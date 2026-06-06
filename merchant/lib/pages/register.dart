@@ -3,26 +3,38 @@ import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_lucide/jaspr_lucide.dart' hide Map;
 import 'package:jaspr_riverpod/jaspr_riverpod.dart';
 import 'package:jaspr_riverpod/legacy.dart';
+import 'package:jaspr_router/jaspr_router.dart';
 import 'package:merchant/components/form_field.dart';
-import 'package:merchant/providers/registration_provider.dart';
+import 'package:merchant/providers/auth_provider.dart';
+import 'package:merchant/providers/field_providers.dart';
 import 'package:web/web.dart' hide Lock;
 
-class Registration extends StatelessComponent {
-  const Registration({super.key});
+class Register extends StatelessComponent {
+  const Register({super.key});
 
   void _onSubmit(BuildContext context, Event e) {
     e.preventDefault();
     final fullName = context.read(fullNameProvider).trim();
     final businessName = context.read(businessNameProvider).trim();
     final whatsappNumber = context.read(whatsappNumberProvider).trim();
-    final email = context.read(emailProvider).trim();
-    final password = context.read(passwordProvider).trim();
+    final email = context.read(registerEmailProvider).trim();
+    final password = context.read(registerPasswordProvider).trim();
 
     print('full name = $fullName');
     print('business name = $businessName');
     print('whatsapp number = $whatsappNumber');
     print('email = $email');
     print('password = $password');
+
+    context
+        .read(authProvider.notifier)
+        .register(
+          name: fullName,
+          businessName: businessName,
+          whatsappNumber: whatsappNumber,
+          email: email,
+          password: password,
+        );
   }
 
   void _onChange(StateProvider provider, BuildContext context, dynamic value) {
@@ -31,7 +43,7 @@ class Registration extends StatelessComponent {
 
   @override
   Component build(BuildContext context) {
-    return main_(classes: 'bg-neutral min-h-screen w-full', [
+    return div(classes: 'bg-neutral min-h-screen w-full', [
       div(
         classes:
             'max-w-120 mx-auto h-full flex flex-col justify-center items-center px-6 md:px-0 py-10',
@@ -52,7 +64,7 @@ class Registration extends StatelessComponent {
             .text('and tracking sales today.'),
           ]),
 
-          div(classes: 'card bg-white shadow-sm w-full', [
+          div(classes: 'card bg-white shadow-sm w-full mb-8', [
             form(
               classes: 'card-body items-start',
               method: .post,
@@ -108,7 +120,8 @@ class Registration extends StatelessComponent {
                   labelText: 'Email',
                   icon: Mail(classes: 'w-4.5 h-4.5'),
                   type: .email,
-                  onChange: (value) => _onChange(emailProvider, context, value),
+                  onChange: (value) =>
+                      _onChange(registerEmailProvider, context, value),
                   attributes: {
                     'placeholder': 'jacksparrow@example.com',
                     'required': '',
@@ -122,7 +135,7 @@ class Registration extends StatelessComponent {
                   icon: Lock(classes: 'w-4.5 h-4.5'),
                   type: .password,
                   onChange: (value) =>
-                      _onChange(passwordProvider, context, value),
+                      _onChange(registerPasswordProvider, context, value),
                   attributes: {
                     'placeholder': '*********',
                     'required': '',
@@ -149,6 +162,17 @@ class Registration extends StatelessComponent {
               ],
             ),
           ]),
+
+          button(
+            classes: 'text-sm hover:cursor-pointer',
+            onClick: () => context.push('/login'),
+            [
+              span([.text('Already have an account?')]),
+              span(classes: 'text-accent font-semibold ml-1', [
+                .text('Sign in to Brand'),
+              ]),
+            ],
+          ),
         ],
       ),
     ]);

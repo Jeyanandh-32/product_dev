@@ -1,0 +1,94 @@
+import 'dart:io';
+
+import 'package:backend/extensions/merchant_dto_extension.dart';
+import 'package:backend/repositories/merchant_repository.dart';
+import 'package:backend/services/auth_service.dart';
+import 'package:backend/utils/responses.dart';
+import 'package:dart_frog/dart_frog.dart';
+import 'package:postgres/postgres.dart';
+import 'package:validators/validators.dart';
+
+Future<Response> onRequest(RequestContext context) async {
+  return switch (context.request.method) {
+    .post => _onPost(context),
+    _ => methodNotAllowed(),
+  };
+}
+
+Future<Response> _onPost(RequestContext context) async {
+  final conn = context.read<Connection>();
+  final repo = MerchantRepository(conn: conn);
+
+  final jsonBody = await context.request.json();
+
+  if (jsonBody is! Map<String, Object?>) return inValidBody();
+
+  final body = jsonBody;
+
+  final name = body['name'] as String?;
+  final businessName = body['businessName'] as String?;
+  final whatsappNumber = body['whatsappNumber'] as String?;
+  final email = body['email'] as String?;
+  final password = body['password'] as String?;
+
+  final errorMessage = MerchantValidator.register(
+    name: name,
+    businessName: businessName,
+    whatsappNumber: whatsappNumber,
+    email: email,
+    password: password,
+  );
+
+  if (errorMessage != null) {
+    return badRequest(message: errorMessage);
+  }
+
+  final passwordHash = AuthService.hashPassword(password!.trim());
+
+  try {
+    final merchantRow = await repo.create(
+      name: name!.trim(),
+      businessName: businessName!.trim(),
+      whatsappNumber: whatsappNumber!.trim(),
+      email: email!.trim(),
+      passwordHash: passwordHash,
+    );
+
+    final accessToken = AuthService.generateAccessToken(
+      id: merchantRow.id,
+      role: .merchant,
+    );
+    final refreshToken = AuthService.generateRefreshToken(
+      id: merchantRow.id,
+      role: .merchant,
+    );
+
+    final cookies = [
+      AuthService.buildAccessTokenCookie(accessToken),
+      AuthService.buildRefreshTokenCookie(refreshToken),
+    ];
+
+    return succes(
+      headers: {
+        HttpHeaders.setCookieHeader: cookies,
+      },
+      statuscode: HttpStatus.created,
+      data: {
+        'merchant': merchantRow.toMerchant(),
+      },
+    );
+  } catch (e) {
+    if (e.toString().contains('merchants_email_key')) {
+      return badRequest(
+        message: 'Email already exists.',
+      );
+    }
+
+    if (e.toString().contains('merchants_whatsapp_number_key')) {
+      return badRequest(
+        message: 'Whatsapp Number already exists.',
+      );
+    }
+    return error(message: e.toString());
+  }
+}

@@ -7,6 +7,18 @@
     --font-sans: "Manrope", sans-serif;
 
     --font-script: "Arizonia", cursive;
+
+    --color-soft-blue: #E5F8FE;
+    --color-soft-blue-content: #2BC5F4;
+
+    --color-soft-green: #E8FFFC;
+    --color-soft-green-content: #167B6C;
+
+    --color-soft-yellow: #FFF5E1;
+    --color-soft-yellow-content: #FFA700;
+
+    --color-soft-red: #FFF2F2;
+    --color-soft-red-content: #FE5454;
 }
 
 @plugin "daisyui" {

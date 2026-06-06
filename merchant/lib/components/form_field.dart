@@ -1,5 +1,6 @@
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
+import 'package:jaspr_router/jaspr_router.dart';
 
 class FormField extends StatelessComponent {
   final String id;
@@ -9,6 +10,7 @@ class FormField extends StatelessComponent {
   final Map<String, String>? attributes;
   final String hintText;
   final void Function(dynamic)? onChange;
+  final bool enableForgotPassword;
 
   const FormField({
     super.key,
@@ -19,16 +21,28 @@ class FormField extends StatelessComponent {
     required this.attributes,
     required this.hintText,
     this.onChange,
+    this.enableForgotPassword = false,
   });
 
   @override
   Component build(BuildContext context) {
     return fieldset(classes: 'fieldset w-full mb-4', [
-      label(
-        htmlFor: id,
-        classes: 'label text-[14px] font-semibold text-gray-500',
-        [icon, .text(labelText)],
-      ),
+      div(classes: 'flex items-center justify-between', [
+        label(
+          htmlFor: id,
+          classes: 'label text-[14px] font-semibold text-gray-500',
+          [icon, .text(labelText)],
+        ),
+        if (enableForgotPassword)
+          button(
+            type: .button,
+            classes: 'text-sm font-semibold text-accent hover:cursor-pointer',
+            onClick: () => context.push('/forgotPassword'),
+            [
+              .text('Forgot Password?'),
+            ],
+          ),
+      ]),
       input(
         id: id,
         name: id,
