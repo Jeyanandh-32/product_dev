@@ -1,4 +1,3 @@
-import 'package:validators/src/validation_patterns.dart';
 import 'package:validators/validators.dart';
 
 class MerchantValidator {

@@ -1,3 +1,4 @@
 library;
 
-export 'src/merchant.dart';
+export 'src/merchant/merchant.dart';
+export 'src/store/store.dart';
