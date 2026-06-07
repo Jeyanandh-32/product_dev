@@ -19,6 +19,6 @@ abstract class MerchantDto with _$MerchantDto {
 
   factory MerchantDto.fromJson(Map<String, Object?> json) =>
       _$MerchantDtoFromJson(json);
-
-  static DateTime _fromJson(DateTime value) => value;
 }
+
+DateTime _fromJson(DateTime value) => value;

@@ -13,8 +13,8 @@ _MerchantDto _$MerchantDtoFromJson(Map<String, dynamic> json) => _MerchantDto(
   whatsappNumber: json['whatsapp_number'] as String,
   email: json['email'] as String,
   passwordHash: json['password_hash'] as String,
-  createdAt: DateTime.parse(json['created_at'] as String),
-  updatedAt: DateTime.parse(json['updated_at'] as String),
+  createdAt: _fromJson(json['created_at'] as DateTime),
+  updatedAt: _fromJson(json['updated_at'] as DateTime),
 );
 
 Map<String, dynamic> _$MerchantDtoToJson(_MerchantDto instance) =>
