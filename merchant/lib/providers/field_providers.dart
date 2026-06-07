@@ -8,22 +8,22 @@ final loginPasswordProvider = StateProvider<String>(
   (ref) => '',
 );
 
-final fullNameProvider = StateProvider(
+final fullNameProvider = StateProvider<String>(
   (ref) => '',
 );
-final businessNameProvider = StateProvider(
+final businessNameProvider = StateProvider<String>(
   (ref) => '',
 );
-final whatsappNumberProvider = StateProvider(
+final whatsappNumberProvider = StateProvider<String>(
   (ref) => '',
 );
-final registerEmailProvider = StateProvider(
+final registerEmailProvider = StateProvider<String>(
   (ref) => '',
 );
-final registerPasswordProvider = StateProvider(
+final registerPasswordProvider = StateProvider<String>(
   (ref) => '',
 );
 
-final forgotPasswordEmailProvider = StateProvider(
+final forgotPasswordEmailProvider = StateProvider<String>(
   (ref) => '',
 );

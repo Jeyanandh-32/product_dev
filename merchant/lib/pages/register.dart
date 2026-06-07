@@ -4,6 +4,7 @@ import 'package:jaspr_lucide/jaspr_lucide.dart' hide Map;
 import 'package:jaspr_riverpod/jaspr_riverpod.dart';
 import 'package:jaspr_riverpod/legacy.dart';
 import 'package:jaspr_router/jaspr_router.dart';
+import 'package:merchant/components/auth_layout.dart';
 import 'package:merchant/components/form_field.dart';
 import 'package:merchant/providers/auth_provider.dart';
 import 'package:merchant/providers/field_providers.dart';
@@ -43,138 +44,117 @@ class Register extends StatelessComponent {
 
   @override
   Component build(BuildContext context) {
-    return div(classes: 'bg-neutral min-h-screen w-full', [
-      div(
-        classes:
-            'max-w-120 mx-auto h-full flex flex-col justify-center items-center px-6 md:px-0 py-10',
+    return AuthLayout(
+      title: 'Create Your Account',
+      descriptionLine1: 'Register your business to start billing',
+      descriptionLine2: 'and tracking sales today.',
+      isMinHeight: true,
+      formContent: form(
+        classes: 'card-body items-start',
+        method: .post,
+        events: {
+          'submit': (e) => _onSubmit(context, e),
+        },
         [
-          h1(classes: 'font-script text-primary text-[40px] font-normal', [
-            .text('Branding'),
-          ]),
+          FormField(
+            onChange: (value) =>
+                _onChange(fullNameProvider, context, value),
+            id: 'fullname',
+            labelText: 'Full Name',
+            icon: User(classes: 'w-4.5 h-4.5'),
+            type: .text,
+            attributes: {'placeholder': 'Jack Dev', 'required': ''},
+            hintText: 'Name is required.',
+          ),
 
-          h1(classes: 'text-center text-3xl font-bold mt-4 mb-2', [
-            .text('Create Your Account'),
-          ]),
+          FormField(
+            id: 'businessName',
+            labelText: 'Business Name',
+            icon: Building(classes: 'w-4.5 h-4.5'),
+            type: .text,
+            onChange: (value) =>
+                _onChange(businessNameProvider, context, value),
+            attributes: {
+              'placeholder': 'Acme Retail Solutions',
+              'required': '',
+            },
+            hintText: 'Business Name is required.',
+          ),
 
-          h4(classes: 'text-gray-500 text-center mb-8', [
-            .text(
-              'Register your business to start billing',
-            ),
-            br(),
-            .text('and tracking sales today.'),
-          ]),
+          FormField(
+            id: 'whatsappNumber',
+            labelText: 'Whatsapp Number',
+            icon: Phone(classes: 'w-4.5 h-4.5'),
+            type: .tel,
+            onChange: (value) =>
+                _onChange(whatsappNumberProvider, context, value),
+            attributes: {
+              'placeholder': '7449261057',
+              'required': '',
+              'pattern': '[0-9]{10}',
+              'minlength': '10',
+              'maxlength': '10',
+              'title': 'Must be 10 digits',
+            },
+            hintText: 'Must be 10 digits.',
+          ),
 
-          div(classes: 'card bg-white shadow-sm w-full mb-8', [
-            form(
-              classes: 'card-body items-start',
-              method: .post,
-              events: {
-                'submit': (e) => _onSubmit(context, e),
-              },
-              [
-                FormField(
-                  onChange: (value) =>
-                      _onChange(fullNameProvider, context, value),
-                  id: 'fullname',
-                  labelText: 'Full Name',
-                  icon: User(classes: 'w-4.5 h-4.5'),
-                  type: .text,
-                  attributes: {'placeholder': 'Jack Dev', 'required': ''},
-                  hintText: 'Name is required.',
-                ),
+          FormField(
+            id: 'email',
+            labelText: 'Email',
+            icon: Mail(classes: 'w-4.5 h-4.5'),
+            type: .email,
+            onChange: (value) =>
+                _onChange(registerEmailProvider, context, value),
+            attributes: {
+              'placeholder': 'jacksparrow@example.com',
+              'required': '',
+            },
+            hintText: 'Email is required.',
+          ),
 
-                FormField(
-                  id: 'businessName',
-                  labelText: 'Business Name',
-                  icon: Building(classes: 'w-4.5 h-4.5'),
-                  type: .text,
-                  onChange: (value) =>
-                      _onChange(businessNameProvider, context, value),
-                  attributes: {
-                    'placeholder': 'Acme Retail Solutions',
-                    'required': '',
-                  },
-                  hintText: 'Business Name is required.',
-                ),
-
-                FormField(
-                  id: 'whatsappNumber',
-                  labelText: 'Whatsapp Number',
-                  icon: Phone(classes: 'w-4.5 h-4.5'),
-                  type: .tel,
-                  onChange: (value) =>
-                      _onChange(whatsappNumberProvider, context, value),
-                  attributes: {
-                    'placeholder': '7449261057',
-                    'required': '',
-                    'pattern': '[0-9]{10}',
-                    'minlength': '10',
-                    'maxlength': '10',
-                    'title': 'Must be 10 digits',
-                  },
-                  hintText: 'Must be 10 digits.',
-                ),
-
-                FormField(
-                  id: 'email',
-                  labelText: 'Email',
-                  icon: Mail(classes: 'w-4.5 h-4.5'),
-                  type: .email,
-                  onChange: (value) =>
-                      _onChange(registerEmailProvider, context, value),
-                  attributes: {
-                    'placeholder': 'jacksparrow@example.com',
-                    'required': '',
-                  },
-                  hintText: 'Email is required.',
-                ),
-
-                FormField(
-                  id: 'password',
-                  labelText: 'Password',
-                  icon: Lock(classes: 'w-4.5 h-4.5'),
-                  type: .password,
-                  onChange: (value) =>
-                      _onChange(registerPasswordProvider, context, value),
-                  attributes: {
-                    'placeholder': '*********',
-                    'required': '',
-                    'pattern': '(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{6,}',
-                    'minlength': '6',
-                  },
-                  hintText:
-                      'Must be 6+ characters with a number, lowercase, and uppercase.',
-                ),
-
-                button(
-                  classes: 'btn btn-primary mt-3 rounded-lg h-12 w-full',
-                  type: .submit,
-                  [
-                    .text('Register'),
-                  ],
-                ),
-
-                span(classes: 'text-gray-500 text-center px-8  md:px-16 mt-6', [
-                  .text(
-                    'By clicking "Register Business", you agree to our Terms of Service and Privacy Policy.',
-                  ),
-                ]),
-              ],
-            ),
-          ]),
+          FormField(
+            id: 'password',
+            labelText: 'Password',
+            icon: Lock(classes: 'w-4.5 h-4.5'),
+            type: .password,
+            onChange: (value) =>
+                _onChange(registerPasswordProvider, context, value),
+            attributes: {
+              'placeholder': '*********',
+              'required': '',
+              'pattern': '(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{6,}',
+              'minlength': '6',
+            },
+            hintText:
+                'Must be 6+ characters with a number, lowercase, and uppercase.',
+          ),
 
           button(
-            classes: 'text-sm hover:cursor-pointer',
-            onClick: () => context.push('/login'),
+            classes: 'btn btn-primary mt-3 rounded-lg h-12 w-full',
+            type: .submit,
             [
-              span([.text('Already have an account?')]),
-              span(classes: 'text-accent font-semibold ml-1', [
-                .text('Sign in to Brand'),
-              ]),
+              .text('Register'),
             ],
           ),
+
+          span(classes: 'text-gray-500 text-center px-8  md:px-16 mt-6', [
+            .text(
+              'By clicking "Register Business", you agree to our Terms of Service and Privacy Policy.',
+            ),
+          ]),
         ],
       ),
-    ]);
+      footerContent: button(
+        classes: 'text-sm hover:cursor-pointer',
+        onClick: () => context.push('/login'),
+        [
+          span([.text('Already have an account?')]),
+          span(classes: 'text-accent font-semibold ml-1', [
+            .text('Sign in to Brand'),
+          ]),
+        ],
+      ),
+    );
   }
 }

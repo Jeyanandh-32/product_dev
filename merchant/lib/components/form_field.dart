@@ -49,7 +49,7 @@ class FormField extends StatelessComponent {
         type: type,
         onChange: onChange,
         classes:
-            'input validator h-11 border border-gray-300 w-full rounded-lg',
+            'input validator h-11 border border-border-medium w-full rounded-lg',
         attributes: attributes,
       ),
       p(classes: 'validator-hint hidden', [.text(hintText)]),

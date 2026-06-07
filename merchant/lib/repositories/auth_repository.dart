@@ -5,19 +5,24 @@ import 'package:models/models.dart';
 class AuthRepository {
   const AuthRepository._();
 
+  static Never _handleDioError(DioException e, String defaultMessage) {
+    final data = e.response?.data;
+    final message = (data is Map ? data['message'] as String? : null) ?? defaultMessage;
+    throw ApiException(message);
+  }
+
   static Future<Merchant?> login({
     required String email,
     required String password,
   }) async {
     try {
       final result = await ApiClient.dio.post(
-        '/v1/auth/merchant/login',
+        ApiEndpoints.login,
         data: {'email': email, 'password': password},
       );
       return Merchant.fromJson(result.data['data']['merchant']);
     } on DioException catch (e) {
-      final message = e.response?.data['message'] as String? ?? 'Login failed.';
-      throw ApiException(message);
+      _handleDioError(e, 'Login failed.');
     }
   }
 
@@ -30,7 +35,7 @@ class AuthRepository {
   }) async {
     try {
       final result = await ApiClient.dio.post(
-        '/v1/auth/merchant/register',
+        ApiEndpoints.register,
         data: {
           'name': name,
           'businessName': businessName,
@@ -41,19 +46,15 @@ class AuthRepository {
       );
       return Merchant.fromJson(result.data['data']['merchant']);
     } on DioException catch (e) {
-      final message = e.response?.data['message'] as String? ?? 'Register failed.';
-      throw ApiException(message);
+      _handleDioError(e, 'Register failed.');
     }
   }
 
   static Future<void> logout() async {
     try {
-      await ApiClient.dio.get('/v1/auth/logout');
+      await ApiClient.dio.get(ApiEndpoints.logout);
     } on DioException catch (e) {
-      final message =
-          e.response?.data['message'] as String? ?? 'Logout failed.';
-
-      throw ApiException(message);
+      _handleDioError(e, 'Logout failed.');
     }
   }
 }

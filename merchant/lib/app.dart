@@ -25,15 +25,13 @@ class App extends StatelessComponent {
               path: '/',
               builder: (context, state) => Home(),
               redirect: (context, state) {
+                final merchant = context.read(authProvider).value;
+
+                if (merchant == null) {
+                  return '/login';
+                }
+
                 return null;
-
-                // final merchant = context.read(authProvider).value;
-
-                // if (merchant == null) {
-                //   return '/login';
-                // }
-
-                // return null;
               },
             ),
             Route(

@@ -5,7 +5,7 @@ class MerchantRepository {
   const MerchantRepository._();
 
   static Future<Merchant?> getMerchant() async {
-    final result = await ApiClient.dio.get('/v1/merchants');
+    final result = await ApiClient.dio.get(ApiEndpoints.merchants);
 
     return Merchant.fromJson(result.data['data']['merchant']);
   }

@@ -19,6 +19,12 @@
 
     --color-soft-red: #FFF2F2;
     --color-soft-red-content: #FE5454;
+
+    --color-soft-purple: #FBF1FF;
+    --color-soft-purple-content: #791C9E;
+
+    --color-border-light: #e5e7eb;
+    --color-border-medium: #d1d5db;
 }
 
 @plugin "daisyui" {
