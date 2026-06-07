@@ -1,4 +1,4 @@
-import 'package:backend/models/merchant_dto.dart';
+import 'package:backend/models/merchant/merchant_dto.dart';
 import 'package:models/models.dart';
 
 extension MerchantDtoExtension on MerchantDto {

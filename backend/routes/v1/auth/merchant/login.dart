@@ -36,26 +36,26 @@ Future<Response> _onPost(RequestContext context) async {
   }
 
   try {
-    final merchantRow = await repo.getByEmail(email!);
+    final merchantDto = await repo.getByEmail(email!);
 
-    if (merchantRow == null) {
+    if (merchantDto == null) {
       return badRequest(message: 'Invalid email or password.');
     }
 
     final isValid = await AuthService.verifyPassword(
       password!,
-      merchantRow.passwordHash,
+      merchantDto.passwordHash,
     );
 
     if (!isValid) return badRequest(message: 'Invalid email or password.');
 
     final accessToken = AuthService.generateAccessToken(
-      id: merchantRow.id,
+      id: merchantDto.id,
       role: .merchant,
     );
 
     final refreshToken = AuthService.generateRefreshToken(
-      id: merchantRow.id,
+      id: merchantDto.id,
       role: .merchant,
     );
 
@@ -69,7 +69,7 @@ Future<Response> _onPost(RequestContext context) async {
         HttpHeaders.setCookieHeader: cookies,
       },
       data: {
-        'merchant': merchantRow.toMerchant(),
+        'merchant': merchantDto.toMerchant(),
       },
     );
   } catch (e) {

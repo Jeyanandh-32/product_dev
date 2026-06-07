@@ -44,7 +44,7 @@ Future<Response> _onPost(RequestContext context) async {
   final passwordHash = await AuthService.hashPassword(password!);
 
   try {
-    final merchantRow = await repo.create(
+    final merchantDto = await repo.create(
       name: name!.trim(),
       businessName: businessName!.trim(),
       whatsappNumber: whatsappNumber!.trim(),
@@ -53,11 +53,11 @@ Future<Response> _onPost(RequestContext context) async {
     );
 
     final accessToken = AuthService.generateAccessToken(
-      id: merchantRow.id,
+      id: merchantDto.id,
       role: .merchant,
     );
     final refreshToken = AuthService.generateRefreshToken(
-      id: merchantRow.id,
+      id: merchantDto.id,
       role: .merchant,
     );
 
@@ -72,7 +72,7 @@ Future<Response> _onPost(RequestContext context) async {
       },
       statusCode: HttpStatus.created,
       data: {
-        'merchant': merchantRow.toMerchant(),
+        'merchant': merchantDto.toMerchant(),
       },
     );
   } catch (e) {

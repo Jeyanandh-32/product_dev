@@ -1,5 +1,5 @@
 import 'package:backend/extensions/merchant_dto_extension.dart';
-import 'package:backend/models/token_payload.dart';
+import 'package:backend/models/token_payload/token_payload.dart';
 import 'package:backend/repositories/merchant_repository.dart';
 import 'package:backend/utils/responses.dart';
 import 'package:dart_frog/dart_frog.dart';

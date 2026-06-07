@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:backend/enums/user_role.dart';
-import 'package:backend/models/token_payload.dart';
+import 'package:backend/models/token_payload/token_payload.dart';
 import 'package:backend/services/auth_service.dart';
 import 'package:backend/utils/responses.dart';
 import 'package:dart_frog/dart_frog.dart';
