@@ -8,6 +8,7 @@ import 'package:merchant/components/auth_layout.dart';
 import 'package:merchant/components/form_field.dart';
 import 'package:merchant/providers/auth_provider.dart';
 import 'package:merchant/providers/field_providers.dart';
+import 'package:validators/validators.dart';
 import 'package:web/web.dart' hide Lock;
 
 class Register extends StatelessComponent {
@@ -91,7 +92,7 @@ class Register extends StatelessComponent {
             attributes: {
               'placeholder': '7449261057',
               'required': '',
-              'pattern': '[0-9]{10}',
+              'pattern': ValidationPatterns.whatsappHtml,
               'minlength': '10',
               'maxlength': '10',
               'title': 'Must be 10 digits',
@@ -123,7 +124,7 @@ class Register extends StatelessComponent {
             attributes: {
               'placeholder': '*********',
               'required': '',
-              'pattern': '(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{6,}',
+              'pattern': ValidationPatterns.password,
               'minlength': '6',
             },
             hintText:

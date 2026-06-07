@@ -14,6 +14,8 @@ dependencies:
   jaspr_router: ^0.8.2
   models:
     path: ../packages/models
+  validators:
+    path: ../packages/validators
   web: ^1.1.1
 
 dev_dependencies:

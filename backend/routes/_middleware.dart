@@ -1,20 +1,42 @@
 import 'package:backend/config/database.dart';
-import 'package:backend/config/env.dart';
 import 'package:backend/repositories/merchant_repository.dart';
 import 'package:dart_frog/dart_frog.dart';
-import 'package:dart_frog_cors/dart_frog_cors.dart';
 import 'package:postgres/postgres.dart';
 
 Handler middleware(Handler handler) {
   return handler
       .use(requestLogger())
       .use(
-        cors(
-          allowOrigin: Env.allowedOrigin,
-          additional: {
-            'Access-Control-Allow-Credentials': 'true',
-          },
-        ),
+        (handler) {
+          return (context) async {
+            final request = context.request;
+            final origin = request.headers['origin'] ?? '*';
+
+            if (request.method == HttpMethod.options) {
+              return Response(
+                statusCode: 204,
+                headers: {
+                  'Access-Control-Allow-Origin': origin,
+                  'Access-Control-Allow-Credentials': 'true',
+                  'Access-Control-Allow-Headers':
+                      'Origin, X-Requested-With, Content-Type, Accept, Authorization',
+                  'Access-Control-Allow-Methods':
+                      'GET, POST, PUT, DELETE, OPTIONS, PATCH',
+                },
+              );
+            }
+
+            final response = await handler(context);
+
+            return response.copyWith(
+              headers: {
+                ...response.headers,
+                'Access-Control-Allow-Origin': origin,
+                'Access-Control-Allow-Credentials': 'true',
+              },
+            );
+          };
+        },
       )
       .use(
         provider<MerchantRepository>(

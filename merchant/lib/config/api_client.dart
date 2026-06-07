@@ -1,11 +1,12 @@
 import 'package:dio/dio.dart';
+import 'package:web/web.dart' as web;
 
 class ApiClient {
   const ApiClient._();
 
   static Dio dio = Dio(
     BaseOptions(
-      baseUrl: 'http://localhost:8080',
+      baseUrl: 'http://${web.window.location.hostname.isEmpty ? 'localhost' : web.window.location.hostname}:8080',
       connectTimeout: Duration(seconds: 10),
       receiveTimeout: Duration(seconds: 10),
       extra: {'withCredentials': true},

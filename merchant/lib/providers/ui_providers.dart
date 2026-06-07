@@ -7,3 +7,11 @@ final indexProvider = StateProvider<int>(
 final storeProvider = StateProvider<String>(
   (ref) => 'STORE - 1',
 );
+
+final navOpenProvider = StateProvider<bool>(
+  (ref) => false,
+);
+
+final headerTitleProvider = StateProvider<String>(
+  (ref) => 'Dashboard',
+);

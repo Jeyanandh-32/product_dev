@@ -9,6 +9,7 @@ import 'package:merchant/components/form_field.dart';
 import 'package:merchant/pages/loading.dart';
 import 'package:merchant/providers/auth_provider.dart';
 import 'package:merchant/providers/field_providers.dart';
+import 'package:validators/validators.dart';
 import 'package:web/web.dart' hide Lock;
 
 class Login extends StatelessComponent {
@@ -70,7 +71,7 @@ class Login extends StatelessComponent {
             attributes: {
               'placeholder': '*********',
               'required': '',
-              'pattern': '(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{6,}',
+              'pattern': ValidationPatterns.password,
               'minlength': '6',
             },
             hintText:

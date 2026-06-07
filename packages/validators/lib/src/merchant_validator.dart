@@ -1,5 +1,13 @@
 import 'package:validators/validators.dart';
 
+class ValidationPatterns {
+  const ValidationPatterns._();
+
+  static const String password = r'(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}';
+  static const String whatsapp = r'^[0-9]{10}$';
+  static const String whatsappHtml = r'[0-9]{10}';
+}
+
 class MerchantValidator {
   const MerchantValidator._();
 
@@ -20,7 +28,7 @@ class MerchantValidator {
       return 'Whatsapp Number is required.';
     }
 
-    if (!whatsappNumber.isLength(10, 10)) {
+    if (!RegExp(ValidationPatterns.whatsapp).hasMatch(whatsappNumber)) {
       return 'Whatsapp Number must be 10 digits.';
     }
 
@@ -60,8 +68,8 @@ class MerchantValidator {
       return 'Password is required.';
     }
 
-    if (!password.isLength(6)) {
-      return 'Password should be at least 6 characters.';
+    if (!RegExp(ValidationPatterns.password).hasMatch(password)) {
+      return 'Must be 6+ characters with a number, lowercase, and uppercase.';
     }
 
     return null;
