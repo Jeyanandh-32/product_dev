@@ -24,40 +24,44 @@ class MerchantValidator {
       return 'Whatsapp Number must be 10 digits.';
     }
 
-    if (email == null || email.isEmpty) {
-      return 'Email is required.';
-    }
+    final emailError = _validateEmail(email);
+    if (emailError != null) return emailError;
 
-    if (!email.isEmail) {
-      return 'Ivalid Email format.';
-    }
-
-    if (password == null || password.isEmpty) {
-      return 'Password is required.';
-    }
-
-    if (!password.isLength(6)) {
-      return 'Password should be atleast 6 characters.';
-    }
+    final passwordError = _validatePassword(password);
+    if (passwordError != null) return passwordError;
 
     return null;
   }
 
   static String? login({String? email, String? password}) {
+    final emailError = _validateEmail(email);
+    if (emailError != null) return emailError;
+
+    final passwordError = _validatePassword(password);
+    if (passwordError != null) return passwordError;
+
+    return null;
+  }
+
+  static String? _validateEmail(String? email) {
     if (email == null || email.isEmpty) {
       return 'Email is required.';
     }
 
     if (!email.isEmail) {
-      return 'Ivalid Email format.';
+      return 'Invalid Email format.';
     }
 
+    return null;
+  }
+
+  static String? _validatePassword(String? password) {
     if (password == null || password.isEmpty) {
       return 'Password is required.';
     }
 
     if (!password.isLength(6)) {
-      return 'Password should be atleast 6 characters.';
+      return 'Password should be at least 6 characters.';
     }
 
     return null;

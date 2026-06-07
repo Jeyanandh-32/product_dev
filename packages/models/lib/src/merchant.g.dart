@@ -6,7 +6,7 @@ part of 'merchant.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-Merchant _$MerchantFromJson(Map<String, dynamic> json) => Merchant(
+_Merchant _$MerchantFromJson(Map<String, dynamic> json) => _Merchant(
   id: json['id'] as String,
   name: json['name'] as String,
   businessName: json['businessName'] as String,
@@ -16,7 +16,7 @@ Merchant _$MerchantFromJson(Map<String, dynamic> json) => Merchant(
   updatedAt: DateTime.parse(json['updatedAt'] as String),
 );
 
-Map<String, dynamic> _$MerchantToJson(Merchant instance) => <String, dynamic>{
+Map<String, dynamic> _$MerchantToJson(_Merchant instance) => <String, dynamic>{
   'id': instance.id,
   'name': instance.name,
   'businessName': instance.businessName,

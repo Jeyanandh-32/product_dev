@@ -6,18 +6,18 @@ part of 'merchant_dto.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-MerchantDto _$MerchantDtoFromJson(Map<String, dynamic> json) => MerchantDto(
+_MerchantDto _$MerchantDtoFromJson(Map<String, dynamic> json) => _MerchantDto(
   id: json['id'] as String,
   name: json['name'] as String,
   businessName: json['business_name'] as String,
   whatsappNumber: json['whatsapp_number'] as String,
   email: json['email'] as String,
   passwordHash: json['password_hash'] as String,
-  createdAt: MerchantDto._fromJson(json['created_at'] as DateTime),
-  updatedAt: MerchantDto._fromJson(json['updated_at'] as DateTime),
+  createdAt: DateTime.parse(json['created_at'] as String),
+  updatedAt: DateTime.parse(json['updated_at'] as String),
 );
 
-Map<String, dynamic> _$MerchantDtoToJson(MerchantDto instance) =>
+Map<String, dynamic> _$MerchantDtoToJson(_MerchantDto instance) =>
     <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
