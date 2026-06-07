@@ -4,7 +4,7 @@ import 'package:jaspr_lucide/jaspr_lucide.dart' hide Map;
 import 'package:jaspr_riverpod/jaspr_riverpod.dart';
 import 'package:jaspr_riverpod/legacy.dart';
 import 'package:jaspr_router/jaspr_router.dart';
-import 'package:merchant/components/auth_layout.dart';
+import 'package:merchant/components/layouts/auth_layout.dart';
 import 'package:merchant/components/form_field.dart';
 import 'package:merchant/pages/loading.dart';
 import 'package:merchant/providers/auth_provider.dart';

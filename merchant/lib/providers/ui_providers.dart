@@ -15,3 +15,14 @@ final navOpenProvider = StateProvider<bool>(
 final headerTitleProvider = StateProvider<String>(
   (ref) => 'Dashboard',
 );
+
+enum ActiveModal {
+  none,
+  addStore,
+  addTerminal,
+  editStore,
+}
+
+final activeModalProvider = StateProvider<ActiveModal>(
+  (ref) => .none,
+);

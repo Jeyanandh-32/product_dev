@@ -1,12 +1,5 @@
+import 'package:validators/src/validation_patterns.dart';
 import 'package:validators/validators.dart';
-
-class ValidationPatterns {
-  const ValidationPatterns._();
-
-  static const String password = r'(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}';
-  static const String whatsapp = r'^[0-9]{10}$';
-  static const String whatsappHtml = r'[0-9]{10}';
-}
 
 class MerchantValidator {
   const MerchantValidator._();

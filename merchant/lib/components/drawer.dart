@@ -28,7 +28,7 @@ class Drawer extends StatelessComponent {
 
     return div(
       classes:
-          'fixed z-50 ${isNavOpen ? 'left-0' : '-left-100'} transition-all duration-300 md:left-0 md:flex w-[60%] sm:w-[30%] md:w-[15%] h-full bg-white border-r border-border-medium flex-col items-center $classes',
+          'fixed z-50 ${isNavOpen ? 'left-0' : '-left-100'} transition-all duration-300 md:left-0 flex w-[60%] sm:w-[30%] md:w-[15%] h-full bg-white border-r border-border-medium flex-col items-center $classes',
       [
         h1(
           classes:
@@ -38,7 +38,7 @@ class Drawer extends StatelessComponent {
           ],
         ),
 
-        ul(classes: 'mt-4 h-full w-full px-4 space-y-1', [
+        ul(classes: 'mt-4 flex-1 w-full px-4 space-y-1', [
           navButton(
             name: 'Dashboard',
             icon: LayoutGrid(classes: 'w-4.5 h-4.5'),

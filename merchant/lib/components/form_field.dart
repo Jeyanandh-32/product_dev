@@ -5,10 +5,10 @@ import 'package:jaspr_router/jaspr_router.dart';
 class FormField extends StatelessComponent {
   final String id;
   final String labelText;
-  final Component icon;
+  final Component? icon;
   final InputType type;
   final Map<String, String>? attributes;
-  final String hintText;
+  final String? hintText;
   final void Function(dynamic)? onChange;
   final bool enableForgotPassword;
 
@@ -16,10 +16,10 @@ class FormField extends StatelessComponent {
     super.key,
     required this.id,
     required this.labelText,
-    required this.icon,
     required this.type,
     required this.attributes,
-    required this.hintText,
+    this.hintText,
+    this.icon,
     this.onChange,
     this.enableForgotPassword = false,
   });
@@ -31,7 +31,7 @@ class FormField extends StatelessComponent {
         label(
           htmlFor: id,
           classes: 'label text-[14px] font-semibold text-gray-500',
-          [icon, .text(labelText)],
+          [?icon, .text(labelText)],
         ),
         if (enableForgotPassword)
           button(
@@ -52,7 +52,9 @@ class FormField extends StatelessComponent {
             'input validator h-11 border border-border-medium w-full rounded-lg',
         attributes: attributes,
       ),
-      p(classes: 'validator-hint hidden', [.text(hintText)]),
+      p(classes: 'validator-hint hidden', [
+        if (hintText != null) .text(hintText!),
+      ]),
     ]);
   }
 }
