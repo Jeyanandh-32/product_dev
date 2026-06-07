@@ -13,7 +13,7 @@ Future<Response> onRequest(RequestContext context) async {
 
 Future<Response> _onGet(RequestContext context) async {
   final cookies = AuthService.removeTokens();
-  return succes(
+  return success(
     headers: {
       HttpHeaders.setCookieHeader: cookies,
     },

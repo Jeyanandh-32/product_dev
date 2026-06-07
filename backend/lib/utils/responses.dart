@@ -2,21 +2,21 @@ import 'dart:io';
 
 import 'package:dart_frog/dart_frog.dart';
 
-Response succes({
-  int? statuscode,
+Response success({
+  int? statusCode,
   Map<String, Object?>? data,
   Map<String, Object>? headers,
 }) {
   return Response.json(
     headers: headers ?? {},
-    statusCode: statuscode ?? HttpStatus.ok,
+    statusCode: statusCode ?? HttpStatus.ok,
     body: {'status': 'success', if (data != null) 'data': data},
   );
 }
 
-Response error({required String message, int? statuscode}) {
+Response error({required String message, int? statusCode}) {
   return Response.json(
-    statusCode: statuscode ?? HttpStatus.internalServerError,
+    statusCode: statusCode ?? HttpStatus.internalServerError,
     body: {
       'status': 'error',
       'message': message,
@@ -26,17 +26,17 @@ Response error({required String message, int? statuscode}) {
 
 Response methodNotAllowed() => error(
   message: 'Method not allowed.',
-  statuscode: HttpStatus.methodNotAllowed,
+  statusCode: HttpStatus.methodNotAllowed,
 );
 
 Response inValidBody() =>
-    error(statuscode: HttpStatus.badRequest, message: 'Invalid Body');
+    error(statusCode: HttpStatus.badRequest, message: 'Invalid Body');
 
 Response badRequest({required String message}) =>
-    error(statuscode: HttpStatus.badRequest, message: message);
+    error(statusCode: HttpStatus.badRequest, message: message);
 
 Response unauthorized({required String message}) =>
-    error(statuscode: HttpStatus.unauthorized, message: message);
+    error(statusCode: HttpStatus.unauthorized, message: message);
 
 Response forbidden({required String message}) =>
-    error(statuscode: HttpStatus.forbidden, message: message);
+    error(statusCode: HttpStatus.forbidden, message: message);

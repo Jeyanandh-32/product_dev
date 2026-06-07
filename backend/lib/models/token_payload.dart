@@ -10,6 +10,8 @@ class TokenPayload {
   factory TokenPayload.fromJson(Map<String, Object?> json) =>
       _$TokenPayloadFromJson(json);
 
+  Map<String, Object?> toJson() => _$TokenPayloadToJson(this);
+
   final String sub;
   final UserRole role;
 }

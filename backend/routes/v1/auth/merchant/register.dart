@@ -5,7 +5,6 @@ import 'package:backend/repositories/merchant_repository.dart';
 import 'package:backend/services/auth_service.dart';
 import 'package:backend/utils/responses.dart';
 import 'package:dart_frog/dart_frog.dart';
-import 'package:postgres/postgres.dart';
 import 'package:validators/validators.dart';
 
 Future<Response> onRequest(RequestContext context) async {
@@ -16,8 +15,7 @@ Future<Response> onRequest(RequestContext context) async {
 }
 
 Future<Response> _onPost(RequestContext context) async {
-  final conn = context.read<Connection>();
-  final repo = MerchantRepository(conn: conn);
+  final repo = context.read<MerchantRepository>();
 
   final jsonBody = await context.request.json();
 
@@ -28,8 +26,8 @@ Future<Response> _onPost(RequestContext context) async {
   final name = body['name'] as String?;
   final businessName = body['businessName'] as String?;
   final whatsappNumber = body['whatsappNumber'] as String?;
-  final email = body['email'] as String?;
-  final password = body['password'] as String?;
+  final email = (body['email'] as String?)?.trim().toLowerCase();
+  final password = (body['password'] as String?)?.trim();
 
   final errorMessage = MerchantValidator.register(
     name: name,
@@ -43,14 +41,14 @@ Future<Response> _onPost(RequestContext context) async {
     return badRequest(message: errorMessage);
   }
 
-  final passwordHash = AuthService.hashPassword(password!.trim());
+  final passwordHash = await AuthService.hashPassword(password!);
 
   try {
     final merchantRow = await repo.create(
       name: name!.trim(),
       businessName: businessName!.trim(),
       whatsappNumber: whatsappNumber!.trim(),
-      email: email!.trim(),
+      email: email!,
       passwordHash: passwordHash,
     );
 
@@ -68,11 +66,11 @@ Future<Response> _onPost(RequestContext context) async {
       AuthService.buildRefreshTokenCookie(refreshToken),
     ];
 
-    return succes(
+    return success(
       headers: {
         HttpHeaders.setCookieHeader: cookies,
       },
-      statuscode: HttpStatus.created,
+      statusCode: HttpStatus.created,
       data: {
         'merchant': merchantRow.toMerchant(),
       },

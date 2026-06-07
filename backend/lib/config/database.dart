@@ -6,31 +6,33 @@ import 'package:postgres/postgres.dart';
 class Database {
   const Database._();
 
-  static late Connection _connection;
+  static Pool<Object>? _pool;
 
-  static Connection get connection => _connection;
-
-  static Future<void> init() async {
-    _connection = await _connect();
+  static Pool<Object> get pool {
+    _pool ??= Pool.withEndpoints(
+      [
+        Endpoint(
+          host: Env.dbHost,
+          database: Env.dbName,
+          username: Env.dbUsername,
+          password: Env.dbPassword,
+          port: Env.dbPort,
+        ),
+      ],
+      settings: const PoolSettings(
+        sslMode: .disable,
+        maxConnectionCount: 10,
+      ),
+    );
+    return _pool!;
   }
 
-  static Future<Connection> _connect() async {
-    final conn = await Connection.open(
-      Endpoint(
-        host: Env.dbHost,
-        database: Env.dbName,
-        username: Env.dbUsername,
-        password: Env.dbPassword,
-        port: Env.dbPort,
-      ),
-      settings: const ConnectionSettings(sslMode: .disable),
-    );
-
-    return conn;
+  static Future<void> init() async {
+    pool;
   }
 
   static Future<void> close() async {
-    await _connection.close();
+    await _pool?.close();
   }
 
   static Future<void> runMigrations() async {
@@ -56,7 +58,7 @@ class Database {
           .toList();
 
       for (final statement in statements) {
-        await _connection.execute(statement);
+        await pool.execute(statement);
       }
 
       // ignore: avoid_print

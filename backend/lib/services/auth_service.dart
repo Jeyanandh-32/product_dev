@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:isolate';
 
 import 'package:backend/config/env.dart';
 import 'package:backend/enums/user_role.dart';
@@ -8,12 +9,12 @@ import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 class AuthService {
   const AuthService._();
 
-  static String hashPassword(String password) {
-    return BCrypt.hashpw(password, BCrypt.gensalt());
+  static Future<String> hashPassword(String password) {
+    return Isolate.run(() => BCrypt.hashpw(password, BCrypt.gensalt()));
   }
 
-  static bool verifyPassword(String password, String hash) {
-    return BCrypt.checkpw(password, hash);
+  static Future<bool> verifyPassword(String password, String hash) {
+    return Isolate.run(() => BCrypt.checkpw(password, hash));
   }
 
   static String generateAccessToken({

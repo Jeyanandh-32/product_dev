@@ -5,7 +5,6 @@ import 'package:backend/repositories/merchant_repository.dart';
 import 'package:backend/services/auth_service.dart';
 import 'package:backend/utils/responses.dart';
 import 'package:dart_frog/dart_frog.dart';
-import 'package:postgres/postgres.dart';
 import 'package:validators/validators.dart';
 
 Future<Response> onRequest(RequestContext context) async {
@@ -16,8 +15,7 @@ Future<Response> onRequest(RequestContext context) async {
 }
 
 Future<Response> _onPost(RequestContext context) async {
-  final conn = context.read<Connection>();
-  final repo = MerchantRepository(conn: conn);
+  final repo = context.read<MerchantRepository>();
 
   final jsonBody = await context.request.json();
 
@@ -25,8 +23,8 @@ Future<Response> _onPost(RequestContext context) async {
 
   final body = jsonBody;
 
-  final email = body['email'] as String?;
-  final password = body['password'] as String?;
+  final email = (body['email'] as String?)?.trim().toLowerCase();
+  final password = (body['password'] as String?)?.trim();
 
   final errorMessage = MerchantValidator.login(
     email: email,
@@ -44,7 +42,7 @@ Future<Response> _onPost(RequestContext context) async {
       return badRequest(message: 'Invalid email or password.');
     }
 
-    final isValid = AuthService.verifyPassword(
+    final isValid = await AuthService.verifyPassword(
       password!,
       merchantRow.passwordHash,
     );
@@ -66,7 +64,7 @@ Future<Response> _onPost(RequestContext context) async {
       AuthService.buildRefreshTokenCookie(refreshToken),
     ];
 
-    return succes(
+    return success(
       headers: {
         HttpHeaders.setCookieHeader: cookies,
       },

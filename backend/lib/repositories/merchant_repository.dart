@@ -2,9 +2,9 @@ import 'package:backend/models/merchant_dto.dart';
 import 'package:postgres/postgres.dart';
 
 class MerchantRepository {
-  MerchantRepository({required this.conn});
+  MerchantRepository({required Session session}) : _session = session;
 
-  final Connection conn;
+  final Session _session;
 
   Future<MerchantDto> create({
     required String name,
@@ -13,7 +13,7 @@ class MerchantRepository {
     required String email,
     required String passwordHash,
   }) async {
-    final result = await conn.execute(
+    final result = await _session.execute(
       Sql.named('''
       INSERT INTO merchants(name, business_name, whatsapp_number, email, password_hash)
       VALUES(@name, @businessName, @whatsappNumber, @email, @passwordHash)
@@ -32,7 +32,7 @@ class MerchantRepository {
   }
 
   Future<List<MerchantDto>> getAll() async {
-    final result = await conn.execute(
+    final result = await _session.execute(
       '''
         SELECT * FROM merchants
       ''',
@@ -50,7 +50,7 @@ class MerchantRepository {
   }
 
   Future<MerchantDto?> getByEmail(String email) async {
-    final result = await conn.execute(
+    final result = await _session.execute(
       Sql.named('''
         SELECT * FROM merchants WHERE email = @email
       '''),
@@ -65,7 +65,7 @@ class MerchantRepository {
   }
 
   Future<MerchantDto?> getById(String id) async {
-    final result = await conn.execute(
+    final result = await _session.execute(
       Sql.named('''
         SELECT * FROM merchants WHERE id = @id
       '''),
