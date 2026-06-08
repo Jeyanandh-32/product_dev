@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Store {
 
- String get id; String get merchantId; String get name; DateTime get createdAt; DateTime get updatedAt; String? get storeType;
+ String get id; String get merchantId; String get name; DateTime get createdAt; DateTime get updatedAt; String? get storeType; bool get isActive;
 /// Create a copy of Store
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $StoreCopyWith<Store> get copyWith => _$StoreCopyWithImpl<Store>(this as Store, 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Store&&(identical(other.id, id) || other.id == id)&&(identical(other.merchantId, merchantId) || other.merchantId == merchantId)&&(identical(other.name, name) || other.name == name)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.storeType, storeType) || other.storeType == storeType));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Store&&(identical(other.id, id) || other.id == id)&&(identical(other.merchantId, merchantId) || other.merchantId == merchantId)&&(identical(other.name, name) || other.name == name)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.storeType, storeType) || other.storeType == storeType)&&(identical(other.isActive, isActive) || other.isActive == isActive));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,merchantId,name,createdAt,updatedAt,storeType);
+int get hashCode => Object.hash(runtimeType,id,merchantId,name,createdAt,updatedAt,storeType,isActive);
 
 @override
 String toString() {
-  return 'Store(id: $id, merchantId: $merchantId, name: $name, createdAt: $createdAt, updatedAt: $updatedAt, storeType: $storeType)';
+  return 'Store(id: $id, merchantId: $merchantId, name: $name, createdAt: $createdAt, updatedAt: $updatedAt, storeType: $storeType, isActive: $isActive)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $StoreCopyWith<$Res>  {
   factory $StoreCopyWith(Store value, $Res Function(Store) _then) = _$StoreCopyWithImpl;
 @useResult
 $Res call({
- String id, String merchantId, String name, DateTime createdAt, DateTime updatedAt, String? storeType
+ String id, String merchantId, String name, DateTime createdAt, DateTime updatedAt, String? storeType, bool isActive
 });
 
 
@@ -65,7 +65,7 @@ class _$StoreCopyWithImpl<$Res>
 
 /// Create a copy of Store
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? merchantId = null,Object? name = null,Object? createdAt = null,Object? updatedAt = null,Object? storeType = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? merchantId = null,Object? name = null,Object? createdAt = null,Object? updatedAt = null,Object? storeType = freezed,Object? isActive = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,merchantId: null == merchantId ? _self.merchantId : merchantId // ignore: cast_nullable_to_non_nullable
@@ -73,7 +73,8 @@ as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non
 as String,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
 as DateTime,storeType: freezed == storeType ? _self.storeType : storeType // ignore: cast_nullable_to_non_nullable
-as String?,
+as String?,isActive: null == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 
@@ -158,10 +159,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String merchantId,  String name,  DateTime createdAt,  DateTime updatedAt,  String? storeType)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String merchantId,  String name,  DateTime createdAt,  DateTime updatedAt,  String? storeType,  bool isActive)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Store() when $default != null:
-return $default(_that.id,_that.merchantId,_that.name,_that.createdAt,_that.updatedAt,_that.storeType);case _:
+return $default(_that.id,_that.merchantId,_that.name,_that.createdAt,_that.updatedAt,_that.storeType,_that.isActive);case _:
   return orElse();
 
 }
@@ -179,10 +180,10 @@ return $default(_that.id,_that.merchantId,_that.name,_that.createdAt,_that.updat
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String merchantId,  String name,  DateTime createdAt,  DateTime updatedAt,  String? storeType)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String merchantId,  String name,  DateTime createdAt,  DateTime updatedAt,  String? storeType,  bool isActive)  $default,) {final _that = this;
 switch (_that) {
 case _Store():
-return $default(_that.id,_that.merchantId,_that.name,_that.createdAt,_that.updatedAt,_that.storeType);case _:
+return $default(_that.id,_that.merchantId,_that.name,_that.createdAt,_that.updatedAt,_that.storeType,_that.isActive);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -199,10 +200,10 @@ return $default(_that.id,_that.merchantId,_that.name,_that.createdAt,_that.updat
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String merchantId,  String name,  DateTime createdAt,  DateTime updatedAt,  String? storeType)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String merchantId,  String name,  DateTime createdAt,  DateTime updatedAt,  String? storeType,  bool isActive)?  $default,) {final _that = this;
 switch (_that) {
 case _Store() when $default != null:
-return $default(_that.id,_that.merchantId,_that.name,_that.createdAt,_that.updatedAt,_that.storeType);case _:
+return $default(_that.id,_that.merchantId,_that.name,_that.createdAt,_that.updatedAt,_that.storeType,_that.isActive);case _:
   return null;
 
 }
@@ -214,7 +215,7 @@ return $default(_that.id,_that.merchantId,_that.name,_that.createdAt,_that.updat
 @JsonSerializable()
 
 class _Store implements Store {
-  const _Store({required this.id, required this.merchantId, required this.name, required this.createdAt, required this.updatedAt, this.storeType});
+  const _Store({required this.id, required this.merchantId, required this.name, required this.createdAt, required this.updatedAt, this.storeType, required this.isActive});
   factory _Store.fromJson(Map<String, dynamic> json) => _$StoreFromJson(json);
 
 @override final  String id;
@@ -223,6 +224,7 @@ class _Store implements Store {
 @override final  DateTime createdAt;
 @override final  DateTime updatedAt;
 @override final  String? storeType;
+@override final  bool isActive;
 
 /// Create a copy of Store
 /// with the given fields replaced by the non-null parameter values.
@@ -237,16 +239,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Store&&(identical(other.id, id) || other.id == id)&&(identical(other.merchantId, merchantId) || other.merchantId == merchantId)&&(identical(other.name, name) || other.name == name)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.storeType, storeType) || other.storeType == storeType));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Store&&(identical(other.id, id) || other.id == id)&&(identical(other.merchantId, merchantId) || other.merchantId == merchantId)&&(identical(other.name, name) || other.name == name)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.storeType, storeType) || other.storeType == storeType)&&(identical(other.isActive, isActive) || other.isActive == isActive));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,merchantId,name,createdAt,updatedAt,storeType);
+int get hashCode => Object.hash(runtimeType,id,merchantId,name,createdAt,updatedAt,storeType,isActive);
 
 @override
 String toString() {
-  return 'Store(id: $id, merchantId: $merchantId, name: $name, createdAt: $createdAt, updatedAt: $updatedAt, storeType: $storeType)';
+  return 'Store(id: $id, merchantId: $merchantId, name: $name, createdAt: $createdAt, updatedAt: $updatedAt, storeType: $storeType, isActive: $isActive)';
 }
 
 
@@ -257,7 +259,7 @@ abstract mixin class _$StoreCopyWith<$Res> implements $StoreCopyWith<$Res> {
   factory _$StoreCopyWith(_Store value, $Res Function(_Store) _then) = __$StoreCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String merchantId, String name, DateTime createdAt, DateTime updatedAt, String? storeType
+ String id, String merchantId, String name, DateTime createdAt, DateTime updatedAt, String? storeType, bool isActive
 });
 
 
@@ -274,7 +276,7 @@ class __$StoreCopyWithImpl<$Res>
 
 /// Create a copy of Store
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? merchantId = null,Object? name = null,Object? createdAt = null,Object? updatedAt = null,Object? storeType = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? merchantId = null,Object? name = null,Object? createdAt = null,Object? updatedAt = null,Object? storeType = freezed,Object? isActive = null,}) {
   return _then(_Store(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,merchantId: null == merchantId ? _self.merchantId : merchantId // ignore: cast_nullable_to_non_nullable
@@ -282,7 +284,8 @@ as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non
 as String,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
 as DateTime,storeType: freezed == storeType ? _self.storeType : storeType // ignore: cast_nullable_to_non_nullable
-as String?,
+as String?,isActive: null == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 

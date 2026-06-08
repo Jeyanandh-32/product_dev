@@ -1,16 +1,17 @@
 import 'package:jaspr/client.dart';
 import 'package:jaspr/dom.dart';
 import 'package:jaspr_lucide/generated_icons/square_pen.dart';
+import 'package:models/models.dart';
 
 class StoreCard extends StatelessComponent {
   const StoreCard({
     super.key,
-    required this.name,
+    required this.store,
     this.isSelected = false,
     this.onClick,
   });
 
-  final String name;
+  final Store store;
   final bool isSelected;
   final VoidCallback? onClick;
 
@@ -24,7 +25,7 @@ class StoreCard extends StatelessComponent {
       },
       [
         div(classes: 'flex justify-between items-center', [
-          h2(classes: 'font-semibold text-primary', [.text(name)]),
+          h2(classes: 'font-semibold text-primary', [.text(store.name)]),
           button(classes: 'hover:cursor-pointer', [
             SquarePen(classes: 'w-5 h-5 text-gray-500'),
           ]),
@@ -41,9 +42,9 @@ class StoreCard extends StatelessComponent {
 
           div(
             classes:
-                'bg-soft-green grow text-soft-green-content rounded-lg text-[14px] font-semibold flex justify-center items-center h-10',
+                'grow ${store.isActive ? 'bg-soft-green text-soft-green-content' : 'bg-soft-red text-soft-red-content'} rounded-lg text-[14px] font-semibold flex justify-center items-center h-10',
             [
-              .text('ACTIVE'),
+              .text(store.isActive ? 'ACTIVE' : 'INACTIVE'),
             ],
           ),
         ]),

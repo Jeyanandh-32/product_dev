@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS stores(
     merchant_id UUID NOT NULL REFERENCES merchants(id) ON DELETE CASCADE,
     name VARCHAR(255) NOT NULL,
     store_type VARCHAR(255),
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     CONSTRAINT unique_merchant_store_name UNIQUE(merchant_id, name)
@@ -49,3 +50,15 @@ CREATE TABLE IF NOT EXISTS store_subscriptions(
 );
 
 CREATE INDEX IF NOT EXISTS idx_store_subscriptions_status ON store_subscriptions(status);
+
+CREATE TABLE IF NOT EXISTS terminals(
+    code VARCHAR(12) PRIMARY KEY,
+    merchant_id UUID NOT NULL REFERENCES merchants(id) ON DELETE CASCADE,
+    store_id UUID NOT NULL REFERENCES stores(id) ON DELETE CASCADE,
+    name VARCHAR(255) NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    CONSTRAINT unique_store_terminal_name UNIQUE(store_id, name)
+);

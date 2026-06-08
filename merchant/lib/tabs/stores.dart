@@ -87,7 +87,7 @@ class Stores extends StatelessComponent {
                       (index) {
                         final store = storesState.value![index];
                         return StoreCard(
-                          name: store.name,
+                          store: store,
                           isSelected: store.id == selectedStore?.id,
                           onClick: () {
                             context

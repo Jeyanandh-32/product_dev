@@ -12,6 +12,7 @@ abstract class Store with _$Store {
     required DateTime createdAt,
     required DateTime updatedAt,
     String? storeType,
+    required bool isActive,
   }) = _Store;
 
   factory Store.fromJson(Map<String, Object?> json) => _$StoreFromJson(json);

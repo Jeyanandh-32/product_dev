@@ -65,16 +65,20 @@ class StoreRepository {
     required String id,
     String? name,
     String? storeType,
+    bool? isActive,
   }) async {
     final result = await _session.execute(
       Sql.named('''
-        UPDATE stores SET name = COALESCE(@name, name), store_type = COALESCE(@storeType, store_type),
+        UPDATE stores SET name = COALESCE(@name, name),
+        store_type = COALESCE(@storeType, store_type),
+        is_active = COALESCE(@isActive, is_active),
         updated_at = NOW() WHERE id = @id RETURNING *
       '''),
       parameters: {
         'id': id,
         'name': name,
         'storeType': storeType,
+        'isActive': isActive,
       },
     );
 

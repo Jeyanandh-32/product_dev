@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$StoreDto {
 
- String get id; String get merchantId; String get name; String? get storeType;@JsonKey(fromJson: _fromJson) DateTime get createdAt;@JsonKey(fromJson: _fromJson) DateTime get updatedAt;
+ String get id; String get merchantId; String get name;@JsonKey(fromJson: _fromJson) DateTime get createdAt;@JsonKey(fromJson: _fromJson) DateTime get updatedAt; bool get isActive; String? get storeType;
 /// Create a copy of StoreDto
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $StoreDtoCopyWith<StoreDto> get copyWith => _$StoreDtoCopyWithImpl<StoreDto>(thi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is StoreDto&&(identical(other.id, id) || other.id == id)&&(identical(other.merchantId, merchantId) || other.merchantId == merchantId)&&(identical(other.name, name) || other.name == name)&&(identical(other.storeType, storeType) || other.storeType == storeType)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is StoreDto&&(identical(other.id, id) || other.id == id)&&(identical(other.merchantId, merchantId) || other.merchantId == merchantId)&&(identical(other.name, name) || other.name == name)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.storeType, storeType) || other.storeType == storeType));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,merchantId,name,storeType,createdAt,updatedAt);
+int get hashCode => Object.hash(runtimeType,id,merchantId,name,createdAt,updatedAt,isActive,storeType);
 
 @override
 String toString() {
-  return 'StoreDto(id: $id, merchantId: $merchantId, name: $name, storeType: $storeType, createdAt: $createdAt, updatedAt: $updatedAt)';
+  return 'StoreDto(id: $id, merchantId: $merchantId, name: $name, createdAt: $createdAt, updatedAt: $updatedAt, isActive: $isActive, storeType: $storeType)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $StoreDtoCopyWith<$Res>  {
   factory $StoreDtoCopyWith(StoreDto value, $Res Function(StoreDto) _then) = _$StoreDtoCopyWithImpl;
 @useResult
 $Res call({
- String id, String merchantId, String name, String? storeType,@JsonKey(fromJson: _fromJson) DateTime createdAt,@JsonKey(fromJson: _fromJson) DateTime updatedAt
+ String id, String merchantId, String name,@JsonKey(fromJson: _fromJson) DateTime createdAt,@JsonKey(fromJson: _fromJson) DateTime updatedAt, bool isActive, String? storeType
 });
 
 
@@ -65,15 +65,16 @@ class _$StoreDtoCopyWithImpl<$Res>
 
 /// Create a copy of StoreDto
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? merchantId = null,Object? name = null,Object? storeType = freezed,Object? createdAt = null,Object? updatedAt = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? merchantId = null,Object? name = null,Object? createdAt = null,Object? updatedAt = null,Object? isActive = null,Object? storeType = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,merchantId: null == merchantId ? _self.merchantId : merchantId // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
-as String,storeType: freezed == storeType ? _self.storeType : storeType // ignore: cast_nullable_to_non_nullable
-as String?,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as String,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
-as DateTime,
+as DateTime,isActive: null == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
+as bool,storeType: freezed == storeType ? _self.storeType : storeType // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 
@@ -158,10 +159,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String merchantId,  String name,  String? storeType, @JsonKey(fromJson: _fromJson)  DateTime createdAt, @JsonKey(fromJson: _fromJson)  DateTime updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String merchantId,  String name, @JsonKey(fromJson: _fromJson)  DateTime createdAt, @JsonKey(fromJson: _fromJson)  DateTime updatedAt,  bool isActive,  String? storeType)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _StoreDto() when $default != null:
-return $default(_that.id,_that.merchantId,_that.name,_that.storeType,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.merchantId,_that.name,_that.createdAt,_that.updatedAt,_that.isActive,_that.storeType);case _:
   return orElse();
 
 }
@@ -179,10 +180,10 @@ return $default(_that.id,_that.merchantId,_that.name,_that.storeType,_that.creat
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String merchantId,  String name,  String? storeType, @JsonKey(fromJson: _fromJson)  DateTime createdAt, @JsonKey(fromJson: _fromJson)  DateTime updatedAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String merchantId,  String name, @JsonKey(fromJson: _fromJson)  DateTime createdAt, @JsonKey(fromJson: _fromJson)  DateTime updatedAt,  bool isActive,  String? storeType)  $default,) {final _that = this;
 switch (_that) {
 case _StoreDto():
-return $default(_that.id,_that.merchantId,_that.name,_that.storeType,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.merchantId,_that.name,_that.createdAt,_that.updatedAt,_that.isActive,_that.storeType);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -199,10 +200,10 @@ return $default(_that.id,_that.merchantId,_that.name,_that.storeType,_that.creat
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String merchantId,  String name,  String? storeType, @JsonKey(fromJson: _fromJson)  DateTime createdAt, @JsonKey(fromJson: _fromJson)  DateTime updatedAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String merchantId,  String name, @JsonKey(fromJson: _fromJson)  DateTime createdAt, @JsonKey(fromJson: _fromJson)  DateTime updatedAt,  bool isActive,  String? storeType)?  $default,) {final _that = this;
 switch (_that) {
 case _StoreDto() when $default != null:
-return $default(_that.id,_that.merchantId,_that.name,_that.storeType,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.merchantId,_that.name,_that.createdAt,_that.updatedAt,_that.isActive,_that.storeType);case _:
   return null;
 
 }
@@ -214,15 +215,16 @@ return $default(_that.id,_that.merchantId,_that.name,_that.storeType,_that.creat
 
 @JsonSerializable(fieldRename: .snake)
 class _StoreDto implements StoreDto {
-  const _StoreDto({required this.id, required this.merchantId, required this.name, this.storeType, @JsonKey(fromJson: _fromJson) required this.createdAt, @JsonKey(fromJson: _fromJson) required this.updatedAt});
+  const _StoreDto({required this.id, required this.merchantId, required this.name, @JsonKey(fromJson: _fromJson) required this.createdAt, @JsonKey(fromJson: _fromJson) required this.updatedAt, required this.isActive, this.storeType});
   factory _StoreDto.fromJson(Map<String, dynamic> json) => _$StoreDtoFromJson(json);
 
 @override final  String id;
 @override final  String merchantId;
 @override final  String name;
-@override final  String? storeType;
 @override@JsonKey(fromJson: _fromJson) final  DateTime createdAt;
 @override@JsonKey(fromJson: _fromJson) final  DateTime updatedAt;
+@override final  bool isActive;
+@override final  String? storeType;
 
 /// Create a copy of StoreDto
 /// with the given fields replaced by the non-null parameter values.
@@ -237,16 +239,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _StoreDto&&(identical(other.id, id) || other.id == id)&&(identical(other.merchantId, merchantId) || other.merchantId == merchantId)&&(identical(other.name, name) || other.name == name)&&(identical(other.storeType, storeType) || other.storeType == storeType)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _StoreDto&&(identical(other.id, id) || other.id == id)&&(identical(other.merchantId, merchantId) || other.merchantId == merchantId)&&(identical(other.name, name) || other.name == name)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.storeType, storeType) || other.storeType == storeType));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,merchantId,name,storeType,createdAt,updatedAt);
+int get hashCode => Object.hash(runtimeType,id,merchantId,name,createdAt,updatedAt,isActive,storeType);
 
 @override
 String toString() {
-  return 'StoreDto(id: $id, merchantId: $merchantId, name: $name, storeType: $storeType, createdAt: $createdAt, updatedAt: $updatedAt)';
+  return 'StoreDto(id: $id, merchantId: $merchantId, name: $name, createdAt: $createdAt, updatedAt: $updatedAt, isActive: $isActive, storeType: $storeType)';
 }
 
 
@@ -257,7 +259,7 @@ abstract mixin class _$StoreDtoCopyWith<$Res> implements $StoreDtoCopyWith<$Res>
   factory _$StoreDtoCopyWith(_StoreDto value, $Res Function(_StoreDto) _then) = __$StoreDtoCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String merchantId, String name, String? storeType,@JsonKey(fromJson: _fromJson) DateTime createdAt,@JsonKey(fromJson: _fromJson) DateTime updatedAt
+ String id, String merchantId, String name,@JsonKey(fromJson: _fromJson) DateTime createdAt,@JsonKey(fromJson: _fromJson) DateTime updatedAt, bool isActive, String? storeType
 });
 
 
@@ -274,15 +276,16 @@ class __$StoreDtoCopyWithImpl<$Res>
 
 /// Create a copy of StoreDto
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? merchantId = null,Object? name = null,Object? storeType = freezed,Object? createdAt = null,Object? updatedAt = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? merchantId = null,Object? name = null,Object? createdAt = null,Object? updatedAt = null,Object? isActive = null,Object? storeType = freezed,}) {
   return _then(_StoreDto(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,merchantId: null == merchantId ? _self.merchantId : merchantId // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
-as String,storeType: freezed == storeType ? _self.storeType : storeType // ignore: cast_nullable_to_non_nullable
-as String?,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as String,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
-as DateTime,
+as DateTime,isActive: null == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
+as bool,storeType: freezed == storeType ? _self.storeType : storeType // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 

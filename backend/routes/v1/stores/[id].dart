@@ -42,10 +42,12 @@ Future<Response> _onPutOrPatch(RequestContext context, String id) async {
 
   final name = body['name'] as String?;
   final storeType = body['storeType'] as String?;
+  final isActive = body['isActive'] as bool?;
 
   final errorMessage = StoreValidator.update(
     name: name,
     storeType: storeType,
+    isActive: isActive,
   );
 
   if (errorMessage != null) {
@@ -57,6 +59,7 @@ Future<Response> _onPutOrPatch(RequestContext context, String id) async {
       id: id,
       name: name?.trim(),
       storeType: storeType?.trim(),
+      isActive: isActive,
     );
 
     return success(

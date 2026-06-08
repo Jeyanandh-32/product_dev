@@ -7,6 +7,7 @@ extension StoreDtoExtension on StoreDto {
     merchantId: merchantId,
     name: name,
     storeType: storeType,
+    isActive: isActive,
     createdAt: createdAt,
     updatedAt: updatedAt,
   );

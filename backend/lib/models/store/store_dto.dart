@@ -12,7 +12,7 @@ abstract class StoreDto with _$StoreDto {
     required String name,
     @JsonKey(fromJson: _fromJson) required DateTime createdAt,
     @JsonKey(fromJson: _fromJson) required DateTime updatedAt,
-    String? storeType,
+    required bool isActive, String? storeType,
   }) = _StoreDto;
 
   factory StoreDto.fromJson(Map<String, Object?> json) =>
