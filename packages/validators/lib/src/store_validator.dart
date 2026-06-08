@@ -6,13 +6,20 @@ class StoreValidator {
     return null;
   }
 
-  static String? update({String? name, String? storeType, bool? isActive}) {
-    if (name != null && name.trim().isEmpty) {
+  static String? update({
+    String? name,
+    String? storeType,
+    bool? isActive,
+    bool namePresent = false,
+    bool storeTypePresent = false,
+    bool isActivePresent = false,
+  }) {
+    if (namePresent && name != null && name.trim().isEmpty) {
       return 'Name cannot be empty.';
     }
 
-    if (name == null && storeType == null && isActive == null) {
-      return 'At least one field (name or storeType) is required to update.';
+    if (!namePresent && !storeTypePresent && !isActivePresent) {
+      return 'At least one field is required to update.';
     }
 
     return null;

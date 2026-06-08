@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:jaspr_riverpod/jaspr_riverpod.dart';
 import 'package:merchant/providers/toast_provider.dart';
+import 'package:merchant/providers/ui_providers.dart';
 import 'package:merchant/repositories/auth_repository.dart';
 import 'package:merchant/repositories/store_repository.dart';
 import 'package:models/models.dart';
@@ -39,4 +40,38 @@ class StoresProvider extends AsyncNotifier<List<Store>> {
       state = AsyncData(currentStores);
     }
   }
+
+  Future<void> updateStore({
+    required String id,
+    String? name,
+    String? storeType,
+    bool? isActive,
+  }) async {
+    final currentStores = state.value ?? [];
+    state = const AsyncLoading();
+
+    try {
+      final updatedStore = await StoreRepository.update(
+        id: id,
+        name: name,
+        storeType: storeType,
+        isActive: isActive,
+      );
+
+      state = AsyncData(
+        currentStores.map((s) => s.id == id ? updatedStore : s).toList(),
+      );
+
+      final selectedStore = ref.read(selectedTabStoreProvider);
+      if (selectedStore != null && selectedStore.id == id) {
+        ref.read(selectedTabStoreProvider.notifier).state = updatedStore;
+      }
+    } catch (e) {
+      final message = e is ApiException ? e.message : 'Something went wrong.';
+      ref.showToast(message);
+
+      state = AsyncData(currentStores);
+    }
+  }
 }
+

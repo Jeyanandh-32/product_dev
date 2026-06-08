@@ -9,11 +9,15 @@ class StoreCard extends StatelessComponent {
     required this.store,
     this.isSelected = false,
     this.onClick,
+    this.onEdit,
+    required this.count,
   });
 
   final Store store;
+  final int count;
   final bool isSelected;
   final VoidCallback? onClick;
+  final VoidCallback? onEdit;
 
   @override
   Component build(BuildContext context) {
@@ -26,9 +30,18 @@ class StoreCard extends StatelessComponent {
       [
         div(classes: 'flex justify-between items-center', [
           h2(classes: 'font-semibold text-primary', [.text(store.name)]),
-          button(classes: 'hover:cursor-pointer', [
-            SquarePen(classes: 'w-5 h-5 text-gray-500'),
-          ]),
+          button(
+            classes: 'hover:cursor-pointer',
+            events: {
+              'click': (e) {
+                e.stopPropagation();
+                onEdit?.call();
+              },
+            },
+            [
+              SquarePen(classes: 'w-5 h-5 text-gray-500'),
+            ],
+          ),
         ]),
 
         div(classes: 'flex gap-2', [
@@ -36,7 +49,7 @@ class StoreCard extends StatelessComponent {
             classes:
                 'bg-soft-blue grow text-soft-blue-content rounded-lg text-[14px] font-semibold flex justify-center items-center h-10',
             [
-              .text('7 Terminals'),
+              .text('$count Terminals'),
             ],
           ),
 

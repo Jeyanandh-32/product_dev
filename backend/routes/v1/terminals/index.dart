@@ -11,22 +11,29 @@ import 'package:validators/validators.dart';
 
 Future<Response> onRequest(RequestContext context) async {
   final parameters = context.request.uri.queryParameters;
-
   final storeId = parameters['storeId'];
 
-  if (storeId == null || storeId.isEmpty) {
-    return badRequest(message: 'Store Id is required.');
+  if (context.request.method == HttpMethod.get) {
+    if (storeId != null && storeId.isNotEmpty && !storeId.isUUID()) {
+      return badRequest(message: 'Invalid store id.');
+    }
+    return _onGet(context, storeId);
+  } else if (context.request.method == HttpMethod.post) {
+    if (storeId == null || storeId.isEmpty) {
+      return badRequest(message: 'Store Id is required.');
+    }
+    if (!storeId.isUUID()) {
+      return badRequest(message: 'Invalid store id.');
+    }
+    return _onPost(context, storeId);
+  } else {
+    return methodNotAllowed();
   }
-
-  if (!storeId.isUUID()) return badRequest(message: 'Invalid store id.');
-  return switch (context.request.method) {
-    .get => _onGet(context, storeId),
-    .post => _onPost(context, storeId),
-    _ => methodNotAllowed(),
-  };
 }
 
-Future<Response> _onGet(RequestContext context, String storeId) async {
+Future<Response> _onGet(RequestContext context, String? storeId) async {
+  // TODO: Remove after Testing diff States.
+  // await Future<void>.delayed(const Duration(seconds: 2));
   final repo = context.read<TerminalRepository>();
   final tokenPayload = context.read<TokenPayload>();
   final merchantId = tokenPayload.sub;

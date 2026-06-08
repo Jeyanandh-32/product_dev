@@ -26,8 +26,18 @@ enum ActiveModal {
   addStore,
   addTerminal,
   editStore,
+  editTerminal,
 }
 
 final activeModalProvider = StateProvider.autoDispose<ActiveModal>(
   (ref) => .none,
 );
+
+final editingStoreProvider = StateProvider.autoDispose<Store?>(
+  (ref) => null,
+);
+
+final editingTerminalProvider = StateProvider.autoDispose<Terminal?>(
+  (ref) => null,
+);
+

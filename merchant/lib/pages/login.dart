@@ -2,23 +2,29 @@ import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_lucide/jaspr_lucide.dart' hide Map;
 import 'package:jaspr_riverpod/jaspr_riverpod.dart';
-import 'package:jaspr_riverpod/legacy.dart';
 import 'package:jaspr_router/jaspr_router.dart';
 import 'package:merchant/components/layouts/auth_layout.dart';
 import 'package:merchant/components/form_field.dart';
 import 'package:merchant/pages/loading.dart';
 import 'package:merchant/providers/auth_provider.dart';
-import 'package:merchant/providers/field_providers.dart';
 import 'package:validators/validators.dart';
 import 'package:web/web.dart' hide Lock;
 
-class Login extends StatelessComponent {
+class Login extends StatefulComponent {
   const Login({super.key});
+
+  @override
+  State<Login> createState() => _LoginState();
+}
+
+class _LoginState extends State<Login> {
+  String _email = '';
+  String _password = '';
 
   void _onSubmit(BuildContext context, Event e) {
     e.preventDefault();
-    final email = context.read(loginEmailProvider).trim();
-    final password = context.read(loginPasswordProvider).trim();
+    final email = _email.trim();
+    final password = _password.trim();
 
     print('email = $email');
     print('password = $password');
@@ -26,15 +32,8 @@ class Login extends StatelessComponent {
     context.read(authProvider.notifier).login(email: email, password: password);
   }
 
-  void _onChange(StateProvider provider, BuildContext context, dynamic value) {
-    context.read(provider.notifier).state = value as String;
-  }
-
   @override
   Component build(BuildContext context) {
-    context.watch(loginEmailProvider);
-    context.watch(loginPasswordProvider);
-
     final authState = context.watch(authProvider);
     if (authState.isLoading) return Loading();
 
@@ -54,10 +53,11 @@ class Login extends StatelessComponent {
             labelText: 'Email',
             icon: Mail(classes: 'w-4.5 h-4.5'),
             type: .email,
-            onChange: (value) => _onChange(loginEmailProvider, context, value),
+            onChange: (value) => _email = value as String,
             attributes: {
               'placeholder': 'jacksparrow@example.com',
               'required': '',
+              'value': _email,
             },
             hintText: 'Email is required.',
           ),
@@ -68,13 +68,13 @@ class Login extends StatelessComponent {
             icon: Lock(classes: 'w-4.5 h-4.5'),
             type: .password,
             enableForgotPassword: true,
-            onChange: (value) =>
-                _onChange(loginPasswordProvider, context, value),
+            onChange: (value) => _password = value as String,
             attributes: {
               'placeholder': '*********',
               'required': '',
               'pattern': ValidationPatterns.password,
               'minlength': '6',
+              'value': _password,
             },
             hintText:
                 'Must be 6+ characters with a number, lowercase, and uppercase.',

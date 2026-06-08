@@ -35,6 +35,7 @@ class StoreRepository {
     required String id,
     String? name,
     String? storeType,
+    bool? isActive,
   }) async {
     try {
       final path = '${ApiEndpoints.stores}/$id';
@@ -42,7 +43,8 @@ class StoreRepository {
         path,
         data: {
           if (name != null) 'name': name,
-          if (storeType != null) 'storeType': storeType,
+          'storeType': storeType,
+          if (isActive != null) 'isActive': isActive,
         },
       );
 

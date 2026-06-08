@@ -29,4 +29,5 @@ class ApiEndpoints {
   static const String logout = '/v1/auth/logout';
   static const String merchants = '/v1/merchants';
   static const String stores = '/v1/stores';
+  static const String terminals = '/v1/terminals';
 }

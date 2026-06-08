@@ -31,16 +31,20 @@ class TerminalRepository {
   }
 
   Future<List<TerminalDto>> getAll({
-    required String storeId,
     required String merchantId,
+    String? storeId,
   }) async {
     final result = await _session.execute(
       Sql.named(
         '''
-        SELECT * FROM terminals WHERE merchant_id = @merchantId AND store_id = @storeId
+        SELECT * FROM terminals WHERE merchant_id = @merchantId
+        ${storeId != null ? 'AND store_id = @storeId' : ''}
       ''',
       ),
-      parameters: {'merchantId': merchantId, 'storeId': storeId},
+      parameters: {
+        'merchantId': merchantId,
+        if (storeId != null) 'storeId': storeId,
+      },
     );
 
     if (result.isEmpty) return [];

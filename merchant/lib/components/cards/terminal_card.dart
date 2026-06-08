@@ -1,11 +1,17 @@
 import 'package:jaspr/client.dart';
 import 'package:jaspr/dom.dart';
 import 'package:jaspr_lucide/generated_icons/square_pen.dart';
+import 'package:models/models.dart';
 
 class TerminalCard extends StatelessComponent {
-  const TerminalCard({super.key, required this.name});
+  const TerminalCard({
+    super.key,
+    required this.terminal,
+    this.onEdit,
+  });
 
-  final String name;
+  final Terminal terminal;
+  final VoidCallback? onEdit;
 
   @override
   Component build(BuildContext context) {
@@ -14,26 +20,35 @@ class TerminalCard extends StatelessComponent {
           'p-4 mb-4 border border-border-light rounded-lg flex flex-col gap-4',
       [
         div(classes: 'flex justify-between items-center', [
-          h2(classes: 'font-semibold text-primary', [.text(name)]),
-          button(classes: 'hover:cursor-pointer', [
-            SquarePen(classes: 'w-5 h-5 text-gray-500'),
-          ]),
+          h2(classes: 'font-semibold text-primary', [.text(terminal.name)]),
+          button(
+            classes: 'hover:cursor-pointer',
+            events: {
+              'click': (e) {
+                e.stopPropagation();
+                onEdit?.call();
+              },
+            },
+            [
+              SquarePen(classes: 'w-5 h-5 text-gray-500'),
+            ],
+          ),
         ]),
 
         div(classes: 'flex gap-2', [
           div(
             classes:
-                'bg-soft-purple flex-1 grow text-soft-purple-content rounded-lg text-[14px] font-semibold flex justify-center items-center h-10',
+                'bg-soft-purple grow text-soft-purple-content rounded-lg text-[14px] font-semibold flex justify-center items-center h-10',
             [
-              .text('CJHUHAZD57K'),
+              .text(terminal.code),
             ],
           ),
 
           div(
             classes:
-                'bg-soft-green flex-1 grow text-soft-green-content rounded-lg text-[14px] font-semibold flex justify-center items-center h-10',
+                'grow ${terminal.isActive ? 'bg-soft-green text-soft-green-content' : 'bg-soft-red text-soft-red-content'} rounded-lg text-[14px] font-semibold flex justify-center items-center h-10 hover:cursor-pointer transition-all duration-300',
             [
-              .text('ACTIVE'),
+              .text(terminal.isActive ? 'ACTIVE' : 'INACTIVE'),
             ],
           ),
         ]),

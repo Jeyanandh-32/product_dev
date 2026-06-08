@@ -2,25 +2,34 @@ import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_lucide/jaspr_lucide.dart' hide Map;
 import 'package:jaspr_riverpod/jaspr_riverpod.dart';
-import 'package:jaspr_riverpod/legacy.dart';
 import 'package:jaspr_router/jaspr_router.dart';
 import 'package:merchant/components/form_field.dart';
 import 'package:merchant/components/layouts/auth_layout.dart';
 import 'package:merchant/providers/auth_provider.dart';
-import 'package:merchant/providers/field_providers.dart';
 import 'package:validators/validators.dart';
 import 'package:web/web.dart' hide Lock;
 
-class Register extends StatelessComponent {
+class Register extends StatefulComponent {
   const Register({super.key});
+
+  @override
+  State<Register> createState() => _RegisterState();
+}
+
+class _RegisterState extends State<Register> {
+  String _fullName = '';
+  String _businessName = '';
+  String _whatsappNumber = '';
+  String _email = '';
+  String _password = '';
 
   void _onSubmit(BuildContext context, Event e) {
     e.preventDefault();
-    final fullName = context.read(fullNameProvider).trim();
-    final businessName = context.read(businessNameProvider).trim();
-    final whatsappNumber = context.read(whatsappNumberProvider).trim();
-    final email = context.read(registerEmailProvider).trim();
-    final password = context.read(registerPasswordProvider).trim();
+    final fullName = _fullName.trim();
+    final businessName = _businessName.trim();
+    final whatsappNumber = _whatsappNumber.trim();
+    final email = _email.trim();
+    final password = _password.trim();
 
     print('full name = $fullName');
     print('business name = $businessName');
@@ -39,18 +48,8 @@ class Register extends StatelessComponent {
         );
   }
 
-  void _onChange(StateProvider provider, BuildContext context, dynamic value) {
-    context.read(provider.notifier).state = value as String;
-  }
-
   @override
   Component build(BuildContext context) {
-    context.watch(fullNameProvider);
-    context.watch(businessNameProvider);
-    context.watch(whatsappNumberProvider);
-    context.watch(registerEmailProvider);
-    context.watch(registerPasswordProvider);
-
     return AuthLayout(
       title: 'Create Your Account',
       descriptionLine1: 'Register your business to start billing',
@@ -63,12 +62,16 @@ class Register extends StatelessComponent {
         },
         [
           FormField(
-            onChange: (value) => _onChange(fullNameProvider, context, value),
+            onChange: (value) => _fullName = value as String,
             id: 'fullname',
             labelText: 'Full Name',
             icon: User(classes: 'w-4.5 h-4.5'),
             type: .text,
-            attributes: {'placeholder': 'Jack Dev', 'required': ''},
+            attributes: {
+              'placeholder': 'Jack Dev',
+              'required': '',
+              'value': _fullName,
+            },
             hintText: 'Name is required.',
           ),
 
@@ -77,11 +80,11 @@ class Register extends StatelessComponent {
             labelText: 'Business Name',
             icon: Building(classes: 'w-4.5 h-4.5'),
             type: .text,
-            onChange: (value) =>
-                _onChange(businessNameProvider, context, value),
+            onChange: (value) => _businessName = value as String,
             attributes: {
               'placeholder': 'Acme Retail Solutions',
               'required': '',
+              'value': _businessName,
             },
             hintText: 'Business Name is required.',
           ),
@@ -91,8 +94,7 @@ class Register extends StatelessComponent {
             labelText: 'Whatsapp Number',
             icon: Phone(classes: 'w-4.5 h-4.5'),
             type: .tel,
-            onChange: (value) =>
-                _onChange(whatsappNumberProvider, context, value),
+            onChange: (value) => _whatsappNumber = value as String,
             attributes: {
               'placeholder': '7449261057',
               'required': '',
@@ -100,6 +102,7 @@ class Register extends StatelessComponent {
               'minlength': '10',
               'maxlength': '10',
               'title': 'Must be 10 digits',
+              'value': _whatsappNumber,
             },
             hintText: 'Must be 10 digits.',
           ),
@@ -109,11 +112,11 @@ class Register extends StatelessComponent {
             labelText: 'Email',
             icon: Mail(classes: 'w-4.5 h-4.5'),
             type: .email,
-            onChange: (value) =>
-                _onChange(registerEmailProvider, context, value),
+            onChange: (value) => _email = value as String,
             attributes: {
               'placeholder': 'jacksparrow@example.com',
               'required': '',
+              'value': _email,
             },
             hintText: 'Email is required.',
           ),
@@ -123,13 +126,13 @@ class Register extends StatelessComponent {
             labelText: 'Password',
             icon: Lock(classes: 'w-4.5 h-4.5'),
             type: .password,
-            onChange: (value) =>
-                _onChange(registerPasswordProvider, context, value),
+            onChange: (value) => _password = value as String,
             attributes: {
               'placeholder': '*********',
               'required': '',
               'pattern': ValidationPatterns.password,
               'minlength': '6',
+              'value': _password,
             },
             hintText:
                 'Must be 6+ characters with a number, lowercase, and uppercase.',
