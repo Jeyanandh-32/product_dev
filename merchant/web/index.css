@@ -3,6 +3,8 @@
 
 @import "tailwindcss";
 
+@source "../lib/**/*.dart";
+
 @theme {
     --font-sans: "Manrope", sans-serif;
 

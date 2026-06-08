@@ -2,7 +2,6 @@ import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_lucide/jaspr_lucide.dart' hide Map;
 import 'package:jaspr_riverpod/jaspr_riverpod.dart';
-import 'package:jaspr_riverpod/legacy.dart';
 import 'package:jaspr_router/jaspr_router.dart';
 import 'package:merchant/components/layouts/auth_layout.dart';
 import 'package:merchant/components/form_field.dart';
@@ -39,17 +38,22 @@ class Register extends StatelessComponent {
         );
   }
 
-  void _onChange(StateProvider provider, BuildContext context, dynamic value) {
+  void _onChange(dynamic provider, BuildContext context, dynamic value) {
     context.read(provider.notifier).state = value as String;
   }
 
   @override
   Component build(BuildContext context) {
+    context.watch(fullNameProvider);
+    context.watch(businessNameProvider);
+    context.watch(whatsappNumberProvider);
+    context.watch(registerEmailProvider);
+    context.watch(registerPasswordProvider);
+
     return AuthLayout(
       title: 'Create Your Account',
       descriptionLine1: 'Register your business to start billing',
       descriptionLine2: 'and tracking sales today.',
-      isMinHeight: true,
       formContent: form(
         classes: 'card-body items-start',
         method: .post,

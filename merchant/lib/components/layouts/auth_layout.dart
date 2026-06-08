@@ -7,8 +7,6 @@ class AuthLayout extends StatelessComponent {
   final String descriptionLine2;
   final Component formContent;
   final Component footerContent;
-  final bool isMinHeight;
-
   const AuthLayout({
     super.key,
     required this.title,
@@ -16,17 +14,16 @@ class AuthLayout extends StatelessComponent {
     required this.descriptionLine2,
     required this.formContent,
     required this.footerContent,
-    this.isMinHeight = false,
   });
 
   @override
   Component build(BuildContext context) {
     return div(
-      classes: 'bg-neutral w-full ${isMinHeight ? 'min-h-screen' : 'h-screen'}',
+      classes: 'bg-neutral w-full min-h-screen flex flex-col justify-center py-10',
       [
         div(
           classes:
-              'max-w-120 mx-auto h-full flex flex-col justify-center items-center px-6 md:px-0 ${isMinHeight ? 'py-10' : ''}',
+              'max-w-120 w-full mx-auto flex flex-col justify-center items-center px-6 md:px-0',
           [
             h1(classes: 'font-script text-primary text-[40px] font-normal', [
               .text('Branding'),

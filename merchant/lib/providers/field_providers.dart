@@ -1,29 +1,37 @@
 import 'package:jaspr_riverpod/legacy.dart';
 
-final loginEmailProvider = StateProvider<String>(
+final loginEmailProvider = StateProvider.autoDispose<String>(
   (ref) => '',
 );
 
-final loginPasswordProvider = StateProvider<String>(
+final loginPasswordProvider = StateProvider.autoDispose<String>(
   (ref) => '',
 );
 
-final fullNameProvider = StateProvider<String>(
+final fullNameProvider = StateProvider.autoDispose<String>(
   (ref) => '',
 );
-final businessNameProvider = StateProvider<String>(
+final businessNameProvider = StateProvider.autoDispose<String>(
   (ref) => '',
 );
-final whatsappNumberProvider = StateProvider<String>(
+final whatsappNumberProvider = StateProvider.autoDispose<String>(
   (ref) => '',
 );
-final registerEmailProvider = StateProvider<String>(
+final registerEmailProvider = StateProvider.autoDispose<String>(
   (ref) => '',
 );
-final registerPasswordProvider = StateProvider<String>(
+final registerPasswordProvider = StateProvider.autoDispose<String>(
   (ref) => '',
 );
 
-final forgotPasswordEmailProvider = StateProvider<String>(
+final forgotPasswordEmailProvider = StateProvider.autoDispose<String>(
   (ref) => '',
+);
+
+final addStoreStoreNameProvider = StateProvider.autoDispose<String>(
+  (ref) => '',
+);
+
+final addStoreStoreTypeProvider = StateProvider.autoDispose<String?>(
+  (ref) => null,
 );

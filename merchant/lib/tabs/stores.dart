@@ -1,93 +1,141 @@
 import 'package:jaspr/client.dart';
 import 'package:jaspr/dom.dart';
-import 'package:jaspr_lucide/jaspr_lucide.dart';
+import 'package:jaspr_riverpod/jaspr_riverpod.dart';
+import 'package:merchant/components/buttons/add_button.dart';
+import 'package:merchant/components/cards/store_card.dart';
+import 'package:merchant/components/cards/terminal_card.dart';
+import 'package:merchant/components/modals/add_store_modal.dart';
+import 'package:merchant/components/modals/add_terminal_modal.dart';
+import 'package:merchant/components/searchbar.dart';
+import 'package:merchant/pages/loading.dart';
+import 'package:merchant/providers/stores_provider.dart';
+import 'package:merchant/providers/ui_providers.dart';
 
 class Stores extends StatelessComponent {
   const Stores({super.key});
 
   @override
   Component build(BuildContext context) {
-    return div(classes: 'w-full h-full p-4 flex gap-4', [
-      div(
-        classes:
-            'h-full bg-white flex-1 rounded-2xl border border-gray-200 p-6 flex flex-col',
-        [
-          div(classes: 'flex items-center gap-2', [
-            label(
-              classes: 'input flex-2 ring ring-inset ring-gray-200 rounded-lg',
-              [
-                Search(classes: 'h-[1em] opacity-50'),
+    final activeModal = context.watch(activeModalProvider);
+    final storesState = context.watch(storesProvider);
 
-                input(
-                  type: .search,
-                  classes: 'grow',
-                  attributes: {
-                    'required': '',
-                    'placeholder': 'Search',
-                  },
-                ),
-              ],
-            ),
+    if (storesState.isLoading || !storesState.hasValue) return Loading();
 
-            button(
-              onClick: () {},
-              classes:
-                  'flex flex-1 hover:cursor-pointer items-center font-semibold justify-center bg-primary text-primary-content text-sm transition-all duration-300 rounded-lg h-10',
-              [
-                Plus(classes: 'w-4 h-4'),
-                .text('Add Store'),
-              ],
-            ),
-          ]),
-
-          div(
-            classes:
-                'divider before:h-[0.5px] after:h-[0.5px] before:bg-gray-300 after:bg-gray-300',
-            [],
-          ),
-
-          storeCard(name: 'Canteen', isSelected: true),
-          storeCard(name: 'Arcade'),
-          storeCard(name: 'Store - 1'),
-          storeCard(name: 'Store - 2'),
-          storeCard(name: 'Store - 3'),
-          storeCard(name: 'Store - 4'),
-        ],
-      ),
-      div(
-        classes: 'h-full bg-white flex-2 rounded-2xl border border-gray-200',
-        [],
-      ),
-    ]);
-  }
-
-  div storeCard({required String name, bool isSelected = false}) {
     return div(
       classes:
-          'p-4 mb-4 border ${isSelected ? ' border-primary' : 'border-gray-200'} rounded-lg flex flex-col gap-4',
+          'w-full flex-1 min-h-0 p-4 flex flex-col lg:flex-row gap-4 overflow-y-auto lg:overflow-hidden',
       [
-        div(classes: 'flex justify-between items-center', [
-          h2(classes: 'font-semibold text-primary', [.text(name)]),
-          SquarePen(classes: 'w-5 h-5 textborder-gray-500'),
-        ]),
+        if (activeModal == .addStore) AddStoreModal(),
+        if (activeModal == .addTerminal) AddTerminalModal(),
 
-        div(classes: 'flex gap-2', [
-          div(
-            classes:
-                'bg-soft-blue grow text-soft-blue-content rounded-lg text-[16px] font-semibold flex justify-center items-center h-10',
-            [
-              .text('7 Terminals'),
-            ],
-          ),
+        div(
+          classes:
+              'h-[400px] md:flex-1 lg:h-full lg:flex-1 min-h-0 bg-white rounded-2xl border border-border-light p-6 flex flex-col flex-shrink-0 lg:flex-shrink',
+          [
+            div(
+              classes:
+                  'flex flex-col sm:flex-row lg:flex-col gap-2 justify-between items-start sm:items-center lg:items-start',
+              [
+                h3(classes: 'text-primary font-semibold text-lg', [
+                  .text('Stores'),
+                ]),
 
-          div(
-            classes:
-                'bg-soft-green grow text-soft-green-content rounded-lg text-[16px] font-semibold flex justify-center items-center h-10',
-            [
-              .text('ACTIVE'),
-            ],
-          ),
-        ]),
+                div(classes: 'flex gap-2 w-full sm:w-auto', [
+                  Searchbar(placeholder: 'Search Store...'),
+                  AddButton(
+                    name: 'Add Store',
+                    onClick: () =>
+                        context.read(activeModalProvider.notifier).state =
+                            .addStore,
+                  ),
+                ]),
+              ],
+            ),
+
+            div(
+              classes:
+                  'divider before:h-[0.5px] after:h-[0.5px] before:bg-gray-300 after:bg-gray-300',
+              [],
+            ),
+
+            div(
+              classes:
+                  'grid grid-cols-1 sm:${storesState.value!.isEmpty ? 'grid-cols-1' : 'grid-cols-2'} lg:flex lg:flex-col sm:gap-x-4 sm:gap-y-2 overflow-y-auto flex-1 pr-2 ${storesState.value!.isEmpty ? '' : 'auto-rows-max'}',
+              storesState.value!.isEmpty
+                  ? [
+                      div(
+                        classes:
+                            'flex flex-col items-center justify-center h-full text-center text-gray-400 py-10 w-full',
+                        [
+                          .text('No stores were added.'),
+                        ],
+                      ),
+                    ]
+                  : List.generate(
+                      storesState.value!.length,
+                      (index) {
+                        final store = storesState.value![index];
+                        return StoreCard(name: store.name);
+                      },
+                    ),
+            ),
+          ],
+        ),
+        div(
+          classes:
+              'h-[500px] md:flex-1 lg:h-full lg:flex-2 min-h-0 p-4 bg-white rounded-2xl border border-border-light flex flex-col flex-shrink-0 lg:flex-shrink',
+          [
+            div(
+              classes:
+                  'flex flex-col sm:flex-row gap-2 lg:gap-0 justify-between items-start sm:items-center',
+              [
+                h3(
+                  classes:
+                      'text-primary font-semibold text-lg flex items-center',
+                  [
+                    .text('Terminals'),
+                    span(classes: 'text-gray-300 mx-2 text-sm font-normal', [
+                      .text('/'),
+                    ]),
+                    span(classes: 'text-sm text-gray-400', [
+                      .text('Canteen'),
+                    ]),
+                  ],
+                ),
+
+                div(classes: 'flex gap-2 w-full sm:w-auto', [
+                  Searchbar(placeholder: 'Search Terminal...'),
+                  AddButton(
+                    name: 'Add Terminal',
+                    onClick: () =>
+                        context.read(activeModalProvider.notifier).state =
+                            .addTerminal,
+                  ),
+                ]),
+              ],
+            ),
+
+            div(
+              classes:
+                  'divider before:h-[0.5px] after:h-[0.5px] before:bg-gray-300 after:bg-gray-300',
+              [],
+            ),
+
+            div(
+              classes:
+                  'grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2 overflow-y-auto flex-1 pr-2 auto-rows-max',
+              [
+                TerminalCard(name: 'Master'),
+                TerminalCard(name: 'Staff Terminal'),
+                TerminalCard(name: 'Terminal - 1'),
+                TerminalCard(name: 'Terminal - 2'),
+                TerminalCard(name: 'Terminal - 3'),
+                TerminalCard(name: 'Terminal - 4'),
+                TerminalCard(name: 'Terminal - 5'),
+              ],
+            ),
+          ],
+        ),
       ],
     );
   }

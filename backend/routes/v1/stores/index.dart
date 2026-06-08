@@ -28,7 +28,6 @@ Future<Response> _onGet(RequestContext context) async {
     final stores = storeDtos.map((s) => s.toStore()).toList();
 
     return success(
-      statusCode: HttpStatus.created,
       data: {
         'stores': stores,
       },

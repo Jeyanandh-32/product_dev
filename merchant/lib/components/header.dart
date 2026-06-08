@@ -19,12 +19,12 @@ class Header extends StatelessComponent {
 
     return div(
       classes:
-          'w-full h-15 px-4 md:px-8 flex justify-between items-center bg-white border-b border-border-medium',
+          'w-full h-15 px-4 lg:px-8 flex justify-between items-center bg-white border-b border-border-medium',
       [
-        div(classes: 'flex items-center gap-3 md:gap-0', [
+        div(classes: 'flex items-center gap-3 lg:gap-0', [
           button(
             classes:
-                'block md:hidden hover:cursor-pointer transition-all duration-300',
+                'block lg:hidden hover:cursor-pointer transition-all duration-300',
             onClick: () =>
                 context.read(navOpenProvider.notifier).state = !isNavOpen,
             [

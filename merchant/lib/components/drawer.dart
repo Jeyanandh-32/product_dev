@@ -28,7 +28,7 @@ class Drawer extends StatelessComponent {
 
     return div(
       classes:
-          'fixed z-50 ${isNavOpen ? 'left-0' : '-left-100'} transition-all duration-300 md:left-0 flex w-[60%] sm:w-[30%] md:w-[15%] h-full bg-white border-r border-border-medium flex-col items-center $classes',
+          'fixed z-50 ${isNavOpen ? 'left-0' : '-left-full'} transition-all duration-300 lg:left-0 flex w-64 h-full bg-white border-r border-border-medium flex-col items-center $classes',
       [
         h1(
           classes:

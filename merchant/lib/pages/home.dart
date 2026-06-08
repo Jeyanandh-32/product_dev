@@ -17,7 +17,7 @@ class Home extends StatelessComponent {
     return div(classes: 'h-screen w-full bg-neutral flex', [
       if (isNavOpen)
         div(
-          classes: 'fixed inset-0 bg-black/40 z-40 md:hidden',
+          classes: 'fixed inset-0 bg-black/40 z-40 lg:hidden',
           events: {
             'click': (e) =>
                 context.read(navOpenProvider.notifier).state = false,
@@ -28,7 +28,7 @@ class Home extends StatelessComponent {
       Drawer(),
 
       div(
-        classes: 'w-full md:pl-[15%] h-screen flex flex-col overflow-hidden',
+        classes: 'w-full lg:pl-64 h-screen flex flex-col overflow-hidden',
         [
           Header(),
 

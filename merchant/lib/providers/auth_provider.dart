@@ -34,10 +34,7 @@ class AuthProvider extends AsyncNotifier<Merchant?> {
       state = AsyncData(merchant);
     } catch (e) {
       final message = e is ApiException ? e.message : 'Something went wrong.';
-      ref.read(toastProvider.notifier).state = message;
-      Future.delayed(const Duration(seconds: 3), () {
-        ref.read(toastProvider.notifier).state = null;
-      });
+      ref.showToast(message);
       state = const AsyncData(null);
     }
   }
@@ -61,10 +58,7 @@ class AuthProvider extends AsyncNotifier<Merchant?> {
       state = AsyncData(merchant);
     } catch (e) {
       final message = e is ApiException ? e.message : 'Something went wrong.';
-      ref.read(toastProvider.notifier).state = message;
-      Future.delayed(const Duration(seconds: 3), () {
-        ref.read(toastProvider.notifier).state = null;
-      });
+      ref.showToast(message);
       state = const AsyncData(null);
     }
   }
@@ -77,15 +71,8 @@ class AuthProvider extends AsyncNotifier<Merchant?> {
       state = const AsyncData(null);
     } catch (e) {
       final message = e is ApiException ? e.message : 'Something went wrong.';
-      ref.read(toastProvider.notifier).state = message;
-
-      Future.delayed(
-        Duration(seconds: 3),
-        () {
-          ref.read(toastProvider.notifier).state = null;
-          state = const AsyncData(null);
-        },
-      );
+      ref.showToast(message);
+      state = const AsyncData(null);
     }
   }
 }

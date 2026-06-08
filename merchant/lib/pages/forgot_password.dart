@@ -2,7 +2,6 @@ import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_lucide/jaspr_lucide.dart' hide Map;
 import 'package:jaspr_riverpod/jaspr_riverpod.dart';
-import 'package:jaspr_riverpod/legacy.dart';
 import 'package:jaspr_router/jaspr_router.dart';
 import 'package:merchant/components/layouts/auth_layout.dart';
 import 'package:merchant/components/form_field.dart';
@@ -19,12 +18,14 @@ class ForgotPassword extends StatelessComponent {
     print('email = $email');
   }
 
-  void _onChange(StateProvider provider, BuildContext context, dynamic value) {
+  void _onChange(dynamic provider, BuildContext context, dynamic value) {
     context.read(provider.notifier).state = value as String;
   }
 
   @override
   Component build(BuildContext context) {
+    context.watch(forgotPasswordEmailProvider);
+
     return AuthLayout(
       title: 'Forgot Password?',
       descriptionLine1: 'Enter to your email to',

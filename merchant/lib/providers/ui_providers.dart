@@ -1,18 +1,18 @@
 import 'package:jaspr_riverpod/legacy.dart';
 
-final indexProvider = StateProvider<int>(
+final indexProvider = StateProvider.autoDispose<int>(
   (ref) => 0,
 );
 
-final storeProvider = StateProvider<String>(
+final storeProvider = StateProvider.autoDispose<String>(
   (ref) => 'STORE - 1',
 );
 
-final navOpenProvider = StateProvider<bool>(
+final navOpenProvider = StateProvider.autoDispose<bool>(
   (ref) => false,
 );
 
-final headerTitleProvider = StateProvider<String>(
+final headerTitleProvider = StateProvider.autoDispose<String>(
   (ref) => 'Dashboard',
 );
 
@@ -23,6 +23,6 @@ enum ActiveModal {
   editStore,
 }
 
-final activeModalProvider = StateProvider<ActiveModal>(
+final activeModalProvider = StateProvider.autoDispose<ActiveModal>(
   (ref) => .none,
 );
