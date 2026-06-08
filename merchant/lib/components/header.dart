@@ -1,14 +1,21 @@
 import 'package:jaspr/client.dart';
 import 'package:jaspr/dom.dart';
-import 'package:jaspr_lucide/jaspr_lucide.dart';
+import 'package:jaspr_lucide/jaspr_lucide.dart' hide Store;
 import 'package:jaspr_riverpod/jaspr_riverpod.dart';
+import 'package:merchant/providers/stores_provider.dart';
 import 'package:merchant/providers/ui_providers.dart';
+import 'package:models/models.dart';
+import 'package:web/web.dart';
 
 class Header extends StatelessComponent {
   const Header({super.key});
 
-  void _changeStore(BuildContext context, String store) {
+  void _changeStore(BuildContext context, Store store) {
     context.read(storeProvider.notifier).state = store;
+    final activeElement = document.activeElement;
+    if (activeElement != null) {
+      (activeElement as HTMLElement).blur();
+    }
   }
 
   @override
@@ -16,6 +23,15 @@ class Header extends StatelessComponent {
     final store = context.watch(storeProvider);
     final isNavOpen = context.watch(navOpenProvider);
     final headerTitle = context.watch(headerTitleProvider);
+    final stores = context.watch(storesProvider).value;
+
+    if (stores != null && stores.isNotEmpty) {
+      if (store == null || !stores.any((st) => st.id == store.id)) {
+        Future.microtask(() {
+          context.read(storeProvider.notifier).state = stores.first;
+        });
+      }
+    }
 
     return div(
       classes:
@@ -35,42 +51,35 @@ class Header extends StatelessComponent {
           h3(classes: 'font-semibold', [.text(headerTitle)]),
         ]),
 
-        div(classes: 'dropdown dropdown-bottom dropdown-end', [
-          div(
-            classes:
-                'btn rounded-full border border-border-medium px-4 bg-white hover:bg-base-200 text-sm h-8 min-h-0',
-            attributes: {
-              'tabindex': '0',
-              'role': 'button',
-            },
-            [
-              .text(store),
-              ChevronDown(classes: 'w-4 h-4'),
-            ],
-          ),
+        if (store != null)
+          div(classes: 'dropdown dropdown-bottom dropdown-end', [
+            div(
+              classes:
+                  'btn rounded-full border border-border-medium px-4 bg-white hover:bg-base-200 text-sm h-8 min-h-0',
+              attributes: {
+                'tabindex': '0',
+                'role': 'button',
+              },
+              [
+                .text(store.name),
+                ChevronDown(classes: 'w-4 h-4'),
+              ],
+            ),
 
-          ul(
-            attributes: {'tabindex': '-1'},
-            classes:
-                'dropdown-content menu bg-base-100 rounded-box z-10 mt-2.5 w-52 p-2 shadow-sm border border-border-light',
-            [
-              dropdownButton(
-                name: 'STORE - 1',
-                onClick: () => _changeStore(context, 'STORE - 1'),
-              ),
-
-              dropdownButton(
-                name: 'STORE - 2',
-                onClick: () => _changeStore(context, 'STORE - 2'),
-              ),
-
-              dropdownButton(
-                name: 'STORE - 3',
-                onClick: () => _changeStore(context, 'STORE - 3'),
-              ),
-            ],
-          ),
-        ]),
+            ul(
+              attributes: {'tabindex': '-1'},
+              classes:
+                  'dropdown-content menu bg-base-100 rounded-box z-10 mt-2.5 w-52 p-2 shadow-sm border border-border-light',
+              [
+                if (stores != null)
+                  for (final s in stores)
+                    dropdownButton(
+                      name: s.name,
+                      onClick: () => _changeStore(context, s),
+                    ),
+              ],
+            ),
+          ]),
       ],
     );
   }

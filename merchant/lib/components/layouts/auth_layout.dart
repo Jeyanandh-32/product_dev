@@ -19,7 +19,8 @@ class AuthLayout extends StatelessComponent {
   @override
   Component build(BuildContext context) {
     return div(
-      classes: 'bg-neutral w-full min-h-screen flex flex-col justify-center py-10',
+      classes:
+          'bg-neutral w-full min-h-screen flex flex-col justify-center py-10',
       [
         div(
           classes:

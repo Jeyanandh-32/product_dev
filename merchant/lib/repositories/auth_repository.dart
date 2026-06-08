@@ -7,7 +7,8 @@ class AuthRepository {
 
   static Never _handleDioError(DioException e, String defaultMessage) {
     final data = e.response?.data;
-    final message = (data is Map ? data['message'] as String? : null) ?? defaultMessage;
+    final message =
+        (data is Map ? data['message'] as String? : null) ?? defaultMessage;
     throw ApiException(message);
   }
 

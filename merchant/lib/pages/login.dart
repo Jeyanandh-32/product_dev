@@ -2,6 +2,7 @@ import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_lucide/jaspr_lucide.dart' hide Map;
 import 'package:jaspr_riverpod/jaspr_riverpod.dart';
+import 'package:jaspr_riverpod/legacy.dart';
 import 'package:jaspr_router/jaspr_router.dart';
 import 'package:merchant/components/layouts/auth_layout.dart';
 import 'package:merchant/components/form_field.dart';
@@ -25,7 +26,7 @@ class Login extends StatelessComponent {
     context.read(authProvider.notifier).login(email: email, password: password);
   }
 
-  void _onChange(dynamic provider, BuildContext context, dynamic value) {
+  void _onChange(StateProvider provider, BuildContext context, dynamic value) {
     context.read(provider.notifier).state = value as String;
   }
 
@@ -53,8 +54,7 @@ class Login extends StatelessComponent {
             labelText: 'Email',
             icon: Mail(classes: 'w-4.5 h-4.5'),
             type: .email,
-            onChange: (value) =>
-                _onChange(loginEmailProvider, context, value),
+            onChange: (value) => _onChange(loginEmailProvider, context, value),
             attributes: {
               'placeholder': 'jacksparrow@example.com',
               'required': '',

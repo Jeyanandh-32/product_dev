@@ -3,16 +3,25 @@ import 'package:jaspr/dom.dart';
 import 'package:jaspr_lucide/generated_icons/square_pen.dart';
 
 class StoreCard extends StatelessComponent {
-  const StoreCard({super.key, required this.name, this.isSelected = false});
+  const StoreCard({
+    super.key,
+    required this.name,
+    this.isSelected = false,
+    this.onClick,
+  });
 
   final String name;
   final bool isSelected;
+  final VoidCallback? onClick;
 
   @override
   Component build(BuildContext context) {
     return div(
       classes:
-          'p-4 mb-4 border ${isSelected ? ' border-accent border-2' : 'border-border-light'} rounded-lg flex flex-col gap-4',
+          'p-4 mb-4 border ${isSelected ? ' border-accent border-2' : 'border-border-light'} rounded-lg flex flex-col gap-4 hover:cursor-pointer hover:border-accent/50 transition-all duration-200',
+      events: {
+        if (onClick != null) 'click': (e) => onClick!(),
+      },
       [
         div(classes: 'flex justify-between items-center', [
           h2(classes: 'font-semibold text-primary', [.text(name)]),

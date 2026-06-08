@@ -6,7 +6,6 @@ import 'package:merchant/repositories/auth_repository.dart';
 import 'package:merchant/repositories/merchant_repository.dart';
 import 'package:models/models.dart';
 
-
 class AuthProvider extends AsyncNotifier<Merchant?> {
   @override
   FutureOr<Merchant?> build() async {

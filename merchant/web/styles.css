@@ -2068,6 +2068,9 @@
   .h-\[500px\] {
     height: 500px;
   }
+  .h-\[600px\] {
+    height: 600px;
+  }
   .h-full {
     height: 100%;
   }
@@ -2488,6 +2491,10 @@
     transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
     transition-duration: var(--tw-duration, var(--default-transition-duration));
   }
+  .duration-200 {
+    --tw-duration: 200ms;
+    transition-duration: 200ms;
+  }
   .duration-300 {
     --tw-duration: 300ms;
     transition-duration: 300ms;
@@ -2533,6 +2540,16 @@
     &:hover {
       @media (hover: hover) {
         cursor: pointer;
+      }
+    }
+  }
+  .hover\:border-accent\/50 {
+    &:hover {
+      @media (hover: hover) {
+        border-color: var(--color-accent);
+        @supports (color: color-mix(in lab, red, red)) {
+          border-color: color-mix(in oklab, var(--color-accent) 50%, transparent);
+        }
       }
     }
   }

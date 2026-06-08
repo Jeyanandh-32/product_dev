@@ -6,7 +6,10 @@ final toastProvider = StateProvider<String?>(
 );
 
 extension ToastRefExtension on Ref {
-  void showToast(String message, {Duration duration = const Duration(seconds: 3)}) {
+  void showToast(
+    String message, {
+    Duration duration = const Duration(seconds: 3),
+  }) {
     read(toastProvider.notifier).state = message;
     Future.delayed(duration, () {
       read(toastProvider.notifier).state = null;

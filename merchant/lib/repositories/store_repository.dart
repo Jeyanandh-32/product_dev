@@ -8,7 +8,8 @@ class StoreRepository {
 
   static Never _handleDioError(DioException e, String defaultMessage) {
     final data = e.response?.data;
-    final message = (data is Map ? data['message'] as String? : null) ?? defaultMessage;
+    final message =
+        (data is Map ? data['message'] as String? : null) ?? defaultMessage;
     throw ApiException(message);
   }
 
@@ -22,7 +23,9 @@ class StoreRepository {
         },
       );
 
-      return Store.fromJson(result.data['data']['store'] as Map<String, Object?>);
+      return Store.fromJson(
+        result.data['data']['store'] as Map<String, Object?>,
+      );
     } on DioException catch (e) {
       _handleDioError(e, 'Failed to create store.');
     }
@@ -43,7 +46,9 @@ class StoreRepository {
         },
       );
 
-      return Store.fromJson(result.data['data']['store'] as Map<String, Object?>);
+      return Store.fromJson(
+        result.data['data']['store'] as Map<String, Object?>,
+      );
     } on DioException catch (e) {
       _handleDioError(e, 'Failed to update store.');
     }
@@ -55,7 +60,9 @@ class StoreRepository {
 
       final list = result.data['data']['stores'] as List<dynamic>;
 
-      return list.map((s) => Store.fromJson(s as Map<String, Object?>)).toList();
+      return list
+          .map((s) => Store.fromJson(s as Map<String, Object?>))
+          .toList();
     } on DioException catch (e) {
       _handleDioError(e, 'Failed to fetch stores.');
     }

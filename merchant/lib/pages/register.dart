@@ -2,9 +2,10 @@ import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_lucide/jaspr_lucide.dart' hide Map;
 import 'package:jaspr_riverpod/jaspr_riverpod.dart';
+import 'package:jaspr_riverpod/legacy.dart';
 import 'package:jaspr_router/jaspr_router.dart';
-import 'package:merchant/components/layouts/auth_layout.dart';
 import 'package:merchant/components/form_field.dart';
+import 'package:merchant/components/layouts/auth_layout.dart';
 import 'package:merchant/providers/auth_provider.dart';
 import 'package:merchant/providers/field_providers.dart';
 import 'package:validators/validators.dart';
@@ -38,7 +39,7 @@ class Register extends StatelessComponent {
         );
   }
 
-  void _onChange(dynamic provider, BuildContext context, dynamic value) {
+  void _onChange(StateProvider provider, BuildContext context, dynamic value) {
     context.read(provider.notifier).state = value as String;
   }
 
@@ -62,8 +63,7 @@ class Register extends StatelessComponent {
         },
         [
           FormField(
-            onChange: (value) =>
-                _onChange(fullNameProvider, context, value),
+            onChange: (value) => _onChange(fullNameProvider, context, value),
             id: 'fullname',
             labelText: 'Full Name',
             icon: User(classes: 'w-4.5 h-4.5'),

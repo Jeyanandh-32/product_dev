@@ -12,7 +12,8 @@ class Env {
   static String get dbPassword => _env['DB_PASSWORD'] ?? '';
   static int get dbPort => int.parse(_env['DB_PORT'] ?? '5432');
   static String get dbName => _env['DB_NAME'] ?? 'test_db';
-  static String get allowedOrigin => _env['ALLOWED_ORIGIN'] ?? 'http://localhost:3000';
+  static String get allowedOrigin =>
+      _env['ALLOWED_ORIGIN'] ?? 'http://localhost:3000';
 
   static void init() {
     _env = DotEnv(includePlatformEnvironment: true)..load();

@@ -18,6 +18,17 @@ class Stores extends StatelessComponent {
   Component build(BuildContext context) {
     final activeModal = context.watch(activeModalProvider);
     final storesState = context.watch(storesProvider);
+    final selectedStore = context.watch(selectedTabStoreProvider);
+
+    if (storesState.hasValue && storesState.value!.isNotEmpty) {
+      if (selectedStore == null ||
+          !storesState.value!.any((st) => st.id == selectedStore.id)) {
+        Future.microtask(() {
+          context.read(selectedTabStoreProvider.notifier).state =
+              storesState.value!.first;
+        });
+      }
+    }
 
     if (storesState.isLoading || !storesState.hasValue) return Loading();
 
@@ -30,7 +41,7 @@ class Stores extends StatelessComponent {
 
         div(
           classes:
-              'h-[400px] md:flex-1 lg:h-full lg:flex-1 min-h-0 bg-white rounded-2xl border border-border-light p-6 flex flex-col flex-shrink-0 lg:flex-shrink',
+              'h-[500px] md:flex-1 lg:h-full lg:flex-1 min-h-0 bg-white rounded-2xl border border-border-light p-6 flex flex-col flex-shrink-0 lg:flex-shrink',
           [
             div(
               classes:
@@ -75,7 +86,16 @@ class Stores extends StatelessComponent {
                       storesState.value!.length,
                       (index) {
                         final store = storesState.value![index];
-                        return StoreCard(name: store.name);
+                        return StoreCard(
+                          name: store.name,
+                          isSelected: store.id == selectedStore?.id,
+                          onClick: () {
+                            context
+                                    .read(selectedTabStoreProvider.notifier)
+                                    .state =
+                                store;
+                          },
+                        );
                       },
                     ),
             ),
@@ -94,12 +114,14 @@ class Stores extends StatelessComponent {
                       'text-primary font-semibold text-lg flex items-center',
                   [
                     .text('Terminals'),
-                    span(classes: 'text-gray-300 mx-2 text-sm font-normal', [
-                      .text('/'),
-                    ]),
-                    span(classes: 'text-sm text-gray-400', [
-                      .text('Canteen'),
-                    ]),
+                    if (selectedStore != null)
+                      span(classes: 'text-gray-300 mx-2 text-sm font-normal', [
+                        .text('/'),
+                      ]),
+                    if (selectedStore != null)
+                      span(classes: 'text-sm text-gray-400', [
+                        .text(selectedStore.name),
+                      ]),
                   ],
                 ),
 

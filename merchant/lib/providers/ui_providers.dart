@@ -1,11 +1,16 @@
 import 'package:jaspr_riverpod/legacy.dart';
+import 'package:models/models.dart';
 
 final indexProvider = StateProvider.autoDispose<int>(
   (ref) => 0,
 );
 
-final storeProvider = StateProvider.autoDispose<String>(
-  (ref) => 'STORE - 1',
+final storeProvider = StateProvider.autoDispose<Store?>(
+  (ref) => null,
+);
+
+final selectedTabStoreProvider = StateProvider.autoDispose<Store?>(
+  (ref) => null,
 );
 
 final navOpenProvider = StateProvider.autoDispose<bool>(
