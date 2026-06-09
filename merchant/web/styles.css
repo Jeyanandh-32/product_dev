@@ -2355,6 +2355,10 @@
     --tw-border-style: dashed;
     border-style: dashed;
   }
+  .border-none {
+    --tw-border-style: none;
+    border-style: none;
+  }
   .border-accent {
     border-color: var(--color-accent);
   }

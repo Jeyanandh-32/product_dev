@@ -14,7 +14,7 @@ class Drawer extends StatelessComponent {
     context.read(headerTitleProvider.notifier).state = headerTitle;
     context.read(indexProvider.notifier).state = index;
     context.read(headerSubTitleProvider.notifier).state = null;
-    _toggleDrawer(context);
+    if (index != 1 && index != 2) _toggleDrawer(context);
   }
 
   void _changeSubIndex(
@@ -167,7 +167,7 @@ class Drawer extends StatelessComponent {
         div(classes: 'w-full px-4 pb-4 mt-auto', [
           button(
             classes:
-                'flex items-center justify-center gap-2 w-full h-10 font-semibold text-sm bg-soft-red text-soft-red-content rounded-lg hover:cursor-pointer',
+                'btn border-none flex items-center justify-center gap-2 w-full h-10 font-semibold text-sm bg-soft-red text-soft-red-content rounded-lg hover:cursor-pointer',
             onClick: () => context.read(authProvider.notifier).logout(),
             [LogOut(classes: 'w-4.5 h-4.5'), .text('Log Out')],
           ),
@@ -185,7 +185,7 @@ class Drawer extends StatelessComponent {
       button(
         onClick: isSelected ? null : onClick,
         classes:
-            'text-sm ${isSelected ? 'text-primary' : 'text-gray-500'} font-semibold hover:cursor-pointer hover:bg-neutral rounded-lg h-8 w-full flex items-center',
+            'text-sm ${isSelected ? 'text-accent' : 'text-gray-500'} font-semibold hover:cursor-pointer hover:bg-neutral rounded-lg h-8 w-full flex items-center',
         [
           Dot(classes: 'w-8 h-8'),
           .text(name),
