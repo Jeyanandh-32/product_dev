@@ -23,6 +23,7 @@ class Header extends StatelessComponent {
     final store = context.watch(storeProvider);
     final isNavOpen = context.watch(navOpenProvider);
     final headerTitle = context.watch(headerTitleProvider);
+    final headerSubTitle = context.watch(headerSubTitleProvider);
     final stores = context.watch(storesProvider).value;
 
     if (stores != null && stores.isNotEmpty) {
@@ -48,7 +49,13 @@ class Header extends StatelessComponent {
             ],
           ),
 
-          h3(classes: 'font-semibold', [.text(headerTitle)]),
+          h3(classes: 'font-semibold flex items-center gap-1.5 text-primary', [
+            .text(headerTitle),
+            if (headerSubTitle != null) ...[
+              span(classes: 'text-gray-300 text-sm font-normal', [.text('/')]),
+              span(classes: 'text-sm text-gray-400 font-normal', [.text(headerSubTitle)]),
+            ],
+          ]),
         ]),
 
         if (store != null)

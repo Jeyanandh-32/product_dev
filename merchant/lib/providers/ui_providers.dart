@@ -5,6 +5,10 @@ final indexProvider = StateProvider.autoDispose<int>(
   (ref) => 0,
 );
 
+final subIndexProvider = StateProvider.autoDispose<int>(
+  (ref) => 0,
+);
+
 final storeProvider = StateProvider.autoDispose<Store?>(
   (ref) => null,
 );
@@ -19,6 +23,10 @@ final navOpenProvider = StateProvider.autoDispose<bool>(
 
 final headerTitleProvider = StateProvider.autoDispose<String>(
   (ref) => 'Dashboard',
+);
+
+final headerSubTitleProvider = StateProvider.autoDispose<String?>(
+  (ref) => null,
 );
 
 enum ActiveModal {
@@ -40,4 +48,3 @@ final editingStoreProvider = StateProvider.autoDispose<Store?>(
 final editingTerminalProvider = StateProvider.autoDispose<Terminal?>(
   (ref) => null,
 );
-

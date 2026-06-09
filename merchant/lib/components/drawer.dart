@@ -13,6 +13,19 @@ class Drawer extends StatelessComponent {
   void _changeIndex(BuildContext context, int index, String headerTitle) {
     context.read(headerTitleProvider.notifier).state = headerTitle;
     context.read(indexProvider.notifier).state = index;
+    context.read(headerSubTitleProvider.notifier).state = null;
+    _toggleDrawer(context);
+  }
+
+  void _changeSubIndex(
+    BuildContext context,
+    int subIndex,
+    String headerTitle,
+    String headerSubTitle,
+  ) {
+    context.read(headerTitleProvider.notifier).state = headerTitle;
+    context.read(subIndexProvider.notifier).state = subIndex;
+    context.read(headerSubTitleProvider.notifier).state = headerSubTitle;
     _toggleDrawer(context);
   }
 
@@ -24,6 +37,7 @@ class Drawer extends StatelessComponent {
   @override
   Component build(BuildContext context) {
     final index = context.watch(indexProvider);
+    final subIndex = context.watch(subIndexProvider);
     final isNavOpen = context.watch(navOpenProvider);
 
     return div(
@@ -41,37 +55,68 @@ class Drawer extends StatelessComponent {
         ul(classes: 'mt-4 flex-1 w-full px-4 space-y-1', [
           navButton(
             name: 'Dashboard',
-            icon: LayoutGrid(classes: 'w-4.5 h-4.5'),
+            prefixIcon: LayoutGrid(classes: 'w-4.5 h-4.5'),
             isSelected: index == 0,
             onClick: () => _changeIndex(context, 0, 'Dashboard'),
           ),
           navButton(
             name: 'Inventory',
-            icon: ShoppingCart(classes: 'w-4.5 h-4.5'),
+            prefixIcon: ShoppingCart(classes: 'w-4.5 h-4.5'),
+            suffixIcon: index == 1
+                ? ChevronDown(classes: 'w-4.5 h-4.5 ml-auto mr-6')
+                : ChevronRight(classes: 'w-4.5 h-4.5 ml-auto mr-6'),
             isSelected: index == 1,
-            onClick: () => _changeIndex(context, 1, 'Inventory'),
+            onClick: () {
+              _changeIndex(context, 1, 'Inventory');
+              context.read(subIndexProvider.notifier).state = 0;
+              context.read(headerSubTitleProvider.notifier).state = 'Products';
+            },
           ),
+          if (index == 1)
+            ul(
+              classes: 'flex flex-col items-center w-full pr-4 pl-8 space-y-1',
+              [
+                navSubButton(
+                  name: 'Products',
+                  isSelected: index == 1 && subIndex == 0,
+                  onClick: () =>
+                      _changeSubIndex(context, 0, 'Inventory', 'Products'),
+                ),
+                navSubButton(
+                  name: 'Category',
+                  isSelected: index == 1 && subIndex == 1,
+                  onClick: () =>
+                      _changeSubIndex(context, 1, 'Inventory', 'Category'),
+                ),
+                navSubButton(
+                  name: 'Counters',
+                  isSelected: index == 1 && subIndex == 2,
+                  onClick: () =>
+                      _changeSubIndex(context, 2, 'Inventory', 'Counters'),
+                ),
+              ],
+            ),
           navButton(
             name: 'Reports',
-            icon: ChartNoAxesCombined(classes: 'w-4.5 h-4.5'),
+            prefixIcon: ChartNoAxesCombined(classes: 'w-4.5 h-4.5'),
             isSelected: index == 2,
             onClick: () => _changeIndex(context, 2, 'Reports'),
           ),
           navButton(
             name: 'Stores',
-            icon: Store(classes: 'w-4.5 h-4.5'),
+            prefixIcon: Store(classes: 'w-4.5 h-4.5'),
             isSelected: index == 3,
             onClick: () => _changeIndex(context, 3, 'Stores'),
           ),
           navButton(
             name: 'Account',
-            icon: UserRound(classes: 'w-4.5 h-4.5'),
+            prefixIcon: UserRound(classes: 'w-4.5 h-4.5'),
             isSelected: index == 4,
             onClick: () => _changeIndex(context, 4, 'Account'),
           ),
           navButton(
             name: 'Settings',
-            icon: Settings(classes: 'w-4.5 h-4.5'),
+            prefixIcon: Settings(classes: 'w-4.5 h-4.5'),
             isSelected: index == 5,
             onClick: () => _changeIndex(context, 5, 'Settings'),
           ),
@@ -88,9 +133,28 @@ class Drawer extends StatelessComponent {
     );
   }
 
+  li navSubButton({
+    required String name,
+    bool isSelected = false,
+    VoidCallback? onClick,
+  }) {
+    return li(classes: 'w-full', [
+      button(
+        onClick: isSelected ? null : onClick,
+        classes:
+            'text-sm ${isSelected ? 'text-primary' : 'text-gray-500'} font-semibold hover:cursor-pointer hover:bg-neutral rounded-lg h-8 w-full flex items-center',
+        [
+          Dot(classes: 'w-8 h-8'),
+          .text(name),
+        ],
+      ),
+    ]);
+  }
+
   li navButton({
     required String name,
-    required Component icon,
+    required Component prefixIcon,
+    Component? suffixIcon,
     bool isSelected = false,
     VoidCallback? onClick,
   }) {
@@ -104,8 +168,9 @@ class Drawer extends StatelessComponent {
         classes:
             'flex gap-2 h-10 w-full font-medium items-center rounded-lg pl-4 text-sm transition-all duration-300 $isSelectedClasses',
         [
-          icon,
+          prefixIcon,
           .text(name),
+          ?suffixIcon,
         ],
       ),
     ]);

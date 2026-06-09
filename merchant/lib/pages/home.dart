@@ -34,6 +34,9 @@ class Home extends StatelessComponent {
 
           switch (index) {
             // 0 => const Dashboard(),
+            1 => div(classes: 'p-8 text-gray-400 font-medium text-center flex-1 flex items-center justify-center', [
+                .text('${context.watch(headerSubTitleProvider) ?? "Products"} content coming soon!'),
+              ]),
             3 => const Stores(),
             _ => const Stores(),
           },
