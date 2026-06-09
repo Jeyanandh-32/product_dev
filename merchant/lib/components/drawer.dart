@@ -99,9 +99,52 @@ class Drawer extends StatelessComponent {
           navButton(
             name: 'Reports',
             prefixIcon: ChartNoAxesCombined(classes: 'w-4.5 h-4.5'),
+            suffixIcon: index == 2
+                ? ChevronDown(classes: 'w-4.5 h-4.5 ml-auto mr-6')
+                : ChevronRight(classes: 'w-4.5 h-4.5 ml-auto mr-6'),
             isSelected: index == 2,
-            onClick: () => _changeIndex(context, 2, 'Reports'),
+            onClick: () {
+              _changeIndex(context, 2, 'Reports');
+              context.read(subIndexProvider.notifier).state = 0;
+              context.read(headerSubTitleProvider.notifier).state = 'Orders';
+            },
           ),
+          if (index == 2)
+            ul(
+              classes: 'flex flex-col items-center w-full pr-4 pl-8 space-y-1',
+              [
+                navSubButton(
+                  name: 'Orders',
+                  isSelected: index == 2 && subIndex == 0,
+                  onClick: () =>
+                      _changeSubIndex(context, 0, 'Reports', 'Orders'),
+                ),
+                navSubButton(
+                  name: 'Payments',
+                  isSelected: index == 2 && subIndex == 1,
+                  onClick: () =>
+                      _changeSubIndex(context, 1, 'Reports', 'Payments'),
+                ),
+                navSubButton(
+                  name: 'Credits',
+                  isSelected: index == 2 && subIndex == 2,
+                  onClick: () =>
+                      _changeSubIndex(context, 2, 'Reports', 'Credits'),
+                ),
+                navSubButton(
+                  name: 'Profit & Loss',
+                  isSelected: index == 2 && subIndex == 3,
+                  onClick: () =>
+                      _changeSubIndex(context, 3, 'Reports', 'Profit & Loss'),
+                ),
+                navSubButton(
+                  name: 'Stock Summary',
+                  isSelected: index == 2 && subIndex == 4,
+                  onClick: () =>
+                      _changeSubIndex(context, 4, 'Reports', 'Stock Summary'),
+                ),
+              ],
+            ),
           navButton(
             name: 'Stores',
             prefixIcon: Store(classes: 'w-4.5 h-4.5'),

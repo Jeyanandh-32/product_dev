@@ -37,6 +37,9 @@ class Home extends StatelessComponent {
             1 => div(classes: 'p-8 text-gray-400 font-medium text-center flex-1 flex items-center justify-center', [
                 .text('${context.watch(headerSubTitleProvider) ?? "Products"} content coming soon!'),
               ]),
+            2 => div(classes: 'p-8 text-gray-400 font-medium text-center flex-1 flex items-center justify-center', [
+                .text('${context.watch(headerSubTitleProvider) ?? "Orders"} content coming soon!'),
+              ]),
             3 => const Stores(),
             _ => const Stores(),
           },
