@@ -73,8 +73,37 @@
     --border: 0.5px;
 }
 
-.input:focus,
-.input:focus-within {
+.input.validator:user-invalid,
+.input.validator:has(:user-invalid),
+.input[aria-invalid="true"],
+.input:has([aria-invalid="true"]),
+.textarea.validator:user-invalid,
+.textarea.validator:has(:user-invalid),
+.textarea[aria-invalid="true"],
+.textarea:has([aria-invalid="true"]),
+.select.validator:user-invalid,
+.select.validator:has(:user-invalid),
+.select[aria-invalid="true"],
+.select:has([aria-invalid="true"]) {
+    --input-color: var(--color-error) !important;
+    border-color: var(--color-error) !important;
+}
+
+.input.validator:user-valid,
+.input.validator:has(:user-valid),
+.textarea.validator:user-valid,
+.textarea.validator:has(:user-valid),
+.select.validator:user-valid,
+.select.validator:has(:user-valid) {
+    --input-color: var(--color-success) !important;
+    border-color: var(--color-success) !important;
+}
+
+.input:focus:not(:user-invalid):not([aria-invalid="true"]),
+.input:focus-within:not(:user-invalid):not([aria-invalid="true"]),
+.textarea:focus:not(:user-invalid):not([aria-invalid="true"]),
+.textarea:focus-within:not(:user-invalid):not([aria-invalid="true"]),
+.select:focus:not(:user-invalid):not([aria-invalid="true"]) {
     border-color: var(--color-accent) !important;
     outline-color: var(--color-accent) !important;
 }
