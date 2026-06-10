@@ -8,22 +8,31 @@ import 'package:dart_frog/dart_frog.dart';
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:validators/validators.dart';
 
-Middleware authMiddleware({List<UserRole>? allowedRoles}) {
+Middleware authMiddleware({
+  List<UserRole>? allowedRoles,
+  List<HttpMethod>? notAllowedMethods,
+  Map<UserRole, List<HttpMethod>>? roleRestrictedMethods,
+}) {
   return (handler) => (context) async {
     final authorization = context.request.headers['authorization'];
 
     final bearerToken = AuthService.extractBearerToken(authorization);
+
     final cookieToken = AuthService.extractAccessCookieToken(
       context.request.headers[HttpHeaders.cookieHeader],
     );
 
     final token = bearerToken ?? cookieToken;
 
-    if (token == null) return unauthorized(message: 'No token provided.');
+    if (token == null) {
+      return unauthorized(message: 'No token provided.');
+    }
 
     late final TokenPayload tokenPayload;
+
     try {
       final jwt = AuthService.verifyAccessToken(token);
+
       tokenPayload = TokenPayload.fromJson(
         jwt.payload as Map<String, Object?>,
       );
@@ -35,6 +44,18 @@ Middleware authMiddleware({List<UserRole>? allowedRoles}) {
       if (allowedRoles != null && !allowedRoles.contains(tokenPayload.role)) {
         return forbidden(message: 'No access.');
       }
+
+      if (notAllowedMethods != null &&
+          notAllowedMethods.contains(context.request.method)) {
+        return forbidden(message: 'No access.');
+      }
+
+      final restrictedMethods = roleRestrictedMethods?[tokenPayload.role];
+
+      if (restrictedMethods != null &&
+          restrictedMethods.contains(context.request.method)) {
+        return forbidden(message: 'No access.');
+      }
     } on JWTExpiredException {
       return forbidden(message: 'Token expired.');
     } on JWTException {
@@ -42,9 +63,7 @@ Middleware authMiddleware({List<UserRole>? allowedRoles}) {
     }
 
     return handler(
-      context.provide<TokenPayload>(
-        () => tokenPayload,
-      ),
+      context.provide<TokenPayload>(() => tokenPayload),
     );
   };
 }
@@ -55,5 +74,9 @@ Middleware merchantAuthMiddleware() =>
 Middleware terminalAuthMiddleware() =>
     authMiddleware(allowedRoles: [.terminal]);
 
-Middleware merchantTerminalAuthMiddleware() =>
-    authMiddleware(allowedRoles: [.merchant, .terminal]);
+Middleware merchantTerminalAuthMiddleware({
+  Map<UserRole, List<HttpMethod>>? roleRestrictedMethods,
+}) => authMiddleware(
+  allowedRoles: [.merchant, .terminal],
+  roleRestrictedMethods: roleRestrictedMethods,
+);

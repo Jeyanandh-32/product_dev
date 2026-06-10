@@ -16,8 +16,6 @@ Future<Response> onRequest(RequestContext context) async {
 }
 
 Future<Response> _onGet(RequestContext context) async {
-  // TODO: Remove after Testing diff States.
-  // await Future<void>.delayed(const Duration(seconds: 2));
   final repo = context.read<StoreRepository>();
   final tokenPayload = context.read<TokenPayload>();
   final merchantId = tokenPayload.sub;
