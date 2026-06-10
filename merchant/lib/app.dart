@@ -5,7 +5,7 @@ import 'package:jaspr_router/jaspr_router.dart';
 import 'package:merchant/components/toast.dart';
 import 'package:merchant/pages/forgot_password.dart';
 import 'package:merchant/pages/home.dart';
-import 'package:merchant/pages/loading.dart';
+import 'package:merchant/components/loading.dart';
 import 'package:merchant/pages/login.dart';
 import 'package:merchant/pages/register.dart';
 import 'package:merchant/providers/auth_provider.dart';

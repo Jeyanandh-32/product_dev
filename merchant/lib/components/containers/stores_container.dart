@@ -3,7 +3,7 @@ import 'package:jaspr/dom.dart';
 import 'package:jaspr_riverpod/jaspr_riverpod.dart';
 import 'package:merchant/components/buttons/add_button.dart';
 import 'package:merchant/components/cards/store_card.dart';
-import 'package:merchant/components/searchbar.dart';
+import 'package:merchant/components/fields/searchbar.dart';
 import 'package:merchant/providers/stores_provider.dart';
 import 'package:merchant/providers/terminals_provider.dart';
 import 'package:merchant/providers/ui_providers.dart';
@@ -24,7 +24,7 @@ class StoresContainer extends StatelessComponent {
 
     return div(
       classes:
-          'h-[500px] md:flex-1 lg:h-full lg:flex-1 min-h-0 bg-white rounded-2xl border border-border-light p-6 flex flex-col flex-shrink-0 lg:flex-shrink',
+          'h-[500px] md:flex-1 lg:h-full lg:flex-1 min-h-0 bg-white rounded-2xl border border-border-medium p-6 flex flex-col flex-shrink-0 lg:flex-shrink',
       [
         div(
           classes:
@@ -35,7 +35,10 @@ class StoresContainer extends StatelessComponent {
             ]),
 
             div(classes: 'flex gap-2 w-full sm:w-auto', [
-              Searchbar(placeholder: 'Search Store...'),
+              Searchbar(
+                placeholder: 'Search Store...',
+                classes: 'flex-1',
+              ),
               AddButton(
                 name: 'Add Store',
                 onClick: () {
@@ -56,7 +59,7 @@ class StoresContainer extends StatelessComponent {
 
         div(
           classes:
-              'grid grid-cols-1 ${showStoresGrid ? 'sm:grid-cols-2' : 'sm:grid-cols-1'} lg:flex lg:flex-col sm:gap-x-4 sm:gap-y-2 overflow-y-auto flex-1 pr-2 ${showStoresGrid ? 'auto-rows-max' : ''}',
+              'grid grid-cols-1 ${showStoresGrid ? 'sm:grid-cols-2' : 'sm:grid-cols-1'} lg:flex lg:flex-col gap-4 overflow-y-auto flex-1 pr-2 ${showStoresGrid ? 'auto-rows-max' : ''}',
           [
             if (storesState.isLoading)
               div(

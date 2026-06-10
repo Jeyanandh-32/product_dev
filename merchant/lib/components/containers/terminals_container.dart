@@ -3,7 +3,7 @@ import 'package:jaspr/dom.dart';
 import 'package:jaspr_riverpod/jaspr_riverpod.dart';
 import 'package:merchant/components/buttons/add_button.dart';
 import 'package:merchant/components/cards/terminal_card.dart';
-import 'package:merchant/components/searchbar.dart';
+import 'package:merchant/components/fields/searchbar.dart';
 import 'package:merchant/providers/terminals_provider.dart';
 import 'package:merchant/providers/ui_providers.dart';
 
@@ -28,7 +28,7 @@ class TerminalsContainer extends StatelessComponent {
 
     return div(
       classes:
-          'h-[500px] md:flex-1 lg:h-full lg:flex-2 min-h-0 p-4 bg-white rounded-2xl border border-border-light flex flex-col flex-shrink-0 lg:flex-shrink',
+          'h-[500px] md:flex-1 lg:h-full lg:flex-2 min-h-0 p-4 bg-white rounded-2xl border border-border-medium flex flex-col flex-shrink-0 lg:flex-shrink',
       [
         div(
           classes:
@@ -50,7 +50,9 @@ class TerminalsContainer extends StatelessComponent {
             ),
 
             div(classes: 'flex gap-2 w-full sm:w-auto', [
-              Searchbar(placeholder: 'Search Terminal...'),
+              Searchbar(
+                placeholder: 'Search Terminal...',
+              ),
               AddButton(
                 name: 'Add Terminal',
                 onClick: () {
@@ -71,7 +73,7 @@ class TerminalsContainer extends StatelessComponent {
 
         div(
           classes:
-              'grid grid-cols-1 ${showTerminalsGrid ? 'sm:grid-cols-2' : 'sm:grid-cols-1'} gap-x-4 gap-y-2 overflow-y-auto flex-1 pr-2 ${showTerminalsGrid ? 'auto-rows-max' : ''}',
+              'grid grid-cols-1 ${showTerminalsGrid ? 'sm:grid-cols-2' : 'sm:grid-cols-1'} gap-4 overflow-y-auto flex-1 pr-2 ${showTerminalsGrid ? 'auto-rows-max' : ''}',
           [
             if (selectedStore == null)
               div(

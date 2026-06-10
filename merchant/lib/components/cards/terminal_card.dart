@@ -17,7 +17,7 @@ class TerminalCard extends StatelessComponent {
   Component build(BuildContext context) {
     return div(
       classes:
-          'p-4 mb-4 border border-border-light rounded-lg flex flex-col gap-4',
+          'flex flex-col gap-4 p-4 border border-border-medium rounded-lg shadow-2xs transition-all duration-200 hover:cursor-pointer hover:border-accent/50',
       [
         div(classes: 'flex justify-between items-center', [
           h2(classes: 'font-semibold text-primary', [.text(terminal.name)]),
@@ -35,23 +35,25 @@ class TerminalCard extends StatelessComponent {
           ),
         ]),
 
-        div(classes: 'flex gap-2', [
-          div(
-            classes:
-                'bg-soft-purple grow text-soft-purple-content rounded-lg text-[14px] font-semibold flex justify-center items-center h-10',
-            [
-              .text(terminal.code),
-            ],
-          ),
-
-          div(
-            classes:
-                'grow ${terminal.isActive ? 'bg-soft-green text-soft-green-content' : 'bg-soft-red text-soft-red-content'} rounded-lg text-[14px] font-semibold flex justify-center items-center h-10 hover:cursor-pointer transition-all duration-300',
-            [
-              .text(terminal.isActive ? 'ACTIVE' : 'INACTIVE'),
-            ],
-          ),
-        ]),
+        div(
+          classes: 'flex gap-2 mt-2',
+          [
+            div(
+              classes:
+                  'bg-soft-purple text-soft-purple-content rounded-full px-3 py-1 text-xs font-semibold',
+              [
+                .text(terminal.code),
+              ],
+            ),
+            div(
+              classes:
+                  '${terminal.isActive ? 'bg-soft-green text-soft-green-content' : 'bg-soft-red text-soft-red-content'} rounded-full px-3 py-1 text-xs font-semibold hover:cursor-pointer transition-all duration-300',
+              [
+                .text(terminal.isActive ? 'ACTIVE' : 'INACTIVE'),
+              ],
+            ),
+          ],
+        ),
       ],
     );
   }

@@ -3,8 +3,8 @@ import 'package:jaspr/dom.dart';
 import 'package:jaspr_riverpod/jaspr_riverpod.dart';
 import 'package:merchant/components/modals/add_edit_store_modal.dart';
 import 'package:merchant/components/modals/add_edit_terminal_modal.dart';
-import 'package:merchant/components/stores_container.dart';
-import 'package:merchant/components/terminals_container.dart';
+import 'package:merchant/components/containers/stores_container.dart';
+import 'package:merchant/components/containers/terminals_container.dart';
 import 'package:merchant/providers/stores_provider.dart';
 import 'package:merchant/providers/ui_providers.dart';
 

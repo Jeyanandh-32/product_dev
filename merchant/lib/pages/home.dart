@@ -4,6 +4,7 @@ import 'package:jaspr_riverpod/jaspr_riverpod.dart';
 import 'package:merchant/components/drawer.dart';
 import 'package:merchant/components/header.dart';
 import 'package:merchant/providers/ui_providers.dart';
+import 'package:merchant/tabs/counters.dart';
 import 'package:merchant/tabs/stores.dart';
 
 class Home extends StatelessComponent {
@@ -34,14 +35,40 @@ class Home extends StatelessComponent {
 
           switch (index) {
             // 0 => const Dashboard(),
-            1 => div(classes: 'p-8 text-gray-400 font-medium text-center flex-1 flex items-center justify-center', [
-                .text('${context.watch(headerSubTitleProvider) ?? "Products"} content coming soon!'),
-              ]),
-            2 => div(classes: 'p-8 text-gray-400 font-medium text-center flex-1 flex items-center justify-center', [
-                .text('${context.watch(headerSubTitleProvider) ?? "Orders"} content coming soon!'),
-              ]),
+            1 => div(
+              classes:
+                  'p-8 text-gray-400 font-medium text-center flex-1 flex items-center justify-center',
+              [
+                .text(
+                  '${context.watch(headerSubTitleProvider) ?? "Products"} content coming soon!',
+                ),
+              ],
+            ),
+            2 => div(
+              classes:
+                  'p-8 text-gray-400 font-medium text-center flex-1 flex items-center justify-center',
+              [
+                .text(
+                  '${context.watch(headerSubTitleProvider) ?? "Orders"} content coming soon!',
+                ),
+              ],
+            ),
             3 => const Stores(),
-            _ => const Stores(),
+            4 => div(
+              classes:
+                  'p-8 text-gray-400 font-medium text-center flex-1 flex items-center justify-center',
+              [
+                .text('Account details and profile settings coming soon!'),
+              ],
+            ),
+            5 => div(
+              classes:
+                  'p-8 text-gray-400 font-medium text-center flex-1 flex items-center justify-center',
+              [
+                .text('Global application settings coming soon!'),
+              ],
+            ),
+            _ => const Counters(),
           },
         ],
       ),

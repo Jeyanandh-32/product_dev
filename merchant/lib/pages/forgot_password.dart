@@ -3,7 +3,7 @@ import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_lucide/jaspr_lucide.dart' hide Map;
 import 'package:jaspr_router/jaspr_router.dart';
 import 'package:merchant/components/layouts/auth_layout.dart';
-import 'package:merchant/components/form_field.dart';
+import 'package:merchant/components/fields/form_field.dart';
 import 'package:web/web.dart' hide Lock;
 
 class ForgotPassword extends StatefulComponent {

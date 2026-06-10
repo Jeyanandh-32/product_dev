@@ -23,7 +23,7 @@ class StoreCard extends StatelessComponent {
   Component build(BuildContext context) {
     return div(
       classes:
-          'p-4 mb-4 border ${isSelected ? ' border-accent border-2' : 'border-border-light'} rounded-lg flex flex-col gap-4 hover:cursor-pointer hover:border-accent/50 transition-all duration-200',
+          'flex flex-col gap-4 p-4 border ${isSelected ? 'border-accent border-2' : 'border-border-medium'} rounded-lg shadow-2xs transition-all duration-200 hover:cursor-pointer hover:border-accent/50',
       events: {
         if (onClick != null) 'click': (e) => onClick!(),
       },
@@ -44,23 +44,25 @@ class StoreCard extends StatelessComponent {
           ),
         ]),
 
-        div(classes: 'flex gap-2', [
-          div(
-            classes:
-                'bg-soft-blue grow text-soft-blue-content rounded-lg text-[14px] font-semibold flex justify-center items-center h-10',
-            [
-              .text('$count Terminals'),
-            ],
-          ),
-
-          div(
-            classes:
-                'grow ${store.isActive ? 'bg-soft-green text-soft-green-content' : 'bg-soft-red text-soft-red-content'} rounded-lg text-[14px] font-semibold flex justify-center items-center h-10',
-            [
-              .text(store.isActive ? 'ACTIVE' : 'INACTIVE'),
-            ],
-          ),
-        ]),
+        div(
+          classes: 'flex gap-2 mt-2',
+          [
+            div(
+              classes:
+                  'bg-soft-blue text-soft-blue-content rounded-full px-3 py-1 text-xs font-semibold',
+              [
+                .text('$count Terminals'),
+              ],
+            ),
+            div(
+              classes:
+                  '${store.isActive ? 'bg-soft-green text-soft-green-content' : 'bg-soft-red text-soft-red-content'} rounded-full px-3 py-1 text-xs font-semibold',
+              [
+                .text(store.isActive ? 'ACTIVE' : 'INACTIVE'),
+              ],
+            ),
+          ],
+        ),
       ],
     );
   }
