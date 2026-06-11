@@ -1108,6 +1108,9 @@
   .z-50 {
     z-index: 50;
   }
+  .z-\[100\] {
+    z-index: 100;
+  }
   .divider {
     @layer daisyui.l1.l2.l3 {
       display: flex;

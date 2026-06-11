@@ -11,7 +11,7 @@ class Toast extends StatelessComponent {
     final message = context.watch(toastProvider);
     if (message == null) return div([]);
 
-    return div(classes: 'toast toast-top toast-center', [
+    return div(classes: 'toast toast-top toast-center z-[100]', [
       div(classes: 'alert alert-error text-white', [
         span([
           .text(message),
