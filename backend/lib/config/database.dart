@@ -1,6 +1,7 @@
-import 'dart:io';
-
 import 'package:backend/config/env.dart';
+import 'package:backend/src/migrations.dart';
+import 'package:migrant/migrant.dart' as migrant;
+import 'package:migrant_db_postgresql/migrant_db_postgresql.dart';
 import 'package:postgres/postgres.dart';
 
 class Database {
@@ -36,33 +37,21 @@ class Database {
   }
 
   static Future<void> runMigrations() async {
-    final migrationsDir = Directory('migrations');
+    final connection = await Connection.open(
+      Endpoint(
+        host: Env.dbHost,
+        database: Env.dbName,
+        username: Env.dbUsername,
+        password: Env.dbPassword,
+        port: Env.dbPort,
+      ),
+      settings: const ConnectionSettings(sslMode: SslMode.disable),
+    );
 
-    final files =
-        migrationsDir
-            .listSync()
-            .whereType<File>()
-            .where((f) => f.path.endsWith('.sql'))
-            .toList()
-          ..sort(
-            (a, b) => a.path.compareTo(b.path),
-          );
+    final gateway = PostgreSQLGateway(connection);
 
-    for (final file in files) {
-      final sql = await file.readAsString();
+    await migrant.Database(gateway).upgrade(migrations);
 
-      final statements = sql
-          .split(';')
-          .map((s) => s.trim())
-          .where((s) => s.isNotEmpty)
-          .toList();
-
-      for (final statement in statements) {
-        await pool.execute(statement);
-      }
-
-      // ignore: avoid_print
-      print('Migration applied: ${file.path}');
-    }
+    await connection.close();
   }
 }

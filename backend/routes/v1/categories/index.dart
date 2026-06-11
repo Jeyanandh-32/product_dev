@@ -1,8 +1,8 @@
 import 'dart:io';
 
-import 'package:backend/extensions/counter_dto_extension.dart';
+import 'package:backend/extensions/category_dto_extension.dart';
 import 'package:backend/models/token_payload/token_payload.dart';
-import 'package:backend/repositories/counter_repository.dart';
+import 'package:backend/repositories/category_repository.dart';
 import 'package:backend/utils/responses.dart';
 import 'package:dart_frog/dart_frog.dart';
 import 'package:validators/validators.dart';
@@ -23,21 +23,21 @@ Future<Response> _onGet(RequestContext context) async {
     return badRequest(message: 'Invalid store id.');
   }
 
-  final repo = context.read<CounterRepository>();
+  final repo = context.read<CategoryRepository>();
   final tokenPayload = context.read<TokenPayload>();
   final merchantId = tokenPayload.sub;
 
   try {
-    final counterDtos = await repo.getAll(
+    final categoryDtos = await repo.getAll(
       storeId: storeId,
       merchantId: merchantId,
     );
 
-    final counters = counterDtos.map((s) => s.toCounter()).toList();
+    final categories = categoryDtos.map((s) => s.toCategory()).toList();
 
     return success(
       data: {
-        'counters': counters,
+        'categories': categories,
       },
     );
   } catch (e) {
@@ -56,7 +56,7 @@ Future<Response> _onPost(RequestContext context) async {
     return badRequest(message: 'Invalid store id.');
   }
 
-  final repo = context.read<CounterRepository>();
+  final repo = context.read<CategoryRepository>();
   final tokenPayload = context.read<TokenPayload>();
   final merchantId = tokenPayload.sub;
 
@@ -68,7 +68,7 @@ Future<Response> _onPost(RequestContext context) async {
 
   final name = body['name'] as String?;
 
-  final errorMessage = CounterValidator.create(
+  final errorMessage = CategoryValidator.create(
     name: name,
   );
 
@@ -77,7 +77,7 @@ Future<Response> _onPost(RequestContext context) async {
   }
 
   try {
-    final counterDto = await repo.create(
+    final categoryDto = await repo.create(
       merchantId: merchantId,
       storeId: storeId,
       name: name!.trim(),
@@ -86,16 +86,15 @@ Future<Response> _onPost(RequestContext context) async {
     return success(
       statusCode: HttpStatus.created,
       data: {
-        'counter': counterDto.toCounter(),
+        'category': categoryDto.toCategory(),
       },
     );
   } catch (e) {
-    if (e.toString().contains('unique_store_counter_name')) {
+    if (e.toString().contains('unique_store_category_name')) {
       return badRequest(
-        message: 'You already have a counter with this name in this store.',
+        message: 'You already have a category with this name in this store.',
       );
     }
-
     return error(message: e.toString());
   }
 }
