@@ -34,9 +34,11 @@ enum ActiveModal {
   addStore,
   addTerminal,
   addCounter,
+  addCategory,
   editStore,
   editTerminal,
   editCounter,
+  editCategory,
 }
 
 final activeModalProvider = StateProvider.autoDispose<ActiveModal>(
@@ -52,5 +54,9 @@ final editingTerminalProvider = StateProvider.autoDispose<Terminal?>(
 );
 
 final editingCounterProvider = StateProvider.autoDispose<Counter?>(
+  (ref) => null,
+);
+
+final editingCategoryProvider = StateProvider.autoDispose<Category?>(
   (ref) => null,
 );

@@ -1,9 +1,9 @@
 import 'dart:async';
 
 import 'package:jaspr_riverpod/jaspr_riverpod.dart';
+import 'package:merchant/exceptions/api_exception.dart';
 import 'package:merchant/providers/toast_provider.dart';
 import 'package:merchant/providers/ui_providers.dart';
-import 'package:merchant/repositories/auth_repository.dart';
 import 'package:merchant/repositories/store_repository.dart';
 import 'package:models/models.dart';
 
@@ -74,4 +74,3 @@ class StoresProvider extends AsyncNotifier<List<Store>> {
     }
   }
 }
-

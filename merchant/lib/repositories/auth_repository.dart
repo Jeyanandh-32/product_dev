@@ -5,13 +5,6 @@ import 'package:models/models.dart';
 class AuthRepository {
   const AuthRepository._();
 
-  static Never _handleDioError(DioException e, String defaultMessage) {
-    final data = e.response?.data;
-    final message =
-        (data is Map ? data['message'] as String? : null) ?? defaultMessage;
-    throw ApiException(message);
-  }
-
   static Future<Merchant?> login({
     required String email,
     required String password,
@@ -23,7 +16,7 @@ class AuthRepository {
       );
       return Merchant.fromJson(result.data['data']['merchant']);
     } on DioException catch (e) {
-      _handleDioError(e, 'Login failed.');
+      ApiClient.handleDioError(e, 'Login failed.');
     }
   }
 
@@ -47,7 +40,7 @@ class AuthRepository {
       );
       return Merchant.fromJson(result.data['data']['merchant']);
     } on DioException catch (e) {
-      _handleDioError(e, 'Register failed.');
+      ApiClient.handleDioError(e, 'Register failed.');
     }
   }
 
@@ -55,12 +48,7 @@ class AuthRepository {
     try {
       await ApiClient.dio.get(ApiEndpoints.logout);
     } on DioException catch (e) {
-      _handleDioError(e, 'Logout failed.');
+      ApiClient.handleDioError(e, 'Logout failed.');
     }
   }
-}
-
-class ApiException implements Exception {
-  const ApiException(this.message);
-  final String message;
 }

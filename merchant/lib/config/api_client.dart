@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:merchant/exceptions/api_exception.dart';
 import 'package:web/web.dart' as web;
 
 class ApiClient {
@@ -19,16 +20,26 @@ class ApiClient {
           status != null && status >= 200 && status < 300,
     ),
   );
+
+  static Never handleDioError(DioException e, String defaultMessage) {
+    final data = e.response?.data;
+    final message =
+        (data is Map ? data['message'] as String? : null) ?? defaultMessage;
+    throw ApiException(message);
+  }
 }
 
 class ApiEndpoints {
   const ApiEndpoints._();
 
-  static const String login = '/v1/auth/merchant/login';
+  static const String version = 'v1';
+
+  static const String login = '/$version/auth/merchant/login';
   static const String register = '/v1/auth/merchant/register';
-  static const String logout = '/v1/auth/logout';
+  static const String logout = '/$version/auth/logout';
   static const String merchants = '/v1/merchants';
-  static const String stores = '/v1/stores';
+  static const String stores = '/$version/stores';
   static const String terminals = '/v1/terminals';
-  static const String counters = '/v1/counters';
+  static const String counters = '/$version/counters';
+  static const String categories = '/$version/categories';
 }

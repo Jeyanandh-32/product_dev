@@ -1,17 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:merchant/config/api_client.dart';
-import 'package:merchant/repositories/auth_repository.dart';
 import 'package:models/models.dart';
 
 class TerminalRepository {
   const TerminalRepository._();
-
-  static Never _handleDioError(DioException e, String defaultMessage) {
-    final data = e.response?.data;
-    final message =
-        (data is Map ? data['message'] as String? : null) ?? defaultMessage;
-    throw ApiException(message);
-  }
 
   static Future<List<Terminal>> getAll({String? storeId}) async {
     try {
@@ -28,7 +20,7 @@ class TerminalRepository {
           .map((t) => Terminal.fromJson(t as Map<String, Object?>))
           .toList();
     } on DioException catch (e) {
-      _handleDioError(e, 'Failed to fetch terminals.');
+      ApiClient.handleDioError(e, 'Failed to fetch terminals.');
     }
   }
 
@@ -51,7 +43,7 @@ class TerminalRepository {
         result.data['data']['terminal'] as Map<String, Object?>,
       );
     } on DioException catch (e) {
-      _handleDioError(e, 'Failed to create terminal.');
+      ApiClient.handleDioError(e, 'Failed to create terminal.');
     }
   }
 
@@ -76,7 +68,7 @@ class TerminalRepository {
         result.data['data']['terminal'] as Map<String, Object?>,
       );
     } on DioException catch (e) {
-      _handleDioError(e, 'Failed to update terminal.');
+      ApiClient.handleDioError(e, 'Failed to update terminal.');
     }
   }
 }

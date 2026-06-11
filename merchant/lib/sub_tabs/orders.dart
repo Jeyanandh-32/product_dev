@@ -1,8 +1,8 @@
 import 'package:jaspr/client.dart';
 import 'package:jaspr/dom.dart';
 
-class Dashboard extends StatelessComponent {
-  const Dashboard({super.key});
+class Orders extends StatelessComponent {
+  const Orders({super.key});
 
   @override
   Component build(BuildContext context) {
@@ -11,7 +11,7 @@ class Dashboard extends StatelessComponent {
           'p-8 text-gray-400 font-medium text-center flex-1 flex items-center justify-center',
       [
         .text(
-          'Dashboard content coming soon!',
+          'Orders content coming soon!',
         ),
       ],
     );

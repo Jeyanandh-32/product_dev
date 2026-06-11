@@ -1,9 +1,9 @@
 import 'dart:async';
 
 import 'package:jaspr_riverpod/jaspr_riverpod.dart';
+import 'package:merchant/exceptions/api_exception.dart';
 import 'package:merchant/providers/toast_provider.dart';
 import 'package:merchant/providers/ui_providers.dart';
-import 'package:merchant/repositories/auth_repository.dart';
 import 'package:merchant/repositories/terminal_repository.dart';
 import 'package:models/models.dart';
 
@@ -45,7 +45,10 @@ class TerminalsProvider extends AsyncNotifier<List<Terminal>> {
     }
   }
 
-  Future<void> updateStatus({required String code, required bool isActive}) async {
+  Future<void> updateStatus({
+    required String code,
+    required bool isActive,
+  }) async {
     final currentTerminals = state.value ?? [];
 
     try {
@@ -55,7 +58,9 @@ class TerminalsProvider extends AsyncNotifier<List<Terminal>> {
       );
 
       state = AsyncData(
-        currentTerminals.map((t) => t.code == code ? updatedTerminal : t).toList(),
+        currentTerminals
+            .map((t) => t.code == code ? updatedTerminal : t)
+            .toList(),
       );
     } catch (e) {
       final message = e is ApiException ? e.message : 'Something went wrong.';
@@ -81,7 +86,9 @@ class TerminalsProvider extends AsyncNotifier<List<Terminal>> {
       );
 
       state = AsyncData(
-        currentTerminals.map((t) => t.code == code ? updatedTerminal : t).toList(),
+        currentTerminals
+            .map((t) => t.code == code ? updatedTerminal : t)
+            .toList(),
       );
     } catch (e) {
       final message = e is ApiException ? e.message : 'Something went wrong.';

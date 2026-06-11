@@ -4,19 +4,19 @@ import 'package:jaspr_riverpod/jaspr_riverpod.dart';
 import 'package:merchant/exceptions/api_exception.dart';
 import 'package:merchant/providers/toast_provider.dart';
 import 'package:merchant/providers/ui_providers.dart';
-import 'package:merchant/repositories/counter_repository.dart';
+import 'package:merchant/repositories/category_repository.dart';
 import 'package:models/models.dart';
 
-final countersProvider =
-    AsyncNotifierProvider.autoDispose<CountersProvider, List<Counter>>(
-      () => CountersProvider(),
+final categoriesProvider =
+    AsyncNotifierProvider.autoDispose<CategoriesProvider, List<Category>>(
+      () => CategoriesProvider(),
     );
 
-class CountersProvider extends AsyncNotifier<List<Counter>> {
+class CategoriesProvider extends AsyncNotifier<List<Category>> {
   @override
-  FutureOr<List<Counter>> build() async {
+  FutureOr<List<Category>> build() async {
     try {
-      return await CounterRepository.getAll();
+      return await CategoryRepository.getAll();
     } catch (e) {
       return [];
     }
@@ -26,47 +26,47 @@ class CountersProvider extends AsyncNotifier<List<Counter>> {
     final selectedStore = ref.read(storeProvider);
     if (selectedStore == null) return;
 
-    final currentCounters = state.value ?? [];
+    final currentCategories = state.value ?? [];
     state = const AsyncLoading();
 
     try {
-      final counter = await CounterRepository.create(
+      final category = await CategoryRepository.create(
         storeId: selectedStore.id,
         name: name,
       );
 
-      state = AsyncData([...currentCounters, counter]);
+      state = AsyncData([...currentCategories, category]);
     } catch (e) {
       final message = e is ApiException ? e.message : 'Something went wrong.';
       ref.showToast(message);
 
-      state = AsyncData(currentCounters);
+      state = AsyncData(currentCategories);
     }
   }
 
-  Future<void> updateCounter({
+  Future<void> updateCategory({
     required String id,
     String? name,
     bool? isActive,
   }) async {
-    final currentCounters = state.value ?? [];
+    final currentCategories = state.value ?? [];
     state = const AsyncLoading();
 
     try {
-      final updatedCounter = await CounterRepository.update(
+      final updatedCategory = await CategoryRepository.update(
         id: id,
         name: name,
         isActive: isActive,
       );
 
       state = AsyncData(
-        currentCounters.map((s) => s.id == id ? updatedCounter : s).toList(),
+        currentCategories.map((s) => s.id == id ? updatedCategory : s).toList(),
       );
     } catch (e) {
       final message = e is ApiException ? e.message : 'Something went wrong.';
       ref.showToast(message);
 
-      state = AsyncData(currentCounters);
+      state = AsyncData(currentCategories);
     }
   }
 }

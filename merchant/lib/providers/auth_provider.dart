@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:jaspr_riverpod/jaspr_riverpod.dart';
+import 'package:merchant/exceptions/api_exception.dart';
 import 'package:merchant/providers/toast_provider.dart';
 import 'package:merchant/repositories/auth_repository.dart';
 import 'package:merchant/repositories/merchant_repository.dart';
