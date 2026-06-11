@@ -30,4 +30,5 @@ class ApiEndpoints {
   static const String merchants = '/v1/merchants';
   static const String stores = '/v1/stores';
   static const String terminals = '/v1/terminals';
+  static const String counters = '/v1/counters';
 }

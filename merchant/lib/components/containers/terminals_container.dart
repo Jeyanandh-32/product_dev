@@ -3,7 +3,9 @@ import 'package:jaspr/dom.dart';
 import 'package:jaspr_riverpod/jaspr_riverpod.dart';
 import 'package:merchant/components/buttons/add_button.dart';
 import 'package:merchant/components/cards/terminal_card.dart';
+import 'package:merchant/components/centered_message.dart';
 import 'package:merchant/components/fields/searchbar.dart';
+import 'package:merchant/components/loading.dart';
 import 'package:merchant/providers/terminals_provider.dart';
 import 'package:merchant/providers/ui_providers.dart';
 
@@ -20,11 +22,6 @@ class TerminalsContainer extends StatelessComponent {
             ?.where((t) => t.storeId == selectedStore?.id)
             .toList() ??
         [];
-
-    final showTerminalsGrid =
-        selectedStore != null &&
-        !terminalsState.isLoading &&
-        terminalsList.isNotEmpty;
 
     return div(
       classes:
@@ -71,27 +68,17 @@ class TerminalsContainer extends StatelessComponent {
           [],
         ),
 
-        div(
-          classes:
-              'grid grid-cols-1 ${showTerminalsGrid ? 'sm:grid-cols-2' : 'sm:grid-cols-1'} gap-4 overflow-y-auto flex-1 pr-2 ${showTerminalsGrid ? 'auto-rows-max' : ''}',
-          [
-            if (selectedStore == null)
-              div(
-                classes:
-                    'flex flex-col items-center justify-center h-full text-center text-gray-400 py-10 w-full',
-                [
-                  .text('Select a store to view terminals.'),
-                ],
-              )
-            else if (terminalsState.isLoading)
-              div(
-                classes:
-                    'flex flex-col items-center justify-center h-full text-center text-gray-400 py-10 w-full',
-                [
-                  .text('Loading terminals...'),
-                ],
-              )
-            else if (terminalsList.isNotEmpty)
+        if (selectedStore == null)
+          CenteredMessage(message: 'Select a store to view terminals.')
+        else if (terminalsState.isLoading)
+          Loading(text: 'Loading terminals...', fullScreen: false)
+        else if (terminalsList.isEmpty)
+          CenteredMessage(message: 'No terminals found.')
+        else
+          div(
+            classes:
+                'grid grid-cols-1 sm:grid-cols-2 gap-4 overflow-y-auto flex-1 pr-2 auto-rows-max',
+            [
               for (final terminal in terminalsList)
                 TerminalCard(
                   terminal: terminal,
@@ -101,17 +88,9 @@ class TerminalsContainer extends StatelessComponent {
                     context.read(activeModalProvider.notifier).state =
                         ActiveModal.editTerminal;
                   },
-                )
-            else
-              div(
-                classes:
-                    'flex flex-col items-center justify-center h-full text-center text-gray-400 py-10 w-full',
-                [
-                  .text('No terminals found.'),
-                ],
-              ),
-          ],
-        ),
+                ),
+            ],
+          ),
       ],
     );
   }

@@ -3,7 +3,9 @@ import 'package:jaspr/dom.dart';
 import 'package:jaspr_riverpod/jaspr_riverpod.dart';
 import 'package:merchant/components/buttons/add_button.dart';
 import 'package:merchant/components/cards/store_card.dart';
+import 'package:merchant/components/centered_message.dart';
 import 'package:merchant/components/fields/searchbar.dart';
+import 'package:merchant/components/loading.dart';
 import 'package:merchant/providers/stores_provider.dart';
 import 'package:merchant/providers/terminals_provider.dart';
 import 'package:merchant/providers/ui_providers.dart';
@@ -16,11 +18,6 @@ class StoresContainer extends StatelessComponent {
     final storesState = context.watch(storesProvider);
     final selectedStore = context.watch(selectedTabStoreProvider);
     final terminalsState = context.watch(terminalsProvider);
-
-    final showStoresGrid =
-        !storesState.isLoading &&
-        storesState.hasValue &&
-        storesState.value!.isNotEmpty;
 
     return div(
       classes:
@@ -57,19 +54,15 @@ class StoresContainer extends StatelessComponent {
           [],
         ),
 
-        div(
-          classes:
-              'grid grid-cols-1 ${showStoresGrid ? 'sm:grid-cols-2' : 'sm:grid-cols-1'} lg:flex lg:flex-col gap-4 overflow-y-auto flex-1 pr-2 ${showStoresGrid ? 'auto-rows-max' : ''}',
-          [
-            if (storesState.isLoading)
-              div(
-                classes:
-                    'flex flex-col items-center justify-center h-full text-center text-gray-400 py-10 w-full',
-                [
-                  .text('Loading stores...'),
-                ],
-              )
-            else if (storesState.hasValue && storesState.value!.isNotEmpty)
+        if (storesState.isLoading)
+          Loading(text: 'Loading stores...', fullScreen: false)
+        else if (storesState.hasValue && storesState.value!.isEmpty)
+          CenteredMessage(message: 'No stores were added.')
+        else
+          div(
+            classes:
+                'grid grid-cols-1 sm:grid-cols-2 lg:flex lg:flex-col gap-4 overflow-y-auto flex-1 pr-2 auto-rows-max',
+            [
               for (final store in storesState.value!)
                 StoreCard(
                   count:
@@ -88,17 +81,9 @@ class StoresContainer extends StatelessComponent {
                     context.read(activeModalProvider.notifier).state =
                         ActiveModal.editStore;
                   },
-                )
-            else
-              div(
-                classes:
-                    'flex flex-col items-center justify-center h-full text-center text-gray-400 py-10 w-full',
-                [
-                  .text('No stores were added.'),
-                ],
-              ),
-          ],
-        ),
+                ),
+            ],
+          ),
       ],
     );
   }
