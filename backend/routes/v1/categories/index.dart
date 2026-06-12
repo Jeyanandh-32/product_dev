@@ -67,6 +67,14 @@ Future<Response> _onPost(RequestContext context) async {
 
   final body = jsonBody;
 
+  if (
+    hasNonStringValue(body, 'name') ||
+    hasNonStringValue(body, 'description') ||
+    hasNonStringValue(body, 'imageUrl')
+  ) {
+    return inValidBody();
+  }
+
   final name = body['name'] as String?;
   final description = readOptionalString(body, 'description');
   final imageUrl = readOptionalString(body, 'imageUrl');

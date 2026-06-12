@@ -45,6 +45,15 @@ Future<Response> _onPutOrPatch(RequestContext context, String id) async {
 
   final body = jsonBody;
 
+  if (
+    hasNonStringValue(body, 'name') ||
+    hasNonBoolValue(body, 'isActive') ||
+    hasNonStringValue(body, 'description') ||
+    hasNonStringValue(body, 'imageUrl')
+  ) {
+    return inValidBody();
+  }
+
   final name = body['name'] as String?;
   final isActive = body['isActive'] as bool?;
   final description = readOptionalString(body, 'description');
