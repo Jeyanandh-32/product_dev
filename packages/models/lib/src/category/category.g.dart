@@ -14,6 +14,8 @@ _Category _$CategoryFromJson(Map<String, dynamic> json) => _Category(
   isActive: json['isActive'] as bool,
   createdAt: DateTime.parse(json['createdAt'] as String),
   updatedAt: DateTime.parse(json['updatedAt'] as String),
+  description: json['description'] as String?,
+  imageUrl: json['imageUrl'] as String?,
 );
 
 Map<String, dynamic> _$CategoryToJson(_Category instance) => <String, dynamic>{
@@ -24,4 +26,6 @@ Map<String, dynamic> _$CategoryToJson(_Category instance) => <String, dynamic>{
   'isActive': instance.isActive,
   'createdAt': instance.createdAt.toIso8601String(),
   'updatedAt': instance.updatedAt.toIso8601String(),
+  'description': instance.description,
+  'imageUrl': instance.imageUrl,
 };

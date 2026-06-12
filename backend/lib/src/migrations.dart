@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS merchants (
 )''',
       'CREATE INDEX IF NOT EXISTS idx_merchants_email ON merchants (email)',
       '''
-CREATE TABLE IF NOT EXISTS subscription_plans(
+CREATE TABLE IF NOT EXISTS subscription_plans (
     code VARCHAR(50) PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     price_in_paise INT NOT NULL,
@@ -36,21 +36,21 @@ CREATE TABLE IF NOT EXISTS subscription_plans(
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 )''',
       '''
-CREATE TABLE IF NOT EXISTS stores(
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    merchant_id UUID NOT NULL REFERENCES merchants(id) ON DELETE CASCADE,
+CREATE TABLE IF NOT EXISTS stores (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
+    merchant_id UUID NOT NULL REFERENCES merchants (id) ON DELETE CASCADE,
     name VARCHAR(255) NOT NULL,
     store_type VARCHAR(255),
     is_active BOOLEAN NOT NULL DEFAULT TRUE,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    CONSTRAINT unique_merchant_store_name UNIQUE(merchant_id, name)
+    CONSTRAINT unique_merchant_store_name UNIQUE (merchant_id, name)
 )''',
       '''
-CREATE TABLE IF NOT EXISTS store_subscriptions(
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    store_id UUID NOT NULL REFERENCES stores(id) ON DELETE CASCADE,
-    plan_code VARCHAR(50) NOT NULL REFERENCES subscription_plans(code) ON DELETE CASCADE,
+CREATE TABLE IF NOT EXISTS store_subscriptions (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
+    store_id UUID NOT NULL REFERENCES stores (id) ON DELETE CASCADE,
+    plan_code VARCHAR(50) NOT NULL REFERENCES subscription_plans (code) ON DELETE CASCADE,
     status VARCHAR(50) NOT NULL DEFAULT 'ACTIVE',
     current_period_start TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     current_period_end TIMESTAMPTZ NOT NULL,
@@ -58,40 +58,44 @@ CREATE TABLE IF NOT EXISTS store_subscriptions(
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 )''',
-      'CREATE INDEX IF NOT EXISTS idx_store_subscriptions_status ON store_subscriptions(status)',
+      'CREATE INDEX IF NOT EXISTS idx_store_subscriptions_status ON store_subscriptions (status)',
       '''
-CREATE TABLE IF NOT EXISTS terminals(
+CREATE TABLE IF NOT EXISTS terminals (
     code VARCHAR(12) PRIMARY KEY,
-    merchant_id UUID NOT NULL REFERENCES merchants(id) ON DELETE CASCADE,
-    store_id UUID NOT NULL REFERENCES stores(id) ON DELETE CASCADE,
+    merchant_id UUID NOT NULL REFERENCES merchants (id) ON DELETE CASCADE,
+    store_id UUID NOT NULL REFERENCES stores (id) ON DELETE CASCADE,
     name VARCHAR(255) NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
     is_active BOOLEAN NOT NULL DEFAULT TRUE,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    CONSTRAINT unique_store_terminal_name UNIQUE(store_id, name)
+    CONSTRAINT unique_store_terminal_name UNIQUE (store_id, name)
 )''',
       '''
-CREATE TABLE IF NOT EXISTS counters(
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+CREATE TABLE IF NOT EXISTS counters (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
     name VARCHAR(255) NOT NULL,
-    merchant_id UUID NOT NULL REFERENCES merchants(id) ON DELETE CASCADE,
-    store_id UUID NOT NULL REFERENCES stores(id) ON DELETE CASCADE,
+    merchant_id UUID NOT NULL REFERENCES merchants (id) ON DELETE CASCADE,
+    store_id UUID NOT NULL REFERENCES stores (id) ON DELETE CASCADE,
     is_active BOOLEAN NOT NULL DEFAULT TRUE,
+    description VARCHAR(255),
+    image_url VARCHAR(255),
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    CONSTRAINT unique_store_counter_name UNIQUE(store_id, name)
+    CONSTRAINT unique_store_counter_name UNIQUE (store_id, name)
 )''',
       '''
-CREATE TABLE IF NOT EXISTS categories(
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+CREATE TABLE IF NOT EXISTS categories (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
     name VARCHAR(255) NOT NULL,
-    merchant_id UUID NOT NULL REFERENCES merchants(id) ON DELETE CASCADE,
-    store_id UUID NOT NULL REFERENCES stores(id) ON DELETE CASCADE,
+    merchant_id UUID NOT NULL REFERENCES merchants (id) ON DELETE CASCADE,
+    store_id UUID NOT NULL REFERENCES stores (id) ON DELETE CASCADE,
     is_active BOOLEAN NOT NULL DEFAULT TRUE,
+    description VARCHAR(255),
+    image_url VARCHAR(255),
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    CONSTRAINT unique_store_category_name UNIQUE(store_id, name)
+    CONSTRAINT unique_store_category_name UNIQUE (store_id, name)
 )''',
     ],
   ),

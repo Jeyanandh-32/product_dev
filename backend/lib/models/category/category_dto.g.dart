@@ -14,6 +14,8 @@ _CategoryDto _$CategoryDtoFromJson(Map<String, dynamic> json) => _CategoryDto(
   isActive: json['is_active'] as bool,
   createdAt: _fromJson(json['created_at'] as DateTime),
   updatedAt: _fromJson(json['updated_at'] as DateTime),
+  description: json['description'] as String?,
+  imageUrl: json['image_url'] as String?,
 );
 
 Map<String, dynamic> _$CategoryDtoToJson(_CategoryDto instance) =>
@@ -25,4 +27,6 @@ Map<String, dynamic> _$CategoryDtoToJson(_CategoryDto instance) =>
       'is_active': instance.isActive,
       'created_at': instance.createdAt.toIso8601String(),
       'updated_at': instance.updatedAt.toIso8601String(),
+      'description': instance.description,
+      'image_url': instance.imageUrl,
     };

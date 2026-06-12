@@ -14,6 +14,8 @@ abstract class CounterDto with _$CounterDto {
     required bool isActive,
     @JsonKey(fromJson: _fromJson) required DateTime createdAt,
     @JsonKey(fromJson: _fromJson) required DateTime updatedAt,
+    String? description,
+    String? imageUrl,
   }) = _CounterDto;
 
   factory CounterDto.fromJson(Map<String, Object?> json) =>

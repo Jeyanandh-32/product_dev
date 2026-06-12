@@ -1,5 +1,6 @@
 import 'package:backend/extensions/counter_dto_extension.dart';
 import 'package:backend/repositories/counter_repository.dart';
+import 'package:backend/utils/request_body.dart';
 import 'package:backend/utils/responses.dart';
 import 'package:dart_frog/dart_frog.dart';
 import 'package:validators/validators.dart';
@@ -46,15 +47,23 @@ Future<Response> _onPutOrPatch(RequestContext context, String id) async {
 
   final name = body['name'] as String?;
   final isActive = body['isActive'] as bool?;
+  final description = readOptionalString(body, 'description');
+  final imageUrl = readOptionalString(body, 'imageUrl');
 
   final namePresent = body.containsKey('name');
   final isActivePresent = body.containsKey('isActive');
+  final descriptionPresent = body.containsKey('description');
+  final imageUrlPresent = body.containsKey('imageUrl');
 
   final errorMessage = CounterValidator.update(
     name: name,
     isActive: isActive,
+    description: description,
+    imageUrl: imageUrl,
     namePresent: namePresent,
     isActivePresent: isActivePresent,
+    descriptionPresent: descriptionPresent,
+    imageUrlPresent: imageUrlPresent,
   );
 
   if (errorMessage != null) {
@@ -66,6 +75,10 @@ Future<Response> _onPutOrPatch(RequestContext context, String id) async {
       id: id,
       name: name?.trim(),
       isActive: isActive,
+      description: description,
+      descriptionPresent: descriptionPresent,
+      imageUrl: imageUrl,
+      imageUrlPresent: imageUrlPresent,
     );
 
     return success(

@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Category {
 
- String get id; String get name; String get merchantId; String get storeId; bool get isActive; DateTime get createdAt; DateTime get updatedAt;
+ String get id; String get name; String get merchantId; String get storeId; bool get isActive; DateTime get createdAt; DateTime get updatedAt; String? get description; String? get imageUrl;
 /// Create a copy of Category
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $CategoryCopyWith<Category> get copyWith => _$CategoryCopyWithImpl<Category>(thi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Category&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.merchantId, merchantId) || other.merchantId == merchantId)&&(identical(other.storeId, storeId) || other.storeId == storeId)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Category&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.merchantId, merchantId) || other.merchantId == merchantId)&&(identical(other.storeId, storeId) || other.storeId == storeId)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.description, description) || other.description == description)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,merchantId,storeId,isActive,createdAt,updatedAt);
+int get hashCode => Object.hash(runtimeType,id,name,merchantId,storeId,isActive,createdAt,updatedAt,description,imageUrl);
 
 @override
 String toString() {
-  return 'Category(id: $id, name: $name, merchantId: $merchantId, storeId: $storeId, isActive: $isActive, createdAt: $createdAt, updatedAt: $updatedAt)';
+  return 'Category(id: $id, name: $name, merchantId: $merchantId, storeId: $storeId, isActive: $isActive, createdAt: $createdAt, updatedAt: $updatedAt, description: $description, imageUrl: $imageUrl)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $CategoryCopyWith<$Res>  {
   factory $CategoryCopyWith(Category value, $Res Function(Category) _then) = _$CategoryCopyWithImpl;
 @useResult
 $Res call({
- String id, String name, String merchantId, String storeId, bool isActive, DateTime createdAt, DateTime updatedAt
+ String id, String name, String merchantId, String storeId, bool isActive, DateTime createdAt, DateTime updatedAt, String? description, String? imageUrl
 });
 
 
@@ -65,7 +65,7 @@ class _$CategoryCopyWithImpl<$Res>
 
 /// Create a copy of Category
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? merchantId = null,Object? storeId = null,Object? isActive = null,Object? createdAt = null,Object? updatedAt = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? merchantId = null,Object? storeId = null,Object? isActive = null,Object? createdAt = null,Object? updatedAt = null,Object? description = freezed,Object? imageUrl = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
@@ -74,7 +74,9 @@ as String,storeId: null == storeId ? _self.storeId : storeId // ignore: cast_nul
 as String,isActive: null == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
 as bool,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
-as DateTime,
+as DateTime,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
+as String?,imageUrl: freezed == imageUrl ? _self.imageUrl : imageUrl // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 
@@ -159,10 +161,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  String merchantId,  String storeId,  bool isActive,  DateTime createdAt,  DateTime updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  String merchantId,  String storeId,  bool isActive,  DateTime createdAt,  DateTime updatedAt,  String? description,  String? imageUrl)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Category() when $default != null:
-return $default(_that.id,_that.name,_that.merchantId,_that.storeId,_that.isActive,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.name,_that.merchantId,_that.storeId,_that.isActive,_that.createdAt,_that.updatedAt,_that.description,_that.imageUrl);case _:
   return orElse();
 
 }
@@ -180,10 +182,10 @@ return $default(_that.id,_that.name,_that.merchantId,_that.storeId,_that.isActiv
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  String merchantId,  String storeId,  bool isActive,  DateTime createdAt,  DateTime updatedAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  String merchantId,  String storeId,  bool isActive,  DateTime createdAt,  DateTime updatedAt,  String? description,  String? imageUrl)  $default,) {final _that = this;
 switch (_that) {
 case _Category():
-return $default(_that.id,_that.name,_that.merchantId,_that.storeId,_that.isActive,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.name,_that.merchantId,_that.storeId,_that.isActive,_that.createdAt,_that.updatedAt,_that.description,_that.imageUrl);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -200,10 +202,10 @@ return $default(_that.id,_that.name,_that.merchantId,_that.storeId,_that.isActiv
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  String merchantId,  String storeId,  bool isActive,  DateTime createdAt,  DateTime updatedAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  String merchantId,  String storeId,  bool isActive,  DateTime createdAt,  DateTime updatedAt,  String? description,  String? imageUrl)?  $default,) {final _that = this;
 switch (_that) {
 case _Category() when $default != null:
-return $default(_that.id,_that.name,_that.merchantId,_that.storeId,_that.isActive,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.name,_that.merchantId,_that.storeId,_that.isActive,_that.createdAt,_that.updatedAt,_that.description,_that.imageUrl);case _:
   return null;
 
 }
@@ -215,7 +217,7 @@ return $default(_that.id,_that.name,_that.merchantId,_that.storeId,_that.isActiv
 @JsonSerializable()
 
 class _Category implements Category {
-  const _Category({required this.id, required this.name, required this.merchantId, required this.storeId, required this.isActive, required this.createdAt, required this.updatedAt});
+  const _Category({required this.id, required this.name, required this.merchantId, required this.storeId, required this.isActive, required this.createdAt, required this.updatedAt, this.description, this.imageUrl});
   factory _Category.fromJson(Map<String, dynamic> json) => _$CategoryFromJson(json);
 
 @override final  String id;
@@ -225,6 +227,8 @@ class _Category implements Category {
 @override final  bool isActive;
 @override final  DateTime createdAt;
 @override final  DateTime updatedAt;
+@override final  String? description;
+@override final  String? imageUrl;
 
 /// Create a copy of Category
 /// with the given fields replaced by the non-null parameter values.
@@ -239,16 +243,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Category&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.merchantId, merchantId) || other.merchantId == merchantId)&&(identical(other.storeId, storeId) || other.storeId == storeId)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Category&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.merchantId, merchantId) || other.merchantId == merchantId)&&(identical(other.storeId, storeId) || other.storeId == storeId)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.description, description) || other.description == description)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,merchantId,storeId,isActive,createdAt,updatedAt);
+int get hashCode => Object.hash(runtimeType,id,name,merchantId,storeId,isActive,createdAt,updatedAt,description,imageUrl);
 
 @override
 String toString() {
-  return 'Category(id: $id, name: $name, merchantId: $merchantId, storeId: $storeId, isActive: $isActive, createdAt: $createdAt, updatedAt: $updatedAt)';
+  return 'Category(id: $id, name: $name, merchantId: $merchantId, storeId: $storeId, isActive: $isActive, createdAt: $createdAt, updatedAt: $updatedAt, description: $description, imageUrl: $imageUrl)';
 }
 
 
@@ -259,7 +263,7 @@ abstract mixin class _$CategoryCopyWith<$Res> implements $CategoryCopyWith<$Res>
   factory _$CategoryCopyWith(_Category value, $Res Function(_Category) _then) = __$CategoryCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String name, String merchantId, String storeId, bool isActive, DateTime createdAt, DateTime updatedAt
+ String id, String name, String merchantId, String storeId, bool isActive, DateTime createdAt, DateTime updatedAt, String? description, String? imageUrl
 });
 
 
@@ -276,7 +280,7 @@ class __$CategoryCopyWithImpl<$Res>
 
 /// Create a copy of Category
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? merchantId = null,Object? storeId = null,Object? isActive = null,Object? createdAt = null,Object? updatedAt = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? merchantId = null,Object? storeId = null,Object? isActive = null,Object? createdAt = null,Object? updatedAt = null,Object? description = freezed,Object? imageUrl = freezed,}) {
   return _then(_Category(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
@@ -285,7 +289,9 @@ as String,storeId: null == storeId ? _self.storeId : storeId // ignore: cast_nul
 as String,isActive: null == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
 as bool,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
-as DateTime,
+as DateTime,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
+as String?,imageUrl: freezed == imageUrl ? _self.imageUrl : imageUrl // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 

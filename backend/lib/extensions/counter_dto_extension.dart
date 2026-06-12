@@ -10,5 +10,7 @@ extension CounterDtoExtension on CounterDto {
     isActive: isActive,
     createdAt: createdAt,
     updatedAt: updatedAt,
+    description: description,
+    imageUrl: imageUrl,
   );
 }

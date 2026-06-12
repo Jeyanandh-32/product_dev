@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:backend/extensions/counter_dto_extension.dart';
 import 'package:backend/models/token_payload/token_payload.dart';
 import 'package:backend/repositories/counter_repository.dart';
+import 'package:backend/utils/request_body.dart';
 import 'package:backend/utils/responses.dart';
 import 'package:dart_frog/dart_frog.dart';
 import 'package:validators/validators.dart';
@@ -67,9 +68,13 @@ Future<Response> _onPost(RequestContext context) async {
   final body = jsonBody;
 
   final name = body['name'] as String?;
+  final description = readOptionalString(body, 'description');
+  final imageUrl = readOptionalString(body, 'imageUrl');
 
   final errorMessage = CounterValidator.create(
     name: name,
+    description: description,
+    imageUrl: imageUrl,
   );
 
   if (errorMessage != null) {
@@ -81,6 +86,8 @@ Future<Response> _onPost(RequestContext context) async {
       merchantId: merchantId,
       storeId: storeId,
       name: name!.trim(),
+      description: description,
+      imageUrl: imageUrl,
     );
 
     return success(

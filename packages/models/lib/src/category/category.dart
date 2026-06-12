@@ -13,6 +13,8 @@ abstract class Category with _$Category {
     required bool isActive,
     required DateTime createdAt,
     required DateTime updatedAt,
+    String? description,
+    String? imageUrl,
   }) = _Category;
 
   factory Category.fromJson(Map<String, Object?> json) =>

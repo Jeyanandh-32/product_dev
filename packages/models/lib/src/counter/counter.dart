@@ -13,6 +13,8 @@ abstract class Counter with _$Counter {
     required bool isActive,
     required DateTime createdAt,
     required DateTime updatedAt,
+    String? description,
+    String? imageUrl,
   }) = _Counter;
 
   factory Counter.fromJson(Map<String, Object?> json) =>

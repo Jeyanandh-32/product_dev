@@ -14,6 +14,8 @@ abstract class CategoryDto with _$CategoryDto {
     required bool isActive,
     @JsonKey(fromJson: _fromJson) required DateTime createdAt,
     @JsonKey(fromJson: _fromJson) required DateTime updatedAt,
+    String? description,
+    String? imageUrl,
   }) = _CategoryDto;
 
   factory CategoryDto.fromJson(Map<String, Object?> json) =>

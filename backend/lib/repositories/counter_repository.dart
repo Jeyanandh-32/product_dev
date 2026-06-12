@@ -10,16 +10,20 @@ class CounterRepository {
     required String name,
     required String merchantId,
     required String storeId,
+    String? description,
+    String? imageUrl,
   }) async {
     final result = await _session.execute(
       Sql.named('''
-      INSERT INTO counters(name, merchant_id, store_id)
-      VALUES(@name, @merchantId, @storeId) RETURNING *
+      INSERT INTO counters(name, merchant_id, store_id, description, image_url)
+      VALUES(@name, @merchantId, @storeId, @description, @imageUrl) RETURNING *
       '''),
       parameters: {
         'name': name,
         'merchantId': merchantId,
         'storeId': storeId,
+        'description': description,
+        'imageUrl': imageUrl,
       },
     );
 
@@ -73,17 +77,33 @@ class CounterRepository {
     required String id,
     String? name,
     bool? isActive,
+    String? description,
+    bool descriptionPresent = false,
+    String? imageUrl,
+    bool imageUrlPresent = false,
   }) async {
     final result = await _session.execute(
       Sql.named('''
         UPDATE counters SET name = COALESCE(@name, name),
         is_active = COALESCE(@isActive, is_active),
+        description = CASE
+          WHEN @descriptionPresent THEN @description
+          ELSE description
+        END,
+        image_url = CASE
+          WHEN @imageUrlPresent THEN @imageUrl
+          ELSE image_url
+        END,
         updated_at = NOW() WHERE id = @id RETURNING *
       '''),
       parameters: {
         'id': id,
         'name': name,
         'isActive': isActive,
+        'description': description,
+        'descriptionPresent': descriptionPresent,
+        'imageUrl': imageUrl,
+        'imageUrlPresent': imageUrlPresent,
       },
     );
 
