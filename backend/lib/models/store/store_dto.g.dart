@@ -10,8 +10,8 @@ _StoreDto _$StoreDtoFromJson(Map<String, dynamic> json) => _StoreDto(
   id: json['id'] as String,
   merchantId: json['merchant_id'] as String,
   name: json['name'] as String,
-  createdAt: _fromJson(json['created_at'] as DateTime),
-  updatedAt: _fromJson(json['updated_at'] as DateTime),
+  createdAt: dateTimeFromJson(json['created_at'] as DateTime),
+  updatedAt: dateTimeFromJson(json['updated_at'] as DateTime),
   isActive: json['is_active'] as bool,
   storeType: json['store_type'] as String?,
 );

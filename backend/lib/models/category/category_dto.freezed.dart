@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$CategoryDto {
 
- String get id; String get name; String get merchantId; String get storeId; bool get isActive;@JsonKey(fromJson: _fromJson) DateTime get createdAt;@JsonKey(fromJson: _fromJson) DateTime get updatedAt; String? get description; String? get imageUrl;
+ String get id; String get name; String get merchantId; String get storeId; bool get isActive;@JsonKey(fromJson: dateTimeFromJson) DateTime get createdAt;@JsonKey(fromJson: dateTimeFromJson) DateTime get updatedAt; String? get description; String? get imageUrl;
 /// Create a copy of CategoryDto
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -48,7 +48,7 @@ abstract mixin class $CategoryDtoCopyWith<$Res>  {
   factory $CategoryDtoCopyWith(CategoryDto value, $Res Function(CategoryDto) _then) = _$CategoryDtoCopyWithImpl;
 @useResult
 $Res call({
- String id, String name, String merchantId, String storeId, bool isActive,@JsonKey(fromJson: _fromJson) DateTime createdAt,@JsonKey(fromJson: _fromJson) DateTime updatedAt, String? description, String? imageUrl
+ String id, String name, String merchantId, String storeId, bool isActive,@JsonKey(fromJson: dateTimeFromJson) DateTime createdAt,@JsonKey(fromJson: dateTimeFromJson) DateTime updatedAt, String? description, String? imageUrl
 });
 
 
@@ -161,7 +161,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  String merchantId,  String storeId,  bool isActive, @JsonKey(fromJson: _fromJson)  DateTime createdAt, @JsonKey(fromJson: _fromJson)  DateTime updatedAt,  String? description,  String? imageUrl)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  String merchantId,  String storeId,  bool isActive, @JsonKey(fromJson: dateTimeFromJson)  DateTime createdAt, @JsonKey(fromJson: dateTimeFromJson)  DateTime updatedAt,  String? description,  String? imageUrl)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _CategoryDto() when $default != null:
 return $default(_that.id,_that.name,_that.merchantId,_that.storeId,_that.isActive,_that.createdAt,_that.updatedAt,_that.description,_that.imageUrl);case _:
@@ -182,7 +182,7 @@ return $default(_that.id,_that.name,_that.merchantId,_that.storeId,_that.isActiv
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  String merchantId,  String storeId,  bool isActive, @JsonKey(fromJson: _fromJson)  DateTime createdAt, @JsonKey(fromJson: _fromJson)  DateTime updatedAt,  String? description,  String? imageUrl)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  String merchantId,  String storeId,  bool isActive, @JsonKey(fromJson: dateTimeFromJson)  DateTime createdAt, @JsonKey(fromJson: dateTimeFromJson)  DateTime updatedAt,  String? description,  String? imageUrl)  $default,) {final _that = this;
 switch (_that) {
 case _CategoryDto():
 return $default(_that.id,_that.name,_that.merchantId,_that.storeId,_that.isActive,_that.createdAt,_that.updatedAt,_that.description,_that.imageUrl);case _:
@@ -202,7 +202,7 @@ return $default(_that.id,_that.name,_that.merchantId,_that.storeId,_that.isActiv
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  String merchantId,  String storeId,  bool isActive, @JsonKey(fromJson: _fromJson)  DateTime createdAt, @JsonKey(fromJson: _fromJson)  DateTime updatedAt,  String? description,  String? imageUrl)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  String merchantId,  String storeId,  bool isActive, @JsonKey(fromJson: dateTimeFromJson)  DateTime createdAt, @JsonKey(fromJson: dateTimeFromJson)  DateTime updatedAt,  String? description,  String? imageUrl)?  $default,) {final _that = this;
 switch (_that) {
 case _CategoryDto() when $default != null:
 return $default(_that.id,_that.name,_that.merchantId,_that.storeId,_that.isActive,_that.createdAt,_that.updatedAt,_that.description,_that.imageUrl);case _:
@@ -217,7 +217,7 @@ return $default(_that.id,_that.name,_that.merchantId,_that.storeId,_that.isActiv
 
 @JsonSerializable(fieldRename: .snake)
 class _CategoryDto implements CategoryDto {
-  const _CategoryDto({required this.id, required this.name, required this.merchantId, required this.storeId, required this.isActive, @JsonKey(fromJson: _fromJson) required this.createdAt, @JsonKey(fromJson: _fromJson) required this.updatedAt, this.description, this.imageUrl});
+  const _CategoryDto({required this.id, required this.name, required this.merchantId, required this.storeId, required this.isActive, @JsonKey(fromJson: dateTimeFromJson) required this.createdAt, @JsonKey(fromJson: dateTimeFromJson) required this.updatedAt, this.description, this.imageUrl});
   factory _CategoryDto.fromJson(Map<String, dynamic> json) => _$CategoryDtoFromJson(json);
 
 @override final  String id;
@@ -225,8 +225,8 @@ class _CategoryDto implements CategoryDto {
 @override final  String merchantId;
 @override final  String storeId;
 @override final  bool isActive;
-@override@JsonKey(fromJson: _fromJson) final  DateTime createdAt;
-@override@JsonKey(fromJson: _fromJson) final  DateTime updatedAt;
+@override@JsonKey(fromJson: dateTimeFromJson) final  DateTime createdAt;
+@override@JsonKey(fromJson: dateTimeFromJson) final  DateTime updatedAt;
 @override final  String? description;
 @override final  String? imageUrl;
 
@@ -263,7 +263,7 @@ abstract mixin class _$CategoryDtoCopyWith<$Res> implements $CategoryDtoCopyWith
   factory _$CategoryDtoCopyWith(_CategoryDto value, $Res Function(_CategoryDto) _then) = __$CategoryDtoCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String name, String merchantId, String storeId, bool isActive,@JsonKey(fromJson: _fromJson) DateTime createdAt,@JsonKey(fromJson: _fromJson) DateTime updatedAt, String? description, String? imageUrl
+ String id, String name, String merchantId, String storeId, bool isActive,@JsonKey(fromJson: dateTimeFromJson) DateTime createdAt,@JsonKey(fromJson: dateTimeFromJson) DateTime updatedAt, String? description, String? imageUrl
 });
 
 

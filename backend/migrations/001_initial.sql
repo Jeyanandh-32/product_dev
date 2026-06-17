@@ -87,3 +87,35 @@ CREATE TABLE IF NOT EXISTS categories (
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     CONSTRAINT unique_store_category_name UNIQUE (store_id, name)
 );
+
+CREATE TABLE IF NOT EXISTS products (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
+    merchant_id UUID NOT NULL REFERENCES merchants (id) ON DELETE CASCADE,
+    store_id UUID NOT NULL REFERENCES stores (id) ON DELETE CASCADE,
+    name VARCHAR(255) NOT NULL,
+    sku VARCHAR(100),
+    barcode VARCHAR(100),
+    description VARCHAR(255),
+    image_url VARCHAR(255),
+    category_id UUID REFERENCES categories (id) ON DELETE SET NULL,
+    counter_id UUID REFERENCES counters (id) ON DELETE SET NULL,
+    tax_rate NUMERIC(5, 2) NOT NULL DEFAULT 0.00,
+    base_price INT NOT NULL DEFAULT 0,
+    selling_price INT NOT NULL DEFAULT 0,
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    CONSTRAINT unique_merchant_product_sku UNIQUE (merchant_id, sku),
+    CONSTRAINT unique_store_product_name UNIQUE (store_id, name)
+);
+
+CREATE TABLE IF NOT EXISTS stocks (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
+    product_id UUID NOT NULL REFERENCES products (id) ON DELETE CASCADE,
+    store_id UUID NOT NULL REFERENCES stores (id) ON DELETE CASCADE,
+    quantity INT NOT NULL DEFAULT 0,
+    low_stock_threshold INT NOT NULL DEFAULT 0,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    CONSTRAINT unique_store_product_stock UNIQUE (store_id, product_id)
+);

@@ -13,8 +13,8 @@ _TerminalDto _$TerminalDtoFromJson(Map<String, dynamic> json) => _TerminalDto(
   name: json['name'] as String,
   passwordHash: json['password_hash'] as String,
   isActive: json['is_active'] as bool,
-  createdAt: _fromJson(json['created_at'] as DateTime),
-  updatedAt: _fromJson(json['updated_at'] as DateTime),
+  createdAt: dateTimeFromJson(json['created_at'] as DateTime),
+  updatedAt: dateTimeFromJson(json['updated_at'] as DateTime),
 );
 
 Map<String, dynamic> _$TerminalDtoToJson(_TerminalDto instance) =>

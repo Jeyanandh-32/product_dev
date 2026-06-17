@@ -1,3 +1,4 @@
+import 'package:backend/utils/converters.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'category_dto.freezed.dart';
@@ -12,8 +13,8 @@ abstract class CategoryDto with _$CategoryDto {
     required String merchantId,
     required String storeId,
     required bool isActive,
-    @JsonKey(fromJson: _fromJson) required DateTime createdAt,
-    @JsonKey(fromJson: _fromJson) required DateTime updatedAt,
+    @JsonKey(fromJson: dateTimeFromJson) required DateTime createdAt,
+    @JsonKey(fromJson: dateTimeFromJson) required DateTime updatedAt,
     String? description,
     String? imageUrl,
   }) = _CategoryDto;
@@ -21,5 +22,3 @@ abstract class CategoryDto with _$CategoryDto {
   factory CategoryDto.fromJson(Map<String, Object?> json) =>
       _$CategoryDtoFromJson(json);
 }
-
-DateTime _fromJson(DateTime value) => value;

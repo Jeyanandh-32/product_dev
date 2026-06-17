@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$TerminalDto {
 
- String get code; String get merchantId; String get storeId; String get name; String get passwordHash; bool get isActive;@JsonKey(fromJson: _fromJson) DateTime get createdAt;@JsonKey(fromJson: _fromJson) DateTime get updatedAt;
+ String get code; String get merchantId; String get storeId; String get name; String get passwordHash; bool get isActive;@JsonKey(fromJson: dateTimeFromJson) DateTime get createdAt;@JsonKey(fromJson: dateTimeFromJson) DateTime get updatedAt;
 /// Create a copy of TerminalDto
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -48,7 +48,7 @@ abstract mixin class $TerminalDtoCopyWith<$Res>  {
   factory $TerminalDtoCopyWith(TerminalDto value, $Res Function(TerminalDto) _then) = _$TerminalDtoCopyWithImpl;
 @useResult
 $Res call({
- String code, String merchantId, String storeId, String name, String passwordHash, bool isActive,@JsonKey(fromJson: _fromJson) DateTime createdAt,@JsonKey(fromJson: _fromJson) DateTime updatedAt
+ String code, String merchantId, String storeId, String name, String passwordHash, bool isActive,@JsonKey(fromJson: dateTimeFromJson) DateTime createdAt,@JsonKey(fromJson: dateTimeFromJson) DateTime updatedAt
 });
 
 
@@ -160,7 +160,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String code,  String merchantId,  String storeId,  String name,  String passwordHash,  bool isActive, @JsonKey(fromJson: _fromJson)  DateTime createdAt, @JsonKey(fromJson: _fromJson)  DateTime updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String code,  String merchantId,  String storeId,  String name,  String passwordHash,  bool isActive, @JsonKey(fromJson: dateTimeFromJson)  DateTime createdAt, @JsonKey(fromJson: dateTimeFromJson)  DateTime updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _TerminalDto() when $default != null:
 return $default(_that.code,_that.merchantId,_that.storeId,_that.name,_that.passwordHash,_that.isActive,_that.createdAt,_that.updatedAt);case _:
@@ -181,7 +181,7 @@ return $default(_that.code,_that.merchantId,_that.storeId,_that.name,_that.passw
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String code,  String merchantId,  String storeId,  String name,  String passwordHash,  bool isActive, @JsonKey(fromJson: _fromJson)  DateTime createdAt, @JsonKey(fromJson: _fromJson)  DateTime updatedAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String code,  String merchantId,  String storeId,  String name,  String passwordHash,  bool isActive, @JsonKey(fromJson: dateTimeFromJson)  DateTime createdAt, @JsonKey(fromJson: dateTimeFromJson)  DateTime updatedAt)  $default,) {final _that = this;
 switch (_that) {
 case _TerminalDto():
 return $default(_that.code,_that.merchantId,_that.storeId,_that.name,_that.passwordHash,_that.isActive,_that.createdAt,_that.updatedAt);case _:
@@ -201,7 +201,7 @@ return $default(_that.code,_that.merchantId,_that.storeId,_that.name,_that.passw
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String code,  String merchantId,  String storeId,  String name,  String passwordHash,  bool isActive, @JsonKey(fromJson: _fromJson)  DateTime createdAt, @JsonKey(fromJson: _fromJson)  DateTime updatedAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String code,  String merchantId,  String storeId,  String name,  String passwordHash,  bool isActive, @JsonKey(fromJson: dateTimeFromJson)  DateTime createdAt, @JsonKey(fromJson: dateTimeFromJson)  DateTime updatedAt)?  $default,) {final _that = this;
 switch (_that) {
 case _TerminalDto() when $default != null:
 return $default(_that.code,_that.merchantId,_that.storeId,_that.name,_that.passwordHash,_that.isActive,_that.createdAt,_that.updatedAt);case _:
@@ -216,7 +216,7 @@ return $default(_that.code,_that.merchantId,_that.storeId,_that.name,_that.passw
 
 @JsonSerializable(fieldRename: .snake)
 class _TerminalDto implements TerminalDto {
-  const _TerminalDto({required this.code, required this.merchantId, required this.storeId, required this.name, required this.passwordHash, required this.isActive, @JsonKey(fromJson: _fromJson) required this.createdAt, @JsonKey(fromJson: _fromJson) required this.updatedAt});
+  const _TerminalDto({required this.code, required this.merchantId, required this.storeId, required this.name, required this.passwordHash, required this.isActive, @JsonKey(fromJson: dateTimeFromJson) required this.createdAt, @JsonKey(fromJson: dateTimeFromJson) required this.updatedAt});
   factory _TerminalDto.fromJson(Map<String, dynamic> json) => _$TerminalDtoFromJson(json);
 
 @override final  String code;
@@ -225,8 +225,8 @@ class _TerminalDto implements TerminalDto {
 @override final  String name;
 @override final  String passwordHash;
 @override final  bool isActive;
-@override@JsonKey(fromJson: _fromJson) final  DateTime createdAt;
-@override@JsonKey(fromJson: _fromJson) final  DateTime updatedAt;
+@override@JsonKey(fromJson: dateTimeFromJson) final  DateTime createdAt;
+@override@JsonKey(fromJson: dateTimeFromJson) final  DateTime updatedAt;
 
 /// Create a copy of TerminalDto
 /// with the given fields replaced by the non-null parameter values.
@@ -261,7 +261,7 @@ abstract mixin class _$TerminalDtoCopyWith<$Res> implements $TerminalDtoCopyWith
   factory _$TerminalDtoCopyWith(_TerminalDto value, $Res Function(_TerminalDto) _then) = __$TerminalDtoCopyWithImpl;
 @override @useResult
 $Res call({
- String code, String merchantId, String storeId, String name, String passwordHash, bool isActive,@JsonKey(fromJson: _fromJson) DateTime createdAt,@JsonKey(fromJson: _fromJson) DateTime updatedAt
+ String code, String merchantId, String storeId, String name, String passwordHash, bool isActive,@JsonKey(fromJson: dateTimeFromJson) DateTime createdAt,@JsonKey(fromJson: dateTimeFromJson) DateTime updatedAt
 });
 
 

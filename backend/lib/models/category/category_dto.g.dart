@@ -12,8 +12,8 @@ _CategoryDto _$CategoryDtoFromJson(Map<String, dynamic> json) => _CategoryDto(
   merchantId: json['merchant_id'] as String,
   storeId: json['store_id'] as String,
   isActive: json['is_active'] as bool,
-  createdAt: _fromJson(json['created_at'] as DateTime),
-  updatedAt: _fromJson(json['updated_at'] as DateTime),
+  createdAt: dateTimeFromJson(json['created_at'] as DateTime),
+  updatedAt: dateTimeFromJson(json['updated_at'] as DateTime),
   description: json['description'] as String?,
   imageUrl: json['image_url'] as String?,
 );

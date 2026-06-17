@@ -2,6 +2,8 @@ import 'package:backend/config/database.dart';
 import 'package:backend/repositories/category_repository.dart';
 import 'package:backend/repositories/counter_repository.dart';
 import 'package:backend/repositories/merchant_repository.dart';
+import 'package:backend/repositories/product_repository.dart';
+import 'package:backend/repositories/stock_repository.dart';
 import 'package:backend/repositories/store_repository.dart'; // Import your new StoreRepository
 import 'package:backend/repositories/terminal_repository.dart';
 import 'package:dart_frog/dart_frog.dart';
@@ -10,6 +12,16 @@ import 'package:postgres/postgres.dart';
 Middleware providerMiddleware() {
   return (handler) {
     return handler
+        .use(
+          provider<ProductRepository>(
+            (context) => ProductRepository(session: context.read<Session>()),
+          ),
+        )
+        .use(
+          provider<StockRepository>(
+            (context) => StockRepository(session: context.read<Session>()),
+          ),
+        )
         .use(
           provider<CategoryRepository>(
             (context) => CategoryRepository(session: context.read<Session>()),
