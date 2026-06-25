@@ -21,23 +21,23 @@ class Drawer extends StatelessComponent {
   @override
   Component build(BuildContext context) {
     final isNavOpen = context.watch(navOpenProvider);
-    final location = RouteState.maybeOf(context)?.location ?? '/';
+    final path = RouteState.maybeOf(context)?.path ?? '/';
 
-    final isDashboard = location == '/';
-    final isInventory = location.startsWith('/inventory');
-    final isReports = location.startsWith('/reports');
-    final isStores = location.startsWith('/stores');
-    final isAccount = location.startsWith('/account');
-    final isSettings = location.startsWith('/settings');
+    final isDashboard = path == '/';
+    final isInventory = path.startsWith('/inventory');
+    final isReports = path.startsWith('/reports');
+    final isStores = path.startsWith('/stores');
+    final isAccount = path.startsWith('/account');
+    final isSettings = path.startsWith('/settings');
 
-    final isCategory = location == '/inventory/categories';
-    final isCounters = location == '/inventory/counters';
+    final isCategory = path == '/inventory/categories';
+    final isCounters = path == '/inventory/counters';
     final isProducts = isInventory && !isCategory && !isCounters;
 
-    final isPayments = location == '/reports/payments';
-    final isCredits = location == '/reports/credits';
-    final isProfitLoss = location == '/reports/profit-loss';
-    final isStockSummary = location == '/reports/stock-summary';
+    final isPayments = path == '/reports/payments';
+    final isCredits = path == '/reports/credits';
+    final isProfitLoss = path == '/reports/profit-loss';
+    final isStockSummary = path == '/reports/stock-summary';
     final isOrders = isReports &&
         !isPayments &&
         !isCredits &&
@@ -69,7 +69,7 @@ class Drawer extends StatelessComponent {
                 ? ChevronDown(classes: 'w-4.5 h-4.5 ml-auto mr-6')
                 : ChevronRight(classes: 'w-4.5 h-4.5 ml-auto mr-6'),
             isSelected: isInventory,
-            onClick: () => _navigate(context, '/inventory', toggle: false),
+            onClick: () => _navigate(context, '/inventory/products', toggle: false),
           ),
           if (isInventory)
             ul(
@@ -78,7 +78,7 @@ class Drawer extends StatelessComponent {
                 navSubButton(
                   name: 'Products',
                   isSelected: isProducts,
-                  onClick: () => _navigate(context, '/inventory'),
+                  onClick: () => _navigate(context, '/inventory/products'),
                 ),
                 navSubButton(
                   name: 'Category',
@@ -99,7 +99,7 @@ class Drawer extends StatelessComponent {
                 ? ChevronDown(classes: 'w-4.5 h-4.5 ml-auto mr-6')
                 : ChevronRight(classes: 'w-4.5 h-4.5 ml-auto mr-6'),
             isSelected: isReports,
-            onClick: () => _navigate(context, '/reports', toggle: false),
+            onClick: () => _navigate(context, '/reports/orders', toggle: false),
           ),
           if (isReports)
             ul(
@@ -108,7 +108,7 @@ class Drawer extends StatelessComponent {
                 navSubButton(
                   name: 'Orders',
                   isSelected: isOrders,
-                  onClick: () => _navigate(context, '/reports'),
+                  onClick: () => _navigate(context, '/reports/orders'),
                 ),
                 navSubButton(
                   name: 'Payments',
