@@ -78,7 +78,9 @@ class _AddEditTerminalModalState extends State<AddEditTerminalModal> {
 
           FormField(
             id: 'password',
-            labelText: component.terminal != null ? 'Password (optional)' : 'Password',
+            labelText: component.terminal != null
+                ? 'Password (optional)'
+                : 'Password',
             type: InputType.password,
             attributes: {
               'placeholder': '*********',
@@ -92,26 +94,27 @@ class _AddEditTerminalModalState extends State<AddEditTerminalModal> {
             onChange: (value) => _password = value as String,
           ),
 
-          div(classes: 'form-control mb-4 flex flex-row items-center gap-3', [
-            p(
-              classes: 'text-[14px] font-semibold text-gray-500',
-              [.text('Active')],
-            ),
-            input(
-              type: InputType.checkbox,
-              classes:
-                  'toggle ${_isActive ? 'toggle-success' : ''} hover:cursor-pointer',
-              checked: _isActive,
-              events: {
-                'change': (e) {
-                  final target = e.target as HTMLInputElement;
-                  setState(() {
-                    _isActive = target.checked;
-                  });
+          if (component.terminal != null)
+            div(classes: 'form-control mb-4 flex flex-row items-center gap-3', [
+              p(
+                classes: 'text-[14px] font-semibold text-gray-500',
+                [.text('Active')],
+              ),
+              input(
+                type: InputType.checkbox,
+                classes:
+                    'toggle ${_isActive ? 'toggle-success' : ''} hover:cursor-pointer',
+                checked: _isActive,
+                events: {
+                  'change': (e) {
+                    final target = e.target as HTMLInputElement;
+                    setState(() {
+                      _isActive = target.checked;
+                    });
+                  },
                 },
-              },
-            ),
-          ]),
+              ),
+            ]),
 
           div(classes: 'flex justify-end items-center pt-2', [
             button(

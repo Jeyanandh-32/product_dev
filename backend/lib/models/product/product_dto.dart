@@ -25,6 +25,8 @@ abstract class ProductDto with _$ProductDto {
     String? description,
     String? imageUrl,
     StockDto? stock,
+    String? categoryName,
+    String? counterName,
   }) = _ProductDto;
 
   factory ProductDto.fromJson(Map<String, Object?> json) =>

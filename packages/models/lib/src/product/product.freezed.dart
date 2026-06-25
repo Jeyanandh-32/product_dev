@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Product {
 
- String get id; String get merchantId; String get name; double get taxRate; int get basePrice; int get sellingPrice; bool get isActive; DateTime get createdAt; DateTime get updatedAt; String? get categoryId; String? get counterId; String? get sku; String? get barcode; String? get description; String? get imageUrl; Stock? get stock;
+ String get id; String get merchantId; String get name; double get taxRate; int get basePrice; int get sellingPrice; bool get isActive; DateTime get createdAt; DateTime get updatedAt; String? get categoryId; String? get counterId; String? get sku; String? get barcode; String? get description; String? get imageUrl; Stock? get stock; String? get categoryName; String? get counterName;
 /// Create a copy of Product
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $ProductCopyWith<Product> get copyWith => _$ProductCopyWithImpl<Product>(this as
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Product&&(identical(other.id, id) || other.id == id)&&(identical(other.merchantId, merchantId) || other.merchantId == merchantId)&&(identical(other.name, name) || other.name == name)&&(identical(other.taxRate, taxRate) || other.taxRate == taxRate)&&(identical(other.basePrice, basePrice) || other.basePrice == basePrice)&&(identical(other.sellingPrice, sellingPrice) || other.sellingPrice == sellingPrice)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.categoryId, categoryId) || other.categoryId == categoryId)&&(identical(other.counterId, counterId) || other.counterId == counterId)&&(identical(other.sku, sku) || other.sku == sku)&&(identical(other.barcode, barcode) || other.barcode == barcode)&&(identical(other.description, description) || other.description == description)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&(identical(other.stock, stock) || other.stock == stock));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Product&&(identical(other.id, id) || other.id == id)&&(identical(other.merchantId, merchantId) || other.merchantId == merchantId)&&(identical(other.name, name) || other.name == name)&&(identical(other.taxRate, taxRate) || other.taxRate == taxRate)&&(identical(other.basePrice, basePrice) || other.basePrice == basePrice)&&(identical(other.sellingPrice, sellingPrice) || other.sellingPrice == sellingPrice)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.categoryId, categoryId) || other.categoryId == categoryId)&&(identical(other.counterId, counterId) || other.counterId == counterId)&&(identical(other.sku, sku) || other.sku == sku)&&(identical(other.barcode, barcode) || other.barcode == barcode)&&(identical(other.description, description) || other.description == description)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&(identical(other.stock, stock) || other.stock == stock)&&(identical(other.categoryName, categoryName) || other.categoryName == categoryName)&&(identical(other.counterName, counterName) || other.counterName == counterName));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,merchantId,name,taxRate,basePrice,sellingPrice,isActive,createdAt,updatedAt,categoryId,counterId,sku,barcode,description,imageUrl,stock);
+int get hashCode => Object.hash(runtimeType,id,merchantId,name,taxRate,basePrice,sellingPrice,isActive,createdAt,updatedAt,categoryId,counterId,sku,barcode,description,imageUrl,stock,categoryName,counterName);
 
 @override
 String toString() {
-  return 'Product(id: $id, merchantId: $merchantId, name: $name, taxRate: $taxRate, basePrice: $basePrice, sellingPrice: $sellingPrice, isActive: $isActive, createdAt: $createdAt, updatedAt: $updatedAt, categoryId: $categoryId, counterId: $counterId, sku: $sku, barcode: $barcode, description: $description, imageUrl: $imageUrl, stock: $stock)';
+  return 'Product(id: $id, merchantId: $merchantId, name: $name, taxRate: $taxRate, basePrice: $basePrice, sellingPrice: $sellingPrice, isActive: $isActive, createdAt: $createdAt, updatedAt: $updatedAt, categoryId: $categoryId, counterId: $counterId, sku: $sku, barcode: $barcode, description: $description, imageUrl: $imageUrl, stock: $stock, categoryName: $categoryName, counterName: $counterName)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $ProductCopyWith<$Res>  {
   factory $ProductCopyWith(Product value, $Res Function(Product) _then) = _$ProductCopyWithImpl;
 @useResult
 $Res call({
- String id, String merchantId, String name, double taxRate, int basePrice, int sellingPrice, bool isActive, DateTime createdAt, DateTime updatedAt, String? categoryId, String? counterId, String? sku, String? barcode, String? description, String? imageUrl, Stock? stock
+ String id, String merchantId, String name, double taxRate, int basePrice, int sellingPrice, bool isActive, DateTime createdAt, DateTime updatedAt, String? categoryId, String? counterId, String? sku, String? barcode, String? description, String? imageUrl, Stock? stock, String? categoryName, String? counterName
 });
 
 
@@ -65,7 +65,7 @@ class _$ProductCopyWithImpl<$Res>
 
 /// Create a copy of Product
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? merchantId = null,Object? name = null,Object? taxRate = null,Object? basePrice = null,Object? sellingPrice = null,Object? isActive = null,Object? createdAt = null,Object? updatedAt = null,Object? categoryId = freezed,Object? counterId = freezed,Object? sku = freezed,Object? barcode = freezed,Object? description = freezed,Object? imageUrl = freezed,Object? stock = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? merchantId = null,Object? name = null,Object? taxRate = null,Object? basePrice = null,Object? sellingPrice = null,Object? isActive = null,Object? createdAt = null,Object? updatedAt = null,Object? categoryId = freezed,Object? counterId = freezed,Object? sku = freezed,Object? barcode = freezed,Object? description = freezed,Object? imageUrl = freezed,Object? stock = freezed,Object? categoryName = freezed,Object? counterName = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,merchantId: null == merchantId ? _self.merchantId : merchantId // ignore: cast_nullable_to_non_nullable
@@ -83,7 +83,9 @@ as String?,barcode: freezed == barcode ? _self.barcode : barcode // ignore: cast
 as String?,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
 as String?,imageUrl: freezed == imageUrl ? _self.imageUrl : imageUrl // ignore: cast_nullable_to_non_nullable
 as String?,stock: freezed == stock ? _self.stock : stock // ignore: cast_nullable_to_non_nullable
-as Stock?,
+as Stock?,categoryName: freezed == categoryName ? _self.categoryName : categoryName // ignore: cast_nullable_to_non_nullable
+as String?,counterName: freezed == counterName ? _self.counterName : counterName // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 /// Create a copy of Product
@@ -180,10 +182,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String merchantId,  String name,  double taxRate,  int basePrice,  int sellingPrice,  bool isActive,  DateTime createdAt,  DateTime updatedAt,  String? categoryId,  String? counterId,  String? sku,  String? barcode,  String? description,  String? imageUrl,  Stock? stock)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String merchantId,  String name,  double taxRate,  int basePrice,  int sellingPrice,  bool isActive,  DateTime createdAt,  DateTime updatedAt,  String? categoryId,  String? counterId,  String? sku,  String? barcode,  String? description,  String? imageUrl,  Stock? stock,  String? categoryName,  String? counterName)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Product() when $default != null:
-return $default(_that.id,_that.merchantId,_that.name,_that.taxRate,_that.basePrice,_that.sellingPrice,_that.isActive,_that.createdAt,_that.updatedAt,_that.categoryId,_that.counterId,_that.sku,_that.barcode,_that.description,_that.imageUrl,_that.stock);case _:
+return $default(_that.id,_that.merchantId,_that.name,_that.taxRate,_that.basePrice,_that.sellingPrice,_that.isActive,_that.createdAt,_that.updatedAt,_that.categoryId,_that.counterId,_that.sku,_that.barcode,_that.description,_that.imageUrl,_that.stock,_that.categoryName,_that.counterName);case _:
   return orElse();
 
 }
@@ -201,10 +203,10 @@ return $default(_that.id,_that.merchantId,_that.name,_that.taxRate,_that.basePri
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String merchantId,  String name,  double taxRate,  int basePrice,  int sellingPrice,  bool isActive,  DateTime createdAt,  DateTime updatedAt,  String? categoryId,  String? counterId,  String? sku,  String? barcode,  String? description,  String? imageUrl,  Stock? stock)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String merchantId,  String name,  double taxRate,  int basePrice,  int sellingPrice,  bool isActive,  DateTime createdAt,  DateTime updatedAt,  String? categoryId,  String? counterId,  String? sku,  String? barcode,  String? description,  String? imageUrl,  Stock? stock,  String? categoryName,  String? counterName)  $default,) {final _that = this;
 switch (_that) {
 case _Product():
-return $default(_that.id,_that.merchantId,_that.name,_that.taxRate,_that.basePrice,_that.sellingPrice,_that.isActive,_that.createdAt,_that.updatedAt,_that.categoryId,_that.counterId,_that.sku,_that.barcode,_that.description,_that.imageUrl,_that.stock);case _:
+return $default(_that.id,_that.merchantId,_that.name,_that.taxRate,_that.basePrice,_that.sellingPrice,_that.isActive,_that.createdAt,_that.updatedAt,_that.categoryId,_that.counterId,_that.sku,_that.barcode,_that.description,_that.imageUrl,_that.stock,_that.categoryName,_that.counterName);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -221,10 +223,10 @@ return $default(_that.id,_that.merchantId,_that.name,_that.taxRate,_that.basePri
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String merchantId,  String name,  double taxRate,  int basePrice,  int sellingPrice,  bool isActive,  DateTime createdAt,  DateTime updatedAt,  String? categoryId,  String? counterId,  String? sku,  String? barcode,  String? description,  String? imageUrl,  Stock? stock)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String merchantId,  String name,  double taxRate,  int basePrice,  int sellingPrice,  bool isActive,  DateTime createdAt,  DateTime updatedAt,  String? categoryId,  String? counterId,  String? sku,  String? barcode,  String? description,  String? imageUrl,  Stock? stock,  String? categoryName,  String? counterName)?  $default,) {final _that = this;
 switch (_that) {
 case _Product() when $default != null:
-return $default(_that.id,_that.merchantId,_that.name,_that.taxRate,_that.basePrice,_that.sellingPrice,_that.isActive,_that.createdAt,_that.updatedAt,_that.categoryId,_that.counterId,_that.sku,_that.barcode,_that.description,_that.imageUrl,_that.stock);case _:
+return $default(_that.id,_that.merchantId,_that.name,_that.taxRate,_that.basePrice,_that.sellingPrice,_that.isActive,_that.createdAt,_that.updatedAt,_that.categoryId,_that.counterId,_that.sku,_that.barcode,_that.description,_that.imageUrl,_that.stock,_that.categoryName,_that.counterName);case _:
   return null;
 
 }
@@ -236,7 +238,7 @@ return $default(_that.id,_that.merchantId,_that.name,_that.taxRate,_that.basePri
 @JsonSerializable()
 
 class _Product implements Product {
-  const _Product({required this.id, required this.merchantId, required this.name, required this.taxRate, required this.basePrice, required this.sellingPrice, required this.isActive, required this.createdAt, required this.updatedAt, this.categoryId, this.counterId, this.sku, this.barcode, this.description, this.imageUrl, this.stock});
+  const _Product({required this.id, required this.merchantId, required this.name, required this.taxRate, required this.basePrice, required this.sellingPrice, required this.isActive, required this.createdAt, required this.updatedAt, this.categoryId, this.counterId, this.sku, this.barcode, this.description, this.imageUrl, this.stock, this.categoryName, this.counterName});
   factory _Product.fromJson(Map<String, dynamic> json) => _$ProductFromJson(json);
 
 @override final  String id;
@@ -255,6 +257,8 @@ class _Product implements Product {
 @override final  String? description;
 @override final  String? imageUrl;
 @override final  Stock? stock;
+@override final  String? categoryName;
+@override final  String? counterName;
 
 /// Create a copy of Product
 /// with the given fields replaced by the non-null parameter values.
@@ -269,16 +273,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Product&&(identical(other.id, id) || other.id == id)&&(identical(other.merchantId, merchantId) || other.merchantId == merchantId)&&(identical(other.name, name) || other.name == name)&&(identical(other.taxRate, taxRate) || other.taxRate == taxRate)&&(identical(other.basePrice, basePrice) || other.basePrice == basePrice)&&(identical(other.sellingPrice, sellingPrice) || other.sellingPrice == sellingPrice)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.categoryId, categoryId) || other.categoryId == categoryId)&&(identical(other.counterId, counterId) || other.counterId == counterId)&&(identical(other.sku, sku) || other.sku == sku)&&(identical(other.barcode, barcode) || other.barcode == barcode)&&(identical(other.description, description) || other.description == description)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&(identical(other.stock, stock) || other.stock == stock));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Product&&(identical(other.id, id) || other.id == id)&&(identical(other.merchantId, merchantId) || other.merchantId == merchantId)&&(identical(other.name, name) || other.name == name)&&(identical(other.taxRate, taxRate) || other.taxRate == taxRate)&&(identical(other.basePrice, basePrice) || other.basePrice == basePrice)&&(identical(other.sellingPrice, sellingPrice) || other.sellingPrice == sellingPrice)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.categoryId, categoryId) || other.categoryId == categoryId)&&(identical(other.counterId, counterId) || other.counterId == counterId)&&(identical(other.sku, sku) || other.sku == sku)&&(identical(other.barcode, barcode) || other.barcode == barcode)&&(identical(other.description, description) || other.description == description)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&(identical(other.stock, stock) || other.stock == stock)&&(identical(other.categoryName, categoryName) || other.categoryName == categoryName)&&(identical(other.counterName, counterName) || other.counterName == counterName));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,merchantId,name,taxRate,basePrice,sellingPrice,isActive,createdAt,updatedAt,categoryId,counterId,sku,barcode,description,imageUrl,stock);
+int get hashCode => Object.hash(runtimeType,id,merchantId,name,taxRate,basePrice,sellingPrice,isActive,createdAt,updatedAt,categoryId,counterId,sku,barcode,description,imageUrl,stock,categoryName,counterName);
 
 @override
 String toString() {
-  return 'Product(id: $id, merchantId: $merchantId, name: $name, taxRate: $taxRate, basePrice: $basePrice, sellingPrice: $sellingPrice, isActive: $isActive, createdAt: $createdAt, updatedAt: $updatedAt, categoryId: $categoryId, counterId: $counterId, sku: $sku, barcode: $barcode, description: $description, imageUrl: $imageUrl, stock: $stock)';
+  return 'Product(id: $id, merchantId: $merchantId, name: $name, taxRate: $taxRate, basePrice: $basePrice, sellingPrice: $sellingPrice, isActive: $isActive, createdAt: $createdAt, updatedAt: $updatedAt, categoryId: $categoryId, counterId: $counterId, sku: $sku, barcode: $barcode, description: $description, imageUrl: $imageUrl, stock: $stock, categoryName: $categoryName, counterName: $counterName)';
 }
 
 
@@ -289,7 +293,7 @@ abstract mixin class _$ProductCopyWith<$Res> implements $ProductCopyWith<$Res> {
   factory _$ProductCopyWith(_Product value, $Res Function(_Product) _then) = __$ProductCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String merchantId, String name, double taxRate, int basePrice, int sellingPrice, bool isActive, DateTime createdAt, DateTime updatedAt, String? categoryId, String? counterId, String? sku, String? barcode, String? description, String? imageUrl, Stock? stock
+ String id, String merchantId, String name, double taxRate, int basePrice, int sellingPrice, bool isActive, DateTime createdAt, DateTime updatedAt, String? categoryId, String? counterId, String? sku, String? barcode, String? description, String? imageUrl, Stock? stock, String? categoryName, String? counterName
 });
 
 
@@ -306,7 +310,7 @@ class __$ProductCopyWithImpl<$Res>
 
 /// Create a copy of Product
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? merchantId = null,Object? name = null,Object? taxRate = null,Object? basePrice = null,Object? sellingPrice = null,Object? isActive = null,Object? createdAt = null,Object? updatedAt = null,Object? categoryId = freezed,Object? counterId = freezed,Object? sku = freezed,Object? barcode = freezed,Object? description = freezed,Object? imageUrl = freezed,Object? stock = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? merchantId = null,Object? name = null,Object? taxRate = null,Object? basePrice = null,Object? sellingPrice = null,Object? isActive = null,Object? createdAt = null,Object? updatedAt = null,Object? categoryId = freezed,Object? counterId = freezed,Object? sku = freezed,Object? barcode = freezed,Object? description = freezed,Object? imageUrl = freezed,Object? stock = freezed,Object? categoryName = freezed,Object? counterName = freezed,}) {
   return _then(_Product(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,merchantId: null == merchantId ? _self.merchantId : merchantId // ignore: cast_nullable_to_non_nullable
@@ -324,7 +328,9 @@ as String?,barcode: freezed == barcode ? _self.barcode : barcode // ignore: cast
 as String?,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
 as String?,imageUrl: freezed == imageUrl ? _self.imageUrl : imageUrl // ignore: cast_nullable_to_non_nullable
 as String?,stock: freezed == stock ? _self.stock : stock // ignore: cast_nullable_to_non_nullable
-as Stock?,
+as Stock?,categoryName: freezed == categoryName ? _self.categoryName : categoryName // ignore: cast_nullable_to_non_nullable
+as String?,counterName: freezed == counterName ? _self.counterName : counterName // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 

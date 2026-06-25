@@ -20,5 +20,7 @@ extension ProductDtoExtension on ProductDto {
     description: description,
     imageUrl: imageUrl,
     stock: stock?.toStock(),
+    categoryName: categoryName,
+    counterName: counterName,
   );
 }

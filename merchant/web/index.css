@@ -111,3 +111,8 @@
 .toggle:not(:checked) {
     --input-color: var(--color-border-medium);
 }
+
+.table-zebra tbody tr:nth-child(even),
+.table-zebra tbody tr:nth-child(even) th {
+    background-color: #f8fafc;
+}

@@ -15,6 +15,7 @@ class Counters extends StatelessComponent {
 
   @override
   Component build(BuildContext context) {
+    final store = context.watch(storeProvider);
     final counters = context.watch(countersProvider);
     final activeModal = context.watch(activeModalProvider);
     final editingCounter = context.watch(editingCounterProvider);
@@ -48,6 +49,8 @@ class Counters extends StatelessComponent {
 
         if (counters.isLoading)
           Loading(text: 'Loading counters...', fullScreen: false)
+        else if (store == null)
+          CenteredMessage(message: 'Create Store to add counters.')
         else if (counters.hasValue &&
             counters.value != null &&
             counters.value!.isEmpty)

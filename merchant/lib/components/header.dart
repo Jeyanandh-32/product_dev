@@ -53,7 +53,9 @@ class Header extends StatelessComponent {
             .text(headerTitle),
             if (headerSubTitle != null) ...[
               span(classes: 'text-gray-300 text-sm font-normal', [.text('/')]),
-              span(classes: 'text-sm text-gray-400 font-normal', [.text(headerSubTitle)]),
+              span(classes: 'text-sm text-gray-400 font-normal', [
+                .text(headerSubTitle),
+              ]),
             ],
           ]),
         ]),
@@ -98,7 +100,7 @@ class Header extends StatelessComponent {
     return li([
       a(
         href: '#',
-        classes: 'rounded-md',
+        classes: 'rounded-md hover:bg-neutral',
         onClick: onClick,
         [
           .text(name),

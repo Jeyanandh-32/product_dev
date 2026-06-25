@@ -29,16 +29,20 @@ final headerSubTitleProvider = StateProvider.autoDispose<String?>(
   (ref) => null,
 );
 
+final entriesProvider = StateProvider.autoDispose<int>((ref) => 10);
+
 enum ActiveModal {
   none,
   addStore,
   addTerminal,
   addCounter,
   addCategory,
+  addProduct,
   editStore,
   editTerminal,
   editCounter,
   editCategory,
+  editProduct,
 }
 
 final activeModalProvider = StateProvider.autoDispose<ActiveModal>(
@@ -58,5 +62,9 @@ final editingCounterProvider = StateProvider.autoDispose<Counter?>(
 );
 
 final editingCategoryProvider = StateProvider.autoDispose<Category?>(
+  (ref) => null,
+);
+
+final editingProductProvider = StateProvider.autoDispose<Product?>(
   (ref) => null,
 );

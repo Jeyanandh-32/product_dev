@@ -119,9 +119,13 @@ class ProductRepository {
           s.quantity AS stock_quantity,
           s.low_stock_threshold AS stock_low_stock_threshold,
           s.created_at AS stock_created_at,
-          s.updated_at AS stock_updated_at
+          s.updated_at AS stock_updated_at,
+          c.name AS category_name,
+          cnt.name AS counter_name
         FROM products p
         LEFT JOIN stocks s ON p.id = s.product_id
+        LEFT JOIN categories c ON p.category_id = c.id
+        LEFT JOIN counters cnt ON p.counter_id = cnt.id
         WHERE p.merchant_id = @merchantId
         ${storeId != null ? 'AND p.store_id = @storeId' : ''}
       ''',
@@ -165,9 +169,13 @@ class ProductRepository {
         s.quantity AS stock_quantity,
         s.low_stock_threshold AS stock_low_stock_threshold,
         s.created_at AS stock_created_at,
-        s.updated_at AS stock_updated_at
+        s.updated_at AS stock_updated_at,
+        c.name AS category_name,
+        cnt.name AS counter_name
       FROM products p
       LEFT JOIN stocks s ON p.id = s.product_id
+      LEFT JOIN categories c ON p.category_id = c.id
+      LEFT JOIN counters cnt ON p.counter_id = cnt.id
       WHERE p.id = @id
       '''),
       parameters: {'id': id},

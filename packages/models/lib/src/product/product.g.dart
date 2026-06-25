@@ -25,6 +25,8 @@ _Product _$ProductFromJson(Map<String, dynamic> json) => _Product(
   stock: json['stock'] == null
       ? null
       : Stock.fromJson(json['stock'] as Map<String, dynamic>),
+  categoryName: json['categoryName'] as String?,
+  counterName: json['counterName'] as String?,
 );
 
 Map<String, dynamic> _$ProductToJson(_Product instance) => <String, dynamic>{
@@ -44,4 +46,6 @@ Map<String, dynamic> _$ProductToJson(_Product instance) => <String, dynamic>{
   'description': instance.description,
   'imageUrl': instance.imageUrl,
   'stock': instance.stock,
+  'categoryName': instance.categoryName,
+  'counterName': instance.counterName,
 };

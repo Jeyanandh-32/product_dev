@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:backend/config/database.dart';
 import 'package:backend/extensions/product_dto_extension.dart';
 import 'package:backend/models/token_payload/token_payload.dart';
 import 'package:backend/repositories/product_repository.dart';
@@ -10,6 +11,7 @@ import 'package:dart_frog/dart_frog.dart';
 import 'package:validators/validators.dart';
 
 Future<Response> onRequest(RequestContext context) async {
+  await Future<void>.delayed(const Duration(seconds: 2));
   return switch (context.request.method) {
     HttpMethod.get => _onGet(context),
     HttpMethod.post => _onPost(context),
@@ -61,8 +63,6 @@ Future<Response> _onPost(RequestContext context) async {
     return badRequest(message: 'Invalid store id.');
   }
 
-  final productRepo = context.read<ProductRepository>();
-  final stockRepo = context.read<StockRepository>();
   final tokenPayload = context.read<TokenPayload>();
   final merchantId = tokenPayload.sub;
 
@@ -125,27 +125,32 @@ Future<Response> _onPost(RequestContext context) async {
   }
 
   try {
-    final productDto = await productRepo.create(
-      merchantId: merchantId,
-      storeId: storeId,
-      name: name!.trim(),
-      categoryId: categoryId!,
-      counterId: counterId!,
-      basePrice: basePrice!,
-      sellingPrice: sellingPrice!,
-      sku: sku,
-      barcode: barcode,
-      description: description,
-      imageUrl: imageUrl,
-      taxRate: taxRate,
-    );
+    final completeProduct = await Database.pool.runTx((session) async {
+      final txProductRepo = ProductRepository(session: session);
+      final txStockRepo = StockRepository(session: session);
 
-    final stockDto = await stockRepo.create(
-      productId: productDto.id,
-      storeId: storeId,
-    );
+      final productDto = await txProductRepo.create(
+        merchantId: merchantId,
+        storeId: storeId,
+        name: name!.trim(),
+        categoryId: categoryId!,
+        counterId: counterId!,
+        basePrice: basePrice!,
+        sellingPrice: sellingPrice!,
+        sku: sku,
+        barcode: barcode,
+        description: description,
+        imageUrl: imageUrl,
+        taxRate: taxRate,
+      );
 
-    final completeProduct = productDto.copyWith(stock: stockDto);
+      final stockDto = await txStockRepo.create(
+        productId: productDto.id,
+        storeId: storeId,
+      );
+
+      return productDto.copyWith(stock: stockDto);
+    });
 
     return success(
       statusCode: HttpStatus.created,

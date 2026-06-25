@@ -23,6 +23,8 @@ abstract class Product with _$Product {
     String? description,
     String? imageUrl,
     Stock? stock,
+    String? categoryName,
+    String? counterName,
   }) = _Product;
 
   factory Product.fromJson(Map<String, Object?> json) =>

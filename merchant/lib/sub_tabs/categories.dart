@@ -15,6 +15,7 @@ class Categories extends StatelessComponent {
 
   @override
   Component build(BuildContext context) {
+    final store = context.watch(storeProvider);
     final categories = context.watch(categoriesProvider);
     final activeModal = context.watch(activeModalProvider);
     final editingCategory = context.watch(editingCategoryProvider);
@@ -49,6 +50,8 @@ class Categories extends StatelessComponent {
 
         if (categories.isLoading)
           Loading(text: 'Loading categories...', fullScreen: false)
+        else if (store == null)
+          CenteredMessage(message: 'Create Store to add categories.')
         else if (categories.hasValue &&
             categories.value != null &&
             categories.value!.isEmpty)
