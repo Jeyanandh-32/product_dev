@@ -1,4 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import '../category/category.dart';
+import '../counter/counter.dart';
 import '../stock/stock.dart';
 
 part 'product.freezed.dart';
@@ -16,17 +18,16 @@ abstract class Product with _$Product {
     required bool isActive,
     required DateTime createdAt,
     required DateTime updatedAt,
-    String? categoryId,
-    String? counterId,
     String? sku,
     String? barcode,
     String? description,
     String? imageUrl,
     Stock? stock,
-    String? categoryName,
-    String? counterName,
+    Category? category,
+    Counter? counter,
   }) = _Product;
 
   factory Product.fromJson(Map<String, Object?> json) =>
       _$ProductFromJson(json);
 }
+

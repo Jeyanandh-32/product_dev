@@ -120,8 +120,24 @@ class ProductRepository {
           s.low_stock_threshold AS stock_low_stock_threshold,
           s.created_at AS stock_created_at,
           s.updated_at AS stock_updated_at,
-          c.name AS category_name,
-          cnt.name AS counter_name
+          c.id AS cat_id,
+          c.name AS cat_name,
+          c.merchant_id AS cat_merchant_id,
+          c.store_id AS cat_store_id,
+          c.is_active AS cat_is_active,
+          c.created_at AS cat_created_at,
+          c.updated_at AS cat_updated_at,
+          c.description AS cat_description,
+          c.image_url AS cat_image_url,
+          cnt.id AS cnt_id,
+          cnt.name AS cnt_name,
+          cnt.merchant_id AS cnt_merchant_id,
+          cnt.store_id AS cnt_store_id,
+          cnt.is_active AS cnt_is_active,
+          cnt.created_at AS cnt_created_at,
+          cnt.updated_at AS cnt_updated_at,
+          cnt.description AS cnt_description,
+          cnt.image_url AS cnt_image_url
         FROM products p
         LEFT JOIN stocks s ON p.id = s.product_id
         LEFT JOIN categories c ON p.category_id = c.id
@@ -152,8 +168,38 @@ class ProductRepository {
           'updated_at': columns['stock_updated_at'],
         };
       }
+      Map<String, Object?>? categoryMap;
+      if (columns['cat_id'] != null) {
+        categoryMap = {
+          'id': columns['cat_id'],
+          'name': columns['cat_name'],
+          'merchant_id': columns['cat_merchant_id'],
+          'store_id': columns['cat_store_id'],
+          'is_active': columns['cat_is_active'],
+          'created_at': columns['cat_created_at'],
+          'updated_at': columns['cat_updated_at'],
+          'description': columns['cat_description'],
+          'image_url': columns['cat_image_url'],
+        };
+      }
+      Map<String, Object?>? counterMap;
+      if (columns['cnt_id'] != null) {
+        counterMap = {
+          'id': columns['cnt_id'],
+          'name': columns['cnt_name'],
+          'merchant_id': columns['cnt_merchant_id'],
+          'store_id': columns['cnt_store_id'],
+          'is_active': columns['cnt_is_active'],
+          'created_at': columns['cnt_created_at'],
+          'updated_at': columns['cnt_updated_at'],
+          'description': columns['cnt_description'],
+          'image_url': columns['cnt_image_url'],
+        };
+      }
       final productMap = Map<String, Object?>.from(columns)
-        ..['stock'] = stockMap;
+        ..['stock'] = stockMap
+        ..['category'] = categoryMap
+        ..['counter'] = counterMap;
       return ProductDto.fromJson(productMap);
     }).toList();
   }
@@ -170,8 +216,24 @@ class ProductRepository {
         s.low_stock_threshold AS stock_low_stock_threshold,
         s.created_at AS stock_created_at,
         s.updated_at AS stock_updated_at,
-        c.name AS category_name,
-        cnt.name AS counter_name
+        c.id AS cat_id,
+        c.name AS cat_name,
+        c.merchant_id AS cat_merchant_id,
+        c.store_id AS cat_store_id,
+        c.is_active AS cat_is_active,
+        c.created_at AS cat_created_at,
+        c.updated_at AS cat_updated_at,
+        c.description AS cat_description,
+        c.image_url AS cat_image_url,
+        cnt.id AS cnt_id,
+        cnt.name AS cnt_name,
+        cnt.merchant_id AS cnt_merchant_id,
+        cnt.store_id AS cnt_store_id,
+        cnt.is_active AS cnt_is_active,
+        cnt.created_at AS cnt_created_at,
+        cnt.updated_at AS cnt_updated_at,
+        cnt.description AS cnt_description,
+        cnt.image_url AS cnt_image_url
       FROM products p
       LEFT JOIN stocks s ON p.id = s.product_id
       LEFT JOIN categories c ON p.category_id = c.id
@@ -196,8 +258,39 @@ class ProductRepository {
         'updated_at': columns['stock_updated_at'],
       };
     }
+    Map<String, Object?>? categoryMap;
+    if (columns['cat_id'] != null) {
+      categoryMap = {
+        'id': columns['cat_id'],
+        'name': columns['cat_name'],
+        'merchant_id': columns['cat_merchant_id'],
+        'store_id': columns['cat_store_id'],
+        'is_active': columns['cat_is_active'],
+        'created_at': columns['cat_created_at'],
+        'updated_at': columns['cat_updated_at'],
+        'description': columns['cat_description'],
+        'image_url': columns['cat_image_url'],
+      };
+    }
+    Map<String, Object?>? counterMap;
+    if (columns['cnt_id'] != null) {
+      counterMap = {
+        'id': columns['cnt_id'],
+        'name': columns['cnt_name'],
+        'merchant_id': columns['cnt_merchant_id'],
+        'store_id': columns['cnt_store_id'],
+        'is_active': columns['cnt_is_active'],
+        'created_at': columns['cnt_created_at'],
+        'updated_at': columns['cnt_updated_at'],
+        'description': columns['cnt_description'],
+        'image_url': columns['cnt_image_url'],
+      };
+    }
     final productMap = Map<String, Object?>.from(columns)
-      ..['stock'] = stockMap;
+      ..['stock'] = stockMap
+      ..['category'] = categoryMap
+      ..['counter'] = counterMap;
     return ProductDto.fromJson(productMap);
   }
+
 }

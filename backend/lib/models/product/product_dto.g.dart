@@ -16,8 +16,6 @@ _ProductDto _$ProductDtoFromJson(Map<String, dynamic> json) => _ProductDto(
   isActive: json['is_active'] as bool,
   createdAt: dateTimeFromJson(json['created_at'] as DateTime),
   updatedAt: dateTimeFromJson(json['updated_at'] as DateTime),
-  categoryId: json['category_id'] as String?,
-  counterId: json['counter_id'] as String?,
   sku: json['sku'] as String?,
   barcode: json['barcode'] as String?,
   description: json['description'] as String?,
@@ -25,8 +23,12 @@ _ProductDto _$ProductDtoFromJson(Map<String, dynamic> json) => _ProductDto(
   stock: json['stock'] == null
       ? null
       : StockDto.fromJson(json['stock'] as Map<String, dynamic>),
-  categoryName: json['category_name'] as String?,
-  counterName: json['counter_name'] as String?,
+  category: json['category'] == null
+      ? null
+      : CategoryDto.fromJson(json['category'] as Map<String, dynamic>),
+  counter: json['counter'] == null
+      ? null
+      : CounterDto.fromJson(json['counter'] as Map<String, dynamic>),
 );
 
 Map<String, dynamic> _$ProductDtoToJson(_ProductDto instance) =>
@@ -40,13 +42,11 @@ Map<String, dynamic> _$ProductDtoToJson(_ProductDto instance) =>
       'is_active': instance.isActive,
       'created_at': instance.createdAt.toIso8601String(),
       'updated_at': instance.updatedAt.toIso8601String(),
-      'category_id': instance.categoryId,
-      'counter_id': instance.counterId,
       'sku': instance.sku,
       'barcode': instance.barcode,
       'description': instance.description,
       'image_url': instance.imageUrl,
       'stock': instance.stock,
-      'category_name': instance.categoryName,
-      'counter_name': instance.counterName,
+      'category': instance.category,
+      'counter': instance.counter,
     };

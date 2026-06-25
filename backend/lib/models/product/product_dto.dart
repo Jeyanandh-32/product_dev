@@ -1,3 +1,5 @@
+import 'package:backend/models/category/category_dto.dart';
+import 'package:backend/models/counter/counter_dto.dart';
 import 'package:backend/models/stock/stock_dto.dart';
 import 'package:backend/utils/converters.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -18,15 +20,13 @@ abstract class ProductDto with _$ProductDto {
     required bool isActive,
     @JsonKey(fromJson: dateTimeFromJson) required DateTime createdAt,
     @JsonKey(fromJson: dateTimeFromJson) required DateTime updatedAt,
-    String? categoryId,
-    String? counterId,
     String? sku,
     String? barcode,
     String? description,
     String? imageUrl,
     StockDto? stock,
-    String? categoryName,
-    String? counterName,
+    CategoryDto? category,
+    CounterDto? counter,
   }) = _ProductDto;
 
   factory ProductDto.fromJson(Map<String, Object?> json) =>

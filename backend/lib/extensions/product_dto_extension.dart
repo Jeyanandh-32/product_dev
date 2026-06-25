@@ -1,3 +1,5 @@
+import 'package:backend/extensions/category_dto_extension.dart';
+import 'package:backend/extensions/counter_dto_extension.dart';
 import 'package:backend/extensions/stock_dto_extension.dart';
 import 'package:backend/models/product/product_dto.dart';
 import 'package:models/models.dart';
@@ -13,14 +15,12 @@ extension ProductDtoExtension on ProductDto {
     isActive: isActive,
     createdAt: createdAt,
     updatedAt: updatedAt,
-    categoryId: categoryId,
-    counterId: counterId,
     sku: sku,
     barcode: barcode,
     description: description,
     imageUrl: imageUrl,
     stock: stock?.toStock(),
-    categoryName: categoryName,
-    counterName: counterName,
+    category: category?.toCategory(),
+    counter: counter?.toCounter(),
   );
 }
