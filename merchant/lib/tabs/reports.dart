@@ -8,11 +8,13 @@ import 'package:merchant/sub_tabs/profit_loss.dart';
 import 'package:merchant/sub_tabs/stock_summary.dart';
 
 class Reports extends StatelessComponent {
-  const Reports({super.key});
+  const Reports({this.subIndex, super.key});
+
+  final int? subIndex;
 
   @override
   Component build(BuildContext context) {
-    final subIndex = context.watch(subIndexProvider);
+    final int activeSubIndex = subIndex ?? context.watch(subIndexProvider);
 
     final tabs = [
       Orders(),
@@ -22,6 +24,6 @@ class Reports extends StatelessComponent {
       StockSummary(),
     ];
 
-    return tabs[subIndex];
+    return tabs[activeSubIndex];
   }
 }

@@ -6,13 +6,15 @@ import 'package:merchant/sub_tabs/counters.dart';
 import 'package:merchant/sub_tabs/products.dart';
 
 class Inventory extends StatelessComponent {
-  const Inventory({super.key});
+  const Inventory({this.subIndex, super.key});
+
+  final int? subIndex;
 
   @override
   Component build(BuildContext context) {
-    final subIndex = context.watch(subIndexProvider);
+    final int activeSubIndex = subIndex ?? context.watch(subIndexProvider);
     final tabs = [Products(), Categories(), Counters()];
 
-    return tabs[subIndex];
+    return tabs[activeSubIndex];
   }
 }

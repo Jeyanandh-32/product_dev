@@ -1,6 +1,7 @@
 import 'package:jaspr/client.dart';
 import 'package:jaspr/dom.dart';
 import 'package:jaspr_lucide/jaspr_lucide.dart' hide Store;
+import 'package:jaspr_router/jaspr_router.dart';
 import 'package:jaspr_riverpod/jaspr_riverpod.dart';
 import 'package:merchant/providers/stores_provider.dart';
 import 'package:merchant/providers/ui_providers.dart';
@@ -22,9 +23,43 @@ class Header extends StatelessComponent {
   Component build(BuildContext context) {
     final store = context.watch(storeProvider);
     final isNavOpen = context.watch(navOpenProvider);
-    final headerTitle = context.watch(headerTitleProvider);
-    final headerSubTitle = context.watch(headerSubTitleProvider);
     final stores = context.watch(storesProvider).value;
+
+    final location = RouteState.maybeOf(context)?.location ?? '/';
+    String headerTitle = 'Dashboard';
+    String? headerSubTitle;
+
+    if (location == '/') {
+      headerTitle = 'Dashboard';
+    } else if (location.startsWith('/inventory')) {
+      headerTitle = 'Inventory';
+      if (location == '/inventory/categories') {
+        headerSubTitle = 'Category';
+      } else if (location == '/inventory/counters') {
+        headerSubTitle = 'Counters';
+      } else {
+        headerSubTitle = 'Products';
+      }
+    } else if (location.startsWith('/reports')) {
+      headerTitle = 'Reports';
+      if (location == '/reports/payments') {
+        headerSubTitle = 'Payments';
+      } else if (location == '/reports/credits') {
+        headerSubTitle = 'Credits';
+      } else if (location == '/reports/profit-loss') {
+        headerSubTitle = 'Profit & Loss';
+      } else if (location == '/reports/stock-summary') {
+        headerSubTitle = 'Stock Summary';
+      } else {
+        headerSubTitle = 'Orders';
+      }
+    } else if (location.startsWith('/stores')) {
+      headerTitle = 'Stores';
+    } else if (location.startsWith('/account')) {
+      headerTitle = 'Account';
+    } else if (location.startsWith('/settings')) {
+      headerTitle = 'Settings';
+    }
 
     if (stores != null && stores.isNotEmpty) {
       if (store == null || !stores.any((st) => st.id == store.id)) {
