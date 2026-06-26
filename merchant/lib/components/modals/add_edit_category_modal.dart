@@ -83,7 +83,7 @@ class _AddEditCategoryModalState extends State<AddEditCategoryModal> {
 
           FormField(
             id: 'description',
-            labelText: 'Description',
+            labelText: 'Description (optional)',
             type: InputType.text,
             attributes: {
               'placeholder': 'Optional description...',
@@ -94,7 +94,7 @@ class _AddEditCategoryModalState extends State<AddEditCategoryModal> {
 
           FormField(
             id: 'imageUrl',
-            labelText: 'Image URL',
+            labelText: 'Image URL (optional)',
             type: InputType.url,
             attributes: {
               'placeholder': 'https://example.com/image.jpg',
