@@ -220,11 +220,12 @@ class _CategoriesState extends State<Categories> {
     return thead([
       tr([
         th([]),
-        td([.text('Category Name')]),
+        td([.text('Action')]),
+        td([.text('Image')]),
+        th([.text('Category Name')]),
         td([.text('Status')]),
         td([.text('Products Associated')]),
         td([.text('Description')]),
-        td([.text('Action')]),
         th([]),
       ]),
     ]);
@@ -240,29 +241,6 @@ class _CategoriesState extends State<Categories> {
   }) {
     return tr([
       th([]),
-      td([
-        div(classes: 'flex items-center gap-3', [
-          div(classes: 'h-12 w-12 overflow-hidden rounded-2xl bg-gray-100 flex-shrink-0', [
-            img(
-              src: image ?? '',
-              alt: name,
-              classes: 'block h-full w-full object-cover',
-            ),
-          ]),
-          span(classes: 'font-semibold text-gray-900', [.text(name)]),
-        ]),
-      ]),
-      td([
-        div(
-          classes:
-              '${isActive ? 'bg-soft-green text-soft-green-content' : 'bg-soft-red text-soft-red-content'} rounded-full px-3 py-1 text-center text-xs font-semibold inline-block',
-          [
-            .text(isActive ? 'ACTIVE' : 'INACTIVE'),
-          ],
-        ),
-      ]),
-      td([.text('$productsCount')]),
-      td([.text(description)]),
       td([
         div(classes: 'flex items-center gap-4', [
           button(
@@ -289,6 +267,30 @@ class _CategoriesState extends State<Categories> {
           ),
         ]),
       ]),
+      td([
+        if (image != null && image.isNotEmpty)
+          div(classes: 'h-12 w-12 overflow-hidden rounded-2xl bg-gray-100 flex-shrink-0', [
+            img(
+              src: image,
+              alt: name,
+              classes: 'block h-full w-full object-cover',
+            ),
+          ])
+        else
+          .text('-'),
+      ]),
+      th(classes: 'whitespace-nowrap font-semibold text-gray-900', [.text(name)]),
+      td([
+        div(
+          classes:
+              '${isActive ? 'bg-soft-green text-soft-green-content' : 'bg-soft-red text-soft-red-content'} rounded-full px-3 py-1 text-center text-xs font-semibold inline-block',
+          [
+            .text(isActive ? 'ACTIVE' : 'INACTIVE'),
+          ],
+        ),
+      ]),
+      td([.text('$productsCount')]),
+      td([.text(description)]),
       th([]),
     ]);
   }

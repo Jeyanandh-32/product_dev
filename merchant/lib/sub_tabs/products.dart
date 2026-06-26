@@ -271,13 +271,16 @@ class Products extends StatelessComponent {
         ]),
       ]),
       td([
-        div(classes: 'h-12 w-12 overflow-hidden rounded-2xl', [
-          img(
-            src: image ?? '',
-            alt: 'Avatar Tailwind CSS Component',
-            classes: 'block h-full w-full object-cover',
-          ),
-        ]),
+        if (image != null && image.isNotEmpty)
+          div(classes: 'h-12 w-12 overflow-hidden rounded-2xl', [
+            img(
+              src: image,
+              alt: 'Avatar Tailwind CSS Component',
+              classes: 'block h-full w-full object-cover',
+            ),
+          ])
+        else
+          .text('-'),
       ]),
       th(classes: 'whitespace-nowrap', [.text(name)]),
       td(classes: 'whitespace-nowrap', [.text(sku ?? '-')]),
