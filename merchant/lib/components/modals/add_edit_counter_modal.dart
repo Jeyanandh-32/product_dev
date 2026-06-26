@@ -19,36 +19,44 @@ class AddEditCounterModal extends StatefulComponent {
 
 class _AddEditCounterModalState extends State<AddEditCounterModal> {
   late String _counterName;
+  late String _description;
+  late String _imageUrl;
   late bool _isActive;
 
   @override
   void initState() {
     super.initState();
     _counterName = component.counter?.name ?? '';
+    _description = component.counter?.description ?? '';
+    _imageUrl = component.counter?.imageUrl ?? '';
     _isActive = component.counter?.isActive ?? true;
   }
 
   void _onSubmit(BuildContext context, Event e) {
     e.preventDefault();
     final counterName = _counterName.trim();
+    final descriptionVal = _description.trim();
+    final imageUrlVal = _imageUrl.trim();
+    final description = descriptionVal.isNotEmpty ? descriptionVal : null;
+    final imageUrl = imageUrlVal.isNotEmpty ? imageUrlVal : null;
     final isActive = _isActive;
 
     context.read(activeModalProvider.notifier).state = ActiveModal.none;
 
     if (component.counter != null) {
-      context
-          .read(countersProvider.notifier)
-          .updateCounter(
-            id: component.counter!.id,
-            name: counterName,
-            isActive: isActive,
-          );
+      context.read(countersProvider.notifier).updateCounter(
+        id: component.counter!.id,
+        name: counterName,
+        isActive: isActive,
+        description: description,
+        imageUrl: imageUrl,
+      );
     } else {
-      context
-          .read(countersProvider.notifier)
-          .create(
-            name: counterName,
-          );
+      context.read(countersProvider.notifier).create(
+        name: counterName,
+        description: description,
+        imageUrl: imageUrl,
+      );
     }
   }
 
@@ -71,6 +79,28 @@ class _AddEditCounterModalState extends State<AddEditCounterModal> {
             },
             hintText: 'Counter name is required.',
             onChange: (value) => _counterName = value as String,
+          ),
+
+          FormField(
+            id: 'description',
+            labelText: 'Description',
+            type: InputType.text,
+            attributes: {
+              'placeholder': 'Optional description...',
+              'value': _description,
+            },
+            onChange: (value) => _description = value as String,
+          ),
+
+          FormField(
+            id: 'imageUrl',
+            labelText: 'Image URL',
+            type: InputType.url,
+            attributes: {
+              'placeholder': 'https://example.com/image.jpg',
+              'value': _imageUrl,
+            },
+            onChange: (value) => _imageUrl = value as String,
           ),
 
           if (component.counter != null)

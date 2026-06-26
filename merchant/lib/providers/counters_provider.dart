@@ -24,7 +24,11 @@ class CountersProvider extends AsyncNotifier<List<Counter>> {
     }
   }
 
-  Future<void> create({required String name}) async {
+  Future<void> create({
+    required String name,
+    String? description,
+    String? imageUrl,
+  }) async {
     final selectedStore = ref.read(storeProvider);
     if (selectedStore == null) return;
 
@@ -35,6 +39,8 @@ class CountersProvider extends AsyncNotifier<List<Counter>> {
       final counter = await CounterRepository.create(
         storeId: selectedStore.id,
         name: name,
+        description: description,
+        imageUrl: imageUrl,
       );
 
       state = AsyncData([...currentCounters, counter]);
@@ -50,6 +56,8 @@ class CountersProvider extends AsyncNotifier<List<Counter>> {
     required String id,
     String? name,
     bool? isActive,
+    String? description,
+    String? imageUrl,
   }) async {
     final currentCounters = state.value ?? [];
     state = const AsyncLoading();
@@ -59,6 +67,8 @@ class CountersProvider extends AsyncNotifier<List<Counter>> {
         id: id,
         name: name,
         isActive: isActive,
+        description: description,
+        imageUrl: imageUrl,
       );
 
       state = AsyncData(

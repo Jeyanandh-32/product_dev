@@ -24,7 +24,11 @@ class CategoriesProvider extends AsyncNotifier<List<Category>> {
     }
   }
 
-  Future<void> create({required String name}) async {
+  Future<void> create({
+    required String name,
+    String? description,
+    String? imageUrl,
+  }) async {
     final selectedStore = ref.read(storeProvider);
     if (selectedStore == null) return;
 
@@ -35,6 +39,8 @@ class CategoriesProvider extends AsyncNotifier<List<Category>> {
       final category = await CategoryRepository.create(
         storeId: selectedStore.id,
         name: name,
+        description: description,
+        imageUrl: imageUrl,
       );
 
       state = AsyncData([...currentCategories, category]);
@@ -50,6 +56,8 @@ class CategoriesProvider extends AsyncNotifier<List<Category>> {
     required String id,
     String? name,
     bool? isActive,
+    String? description,
+    String? imageUrl,
   }) async {
     final currentCategories = state.value ?? [];
     state = const AsyncLoading();
@@ -59,6 +67,8 @@ class CategoriesProvider extends AsyncNotifier<List<Category>> {
         id: id,
         name: name,
         isActive: isActive,
+        description: description,
+        imageUrl: imageUrl,
       );
 
       state = AsyncData(

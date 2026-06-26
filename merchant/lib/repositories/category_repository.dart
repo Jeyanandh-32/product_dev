@@ -8,6 +8,8 @@ class CategoryRepository {
   static Future<Category> create({
     required String storeId,
     required String name,
+    String? description,
+    String? imageUrl,
   }) async {
     try {
       final result = await ApiClient.dio.post(
@@ -15,6 +17,8 @@ class CategoryRepository {
         queryParameters: {'storeId': storeId},
         data: {
           'name': name,
+          if (description != null) 'description': description,
+          if (imageUrl != null) 'imageUrl': imageUrl,
         },
       );
 
@@ -30,6 +34,8 @@ class CategoryRepository {
     required String id,
     String? name,
     bool? isActive,
+    String? description,
+    String? imageUrl,
   }) async {
     try {
       final path = '${ApiEndpoints.categories}/$id';
@@ -38,6 +44,8 @@ class CategoryRepository {
         data: {
           if (name != null) 'name': name,
           if (isActive != null) 'isActive': isActive,
+          if (description != null) 'description': description,
+          if (imageUrl != null) 'imageUrl': imageUrl,
         },
       );
 

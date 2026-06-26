@@ -19,18 +19,26 @@ class AddEditCategoryModal extends StatefulComponent {
 
 class _AddEditCategoryModalState extends State<AddEditCategoryModal> {
   late String _categoryName;
+  late String _description;
+  late String _imageUrl;
   late bool _isActive;
 
   @override
   void initState() {
     super.initState();
     _categoryName = component.category?.name ?? '';
+    _description = component.category?.description ?? '';
+    _imageUrl = component.category?.imageUrl ?? '';
     _isActive = component.category?.isActive ?? true;
   }
 
   void _onSubmit(BuildContext context, Event e) {
     e.preventDefault();
     final categoryName = _categoryName.trim();
+    final descriptionVal = _description.trim();
+    final imageUrlVal = _imageUrl.trim();
+    final description = descriptionVal.isNotEmpty ? descriptionVal : null;
+    final imageUrl = imageUrlVal.isNotEmpty ? imageUrlVal : null;
     final isActive = _isActive;
 
     context.read(activeModalProvider.notifier).state = ActiveModal.none;
@@ -40,10 +48,14 @@ class _AddEditCategoryModalState extends State<AddEditCategoryModal> {
         id: component.category!.id,
         name: categoryName,
         isActive: isActive,
+        description: description,
+        imageUrl: imageUrl,
       );
     } else {
       context.read(categoriesProvider.notifier).create(
         name: categoryName,
+        description: description,
+        imageUrl: imageUrl,
       );
     }
   }
@@ -67,6 +79,28 @@ class _AddEditCategoryModalState extends State<AddEditCategoryModal> {
             },
             hintText: 'Category name is required.',
             onChange: (value) => _categoryName = value as String,
+          ),
+
+          FormField(
+            id: 'description',
+            labelText: 'Description',
+            type: InputType.text,
+            attributes: {
+              'placeholder': 'Optional description...',
+              'value': _description,
+            },
+            onChange: (value) => _description = value as String,
+          ),
+
+          FormField(
+            id: 'imageUrl',
+            labelText: 'Image URL',
+            type: InputType.url,
+            attributes: {
+              'placeholder': 'https://example.com/image.jpg',
+              'value': _imageUrl,
+            },
+            onChange: (value) => _imageUrl = value as String,
           ),
 
           if (component.category != null)
