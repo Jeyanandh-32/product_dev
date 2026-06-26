@@ -320,7 +320,7 @@ class Products extends StatelessComponent {
         th([]),
         td([.text('Action')]),
         td([.text('Image')]),
-        th([.text('Product')]),
+        th([.text('Product Name')]),
         td([.text('SKU')]),
         td([.text('Barcode')]),
         td([.text('Status')]),
