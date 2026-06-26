@@ -255,16 +255,6 @@ class _CountersState extends State<Counters> {
               SquarePen(classes: 'w-5 h-5 text-gray-500 hover:text-accent'),
             ],
           ),
-          a(
-            href: '#',
-            classes: 'text-sm text-accent font-semibold hover:underline',
-            events: {
-              'click': (e) {
-                e.preventDefault();
-              }
-            },
-            [.text('View Products')],
-          ),
         ]),
       ]),
       td([
