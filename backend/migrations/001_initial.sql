@@ -115,6 +115,7 @@ CREATE TABLE IF NOT EXISTS stocks (
     store_id UUID NOT NULL REFERENCES stores (id) ON DELETE CASCADE,
     quantity INT NOT NULL DEFAULT 0,
     low_stock_threshold INT NOT NULL DEFAULT 0,
+    stock_monitor BOOLEAN NOT NULL DEFAULT FALSE,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     CONSTRAINT unique_store_product_stock UNIQUE (store_id, product_id)

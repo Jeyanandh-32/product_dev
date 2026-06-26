@@ -19,8 +19,20 @@ class ProductsProvider extends AsyncNotifier<List<Product>> {
     final selectedStore = ref.watch(storeProvider);
     if (selectedStore == null) return [];
 
+    final limit = ref.watch(entriesProvider);
+    final page = ref.watch(productsPageProvider);
+    final offset = (page - 1) * limit;
+
     try {
-      return await ProductRepository.getAll(storeId: selectedStore.id);
+      final (products, total) = await ProductRepository.getAll(
+        storeId: selectedStore.id,
+        limit: limit,
+        offset: offset,
+      );
+
+      ref.read(productsTotalProvider.notifier).state = total;
+
+      return products;
     } catch (e) {
       return [];
     }
@@ -117,6 +129,7 @@ class ProductsProvider extends AsyncNotifier<List<Product>> {
     required String productId,
     int? quantity,
     int? lowStockThreshold,
+    bool? stockMonitor,
   }) async {
     final currentProducts = state.value ?? [];
     state = const AsyncLoading();
@@ -126,6 +139,7 @@ class ProductsProvider extends AsyncNotifier<List<Product>> {
         id: stockId,
         quantity: quantity,
         lowStockThreshold: lowStockThreshold,
+        stockMonitor: stockMonitor,
       );
 
       state = AsyncData(

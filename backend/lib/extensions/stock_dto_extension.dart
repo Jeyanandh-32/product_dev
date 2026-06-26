@@ -8,6 +8,7 @@ extension StockDtoExtension on StockDto {
     storeId: storeId,
     quantity: quantity,
     lowStockThreshold: lowStockThreshold,
+    stockMonitor: stockMonitor,
     createdAt: createdAt,
     updatedAt: updatedAt,
   );

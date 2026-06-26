@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$StockDto {
 
- String get id; String get productId; String get storeId; int get quantity; int get lowStockThreshold;@JsonKey(fromJson: dateTimeFromJson) DateTime get createdAt;@JsonKey(fromJson: dateTimeFromJson) DateTime get updatedAt;
+ String get id; String get productId; String get storeId; int get quantity; int get lowStockThreshold; bool get stockMonitor;@JsonKey(fromJson: dateTimeFromJson) DateTime get createdAt;@JsonKey(fromJson: dateTimeFromJson) DateTime get updatedAt;
 /// Create a copy of StockDto
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $StockDtoCopyWith<StockDto> get copyWith => _$StockDtoCopyWithImpl<StockDto>(thi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is StockDto&&(identical(other.id, id) || other.id == id)&&(identical(other.productId, productId) || other.productId == productId)&&(identical(other.storeId, storeId) || other.storeId == storeId)&&(identical(other.quantity, quantity) || other.quantity == quantity)&&(identical(other.lowStockThreshold, lowStockThreshold) || other.lowStockThreshold == lowStockThreshold)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is StockDto&&(identical(other.id, id) || other.id == id)&&(identical(other.productId, productId) || other.productId == productId)&&(identical(other.storeId, storeId) || other.storeId == storeId)&&(identical(other.quantity, quantity) || other.quantity == quantity)&&(identical(other.lowStockThreshold, lowStockThreshold) || other.lowStockThreshold == lowStockThreshold)&&(identical(other.stockMonitor, stockMonitor) || other.stockMonitor == stockMonitor)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,productId,storeId,quantity,lowStockThreshold,createdAt,updatedAt);
+int get hashCode => Object.hash(runtimeType,id,productId,storeId,quantity,lowStockThreshold,stockMonitor,createdAt,updatedAt);
 
 @override
 String toString() {
-  return 'StockDto(id: $id, productId: $productId, storeId: $storeId, quantity: $quantity, lowStockThreshold: $lowStockThreshold, createdAt: $createdAt, updatedAt: $updatedAt)';
+  return 'StockDto(id: $id, productId: $productId, storeId: $storeId, quantity: $quantity, lowStockThreshold: $lowStockThreshold, stockMonitor: $stockMonitor, createdAt: $createdAt, updatedAt: $updatedAt)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $StockDtoCopyWith<$Res>  {
   factory $StockDtoCopyWith(StockDto value, $Res Function(StockDto) _then) = _$StockDtoCopyWithImpl;
 @useResult
 $Res call({
- String id, String productId, String storeId, int quantity, int lowStockThreshold,@JsonKey(fromJson: dateTimeFromJson) DateTime createdAt,@JsonKey(fromJson: dateTimeFromJson) DateTime updatedAt
+ String id, String productId, String storeId, int quantity, int lowStockThreshold, bool stockMonitor,@JsonKey(fromJson: dateTimeFromJson) DateTime createdAt,@JsonKey(fromJson: dateTimeFromJson) DateTime updatedAt
 });
 
 
@@ -65,14 +65,15 @@ class _$StockDtoCopyWithImpl<$Res>
 
 /// Create a copy of StockDto
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? productId = null,Object? storeId = null,Object? quantity = null,Object? lowStockThreshold = null,Object? createdAt = null,Object? updatedAt = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? productId = null,Object? storeId = null,Object? quantity = null,Object? lowStockThreshold = null,Object? stockMonitor = null,Object? createdAt = null,Object? updatedAt = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,productId: null == productId ? _self.productId : productId // ignore: cast_nullable_to_non_nullable
 as String,storeId: null == storeId ? _self.storeId : storeId // ignore: cast_nullable_to_non_nullable
 as String,quantity: null == quantity ? _self.quantity : quantity // ignore: cast_nullable_to_non_nullable
 as int,lowStockThreshold: null == lowStockThreshold ? _self.lowStockThreshold : lowStockThreshold // ignore: cast_nullable_to_non_nullable
-as int,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as int,stockMonitor: null == stockMonitor ? _self.stockMonitor : stockMonitor // ignore: cast_nullable_to_non_nullable
+as bool,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
 as DateTime,
   ));
@@ -159,10 +160,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String productId,  String storeId,  int quantity,  int lowStockThreshold, @JsonKey(fromJson: dateTimeFromJson)  DateTime createdAt, @JsonKey(fromJson: dateTimeFromJson)  DateTime updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String productId,  String storeId,  int quantity,  int lowStockThreshold,  bool stockMonitor, @JsonKey(fromJson: dateTimeFromJson)  DateTime createdAt, @JsonKey(fromJson: dateTimeFromJson)  DateTime updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _StockDto() when $default != null:
-return $default(_that.id,_that.productId,_that.storeId,_that.quantity,_that.lowStockThreshold,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.productId,_that.storeId,_that.quantity,_that.lowStockThreshold,_that.stockMonitor,_that.createdAt,_that.updatedAt);case _:
   return orElse();
 
 }
@@ -180,10 +181,10 @@ return $default(_that.id,_that.productId,_that.storeId,_that.quantity,_that.lowS
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String productId,  String storeId,  int quantity,  int lowStockThreshold, @JsonKey(fromJson: dateTimeFromJson)  DateTime createdAt, @JsonKey(fromJson: dateTimeFromJson)  DateTime updatedAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String productId,  String storeId,  int quantity,  int lowStockThreshold,  bool stockMonitor, @JsonKey(fromJson: dateTimeFromJson)  DateTime createdAt, @JsonKey(fromJson: dateTimeFromJson)  DateTime updatedAt)  $default,) {final _that = this;
 switch (_that) {
 case _StockDto():
-return $default(_that.id,_that.productId,_that.storeId,_that.quantity,_that.lowStockThreshold,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.productId,_that.storeId,_that.quantity,_that.lowStockThreshold,_that.stockMonitor,_that.createdAt,_that.updatedAt);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -200,10 +201,10 @@ return $default(_that.id,_that.productId,_that.storeId,_that.quantity,_that.lowS
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String productId,  String storeId,  int quantity,  int lowStockThreshold, @JsonKey(fromJson: dateTimeFromJson)  DateTime createdAt, @JsonKey(fromJson: dateTimeFromJson)  DateTime updatedAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String productId,  String storeId,  int quantity,  int lowStockThreshold,  bool stockMonitor, @JsonKey(fromJson: dateTimeFromJson)  DateTime createdAt, @JsonKey(fromJson: dateTimeFromJson)  DateTime updatedAt)?  $default,) {final _that = this;
 switch (_that) {
 case _StockDto() when $default != null:
-return $default(_that.id,_that.productId,_that.storeId,_that.quantity,_that.lowStockThreshold,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.productId,_that.storeId,_that.quantity,_that.lowStockThreshold,_that.stockMonitor,_that.createdAt,_that.updatedAt);case _:
   return null;
 
 }
@@ -215,7 +216,7 @@ return $default(_that.id,_that.productId,_that.storeId,_that.quantity,_that.lowS
 
 @JsonSerializable(fieldRename: .snake)
 class _StockDto implements StockDto {
-  const _StockDto({required this.id, required this.productId, required this.storeId, required this.quantity, required this.lowStockThreshold, @JsonKey(fromJson: dateTimeFromJson) required this.createdAt, @JsonKey(fromJson: dateTimeFromJson) required this.updatedAt});
+  const _StockDto({required this.id, required this.productId, required this.storeId, required this.quantity, required this.lowStockThreshold, required this.stockMonitor, @JsonKey(fromJson: dateTimeFromJson) required this.createdAt, @JsonKey(fromJson: dateTimeFromJson) required this.updatedAt});
   factory _StockDto.fromJson(Map<String, dynamic> json) => _$StockDtoFromJson(json);
 
 @override final  String id;
@@ -223,6 +224,7 @@ class _StockDto implements StockDto {
 @override final  String storeId;
 @override final  int quantity;
 @override final  int lowStockThreshold;
+@override final  bool stockMonitor;
 @override@JsonKey(fromJson: dateTimeFromJson) final  DateTime createdAt;
 @override@JsonKey(fromJson: dateTimeFromJson) final  DateTime updatedAt;
 
@@ -239,16 +241,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _StockDto&&(identical(other.id, id) || other.id == id)&&(identical(other.productId, productId) || other.productId == productId)&&(identical(other.storeId, storeId) || other.storeId == storeId)&&(identical(other.quantity, quantity) || other.quantity == quantity)&&(identical(other.lowStockThreshold, lowStockThreshold) || other.lowStockThreshold == lowStockThreshold)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _StockDto&&(identical(other.id, id) || other.id == id)&&(identical(other.productId, productId) || other.productId == productId)&&(identical(other.storeId, storeId) || other.storeId == storeId)&&(identical(other.quantity, quantity) || other.quantity == quantity)&&(identical(other.lowStockThreshold, lowStockThreshold) || other.lowStockThreshold == lowStockThreshold)&&(identical(other.stockMonitor, stockMonitor) || other.stockMonitor == stockMonitor)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,productId,storeId,quantity,lowStockThreshold,createdAt,updatedAt);
+int get hashCode => Object.hash(runtimeType,id,productId,storeId,quantity,lowStockThreshold,stockMonitor,createdAt,updatedAt);
 
 @override
 String toString() {
-  return 'StockDto(id: $id, productId: $productId, storeId: $storeId, quantity: $quantity, lowStockThreshold: $lowStockThreshold, createdAt: $createdAt, updatedAt: $updatedAt)';
+  return 'StockDto(id: $id, productId: $productId, storeId: $storeId, quantity: $quantity, lowStockThreshold: $lowStockThreshold, stockMonitor: $stockMonitor, createdAt: $createdAt, updatedAt: $updatedAt)';
 }
 
 
@@ -259,7 +261,7 @@ abstract mixin class _$StockDtoCopyWith<$Res> implements $StockDtoCopyWith<$Res>
   factory _$StockDtoCopyWith(_StockDto value, $Res Function(_StockDto) _then) = __$StockDtoCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String productId, String storeId, int quantity, int lowStockThreshold,@JsonKey(fromJson: dateTimeFromJson) DateTime createdAt,@JsonKey(fromJson: dateTimeFromJson) DateTime updatedAt
+ String id, String productId, String storeId, int quantity, int lowStockThreshold, bool stockMonitor,@JsonKey(fromJson: dateTimeFromJson) DateTime createdAt,@JsonKey(fromJson: dateTimeFromJson) DateTime updatedAt
 });
 
 
@@ -276,14 +278,15 @@ class __$StockDtoCopyWithImpl<$Res>
 
 /// Create a copy of StockDto
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? productId = null,Object? storeId = null,Object? quantity = null,Object? lowStockThreshold = null,Object? createdAt = null,Object? updatedAt = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? productId = null,Object? storeId = null,Object? quantity = null,Object? lowStockThreshold = null,Object? stockMonitor = null,Object? createdAt = null,Object? updatedAt = null,}) {
   return _then(_StockDto(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,productId: null == productId ? _self.productId : productId // ignore: cast_nullable_to_non_nullable
 as String,storeId: null == storeId ? _self.storeId : storeId // ignore: cast_nullable_to_non_nullable
 as String,quantity: null == quantity ? _self.quantity : quantity // ignore: cast_nullable_to_non_nullable
 as int,lowStockThreshold: null == lowStockThreshold ? _self.lowStockThreshold : lowStockThreshold // ignore: cast_nullable_to_non_nullable
-as int,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as int,stockMonitor: null == stockMonitor ? _self.stockMonitor : stockMonitor // ignore: cast_nullable_to_non_nullable
+as bool,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
 as DateTime,
   ));

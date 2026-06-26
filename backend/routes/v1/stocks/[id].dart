@@ -38,17 +38,26 @@ Future<Response> _onPutOrPatch(RequestContext context, String id) async {
     return badRequest(message: 'lowStockThreshold must be an integer.');
   }
 
+  final stockMonitorVal = body['stockMonitor'];
+  if (stockMonitorVal != null && stockMonitorVal is! bool) {
+    return badRequest(message: 'stockMonitor must be a boolean.');
+  }
+
   final quantity = quantityVal as int?;
   final lowStockThreshold = lowStockThresholdVal as int?;
+  final stockMonitor = stockMonitorVal as bool?;
 
   final quantityPresent = body.containsKey('quantity');
   final lowStockThresholdPresent = body.containsKey('lowStockThreshold');
+  final stockMonitorPresent = body.containsKey('stockMonitor');
 
   final errorMessage = StockValidator.update(
     quantity: quantity,
     lowStockThreshold: lowStockThreshold,
+    stockMonitor: stockMonitor,
     quantityPresent: quantityPresent,
     lowStockThresholdPresent: lowStockThresholdPresent,
+    stockMonitorPresent: stockMonitorPresent,
   );
 
   if (errorMessage != null) {
@@ -60,6 +69,7 @@ Future<Response> _onPutOrPatch(RequestContext context, String id) async {
       id: id,
       quantity: quantity,
       lowStockThreshold: lowStockThreshold,
+      stockMonitor: stockMonitor,
     );
 
     if (updatedDto == null) {

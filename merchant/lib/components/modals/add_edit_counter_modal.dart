@@ -35,8 +35,6 @@ class _AddEditCounterModalState extends State<AddEditCounterModal> {
 
     context.read(activeModalProvider.notifier).state = ActiveModal.none;
 
-    print("counter name = $counterName");
-    print("is active = $isActive");
     if (component.counter != null) {
       context
           .read(countersProvider.notifier)

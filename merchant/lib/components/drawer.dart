@@ -1,8 +1,7 @@
 import 'package:jaspr/client.dart';
 import 'package:jaspr/dom.dart';
-import 'package:jaspr_lucide/jaspr_lucide.dart' hide Router;
+import 'package:jaspr_lucide/jaspr_lucide.dart';
 import 'package:jaspr_riverpod/jaspr_riverpod.dart';
-import 'package:jaspr_router/jaspr_router.dart';
 import 'package:merchant/providers/auth_provider.dart';
 import 'package:merchant/providers/ui_providers.dart';
 
@@ -11,38 +10,35 @@ class Drawer extends StatelessComponent {
 
   final String? classes;
 
-  void _navigate(BuildContext context, String path, {bool toggle = true}) {
-    Router.of(context).push(path);
-    if (toggle) {
-      context.read(navOpenProvider.notifier).state = false;
-    }
+  void _changeIndex(BuildContext context, int index, String headerTitle) {
+    context.read(headerTitleProvider.notifier).state = headerTitle;
+    context.read(indexProvider.notifier).state = index;
+    context.read(headerSubTitleProvider.notifier).state = null;
+    if (index != 1 && index != 2) _toggleDrawer(context);
   }
+
+  void _changeSubIndex(
+    BuildContext context,
+    int subIndex,
+    String headerTitle,
+    String headerSubTitle,
+  ) {
+    context.read(headerTitleProvider.notifier).state = headerTitle;
+    context.read(subIndexProvider.notifier).state = subIndex;
+    context.read(headerSubTitleProvider.notifier).state = headerSubTitle;
+    _toggleDrawer(context);
+  }
+
+  void _toggleDrawer(BuildContext context) =>
+      context.read(navOpenProvider.notifier).state = !context.read(
+        navOpenProvider,
+      );
 
   @override
   Component build(BuildContext context) {
+    final index = context.watch(indexProvider);
+    final subIndex = context.watch(subIndexProvider);
     final isNavOpen = context.watch(navOpenProvider);
-    final path = RouteState.maybeOf(context)?.path ?? '/';
-
-    final isDashboard = path == '/';
-    final isInventory = path.startsWith('/inventory');
-    final isReports = path.startsWith('/reports');
-    final isStores = path.startsWith('/stores');
-    final isAccount = path.startsWith('/account');
-    final isSettings = path.startsWith('/settings');
-
-    final isCategory = path == '/inventory/categories';
-    final isCounters = path == '/inventory/counters';
-    final isProducts = isInventory && !isCategory && !isCounters;
-
-    final isPayments = path == '/reports/payments';
-    final isCredits = path == '/reports/credits';
-    final isProfitLoss = path == '/reports/profit-loss';
-    final isStockSummary = path == '/reports/stock-summary';
-    final isOrders = isReports &&
-        !isPayments &&
-        !isCredits &&
-        !isProfitLoss &&
-        !isStockSummary;
 
     return div(
       classes:
@@ -55,100 +51,117 @@ class Drawer extends StatelessComponent {
             .text('Branding'),
           ],
         ),
+
         ul(classes: 'mt-4 flex-1 w-full px-4 space-y-1', [
           navButton(
             name: 'Dashboard',
             prefixIcon: LayoutGrid(classes: 'w-4.5 h-4.5'),
-            isSelected: isDashboard,
-            onClick: () => _navigate(context, '/'),
+            isSelected: index == 0,
+            onClick: () => _changeIndex(context, 0, 'Dashboard'),
           ),
           navButton(
             name: 'Inventory',
             prefixIcon: ShoppingCart(classes: 'w-4.5 h-4.5'),
-            suffixIcon: isInventory
+            suffixIcon: index == 1
                 ? ChevronDown(classes: 'w-4.5 h-4.5 ml-auto mr-6')
                 : ChevronRight(classes: 'w-4.5 h-4.5 ml-auto mr-6'),
-            isSelected: isInventory,
-            onClick: () => _navigate(context, '/inventory/products', toggle: false),
+            isSelected: index == 1,
+            onClick: () {
+              _changeIndex(context, 1, 'Inventory');
+              context.read(subIndexProvider.notifier).state = 0;
+              context.read(headerSubTitleProvider.notifier).state = 'Products';
+            },
           ),
-          if (isInventory)
+          if (index == 1)
             ul(
               classes: 'flex flex-col items-center w-full pr-4 pl-8 space-y-1',
               [
                 navSubButton(
                   name: 'Products',
-                  isSelected: isProducts,
-                  onClick: () => _navigate(context, '/inventory/products'),
+                  isSelected: index == 1 && subIndex == 0,
+                  onClick: () =>
+                      _changeSubIndex(context, 0, 'Inventory', 'Products'),
                 ),
                 navSubButton(
                   name: 'Category',
-                  isSelected: isCategory,
-                  onClick: () => _navigate(context, '/inventory/categories'),
+                  isSelected: index == 1 && subIndex == 1,
+                  onClick: () =>
+                      _changeSubIndex(context, 1, 'Inventory', 'Category'),
                 ),
                 navSubButton(
                   name: 'Counters',
-                  isSelected: isCounters,
-                  onClick: () => _navigate(context, '/inventory/counters'),
+                  isSelected: index == 1 && subIndex == 2,
+                  onClick: () =>
+                      _changeSubIndex(context, 2, 'Inventory', 'Counters'),
                 ),
               ],
             ),
           navButton(
             name: 'Reports',
             prefixIcon: ChartNoAxesCombined(classes: 'w-4.5 h-4.5'),
-            suffixIcon: isReports
+            suffixIcon: index == 2
                 ? ChevronDown(classes: 'w-4.5 h-4.5 ml-auto mr-6')
                 : ChevronRight(classes: 'w-4.5 h-4.5 ml-auto mr-6'),
-            isSelected: isReports,
-            onClick: () => _navigate(context, '/reports/orders', toggle: false),
+            isSelected: index == 2,
+            onClick: () {
+              _changeIndex(context, 2, 'Reports');
+              context.read(subIndexProvider.notifier).state = 0;
+              context.read(headerSubTitleProvider.notifier).state = 'Orders';
+            },
           ),
-          if (isReports)
+          if (index == 2)
             ul(
               classes: 'flex flex-col items-center w-full pr-4 pl-8 space-y-1',
               [
                 navSubButton(
                   name: 'Orders',
-                  isSelected: isOrders,
-                  onClick: () => _navigate(context, '/reports/orders'),
+                  isSelected: index == 2 && subIndex == 0,
+                  onClick: () =>
+                      _changeSubIndex(context, 0, 'Reports', 'Orders'),
                 ),
                 navSubButton(
                   name: 'Payments',
-                  isSelected: isPayments,
-                  onClick: () => _navigate(context, '/reports/payments'),
+                  isSelected: index == 2 && subIndex == 1,
+                  onClick: () =>
+                      _changeSubIndex(context, 1, 'Reports', 'Payments'),
                 ),
                 navSubButton(
                   name: 'Credits',
-                  isSelected: isCredits,
-                  onClick: () => _navigate(context, '/reports/credits'),
+                  isSelected: index == 2 && subIndex == 2,
+                  onClick: () =>
+                      _changeSubIndex(context, 2, 'Reports', 'Credits'),
                 ),
                 navSubButton(
                   name: 'Profit & Loss',
-                  isSelected: isProfitLoss,
-                  onClick: () => _navigate(context, '/reports/profit-loss'),
+                  isSelected: index == 2 && subIndex == 3,
+                  onClick: () =>
+                      _changeSubIndex(context, 3, 'Reports', 'Profit & Loss'),
                 ),
                 navSubButton(
                   name: 'Stock Summary',
-                  isSelected: isStockSummary,
-                  onClick: () => _navigate(context, '/reports/stock-summary'),
+                  isSelected: index == 2 && subIndex == 4,
+                  onClick: () =>
+                      _changeSubIndex(context, 4, 'Reports', 'Stock Summary'),
                 ),
               ],
             ),
           navButton(
             name: 'Stores',
             prefixIcon: Store(classes: 'w-4.5 h-4.5'),
-            isSelected: isStores,
-            onClick: () => _navigate(context, '/stores'),
+            isSelected: index == 3,
+            onClick: () => _changeIndex(context, 3, 'Stores'),
           ),
           navButton(
             name: 'Account',
             prefixIcon: UserRound(classes: 'w-4.5 h-4.5'),
-            isSelected: isAccount,
-            onClick: () => _navigate(context, '/account'),
+            isSelected: index == 4,
+            onClick: () => _changeIndex(context, 4, 'Account'),
           ),
           navButton(
             name: 'Settings',
             prefixIcon: Settings(classes: 'w-4.5 h-4.5'),
-            isSelected: isSettings,
-            onClick: () => _navigate(context, '/settings'),
+            isSelected: index == 5,
+            onClick: () => _changeIndex(context, 5, 'Settings'),
           ),
         ]),
         div(classes: 'w-full px-4 pb-4 mt-auto', [

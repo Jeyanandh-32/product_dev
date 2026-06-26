@@ -25,6 +25,7 @@ class Header extends StatelessComponent {
     final stores = context.watch(storesProvider).value;
     final headerTitle = context.watch(headerTitleProvider);
     final headerSubTitle = context.watch(headerSubTitleProvider);
+    final index = context.watch(indexProvider);
 
     if (stores != null && stores.isNotEmpty) {
       if (store == null || !stores.any((st) => st.id == store.id)) {
@@ -60,7 +61,7 @@ class Header extends StatelessComponent {
           ]),
         ]),
 
-        if (store != null)
+        if (store != null && index != 3)
           div(classes: 'dropdown dropdown-bottom dropdown-end', [
             div(
               classes:

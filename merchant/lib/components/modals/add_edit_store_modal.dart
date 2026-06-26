@@ -38,9 +38,6 @@ class _AddEditStoreModalState extends State<AddEditStoreModal> {
 
     context.read(activeModalProvider.notifier).state = ActiveModal.none;
 
-    print("store name = $storeName");
-    print("store type = $storeType");
-    print("is active = $isActive");
     if (component.store != null) {
       context
           .read(storesProvider.notifier)

@@ -29,14 +29,40 @@ Future<Response> _onGet(RequestContext context) async {
     return badRequest(message: 'Invalid store id.');
   }
 
+  final limitStr = parameters['limit'];
+  final offsetStr = parameters['offset'];
+
+  int? limit;
+  if (limitStr != null && limitStr.isNotEmpty) {
+    limit = int.tryParse(limitStr);
+    if (limit == null || limit <= 0) {
+      return badRequest(message: 'limit must be a positive integer.');
+    }
+  }
+
+  int? offset;
+  if (offsetStr != null && offsetStr.isNotEmpty) {
+    offset = int.tryParse(offsetStr);
+    if (offset == null || offset < 0) {
+      return badRequest(message: 'offset must be a non-negative integer.');
+    }
+  }
+
   final repo = context.read<ProductRepository>();
   final tokenPayload = context.read<TokenPayload>();
   final merchantId = tokenPayload.sub;
 
   try {
+    final total = await repo.count(
+      storeId: storeId,
+      merchantId: merchantId,
+    );
+
     final productDtos = await repo.getAll(
       storeId: storeId,
       merchantId: merchantId,
+      limit: limit,
+      offset: offset,
     );
 
     final products = productDtos.map((s) => s.toProduct()).toList();
@@ -44,6 +70,7 @@ Future<Response> _onGet(RequestContext context) async {
     return success(
       data: {
         'products': products,
+        'total': total,
       },
     );
   } catch (e) {

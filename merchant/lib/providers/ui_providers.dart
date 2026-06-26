@@ -31,6 +31,10 @@ final headerSubTitleProvider = StateProvider.autoDispose<String?>(
 
 final entriesProvider = StateProvider.autoDispose<int>((ref) => 10);
 
+final productsPageProvider = StateProvider.autoDispose<int>((ref) => 1);
+
+final productsTotalProvider = StateProvider.autoDispose<int>((ref) => 0);
+
 enum ActiveModal {
   none,
   addStore,
@@ -43,6 +47,7 @@ enum ActiveModal {
   editCounter,
   editCategory,
   editProduct,
+  updateStock,
 }
 
 final activeModalProvider = StateProvider.autoDispose<ActiveModal>(

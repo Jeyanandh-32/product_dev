@@ -15,8 +15,10 @@ final categoriesProvider =
 class CategoriesProvider extends AsyncNotifier<List<Category>> {
   @override
   FutureOr<List<Category>> build() async {
+    final selectedStore = ref.watch(storeProvider);
+    if (selectedStore == null) return [];
     try {
-      return await CategoryRepository.getAll();
+      return await CategoryRepository.getAll(storeId: selectedStore.id);
     } catch (e) {
       return [];
     }

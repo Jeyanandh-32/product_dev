@@ -13,6 +13,7 @@ abstract class StockDto with _$StockDto {
     required String storeId,
     required int quantity,
     required int lowStockThreshold,
+    required bool stockMonitor,
     @JsonKey(fromJson: dateTimeFromJson) required DateTime createdAt,
     @JsonKey(fromJson: dateTimeFromJson) required DateTime updatedAt,
   }) = _StockDto;

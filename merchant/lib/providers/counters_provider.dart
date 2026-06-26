@@ -15,8 +15,10 @@ final countersProvider =
 class CountersProvider extends AsyncNotifier<List<Counter>> {
   @override
   FutureOr<List<Counter>> build() async {
+    final selectedStore = ref.watch(storeProvider);
+    if (selectedStore == null) return [];
     try {
-      return await CounterRepository.getAll();
+      return await CounterRepository.getAll(storeId: selectedStore.id);
     } catch (e) {
       return [];
     }

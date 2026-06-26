@@ -28,12 +28,14 @@ class StockRepository {
     required String id,
     int? quantity,
     int? lowStockThreshold,
+    bool? stockMonitor,
   }) async {
     final result = await _session.execute(
       Sql.named('''
       UPDATE stocks SET 
         quantity = COALESCE(@quantity, quantity),
         low_stock_threshold = COALESCE(@lowStockThreshold, low_stock_threshold),
+        stock_monitor = COALESCE(@stockMonitor, stock_monitor),
         updated_at = NOW()
       WHERE id = @id RETURNING *
       '''),
@@ -41,6 +43,7 @@ class StockRepository {
         'id': id,
         'quantity': quantity,
         'lowStockThreshold': lowStockThreshold,
+        'stockMonitor': stockMonitor,
       },
     );
 

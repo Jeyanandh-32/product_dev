@@ -11,6 +11,7 @@ abstract class Stock with _$Stock {
     required String storeId,
     required int quantity,
     required int lowStockThreshold,
+    required bool stockMonitor,
     required DateTime createdAt,
     required DateTime updatedAt,
   }) = _Stock;

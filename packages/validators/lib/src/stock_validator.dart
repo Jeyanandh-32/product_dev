@@ -25,8 +25,10 @@ class StockValidator {
   static String? update({
     int? quantity,
     int? lowStockThreshold,
+    bool? stockMonitor,
     bool quantityPresent = false,
     bool lowStockThresholdPresent = false,
+    bool stockMonitorPresent = false,
   }) {
     if (quantityPresent && quantity != null && quantity < 0) {
       return 'Quantity cannot be negative.';
@@ -34,7 +36,7 @@ class StockValidator {
     if (lowStockThresholdPresent && lowStockThreshold != null && lowStockThreshold < 0) {
       return 'Low stock threshold cannot be negative.';
     }
-    if (!quantityPresent && !lowStockThresholdPresent) {
+    if (!quantityPresent && !lowStockThresholdPresent && !stockMonitorPresent) {
       return 'At least one field is required to update.';
     }
     return null;

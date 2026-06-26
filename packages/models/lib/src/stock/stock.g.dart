@@ -12,6 +12,7 @@ _Stock _$StockFromJson(Map<String, dynamic> json) => _Stock(
   storeId: json['storeId'] as String,
   quantity: (json['quantity'] as num).toInt(),
   lowStockThreshold: (json['lowStockThreshold'] as num).toInt(),
+  stockMonitor: json['stockMonitor'] as bool,
   createdAt: DateTime.parse(json['createdAt'] as String),
   updatedAt: DateTime.parse(json['updatedAt'] as String),
 );
@@ -22,6 +23,7 @@ Map<String, dynamic> _$StockToJson(_Stock instance) => <String, dynamic>{
   'storeId': instance.storeId,
   'quantity': instance.quantity,
   'lowStockThreshold': instance.lowStockThreshold,
+  'stockMonitor': instance.stockMonitor,
   'createdAt': instance.createdAt.toIso8601String(),
   'updatedAt': instance.updatedAt.toIso8601String(),
 };

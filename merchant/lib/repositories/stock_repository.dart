@@ -9,6 +9,7 @@ class StockRepository {
     required String id,
     int? quantity,
     int? lowStockThreshold,
+    bool? stockMonitor,
   }) async {
     try {
       final path = '${ApiEndpoints.stocks}/$id';
@@ -17,6 +18,7 @@ class StockRepository {
         data: {
           if (quantity != null) 'quantity': quantity,
           if (lowStockThreshold != null) 'lowStockThreshold': lowStockThreshold,
+          if (stockMonitor != null) 'stockMonitor': stockMonitor,
         },
       );
 

@@ -7,6 +7,8 @@ import 'package:merchant/components/buttons/add_button.dart';
 import 'package:merchant/components/centered_message.dart';
 import 'package:merchant/components/fields/searchbar.dart';
 import 'package:merchant/components/loading.dart';
+import 'package:merchant/components/modals/add_edit_product_modal.dart';
+import 'package:merchant/components/modals/update_stock_modal.dart';
 import 'package:merchant/providers/products_provider.dart';
 import 'package:merchant/providers/ui_providers.dart';
 import 'package:web/web.dart';
@@ -16,6 +18,7 @@ class Products extends StatelessComponent {
 
   void _changeEntry(BuildContext context, int entry) {
     context.read(entriesProvider.notifier).state = entry;
+    context.read(productsPageProvider.notifier).state = 1;
 
     final activeElement = document.activeElement;
 
@@ -28,11 +31,21 @@ class Products extends StatelessComponent {
   Component build(BuildContext context) {
     final entries = context.watch(entriesProvider);
     final products = context.watch(productsProvider);
+    final total = context.watch(productsTotalProvider);
+    final currentPage = context.watch(productsPageProvider);
+    final totalPages = (total / entries).ceil();
+    final activeModal = context.watch(activeModalProvider);
+    final editingProduct = context.watch(editingProductProvider);
 
     return div(
       classes:
           'min-h-0 flex-1 bg-white rounded-2xl flex flex-col m-4 shadow-xs border border-border-medium',
       [
+        if (activeModal == ActiveModal.addProduct) const AddEditProductModal(),
+        if (activeModal == ActiveModal.editProduct)
+          AddEditProductModal(product: editingProduct),
+        if (activeModal == ActiveModal.updateStock)
+          UpdateStockModal(product: editingProduct!),
         div(
           classes:
               'flex flex-col md:items-center md:flex-row md:justify-between w-full border-b border-border-medium p-4 gap-4',
@@ -86,7 +99,11 @@ class Products extends StatelessComponent {
               ),
               AddButton(
                 name: 'Add Product',
-                onClick: () {},
+                onClick: () {
+                  context.read(editingProductProvider.notifier).state = null;
+                  context.read(activeModalProvider.notifier).state =
+                      ActiveModal.addProduct;
+                },
               ),
             ]),
           ],
@@ -111,6 +128,7 @@ class Products extends StatelessComponent {
                     isActive: product.isActive,
                     stock: product.stock!.quantity,
                     lowStock: product.stock!.lowStockThreshold,
+                    stockMonitor: product.stock!.stockMonitor,
                     basePrice: product.basePrice,
                     sellingPrice: product.sellingPrice,
                     category: product.category?.name ?? '-',
@@ -118,36 +136,65 @@ class Products extends StatelessComponent {
                     sku: product.sku,
                     barcode: product.barcode,
                     taxRate: product.taxRate,
+                    onEdit: () {
+                      context.read(editingProductProvider.notifier).state =
+                          product;
+                      context.read(activeModalProvider.notifier).state =
+                          ActiveModal.editProduct;
+                    },
+                    onUpdateStock: () {
+                      context.read(editingProductProvider.notifier).state =
+                          product;
+                      context.read(activeModalProvider.notifier).state =
+                          ActiveModal.updateStock;
+                    },
                   ),
               ]),
             ]),
           ]),
 
-        div(
-          classes:
-              'border-t border-border-medium flex justify-center items-center gap-2 font-medium text-gray-500 p-4',
-          [
-            button(
-              classes:
-                  'btn border-none bg-white shadow-none hover:bg-neutral h-8 hover:text-black',
-              [
-                .text('Previous'),
-              ],
-            ),
-            button(classes: 'btn w-8 h-8 bg-accent text-white rounded-lg', [
-              .text('1'),
-            ]),
-            button(classes: 'btn w-8 h-8 bg-neutral rounded-lg', [.text('2')]),
-            button(classes: 'btn w-8 h-8 bg-neutral rounded-lg', [.text('3')]),
-            button(
-              classes:
-                  'btn border-none bg-white shadow-none hover:bg-neutral h-8 hover:text-black',
-              [
-                .text('Next'),
-              ],
-            ),
-          ],
-        ),
+        if (totalPages > 1)
+          div(
+            classes:
+                'border-t border-border-medium flex justify-center items-center gap-2 font-medium text-gray-500 p-4',
+            [
+              button(
+                classes:
+                    'btn border-none bg-white shadow-none hover:bg-neutral h-8 hover:text-black ${currentPage == 1 ? 'btn-disabled opacity-50' : ''}',
+                onClick: currentPage > 1
+                    ? () => context.read(productsPageProvider.notifier).state =
+                          currentPage - 1
+                    : null,
+                [
+                  .text('Previous'),
+                ],
+              ),
+              for (int i = 1; i <= totalPages; i++)
+                button(
+                  classes:
+                      'btn w-8 h-8 rounded-lg ${i == currentPage ? 'bg-accent text-white hover:bg-accent' : 'bg-neutral hover:bg-base-300'}',
+                  onClick: i == currentPage
+                      ? null
+                      : () =>
+                            context.read(productsPageProvider.notifier).state =
+                                i,
+                  [
+                    .text('$i'),
+                  ],
+                ),
+              button(
+                classes:
+                    'btn border-none bg-white shadow-none hover:bg-neutral h-8 hover:text-black ${currentPage == totalPages ? 'btn-disabled opacity-50' : ''}',
+                onClick: currentPage < totalPages
+                    ? () => context.read(productsPageProvider.notifier).state =
+                          currentPage + 1
+                    : null,
+                [
+                  .text('Next'),
+                ],
+              ),
+            ],
+          ),
       ],
     );
   }
@@ -158,6 +205,7 @@ class Products extends StatelessComponent {
     required bool isActive,
     required int stock,
     required int lowStock,
+    required bool stockMonitor,
     required int basePrice,
     required int sellingPrice,
     required String category,
@@ -165,21 +213,62 @@ class Products extends StatelessComponent {
     String? sku,
     String? barcode,
     required double taxRate,
+    VoidCallback? onEdit,
+    VoidCallback? onUpdateStock,
   }) {
     return tr([
       th([]),
       td([
-        button(
-          classes: 'hover:cursor-pointer',
-          events: {
-            'click': (e) {
-              e.stopPropagation();
+        div(classes: 'dropdown dropdown-right dropdown-bottom', [
+          button(
+            classes:
+                'hover:cursor-pointer btn btn-ghost btn-xs h-8 w-8 p-0 rounded-full',
+            attributes: {
+              'tabindex': '0',
+              'role': 'button',
             },
-          },
-          [
-            SquarePen(classes: 'w-5 h-5 text-gray-500'),
-          ],
-        ),
+            [
+              SquarePen(classes: 'w-5 h-5 text-gray-500'),
+            ],
+          ),
+          ul(
+            attributes: {'tabindex': '-1'},
+            classes:
+                'dropdown-content menu bg-base-100 rounded-box z-50 mt-1 p-2 shadow-md border border-border-light w-36',
+            [
+              li([
+                a(
+                  href: '#',
+                  classes:
+                      'rounded-md hover:bg-neutral py-2 px-3 block text-sm',
+                  onClick: () {
+                    onEdit?.call();
+                    final activeElement = document.activeElement;
+                    if (activeElement != null) {
+                      (activeElement as HTMLElement).blur();
+                    }
+                  },
+                  [.text('Edit Product')],
+                ),
+              ]),
+              li([
+                a(
+                  href: '#',
+                  classes:
+                      'rounded-md hover:bg-neutral py-2 px-3 block text-sm',
+                  onClick: () {
+                    onUpdateStock?.call();
+                    final activeElement = document.activeElement;
+                    if (activeElement != null) {
+                      (activeElement as HTMLElement).blur();
+                    }
+                  },
+                  [.text('Update Stock')],
+                ),
+              ]),
+            ],
+          ),
+        ]),
       ]),
       td([
         div(classes: 'h-12 w-12 overflow-hidden rounded-2xl', [
@@ -204,10 +293,19 @@ class Products extends StatelessComponent {
       ]),
       td([.text('$stock')]),
       td([.text('$lowStock')]),
+      td([
+        div(
+          classes:
+              '${stockMonitor ? 'bg-soft-green text-soft-green-content' : 'bg-soft-red text-soft-red-content'} rounded-full px-3 py-1 text-center text-xs font-semibold',
+          [
+            .text(stockMonitor ? 'ON' : 'OFF'),
+          ],
+        ),
+      ]),
       td([.text('$basePrice')]),
       td([.text('$sellingPrice')]),
       td([.text('${taxRate.toStringAsFixed(2)}%')]),
-      td(classes: 'whitespace-nowrap',[.text(category)]),
+      td(classes: 'whitespace-nowrap', [.text(category)]),
       td(classes: 'whitespace-nowrap', [.text(counter)]),
       th([]),
     ]);
@@ -225,6 +323,7 @@ class Products extends StatelessComponent {
         td([.text('Status')]),
         td([.text('Stock')]),
         td([.text('Low Stock')]),
+        td([.text('Stock Monitor')]),
         td([.text('Base Price (₹)')]),
         td([.text('Selling Price (₹)')]),
         td([.text('Tax Rate (%)')]),

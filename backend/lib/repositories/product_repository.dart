@@ -107,6 +107,8 @@ class ProductRepository {
   Future<List<ProductDto>> getAll({
     required String merchantId,
     String? storeId,
+    int? limit,
+    int? offset,
   }) async {
     final result = await _session.execute(
       Sql.named(
@@ -118,6 +120,7 @@ class ProductRepository {
           s.store_id AS stock_store_id,
           s.quantity AS stock_quantity,
           s.low_stock_threshold AS stock_low_stock_threshold,
+          s.stock_monitor AS stock_stock_monitor,
           s.created_at AS stock_created_at,
           s.updated_at AS stock_updated_at,
           c.id AS cat_id,
@@ -144,11 +147,16 @@ class ProductRepository {
         LEFT JOIN counters cnt ON p.counter_id = cnt.id
         WHERE p.merchant_id = @merchantId
         ${storeId != null ? 'AND p.store_id = @storeId' : ''}
+        ORDER BY p.created_at DESC
+        ${limit != null ? 'LIMIT @limit' : ''}
+        ${offset != null ? 'OFFSET @offset' : ''}
       ''',
       ),
       parameters: {
         'merchantId': merchantId,
         if (storeId != null) 'storeId': storeId,
+        if (limit != null) 'limit': limit,
+        if (offset != null) 'offset': offset,
       },
     );
 
@@ -164,6 +172,7 @@ class ProductRepository {
           'store_id': columns['stock_store_id'],
           'quantity': columns['stock_quantity'],
           'low_stock_threshold': columns['stock_low_stock_threshold'],
+          'stock_monitor': columns['stock_stock_monitor'],
           'created_at': columns['stock_created_at'],
           'updated_at': columns['stock_updated_at'],
         };
@@ -214,6 +223,7 @@ class ProductRepository {
         s.store_id AS stock_store_id,
         s.quantity AS stock_quantity,
         s.low_stock_threshold AS stock_low_stock_threshold,
+        s.stock_monitor AS stock_stock_monitor,
         s.created_at AS stock_created_at,
         s.updated_at AS stock_updated_at,
         c.id AS cat_id,
@@ -254,6 +264,7 @@ class ProductRepository {
         'store_id': columns['stock_store_id'],
         'quantity': columns['stock_quantity'],
         'low_stock_threshold': columns['stock_low_stock_threshold'],
+        'stock_monitor': columns['stock_stock_monitor'],
         'created_at': columns['stock_created_at'],
         'updated_at': columns['stock_updated_at'],
       };
@@ -293,4 +304,21 @@ class ProductRepository {
     return ProductDto.fromJson(productMap);
   }
 
+  Future<int> count({
+    required String merchantId,
+    String? storeId,
+  }) async {
+    final result = await _session.execute(
+      Sql.named('''
+        SELECT COUNT(*) FROM products
+        WHERE merchant_id = @merchantId
+        ${storeId != null ? 'AND store_id = @storeId' : ''}
+      '''),
+      parameters: {
+        'merchantId': merchantId,
+        if (storeId != null) 'storeId': storeId,
+      },
+    );
+    return result.first.first! as int;
+  }
 }

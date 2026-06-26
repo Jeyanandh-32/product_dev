@@ -85,20 +85,28 @@ class ProductRepository {
     }
   }
 
-  static Future<List<Product>> getAll({required String storeId}) async {
+  static Future<(List<Product>, int)> getAll({
+    required String storeId,
+    int? limit,
+    int? offset,
+  }) async {
     try {
       final result = await ApiClient.dio.get(
         ApiEndpoints.products,
         queryParameters: {
           'storeId': storeId,
+          if (limit != null) 'limit': limit,
+          if (offset != null) 'offset': offset,
         },
       );
 
       final list = result.data['data']['products'] as List<dynamic>;
+      final total = result.data['data']['total'] as int? ?? list.length;
 
-      return list
+      final products = list
           .map((s) => Product.fromJson(s as Map<String, Object?>))
           .toList();
+      return (products, total);
     } on DioException catch (e) {
       ApiClient.handleDioError(e, 'Failed to fetch products.');
     }
