@@ -3,10 +3,11 @@ import 'package:jaspr/dom.dart';
 import 'package:jaspr_lucide/generated_icons/search.dart';
 
 class Searchbar extends StatelessComponent {
-  const Searchbar({super.key, required this.placeholder, this.classes});
+  const Searchbar({super.key, required this.placeholder, this.classes, this.onInput});
 
   final String placeholder;
   final String? classes;
+  final ValueChanged<String>? onInput;
 
   @override
   Component build(BuildContext context) {
@@ -23,6 +24,7 @@ class Searchbar extends StatelessComponent {
             'required': '',
             'placeholder': placeholder,
           },
+          onInput: onInput,
         ),
       ],
     );
