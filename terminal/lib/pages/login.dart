@@ -28,25 +28,19 @@ class _LoginState extends ConsumerState<Login> {
         await ref
             .read(authProvider.notifier)
             .login(code: code.trim(), password: password);
-      } catch (e, stack) {
-        debugPrint('Sign in failed caught in UI: $e\n$stack');
+      } catch (e) {
         if (!mounted) return;
         final message = e is ApiException
             ? e.message
             : 'Login failed. Please check your credentials.';
-        try {
-          ShadToaster.of(context).show(
-            ShadToast.destructive(
-              title: const Text('Authentication Error'),
-              description: Text(message),
-              alignment: .topCenter,
-              duration: Duration(seconds: 3),
-            ),
-          );
-          debugPrint('Called ShadToaster.of(context).show successfully');
-        } catch (err, st) {
-          debugPrint('Failed to show toaster: $err\n$st');
-        }
+        ShadToaster.of(context).show(
+          ShadToast.destructive(
+            title: const Text('Authentication Error'),
+            description: Text(message),
+            alignment: Alignment.topCenter,
+            duration: const Duration(seconds: 3),
+          ),
+        );
       }
     }
   }
