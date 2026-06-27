@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mix/mix.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:terminal/pages/loading.dart';
+import 'package:terminal/providers/auth_provider.dart';
 import 'package:terminal/providers/categories_provider.dart';
 import 'package:terminal/providers/products_provider.dart';
 import 'package:terminal/providers/ui_providers.dart';
@@ -44,6 +46,13 @@ class Home extends ConsumerWidget {
           preferredSize: const Size.fromHeight(1.0),
           child: Container(color: theme.colorScheme.border, height: 1.0),
         ),
+        actions: [
+          ShadButton.destructive(
+            onPressed: () => ref.read(authProvider.notifier).logout(),
+            child: const StyledText('Log Out'),
+          ),
+        ],
+        actionsPadding: EdgeInsets.only(right: 24),
       ),
       body: RowBox(
         children: [
@@ -53,8 +62,12 @@ class Home extends ConsumerWidget {
               children: [
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
+                  dragStartBehavior: .start,
                   child: RowBox(
-                    style: FlexBoxStyler().spacing(8).paddingY(4),
+                    style: FlexBoxStyler()
+                        .spacing(8)
+                        .paddingY(4)
+                        .mainAxisAlignment(.start),
                     children: List.generate(categories.value!.length, (index) {
                       final category = categories.value![index];
                       final isSelected = category.id == selectedCategory?.id;
@@ -115,16 +128,44 @@ class Home extends ConsumerWidget {
                                     BoxStyler().color(Colors.grey.shade100),
                                   ),
                               child: ColumnBox(
+                                style: FlexBoxStyler().crossAxisAlignment(
+                                  .start,
+                                ),
                                 children: [
                                   if (product.imageUrl != null)
                                     Expanded(
-                                      child: Image.network(
-                                        product.imageUrl!,
-                                        fit: BoxFit.cover,
+                                      child: Box(
+                                        style: BoxStyler()
+                                            .borderRadiusAll(.circular(8))
+                                            .alignment(.center),
+                                        child: Image.network(
+                                          product.imageUrl!,
+                                          fit: BoxFit.cover,
+                                        ),
                                       ),
                                     ),
                                   const SizedBox(height: 8),
-                                  StyledText(product.name),
+                                  StyledText(
+                                    product.name,
+                                    style: TextStyler()
+                                        .fontSize(16)
+                                        .fontWeight(.w600),
+                                  ),
+                                  Gap(8),
+                                  StyledText(
+                                    '${product.stock?.quantity ?? 0} - left',
+                                    style: TextStyler()
+                                        .color(theme.colorScheme.accent)
+                                        .fontSize(16)
+                                        .fontWeight(.w500),
+                                  ),
+                                  Gap(8),
+                                  StyledText(
+                                    '₹${product.sellingPrice}',
+                                    style: TextStyler()
+                                        .fontSize(16)
+                                        .fontWeight(.w600),
+                                  ),
                                 ],
                               ),
                             );
