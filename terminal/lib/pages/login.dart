@@ -76,7 +76,7 @@ class _LoginState extends ConsumerState<Login> {
                       ),
                       Gap(8),
                       StyledText(
-                        'Enter to your credentials to access\nand tracking sales today.',
+                        'Enter your credentials to access the terminal\nand manage billing operations.',
                         style: TextStyler()
                             .textAlign(.center)
                             .fontSize(16)

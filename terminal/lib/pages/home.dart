@@ -48,7 +48,7 @@ class Home extends ConsumerWidget {
                             .borderRadiusAll(.circular(6)),
                         child: StyledText(
                           category.name,
-                          style: TextStyler().fontSize(16),
+                          style: TextStyler().fontSize(16).fontWeight(.w500),
                         ),
                       );
                     }),
