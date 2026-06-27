@@ -30,20 +30,36 @@ class Home extends ConsumerWidget {
       ),
       body: RowBox(
         children: [
-          ColumnBox(
-            children: [
-              RowBox(
-                children: List.generate(categories.value!.length, (index) {
-                  final category = categories.value![index];
-                  return Box(
-                    style: BoxStyler().color(Colors.white),
-                    child: StyledText(category.name),
-                  );
-                }),
-              ),
-            ],
+          Expanded(
+            child: ColumnBox(
+              style: FlexBoxStyler().paddingAll(16),
+              children: [
+                SingleChildScrollView(
+                  scrollDirection: .horizontal,
+                  child: RowBox(
+                    style: FlexBoxStyler().spacing(8),
+                    children: List.generate(categories.value!.length, (index) {
+                      final category = categories.value![index];
+                      return Box(
+                        style: BoxStyler()
+                            .color(Colors.white)
+                            .paddingX(24)
+                            .paddingY(4)
+                            .borderRadiusAll(.circular(6)),
+                        child: StyledText(
+                          category.name,
+                          style: TextStyler().fontSize(16),
+                        ),
+                      );
+                    }),
+                  ),
+                ),
+              ],
+            ),
           ),
-          ColumnBox(style: FlexBoxStyler().color(Colors.white)),
+          Expanded(
+            child: ColumnBox(style: FlexBoxStyler().color(Colors.white)),
+          ),
         ],
       ),
     );
