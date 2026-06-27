@@ -6,8 +6,15 @@ import 'package:mix/mix.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:validators/validators.dart';
 
-class Login extends StatelessWidget {
+class Login extends StatefulWidget {
   const Login({super.key});
+
+  @override
+  State<Login> createState() => _LoginState();
+}
+
+class _LoginState extends State<Login> {
+  final formKey = GlobalKey<ShadFormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -52,6 +59,7 @@ class Login extends StatelessWidget {
                         blurRadius: 2,
                       ),
                   child: ShadForm(
+                    key: formKey,
                     child: ColumnBox(
                       children: [
                         RowBox(
@@ -72,6 +80,7 @@ class Login extends StatelessWidget {
                         ),
                         Gap(16),
                         ShadInputFormField(
+                          id: 'terminalId',
                           placeholder: StyledText('HINXXXXXXOE5'),
                           inputFormatters: [
                             LengthLimitingTextInputFormatter(12),
@@ -116,13 +125,16 @@ class Login extends StatelessWidget {
                         ),
                         Gap(16),
                         ShadInputFormField(
+                          id: 'password',
                           placeholder: StyledText('*********'),
                           obscureText: true,
                           validator: (v) {
                             if (v.isEmpty) {
                               return 'Password is required.';
                             }
-                            if (!RegExp(ValidationPatterns.password).hasMatch(v)) {
+                            if (!RegExp(
+                              ValidationPatterns.password,
+                            ).hasMatch(v)) {
                               return 'Must be 6+ characters with a number, lowercase, and uppercase.';
                             }
                             return null;
@@ -135,6 +147,12 @@ class Login extends StatelessWidget {
                           width: .infinity,
                           height: 48,
                           child: StyledText('Sign In'),
+                          onPressed: () {
+                            if (formKey.currentState!.saveAndValidate()) {
+                              final values = formKey.currentState!.value;
+                              debugPrint('Valid form data: $values');
+                            }
+                          },
                         ),
                       ],
                     ),
