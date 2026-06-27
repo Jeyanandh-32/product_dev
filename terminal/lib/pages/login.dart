@@ -69,8 +69,8 @@ class _LoginState extends State<Login> {
                               icon: LucideIcons.monitor,
                               style: IconStyler().color(Colors.grey.shade600),
                             ),
-                            StyledText(
-                              'Terminal ID',
+                             StyledText(
+                              'Terminal Code',
                               style: TextStyler()
                                   .fontSize(14)
                                   .fontWeight(.w600)
@@ -80,7 +80,7 @@ class _LoginState extends State<Login> {
                         ),
                         Gap(16),
                         ShadInputFormField(
-                          id: 'terminalId',
+                          id: 'code',
                           placeholder: StyledText('HINXXXXXXOE5'),
                           textInputAction: .next,
                           inputFormatters: [
@@ -90,17 +90,17 @@ class _LoginState extends State<Login> {
                               newValue,
                             ) {
                               return TextEditingValue(
-                                text: newValue.text.toUpperCase(),
-                                selection: newValue.selection,
+                                  text: newValue.text.toUpperCase(),
+                                  selection: newValue.selection,
                               );
                             }),
                           ],
                           validator: (v) {
                             if (v.trim().isEmpty) {
-                              return 'Terminal ID is required.';
+                              return 'Terminal Code is required.';
                             }
                             if (v.length < 12) {
-                              return 'Terminal ID must be exactly 12 characters.';
+                              return 'Terminal Code must be exactly 12 characters.';
                             }
                             return null;
                           },
