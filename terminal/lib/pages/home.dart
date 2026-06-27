@@ -5,6 +5,7 @@ import 'package:mix/mix.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:terminal/pages/loading.dart';
 import 'package:terminal/providers/categories_provider.dart';
+import 'package:terminal/providers/products_provider.dart';
 import 'package:terminal/providers/ui_providers.dart';
 
 class Home extends ConsumerWidget {
@@ -14,8 +15,17 @@ class Home extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = ShadTheme.of(context);
     final categories = ref.watch(categoriesProvider);
-    if (categories.isLoading) return Scaffold(body: Loading());
+    final products = ref.watch(productsProvider);
+
+    if (categories.isLoading || products.isLoading) {
+      return Scaffold(body: Loading());
+    }
+
     final selectedCategory = ref.watch(selectedCategoryProvider);
+    final filteredProducts = products.value?.where((product) {
+          return product.category?.id == selectedCategory?.id;
+        }).toList() ??
+        [];
 
     return Scaffold(
       appBar: AppBar(
@@ -41,7 +51,7 @@ class Home extends ConsumerWidget {
               style: FlexBoxStyler().paddingAll(16),
               children: [
                 SingleChildScrollView(
-                  scrollDirection: .horizontal,
+                  scrollDirection: Axis.horizontal,
                   child: RowBox(
                     style: FlexBoxStyler().spacing(8).paddingY(4),
                     children: List.generate(categories.value!.length, (index) {
@@ -75,8 +85,9 @@ class Home extends ConsumerWidget {
                           mainAxisSpacing: 12,
                           childAspectRatio: 1.1,
                         ),
-                    itemCount: 9,
+                    itemCount: filteredProducts.length,
                     itemBuilder: (context, index) {
+                      final product = filteredProducts[index];
                       return PressableBox(
                         onPress: () {},
                         style: BoxStyler()
@@ -92,7 +103,7 @@ class Home extends ConsumerWidget {
                             .onPressed(BoxStyler().color(Colors.grey.shade100)),
                         child: Center(
                           child: StyledText(
-                            'Item ${index + 1}',
+                            product.name,
                             style: TextStyler().fontSize(16).fontWeight(.w500),
                           ),
                         ),
