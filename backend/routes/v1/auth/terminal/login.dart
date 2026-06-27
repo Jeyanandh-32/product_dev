@@ -16,6 +16,11 @@ Future<Response> _onPost(RequestContext context) async {
 
   if (jsonBody is! Map<String, Object?>) return inValidBody();
 
+  final body = jsonBody;
+
+  final code = (body['code'] as String?)?.trim().toUpperCase();
+  final password = (body['password'] as String?)?.trim();
+
   
   return success();
 }

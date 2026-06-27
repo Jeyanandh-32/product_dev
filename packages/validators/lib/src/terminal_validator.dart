@@ -19,6 +19,26 @@ class TerminalValidator {
     return null;
   }
 
+  static String? login({String? code, String? password}) {
+    if (code == null || code.trim().isEmpty) {
+      return 'Terminal Code is required.';
+    }
+
+    if (code.trim().length != 12) {
+      return 'Terminal Code must be exactly 12 characters.';
+    }
+
+    if (password == null || password.isEmpty) {
+      return 'Password is required.';
+    }
+
+    if (!RegExp(ValidationPatterns.password).hasMatch(password)) {
+      return 'Password must be at least 6 characters long and contain at least one number, one uppercase letter, and one lowercase letter.';
+    }
+
+    return null;
+  }
+
   static String? update({String? name, String? password, bool? isActive}) {
     if (name != null && name.trim().isEmpty) {
       return 'Terminal Name cannot be empty.';
