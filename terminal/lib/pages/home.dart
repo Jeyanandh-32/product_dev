@@ -22,7 +22,8 @@ class Home extends ConsumerWidget {
     }
 
     final selectedCategory = ref.watch(selectedCategoryProvider);
-    final filteredProducts = products.value?.where((product) {
+    final filteredProducts =
+        products.value?.where((product) {
           return product.category?.id == selectedCategory?.id;
         }).toList() ??
         [];
@@ -76,40 +77,56 @@ class Home extends ConsumerWidget {
                   ),
                 ),
                 Expanded(
-                  child: GridView.builder(
-                    padding: const EdgeInsets.only(top: 16),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 3,
-                          crossAxisSpacing: 12,
-                          mainAxisSpacing: 12,
-                          childAspectRatio: 1.1,
-                        ),
-                    itemCount: filteredProducts.length,
-                    itemBuilder: (context, index) {
-                      final product = filteredProducts[index];
-                      return PressableBox(
-                        onPress: () {},
-                        style: BoxStyler()
-                            .color(Colors.white)
-                            .borderRadiusAll(const Radius.circular(8))
-                            .paddingAll(12)
-                            .shadowOnly(
-                              color: Colors.black.withValues(alpha: 0.05),
-                              offset: const Offset(0, 1),
-                              blurRadius: 2,
-                            )
-                            .onHovered(BoxStyler().color(Colors.grey.shade50))
-                            .onPressed(BoxStyler().color(Colors.grey.shade100)),
-                        child: Center(
+                  child: filteredProducts.isEmpty
+                      ? Center(
                           child: StyledText(
-                            product.name,
-                            style: TextStyler().fontSize(16).fontWeight(.w500),
+                            'No products available in this category.',
+                            style: TextStyler()
+                                .fontSize(16)
+                                .color(Colors.grey.shade600),
                           ),
+                        )
+                      : GridView.builder(
+                          padding: const EdgeInsets.only(top: 16),
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 3,
+                                crossAxisSpacing: 12,
+                                mainAxisSpacing: 12,
+                              ),
+                          itemCount: filteredProducts.length,
+                          itemBuilder: (context, index) {
+                            final product = filteredProducts[index];
+                            return Align(
+                              alignment: Alignment.topCenter,
+                              child: PressableBox(
+                                onPress: () {},
+                                style: BoxStyler()
+                                    .color(Colors.white)
+                                    .borderRadiusAll(const Radius.circular(8))
+                                    .paddingAll(12)
+                                    .shadowOnly(
+                                      color: Colors.black.withValues(alpha: 0.05),
+                                      offset: const Offset(0, 1),
+                                      blurRadius: 2,
+                                    )
+                                    .onHovered(
+                                      BoxStyler().color(Colors.grey.shade50),
+                                    )
+                                    .onPressed(
+                                      BoxStyler().color(Colors.grey.shade100),
+                                    ),
+                                child: ColumnBox(
+                                  children: [
+                                    if (product.imageUrl != null)
+                                      Image.network(product.imageUrl!),
+                                    StyledText(product.name),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
                         ),
-                      );
-                    },
-                  ),
                 ),
               ],
             ),
