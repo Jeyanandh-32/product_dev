@@ -82,6 +82,7 @@ class _LoginState extends State<Login> {
                         ShadInputFormField(
                           id: 'terminalId',
                           placeholder: StyledText('HINXXXXXXOE5'),
+                          textInputAction: .next,
                           inputFormatters: [
                             LengthLimitingTextInputFormatter(12),
                             TextInputFormatter.withFunction((
@@ -127,6 +128,7 @@ class _LoginState extends State<Login> {
                         ShadInputFormField(
                           id: 'password',
                           placeholder: StyledText('*********'),
+                          textInputAction: .done,
                           obscureText: true,
                           validator: (v) {
                             if (v.isEmpty) {
