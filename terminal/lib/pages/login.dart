@@ -4,6 +4,7 @@ import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mix/mix.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
+import 'package:validators/validators.dart';
 
 class Login extends StatelessWidget {
   const Login({super.key});
@@ -74,13 +75,25 @@ class Login extends StatelessWidget {
                           placeholder: StyledText('HINXXXXXXOE5'),
                           inputFormatters: [
                             LengthLimitingTextInputFormatter(12),
-                            TextInputFormatter.withFunction((oldValue, newValue) {
+                            TextInputFormatter.withFunction((
+                              oldValue,
+                              newValue,
+                            ) {
                               return TextEditingValue(
                                 text: newValue.text.toUpperCase(),
                                 selection: newValue.selection,
                               );
                             }),
                           ],
+                          validator: (v) {
+                            if (v.trim().isEmpty) {
+                              return 'Terminal ID is required.';
+                            }
+                            if (v.length < 12) {
+                              return 'Terminal ID must be exactly 12 characters.';
+                            }
+                            return null;
+                          },
                         ),
 
                         Gap(16),
@@ -105,6 +118,15 @@ class Login extends StatelessWidget {
                         ShadInputFormField(
                           placeholder: StyledText('*********'),
                           obscureText: true,
+                          validator: (v) {
+                            if (v.isEmpty) {
+                              return 'Password is required.';
+                            }
+                            if (!RegExp(ValidationPatterns.password).hasMatch(v)) {
+                              return 'Must be 6+ characters with a number, lowercase, and uppercase.';
+                            }
+                            return null;
+                          },
                         ),
 
                         Gap(28),
