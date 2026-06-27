@@ -15,7 +15,7 @@ class Login extends StatelessWidget {
         child: Box(
           style: BoxStyler().maxWidth(480).onMobile(BoxStyler().paddingX(24)),
           child: SingleChildScrollView(
-            child: Column(
+            child: ColumnBox(
               children: [
                 StyledText(
                   'Branding',
@@ -50,7 +50,7 @@ class Login extends StatelessWidget {
                         blurRadius: 2,
                       )
                       .height(500),
-                  child: Column(
+                  child: ColumnBox(
                     children: [
                       RowBox(
                         style: FlexBoxStyler().spacing(8),
