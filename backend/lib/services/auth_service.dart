@@ -30,7 +30,7 @@ class AuthService {
 
     return jwt.sign(
       SecretKey(Env.accessSecret),
-      expiresIn: const Duration(hours: 24),
+      expiresIn: role == .terminal ? null : const Duration(hours: 24),
     );
   }
 
