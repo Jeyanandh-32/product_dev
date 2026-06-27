@@ -1,24 +1,45 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mix/mix.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
+import 'package:terminal/exceptions/api_exception.dart';
+import 'package:terminal/providers/auth_provider.dart';
 import 'package:validators/validators.dart';
 
-class Login extends StatefulWidget {
+class Login extends ConsumerStatefulWidget {
   const Login({super.key});
 
   @override
-  State<Login> createState() => _LoginState();
+  ConsumerState<Login> createState() => _LoginState();
 }
 
-class _LoginState extends State<Login> {
+class _LoginState extends ConsumerState<Login> {
   final formKey = GlobalKey<ShadFormState>();
 
   @override
   Widget build(BuildContext context) {
     final theme = ShadTheme.of(context);
+    final authState = ref.watch(authProvider);
+    final isLoading = authState.isLoading;
+
+    ref.listen(authProvider, (previous, next) {
+      if (next.hasError && !next.isLoading) {
+        final error = next.error;
+        final message = error is ApiException
+            ? error.message
+            : 'Login failed. Please check your credentials.';
+        ShadToaster.of(context).show(
+          ShadToast.destructive(
+            title: const Text('Authentication Error'),
+            description: Text(message),
+          ),
+        );
+      }
+    });
+
     return Scaffold(
       body: Center(
         child: Box(
@@ -145,7 +166,7 @@ class _LoginState extends State<Login> {
 
                         Gap(28),
 
-                        ShadButton(
+                         ShadButton(
                           width: .infinity,
                           height: 48,
                           shadows: [
@@ -162,13 +183,29 @@ class _LoginState extends State<Login> {
                               spreadRadius: -2,
                             ),
                           ],
-                          child: StyledText('Sign In'),
-                          onPressed: () {
-                            if (formKey.currentState!.saveAndValidate()) {
-                              final values = formKey.currentState!.value;
-                              debugPrint('Valid form data: $values');
-                            }
-                          },
+                          onPressed: isLoading
+                              ? null
+                              : () {
+                                  if (formKey.currentState!.saveAndValidate()) {
+                                    final values = formKey.currentState!.value;
+                                    final code = values['code'] as String;
+                                    final password = values['password'] as String;
+                                    ref.read(authProvider.notifier).login(
+                                          code: code.trim(),
+                                          password: password,
+                                        );
+                                  }
+                                },
+                          child: isLoading
+                              ? const SizedBox(
+                                  height: 20,
+                                  width: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: Colors.white,
+                                  ),
+                                )
+                              : StyledText('Sign In'),
                         ),
                       ],
                     ),
