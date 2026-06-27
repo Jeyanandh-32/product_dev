@@ -14,6 +14,13 @@ Future<Response> onRequest(RequestContext context) async {
   final storeId = parameters['storeId'];
 
   if (context.request.method == HttpMethod.get) {
+    final tokenPayload = context.read<TokenPayload>();
+
+    // Terminal role: look up by code, no storeId needed
+    if (tokenPayload.role == .terminal && tokenPayload.terminalCode != null) {
+      return _onGetTerminal(context, tokenPayload);
+    }
+
     if (storeId != null && storeId.isNotEmpty && !storeId.isUUID()) {
       return badRequest(message: 'Invalid store id.');
     }
@@ -31,32 +38,37 @@ Future<Response> onRequest(RequestContext context) async {
   }
 }
 
+Future<Response> _onGetTerminal(
+  RequestContext context,
+  TokenPayload tokenPayload,
+) async {
+  final repo = context.read<TerminalRepository>();
+
+  try {
+    final terminalDto = await repo.getByCode(tokenPayload.terminalCode!);
+
+    if (terminalDto == null) {
+      return badRequest(message: 'Terminal not exists');
+    }
+
+    if (!terminalDto.isActive) {
+      return forbidden(message: 'This Terminal is deactivated.');
+    }
+
+    return success(
+      data: {
+        'terminal': terminalDto.toTerminal(),
+      },
+    );
+  } catch (e) {
+    return error(message: e.toString());
+  }
+}
+
 Future<Response> _onGet(RequestContext context, String? storeId) async {
   final repo = context.read<TerminalRepository>();
   final tokenPayload = context.read<TokenPayload>();
   final merchantId = tokenPayload.sub;
-
-  if (tokenPayload.role == .terminal && tokenPayload.terminalCode != null) {
-    try {
-      final terminalDto = await repo.getByCode(tokenPayload.terminalCode!);
-
-      if (terminalDto == null) {
-        return badRequest(message: 'Terminal not exists');
-      }
-
-      if (!terminalDto.isActive) {
-        return forbidden(message: 'This Terminal is deactivated.');
-      }
-
-      return success(
-        data: {
-          'terminal': terminalDto.toTerminal(),
-        },
-      );
-    } catch (e) {
-      return error(message: e.toString());
-    }
-  }
 
   try {
     final terminalDtos = await repo.getAll(
