@@ -35,6 +35,10 @@ Future<Response> _onPost(RequestContext context) async {
       return badRequest(message: 'Invalid Terminal code or password.');
     }
 
+    if (!terminalDto.isActive) {
+      return badRequest(message: 'This terminal is deactivated.');
+    }
+
     final isValid = await AuthService.verifyPassword(
       password!,
       terminalDto.passwordHash,
