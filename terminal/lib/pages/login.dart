@@ -52,12 +52,21 @@ class Login extends StatelessWidget {
                       .height(500),
                   child: Column(
                     children: [
-                      StyledText(
-                        'Terminal ID',
-                        style: TextStyler()
-                            .fontSize(14)
-                            .fontWeight(.w600)
-                            .color(Colors.grey.shade600),
+                      RowBox(
+                        style: FlexBoxStyler().spacing(8),
+                        children: [
+                          StyledIcon(
+                            icon: LucideIcons.monitor,
+                            style: IconStyler().color(Colors.grey.shade600),
+                          ),
+                          StyledText(
+                            'Terminal ID',
+                            style: TextStyler()
+                                .fontSize(14)
+                                .fontWeight(.w600)
+                                .color(Colors.grey.shade600),
+                          ),
+                        ],
                       ),
                     ],
                   ),
