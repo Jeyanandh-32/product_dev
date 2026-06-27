@@ -44,6 +44,7 @@ dependencies:
   mix: ^2.1.0
   google_fonts: ^8.1.0
   gap: ^3.0.1
+  dio: ^5.9.2
 
 dev_dependencies:
   flutter_test:
