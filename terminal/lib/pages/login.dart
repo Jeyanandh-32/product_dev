@@ -172,35 +172,7 @@ class _LoginState extends ConsumerState<Login> {
                               spreadRadius: -2,
                             ),
                           ],
-                          onPressed: isLoading
-                              ? null
-                              : () async {
-                                  if (formKey.currentState!.saveAndValidate()) {
-                                    final values = formKey.currentState!.value;
-                                    final code = values['code'] as String;
-                                    final password =
-                                        values['password'] as String;
-                                    try {
-                                      await ref
-                                          .read(authProvider.notifier)
-                                          .login(
-                                            code: code.trim(),
-                                            password: password,
-                                          );
-                                    } catch (e) {
-                                      if (!context.mounted) return;
-                                      final message = e is ApiException
-                                          ? e.message
-                                          : 'Login failed. Please check your credentials.';
-                                      ShadToaster.of(context).show(
-                                        ShadToast.destructive(
-                                          title: const Text('Authentication Error'),
-                                          description: Text(message),
-                                        ),
-                                      );
-                                    }
-                                  }
-                                },
+                          onPressed: isLoading ? null : _signIn,
                           child: isLoading
                               ? const SizedBox(
                                   height: 20,
@@ -222,5 +194,29 @@ class _LoginState extends ConsumerState<Login> {
         ),
       ),
     );
+  }
+
+  Future<void> _signIn() async {
+    if (formKey.currentState!.saveAndValidate()) {
+      final values = formKey.currentState!.value;
+      final code = values['code'] as String;
+      final password = values['password'] as String;
+      try {
+        await ref
+            .read(authProvider.notifier)
+            .login(code: code.trim(), password: password);
+      } catch (e) {
+        if (!mounted) return;
+        final message = e is ApiException
+            ? e.message
+            : 'Login failed. Please check your credentials.';
+        ShadToaster.of(context).show(
+          ShadToast.destructive(
+            title: const Text('Authentication Error'),
+            description: Text(message),
+          ),
+        );
+      }
+    }
   }
 }
