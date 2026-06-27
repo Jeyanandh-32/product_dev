@@ -14,7 +14,9 @@ class Home extends ConsumerWidget {
     final theme = ShadTheme.of(context);
     final categories = ref.watch(categoriesProvider);
     if (categories.isLoading) return Scaffold(body: Loading());
-    
+
+    debugPrint(categories.value.toString());
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -28,7 +30,19 @@ class Home extends ConsumerWidget {
       ),
       body: RowBox(
         children: [
-          ColumnBox(),
+          ColumnBox(
+            children: [
+              RowBox(
+                children: List.generate(categories.value!.length, (index) {
+                  final category = categories.value![index];
+                  return Box(
+                    style: BoxStyler().color(Colors.white),
+                    child: StyledText(category.name),
+                  );
+                }),
+              ),
+            ],
+          ),
           ColumnBox(style: FlexBoxStyler().color(Colors.white)),
         ],
       ),

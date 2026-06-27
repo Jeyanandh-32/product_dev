@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:terminal/config/secure_storage.dart';
 import 'package:terminal/exceptions/api_exception.dart';
 
 class ApiClient {
@@ -18,7 +19,17 @@ class ApiClient {
       validateStatus: (status) =>
           status != null && status >= 200 && status < 300,
     ),
-  );
+  )..interceptors.add(
+      InterceptorsWrapper(
+        onRequest: (options, handler) async {
+          final token = await SecureStorage.getAccessToken();
+          if (token != null) {
+            options.headers['Authorization'] = 'Bearer $token';
+          }
+          return handler.next(options);
+        },
+      ),
+    );
 
   static Never handleDioError(DioException e, String defaultMessage) {
     final data = e.response?.data;
