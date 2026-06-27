@@ -95,6 +95,14 @@ class Login extends StatelessWidget {
                         ShadInputFormField(
                           placeholder: StyledText('*********'),
                         ),
+
+                        Gap(28),
+
+                        ShadButton(
+                          width: .infinity,
+                          height: 48,
+                          child: StyledText('Sign In'),
+                        ),
                       ],
                     ),
                   ),
