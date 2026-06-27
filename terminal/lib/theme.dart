@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 final terminalLightTheme = ShadThemeData(
@@ -24,9 +25,11 @@ final terminalLightTheme = ShadThemeData(
     input: Color(0xFFCBD5E1),
     ring: Color(0xFF43C6AC),
   ),
+  textTheme: ShadTextTheme.fromGoogleFont(GoogleFonts.manrope),
 );
 
 final terminalDarkTheme = ShadThemeData(
   brightness: Brightness.dark,
   colorScheme: const ShadZincColorScheme.dark(),
+  textTheme: ShadTextTheme.fromGoogleFont(GoogleFonts.manrope),
 );
