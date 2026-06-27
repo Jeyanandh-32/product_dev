@@ -148,6 +148,20 @@ class _LoginState extends State<Login> {
                         ShadButton(
                           width: .infinity,
                           height: 48,
+                          shadows: [
+                            BoxShadow(
+                              color: theme.colorScheme.primary.withValues(alpha: 0.3),
+                              offset: const Offset(0, 3),
+                              blurRadius: 2,
+                              spreadRadius: -2,
+                            ),
+                            BoxShadow(
+                              color: theme.colorScheme.primary.withValues(alpha: 0.3),
+                              offset: const Offset(0, 4),
+                              blurRadius: 3,
+                              spreadRadius: -2,
+                            ),
+                          ],
                           child: StyledText('Sign In'),
                           onPressed: () {
                             if (formKey.currentState!.saveAndValidate()) {
