@@ -23,8 +23,9 @@ class AuthProvider extends AsyncNotifier<Terminal?> {
         password: password,
       );
       state = AsyncData(terminal);
-    } catch (e) {
-      state = AsyncError(e, StackTrace.current);
+    } catch (e, stack) {
+      state = AsyncError(e, stack);
+      rethrow;
     }
   }
 

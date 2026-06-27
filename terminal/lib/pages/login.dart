@@ -25,21 +25,6 @@ class _LoginState extends ConsumerState<Login> {
     final authState = ref.watch(authProvider);
     final isLoading = authState.isLoading;
 
-    ref.listen(authProvider, (previous, next) {
-      if (next.hasError && !next.isLoading) {
-        final error = next.error;
-        final message = error is ApiException
-            ? error.message
-            : 'Login failed. Please check your credentials.';
-        ShadToaster.of(context).show(
-          ShadToast.destructive(
-            title: const Text('Authentication Error'),
-            description: Text(message),
-          ),
-        );
-      }
-    });
-
     return Scaffold(
       body: Center(
         child: Box(
@@ -90,7 +75,7 @@ class _LoginState extends ConsumerState<Login> {
                               icon: LucideIcons.monitor,
                               style: IconStyler().color(Colors.grey.shade600),
                             ),
-                             StyledText(
+                            StyledText(
                               'Terminal Code',
                               style: TextStyler()
                                   .fontSize(14)
@@ -111,8 +96,8 @@ class _LoginState extends ConsumerState<Login> {
                               newValue,
                             ) {
                               return TextEditingValue(
-                                  text: newValue.text.toUpperCase(),
-                                  selection: newValue.selection,
+                                text: newValue.text.toUpperCase(),
+                                selection: newValue.selection,
                               );
                             }),
                           ],
@@ -166,18 +151,22 @@ class _LoginState extends ConsumerState<Login> {
 
                         Gap(28),
 
-                         ShadButton(
+                        ShadButton(
                           width: .infinity,
                           height: 48,
                           shadows: [
                             BoxShadow(
-                              color: theme.colorScheme.primary.withValues(alpha: 0.3),
+                              color: theme.colorScheme.primary.withValues(
+                                alpha: 0.3,
+                              ),
                               offset: const Offset(0, 3),
                               blurRadius: 2,
                               spreadRadius: -2,
                             ),
                             BoxShadow(
-                              color: theme.colorScheme.primary.withValues(alpha: 0.3),
+                              color: theme.colorScheme.primary.withValues(
+                                alpha: 0.3,
+                              ),
                               offset: const Offset(0, 4),
                               blurRadius: 3,
                               spreadRadius: -2,
@@ -185,15 +174,31 @@ class _LoginState extends ConsumerState<Login> {
                           ],
                           onPressed: isLoading
                               ? null
-                              : () {
+                              : () async {
                                   if (formKey.currentState!.saveAndValidate()) {
                                     final values = formKey.currentState!.value;
                                     final code = values['code'] as String;
-                                    final password = values['password'] as String;
-                                    ref.read(authProvider.notifier).login(
-                                          code: code.trim(),
-                                          password: password,
-                                        );
+                                    final password =
+                                        values['password'] as String;
+                                    try {
+                                      await ref
+                                          .read(authProvider.notifier)
+                                          .login(
+                                            code: code.trim(),
+                                            password: password,
+                                          );
+                                    } catch (e) {
+                                      if (!context.mounted) return;
+                                      final message = e is ApiException
+                                          ? e.message
+                                          : 'Login failed. Please check your credentials.';
+                                      ShadToaster.of(context).show(
+                                        ShadToast.destructive(
+                                          title: const Text('Authentication Error'),
+                                          description: Text(message),
+                                        ),
+                                      );
+                                    }
                                   }
                                 },
                           child: isLoading
