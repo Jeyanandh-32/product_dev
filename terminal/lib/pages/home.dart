@@ -58,9 +58,7 @@ class Home extends ConsumerWidget {
         children: [
           Expanded(
             child: ColumnBox(
-              style: FlexBoxStyler()
-                  .paddingAll(16)
-                  .crossAxisAlignment(.start),
+              style: FlexBoxStyler().paddingAll(16).crossAxisAlignment(.start),
               children: [
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
@@ -136,13 +134,13 @@ class Home extends ConsumerWidget {
                                 children: [
                                   if (product.imageUrl != null)
                                     Expanded(
-                                      child: Box(
-                                        style: BoxStyler()
-                                            .borderRadiusAll(.circular(8))
-                                            .alignment(.center),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(16),
                                         child: Image.network(
                                           product.imageUrl!,
                                           fit: BoxFit.cover,
+                                          width: double.infinity,
+                                          height: double.infinity,
                                         ),
                                       ),
                                     ),
