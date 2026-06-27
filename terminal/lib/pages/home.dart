@@ -106,7 +106,7 @@ class Home extends ConsumerWidget {
                                 crossAxisCount: 3,
                                 crossAxisSpacing: 12,
                                 mainAxisSpacing: 12,
-                                childAspectRatio: 0.72,
+                                childAspectRatio: 0.65,
                               ),
                           itemCount: filteredProducts.length,
                           itemBuilder: (context, index) {
@@ -145,13 +145,16 @@ class Home extends ConsumerWidget {
                                       ),
                                     ),
                                   const SizedBox(height: 8),
-                                  StyledText(
+                                  Text(
                                     product.name,
-                                    style: TextStyler()
-                                        .fontSize(16)
-                                        .fontWeight(.w600),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   ),
-                                  Gap(8),
+                                  const Gap(4),
                                   StyledText(
                                     '${product.stock?.quantity ?? 0} - left',
                                     style: TextStyler()
@@ -159,7 +162,7 @@ class Home extends ConsumerWidget {
                                         .fontSize(16)
                                         .fontWeight(.w500),
                                   ),
-                                  Gap(8),
+                                  const Gap(4),
                                   StyledText(
                                     '₹${product.sellingPrice}',
                                     style: TextStyler()
