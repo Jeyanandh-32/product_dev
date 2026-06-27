@@ -49,11 +49,12 @@ class Home extends ConsumerWidget {
                     style: FlexBoxStyler().spacing(8).paddingY(4),
                     children: List.generate(categories.value!.length, (index) {
                       final category = categories.value![index];
+                      final isSelected = category.id == selectedCategory?.id;
                       return ShadButton(
-                        backgroundColor: category.id == selectedCategory?.id
+                        backgroundColor: isSelected
                             ? theme.colorScheme.primary
                             : Colors.white,
-                        foregroundColor: category.id == selectedCategory?.id
+                        foregroundColor: isSelected
                             ? Colors.white
                             : Colors.black,
                         onPressed: () => ref
@@ -67,11 +68,53 @@ class Home extends ConsumerWidget {
                     }),
                   ),
                 ),
+                Expanded(
+                  child: GridView.builder(
+                    padding: const EdgeInsets.only(top: 16),
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3,
+                      crossAxisSpacing: 12,
+                      mainAxisSpacing: 12,
+                      childAspectRatio: 1.1,
+                    ),
+                    itemCount: 9,
+                    itemBuilder: (context, index) {
+                      return PressableBox(
+                        onPress: () {},
+                        style: BoxStyler()
+                            .color(Colors.white)
+                            .borderRadiusAll(const Radius.circular(8))
+                            .paddingAll(12)
+                            .shadowOnly(
+                              color: Colors.black.withValues(alpha: 0.05),
+                              offset: const Offset(0, 1),
+                              blurRadius: 2,
+                            )
+                            .onHovered(
+                              BoxStyler().color(Colors.grey.shade50),
+                            )
+                            .onPressed(
+                              BoxStyler().color(Colors.grey.shade100),
+                            ),
+                        child: Center(
+                          child: StyledText(
+                            'Item ${index + 1}',
+                            style: TextStyler().fontSize(16).fontWeight(.w500),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
               ],
             ),
           ),
           Expanded(
-            child: ColumnBox(style: FlexBoxStyler().color(Colors.white)),
+            child: ColumnBox(
+              style: FlexBoxStyler()
+                  .color(Colors.white)
+                  .borderLeft(color: theme.colorScheme.border),
+            ),
           ),
         ],
       ),
