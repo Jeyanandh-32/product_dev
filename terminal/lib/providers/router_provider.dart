@@ -39,7 +39,6 @@ final routerProvider = Provider<GoRouter>((ref) {
         return isLoggingIn ? null : '/login';
       }
 
-      // If logged in, redirect to home page from login or loading
       if (isLoggingIn || state.matchedLocation == '/loading') {
         return '/';
       }

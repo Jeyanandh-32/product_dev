@@ -29,13 +29,8 @@ class AuthProvider extends AsyncNotifier<Terminal?> {
   }
 
   Future<void> logout() async {
-    state = const AsyncLoading();
-    try {
-      await SecureStorage.deleteAccessToken();
-      state = const AsyncData(null);
-    } catch (e) {
-      state = AsyncError(e, StackTrace.current);
-    }
+    await SecureStorage.deleteAccessToken();
+    state = const AsyncData(null);
   }
 }
 
