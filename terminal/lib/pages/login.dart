@@ -162,6 +162,7 @@ class _LoginState extends ConsumerState<Login> {
                           placeholder: StyledText('*********'),
                           textInputAction: .done,
                           obscureText: true,
+                          onSubmitted: (value) => _signIn(),
                           validator: (v) {
                             if (v.isEmpty) {
                               return 'Password is required.';

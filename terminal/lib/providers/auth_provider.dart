@@ -8,6 +8,7 @@ import 'package:terminal/repositories/terminal_repository.dart';
 class AuthProvider extends AsyncNotifier<Terminal?> {
   @override
   FutureOr<Terminal?> build() async {
+    await Future<void>.delayed(const Duration(seconds: 1));
     try {
       return await TerminalRepository.getTerminal();
     } catch (_) {
