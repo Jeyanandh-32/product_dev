@@ -11,7 +11,6 @@ class Login extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = ShadTheme.of(context);
     return Scaffold(
-      backgroundColor: theme.colorScheme.secondary,
       body: Center(
         child: Box(
           style: BoxStyler().maxWidth(480).onMobile(BoxStyler().paddingX(24)),

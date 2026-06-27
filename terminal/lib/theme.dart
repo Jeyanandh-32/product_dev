@@ -5,7 +5,7 @@ import 'package:shadcn_ui/shadcn_ui.dart';
 final terminalLightTheme = ShadThemeData(
   brightness: Brightness.light,
   colorScheme: const ShadZincColorScheme.light(
-    background: Color(0xFFFFFFFF),
+    background: Color(0xFFF8FAFC),
     foreground: Color(0xFF0F172A),
     card: Color(0xFFFFFFFF),
     cardForeground: Color(0xFF0F172A),
