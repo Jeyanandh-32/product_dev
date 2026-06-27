@@ -36,6 +36,28 @@ Future<Response> _onGet(RequestContext context, String? storeId) async {
   final tokenPayload = context.read<TokenPayload>();
   final merchantId = tokenPayload.sub;
 
+  if (tokenPayload.role == .terminal && tokenPayload.terminalCode != null) {
+    try {
+      final terminalDto = await repo.getByCode(tokenPayload.terminalCode!);
+
+      if (terminalDto == null) {
+        return badRequest(message: 'Terminal not exists');
+      }
+
+      if (!terminalDto.isActive) {
+        return forbidden(message: 'This Terminal is deactivated.');
+      }
+
+      return success(
+        data: {
+          'terminal': terminalDto.toTerminal(),
+        },
+      );
+    } catch (e) {
+      return error(message: e.toString());
+    }
+  }
+
   try {
     final terminalDtos = await repo.getAll(
       storeId: storeId,
