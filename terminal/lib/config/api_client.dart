@@ -36,5 +36,6 @@ class ApiEndpoints {
   static const String login = '/$version/auth/terminal/login';
   static const String terminals = '/$version/terminals';
   static const String products = '/$version/products';
+  static const String categories = '/$version/categories';
   static const String stores = '/$version/stores';
 }
