@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mix/mix.dart';
@@ -71,6 +72,15 @@ class Login extends StatelessWidget {
                         Gap(16),
                         ShadInputFormField(
                           placeholder: StyledText('HINXXXXXXOE5'),
+                          inputFormatters: [
+                            LengthLimitingTextInputFormatter(12),
+                            TextInputFormatter.withFunction((oldValue, newValue) {
+                              return TextEditingValue(
+                                text: newValue.text.toUpperCase(),
+                                selection: newValue.selection,
+                              );
+                            }),
+                          ],
                         ),
 
                         Gap(16),
@@ -94,6 +104,7 @@ class Login extends StatelessWidget {
                         Gap(16),
                         ShadInputFormField(
                           placeholder: StyledText('*********'),
+                          obscureText: true,
                         ),
 
                         Gap(28),
