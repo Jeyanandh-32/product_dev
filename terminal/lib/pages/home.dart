@@ -58,7 +58,9 @@ class Home extends ConsumerWidget {
         children: [
           Expanded(
             child: ColumnBox(
-              style: FlexBoxStyler().paddingAll(16),
+              style: FlexBoxStyler()
+                  .paddingAll(16)
+                  .crossAxisAlignment(.start),
               children: [
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
