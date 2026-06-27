@@ -48,27 +48,55 @@ class Login extends StatelessWidget {
                         color: Colors.black.withValues(alpha: 0.05),
                         offset: const Offset(0, 1),
                         blurRadius: 2,
-                      )
-                      .height(500),
-                  child: ColumnBox(
-                    children: [
-                      RowBox(
-                        style: FlexBoxStyler().spacing(8),
-                        children: [
-                          StyledIcon(
-                            icon: LucideIcons.monitor,
-                            style: IconStyler().color(Colors.grey.shade600),
-                          ),
-                          StyledText(
-                            'Terminal ID',
-                            style: TextStyler()
-                                .fontSize(14)
-                                .fontWeight(.w600)
-                                .color(Colors.grey.shade600),
-                          ),
-                        ],
                       ),
-                    ],
+                  child: ShadForm(
+                    child: ColumnBox(
+                      children: [
+                        RowBox(
+                          style: FlexBoxStyler().spacing(8),
+                          children: [
+                            StyledIcon(
+                              icon: LucideIcons.monitor,
+                              style: IconStyler().color(Colors.grey.shade600),
+                            ),
+                            StyledText(
+                              'Terminal ID',
+                              style: TextStyler()
+                                  .fontSize(14)
+                                  .fontWeight(.w600)
+                                  .color(Colors.grey.shade600),
+                            ),
+                          ],
+                        ),
+                        Gap(16),
+                        ShadInputFormField(
+                          placeholder: StyledText('HINXXXXXXOE5'),
+                        ),
+
+                        Gap(16),
+
+                        RowBox(
+                          style: FlexBoxStyler().spacing(8),
+                          children: [
+                            StyledIcon(
+                              icon: LucideIcons.lock,
+                              style: IconStyler().color(Colors.grey.shade600),
+                            ),
+                            StyledText(
+                              'Password',
+                              style: TextStyler()
+                                  .fontSize(14)
+                                  .fontWeight(.w600)
+                                  .color(Colors.grey.shade600),
+                            ),
+                          ],
+                        ),
+                        Gap(16),
+                        ShadInputFormField(
+                          placeholder: StyledText('*********'),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],

@@ -26,10 +26,16 @@ final terminalLightTheme = ShadThemeData(
     ring: Color(0xFF43C6AC),
   ),
   textTheme: ShadTextTheme.fromGoogleFont(GoogleFonts.manrope),
+  inputTheme: const ShadInputTheme(
+    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+  ),
 );
 
 final terminalDarkTheme = ShadThemeData(
   brightness: Brightness.dark,
   colorScheme: const ShadZincColorScheme.dark(),
   textTheme: ShadTextTheme.fromGoogleFont(GoogleFonts.manrope),
+  inputTheme: const ShadInputTheme(
+    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+  ),
 );
