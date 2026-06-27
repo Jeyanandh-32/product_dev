@@ -27,8 +27,12 @@ final routerProvider = Provider<GoRouter>((ref) {
     redirect: (context, state) {
       final authState = ref.read(authProvider);
 
-      // While authenticating on startup, show loading page
+      // While authenticating on startup, show loading page.
+      // If we are on the login screen, let the login screen handle its own loading indicator.
       if (authState.isLoading) {
+        if (state.matchedLocation == '/login') {
+          return null;
+        }
         return '/loading';
       }
 
