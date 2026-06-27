@@ -51,6 +51,7 @@ Future<Response> _onPost(RequestContext context) async {
     final accessToken = AuthService.generateAccessToken(
       id: terminalDto.merchantId,
       role: .terminal,
+      terminalCode: terminalDto.code,
     );
 
     return success(

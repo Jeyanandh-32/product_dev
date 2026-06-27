@@ -20,17 +20,19 @@ class AuthService {
   static String generateAccessToken({
     required String id,
     required UserRole role,
+    String? terminalCode,
   }) {
     final jwt = JWT(
       {
         'sub': id,
         'role': role.name,
+        if (terminalCode != null) 'terminalCode': terminalCode,
       },
     );
 
     return jwt.sign(
       SecretKey(Env.accessSecret),
-      expiresIn: role == .terminal ? null : const Duration(hours: 24),
+      expiresIn: role == UserRole.terminal ? null : const Duration(hours: 24),
     );
   }
 
