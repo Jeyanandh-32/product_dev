@@ -15,8 +15,6 @@ class Home extends ConsumerWidget {
     final categories = ref.watch(categoriesProvider);
     if (categories.isLoading) return Scaffold(body: Loading());
 
-    debugPrint(categories.value.toString());
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -37,15 +35,12 @@ class Home extends ConsumerWidget {
                 SingleChildScrollView(
                   scrollDirection: .horizontal,
                   child: RowBox(
-                    style: FlexBoxStyler().spacing(8),
+                    style: FlexBoxStyler().spacing(8).paddingY(4),
                     children: List.generate(categories.value!.length, (index) {
                       final category = categories.value![index];
-                      return Box(
-                        style: BoxStyler()
-                            .color(Colors.white)
-                            .paddingX(24)
-                            .paddingY(4)
-                            .borderRadiusAll(.circular(6)),
+                      return ShadButton(
+                        backgroundColor: Colors.white,
+                        foregroundColor: Colors.black,
                         child: StyledText(
                           category.name,
                           style: TextStyler().fontSize(16).fontWeight(.w500),
