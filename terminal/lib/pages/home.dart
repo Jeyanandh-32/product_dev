@@ -5,6 +5,7 @@ import 'package:mix/mix.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:terminal/pages/loading.dart';
 import 'package:terminal/providers/categories_provider.dart';
+import 'package:terminal/providers/ui_providers.dart';
 
 class Home extends ConsumerWidget {
   const Home({super.key});
@@ -14,16 +15,26 @@ class Home extends ConsumerWidget {
     final theme = ShadTheme.of(context);
     final categories = ref.watch(categoriesProvider);
     if (categories.isLoading) return Scaffold(body: Loading());
+    final selectedCategory = ref.watch(selectedCategoryProvider);
 
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
+        elevation: 0,
+        scrolledUnderElevation: 0,
         title: StyledText(
           'Branding',
           style: TextStyler()
               .fontSize(40)
               .fontFamily(GoogleFonts.arizonia().fontFamily!)
               .color(theme.colorScheme.primary),
+        ),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1.0),
+          child: Container(
+            color: theme.colorScheme.border,
+            height: 1.0,
+          ),
         ),
       ),
       body: RowBox(
@@ -39,8 +50,15 @@ class Home extends ConsumerWidget {
                     children: List.generate(categories.value!.length, (index) {
                       final category = categories.value![index];
                       return ShadButton(
-                        backgroundColor: Colors.white,
-                        foregroundColor: Colors.black,
+                        backgroundColor: category.id == selectedCategory?.id
+                            ? theme.colorScheme.primary
+                            : Colors.white,
+                        foregroundColor: category.id == selectedCategory?.id
+                            ? Colors.white
+                            : Colors.black,
+                        onPressed: () => ref
+                            .read(selectedCategoryProvider.notifier)
+                            .select(category),
                         child: StyledText(
                           category.name,
                           style: TextStyler().fontSize(16).fontWeight(.w500),
