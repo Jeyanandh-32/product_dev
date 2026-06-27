@@ -111,8 +111,10 @@ class Home extends ConsumerWidget {
                           itemCount: filteredProducts.length,
                           itemBuilder: (context, index) {
                             final product = filteredProducts[index];
-                            return PressableBox(
-                              onPress: () {},
+                            return Align(
+                              alignment: Alignment.topCenter,
+                              child: PressableBox(
+                                onPress: () {},
                               style: BoxStyler()
                                   .color(Colors.white)
                                   .borderRadiusAll(const Radius.circular(8))
@@ -171,8 +173,9 @@ class Home extends ConsumerWidget {
                                   ),
                                 ],
                               ),
-                            );
-                          },
+                            ),
+                          );
+                        },
                         ),
                 ),
               ],
