@@ -31,10 +31,7 @@ class Home extends ConsumerWidget {
         ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1.0),
-          child: Container(
-            color: theme.colorScheme.border,
-            height: 1.0,
-          ),
+          child: Container(color: theme.colorScheme.border, height: 1.0),
         ),
       ),
       body: RowBox(
@@ -71,12 +68,13 @@ class Home extends ConsumerWidget {
                 Expanded(
                   child: GridView.builder(
                     padding: const EdgeInsets.only(top: 16),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3,
-                      crossAxisSpacing: 12,
-                      mainAxisSpacing: 12,
-                      childAspectRatio: 1.1,
-                    ),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 3,
+                          crossAxisSpacing: 12,
+                          mainAxisSpacing: 12,
+                          childAspectRatio: 1.1,
+                        ),
                     itemCount: 9,
                     itemBuilder: (context, index) {
                       return PressableBox(
@@ -90,12 +88,8 @@ class Home extends ConsumerWidget {
                               offset: const Offset(0, 1),
                               blurRadius: 2,
                             )
-                            .onHovered(
-                              BoxStyler().color(Colors.grey.shade50),
-                            )
-                            .onPressed(
-                              BoxStyler().color(Colors.grey.shade100),
-                            ),
+                            .onHovered(BoxStyler().color(Colors.grey.shade50))
+                            .onPressed(BoxStyler().color(Colors.grey.shade100)),
                         child: Center(
                           child: StyledText(
                             'Item ${index + 1}',
