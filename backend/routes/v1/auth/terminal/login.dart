@@ -6,6 +6,7 @@ import 'package:dart_frog/dart_frog.dart';
 import 'package:validators/validators.dart';
 
 Future<Response> onRequest(RequestContext context) async {
+  await Future<void>.delayed(const Duration(seconds: 2));
   return switch (context.request.method) {
     .post => _onPost(context),
     _ => methodNotAllowed(),
