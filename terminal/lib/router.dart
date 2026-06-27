@@ -7,44 +7,61 @@ import 'package:terminal/pages/login.dart';
 import 'package:terminal/providers/auth_provider.dart';
 
 class RouterListenable extends ChangeNotifier {
-  void refresh() => notifyListeners();
+  RouterListenable(Ref ref) {
+    ref.listen(authProvider, (prev, next) {
+      notifyListeners();
+    });
+  }
 }
 
-final routerListenable = RouterListenable();
+final routerListenableProvider = Provider<Listenable>((ref) {
+  return RouterListenable(ref);
+});
 
-final router = GoRouter(
-  initialLocation: '/loading',
-  refreshListenable: routerListenable,
-  routes: [
-    GoRoute(
-      path: '/loading',
-      builder: (context, state) => const Scaffold(body: Loading()),
-    ),
-    GoRoute(path: '/login', builder: (context, state) => const Login()),
-    GoRoute(path: '/', builder: (context, state) => const Home()),
-  ],
-  redirect: (context, state) {
-    final container = ProviderScope.containerOf(context);
-    final authState = container.read(authProvider);
+final routerProvider = Provider<GoRouter>((ref) {
+  final listenable = ref.watch(routerListenableProvider);
 
-    if (authState.isLoading) {
-      if (state.matchedLocation == '/login') {
-        return null;
+  return GoRouter(
+    initialLocation: '/loading',
+    refreshListenable: listenable,
+    redirect: (context, state) {
+      final authState = ref.read(authProvider);
+
+      if (authState.isLoading) {
+        if (state.matchedLocation == '/login') {
+          return null;
+        }
+        return '/loading';
       }
-      return '/loading';
-    }
 
-    final terminal = authState.value;
-    final isLoggingIn = state.matchedLocation == '/login';
+      final terminal = authState.value;
+      final isLoggingIn = state.matchedLocation == '/login';
 
-    if (terminal == null) {
-      return isLoggingIn ? null : '/login';
-    }
+      if (terminal == null) {
+        return isLoggingIn ? null : '/login';
+      }
 
-    if (isLoggingIn || state.matchedLocation == '/loading') {
-      return '/';
-    }
+      if (isLoggingIn || state.matchedLocation == '/loading') {
+        return '/';
+      }
 
-    return null;
-  },
-);
+      return null;
+    },
+    routes: [
+      GoRoute(
+        path: '/loading',
+        builder: (context, state) => const Scaffold(
+          body: Loading(),
+        ),
+      ),
+      GoRoute(
+        path: '/login',
+        builder: (context, state) => const Login(),
+      ),
+      GoRoute(
+        path: '/',
+        builder: (context, state) => const Home(),
+      ),
+    ],
+  );
+});
