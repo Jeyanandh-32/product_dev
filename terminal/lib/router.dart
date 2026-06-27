@@ -6,8 +6,15 @@ import 'package:terminal/pages/loading.dart';
 import 'package:terminal/pages/login.dart';
 import 'package:terminal/providers/auth_provider.dart';
 
+class RouterListenable extends ChangeNotifier {
+  void refresh() => notifyListeners();
+}
+
+final routerListenable = RouterListenable();
+
 final router = GoRouter(
   initialLocation: '/loading',
+  refreshListenable: routerListenable,
   routes: [
     GoRoute(
       path: '/loading',
