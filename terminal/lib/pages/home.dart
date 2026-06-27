@@ -106,6 +106,7 @@ class Home extends ConsumerWidget {
                                 crossAxisCount: 3,
                                 crossAxisSpacing: 12,
                                 mainAxisSpacing: 12,
+                                childAspectRatio: 0.72,
                               ),
                           itemCount: filteredProducts.length,
                           itemBuilder: (context, index) {
@@ -133,14 +134,13 @@ class Home extends ConsumerWidget {
                                 ),
                                 children: [
                                   if (product.imageUrl != null)
-                                    Expanded(
+                                    AspectRatio(
+                                      aspectRatio: 1.0,
                                       child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(16),
+                                        borderRadius: BorderRadius.circular(8),
                                         child: Image.network(
                                           product.imageUrl!,
                                           fit: BoxFit.cover,
-                                          width: double.infinity,
-                                          height: double.infinity,
                                         ),
                                       ),
                                     ),
