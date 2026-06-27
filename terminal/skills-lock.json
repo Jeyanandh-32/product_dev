@@ -1,6 +1,12 @@
 {
   "version": 1,
   "skills": {
+    "mix": {
+      "source": "btwld/mix",
+      "sourceType": "github",
+      "skillPath": "skills/mix/SKILL.md",
+      "computedHash": "87af64b741d98b0c0810229ad8fc00f095fc938d2950eb89e519f44ace569f8d"
+    },
     "shadcn-ui-flutter": {
       "source": "nank1ro/flutter-shadcn-ui",
       "sourceType": "github",

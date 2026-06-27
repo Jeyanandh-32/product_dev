@@ -240,6 +240,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.0.0"
+  gap:
+    dependency: "direct main"
+    description:
+      name: gap
+      sha256: f19387d4e32f849394758b91377f9153a1b41d79513ef7668c088c77dbc6955d
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.1"
   glob:
     dependency: transitive
     description:
@@ -424,6 +432,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.0"
+  mix:
+    dependency: "direct main"
+    description:
+      name: mix
+      sha256: ed8382ac70d5d85c3d0f753c9f8f68f61d74958afbd05f3e3d7144a11ab8efad
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.1.0"
+  mix_annotations:
+    dependency: transitive
+    description:
+      name: mix_annotations
+      sha256: fe52ce2e53efc5af2539882cadbe601688021701cb6e4c425d6c1df4687e2ac7
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.1.0"
   models:
     dependency: "direct main"
     description:
