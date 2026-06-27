@@ -16,7 +16,6 @@ Future<Response> onRequest(RequestContext context) async {
   if (context.request.method == HttpMethod.get) {
     final tokenPayload = context.read<TokenPayload>();
 
-    // Terminal role: look up by code, no storeId needed
     if (tokenPayload.role == .terminal && tokenPayload.terminalCode != null) {
       return _onGetTerminal(context, tokenPayload);
     }
