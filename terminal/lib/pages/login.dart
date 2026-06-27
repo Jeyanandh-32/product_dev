@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:mix/mix.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:terminal/exceptions/api_exception.dart';
+import 'package:terminal/pages/loading.dart';
 import 'package:terminal/providers/auth_provider.dart';
 import 'package:validators/validators.dart';
 
@@ -52,7 +53,9 @@ class _LoginState extends ConsumerState<Login> {
     final isLoading = authState.isLoading;
 
     return Scaffold(
-      body: Center(
+      body: isLoading
+          ? const Loading()
+          : Center(
         child: Box(
           style: BoxStyler().maxWidth(480).onMobile(BoxStyler().marginX(24)),
           child: SingleChildScrollView(
