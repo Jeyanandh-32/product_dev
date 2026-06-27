@@ -97,32 +97,35 @@ class Home extends ConsumerWidget {
                           itemCount: filteredProducts.length,
                           itemBuilder: (context, index) {
                             final product = filteredProducts[index];
-                            return Align(
-                              alignment: Alignment.topCenter,
-                              child: PressableBox(
-                                onPress: () {},
-                                style: BoxStyler()
-                                    .color(Colors.white)
-                                    .borderRadiusAll(const Radius.circular(8))
-                                    .paddingAll(12)
-                                    .shadowOnly(
-                                      color: Colors.black.withValues(alpha: 0.05),
-                                      offset: const Offset(0, 1),
-                                      blurRadius: 2,
-                                    )
-                                    .onHovered(
-                                      BoxStyler().color(Colors.grey.shade50),
-                                    )
-                                    .onPressed(
-                                      BoxStyler().color(Colors.grey.shade100),
+                            return PressableBox(
+                              onPress: () {},
+                              style: BoxStyler()
+                                  .color(Colors.white)
+                                  .borderRadiusAll(const Radius.circular(8))
+                                  .paddingAll(12)
+                                  .shadowOnly(
+                                    color: Colors.black.withValues(alpha: 0.05),
+                                    offset: const Offset(0, 1),
+                                    blurRadius: 2,
+                                  )
+                                  .onHovered(
+                                    BoxStyler().color(Colors.grey.shade50),
+                                  )
+                                  .onPressed(
+                                    BoxStyler().color(Colors.grey.shade100),
+                                  ),
+                              child: ColumnBox(
+                                children: [
+                                  if (product.imageUrl != null)
+                                    Expanded(
+                                      child: Image.network(
+                                        product.imageUrl!,
+                                        fit: BoxFit.cover,
+                                      ),
                                     ),
-                                child: ColumnBox(
-                                  children: [
-                                    if (product.imageUrl != null)
-                                      Image.network(product.imageUrl!),
-                                    StyledText(product.name),
-                                  ],
-                                ),
+                                  const SizedBox(height: 8),
+                                  StyledText(product.name),
+                                ],
                               ),
                             );
                           },
