@@ -1,10 +1,11 @@
 import 'package:dio/dio.dart';
+import 'package:models/models.dart';
 import 'package:terminal/config/api_client.dart';
 
 class TerminalRepository {
   const TerminalRepository._();
 
-  static Future<Map<String, dynamic>?> login({
+  static Future<(Terminal, String)> login({
     required String code,
     required String password,
   }) async {
@@ -16,11 +17,10 @@ class TerminalRepository {
 
       final data = result.data['data'] as Map<String, dynamic>;
 
-      // Dynamically attach the bearer token for subsequent requests
       final accessToken = data['accessToken'] as String;
-      ApiClient.dio.options.headers['Authorization'] = 'Bearer $accessToken';
 
-      return data;
+      final terminal = Terminal.fromJson(data['terminal']);
+      return (terminal, accessToken);
     } on DioException catch (e) {
       ApiClient.handleDioError(e, 'Login failed.');
     }

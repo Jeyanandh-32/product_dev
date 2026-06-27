@@ -4,8 +4,6 @@ import 'package:terminal/exceptions/api_exception.dart';
 class ApiClient {
   const ApiClient._();
 
-  // Point to the backend server. Using localhost:8080 works for desktop and web.
-  // If running on a physical Android device or emulator, you can update this to the computer's IP or 10.0.2.2.
   static const String baseUrl = 'http://localhost:8080';
 
   static Dio dio = Dio(
