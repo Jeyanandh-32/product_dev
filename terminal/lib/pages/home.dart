@@ -30,6 +30,13 @@ class Home extends ConsumerWidget {
         }).toList() ??
         [];
 
+    // Chunk filtered products into lists of at most 3 items to build a responsive row-based grid
+    final List<List<dynamic>> chunkedRows = [];
+    for (var i = 0; i < filteredProducts.length; i += 3) {
+      final end = (i + 3 < filteredProducts.length) ? i + 3 : filteredProducts.length;
+      chunkedRows.add(filteredProducts.sublist(i, end));
+    }
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -52,22 +59,21 @@ class Home extends ConsumerWidget {
             child: const StyledText('Log Out'),
           ),
         ],
-        actionsPadding: EdgeInsets.only(right: 24),
+        actionsPadding: const EdgeInsets.only(right: 24),
       ),
       body: RowBox(
         children: [
           Expanded(
             child: ColumnBox(
-              style: FlexBoxStyler().paddingAll(16).crossAxisAlignment(.start),
+              style: FlexBoxStyler().paddingAll(16).crossAxisAlignment(CrossAxisAlignment.start),
               children: [
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
-                  dragStartBehavior: .start,
                   child: RowBox(
                     style: FlexBoxStyler()
                         .spacing(8)
                         .paddingY(4)
-                        .mainAxisAlignment(.start),
+                        .mainAxisAlignment(MainAxisAlignment.start),
                     children: List.generate(categories.value!.length, (index) {
                       final category = categories.value![index];
                       final isSelected = category.id == selectedCategory?.id;
@@ -89,6 +95,7 @@ class Home extends ConsumerWidget {
                     }),
                   ),
                 ),
+                const Gap(16),
                 Expanded(
                   child: filteredProducts.isEmpty
                       ? Center(
@@ -99,83 +106,87 @@ class Home extends ConsumerWidget {
                                 .color(Colors.grey.shade600),
                           ),
                         )
-                      : GridView.builder(
-                          padding: const EdgeInsets.only(top: 16),
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 3,
-                                crossAxisSpacing: 12,
-                                mainAxisSpacing: 12,
-                                childAspectRatio: 0.65,
-                              ),
-                          itemCount: filteredProducts.length,
-                          itemBuilder: (context, index) {
-                            final product = filteredProducts[index];
-                            return Align(
-                              alignment: Alignment.topCenter,
-                              child: PressableBox(
-                                onPress: () {},
-                              style: BoxStyler()
-                                  .color(Colors.white)
-                                  .borderRadiusAll(const Radius.circular(8))
-                                  .paddingAll(12)
-                                  .shadowOnly(
-                                    color: Colors.black.withValues(alpha: 0.05),
-                                    offset: const Offset(0, 1),
-                                    blurRadius: 2,
-                                  )
-                                  .onHovered(
-                                    BoxStyler().color(Colors.grey.shade50),
-                                  )
-                                  .onPressed(
-                                    BoxStyler().color(Colors.grey.shade100),
-                                  ),
-                              child: ColumnBox(
-                                style: FlexBoxStyler().crossAxisAlignment(
-                                  .start,
-                                ),
-                                children: [
-                                  if (product.imageUrl != null)
-                                    AspectRatio(
-                                      aspectRatio: 1.0,
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(8),
-                                        child: Image.network(
-                                          product.imageUrl!,
-                                          fit: BoxFit.cover,
+                      : SingleChildScrollView(
+                          child: ColumnBox(
+                            style: FlexBoxStyler().spacing(12),
+                            children: chunkedRows.map((rowItems) {
+                              return RowBox(
+                                style: FlexBoxStyler().spacing(12),
+                                children: List.generate(3, (index) {
+                                  if (index < rowItems.length) {
+                                    final product = rowItems[index];
+                                    return Expanded(
+                                      child: PressableBox(
+                                        onPress: () {},
+                                        style: BoxStyler()
+                                            .color(Colors.white)
+                                            .borderRadiusAll(const Radius.circular(8))
+                                            .paddingAll(12)
+                                            .shadowOnly(
+                                              color: Colors.black.withValues(alpha: 0.05),
+                                              offset: const Offset(0, 1),
+                                              blurRadius: 2,
+                                            )
+                                            .onHovered(
+                                              BoxStyler().color(Colors.grey.shade50),
+                                            )
+                                            .onPressed(
+                                              BoxStyler().color(Colors.grey.shade100),
+                                            ),
+                                        child: ColumnBox(
+                                          style: FlexBoxStyler().crossAxisAlignment(
+                                            CrossAxisAlignment.start,
+                                          ),
+                                          children: [
+                                            if (product.imageUrl != null)
+                                              AspectRatio(
+                                                aspectRatio: 1.0,
+                                                child: ClipRRect(
+                                                  borderRadius: BorderRadius.circular(8),
+                                                  child: Image.network(
+                                                    product.imageUrl!,
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                ),
+                                              ),
+                                            const SizedBox(height: 8),
+                                            Text(
+                                              product.name,
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: const TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                            const Gap(4),
+                                            StyledText(
+                                              '${product.stock?.quantity ?? 0} - left',
+                                              style: TextStyler()
+                                                  .color(theme.colorScheme.accent)
+                                                  .fontSize(16)
+                                                  .fontWeight(.w500),
+                                            ),
+                                            const Gap(4),
+                                            StyledText(
+                                              '₹${product.sellingPrice}',
+                                              style: TextStyler()
+                                                  .fontSize(16)
+                                                  .fontWeight(.w600),
+                                            ),
+                                          ],
                                         ),
                                       ),
-                                    ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    product.name,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  const Gap(4),
-                                  StyledText(
-                                    '${product.stock?.quantity ?? 0} - left',
-                                    style: TextStyler()
-                                        .color(theme.colorScheme.accent)
-                                        .fontSize(16)
-                                        .fontWeight(.w500),
-                                  ),
-                                  const Gap(4),
-                                  StyledText(
-                                    '₹${product.sellingPrice}',
-                                    style: TextStyler()
-                                        .fontSize(16)
-                                        .fontWeight(.w600),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
+                                    );
+                                  } else {
+                                    return const Expanded(
+                                      child: SizedBox(),
+                                    );
+                                  }
+                                }),
+                              );
+                            }).toList(),
+                          ),
                         ),
                 ),
               ],
