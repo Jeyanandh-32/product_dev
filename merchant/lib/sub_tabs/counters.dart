@@ -52,7 +52,9 @@ class _CountersState extends State<Counters> {
     final filtered = countersList.where((cnt) {
       if (_searchQuery.isEmpty) return true;
       return cnt.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-          (cnt.description ?? '').toLowerCase().contains(_searchQuery.toLowerCase());
+          (cnt.description ?? '').toLowerCase().contains(
+            _searchQuery.toLowerCase(),
+          );
     }).toList();
 
     final totalPages = (filtered.length / _entries).ceil();
@@ -64,14 +66,15 @@ class _CountersState extends State<Counters> {
     final endIndex = (startIndex + _entries) > filtered.length
         ? filtered.length
         : (startIndex + _entries);
-    final paginated = filtered.isEmpty ? <Counter>[] : filtered.sublist(startIndex, endIndex);
+    final paginated = filtered.isEmpty
+        ? <Counter>[]
+        : filtered.sublist(startIndex, endIndex);
 
     return div(
       classes:
-          'flex flex-col flex-1 min-h-0 m-4 bg-white rounded-2xl border border-border-medium shadow-xs',
+          'flex flex-col flex-1 min-h-0 m-4 bg-white rounded-2xl border border-border-medium shadow-xs overflow-hidden',
       [
-        if (activeModal == ActiveModal.addCounter)
-          const AddEditCounterModal(),
+        if (activeModal == ActiveModal.addCounter) const AddEditCounterModal(),
         if (activeModal == ActiveModal.editCounter)
           AddEditCounterModal(counter: editingCounter),
 
@@ -244,7 +247,8 @@ class _CountersState extends State<Counters> {
       td([
         div(classes: 'flex items-center gap-4', [
           button(
-            classes: 'hover:cursor-pointer btn btn-ghost btn-xs h-8 w-8 p-0 rounded-full',
+            classes:
+                'hover:cursor-pointer btn btn-ghost btn-xs h-8 w-8 p-0 rounded-full',
             events: {
               'click': (e) {
                 e.stopPropagation();
@@ -259,17 +263,23 @@ class _CountersState extends State<Counters> {
       ]),
       td([
         if (image != null && image.isNotEmpty)
-          div(classes: 'h-12 w-12 overflow-hidden rounded-2xl bg-gray-100 flex-shrink-0', [
-            img(
-              src: image,
-              alt: name,
-              classes: 'block h-full w-full object-cover',
-            ),
-          ])
+          div(
+            classes:
+                'h-12 w-12 overflow-hidden rounded-2xl bg-gray-100 flex-shrink-0',
+            [
+              img(
+                src: image,
+                alt: name,
+                classes: 'block h-full w-full object-cover',
+              ),
+            ],
+          )
         else
           .text('-'),
       ]),
-      th(classes: 'whitespace-nowrap font-semibold text-gray-900', [.text(name)]),
+      th(classes: 'whitespace-nowrap font-semibold text-gray-900', [
+        .text(name),
+      ]),
       td([
         div(
           classes:

@@ -39,7 +39,7 @@ class Products extends StatelessComponent {
 
     return div(
       classes:
-          'min-h-0 flex-1 bg-white rounded-2xl flex flex-col m-4 shadow-xs border border-border-medium',
+          'min-h-0 flex-1 bg-white rounded-2xl flex flex-col m-4 shadow-xs border border-border-medium overflow-hidden',
       [
         if (activeModal == ActiveModal.addProduct) const AddEditProductModal(),
         if (activeModal == ActiveModal.editProduct)

@@ -30,10 +30,11 @@ class Home extends ConsumerWidget {
         }).toList() ??
         [];
 
-    // Chunk filtered products into lists of at most 3 items to build a responsive row-based grid
     final List<List<dynamic>> chunkedRows = [];
     for (var i = 0; i < filteredProducts.length; i += 3) {
-      final end = (i + 3 < filteredProducts.length) ? i + 3 : filteredProducts.length;
+      final end = (i + 3 < filteredProducts.length)
+          ? i + 3
+          : filteredProducts.length;
       chunkedRows.add(filteredProducts.sublist(i, end));
     }
 
@@ -65,7 +66,9 @@ class Home extends ConsumerWidget {
         children: [
           Expanded(
             child: ColumnBox(
-              style: FlexBoxStyler().paddingAll(16).crossAxisAlignment(CrossAxisAlignment.start),
+              style: FlexBoxStyler()
+                  .paddingAll(16)
+                  .crossAxisAlignment(CrossAxisAlignment.start),
               children: [
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
@@ -120,29 +123,39 @@ class Home extends ConsumerWidget {
                                         onPress: () {},
                                         style: BoxStyler()
                                             .color(Colors.white)
-                                            .borderRadiusAll(const Radius.circular(8))
+                                            .borderRadiusAll(
+                                              const Radius.circular(8),
+                                            )
                                             .paddingAll(12)
                                             .shadowOnly(
-                                              color: Colors.black.withValues(alpha: 0.05),
+                                              color: Colors.black.withValues(
+                                                alpha: 0.05,
+                                              ),
                                               offset: const Offset(0, 1),
                                               blurRadius: 2,
                                             )
                                             .onHovered(
-                                              BoxStyler().color(Colors.grey.shade50),
+                                              BoxStyler().color(
+                                                Colors.grey.shade50,
+                                              ),
                                             )
                                             .onPressed(
-                                              BoxStyler().color(Colors.grey.shade100),
+                                              BoxStyler().color(
+                                                Colors.grey.shade100,
+                                              ),
                                             ),
                                         child: ColumnBox(
-                                          style: FlexBoxStyler().crossAxisAlignment(
-                                            CrossAxisAlignment.start,
-                                          ),
+                                          style: FlexBoxStyler()
+                                              .crossAxisAlignment(
+                                                CrossAxisAlignment.start,
+                                              ),
                                           children: [
                                             if (product.imageUrl != null)
                                               AspectRatio(
                                                 aspectRatio: 1.0,
                                                 child: ClipRRect(
-                                                  borderRadius: BorderRadius.circular(8),
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
                                                   child: Image.network(
                                                     product.imageUrl!,
                                                     fit: BoxFit.cover,
@@ -163,7 +176,9 @@ class Home extends ConsumerWidget {
                                             StyledText(
                                               '${product.stock?.quantity ?? 0} - left',
                                               style: TextStyler()
-                                                  .color(theme.colorScheme.accent)
+                                                  .color(
+                                                    theme.colorScheme.accent,
+                                                  )
                                                   .fontSize(16)
                                                   .fontWeight(.w500),
                                             ),
@@ -179,9 +194,7 @@ class Home extends ConsumerWidget {
                                       ),
                                     );
                                   } else {
-                                    return const Expanded(
-                                      child: SizedBox(),
-                                    );
+                                    return const Expanded(child: SizedBox());
                                   }
                                 }),
                               );

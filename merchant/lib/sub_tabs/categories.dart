@@ -52,7 +52,9 @@ class _CategoriesState extends State<Categories> {
     final filtered = categoriesList.where((cat) {
       if (_searchQuery.isEmpty) return true;
       return cat.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-          (cat.description ?? '').toLowerCase().contains(_searchQuery.toLowerCase());
+          (cat.description ?? '').toLowerCase().contains(
+            _searchQuery.toLowerCase(),
+          );
     }).toList();
 
     final totalPages = (filtered.length / _entries).ceil();
@@ -64,11 +66,13 @@ class _CategoriesState extends State<Categories> {
     final endIndex = (startIndex + _entries) > filtered.length
         ? filtered.length
         : (startIndex + _entries);
-    final paginated = filtered.isEmpty ? <Category>[] : filtered.sublist(startIndex, endIndex);
+    final paginated = filtered.isEmpty
+        ? <Category>[]
+        : filtered.sublist(startIndex, endIndex);
 
     return div(
       classes:
-          'flex flex-col flex-1 min-h-0 m-4 bg-white rounded-2xl border border-border-medium shadow-xs',
+          'flex flex-col flex-1 min-h-0 m-4 bg-white rounded-2xl border border-border-medium shadow-xs overflow-hidden',
       [
         if (activeModal == ActiveModal.addCategory)
           const AddEditCategoryModal(),
@@ -244,7 +248,8 @@ class _CategoriesState extends State<Categories> {
       td([
         div(classes: 'flex items-center gap-4', [
           button(
-            classes: 'hover:cursor-pointer btn btn-ghost btn-xs h-8 w-8 p-0 rounded-full',
+            classes:
+                'hover:cursor-pointer btn btn-ghost btn-xs h-8 w-8 p-0 rounded-full',
             events: {
               'click': (e) {
                 e.stopPropagation();
@@ -259,17 +264,23 @@ class _CategoriesState extends State<Categories> {
       ]),
       td([
         if (image != null && image.isNotEmpty)
-          div(classes: 'h-12 w-12 overflow-hidden rounded-2xl bg-gray-100 flex-shrink-0', [
-            img(
-              src: image,
-              alt: name,
-              classes: 'block h-full w-full object-cover',
-            ),
-          ])
+          div(
+            classes:
+                'h-12 w-12 overflow-hidden rounded-2xl bg-gray-100 flex-shrink-0',
+            [
+              img(
+                src: image,
+                alt: name,
+                classes: 'block h-full w-full object-cover',
+              ),
+            ],
+          )
         else
           .text('-'),
       ]),
-      th(classes: 'whitespace-nowrap font-semibold text-gray-900', [.text(name)]),
+      th(classes: 'whitespace-nowrap font-semibold text-gray-900', [
+        .text(name),
+      ]),
       td([
         div(
           classes:
