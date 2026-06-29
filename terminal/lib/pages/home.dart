@@ -159,6 +159,17 @@ class Home extends ConsumerWidget {
                                                   child: Image.network(
                                                     product.imageUrl!,
                                                     fit: BoxFit.cover,
+                                                    errorBuilder: (context, error, stackTrace) {
+                                                      return Container(
+                                                        color: Colors.grey.shade100,
+                                                        alignment: Alignment.center,
+                                                        child: Icon(
+                                                          LucideIcons.image,
+                                                          color: Colors.grey.shade400,
+                                                          size: 32,
+                                                        ),
+                                                      );
+                                                    },
                                                   ),
                                                 ),
                                               ),
