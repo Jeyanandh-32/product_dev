@@ -5,7 +5,10 @@ import 'package:terminal/exceptions/api_exception.dart';
 class ApiClient {
   const ApiClient._();
 
-  static const String baseUrl = 'http://localhost:8080';
+  static const String baseUrl = String.fromEnvironment(
+    'API_BASE_URL',
+    defaultValue: 'http://localhost:8080',
+  );
 
   static Dio dio = Dio(
     BaseOptions(
