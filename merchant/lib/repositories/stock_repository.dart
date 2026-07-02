@@ -16,9 +16,9 @@ class StockRepository {
       final result = await ApiClient.dio.patch(
         path,
         data: {
-          if (quantity != null) 'quantity': quantity,
-          if (lowStockThreshold != null) 'lowStockThreshold': lowStockThreshold,
-          if (stockMonitor != null) 'stockMonitor': stockMonitor,
+          'quantity': ?quantity,
+          'lowStockThreshold': ?lowStockThreshold,
+          'stockMonitor': ?stockMonitor,
         },
       );
 

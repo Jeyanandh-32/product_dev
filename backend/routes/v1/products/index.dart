@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:backend/config/database.dart';
-import 'package:backend/extensions/product_dto_extension.dart';
+import 'package:backend/extensions/product_row_extension.dart';
 import 'package:backend/models/token_payload/token_payload.dart';
 import 'package:backend/repositories/product_repository.dart';
 import 'package:backend/repositories/stock_repository.dart';
@@ -58,14 +58,12 @@ Future<Response> _onGet(RequestContext context) async {
       merchantId: merchantId,
     );
 
-    final productDtos = await repo.getAll(
+    final products = await repo.getAll(
       storeId: storeId,
       merchantId: merchantId,
       limit: limit,
       offset: offset,
     );
-
-    final products = productDtos.map((s) => s.toProduct()).toList();
 
     return success(
       data: {
@@ -79,6 +77,7 @@ Future<Response> _onGet(RequestContext context) async {
 }
 
 Future<Response> _onPost(RequestContext context) async {
+  final repo = context.read<ProductRepository>();
   final parameters = context.request.uri.queryParameters;
   final storeId = parameters['storeId'];
 
@@ -151,11 +150,9 @@ Future<Response> _onPost(RequestContext context) async {
   }
 
   try {
-    final completeProduct = await Database.pool.runTx((session) async {
-      final txProductRepo = ProductRepository(session: session);
-      final txStockRepo = StockRepository(session: session);
-
-      final productDto = await txProductRepo.create(
+    final stockRepo = context.read<StockRepository>();
+    final completeProduct = await Database.db.transact(() async {
+      final productRow = await repo.create(
         merchantId: merchantId,
         storeId: storeId,
         name: name!.trim(),
@@ -170,18 +167,18 @@ Future<Response> _onPost(RequestContext context) async {
         taxRate: taxRate,
       );
 
-      final stockDto = await txStockRepo.create(
-        productId: productDto.id,
+      final stockRow = await stockRepo.create(
+        productId: productRow.id,
         storeId: storeId,
       );
 
-      return productDto.copyWith(stock: stockDto);
+      return productRow.toProduct(stockRow: stockRow);
     });
 
     return success(
       statusCode: HttpStatus.created,
       data: {
-        'product': completeProduct.toProduct(),
+        'product': completeProduct,
       },
     );
   } catch (e) {

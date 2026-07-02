@@ -1,8 +1,10 @@
 import 'package:backend/config/env.dart';
+import 'package:backend/database/schema.dart';
 import 'package:backend/src/migrations.dart';
 import 'package:migrant/migrant.dart' as migrant;
 import 'package:migrant_db_postgresql/migrant_db_postgresql.dart';
 import 'package:postgres/postgres.dart';
+import 'package:typed_sql/typed_sql.dart' as ts;
 
 class Database {
   const Database._();
@@ -21,12 +23,17 @@ class Database {
         ),
       ],
       settings: const PoolSettings(
-        sslMode: .disable,
+        sslMode: SslMode.disable,
         maxConnectionCount: 10,
       ),
     );
     return _pool!;
   }
+
+  static final db = ts.Database<DatabaseSchema>(
+    ts.DatabaseAdapter.postgres(pool),
+    ts.SqlDialect.postgres(),
+  );
 
   static Future<void> init() async {
     pool;

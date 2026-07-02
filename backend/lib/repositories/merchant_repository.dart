@@ -1,81 +1,47 @@
-import 'package:backend/models/merchant/merchant_dto.dart';
-import 'package:postgres/postgres.dart';
+import 'package:backend/database/schema.dart';
+import 'package:typed_sql/typed_sql.dart' as ts;
 
 class MerchantRepository {
-  MerchantRepository({required Session session}) : _session = session;
+  MerchantRepository({required ts.Database<DatabaseSchema> db}) : _db = db;
 
-  final Session _session;
+  final ts.Database<DatabaseSchema> _db;
 
-  Future<MerchantDto> create({
+  Future<MerchantRow> create({
     required String name,
     required String businessName,
     required String whatsappNumber,
     required String email,
     required String passwordHash,
   }) async {
-    final result = await _session.execute(
-      Sql.named('''
-      INSERT INTO merchants(name, business_name, whatsapp_number, email, password_hash)
-      VALUES(@name, @businessName, @whatsappNumber, @email, @passwordHash)
-      RETURNING *
-    '''),
-      parameters: {
-        'name': name,
-        'businessName': businessName,
-        'whatsappNumber': whatsappNumber,
-        'email': email,
-        'passwordHash': passwordHash,
-      },
-    );
-
-    return MerchantDto.fromJson(result.first.toColumnMap());
-  }
-
-  Future<List<MerchantDto>> getAll() async {
-    final result = await _session.execute(
-      '''
-        SELECT * FROM merchants
-      ''',
-    );
-
-    if (result.isEmpty) return [];
-
-    final merchantDtos = result
-        .map(
-          (element) => MerchantDto.fromJson(element.toColumnMap()),
+    final row = await _db.merchants
+        .insertValue(
+          name: name,
+          businessName: businessName,
+          whatsappNumber: whatsappNumber,
+          email: email,
+          passwordHash: passwordHash,
         )
-        .toList();
+        .returning((ts.Expr<MerchantRow> m) => (m,))
+        .executeAndFetch();
 
-    return merchantDtos;
+    return row;
   }
 
-  Future<MerchantDto?> getByEmail(String email) async {
-    final result = await _session.execute(
-      Sql.named('''
-        SELECT * FROM merchants WHERE email = @email
-      '''),
-      parameters: {'email': email},
-    );
-
-    if (result.isEmpty) return null;
-
-    final merchantDto = MerchantDto.fromJson(result.first.toColumnMap());
-
-    return merchantDto;
+  Future<List<MerchantRow>> getAll() async {
+    final rows = await _db.merchants.fetch();
+    return rows;
   }
 
-  Future<MerchantDto?> getById(String id) async {
-    final result = await _session.execute(
-      Sql.named('''
-        SELECT * FROM merchants WHERE id = @id
-      '''),
-      parameters: {'id': id},
-    );
+  Future<MerchantRow?> getByEmail(String email) async {
+    final row = await _db.merchants
+        .where((m) => m.email.equalsValue(email))
+        .first
+        .fetch();
+    return row;
+  }
 
-    if (result.isEmpty) return null;
-
-    final merchantDto = MerchantDto.fromJson(result.first.toColumnMap());
-
-    return merchantDto;
+  Future<MerchantRow?> getById(String id) async {
+    final row = await _db.merchants.byKey(id).fetch();
+    return row;
   }
 }

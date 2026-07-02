@@ -1,79 +1,56 @@
-import 'package:backend/models/category/category_dto.dart';
-import 'package:postgres/postgres.dart';
+import 'package:backend/database/schema.dart';
+import 'package:typed_sql/typed_sql.dart' as ts;
 
 class CategoryRepository {
-  CategoryRepository({required Session session}) : _session = session;
+  CategoryRepository({required ts.Database<DatabaseSchema> db}) : _db = db;
 
-  final Session _session;
+  final ts.Database<DatabaseSchema> _db;
 
-  Future<CategoryDto> create({
+  Future<CategoryRow> create({
     required String name,
     required String merchantId,
     required String storeId,
     String? description,
     String? imageUrl,
   }) async {
-    final result = await _session.execute(
-      Sql.named('''
-      INSERT INTO categories(name, merchant_id, store_id, description, image_url)
-      VALUES(@name, @merchantId, @storeId, @description, @imageUrl) RETURNING *
-      '''),
-      parameters: {
-        'name': name,
-        'merchantId': merchantId,
-        'storeId': storeId,
-        'description': description,
-        'imageUrl': imageUrl,
-      },
-    );
+    final row = await _db.categories
+        .insertValue(
+          name: name,
+          merchantId: merchantId,
+          storeId: storeId,
+          description: description,
+          imageUrl: imageUrl,
+        )
+        .returning((ts.Expr<CategoryRow> c) => (c,))
+        .executeAndFetch();
 
-    return CategoryDto.fromJson(result.first.toColumnMap());
+    return row;
   }
 
-  Future<List<CategoryDto>> getAll({
+  Future<List<CategoryRow>> getAll({
     required String merchantId,
     String? storeId,
   }) async {
-    final result = await _session.execute(
-      Sql.named(
-        '''
-        SELECT * FROM categories WHERE merchant_id = @merchantId
-        ${storeId != null ? 'AND store_id = @storeId' : ''}
-      ''',
-      ),
-      parameters: {
-        'merchantId': merchantId,
-        if (storeId != null) 'storeId': storeId,
-      },
-    );
+    final query = _db.categories
+        .where((c) => c.merchantId.equalsValue(merchantId));
 
-    if (result.isEmpty) return [];
+    if (storeId != null) {
+      final rows = await query
+          .where((c) => c.storeId.equalsValue(storeId))
+          .fetch();
+      return rows;
+    }
 
-    final categoryDtos = result
-        .map(
-          (element) => CategoryDto.fromJson(element.toColumnMap()),
-        )
-        .toList();
-
-    return categoryDtos;
+    final rows = await query.fetch();
+    return rows;
   }
 
-  Future<CategoryDto?> getById(String id) async {
-    final result = await _session.execute(
-      Sql.named('''
-        SELECT * FROM categories WHERE id = @id
-      '''),
-      parameters: {'id': id},
-    );
-
-    if (result.isEmpty) return null;
-
-    final categoryDto = CategoryDto.fromJson(result.first.toColumnMap());
-
-    return categoryDto;
+  Future<CategoryRow?> getById(String id) async {
+    final row = await _db.categories.byKey(id).fetch();
+    return row;
   }
 
-  Future<CategoryDto?> update({
+  Future<CategoryRow?> update({
     required String id,
     String? name,
     bool? isActive,
@@ -82,35 +59,21 @@ class CategoryRepository {
     String? imageUrl,
     bool imageUrlPresent = false,
   }) async {
-    final result = await _session.execute(
-      Sql.named('''
-        UPDATE categories SET name = COALESCE(@name, name),
-        is_active = COALESCE(@isActive, is_active),
-        description = CASE
-          WHEN @descriptionPresent THEN @description
-          ELSE description
-        END,
-        image_url = CASE
-          WHEN @imageUrlPresent THEN @imageUrl
-          ELSE image_url
-        END,
-        updated_at = NOW() WHERE id = @id RETURNING *
-      '''),
-      parameters: {
-        'id': id,
-        'name': name,
-        'isActive': isActive,
-        'description': description,
-        'descriptionPresent': descriptionPresent,
-        'imageUrl': imageUrl,
-        'imageUrlPresent': imageUrlPresent,
-      },
-    );
+    final row = await _db.categories
+        .byKey(id)
+        .update(
+          (c, set) => set(
+            name: name != null ? ts.toExpr(name) : c.name,
+            isActive: isActive != null ? ts.toExpr(isActive) : c.isActive,
+            description:
+                descriptionPresent ? ts.toExpr(description) : c.description,
+            imageUrl: imageUrlPresent ? ts.toExpr(imageUrl) : c.imageUrl,
+            updatedAt: ts.Expr.currentTimestamp,
+          ),
+        )
+        .returning((ts.Expr<CategoryRow> c) => (c,))
+        .executeAndFetch();
 
-    if (result.isEmpty) return null;
-
-    final categoryDto = CategoryDto.fromJson(result.first.toColumnMap());
-
-    return categoryDto;
+    return row;
   }
 }

@@ -1,0 +1,33 @@
+name: product_dev
+publish_to: none
+
+environment:
+  sdk: ^3.12.2
+
+workspace:
+  - packages/models
+  - packages/validators
+  - backend
+  - merchant
+  - terminal
+
+dev_dependencies:
+  melos: ^7.5.1
+
+melos:
+  scripts:
+    analyze:
+      run: melos exec -- "dart analyze"
+      description: Run dart analyze across all packages.
+
+    test:dart:
+      run: melos exec --dir-exists="test" --depends-on="test" -- "dart test"
+      description: Run unit tests for Dart packages/backend.
+
+    test:flutter:
+      run: melos exec --dir-exists="test" --depends-on="flutter_test" -- "flutter test"
+      description: Run unit/widget tests for Flutter terminal app.
+
+    clean:
+      run: melos exec -- "flutter clean || true"
+      description: Clean build caches.

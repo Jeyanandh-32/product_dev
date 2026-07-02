@@ -1,4 +1,4 @@
-import 'package:backend/extensions/store_dto_extension.dart';
+import 'package:backend/extensions/store_row_extension.dart';
 import 'package:backend/repositories/store_repository.dart';
 import 'package:backend/utils/responses.dart';
 import 'package:dart_frog/dart_frog.dart';
@@ -9,8 +9,8 @@ Future<Response> onRequest(
   String id,
 ) async {
   return switch (context.request.method) {
-    .get => _onGet(context, id),
-    .put || .patch => _onPutOrPatch(context, id),
+    HttpMethod.get => _onGet(context, id),
+    HttpMethod.put || HttpMethod.patch => _onPutOrPatch(context, id),
     _ => methodNotAllowed(),
   };
 }
@@ -19,11 +19,11 @@ Future<Response> _onGet(RequestContext context, String id) async {
   final repo = context.read<StoreRepository>();
 
   try {
-    final storeDto = await repo.getById(id);
+    final storeRow = await repo.getById(id);
 
     return success(
       data: {
-        'store': storeDto?.toStore(),
+        'store': storeRow?.toStore(),
       },
     );
   } catch (e) {
@@ -62,7 +62,7 @@ Future<Response> _onPutOrPatch(RequestContext context, String id) async {
   }
 
   try {
-    final storeDto = await repo.update(
+    final storeRow = await repo.update(
       id: id,
       name: name?.trim(),
       storeType: storeType?.trim(),
@@ -72,7 +72,7 @@ Future<Response> _onPutOrPatch(RequestContext context, String id) async {
 
     return success(
       data: {
-        'store': storeDto?.toStore(),
+        'store': storeRow?.toStore(),
       },
     );
   } catch (e) {

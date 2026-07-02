@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:backend/extensions/merchant_dto_extension.dart';
+import 'package:backend/extensions/merchant_row_extension.dart';
 import 'package:backend/repositories/merchant_repository.dart';
 import 'package:backend/services/auth_service.dart';
 import 'package:backend/utils/responses.dart';
@@ -9,7 +9,7 @@ import 'package:validators/validators.dart';
 
 Future<Response> onRequest(RequestContext context) async {
   return switch (context.request.method) {
-    .post => _onPost(context),
+    HttpMethod.post => _onPost(context),
     _ => methodNotAllowed(),
   };
 }
@@ -44,7 +44,7 @@ Future<Response> _onPost(RequestContext context) async {
   final passwordHash = await AuthService.hashPassword(password!);
 
   try {
-    final merchantDto = await repo.create(
+    final merchantRow = await repo.create(
       name: name!.trim(),
       businessName: businessName!.trim(),
       whatsappNumber: whatsappNumber!.trim(),
@@ -53,11 +53,11 @@ Future<Response> _onPost(RequestContext context) async {
     );
 
     final accessToken = AuthService.generateAccessToken(
-      id: merchantDto.id,
+      id: merchantRow.id,
       role: .merchant,
     );
     final refreshToken = AuthService.generateRefreshToken(
-      id: merchantDto.id,
+      id: merchantRow.id,
       role: .merchant,
     );
 
@@ -72,7 +72,7 @@ Future<Response> _onPost(RequestContext context) async {
       },
       statusCode: HttpStatus.created,
       data: {
-        'merchant': merchantDto.toMerchant(),
+        'merchant': merchantRow.toMerchant(),
       },
     );
   } catch (e) {

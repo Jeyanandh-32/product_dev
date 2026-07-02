@@ -6,6 +6,8 @@ publish_to: none
 environment:
   sdk: ^3.11.0
 
+resolution: workspace
+
 dependencies:
   bcrypt: ^1.2.0
   dart_frog: ^1.1.0
@@ -19,6 +21,7 @@ dependencies:
   models: 
     path: ../packages/models
   postgres: ^3.5.11
+  typed_sql: ^0.1.12
   validators: 
     path: ../packages/validators
 

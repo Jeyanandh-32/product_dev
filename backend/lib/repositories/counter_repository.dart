@@ -1,79 +1,56 @@
-import 'package:backend/models/counter/counter_dto.dart';
-import 'package:postgres/postgres.dart';
+import 'package:backend/database/schema.dart';
+import 'package:typed_sql/typed_sql.dart' as ts;
 
 class CounterRepository {
-  CounterRepository({required Session session}) : _session = session;
+  CounterRepository({required ts.Database<DatabaseSchema> db}) : _db = db;
 
-  final Session _session;
+  final ts.Database<DatabaseSchema> _db;
 
-  Future<CounterDto> create({
+  Future<CounterRow> create({
     required String name,
     required String merchantId,
     required String storeId,
     String? description,
     String? imageUrl,
   }) async {
-    final result = await _session.execute(
-      Sql.named('''
-      INSERT INTO counters(name, merchant_id, store_id, description, image_url)
-      VALUES(@name, @merchantId, @storeId, @description, @imageUrl) RETURNING *
-      '''),
-      parameters: {
-        'name': name,
-        'merchantId': merchantId,
-        'storeId': storeId,
-        'description': description,
-        'imageUrl': imageUrl,
-      },
-    );
+    final row = await _db.counters
+        .insertValue(
+          name: name,
+          merchantId: merchantId,
+          storeId: storeId,
+          description: description,
+          imageUrl: imageUrl,
+        )
+        .returning((ts.Expr<CounterRow> c) => (c,))
+        .executeAndFetch();
 
-    return CounterDto.fromJson(result.first.toColumnMap());
+    return row;
   }
 
-  Future<List<CounterDto>> getAll({
+  Future<List<CounterRow>> getAll({
     required String merchantId,
     String? storeId,
   }) async {
-    final result = await _session.execute(
-      Sql.named(
-        '''
-        SELECT * FROM counters WHERE merchant_id = @merchantId
-        ${storeId != null ? 'AND store_id = @storeId' : ''}
-      ''',
-      ),
-      parameters: {
-        'merchantId': merchantId,
-        if (storeId != null) 'storeId': storeId,
-      },
-    );
+    final query = _db.counters
+        .where((c) => c.merchantId.equalsValue(merchantId));
 
-    if (result.isEmpty) return [];
+    if (storeId != null) {
+      final rows = await query
+          .where((c) => c.storeId.equalsValue(storeId))
+          .fetch();
+      return rows;
+    }
 
-    final counterDtos = result
-        .map(
-          (element) => CounterDto.fromJson(element.toColumnMap()),
-        )
-        .toList();
-
-    return counterDtos;
+    final rows = await query.fetch();
+    return rows;
   }
 
-  Future<CounterDto?> getById(String id) async {
-    final result = await _session.execute(
-      Sql.named('''
-        SELECT * FROM counters WHERE id = @id
-      '''),
-      parameters: {'id': id},
-    );
-
-    if (result.isEmpty) return null;
-
-    final counterDto = CounterDto.fromJson(result.first.toColumnMap());
-
-    return counterDto;
+  Future<CounterRow?> getById(String id) async {
+    final row = await _db.counters.byKey(id).fetch();
+    return row;
   }
 
-  Future<CounterDto?> update({
+  Future<CounterRow?> update({
     required String id,
     String? name,
     bool? isActive,
@@ -82,35 +59,21 @@ class CounterRepository {
     String? imageUrl,
     bool imageUrlPresent = false,
   }) async {
-    final result = await _session.execute(
-      Sql.named('''
-        UPDATE counters SET name = COALESCE(@name, name),
-        is_active = COALESCE(@isActive, is_active),
-        description = CASE
-          WHEN @descriptionPresent THEN @description
-          ELSE description
-        END,
-        image_url = CASE
-          WHEN @imageUrlPresent THEN @imageUrl
-          ELSE image_url
-        END,
-        updated_at = NOW() WHERE id = @id RETURNING *
-      '''),
-      parameters: {
-        'id': id,
-        'name': name,
-        'isActive': isActive,
-        'description': description,
-        'descriptionPresent': descriptionPresent,
-        'imageUrl': imageUrl,
-        'imageUrlPresent': imageUrlPresent,
-      },
-    );
+    final row = await _db.counters
+        .byKey(id)
+        .update(
+          (c, set) => set(
+            name: name != null ? ts.toExpr(name) : c.name,
+            isActive: isActive != null ? ts.toExpr(isActive) : c.isActive,
+            description:
+                descriptionPresent ? ts.toExpr(description) : c.description,
+            imageUrl: imageUrlPresent ? ts.toExpr(imageUrl) : c.imageUrl,
+            updatedAt: ts.Expr.currentTimestamp,
+          ),
+        )
+        .returning((ts.Expr<CounterRow> c) => (c,))
+        .executeAndFetch();
 
-    if (result.isEmpty) return null;
-
-    final counterDto = CounterDto.fromJson(result.first.toColumnMap());
-
-    return counterDto;
+    return row;
   }
 }

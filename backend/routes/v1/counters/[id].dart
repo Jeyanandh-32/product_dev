@@ -1,4 +1,4 @@
-import 'package:backend/extensions/counter_dto_extension.dart';
+import 'package:backend/extensions/counter_row_extension.dart';
 import 'package:backend/repositories/counter_repository.dart';
 import 'package:backend/utils/request_body.dart';
 import 'package:backend/utils/responses.dart';
@@ -14,8 +14,8 @@ Future<Response> onRequest(
   }
 
   return switch (context.request.method) {
-    .get => _onGet(context, id),
-    .put || .patch => _onPutOrPatch(context, id),
+    HttpMethod.get => _onGet(context, id),
+    HttpMethod.put || HttpMethod.patch => _onPutOrPatch(context, id),
     _ => methodNotAllowed(),
   };
 }
@@ -24,11 +24,11 @@ Future<Response> _onGet(RequestContext context, String id) async {
   final repo = context.read<CounterRepository>();
 
   try {
-    final counterDto = await repo.getById(id);
+    final counterRow = await repo.getById(id);
 
     return success(
       data: {
-        'counter': counterDto?.toCounter(),
+        'counter': counterRow?.toCounter(),
       },
     );
   } catch (e) {
@@ -80,7 +80,7 @@ Future<Response> _onPutOrPatch(RequestContext context, String id) async {
   }
 
   try {
-    final counterDto = await repo.update(
+    final counterRow = await repo.update(
       id: id,
       name: name?.trim(),
       isActive: isActive,
@@ -92,7 +92,7 @@ Future<Response> _onPutOrPatch(RequestContext context, String id) async {
 
     return success(
       data: {
-        'counter': counterDto?.toCounter(),
+        'counter': counterRow?.toCounter(),
       },
     );
   } catch (e) {

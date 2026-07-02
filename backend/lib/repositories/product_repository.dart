@@ -1,12 +1,14 @@
-import 'package:backend/models/product/product_dto.dart';
-import 'package:postgres/postgres.dart';
+import 'package:backend/database/schema.dart';
+import 'package:backend/extensions/product_row_extension.dart';
+import 'package:models/models.dart';
+import 'package:typed_sql/typed_sql.dart' as ts;
 
 class ProductRepository {
-  ProductRepository({required Session session}) : _session = session;
+  ProductRepository({required ts.Database<DatabaseSchema> db}) : _db = db;
 
-  final Session _session;
+  final ts.Database<DatabaseSchema> _db;
 
-  Future<ProductDto> create({
+  Future<ProductRow> create({
     required String merchantId,
     required String storeId,
     required String name,
@@ -20,33 +22,28 @@ class ProductRepository {
     String? description,
     String? imageUrl,
   }) async {
-    final result = await _session.execute(
-      Sql.named('''
-      INSERT INTO products(merchant_id, store_id, name, sku, barcode, description, image_url,
-      category_id, counter_id, tax_rate, base_price, selling_price)
-      VALUES(@merchantId, @storeId, @name, @sku, @barcode, @description, @imageUrl, @categoryId,
-      @counterId, @taxRate, @basePrice, @sellingPrice) RETURNING *
-      '''),
-      parameters: {
-        'merchantId': merchantId,
-        'storeId': storeId,
-        'name': name,
-        'sku': sku,
-        'barcode': barcode,
-        'description': description,
-        'imageUrl': imageUrl,
-        'categoryId': categoryId,
-        'counterId': counterId,
-        'taxRate': taxRate,
-        'basePrice': basePrice,
-        'sellingPrice': sellingPrice,
-      },
-    );
+    final row = await _db.products
+        .insertValue(
+          merchantId: merchantId,
+          storeId: storeId,
+          name: name,
+          categoryId: categoryId,
+          counterId: counterId,
+          basePrice: basePrice,
+          sellingPrice: sellingPrice,
+          taxRate: taxRate,
+          sku: sku,
+          barcode: barcode,
+          description: description,
+          imageUrl: imageUrl,
+        )
+        .returning((ts.Expr<ProductRow> p) => (p,))
+        .executeAndFetch();
 
-    return ProductDto.fromJson(result.first.toColumnMap());
+    return row;
   }
 
-  Future<ProductDto?> update({
+  Future<ProductRow?> update({
     required String id,
     String? name,
     String? categoryId,
@@ -64,261 +61,94 @@ class ProductRepository {
     bool descriptionPresent = false,
     bool imageUrlPresent = false,
   }) async {
-    final result = await _session.execute(
-      Sql.named('''
-      UPDATE products SET name = COALESCE(@name, name),
-      is_active = COALESCE(@isActive, is_active),
-      category_id = COALESCE(@categoryId, category_id),
-      counter_id = COALESCE(@counterId, counter_id),
-      base_price = COALESCE(@basePrice, base_price),
-      selling_price = COALESCE(@sellingPrice, selling_price),
-      tax_rate = COALESCE(@taxRate, tax_rate),
-      sku = CASE WHEN @skuPresent THEN @sku ELSE sku END,
-      barcode = CASE WHEN @barcodePresent THEN @barcode ELSE barcode END,
-      description = CASE WHEN @descriptionPresent THEN @description ELSE description END,
-      image_url = CASE WHEN @imageUrlPresent THEN @imageUrl ELSE image_url END
-      WHERE id = @id RETURNING *
-      '''),
-      parameters: {
-        'id': id,
-        'name': name,
-        'isActive': isActive,
-        'sku': sku,
-        'skuPresent': skuPresent,
-        'barcode': barcode,
-        'barcodePresent': barcodePresent,
-        'description': description,
-        'descriptionPresent': descriptionPresent,
-        'imageUrl': imageUrl,
-        'imageUrlPresent': imageUrlPresent,
-        'categoryId': categoryId,
-        'counterId': counterId,
-        'taxRate': taxRate,
-        'basePrice': basePrice,
-        'sellingPrice': sellingPrice,
-      },
-    );
+    final row = await _db.products
+        .byKey(id)
+        .update(
+          (p, set) => set(
+            name: name != null ? ts.toExpr(name) : p.name,
+            categoryId: categoryId != null ? ts.toExpr(categoryId) : p.categoryId,
+            counterId: counterId != null ? ts.toExpr(counterId) : p.counterId,
+            isActive: isActive != null ? ts.toExpr(isActive) : p.isActive,
+            basePrice: basePrice != null ? ts.toExpr(basePrice) : p.basePrice,
+            sellingPrice:
+                sellingPrice != null ? ts.toExpr(sellingPrice) : p.sellingPrice,
+            taxRate: taxRate != null ? ts.toExpr(taxRate) : p.taxRate,
+            sku: skuPresent ? ts.toExpr(sku) : p.sku,
+            barcode: barcodePresent ? ts.toExpr(barcode) : p.barcode,
+            description:
+                descriptionPresent ? ts.toExpr(description) : p.description,
+            imageUrl: imageUrlPresent ? ts.toExpr(imageUrl) : p.imageUrl,
+            updatedAt: ts.Expr.currentTimestamp,
+          ),
+        )
+        .returning((ts.Expr<ProductRow> p) => (p,))
+        .executeAndFetch();
 
-    if (result.isEmpty) return null;
-
-    return ProductDto.fromJson(result.first.toColumnMap());
+    return row;
   }
 
-  Future<List<ProductDto>> getAll({
+  Future<List<Product>> getAll({
     required String merchantId,
     String? storeId,
     int? limit,
     int? offset,
   }) async {
-    final result = await _session.execute(
-      Sql.named(
-        '''
-        SELECT 
-          p.*,
-          s.id AS stock_id,
-          s.product_id AS stock_product_id,
-          s.store_id AS stock_store_id,
-          s.quantity AS stock_quantity,
-          s.low_stock_threshold AS stock_low_stock_threshold,
-          s.stock_monitor AS stock_stock_monitor,
-          s.created_at AS stock_created_at,
-          s.updated_at AS stock_updated_at,
-          c.id AS cat_id,
-          c.name AS cat_name,
-          c.merchant_id AS cat_merchant_id,
-          c.store_id AS cat_store_id,
-          c.is_active AS cat_is_active,
-          c.created_at AS cat_created_at,
-          c.updated_at AS cat_updated_at,
-          c.description AS cat_description,
-          c.image_url AS cat_image_url,
-          cnt.id AS cnt_id,
-          cnt.name AS cnt_name,
-          cnt.merchant_id AS cnt_merchant_id,
-          cnt.store_id AS cnt_store_id,
-          cnt.is_active AS cnt_is_active,
-          cnt.created_at AS cnt_created_at,
-          cnt.updated_at AS cnt_updated_at,
-          cnt.description AS cnt_description,
-          cnt.image_url AS cnt_image_url
-        FROM products p
-        LEFT JOIN stocks s ON p.id = s.product_id
-        LEFT JOIN categories c ON p.category_id = c.id
-        LEFT JOIN counters cnt ON p.counter_id = cnt.id
-        WHERE p.merchant_id = @merchantId
-        ${storeId != null ? 'AND p.store_id = @storeId' : ''}
-        ORDER BY p.created_at DESC
-        ${limit != null ? 'LIMIT @limit' : ''}
-        ${offset != null ? 'OFFSET @offset' : ''}
-      ''',
-      ),
-      parameters: {
-        'merchantId': merchantId,
-        if (storeId != null) 'storeId': storeId,
-        if (limit != null) 'limit': limit,
-        if (offset != null) 'offset': offset,
-      },
-    );
+    var q = _db.products
+        .leftJoin(_db.stocks)
+        .on((p, s) => p.id.equals(s.productId))
+        .leftJoin(_db.categories)
+        .on((p, s, c) => p.categoryId.equals(c.id))
+        .leftJoin(_db.counters)
+        .on((p, s, c, cnt) => p.counterId.equals(cnt.id))
+        .where((p, s, c, cnt) => p.merchantId.equalsValue(merchantId));
 
-    if (result.isEmpty) return [];
+    if (storeId != null) {
+      q = q.where((p, s, c, cnt) => p.storeId.equalsValue(storeId));
+    }
 
-    return result.map((element) {
-      final columns = element.toColumnMap();
-      Map<String, Object?>? stockMap;
-      if (columns['stock_id'] != null) {
-        stockMap = {
-          'id': columns['stock_id'],
-          'product_id': columns['stock_product_id'],
-          'store_id': columns['stock_store_id'],
-          'quantity': columns['stock_quantity'],
-          'low_stock_threshold': columns['stock_low_stock_threshold'],
-          'stock_monitor': columns['stock_stock_monitor'],
-          'created_at': columns['stock_created_at'],
-          'updated_at': columns['stock_updated_at'],
-        };
-      }
-      Map<String, Object?>? categoryMap;
-      if (columns['cat_id'] != null) {
-        categoryMap = {
-          'id': columns['cat_id'],
-          'name': columns['cat_name'],
-          'merchant_id': columns['cat_merchant_id'],
-          'store_id': columns['cat_store_id'],
-          'is_active': columns['cat_is_active'],
-          'created_at': columns['cat_created_at'],
-          'updated_at': columns['cat_updated_at'],
-          'description': columns['cat_description'],
-          'image_url': columns['cat_image_url'],
-        };
-      }
-      Map<String, Object?>? counterMap;
-      if (columns['cnt_id'] != null) {
-        counterMap = {
-          'id': columns['cnt_id'],
-          'name': columns['cnt_name'],
-          'merchant_id': columns['cnt_merchant_id'],
-          'store_id': columns['cnt_store_id'],
-          'is_active': columns['cnt_is_active'],
-          'created_at': columns['cnt_created_at'],
-          'updated_at': columns['cnt_updated_at'],
-          'description': columns['cnt_description'],
-          'image_url': columns['cnt_image_url'],
-        };
-      }
-      final productMap = Map<String, Object?>.from(columns)
-        ..['stock'] = stockMap
-        ..['category'] = categoryMap
-        ..['counter'] = counterMap;
-      return ProductDto.fromJson(productMap);
-    }).toList();
+    var finalQuery = q.orderBy((p, s, c, cnt) => [
+          (p.createdAt, ts.Order.descending),
+        ]).asQuery;
+
+    if (limit != null) {
+      finalQuery = finalQuery.limit(limit);
+    }
+    if (offset != null) {
+      finalQuery = finalQuery.offset(offset);
+    }
+
+    final rows = await finalQuery.fetch();
+    return rows.map((r) => r.toProduct()).toList();
   }
 
-  Future<ProductDto?> getById(String id) async {
-    final result = await _session.execute(
-      Sql.named('''
-      SELECT 
-        p.*,
-        s.id AS stock_id,
-        s.product_id AS stock_product_id,
-        s.store_id AS stock_store_id,
-        s.quantity AS stock_quantity,
-        s.low_stock_threshold AS stock_low_stock_threshold,
-        s.stock_monitor AS stock_stock_monitor,
-        s.created_at AS stock_created_at,
-        s.updated_at AS stock_updated_at,
-        c.id AS cat_id,
-        c.name AS cat_name,
-        c.merchant_id AS cat_merchant_id,
-        c.store_id AS cat_store_id,
-        c.is_active AS cat_is_active,
-        c.created_at AS cat_created_at,
-        c.updated_at AS cat_updated_at,
-        c.description AS cat_description,
-        c.image_url AS cat_image_url,
-        cnt.id AS cnt_id,
-        cnt.name AS cnt_name,
-        cnt.merchant_id AS cnt_merchant_id,
-        cnt.store_id AS cnt_store_id,
-        cnt.is_active AS cnt_is_active,
-        cnt.created_at AS cnt_created_at,
-        cnt.updated_at AS cnt_updated_at,
-        cnt.description AS cnt_description,
-        cnt.image_url AS cnt_image_url
-      FROM products p
-      LEFT JOIN stocks s ON p.id = s.product_id
-      LEFT JOIN categories c ON p.category_id = c.id
-      LEFT JOIN counters cnt ON p.counter_id = cnt.id
-      WHERE p.id = @id
-      '''),
-      parameters: {'id': id},
-    );
+  Future<Product?> getById(String id) async {
+    final row = await _db.products
+        .leftJoin(_db.stocks)
+        .on((p, s) => p.id.equals(s.productId))
+        .leftJoin(_db.categories)
+        .on((p, s, c) => p.categoryId.equals(c.id))
+        .leftJoin(_db.counters)
+        .on((p, s, c, cnt) => p.counterId.equals(cnt.id))
+        .where((p, s, c, cnt) => p.id.equalsValue(id))
+        .first
+        .fetch();
 
-    if (result.isEmpty) return null;
-
-    final columns = result.first.toColumnMap();
-    Map<String, Object?>? stockMap;
-    if (columns['stock_id'] != null) {
-      stockMap = {
-        'id': columns['stock_id'],
-        'product_id': columns['stock_product_id'],
-        'store_id': columns['stock_store_id'],
-        'quantity': columns['stock_quantity'],
-        'low_stock_threshold': columns['stock_low_stock_threshold'],
-        'stock_monitor': columns['stock_stock_monitor'],
-        'created_at': columns['stock_created_at'],
-        'updated_at': columns['stock_updated_at'],
-      };
-    }
-    Map<String, Object?>? categoryMap;
-    if (columns['cat_id'] != null) {
-      categoryMap = {
-        'id': columns['cat_id'],
-        'name': columns['cat_name'],
-        'merchant_id': columns['cat_merchant_id'],
-        'store_id': columns['cat_store_id'],
-        'is_active': columns['cat_is_active'],
-        'created_at': columns['cat_created_at'],
-        'updated_at': columns['cat_updated_at'],
-        'description': columns['cat_description'],
-        'image_url': columns['cat_image_url'],
-      };
-    }
-    Map<String, Object?>? counterMap;
-    if (columns['cnt_id'] != null) {
-      counterMap = {
-        'id': columns['cnt_id'],
-        'name': columns['cnt_name'],
-        'merchant_id': columns['cnt_merchant_id'],
-        'store_id': columns['cnt_store_id'],
-        'is_active': columns['cnt_is_active'],
-        'created_at': columns['cnt_created_at'],
-        'updated_at': columns['cnt_updated_at'],
-        'description': columns['cnt_description'],
-        'image_url': columns['cnt_image_url'],
-      };
-    }
-    final productMap = Map<String, Object?>.from(columns)
-      ..['stock'] = stockMap
-      ..['category'] = categoryMap
-      ..['counter'] = counterMap;
-    return ProductDto.fromJson(productMap);
+    if (row == null) return null;
+    return row.toProduct();
   }
 
   Future<int> count({
     required String merchantId,
     String? storeId,
   }) async {
-    final result = await _session.execute(
-      Sql.named('''
-        SELECT COUNT(*) FROM products
-        WHERE merchant_id = @merchantId
-        ${storeId != null ? 'AND store_id = @storeId' : ''}
-      '''),
-      parameters: {
-        'merchantId': merchantId,
-        if (storeId != null) 'storeId': storeId,
-      },
-    );
-    return result.first.first! as int;
+    var q = _db.products
+        .where((p) => p.merchantId.equalsValue(merchantId));
+
+    if (storeId != null) {
+      q = q.where((p) => p.storeId.equalsValue(storeId));
+    }
+
+    final count = await q.count().fetch();
+    return count ?? 0;
   }
 }

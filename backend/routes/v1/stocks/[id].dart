@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:backend/extensions/stock_dto_extension.dart';
+import 'package:backend/extensions/stock_row_extension.dart';
 import 'package:backend/repositories/stock_repository.dart';
 import 'package:backend/utils/responses.dart';
 import 'package:dart_frog/dart_frog.dart';
@@ -65,20 +65,20 @@ Future<Response> _onPutOrPatch(RequestContext context, String id) async {
   }
 
   try {
-    final updatedDto = await repo.update(
+    final updatedRow = await repo.update(
       id: id,
       quantity: quantity,
       lowStockThreshold: lowStockThreshold,
       stockMonitor: stockMonitor,
     );
 
-    if (updatedDto == null) {
+    if (updatedRow == null) {
       return error(message: 'Stock not found.', statusCode: HttpStatus.notFound);
     }
 
     return success(
       data: {
-        'stock': updatedDto.toStock(),
+        'stock': updatedRow.toStock(),
       },
     );
   } catch (e) {

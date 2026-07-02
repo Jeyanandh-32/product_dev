@@ -1,54 +1,49 @@
-import 'package:backend/models/stock/stock_dto.dart';
-import 'package:postgres/postgres.dart';
+import 'package:backend/database/schema.dart';
+import 'package:typed_sql/typed_sql.dart' as ts;
 
 class StockRepository {
-  StockRepository({required Session session}) : _session = session;
+  StockRepository({required ts.Database<DatabaseSchema> db}) : _db = db;
 
-  final Session _session;
+  final ts.Database<DatabaseSchema> _db;
 
-  Future<StockDto> create({
+  Future<StockRow> create({
     required String productId,
     required String storeId,
   }) async {
-    final result = await _session.execute(
-      Sql.named('''
-      INSERT INTO stocks(product_id, store_id)
-      VALUES(@productId, @storeId) RETURNING *
-      '''),
-      parameters: {
-        'productId': productId,
-        'storeId': storeId,
-      },
-    );
+    final row = await _db.stocks
+        .insertValue(
+          productId: productId,
+          storeId: storeId,
+        )
+        .returning((ts.Expr<StockRow> s) => (s,))
+        .executeAndFetch();
 
-    return StockDto.fromJson(result.first.toColumnMap());
+    return row;
   }
 
-  Future<StockDto?> update({
+  Future<StockRow?> update({
     required String id,
     int? quantity,
     int? lowStockThreshold,
     bool? stockMonitor,
   }) async {
-    final result = await _session.execute(
-      Sql.named('''
-      UPDATE stocks SET 
-        quantity = COALESCE(@quantity, quantity),
-        low_stock_threshold = COALESCE(@lowStockThreshold, low_stock_threshold),
-        stock_monitor = COALESCE(@stockMonitor, stock_monitor),
-        updated_at = NOW()
-      WHERE id = @id RETURNING *
-      '''),
-      parameters: {
-        'id': id,
-        'quantity': quantity,
-        'lowStockThreshold': lowStockThreshold,
-        'stockMonitor': stockMonitor,
-      },
-    );
+    final rows = await _db.stocks
+        .where((ts.Expr<StockRow> s) => s.id.equalsValue(id))
+        .update(
+          (s, set) => set(
+            quantity: quantity != null ? ts.toExpr(quantity) : s.quantity,
+            lowStockThreshold: lowStockThreshold != null
+                ? ts.toExpr(lowStockThreshold)
+                : s.lowStockThreshold,
+            stockMonitor:
+                stockMonitor != null ? ts.toExpr(stockMonitor) : s.stockMonitor,
+            updatedAt: ts.Expr.currentTimestamp,
+          ),
+        )
+        .returning((ts.Expr<StockRow> s) => (s,))
+        .executeAndFetch();
 
-    if (result.isEmpty) return null;
-
-    return StockDto.fromJson(result.first.toColumnMap());
+    if (rows.isEmpty) return null;
+    return rows.first;
   }
 }

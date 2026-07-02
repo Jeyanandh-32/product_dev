@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'dart:math';
 
-import 'package:backend/extensions/terminal_dto_extension.dart';
+import 'package:backend/extensions/terminal_row_extension.dart';
 import 'package:backend/models/token_payload/token_payload.dart';
 import 'package:backend/repositories/terminal_repository.dart';
 import 'package:backend/services/auth_service.dart';
@@ -44,19 +44,19 @@ Future<Response> _onGetTerminal(
   final repo = context.read<TerminalRepository>();
 
   try {
-    final terminalDto = await repo.getByCode(tokenPayload.terminalCode!);
+    final terminalRow = await repo.getByCode(tokenPayload.terminalCode!);
 
-    if (terminalDto == null) {
+    if (terminalRow == null) {
       return badRequest(message: 'Terminal not exists');
     }
 
-    if (!terminalDto.isActive) {
+    if (!terminalRow.isActive) {
       return forbidden(message: 'This Terminal is deactivated.');
     }
 
     return success(
       data: {
-        'terminal': terminalDto.toTerminal(),
+        'terminal': terminalRow.toTerminal(),
       },
     );
   } catch (e) {
@@ -70,12 +70,12 @@ Future<Response> _onGet(RequestContext context, String? storeId) async {
   final merchantId = tokenPayload.sub;
 
   try {
-    final terminalDtos = await repo.getAll(
+    final terminalRows = await repo.getAll(
       storeId: storeId,
       merchantId: merchantId,
     );
 
-    final terminals = terminalDtos.map((s) => s.toTerminal()).toList();
+    final terminals = terminalRows.map((s) => s.toTerminal()).toList();
 
     return success(
       data: {
@@ -114,7 +114,7 @@ Future<Response> _onPost(RequestContext context, String storeId) async {
   final code = _generateTerminalCode();
 
   try {
-    final terminalDto = await repo.create(
+    final terminalRow = await repo.create(
       code: code,
       merchantId: merchantId,
       storeId: storeId,
@@ -125,7 +125,7 @@ Future<Response> _onPost(RequestContext context, String storeId) async {
     return success(
       statusCode: HttpStatus.created,
       data: {
-        'terminal': terminalDto.toTerminal(),
+        'terminal': terminalRow.toTerminal(),
       },
     );
   } catch (e) {

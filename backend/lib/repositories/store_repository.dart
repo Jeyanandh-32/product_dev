@@ -1,93 +1,61 @@
-import 'package:backend/models/store/store_dto.dart';
-import 'package:postgres/postgres.dart';
+import 'package:backend/database/schema.dart';
+import 'package:typed_sql/typed_sql.dart' as ts;
 
 class StoreRepository {
-  StoreRepository({required Session session}) : _session = session;
+  StoreRepository({required ts.Database<DatabaseSchema> db}) : _db = db;
 
-  final Session _session;
+  final ts.Database<DatabaseSchema> _db;
 
-  Future<StoreDto> create({
+  Future<StoreRow> create({
     required String merchantId,
     required String name,
     String? storeType,
   }) async {
-    final result = await _session.execute(
-      Sql.named('''
-      INSERT INTO stores(merchant_id, name, store_type) VALUES(@merchantId, @name, @storeType) RETURNING *
-      '''),
-      parameters: {
-        'merchantId': merchantId,
-        'name': name,
-        'storeType': storeType,
-      },
-    );
-
-    return StoreDto.fromJson(result.first.toColumnMap());
-  }
-
-  Future<List<StoreDto>> getAll({required String merchantId}) async {
-    final result = await _session.execute(
-      Sql.named(
-        '''
-        SELECT * FROM stores WHERE merchant_id = @id
-      ''',
-      ),
-      parameters: {'id': merchantId},
-    );
-
-    if (result.isEmpty) return [];
-
-    final storeDtos = result
-        .map(
-          (element) => StoreDto.fromJson(element.toColumnMap()),
+    final row = await _db.stores
+        .insertValue(
+          merchantId: merchantId,
+          name: name,
+          storeType: storeType,
         )
-        .toList();
+        .returning((ts.Expr<StoreRow> s) => (s,))
+        .executeAndFetch();
 
-    return storeDtos;
+    return row;
   }
 
-  Future<StoreDto?> getById(String id) async {
-    final result = await _session.execute(
-      Sql.named('''
-        SELECT * FROM stores WHERE id = @id
-      '''),
-      parameters: {'id': id},
-    );
+  Future<List<StoreRow>> getAll({required String merchantId}) async {
+    final rows = await _db.stores
+        .where((s) => s.merchantId.equalsValue(merchantId))
+        .fetch();
 
-    if (result.isEmpty) return null;
-
-    final storeDto = StoreDto.fromJson(result.first.toColumnMap());
-
-    return storeDto;
+    return rows;
   }
 
-  Future<StoreDto?> update({
+  Future<StoreRow?> getById(String id) async {
+    final row = await _db.stores.byKey(id).fetch();
+    return row;
+  }
+
+  Future<StoreRow?> update({
     required String id,
     String? name,
     String? storeType,
     bool? isActive,
     bool updateStoreType = false,
   }) async {
-    final result = await _session.execute(
-      Sql.named('''
-        UPDATE stores SET name = COALESCE(@name, name),
-        store_type = CASE WHEN @updateStoreType THEN @storeType ELSE store_type END,
-        is_active = COALESCE(@isActive, is_active),
-        updated_at = NOW() WHERE id = @id RETURNING *
-      '''),
-      parameters: {
-        'id': id,
-        'name': name,
-        'storeType': storeType,
-        'isActive': isActive,
-        'updateStoreType': updateStoreType,
-      },
-    );
+    final row = await _db.stores
+        .byKey(id)
+        .update(
+          (s, set) => set(
+            name: name != null ? ts.toExpr(name) : s.name,
+            storeType: updateStoreType ? ts.toExpr(storeType) : s.storeType,
+            isActive: isActive != null ? ts.toExpr(isActive) : s.isActive,
+            updatedAt: ts.Expr.currentTimestamp,
+          ),
+        )
+        .returning((ts.Expr<StoreRow> s) => (s,))
+        .executeAndFetch();
 
-    if (result.isEmpty) return null;
-
-    final storeDto = StoreDto.fromJson(result.first.toColumnMap());
-
-    return storeDto;
+    return row;
   }
 }

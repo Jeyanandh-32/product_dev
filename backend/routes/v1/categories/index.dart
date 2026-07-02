@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:backend/extensions/category_dto_extension.dart';
+import 'package:backend/extensions/category_row_extension.dart';
 import 'package:backend/models/token_payload/token_payload.dart';
 import 'package:backend/repositories/category_repository.dart';
 import 'package:backend/utils/request_body.dart';
@@ -29,12 +29,12 @@ Future<Response> _onGet(RequestContext context) async {
   final merchantId = tokenPayload.sub;
 
   try {
-    final categoryDtos = await repo.getAll(
+    final categoryRows = await repo.getAll(
       storeId: storeId,
       merchantId: merchantId,
     );
 
-    final categories = categoryDtos.map((s) => s.toCategory()).toList();
+    final categories = categoryRows.map((s) => s.toCategory()).toList();
 
     return success(
       data: {
@@ -90,7 +90,7 @@ Future<Response> _onPost(RequestContext context) async {
   }
 
   try {
-    final categoryDto = await repo.create(
+    final categoryRow = await repo.create(
       merchantId: merchantId,
       storeId: storeId,
       name: name!.trim(),
@@ -101,7 +101,7 @@ Future<Response> _onPost(RequestContext context) async {
     return success(
       statusCode: HttpStatus.created,
       data: {
-        'category': categoryDto.toCategory(),
+        'category': categoryRow.toCategory(),
       },
     );
   } catch (e) {

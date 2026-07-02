@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:backend/extensions/merchant_dto_extension.dart';
+import 'package:backend/extensions/merchant_row_extension.dart';
 import 'package:backend/repositories/merchant_repository.dart';
 import 'package:backend/services/auth_service.dart';
 import 'package:backend/utils/responses.dart';
@@ -9,7 +9,7 @@ import 'package:validators/validators.dart';
 
 Future<Response> onRequest(RequestContext context) async {
   return switch (context.request.method) {
-    .post => _onPost(context),
+    HttpMethod.post => _onPost(context),
     _ => methodNotAllowed(),
   };
 }
@@ -36,26 +36,26 @@ Future<Response> _onPost(RequestContext context) async {
   }
 
   try {
-    final merchantDto = await repo.getByEmail(email!);
+    final merchantRow = await repo.getByEmail(email!);
 
-    if (merchantDto == null) {
+    if (merchantRow == null) {
       return badRequest(message: 'Invalid email or password.');
     }
 
     final isValid = await AuthService.verifyPassword(
       password!,
-      merchantDto.passwordHash,
+      merchantRow.passwordHash,
     );
 
     if (!isValid) return badRequest(message: 'Invalid email or password.');
 
     final accessToken = AuthService.generateAccessToken(
-      id: merchantDto.id,
+      id: merchantRow.id,
       role: .merchant,
     );
 
     final refreshToken = AuthService.generateRefreshToken(
-      id: merchantDto.id,
+      id: merchantRow.id,
       role: .merchant,
     );
 
@@ -69,7 +69,7 @@ Future<Response> _onPost(RequestContext context) async {
         HttpHeaders.setCookieHeader: cookies,
       },
       data: {
-        'merchant': merchantDto.toMerchant(),
+        'merchant': merchantRow.toMerchant(),
       },
     );
   } catch (e) {

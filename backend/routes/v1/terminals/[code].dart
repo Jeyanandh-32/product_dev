@@ -1,4 +1,4 @@
-import 'package:backend/extensions/terminal_dto_extension.dart';
+import 'package:backend/extensions/terminal_row_extension.dart';
 import 'package:backend/repositories/terminal_repository.dart';
 import 'package:backend/services/auth_service.dart';
 import 'package:backend/utils/responses.dart';
@@ -10,8 +10,8 @@ Future<Response> onRequest(
   String code,
 ) async {
   return switch (context.request.method) {
-    .get => _onGet(context, code),
-    .put || .patch => _onPutOrPatch(context, code),
+    HttpMethod.get => _onGet(context, code),
+    HttpMethod.put || HttpMethod.patch => _onPutOrPatch(context, code),
     _ => methodNotAllowed(),
   };
 }
@@ -20,11 +20,11 @@ Future<Response> _onGet(RequestContext context, String code) async {
   final repo = context.read<TerminalRepository>();
 
   try {
-    final terminalDto = await repo.getByCode(code);
+    final terminalRow = await repo.getByCode(code);
 
     return success(
       data: {
-        'terminal': terminalDto?.toTerminal(),
+        'terminal': terminalRow?.toTerminal(),
       },
     );
   } catch (e) {
@@ -61,7 +61,7 @@ Future<Response> _onPutOrPatch(RequestContext context, String code) async {
   }
 
   try {
-    final terminalDto = await repo.update(
+    final terminalRow = await repo.update(
       code: code,
       name: name?.trim(),
       passwordHash: passwordHash,
@@ -70,7 +70,7 @@ Future<Response> _onPutOrPatch(RequestContext context, String code) async {
 
     return success(
       data: {
-        'terminal': terminalDto?.toTerminal(),
+        'terminal': terminalRow?.toTerminal(),
       },
     );
   } catch (e) {

@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:backend/extensions/product_dto_extension.dart';
 import 'package:backend/repositories/product_repository.dart';
 import 'package:backend/utils/request_body.dart';
 import 'package:backend/utils/responses.dart';
@@ -26,14 +25,14 @@ Future<Response> _onGet(RequestContext context, String id) async {
   final repo = context.read<ProductRepository>();
 
   try {
-    final productDto = await repo.getById(id);
-    if (productDto == null) {
+    final product = await repo.getById(id);
+    if (product == null) {
       return error(message: 'Product not found.', statusCode: HttpStatus.notFound);
     }
 
     return success(
       data: {
-        'product': productDto.toProduct(),
+        'product': product,
       },
     );
   } catch (e) {
@@ -130,7 +129,7 @@ Future<Response> _onPutOrPatch(RequestContext context, String id) async {
   }
 
   try {
-    final updatedDto = await repo.update(
+    final updatedRow = await repo.update(
       id: id,
       name: name?.trim(),
       categoryId: categoryId,
@@ -149,7 +148,7 @@ Future<Response> _onPutOrPatch(RequestContext context, String id) async {
       imageUrlPresent: imageUrlPresent,
     );
 
-    if (updatedDto == null) {
+    if (updatedRow == null) {
       return error(message: 'Product not found.', statusCode: HttpStatus.notFound);
     }
 
@@ -158,7 +157,7 @@ Future<Response> _onPutOrPatch(RequestContext context, String id) async {
 
     return success(
       data: {
-        'product': completeProduct?.toProduct(),
+        'product': completeProduct,
       },
     );
   } catch (e) {

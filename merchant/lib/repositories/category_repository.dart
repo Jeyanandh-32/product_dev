@@ -17,8 +17,8 @@ class CategoryRepository {
         queryParameters: {'storeId': storeId},
         data: {
           'name': name,
-          if (description != null) 'description': description,
-          if (imageUrl != null) 'imageUrl': imageUrl,
+          'description': ?description,
+          'imageUrl': ?imageUrl,
         },
       );
 
@@ -42,10 +42,10 @@ class CategoryRepository {
       final result = await ApiClient.dio.patch(
         path,
         data: {
-          if (name != null) 'name': name,
-          if (isActive != null) 'isActive': isActive,
-          if (description != null) 'description': description,
-          if (imageUrl != null) 'imageUrl': imageUrl,
+          'name': ?name,
+          'isActive': ?isActive,
+          'description': ?description,
+          'imageUrl': ?imageUrl,
         },
       );
 
@@ -62,7 +62,7 @@ class CategoryRepository {
       final result = await ApiClient.dio.get(
         ApiEndpoints.categories,
         queryParameters: {
-          if (storeId != null) 'storeId': storeId,
+          'storeId': ?storeId,
         },
       );
 

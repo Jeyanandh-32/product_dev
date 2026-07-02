@@ -11,7 +11,7 @@ class StoreRepository {
         ApiEndpoints.stores,
         data: {
           'name': name,
-          if (storeType != null) 'storeType': storeType,
+          'storeType': ?storeType,
         },
       );
 
@@ -34,9 +34,9 @@ class StoreRepository {
       final result = await ApiClient.dio.patch(
         path,
         data: {
-          if (name != null) 'name': name,
-          'storeType': storeType,
-          if (isActive != null) 'isActive': isActive,
+          'name': ?name,
+          'storeType': ?storeType,
+          'isActive': ?isActive,
         },
       );
 

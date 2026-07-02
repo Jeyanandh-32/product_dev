@@ -10,7 +10,7 @@ class TerminalRepository {
       final result = await ApiClient.dio.get(
         ApiEndpoints.terminals,
         queryParameters: {
-          if (storeId != null) 'storeId': storeId,
+          'storeId': ?storeId,
         },
       );
 
@@ -58,9 +58,9 @@ class TerminalRepository {
       final result = await ApiClient.dio.patch(
         path,
         data: {
-          if (name != null) 'name': name,
-          if (password != null) 'password': password,
-          if (isActive != null) 'isActive': isActive,
+          'name': ?name,
+          'password': ?password,
+          'isActive': ?isActive,
         },
       );
 

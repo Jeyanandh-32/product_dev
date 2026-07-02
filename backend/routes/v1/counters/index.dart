@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:backend/extensions/counter_dto_extension.dart';
+import 'package:backend/extensions/counter_row_extension.dart';
 import 'package:backend/models/token_payload/token_payload.dart';
 import 'package:backend/repositories/counter_repository.dart';
 import 'package:backend/utils/request_body.dart';
@@ -29,12 +29,12 @@ Future<Response> _onGet(RequestContext context) async {
   final merchantId = tokenPayload.sub;
 
   try {
-    final counterDtos = await repo.getAll(
+    final counterRows = await repo.getAll(
       storeId: storeId,
       merchantId: merchantId,
     );
 
-    final counters = counterDtos.map((s) => s.toCounter()).toList();
+    final counters = counterRows.map((s) => s.toCounter()).toList();
 
     return success(
       data: {
@@ -90,7 +90,7 @@ Future<Response> _onPost(RequestContext context) async {
   }
 
   try {
-    final counterDto = await repo.create(
+    final counterRow = await repo.create(
       merchantId: merchantId,
       storeId: storeId,
       name: name!.trim(),
@@ -101,7 +101,7 @@ Future<Response> _onPost(RequestContext context) async {
     return success(
       statusCode: HttpStatus.created,
       data: {
-        'counter': counterDto.toCounter(),
+        'counter': counterRow.toCounter(),
       },
     );
   } catch (e) {

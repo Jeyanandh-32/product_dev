@@ -1,103 +1,75 @@
-import 'package:backend/models/terminal/terminal_dto.dart';
-import 'package:postgres/postgres.dart';
+import 'package:backend/database/schema.dart';
+import 'package:typed_sql/typed_sql.dart' as ts;
 
 class TerminalRepository {
-  TerminalRepository({required Session session}) : _session = session;
+  TerminalRepository({required ts.Database<DatabaseSchema> db}) : _db = db;
 
-  final Session _session;
+  final ts.Database<DatabaseSchema> _db;
 
-  Future<TerminalDto> create({
+  Future<TerminalRow> create({
     required String code,
     required String merchantId,
     required String storeId,
     required String name,
     required String passwordHash,
   }) async {
-    final result = await _session.execute(
-      Sql.named('''
-      INSERT INTO terminals(code, merchant_id, store_id, name, password_hash)
-      VALUES(@code , @merchantId, @storeId, @name, @passwordHash) RETURNING *
-      '''),
-      parameters: {
-        'code': code,
-        'merchantId': merchantId,
-        'storeId': storeId,
-        'name': name,
-        'passwordHash': passwordHash,
-      },
-    );
+    final row = await _db.terminals
+        .insertValue(
+          code: code,
+          merchantId: merchantId,
+          storeId: storeId,
+          name: name,
+          passwordHash: passwordHash,
+        )
+        .returning((ts.Expr<TerminalRow> t) => (t,))
+        .executeAndFetch();
 
-    return TerminalDto.fromJson(result.first.toColumnMap());
+    return row;
   }
 
-  Future<List<TerminalDto>> getAll({
+  Future<List<TerminalRow>> getAll({
     required String merchantId,
     String? storeId,
   }) async {
-    final result = await _session.execute(
-      Sql.named(
-        '''
-        SELECT * FROM terminals WHERE merchant_id = @merchantId
-        ${storeId != null ? 'AND store_id = @storeId' : ''}
-      ''',
-      ),
-      parameters: {
-        'merchantId': merchantId,
-        if (storeId != null) 'storeId': storeId,
-      },
-    );
+    final query = _db.terminals
+        .where((t) => t.merchantId.equalsValue(merchantId));
 
-    if (result.isEmpty) return [];
+    if (storeId != null) {
+      final rows = await query
+          .where((t) => t.storeId.equalsValue(storeId))
+          .fetch();
+      return rows;
+    }
 
-    final terminalDtos = result
-        .map(
-          (element) => TerminalDto.fromJson(element.toColumnMap()),
-        )
-        .toList();
-
-    return terminalDtos;
+    final rows = await query.fetch();
+    return rows;
   }
 
-  Future<TerminalDto?> getByCode(String code) async {
-    final result = await _session.execute(
-      Sql.named('''
-        SELECT * FROM terminals WHERE code = @code
-      '''),
-      parameters: {'code': code},
-    );
-
-    if (result.isEmpty) return null;
-
-    final terminalDto = TerminalDto.fromJson(result.first.toColumnMap());
-
-    return terminalDto;
+  Future<TerminalRow?> getByCode(String code) async {
+    final row = await _db.terminals.byKey(code).fetch();
+    return row;
   }
 
-  Future<TerminalDto?> update({
+  Future<TerminalRow?> update({
     required String code,
     String? name,
     String? passwordHash,
     bool? isActive,
   }) async {
-    final result = await _session.execute(
-      Sql.named('''
-        UPDATE terminals SET name = COALESCE(@name, name),
-        password_hash = COALESCE(@passwordHash, password_hash),
-        is_active = COALESCE(@isActive, is_active),
-        updated_at = NOW() WHERE code = @code RETURNING *
-      '''),
-      parameters: {
-        'code': code,
-        'name': name,
-        'passwordHash': passwordHash,
-        'isActive': isActive,
-      },
-    );
+    final row = await _db.terminals
+        .byKey(code)
+        .update(
+          (t, set) => set(
+            name: name != null ? ts.toExpr(name) : t.name,
+            passwordHash:
+                passwordHash != null ? ts.toExpr(passwordHash) : t.passwordHash,
+            isActive: isActive != null ? ts.toExpr(isActive) : t.isActive,
+            updatedAt: ts.Expr.currentTimestamp,
+          ),
+        )
+        .returning((ts.Expr<TerminalRow> t) => (t,))
+        .executeAndFetch();
 
-    if (result.isEmpty) return null;
-
-    final terminalDto = TerminalDto.fromJson(result.first.toColumnMap());
-
-    return terminalDto;
+    return row;
   }
 }

@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:backend/extensions/store_dto_extension.dart';
+import 'package:backend/extensions/store_row_extension.dart';
 import 'package:backend/models/token_payload/token_payload.dart';
 import 'package:backend/repositories/store_repository.dart';
 import 'package:backend/utils/responses.dart';
@@ -9,8 +9,8 @@ import 'package:validators/validators.dart';
 
 Future<Response> onRequest(RequestContext context) async {
   return switch (context.request.method) {
-    .get => _onGet(context),
-    .post => _onPost(context),
+    HttpMethod.get => _onGet(context),
+    HttpMethod.post => _onPost(context),
     _ => methodNotAllowed(),
   };
 }
@@ -21,11 +21,11 @@ Future<Response> _onGet(RequestContext context) async {
   final merchantId = tokenPayload.sub;
 
   try {
-    final storeDtos = await repo.getAll(
+    final storeRows = await repo.getAll(
       merchantId: merchantId,
     );
 
-    final stores = storeDtos.map((s) => s.toStore()).toList();
+    final stores = storeRows.map((s) => s.toStore()).toList();
 
     return success(
       data: {
@@ -61,7 +61,7 @@ Future<Response> _onPost(RequestContext context) async {
   }
 
   try {
-    final storeDto = await repo.create(
+    final storeRow = await repo.create(
       merchantId: merchantId,
       name: name!.trim(),
       storeType: storeType?.trim(),
@@ -70,7 +70,7 @@ Future<Response> _onPost(RequestContext context) async {
     return success(
       statusCode: HttpStatus.created,
       data: {
-        'store': storeDto.toStore(),
+        'store': storeRow.toStore(),
       },
     );
   } catch (e) {

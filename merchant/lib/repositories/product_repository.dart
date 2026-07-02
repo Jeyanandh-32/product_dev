@@ -28,11 +28,11 @@ class ProductRepository {
           'counterId': counterId,
           'basePrice': basePrice,
           'sellingPrice': sellingPrice,
-          if (taxRate != null) 'taxRate': taxRate,
-          if (sku != null) 'sku': sku,
-          if (barcode != null) 'barcode': barcode,
-          if (description != null) 'description': description,
-          if (imageUrl != null) 'imageUrl': imageUrl,
+          'taxRate': ?taxRate,
+          'sku': ?sku,
+          'barcode': ?barcode,
+          'description': ?description,
+          'imageUrl': ?imageUrl,
         },
       );
 
@@ -63,17 +63,17 @@ class ProductRepository {
       final result = await ApiClient.dio.patch(
         path,
         data: {
-          if (name != null) 'name': name,
-          if (categoryId != null) 'categoryId': categoryId,
-          if (counterId != null) 'counterId': counterId,
-          if (isActive != null) 'isActive': isActive,
-          if (basePrice != null) 'basePrice': basePrice,
-          if (sellingPrice != null) 'sellingPrice': sellingPrice,
-          if (taxRate != null) 'taxRate': taxRate,
-          if (sku != null) 'sku': sku,
-          if (barcode != null) 'barcode': barcode,
-          if (description != null) 'description': description,
-          if (imageUrl != null) 'imageUrl': imageUrl,
+          'name': ?name,
+          'isActive': ?isActive,
+          'categoryId': ?categoryId,
+          'counterId': ?counterId,
+          'basePrice': ?basePrice,
+          'sellingPrice': ?sellingPrice,
+          'taxRate': ?taxRate,
+          'sku': ?sku,
+          'barcode': ?barcode,
+          'description': ?description,
+          'imageUrl': ?imageUrl,
         },
       );
 
@@ -95,8 +95,8 @@ class ProductRepository {
         ApiEndpoints.products,
         queryParameters: {
           'storeId': storeId,
-          if (limit != null) 'limit': limit,
-          if (offset != null) 'offset': offset,
+          'limit': ?limit,
+          'offset': ?offset,
         },
       );
 
