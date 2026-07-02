@@ -15,6 +15,9 @@ class Env {
   static String get allowedOrigin =>
       _env['ALLOWED_ORIGIN'] ?? 'http://localhost:3000';
 
+  static int get dbMaxConnections =>
+      int.tryParse(_env['DB_MAX_CONNECTIONS'] ?? '10') ?? 10;
+
   static void init() {
     _env = DotEnv(includePlatformEnvironment: true)..load();
   }

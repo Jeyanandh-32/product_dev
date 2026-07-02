@@ -22,9 +22,9 @@ class Database {
           port: Env.dbPort,
         ),
       ],
-      settings: const PoolSettings(
+      settings: PoolSettings(
         sslMode: SslMode.disable,
-        maxConnectionCount: 10,
+        maxConnectionCount: Env.dbMaxConnections,
       ),
     );
     return _pool!;
