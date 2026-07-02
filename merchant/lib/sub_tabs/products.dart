@@ -217,7 +217,7 @@ class Products extends StatelessComponent {
     VoidCallback? onUpdateStock,
   }) {
     return tr([
-      th(classes: 'z-2', []),
+      th([]),
       td([
         div(classes: 'dropdown dropdown-right dropdown-bottom', [
           button(
@@ -282,7 +282,7 @@ class Products extends StatelessComponent {
         else
           .text('-'),
       ]),
-      th(classes: 'whitespace-nowrap z-2', [.text(name)]),
+      th(classes: 'whitespace-nowrap', [.text(name)]),
       td(classes: 'whitespace-nowrap', [.text(sku ?? '-')]),
       td([.text(barcode ?? '-')]),
       td([
@@ -310,17 +310,17 @@ class Products extends StatelessComponent {
       td([.text('${taxRate.toStringAsFixed(2)}%')]),
       td(classes: 'whitespace-nowrap', [.text(category)]),
       td(classes: 'whitespace-nowrap', [.text(counter)]),
-      th(classes: 'z-2', []),
+      th([]),
     ]);
   }
 
   thead tableHead() {
     return thead([
       tr([
-        th(classes: 'z-2', []),
+        th([]),
         td([.text('Action')]),
         td([.text('Image')]),
-        th(classes: 'z-2', [.text('Product Name')]),
+        th([.text('Product Name')]),
         td([.text('SKU')]),
         td([.text('Barcode')]),
         td([.text('Status')]),
@@ -332,7 +332,7 @@ class Products extends StatelessComponent {
         td([.text('Tax Rate (%)')]),
         td([.text('Category')]),
         td([.text('Counter')]),
-        th(classes: 'z-2', []),
+        th([]),
       ]),
     ]);
   }
