@@ -265,7 +265,7 @@ class _CountersState extends State<Counters> {
         if (image != null && image.isNotEmpty)
           div(
             classes:
-                'h-12 w-12 overflow-hidden rounded-2xl bg-gray-100 flex-shrink-0',
+                'h-12 w-12 overflow-hidden rounded-2xl bg-gray-100 shrink-0',
             [
               img(
                 src: image,
