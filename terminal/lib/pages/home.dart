@@ -1,9 +1,11 @@
+import 'package:dynamic_height_grid_view/dynamic_height_grid_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mix/mix.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
+import 'package:terminal/components/cart.dart';
 import 'package:terminal/pages/loading.dart';
 import 'package:terminal/providers/auth_provider.dart';
 import 'package:terminal/providers/categories_provider.dart';
@@ -30,14 +32,6 @@ class Home extends ConsumerWidget {
         }).toList() ??
         [];
 
-    final List<List<dynamic>> chunkedRows = [];
-    for (var i = 0; i < filteredProducts.length; i += 3) {
-      final end = (i + 3 < filteredProducts.length)
-          ? i + 3
-          : filteredProducts.length;
-      chunkedRows.add(filteredProducts.sublist(i, end));
-    }
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -62,168 +56,164 @@ class Home extends ConsumerWidget {
         ],
         actionsPadding: const EdgeInsets.only(right: 24),
       ),
-      body: RowBox(
-        children: [
-          Expanded(
-            child: ColumnBox(
-              style: FlexBoxStyler()
-                  .paddingAll(16)
-                  .crossAxisAlignment(CrossAxisAlignment.start),
-              children: [
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: RowBox(
-                    style: FlexBoxStyler()
-                        .spacing(8)
-                        .paddingY(4)
-                        .mainAxisAlignment(MainAxisAlignment.start),
-                    children: List.generate(categories.value!.length, (index) {
-                      final category = categories.value![index];
-                      final isSelected = category.id == selectedCategory?.id;
-                      return ShadButton(
-                        backgroundColor: isSelected
-                            ? theme.colorScheme.primary
-                            : Colors.white,
-                        foregroundColor: isSelected
-                            ? Colors.white
-                            : Colors.black,
-                        onPressed: () => ref
-                            .read(selectedCategoryProvider.notifier)
-                            .select(category),
-                        child: StyledText(
-                          category.name,
-                          style: TextStyler().fontSize(16).fontWeight(.w500),
-                        ),
-                      );
-                    }),
+      body: Builder(
+        builder: (context) {
+          final screenWidth = MediaQuery.sizeOf(context).width;
+          return RowBox(
+            children: [
+              ColumnBox(
+                style: FlexBoxStyler()
+                    .width(screenWidth * .60)
+                    .onMobile(.width(.infinity))
+                    .paddingAll(16),
+                children: [
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: RowBox(
+                      style: FlexBoxStyler()
+                          .spacing(8)
+                          .mainAxisAlignment(.start),
+                      children: List.generate(categories.value!.length, (
+                        index,
+                      ) {
+                        final category = categories.value![index];
+                        final isSelected = category.id == selectedCategory?.id;
+                        return PressableBox(
+                          style: BoxStyler()
+                              .color(
+                                isSelected
+                                    ? theme.colorScheme.accent
+                                    : Colors.white,
+                              )
+                              .textStyle(
+                                .color(
+                                  isSelected ? Colors.white : Colors.black,
+                                ).fontSize(16).fontWeight(.w500),
+                              )
+                              .paddingY(4)
+                              .paddingX(16)
+                              .borderAll(color: theme.colorScheme.border)
+                              .borderRadiusAll(.circular(8)),
+                          child: StyledText(category.name),
+                          onPress: () => ref
+                              .watch(selectedCategoryProvider.notifier)
+                              .select(category),
+                        );
+                      }),
+                    ),
                   ),
-                ),
-                const Gap(16),
-                Expanded(
-                  child: filteredProducts.isEmpty
-                      ? Center(
-                          child: StyledText(
-                            'No products available in this category.',
-                            style: TextStyler()
-                                .fontSize(16)
-                                .color(Colors.grey.shade600),
-                          ),
-                        )
-                      : SingleChildScrollView(
-                          child: ColumnBox(
-                            style: FlexBoxStyler().spacing(12),
-                            children: chunkedRows.map((rowItems) {
-                              return RowBox(
-                                style: FlexBoxStyler().spacing(12),
-                                children: List.generate(3, (index) {
-                                  if (index < rowItems.length) {
-                                    final product = rowItems[index];
-                                    return Expanded(
-                                      child: PressableBox(
-                                        onPress: () {},
-                                        style: BoxStyler()
-                                            .color(Colors.white)
-                                            .borderRadiusAll(
-                                              const Radius.circular(8),
-                                            )
-                                            .paddingAll(12)
-                                            .shadowOnly(
-                                              color: Colors.black.withValues(
-                                                alpha: 0.05,
-                                              ),
-                                              offset: const Offset(0, 1),
-                                              blurRadius: 2,
-                                            )
-                                            .onHovered(
-                                              BoxStyler().color(
-                                                Colors.grey.shade50,
-                                              ),
-                                            )
-                                            .onPressed(
-                                              BoxStyler().color(
-                                                Colors.grey.shade100,
-                                              ),
-                                            ),
-                                        child: ColumnBox(
-                                          style: FlexBoxStyler()
-                                              .crossAxisAlignment(
-                                                CrossAxisAlignment.start,
-                                              ),
-                                          children: [
-                                            if (product.imageUrl != null)
-                                              AspectRatio(
-                                                aspectRatio: 1.0,
-                                                child: ClipRRect(
-                                                  borderRadius:
-                                                      BorderRadius.circular(8),
-                                                  child: Image.network(
-                                                    product.imageUrl!,
-                                                    fit: BoxFit.cover,
-                                                    errorBuilder: (context, error, stackTrace) {
-                                                      return Container(
-                                                        color: Colors.grey.shade100,
-                                                        alignment: Alignment.center,
-                                                        child: Icon(
-                                                          LucideIcons.image,
-                                                          color: Colors.grey.shade400,
-                                                          size: 32,
-                                                        ),
-                                                      );
-                                                    },
-                                                  ),
-                                                ),
-                                              ),
-                                            const SizedBox(height: 8),
-                                            Text(
-                                              product.name,
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: const TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                            ),
-                                            const Gap(4),
-                                            StyledText(
-                                              '${product.stock?.quantity ?? 0} - left',
-                                              style: TextStyler()
-                                                  .color(
-                                                    theme.colorScheme.accent,
-                                                  )
-                                                  .fontSize(16)
-                                                  .fontWeight(.w500),
-                                            ),
-                                            const Gap(4),
-                                            StyledText(
-                                              '₹${product.sellingPrice}',
-                                              style: TextStyler()
-                                                  .fontSize(16)
-                                                  .fontWeight(.w600),
-                                            ),
-                                          ],
+
+                  Gap(16),
+
+                  ShadInput(
+                    placeholder: StyledText('Search something on your mind...'),
+                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                    decoration: ShadDecoration(
+                      color: Colors.white,
+                      border: ShadBorder(radius: BorderRadius.circular(999)),
+                      secondaryFocusedBorder: ShadBorder(
+                        radius: BorderRadius.circular(999),
+                      ),
+                    ),
+                    trailing: Box(
+                      style: BoxStyler()
+                          .color(Color(0xFFF7F7F7))
+                          .shape(.circle())
+                          .paddingAll(8),
+                      child: Icon(LucideIcons.search),
+                    ),
+                  ),
+
+                  Gap(16),
+
+                  Expanded(
+                    child: ExcludeSemantics(
+                      child: ScrollConfiguration(
+                        behavior: ScrollConfiguration.of(
+                          context,
+                        ).copyWith(scrollbars: false),
+                        child: DynamicHeightGridView(
+                          crossAxisSpacing: 12,
+                          mainAxisSpacing: 8,
+                          builder: (context, index) {
+                            final product = filteredProducts[index];
+                            return PressableBox(
+                              onPress: () {},
+                              style: BoxStyler()
+                                  .color(Colors.white)
+                                  .paddingAll(8)
+                                  .marginBottom(4)
+                                  .borderRadiusAll(.circular(12))
+                                  .borderAll(
+                                    color: theme.colorScheme.border.withValues(
+                                      alpha: .5,
+                                    ),
+                                  )
+                                  .shadowOnly(
+                                    color: Colors.black.withValues(alpha: 0.05),
+                                    offset: const Offset(0, 1),
+                                    blurRadius: 2,
+                                  )
+                                  .scale(1.0)
+                                  .onPressed(BoxStyler().scale(0.95))
+                                  .animate(.easeInOut(150.ms)),
+                              child: ColumnBox(
+                                style: FlexBoxStyler()
+                                    .mainAxisSize(.min)
+                                    .crossAxisAlignment(.start),
+                                children: [
+                                  AspectRatio(
+                                    aspectRatio: 3 / 2,
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(6),
+                                      child: Box(
+                                        style: BoxStyler().color(
+                                          Color(0xFFF7F7F7),
+                                        ),
+                                        child: Image.network(
+                                          product.imageUrl ?? '',
+                                          fit: .cover,
+                                          errorBuilder:
+                                              (context, error, stackTrace) {
+                                                return Icon(
+                                                  LucideIcons.image,
+                                                  size: 32,
+                                                  color: Colors.grey.shade500,
+                                                );
+                                              },
                                         ),
                                       ),
-                                    );
-                                  } else {
-                                    return const Expanded(child: SizedBox());
-                                  }
-                                }),
-                              );
-                            }).toList(),
-                          ),
+                                    ),
+                                  ),
+
+                                  Gap(16),
+                                  StyledText(
+                                    product.name,
+                                    style: TextStyler()
+                                        .fontWeight(.w600)
+                                        .overflow(.ellipsis),
+                                  ),
+                                  Gap(8),
+                                  StyledText(
+                                    '₹${product.sellingPrice}.00',
+                                    style: TextStyler().fontWeight(.w600),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                          itemCount: filteredProducts.length,
+                          crossAxisCount: 4,
                         ),
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: ColumnBox(
-              style: FlexBoxStyler()
-                  .color(Colors.white)
-                  .borderLeft(color: theme.colorScheme.border),
-            ),
-          ),
-        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Cart(),
+            ],
+          );
+        },
       ),
     );
   }

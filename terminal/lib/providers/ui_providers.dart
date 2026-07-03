@@ -19,3 +19,17 @@ final selectedCategoryProvider =
     NotifierProvider.autoDispose<SelectedCategoryNotifier, Category?>(
       () => SelectedCategoryNotifier(),
     );
+
+class PaymentModeNotifier extends Notifier<String> {
+  @override
+  String build() => 'cash';
+
+  void setPaymentMode(String mode) {
+    state = mode;
+  }
+}
+
+final paymentModeProvider =
+    NotifierProvider<PaymentModeNotifier, String>(
+      () => PaymentModeNotifier(),
+    );
