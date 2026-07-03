@@ -58,12 +58,14 @@ Future<Response> _onGet(RequestContext context) async {
       merchantId: merchantId,
     );
 
-    final products = await repo.getAll(
+    final productRows = await repo.getAll(
       storeId: storeId,
       merchantId: merchantId,
       limit: limit,
       offset: offset,
     );
+
+    final products = productRows.map((r) => r.toProduct()).toList();
 
     return success(
       data: {

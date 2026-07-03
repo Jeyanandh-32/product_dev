@@ -1,6 +1,4 @@
 import 'package:backend/database/schema.dart';
-import 'package:backend/extensions/product_row_extension.dart';
-import 'package:models/models.dart';
 import 'package:typed_sql/typed_sql.dart' as ts;
 
 class ProductRepository {
@@ -87,7 +85,7 @@ class ProductRepository {
     return row;
   }
 
-  Future<List<Product>> getAll({
+  Future<List<(ProductRow, StockRow?, CategoryRow?, CounterRow?)>> getAll({
     required String merchantId,
     String? storeId,
     int? limit,
@@ -110,18 +108,18 @@ class ProductRepository {
           (p.createdAt, ts.Order.descending),
         ]).asQuery;
 
-    if (limit != null) {
-      finalQuery = finalQuery.limit(limit);
-    }
     if (offset != null) {
       finalQuery = finalQuery.offset(offset);
     }
+    if (limit != null) {
+      finalQuery = finalQuery.limit(limit);
+    }
 
     final rows = await finalQuery.fetch();
-    return rows.map((r) => r.toProduct()).toList();
+    return rows;
   }
 
-  Future<Product?> getById(String id) async {
+  Future<(ProductRow, StockRow?, CategoryRow?, CounterRow?)?> getById(String id) async {
     final row = await _db.products
         .leftJoin(_db.stocks)
         .on((p, s) => p.id.equals(s.productId))
@@ -133,8 +131,7 @@ class ProductRepository {
         .first
         .fetch();
 
-    if (row == null) return null;
-    return row.toProduct();
+    return row;
   }
 
   Future<int> count({

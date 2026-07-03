@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:backend/extensions/product_row_extension.dart';
 import 'package:backend/repositories/product_repository.dart';
 import 'package:backend/utils/request_body.dart';
 import 'package:backend/utils/responses.dart';
@@ -25,10 +26,12 @@ Future<Response> _onGet(RequestContext context, String id) async {
   final repo = context.read<ProductRepository>();
 
   try {
-    final product = await repo.getById(id);
-    if (product == null) {
+    final productRow = await repo.getById(id);
+    if (productRow == null) {
       return error(message: 'Product not found.', statusCode: HttpStatus.notFound);
     }
+
+    final product = productRow.toProduct();
 
     return success(
       data: {
@@ -153,7 +156,12 @@ Future<Response> _onPutOrPatch(RequestContext context, String id) async {
     }
 
     // Fetch the product with fully joined stock details after updating
-    final completeProduct = await repo.getById(id);
+    final completeProductRow = await repo.getById(id);
+    if (completeProductRow == null) {
+      return error(message: 'Product not found.', statusCode: HttpStatus.notFound);
+    }
+
+    final completeProduct = completeProductRow.toProduct();
 
     return success(
       data: {
