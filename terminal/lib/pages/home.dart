@@ -87,13 +87,17 @@ class Home extends ConsumerWidget {
                               )
                               .textStyle(
                                 .color(
-                                  isSelected ? Colors.white : Colors.black,
-                                ).fontSize(16).fontWeight(.w500),
+                                  isSelected ? Colors.white : Colors.grey.shade800,
+                                ).fontSize(14).fontWeight(.w600),
                               )
-                              .paddingY(4)
-                              .paddingX(16)
-                              .borderAll(color: theme.colorScheme.border)
-                              .borderRadiusAll(.circular(8)),
+                              .paddingY(8)
+                              .paddingX(20)
+                              .borderAll(
+                                color: isSelected
+                                    ? theme.colorScheme.accent
+                                    : Colors.grey.shade200,
+                              )
+                              .borderRadiusAll(.circular(16)),
                           child: StyledText(category.name),
                           onPress: () => ref
                               .watch(selectedCategoryProvider.notifier)
@@ -105,22 +109,49 @@ class Home extends ConsumerWidget {
 
                   Gap(16),
 
-                  ShadInput(
-                    placeholder: StyledText('Search something on your mind...'),
-                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                    decoration: ShadDecoration(
-                      color: Colors.white,
-                      border: ShadBorder(radius: BorderRadius.circular(999)),
-                      secondaryFocusedBorder: ShadBorder(
-                        radius: BorderRadius.circular(999),
-                      ),
-                    ),
-                    trailing: Box(
-                      style: BoxStyler()
-                          .color(Color(0xFFF7F7F7))
-                          .shape(.circle())
-                          .paddingAll(8),
-                      child: Icon(LucideIcons.search),
+                  Box(
+                    style: BoxStyler()
+                        .color(Colors.white)
+                        .borderRadiusAll(.circular(999))
+                        .borderAll(color: Colors.grey.shade200)
+                        .shadowOnly(
+                          color: Colors.black.withValues(alpha: 0.03),
+                          offset: const Offset(0, 2),
+                          blurRadius: 4,
+                        )
+                        .paddingLeft(20)
+                        .paddingRight(6)
+                        .paddingY(4),
+                    child: RowBox(
+                      style: FlexBoxStyler().crossAxisAlignment(CrossAxisAlignment.center),
+                      children: [
+                        Expanded(
+                          child: ShadInput(
+                            placeholder: StyledText(
+                              'Search something sweet on your mind...',
+                              style: TextStyler()
+                                  .fontSize(14)
+                                  .color(Colors.grey.shade400),
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 8),
+                            decoration: ShadDecoration(
+                              border: ShadBorder.none,
+                              secondaryFocusedBorder: ShadBorder.none,
+                            ),
+                          ),
+                        ),
+                        Box(
+                          style: BoxStyler()
+                              .color(const Color(0xFFF3F4F6))
+                              .shape(.circle())
+                              .paddingAll(8),
+                          child: Icon(
+                            LucideIcons.search,
+                            color: Colors.grey.shade600,
+                            size: 16,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
 
@@ -140,19 +171,18 @@ class Home extends ConsumerWidget {
                             return PressableBox(
                               onPress: () {},
                               style: BoxStyler()
-                                  .color(Colors.white)
-                                  .paddingAll(8)
-                                  .marginBottom(4)
-                                  .borderRadiusAll(.circular(12))
+                                  .color(const Color(0xFFF9FAFB))
+                                  .paddingAll(12)
+                                  .borderRadiusAll(.circular(16))
                                   .borderAll(
                                     color: theme.colorScheme.border.withValues(
-                                      alpha: .5,
+                                      alpha: .3,
                                     ),
                                   )
                                   .shadowOnly(
-                                    color: Colors.black.withValues(alpha: 0.05),
+                                    color: Colors.black.withValues(alpha: 0.03),
                                     offset: const Offset(0, 1),
-                                    blurRadius: 2,
+                                    blurRadius: 3,
                                   )
                                   .scale(1.0)
                                   .onPressed(BoxStyler().scale(0.95))
@@ -165,10 +195,10 @@ class Home extends ConsumerWidget {
                                   AspectRatio(
                                     aspectRatio: 3 / 2,
                                     child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(6),
+                                      borderRadius: BorderRadius.circular(10),
                                       child: Box(
                                         style: BoxStyler().color(
-                                          Color(0xFFF7F7F7),
+                                          const Color(0xFFF1F2F3),
                                         ),
                                         child: Image.network(
                                           product.imageUrl ?? '',
@@ -178,7 +208,7 @@ class Home extends ConsumerWidget {
                                                 return Icon(
                                                   LucideIcons.image,
                                                   size: 32,
-                                                  color: Colors.grey.shade500,
+                                                  color: Colors.grey.shade400,
                                                 );
                                               },
                                         ),
@@ -186,17 +216,22 @@ class Home extends ConsumerWidget {
                                     ),
                                   ),
 
-                                  Gap(16),
+                                  Gap(12),
                                   StyledText(
                                     product.name,
                                     style: TextStyler()
+                                        .fontSize(14)
                                         .fontWeight(.w600)
+                                        .color(Colors.grey.shade800)
                                         .overflow(.ellipsis),
                                   ),
-                                  Gap(8),
+                                  Gap(6),
                                   StyledText(
                                     '₹${product.sellingPrice}.00',
-                                    style: TextStyler().fontWeight(.w600),
+                                    style: TextStyler()
+                                        .fontSize(14)
+                                        .fontWeight(.bold)
+                                        .color(Colors.black),
                                   ),
                                 ],
                               ),

@@ -24,8 +24,35 @@ class Cart extends ConsumerWidget {
     return ColumnBox(
       style: cartStyle,
       children: [
-        StyledText('Cart', style: TextStyler().fontSize(20).fontWeight(.w600)),
-        Divider(endIndent: 48, indent: 48),
+        RowBox(
+          style: FlexBoxStyler()
+              .mainAxisAlignment(MainAxisAlignment.spaceBetween)
+              .crossAxisAlignment(CrossAxisAlignment.center),
+          children: [
+            StyledText(
+              'Cart',
+              style: TextStyler()
+                  .fontSize(22)
+                  .fontWeight(.bold)
+                  .color(Colors.grey.shade900),
+            ),
+            PressableBox(
+              onPress: () {},
+              style: BoxStyler()
+                  .paddingX(12)
+                  .paddingY(6)
+                  .borderRadiusAll(.circular(8))
+                  .onHovered(BoxStyler().color(Colors.red.shade50)),
+              child: StyledText(
+                'Clear All',
+                style: TextStyler()
+                    .fontSize(13)
+                    .fontWeight(.w600)
+                    .color(Colors.red.shade600),
+              ),
+            ),
+          ],
+        ),
         Gap(16),
         Expanded(
           child: ScrollConfiguration(
@@ -170,22 +197,26 @@ class Cart extends ConsumerWidget {
 
   RowBox _cartItem() {
     return RowBox(
-      style: FlexBoxStyler().height(120).spacing(12).paddingAll(8),
+      style: FlexBoxStyler()
+          .height(80)
+          .spacing(12)
+          .paddingAll(8)
+          .crossAxisAlignment(CrossAxisAlignment.center),
       children: [
         AspectRatio(
-          aspectRatio: 3 / 2,
+          aspectRatio: 1,
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(6),
+            borderRadius: BorderRadius.circular(8),
             child: Box(
-              style: BoxStyler().color(Color(0xFFF7F7F7)),
+              style: BoxStyler().color(const Color(0xFFF9FAFB)),
               child: Image.network(
                 'https://positeasy.s3.ap-south-1.amazonaws.com/MID-7efd859e-a0f7-4864-a70b-69f918b99c4b/Store1s/product-image/photos/T1-Img-203a5a62-3861-46e2-b3b5-668141e23bbb.jpeg',
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) {
                   return Icon(
                     LucideIcons.image,
-                    size: 32,
-                    color: Colors.grey.shade500,
+                    size: 24,
+                    color: Colors.grey.shade400,
                   );
                 },
               ),
@@ -196,82 +227,80 @@ class Cart extends ConsumerWidget {
           child: ColumnBox(
             style: FlexBoxStyler()
                 .crossAxisAlignment(CrossAxisAlignment.start)
-                .mainAxisAlignment(MainAxisAlignment.spaceBetween),
+                .mainAxisAlignment(MainAxisAlignment.center),
             children: [
-              ColumnBox(
-                style: FlexBoxStyler().crossAxisAlignment(
-                  CrossAxisAlignment.start,
-                ),
-                children: [
-                  StyledText(
-                    'Black Coffee'.toUpperCase(),
-                    style: TextStyler().fontSize(16).fontWeight(.w600),
-                  ),
-                  StyledText(
-                    '₹15.00',
-                    style: TextStyler()
-                        .fontSize(16)
-                        .color(Colors.grey.shade600),
-                  ),
-                ],
+              StyledText(
+                'Black Coffee',
+                style: TextStyler()
+                    .fontSize(14)
+                    .fontWeight(.w600)
+                    .color(Colors.grey.shade900)
+                    .overflow(.ellipsis),
               ),
-              RowBox(
-                style: FlexBoxStyler()
-                    .spacing(8)
-                    .mainAxisAlignment(.spaceBetween),
-                children: [
-                  RowBox(
-                    style: FlexBoxStyler()
-                        .color(Color(0xFFF7F7F7))
-                        .mainAxisSize(.min)
-                        .paddingAll(4)
-                        .borderRadiusAll(.circular(999))
-                        .crossAxisAlignment(CrossAxisAlignment.center)
-                        .spacing(12),
-                    children: [
-                      ShadIconButton(
-                        icon: const Icon(LucideIcons.minus),
-                        height: 32,
-                        width: 32,
-                        iconSize: 16,
-                        backgroundColor: Colors.white,
-                        foregroundColor: Colors.black,
-                        decoration: const ShadDecoration(
-                          shape: BoxShape.circle,
-                        ),
-                        onPressed: () {},
-                      ),
-                      StyledText(
-                        '1',
-                        style: TextStyler().fontSize(16).fontWeight(.w600),
-                      ),
-                      ShadIconButton(
-                        icon: const Icon(LucideIcons.plus),
-                        height: 32,
-                        width: 32,
-                        iconSize: 16,
-                        backgroundColor: Colors.white,
-                        foregroundColor: Colors.black,
-                        decoration: const ShadDecoration(
-                          shape: BoxShape.circle,
-                        ),
-                        onPressed: () {},
-                      ),
-                    ],
-                  ),
-
-                  ShadIconButton.destructive(
-                    height: 36,
-                    width: 36,
-                    iconSize: 16,
-                    decoration: const ShadDecoration(shape: BoxShape.circle),
-                    onPressed: () {},
-                    icon: Icon(LucideIcons.trash),
-                  ),
-                ],
+              const Gap(4),
+              StyledText(
+                '₹15.00',
+                style: TextStyler()
+                    .fontSize(13)
+                    .fontWeight(.w500)
+                    .color(Colors.grey.shade500),
               ),
             ],
           ),
+        ),
+        RowBox(
+          style: FlexBoxStyler()
+              .spacing(8)
+              .crossAxisAlignment(CrossAxisAlignment.center),
+          children: [
+            RowBox(
+              style: FlexBoxStyler()
+                  .color(const Color(0xFFF3F4F6))
+                  .mainAxisSize(.min)
+                  .paddingAll(2)
+                  .borderRadiusAll(.circular(999))
+                  .crossAxisAlignment(CrossAxisAlignment.center),
+              children: [
+                ShadIconButton(
+                  icon: const Icon(LucideIcons.minus),
+                  height: 28,
+                  width: 28,
+                  iconSize: 12,
+                  backgroundColor: Colors.white,
+                  foregroundColor: Colors.black87,
+                  decoration: const ShadDecoration(shape: BoxShape.circle),
+                  onPressed: () {},
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: StyledText(
+                    '1',
+                    style: TextStyler().fontSize(13).fontWeight(.w600),
+                  ),
+                ),
+                ShadIconButton(
+                  icon: const Icon(LucideIcons.plus),
+                  height: 28,
+                  width: 28,
+                  iconSize: 12,
+                  backgroundColor: Colors.white,
+                  foregroundColor: Colors.black87,
+                  decoration: const ShadDecoration(shape: BoxShape.circle),
+                  onPressed: () {},
+                ),
+              ],
+            ),
+            ShadIconButton.ghost(
+              height: 32,
+              width: 32,
+              iconSize: 16,
+              foregroundColor: Colors.red.shade400,
+              hoverBackgroundColor: Colors.red.shade400,
+              hoverForegroundColor: Colors.white,
+              onPressed: () {},
+              icon: const Icon(LucideIcons.trash),
+            ),
+          ],
         ),
       ],
     );
