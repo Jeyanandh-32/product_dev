@@ -8,6 +8,7 @@ import 'package:merchant/components/centered_message.dart';
 import 'package:merchant/components/fields/searchbar.dart';
 import 'package:merchant/components/loading.dart';
 import 'package:merchant/components/modals/add_edit_counter_modal.dart';
+import 'package:merchant/components/table_pagination.dart';
 import 'package:merchant/providers/counters_provider.dart';
 import 'package:merchant/providers/ui_providers.dart';
 import 'package:models/models.dart';
@@ -36,6 +37,8 @@ class _CountersState extends State<Counters> {
       (activeElement as HTMLElement).blur();
     }
   }
+
+
 
   int _getAssociatedCount(Counter counter) {
     return (counter.name.hashCode.abs() % 900) + 100;
@@ -156,7 +159,7 @@ class _CountersState extends State<Counters> {
           CenteredMessage(message: 'No matching counters found.')
         else
           div(classes: 'h-full overflow-x-auto', [
-            table(classes: 'table table-zebra table-pin-rows table-pin-cols', [
+            table(classes: 'table table-zebra table-pin-rows sm:table-pin-cols', [
               tableHead(),
               tbody([
                 for (final counter in paginated)
@@ -177,44 +180,11 @@ class _CountersState extends State<Counters> {
             ]),
           ]),
 
-        if (totalPages > 1)
-          div(
-            classes:
-                'border-t border-border-medium flex justify-center items-center gap-2 font-medium text-gray-500 p-4',
-            [
-              button(
-                classes:
-                    'btn border-none bg-white shadow-none hover:bg-neutral h-8 hover:text-black ${_currentPage == 1 ? 'btn-disabled opacity-50' : ''}',
-                onClick: _currentPage > 1
-                    ? () => setState(() => _currentPage--)
-                    : null,
-                [
-                  .text('Previous'),
-                ],
-              ),
-              for (int i = 1; i <= totalPages; i++)
-                button(
-                  classes:
-                      'btn w-8 h-8 rounded-lg ${i == _currentPage ? 'bg-accent text-white hover:bg-accent' : 'bg-neutral hover:bg-base-300'}',
-                  onClick: i == _currentPage
-                      ? null
-                      : () => setState(() => _currentPage = i),
-                  [
-                    .text('$i'),
-                  ],
-                ),
-              button(
-                classes:
-                    'btn border-none bg-white shadow-none hover:bg-neutral h-8 hover:text-black ${_currentPage == totalPages ? 'btn-disabled opacity-50' : ''}',
-                onClick: _currentPage < totalPages
-                    ? () => setState(() => _currentPage++)
-                    : null,
-                [
-                  .text('Next'),
-                ],
-              ),
-            ],
-          ),
+        TablePagination(
+          currentPage: _currentPage,
+          totalPages: totalPages,
+          onPageChanged: (page) => setState(() => _currentPage = page),
+        ),
       ],
     );
   }

@@ -11,6 +11,7 @@ import 'package:merchant/components/modals/add_edit_product_modal.dart';
 import 'package:merchant/components/modals/update_stock_modal.dart';
 import 'package:merchant/providers/products_provider.dart';
 import 'package:merchant/providers/ui_providers.dart';
+import 'package:merchant/components/table_pagination.dart';
 import 'package:web/web.dart';
 
 class Products extends StatelessComponent {
@@ -26,6 +27,8 @@ class Products extends StatelessComponent {
       (activeElement as HTMLElement).blur();
     }
   }
+
+
 
   @override
   Component build(BuildContext context) {
@@ -117,7 +120,7 @@ class Products extends StatelessComponent {
           CenteredMessage(message: 'No Products were added.')
         else
           div(classes: 'h-full overflow-x-auto', [
-            table(classes: 'table table-zebra table-pin-rows table-pin-cols', [
+            table(classes: 'table table-zebra table-pin-rows sm:table-pin-cols', [
               tableHead(),
 
               tbody([
@@ -153,48 +156,12 @@ class Products extends StatelessComponent {
             ]),
           ]),
 
-        if (totalPages > 1)
-          div(
-            classes:
-                'border-t border-border-medium flex justify-center items-center gap-2 font-medium text-gray-500 p-4',
-            [
-              button(
-                classes:
-                    'btn border-none bg-white shadow-none hover:bg-neutral h-8 hover:text-black ${currentPage == 1 ? 'btn-disabled opacity-50' : ''}',
-                onClick: currentPage > 1
-                    ? () => context.read(productsPageProvider.notifier).state =
-                          currentPage - 1
-                    : null,
-                [
-                  .text('Previous'),
-                ],
-              ),
-              for (int i = 1; i <= totalPages; i++)
-                button(
-                  classes:
-                      'btn w-8 h-8 rounded-lg ${i == currentPage ? 'bg-accent text-white hover:bg-accent' : 'bg-neutral hover:bg-base-300'}',
-                  onClick: i == currentPage
-                      ? null
-                      : () =>
-                            context.read(productsPageProvider.notifier).state =
-                                i,
-                  [
-                    .text('$i'),
-                  ],
-                ),
-              button(
-                classes:
-                    'btn border-none bg-white shadow-none hover:bg-neutral h-8 hover:text-black ${currentPage == totalPages ? 'btn-disabled opacity-50' : ''}',
-                onClick: currentPage < totalPages
-                    ? () => context.read(productsPageProvider.notifier).state =
-                          currentPage + 1
-                    : null,
-                [
-                  .text('Next'),
-                ],
-              ),
-            ],
-          ),
+        TablePagination(
+          currentPage: currentPage,
+          totalPages: totalPages,
+          onPageChanged: (page) =>
+              context.read(productsPageProvider.notifier).state = page,
+        ),
       ],
     );
   }
