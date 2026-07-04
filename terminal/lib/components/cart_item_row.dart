@@ -9,10 +9,7 @@ import 'package:terminal/providers/cart_provider.dart';
 class CartItemRow extends ConsumerWidget {
   final CartItem item;
 
-  const CartItemRow({
-    super.key,
-    required this.item,
-  });
+  const CartItemRow({super.key, required this.item});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -121,6 +118,7 @@ class CartItemRow extends ConsumerWidget {
               foregroundColor: Colors.red.shade400,
               hoverBackgroundColor: Colors.red.shade400,
               hoverForegroundColor: Colors.white,
+              decoration: ShadDecoration(shape: .circle),
               onPressed: () =>
                   ref.read(cartProvider.notifier).removeItem(item.product.id),
               icon: const Icon(LucideIcons.trash),
