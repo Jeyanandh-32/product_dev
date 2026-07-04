@@ -4,9 +4,9 @@ import 'package:gap/gap.dart';
 import 'package:mix/mix.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:styled_divider/styled_divider.dart';
-import 'package:terminal/models/cart_item.dart';
+import 'package:terminal/components/cart_item_row.dart';
+import 'package:terminal/components/cart_summary.dart';
 import 'package:terminal/providers/cart_provider.dart';
-import 'package:terminal/providers/ui_providers.dart';
 
 class Cart extends ConsumerWidget {
   const Cart({super.key});
@@ -56,19 +56,19 @@ class Cart extends ConsumerWidget {
             ),
           ],
         ),
-        Gap(16),
+        const Gap(16),
         Expanded(
           child: cart.items.isEmpty
               ? ColumnBox(
                   style: FlexBoxStyler().mainAxisAlignment(.center),
                   children: [
-                    Icon(LucideIcons.badgeX, size: 24),
-                    Gap(8),
+                    const Icon(LucideIcons.badgeX, size: 24),
+                    const Gap(8),
                     StyledText(
                       style: TextStyler().fontSize(16).fontWeight(.w600),
                       'Your current order is empty',
                     ),
-                    Gap(8),
+                    const Gap(8),
                     StyledText(
                       style: TextStyler().color(Colors.grey.shade600),
                       'Please add some products from the menu',
@@ -86,9 +86,9 @@ class Cart extends ConsumerWidget {
                       return ColumnBox(
                         style: FlexBoxStyler().mainAxisSize(.min),
                         children: [
-                          _cartItem(item, ref),
-                          StyledDivider(
-                            lineStyle: .dashed,
+                          CartItemRow(item: item),
+                          const StyledDivider(
+                            lineStyle: DividerLineStyle.dashed,
                             thickness: 1.5,
                             indent: 32,
                             endIndent: 32,
@@ -99,225 +99,7 @@ class Cart extends ConsumerWidget {
                   ),
                 ),
         ),
-        ColumnBox(
-          style: FlexBoxStyler().paddingTop(16),
-          children: [
-            StyledText(
-              'Summary',
-              style: TextStyler().fontSize(16).fontWeight(.w600),
-            ),
-            Gap(16),
-            _summaryTile(
-              title: 'Total No of Items',
-              value: '${cart.noOfItems}',
-            ),
-            Gap(4),
-            _summaryTile(
-              title: 'Total Order Quantity',
-              value: '${cart.orderQuantity}',
-            ),
-            Gap(4),
-            _summaryTile(title: 'Order Summary', value: '₹${cart.subtotal}0'),
-            Gap(4),
-            _summaryTile(title: 'Total Tax', value: '₹${cart.taxTotal}0'),
-            Gap(4),
-            StyledDivider(lineStyle: .dashed),
-            Gap(4),
-            RowBox(
-              style: FlexBoxStyler().mainAxisAlignment(.spaceBetween),
-              children: [
-                StyledText(
-                  'Total Amount',
-                  style: TextStyler().fontSize(16).fontWeight(.bold),
-                ),
-                StyledText(
-                  '₹${cart.grandTotal}0',
-                  style: TextStyler().fontSize(16).fontWeight(.bold),
-                ),
-              ],
-            ),
-            Gap(4),
-            StyledDivider(lineStyle: .dashed),
-            Gap(16),
-            RowBox(
-              style: FlexBoxStyler()
-                  .mainAxisAlignment(MainAxisAlignment.spaceBetween)
-                  .crossAxisAlignment(CrossAxisAlignment.center),
-              children: [
-                StyledText(
-                  'Payment Mode',
-                  style: TextStyler()
-                      .fontSize(14)
-                      .fontWeight(.w500)
-                      .color(Colors.grey.shade700),
-                ),
-                ShadRadioGroup<String>(
-                  initialValue: ref.watch(paymentModeProvider),
-                  onChanged: (value) {
-                    if (value != null) {
-                      ref
-                          .read(paymentModeProvider.notifier)
-                          .setPaymentMode(value);
-                    }
-                  },
-                  axis: Axis.horizontal,
-                  spacing: 16,
-                  items: [
-                    ShadRadio(
-                      value: 'cash',
-                      label: StyledText(
-                        'Cash',
-                        style: TextStyler().fontSize(14),
-                      ),
-                    ),
-                    ShadRadio(
-                      value: 'upi',
-                      label: StyledText(
-                        'UPI',
-                        style: TextStyler().fontSize(14),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            Gap(24),
-            ShadButton(
-              width: double.infinity,
-              height: 44,
-              child: StyledText(
-                'Save & Print',
-                style: TextStyler().fontSize(16),
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  RowBox _summaryTile({required String title, required String value}) {
-    return RowBox(
-      style: FlexBoxStyler().mainAxisAlignment(.spaceBetween),
-      children: [
-        StyledText(title, style: TextStyler().color(Colors.grey.shade600)),
-        StyledText(value, style: TextStyler().fontWeight(.bold)),
-      ],
-    );
-  }
-
-  RowBox _cartItem(CartItem item, WidgetRef ref) {
-    return RowBox(
-      style: FlexBoxStyler()
-          .height(80)
-          .spacing(12)
-          .paddingAll(8)
-          .crossAxisAlignment(CrossAxisAlignment.center),
-      children: [
-        AspectRatio(
-          aspectRatio: 1,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: Box(
-              style: BoxStyler().color(const Color(0xFFF9FAFB)),
-              child: Image.network(
-                item.product.imageUrl ?? '',
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Icon(
-                    LucideIcons.image,
-                    size: 24,
-                    color: Colors.grey.shade400,
-                  );
-                },
-              ),
-            ),
-          ),
-        ),
-        Expanded(
-          child: ColumnBox(
-            style: FlexBoxStyler()
-                .crossAxisAlignment(CrossAxisAlignment.start)
-                .mainAxisAlignment(MainAxisAlignment.center),
-            children: [
-              StyledText(
-                item.product.name,
-                style: TextStyler()
-                    .fontSize(14)
-                    .fontWeight(.w600)
-                    .color(Colors.grey.shade900)
-                    .overflow(.ellipsis),
-              ),
-              const Gap(4),
-              StyledText(
-                '₹${item.product.sellingPrice}.00',
-                style: TextStyler()
-                    .fontSize(13)
-                    .fontWeight(.w500)
-                    .color(Colors.grey.shade500),
-              ),
-            ],
-          ),
-        ),
-        RowBox(
-          style: FlexBoxStyler()
-              .spacing(8)
-              .crossAxisAlignment(CrossAxisAlignment.center),
-          children: [
-            RowBox(
-              style: FlexBoxStyler()
-                  .color(const Color(0xFFF3F4F6))
-                  .mainAxisSize(.min)
-                  .paddingAll(2)
-                  .borderRadiusAll(.circular(999))
-                  .crossAxisAlignment(CrossAxisAlignment.center),
-              children: [
-                ShadIconButton(
-                  icon: const Icon(LucideIcons.minus),
-                  height: 28,
-                  width: 28,
-                  iconSize: 12,
-                  backgroundColor: Colors.white,
-                  foregroundColor: Colors.black87,
-                  decoration: const ShadDecoration(shape: BoxShape.circle),
-                  onPressed: () => ref
-                      .read(cartProvider.notifier)
-                      .updateQuantity(item.product.id, item.quantity - 1),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: StyledText(
-                    '${item.quantity}',
-                    style: TextStyler().fontSize(13).fontWeight(.w600),
-                  ),
-                ),
-                ShadIconButton(
-                  icon: const Icon(LucideIcons.plus),
-                  height: 28,
-                  width: 28,
-                  iconSize: 12,
-                  backgroundColor: Colors.white,
-                  foregroundColor: Colors.black87,
-                  decoration: const ShadDecoration(shape: BoxShape.circle),
-                  onPressed: () => ref
-                      .read(cartProvider.notifier)
-                      .updateQuantity(item.product.id, item.quantity + 1),
-                ),
-              ],
-            ),
-            ShadIconButton.ghost(
-              height: 32,
-              width: 32,
-              iconSize: 16,
-              foregroundColor: Colors.red.shade400,
-              hoverBackgroundColor: Colors.red.shade400,
-              hoverForegroundColor: Colors.white,
-              onPressed: () =>
-                  ref.read(cartProvider.notifier).removeItem(item.product.id),
-              icon: const Icon(LucideIcons.trash),
-            ),
-          ],
-        ),
+        const CartSummary(),
       ],
     );
   }

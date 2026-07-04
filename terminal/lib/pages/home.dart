@@ -4,12 +4,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mix/mix.dart';
-import 'package:models/models.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:terminal/components/cart.dart';
+import 'package:terminal/components/category_filter_list.dart';
+import 'package:terminal/components/product_card.dart';
+import 'package:terminal/components/product_search_bar.dart';
 import 'package:terminal/pages/loading.dart';
 import 'package:terminal/providers/auth_provider.dart';
-import 'package:terminal/providers/cart_provider.dart';
 import 'package:terminal/providers/categories_provider.dart';
 import 'package:terminal/providers/products_provider.dart';
 import 'package:terminal/providers/ui_providers.dart';
@@ -24,7 +25,7 @@ class Home extends ConsumerWidget {
     final products = ref.watch(productsProvider);
 
     if (categories.isLoading || products.isLoading) {
-      return Scaffold(body: Loading());
+      return const Scaffold(body: Loading());
     }
 
     final selectedCategory = ref.watch(selectedCategoryProvider);
@@ -69,100 +70,10 @@ class Home extends ConsumerWidget {
                     .onMobile(.width(.infinity))
                     .paddingAll(16),
                 children: [
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: RowBox(
-                      style: FlexBoxStyler()
-                          .spacing(8)
-                          .mainAxisAlignment(.start),
-                      children: List.generate(categories.value!.length, (
-                        index,
-                      ) {
-                        final category = categories.value![index];
-                        final isSelected = category.id == selectedCategory?.id;
-                        return PressableBox(
-                          style: BoxStyler()
-                              .color(
-                                isSelected
-                                    ? theme.colorScheme.accent
-                                    : Colors.white,
-                              )
-                              .textStyle(
-                                .color(
-                                  isSelected
-                                      ? Colors.white
-                                      : Colors.grey.shade800,
-                                ).fontSize(14).fontWeight(.w600),
-                              )
-                              .paddingY(8)
-                              .paddingX(20)
-                              .borderAll(
-                                color: isSelected
-                                    ? theme.colorScheme.accent
-                                    : Colors.grey.shade200,
-                              )
-                              .borderRadiusAll(.circular(16)),
-                          child: StyledText(category.name),
-                          onPress: () => ref
-                              .watch(selectedCategoryProvider.notifier)
-                              .select(category),
-                        );
-                      }),
-                    ),
-                  ),
-
-                  Gap(16),
-
-                  Box(
-                    style: BoxStyler()
-                        .color(Colors.white)
-                        .borderRadiusAll(.circular(999))
-                        .borderAll(color: Colors.grey.shade200)
-                        .shadowOnly(
-                          color: Colors.black.withValues(alpha: 0.03),
-                          offset: const Offset(0, 2),
-                          blurRadius: 4,
-                        )
-                        .paddingLeft(20)
-                        .paddingRight(6)
-                        .paddingY(4),
-                    child: RowBox(
-                      style: FlexBoxStyler().crossAxisAlignment(
-                        CrossAxisAlignment.center,
-                      ),
-                      children: [
-                        Expanded(
-                          child: ShadInput(
-                            placeholder: StyledText(
-                              'Search something sweet on your mind...',
-                              style: TextStyler()
-                                  .fontSize(14)
-                                  .color(Colors.grey.shade400),
-                            ),
-                            padding: const EdgeInsets.symmetric(vertical: 8),
-                            decoration: ShadDecoration(
-                              border: ShadBorder.none,
-                              secondaryFocusedBorder: ShadBorder.none,
-                            ),
-                          ),
-                        ),
-                        Box(
-                          style: BoxStyler()
-                              .color(const Color(0xFFF3F4F6))
-                              .shape(.circle())
-                              .paddingAll(8),
-                          child: Icon(
-                            LucideIcons.search,
-                            color: Colors.grey.shade600,
-                            size: 16,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  Gap(16),
-
+                  const CategoryFilterList(),
+                  const Gap(16),
+                  const ProductSearchBar(),
+                  const Gap(16),
                   Expanded(
                     child: ExcludeSemantics(
                       child: ScrollConfiguration(
@@ -174,7 +85,7 @@ class Home extends ConsumerWidget {
                           mainAxisSpacing: 8,
                           builder: (context, index) {
                             final product = filteredProducts[index];
-                            return _productCard(ref, product, theme);
+                            return ProductCard(product: product);
                           },
                           itemCount: filteredProducts.length,
                           crossAxisCount: 4,
@@ -184,80 +95,10 @@ class Home extends ConsumerWidget {
                   ),
                 ],
               ),
-              Cart(),
+              const Cart(),
             ],
           );
         },
-      ),
-    );
-  }
-
-  PressableBox _productCard(
-    WidgetRef ref,
-    Product product,
-    ShadThemeData theme,
-  ) {
-    final cart = ref.watch(cartProvider);
-    final isExisting =
-        cart.items.indexWhere((item) => item.product.id == product.id) >= 0;
-
-    return PressableBox(
-      onPress: () => ref.read(cartProvider.notifier).addItem(product),
-      style: BoxStyler()
-          .color(isExisting ? theme.colorScheme.accent : Colors.white)
-          .paddingAll(12)
-          .borderRadiusAll(.circular(16))
-          .borderAll(color: theme.colorScheme.border.withValues(alpha: .3))
-          .shadowOnly(
-            color: Colors.black.withValues(alpha: 0.03),
-            offset: const Offset(0, 1),
-            blurRadius: 3,
-          )
-          .scale(1.0)
-          .onPressed(BoxStyler().scale(0.95))
-          .animate(.easeInOut(150.ms)),
-      child: ColumnBox(
-        style: FlexBoxStyler().mainAxisSize(.min).crossAxisAlignment(.start),
-        children: [
-          AspectRatio(
-            aspectRatio: 3 / 2,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: Box(
-                style: BoxStyler().color(const Color(0xFFF1F2F3)),
-                child: Image.network(
-                  product.imageUrl ?? '',
-                  fit: .cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Icon(
-                      LucideIcons.image,
-                      size: 32,
-                 ₹     color: Colors.grey.shade400,
-                    );
-                  },
-                ),
-              ),
-            ),
-          ),
-
-          Gap(12),
-          StyledText(
-            product.name,
-            style: TextStyler()
-                .fontSize(14)
-                .fontWeight(.w600)
-                .color(isExisting ? Colors.white : Colors.grey.shade800)
-                .overflow(.ellipsis),
-          ),
-          Gap(6),
-          StyledText(
-            '₹${product.sellingPrice}.00',
-            style: TextStyler()
-                .fontSize(14)
-                .fontWeight(.bold)
-                .color(isExisting ? Colors.white : Colors.black),
-          ),
-        ],
       ),
     );
   }
