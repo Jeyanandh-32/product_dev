@@ -73,7 +73,10 @@ Future<Response> _onPutOrPatch(RequestContext context, String id) async {
     );
 
     if (updatedRow == null) {
-      return error(message: 'Stock not found.', statusCode: HttpStatus.notFound);
+      return error(
+        message: 'Stock not found.',
+        statusCode: HttpStatus.notFound,
+      );
     }
 
     return success(

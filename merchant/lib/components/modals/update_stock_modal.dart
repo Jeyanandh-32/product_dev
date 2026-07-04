@@ -50,7 +50,9 @@ class _UpdateStockModalState extends State<UpdateStockModal> {
     context.read(activeModalProvider.notifier).state = ActiveModal.none;
 
     if (component.product.stock != null) {
-      context.read(productsProvider.notifier).updateStock(
+      context
+          .read(productsProvider.notifier)
+          .updateStock(
             stockId: component.product.stock!.id,
             productId: component.product.id,
             quantity: quantity,
@@ -81,7 +83,7 @@ class _UpdateStockModalState extends State<UpdateStockModal> {
             hintText: 'Stock quantity is required.',
             onChange: (value) => _quantity = value as String,
           ),
-          
+
           // Stock Monitor Toggle
           div(
             classes: 'form-control mb-4 flex flex-row items-center gap-3',

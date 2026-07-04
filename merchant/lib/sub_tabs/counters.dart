@@ -38,8 +38,6 @@ class _CountersState extends State<Counters> {
     }
   }
 
-
-
   int _getAssociatedCount(Counter counter) {
     return (counter.name.hashCode.abs() % 900) + 100;
   }
@@ -159,25 +157,28 @@ class _CountersState extends State<Counters> {
           CenteredMessage(message: 'No matching counters found.')
         else
           div(classes: 'h-full overflow-x-auto', [
-            table(classes: 'table table-zebra table-pin-rows sm:table-pin-cols', [
-              tableHead(),
-              tbody([
-                for (final counter in paginated)
-                  tableRow(
-                    name: counter.name,
-                    image: counter.imageUrl,
-                    isActive: counter.isActive,
-                    productsCount: _getAssociatedCount(counter),
-                    description: counter.description ?? 'N/A',
-                    onEdit: () {
-                      context.read(editingCounterProvider.notifier).state =
-                          counter;
-                      context.read(activeModalProvider.notifier).state =
-                          ActiveModal.editCounter;
-                    },
-                  ),
-              ]),
-            ]),
+            table(
+              classes: 'table table-zebra table-pin-rows sm:table-pin-cols',
+              [
+                tableHead(),
+                tbody([
+                  for (final counter in paginated)
+                    tableRow(
+                      name: counter.name,
+                      image: counter.imageUrl,
+                      isActive: counter.isActive,
+                      productsCount: _getAssociatedCount(counter),
+                      description: counter.description ?? 'N/A',
+                      onEdit: () {
+                        context.read(editingCounterProvider.notifier).state =
+                            counter;
+                        context.read(activeModalProvider.notifier).state =
+                            ActiveModal.editCounter;
+                      },
+                    ),
+                ]),
+              ],
+            ),
           ]),
 
         TablePagination(

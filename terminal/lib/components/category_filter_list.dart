@@ -15,8 +15,12 @@ class CategoryFilterList extends ConsumerWidget {
     final selectedCategory = ref.watch(selectedCategoryProvider);
 
     return categoriesAsync.when(
-      loading: () => const SizedBox(height: 38, child: Center(child: CircularProgressIndicator())),
-      error: (err, stack) => SizedBox(height: 38, child: Center(child: Text('Error: $err'))),
+      loading: () => const SizedBox(
+        height: 38,
+        child: Center(child: CircularProgressIndicator()),
+      ),
+      error: (err, stack) =>
+          SizedBox(height: 38, child: Center(child: Text('Error: $err'))),
       data: (categories) {
         if (categories.isEmpty) return const SizedBox.shrink();
         return SingleChildScrollView(
@@ -31,15 +35,23 @@ class CategoryFilterList extends ConsumerWidget {
                     .color(isSelected ? theme.colorScheme.accent : Colors.white)
                     .textStyle(
                       TextStyler()
-                          .color(isSelected ? Colors.white : Colors.grey.shade800)
+                          .color(
+                            isSelected ? Colors.white : Colors.grey.shade800,
+                          )
                           .fontSize(14)
                           .fontWeight(.w600),
                     )
                     .paddingY(8)
                     .paddingX(20)
-                    .borderAll(color: isSelected ? theme.colorScheme.accent : Colors.grey.shade200)
+                    .borderAll(
+                      color: isSelected
+                          ? theme.colorScheme.accent
+                          : Colors.grey.shade200,
+                    )
                     .borderRadiusAll(.circular(16)),
-                onPress: () => ref.read(selectedCategoryProvider.notifier).select(category),
+                onPress: () => ref
+                    .read(selectedCategoryProvider.notifier)
+                    .select(category),
                 child: StyledText(category.name),
               );
             }),

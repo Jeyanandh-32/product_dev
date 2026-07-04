@@ -61,9 +61,7 @@ class CategoryRepository {
     try {
       final result = await ApiClient.dio.get(
         ApiEndpoints.categories,
-        queryParameters: {
-          'storeId': ?storeId,
-        },
+        queryParameters: {'storeId': ?storeId},
       );
 
       final list = result.data['data']['categories'] as List<dynamic>;

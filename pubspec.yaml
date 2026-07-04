@@ -31,3 +31,7 @@ melos:
     clean:
       run: melos exec -- "flutter clean || true"
       description: Clean build caches.
+
+    format:
+      run: melos exec -- "dart format ."
+      description: Format Dart code across all packages.

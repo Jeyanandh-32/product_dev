@@ -64,17 +64,21 @@ class ProductRepository {
         .update(
           (p, set) => set(
             name: name != null ? ts.toExpr(name) : p.name,
-            categoryId: categoryId != null ? ts.toExpr(categoryId) : p.categoryId,
+            categoryId: categoryId != null
+                ? ts.toExpr(categoryId)
+                : p.categoryId,
             counterId: counterId != null ? ts.toExpr(counterId) : p.counterId,
             isActive: isActive != null ? ts.toExpr(isActive) : p.isActive,
             basePrice: basePrice != null ? ts.toExpr(basePrice) : p.basePrice,
-            sellingPrice:
-                sellingPrice != null ? ts.toExpr(sellingPrice) : p.sellingPrice,
+            sellingPrice: sellingPrice != null
+                ? ts.toExpr(sellingPrice)
+                : p.sellingPrice,
             taxRate: taxRate != null ? ts.toExpr(taxRate) : p.taxRate,
             sku: skuPresent ? ts.toExpr(sku) : p.sku,
             barcode: barcodePresent ? ts.toExpr(barcode) : p.barcode,
-            description:
-                descriptionPresent ? ts.toExpr(description) : p.description,
+            description: descriptionPresent
+                ? ts.toExpr(description)
+                : p.description,
             imageUrl: imageUrlPresent ? ts.toExpr(imageUrl) : p.imageUrl,
             updatedAt: ts.Expr.currentTimestamp,
           ),
@@ -104,9 +108,13 @@ class ProductRepository {
       q = q.where((p, s, c, cnt) => p.storeId.equalsValue(storeId));
     }
 
-    var finalQuery = q.orderBy((p, s, c, cnt) => [
-          (p.createdAt, ts.Order.descending),
-        ]).asQuery;
+    var finalQuery = q
+        .orderBy(
+          (p, s, c, cnt) => [
+            (p.createdAt, ts.Order.descending),
+          ],
+        )
+        .asQuery;
 
     if (offset != null) {
       finalQuery = finalQuery.offset(offset);
@@ -119,7 +127,9 @@ class ProductRepository {
     return rows;
   }
 
-  Future<(ProductRow, StockRow?, CategoryRow?, CounterRow?)?> getById(String id) async {
+  Future<(ProductRow, StockRow?, CategoryRow?, CounterRow?)?> getById(
+    String id,
+  ) async {
     final row = await _db.products
         .leftJoin(_db.stocks)
         .on((p, s) => p.id.equals(s.productId))
@@ -138,8 +148,7 @@ class ProductRepository {
     required String merchantId,
     String? storeId,
   }) async {
-    var q = _db.products
-        .where((p) => p.merchantId.equalsValue(merchantId));
+    var q = _db.products.where((p) => p.merchantId.equalsValue(merchantId));
 
     if (storeId != null) {
       q = q.where((p) => p.storeId.equalsValue(storeId));

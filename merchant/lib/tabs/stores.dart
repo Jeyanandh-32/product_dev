@@ -34,7 +34,8 @@ class Stores extends StatelessComponent {
           'w-full flex-1 min-h-0 p-4 flex flex-col lg:flex-row gap-4 overflow-y-auto lg:overflow-hidden',
       [
         if (activeModal == ActiveModal.addStore) AddEditStoreModal(),
-        if (activeModal == ActiveModal.editStore) AddEditStoreModal(store: editingStore),
+        if (activeModal == ActiveModal.editStore)
+          AddEditStoreModal(store: editingStore),
         if (activeModal == ActiveModal.addTerminal) AddEditTerminalModal(),
         if (activeModal == ActiveModal.editTerminal)
           AddEditTerminalModal(terminal: editingTerminal),

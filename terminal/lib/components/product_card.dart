@@ -9,10 +9,7 @@ import 'package:terminal/providers/cart_provider.dart';
 class ProductCard extends ConsumerWidget {
   final Product product;
 
-  const ProductCard({
-    super.key,
-    required this.product,
-  });
+  const ProductCard({super.key, required this.product});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

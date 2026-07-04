@@ -31,8 +31,9 @@ class TerminalRepository {
     required String merchantId,
     String? storeId,
   }) async {
-    final query = _db.terminals
-        .where((t) => t.merchantId.equalsValue(merchantId));
+    final query = _db.terminals.where(
+      (t) => t.merchantId.equalsValue(merchantId),
+    );
 
     if (storeId != null) {
       final rows = await query
@@ -61,8 +62,9 @@ class TerminalRepository {
         .update(
           (t, set) => set(
             name: name != null ? ts.toExpr(name) : t.name,
-            passwordHash:
-                passwordHash != null ? ts.toExpr(passwordHash) : t.passwordHash,
+            passwordHash: passwordHash != null
+                ? ts.toExpr(passwordHash)
+                : t.passwordHash,
             isActive: isActive != null ? ts.toExpr(isActive) : t.isActive,
             updatedAt: ts.Expr.currentTimestamp,
           ),

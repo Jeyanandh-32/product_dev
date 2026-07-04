@@ -9,36 +9,31 @@ extension ProductRowExtension on ProductRow {
     StockRow? stockRow,
     CategoryRow? categoryRow,
     CounterRow? counterRow,
-  }) =>
-      Product(
-        id: id,
-        merchantId: merchantId,
-        name: name,
-        taxRate: taxRate,
-        basePrice: basePrice,
-        sellingPrice: sellingPrice,
-        isActive: isActive,
-        createdAt: createdAt,
-        updatedAt: updatedAt,
-        sku: sku,
-        barcode: barcode,
-        description: description,
-        imageUrl: imageUrl,
-        stock: stockRow?.toStock(),
-        category: categoryRow?.toCategory(),
-        counter: counterRow?.toCounter(),
-      );
+  }) => Product(
+    id: id,
+    merchantId: merchantId,
+    name: name,
+    taxRate: taxRate,
+    basePrice: basePrice,
+    sellingPrice: sellingPrice,
+    isActive: isActive,
+    createdAt: createdAt,
+    updatedAt: updatedAt,
+    sku: sku,
+    barcode: barcode,
+    description: description,
+    imageUrl: imageUrl,
+    stock: stockRow?.toStock(),
+    category: categoryRow?.toCategory(),
+    counter: counterRow?.toCounter(),
+  );
 }
 
-extension ProductRecordExtension on (
-  ProductRow,
-  StockRow?,
-  CategoryRow?,
-  CounterRow?
-) {
+extension ProductRecordExtension
+    on (ProductRow, StockRow?, CategoryRow?, CounterRow?) {
   Product toProduct() => $1.toProduct(
-        stockRow: $2,
-        categoryRow: $3,
-        counterRow: $4,
-      );
+    stockRow: $2,
+    categoryRow: $3,
+    counterRow: $4,
+  );
 }

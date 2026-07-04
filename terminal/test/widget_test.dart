@@ -4,10 +4,6 @@ import 'package:terminal/app.dart';
 
 void main() {
   testWidgets('App load smoke test', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const ProviderScope(
-        child: MyApp(),
-      ),
-    );
+    await tester.pumpWidget(const ProviderScope(child: MyApp()));
   });
 }

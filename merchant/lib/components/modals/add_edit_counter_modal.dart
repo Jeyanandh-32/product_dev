@@ -44,19 +44,23 @@ class _AddEditCounterModalState extends State<AddEditCounterModal> {
     context.read(activeModalProvider.notifier).state = ActiveModal.none;
 
     if (component.counter != null) {
-      context.read(countersProvider.notifier).updateCounter(
-        id: component.counter!.id,
-        name: counterName,
-        isActive: isActive,
-        description: description,
-        imageUrl: imageUrl,
-      );
+      context
+          .read(countersProvider.notifier)
+          .updateCounter(
+            id: component.counter!.id,
+            name: counterName,
+            isActive: isActive,
+            description: description,
+            imageUrl: imageUrl,
+          );
     } else {
-      context.read(countersProvider.notifier).create(
-        name: counterName,
-        description: description,
-        imageUrl: imageUrl,
-      );
+      context
+          .read(countersProvider.notifier)
+          .create(
+            name: counterName,
+            description: description,
+            imageUrl: imageUrl,
+          );
     }
   }
 

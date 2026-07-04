@@ -5,10 +5,7 @@ import 'package:shadcn_ui/shadcn_ui.dart';
 class ProductSearchBar extends StatefulWidget {
   final ValueChanged<String>? onChanged;
 
-  const ProductSearchBar({
-    super.key,
-    this.onChanged,
-  });
+  const ProductSearchBar({super.key, this.onChanged});
 
   @override
   State<ProductSearchBar> createState() => _ProductSearchBarState();

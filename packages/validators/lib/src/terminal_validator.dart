@@ -48,7 +48,8 @@ class TerminalValidator {
       return 'Password cannot be empty.';
     }
 
-    if (password != null && !RegExp(ValidationPatterns.password).hasMatch(password)) {
+    if (password != null &&
+        !RegExp(ValidationPatterns.password).hasMatch(password)) {
       return 'Password must be at least 6 characters long and contain at least one number, one uppercase letter, and one lowercase letter.';
     }
 

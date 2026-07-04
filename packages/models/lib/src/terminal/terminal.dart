@@ -16,5 +16,6 @@ abstract class Terminal with _$Terminal {
     required DateTime updatedAt,
   }) = _Terminal;
 
-  factory Terminal.fromJson(Map<String, Object?> json) => _$TerminalFromJson(json);
+  factory Terminal.fromJson(Map<String, Object?> json) =>
+      _$TerminalFromJson(json);
 }

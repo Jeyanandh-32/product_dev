@@ -9,9 +9,9 @@ import 'package:merchant/components/fields/searchbar.dart';
 import 'package:merchant/components/loading.dart';
 import 'package:merchant/components/modals/add_edit_product_modal.dart';
 import 'package:merchant/components/modals/update_stock_modal.dart';
+import 'package:merchant/components/table_pagination.dart';
 import 'package:merchant/providers/products_provider.dart';
 import 'package:merchant/providers/ui_providers.dart';
-import 'package:merchant/components/table_pagination.dart';
 import 'package:web/web.dart';
 
 class Products extends StatelessComponent {
@@ -27,8 +27,6 @@ class Products extends StatelessComponent {
       (activeElement as HTMLElement).blur();
     }
   }
-
-
 
   @override
   Component build(BuildContext context) {
@@ -120,40 +118,43 @@ class Products extends StatelessComponent {
           CenteredMessage(message: 'No Products were added.')
         else
           div(classes: 'h-full overflow-x-auto', [
-            table(classes: 'table table-zebra table-pin-rows sm:table-pin-cols', [
-              tableHead(),
+            table(
+              classes: 'table table-zebra table-pin-rows sm:table-pin-cols',
+              [
+                tableHead(),
 
-              tbody([
-                for (final product in products.value!)
-                  tableRow(
-                    name: product.name,
-                    image: product.imageUrl,
-                    isActive: product.isActive,
-                    stock: product.stock!.quantity,
-                    lowStock: product.stock!.lowStockThreshold,
-                    stockMonitor: product.stock!.stockMonitor,
-                    basePrice: product.basePrice,
-                    sellingPrice: product.sellingPrice,
-                    category: product.category?.name ?? '-',
-                    counter: product.counter?.name ?? '-',
-                    sku: product.sku,
-                    barcode: product.barcode,
-                    taxRate: product.taxRate,
-                    onEdit: () {
-                      context.read(editingProductProvider.notifier).state =
-                          product;
-                      context.read(activeModalProvider.notifier).state =
-                          ActiveModal.editProduct;
-                    },
-                    onUpdateStock: () {
-                      context.read(editingProductProvider.notifier).state =
-                          product;
-                      context.read(activeModalProvider.notifier).state =
-                          ActiveModal.updateStock;
-                    },
-                  ),
-              ]),
-            ]),
+                tbody([
+                  for (final product in products.value!)
+                    tableRow(
+                      name: product.name,
+                      image: product.imageUrl,
+                      isActive: product.isActive,
+                      stock: product.stock!.quantity,
+                      lowStock: product.stock!.lowStockThreshold,
+                      stockMonitor: product.stock!.stockMonitor,
+                      basePrice: product.basePrice,
+                      sellingPrice: product.sellingPrice,
+                      category: product.category?.name ?? '-',
+                      counter: product.counter?.name ?? '-',
+                      sku: product.sku,
+                      barcode: product.barcode,
+                      taxRate: product.taxRate,
+                      onEdit: () {
+                        context.read(editingProductProvider.notifier).state =
+                            product;
+                        context.read(activeModalProvider.notifier).state =
+                            ActiveModal.editProduct;
+                      },
+                      onUpdateStock: () {
+                        context.read(editingProductProvider.notifier).state =
+                            product;
+                        context.read(activeModalProvider.notifier).state =
+                            ActiveModal.updateStock;
+                      },
+                    ),
+                ]),
+              ],
+            ),
           ]),
 
         TablePagination(

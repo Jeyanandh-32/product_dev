@@ -19,9 +19,7 @@ class ProductsProvider extends AsyncNotifier<List<Product>> {
     if (storeId == null) return [];
 
     try {
-      final (products, _) = await ProductRepository.getAll(
-        storeId: storeId,
-      );
+      final (products, _) = await ProductRepository.getAll(storeId: storeId);
 
       return products;
     } catch (e) {

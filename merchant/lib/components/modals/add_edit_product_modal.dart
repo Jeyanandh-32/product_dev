@@ -117,231 +117,249 @@ class _AddEditProductModalState extends State<AddEditProductModal> {
         method: FormMethod.post,
         events: {'submit': (e) => _onSubmit(context, e)},
         [
-          div(classes: 'max-h-[60vh] overflow-y-auto overflow-x-hidden flex flex-col gap-0 px-3', [
-            // Name
-            FormField(
-              id: 'productName',
-              labelText: 'Product Name',
-              type: InputType.text,
-              attributes: {
-                'placeholder': 'Oreo Biscuits',
-                'required': '',
-                'value': _name,
-              },
-              hintText: 'Product name is required.',
-              onChange: (value) => _name = value as String,
-            ),
-
-            // Category & Counter dropdowns stacked vertically
-            // Category dropdown
-            fieldset(classes: 'fieldset w-full mb-4', [
-              label(
-                htmlFor: 'categoryId',
-                classes: 'label text-[14px] font-semibold text-gray-500',
-                [.text('Category')],
-              ),
-              div(classes: 'dropdown w-full', [
-                div(
-                  classes: 'btn border border-border-medium bg-white hover:bg-base-200 text-sm h-11 w-full justify-between font-normal px-3 rounded-lg ${_categoryId.isEmpty ? 'text-gray-400' : 'text-base-content'}',
-                  attributes: {
-                    'tabindex': '0',
-                    'role': 'button',
-                  },
-                  [
-                    span([
-                      .text(_categoryId.isEmpty
-                          ? 'Select Category'
-                          : (categories.any((c) => c.id == _categoryId)
-                              ? categories.firstWhere((c) => c.id == _categoryId).name
-                              : 'Select Category')),
-                    ]),
-                    ChevronDown(classes: 'w-4 h-4 opacity-50'),
-                  ],
-                ),
-                ul(
-                  attributes: {'tabindex': '-1'},
-                  classes:
-                      'dropdown-content menu bg-base-100 rounded-box z-50 mt-1 p-2 shadow-sm border border-border-light w-full max-h-48 overflow-y-auto',
-                  [
-                    for (final cat in categories)
-                      li([
-                        a(
-                          href: '#',
-                          classes: 'rounded-md hover:bg-neutral py-2 px-3 block ${cat.id == _categoryId ? 'bg-neutral font-semibold' : ''}',
-                          onClick: () {
-                            setState(() {
-                              _categoryId = cat.id;
-                            });
-                            final activeElement = document.activeElement;
-                            if (activeElement != null) {
-                              (activeElement as HTMLElement).blur();
-                            }
-                          },
-                          [.text(cat.name)],
-                        ),
-                      ]),
-                  ],
-                ),
-              ]),
-            ]),
-
-            // Counter dropdown
-            fieldset(classes: 'fieldset w-full mb-4', [
-              label(
-                htmlFor: 'counterId',
-                classes: 'label text-[14px] font-semibold text-gray-500',
-                [.text('Counter')],
-              ),
-              div(classes: 'dropdown w-full', [
-                div(
-                  classes: 'btn border border-border-medium bg-white hover:bg-base-200 text-sm h-11 w-full justify-between font-normal px-3 rounded-lg ${_counterId.isEmpty ? 'text-gray-400' : 'text-base-content'}',
-                  attributes: {
-                    'tabindex': '0',
-                    'role': 'button',
-                  },
-                  [
-                    span([
-                      .text(_counterId.isEmpty
-                          ? 'Select Counter'
-                          : (counters.any((c) => c.id == _counterId)
-                              ? counters.firstWhere((c) => c.id == _counterId).name
-                              : 'Select Counter')),
-                    ]),
-                    ChevronDown(classes: 'w-4 h-4 opacity-50'),
-                  ],
-                ),
-                ul(
-                  attributes: {'tabindex': '-1'},
-                  classes:
-                      'dropdown-content menu bg-base-100 rounded-box z-50 mt-1 p-2 shadow-sm border border-border-light w-full max-h-48 overflow-y-auto',
-                  [
-                    for (final cnt in counters)
-                      li([
-                        a(
-                          href: '#',
-                          classes: 'rounded-md hover:bg-neutral py-2 px-3 block ${cnt.id == _counterId ? 'bg-neutral font-semibold' : ''}',
-                          onClick: () {
-                            setState(() {
-                              _counterId = cnt.id;
-                            });
-                            final activeElement = document.activeElement;
-                            if (activeElement != null) {
-                              (activeElement as HTMLElement).blur();
-                            }
-                          },
-                          [.text(cnt.name)],
-                        ),
-                      ]),
-                  ],
-                ),
-              ]),
-            ]),
-
-            // Base Price & Selling Price side by side
-            div(classes: 'flex gap-4', [
+          div(
+            classes:
+                'max-h-[60vh] overflow-y-auto overflow-x-hidden flex flex-col gap-0 px-3',
+            [
+              // Name
               FormField(
-                id: 'basePrice',
-                labelText: 'Base Price (₹)',
-                type: InputType.number,
+                id: 'productName',
+                labelText: 'Product Name',
+                type: InputType.text,
                 attributes: {
-                  'placeholder': '100',
+                  'placeholder': 'Oreo Biscuits',
                   'required': '',
-                  'min': '0',
-                  'value': _basePrice,
+                  'value': _name,
                 },
-                hintText: 'Base price is required.',
-                onChange: (value) => _basePrice = value as String,
+                hintText: 'Product name is required.',
+                onChange: (value) => _name = value as String,
               ),
-              FormField(
-                id: 'sellingPrice',
-                labelText: 'Selling Price (₹)',
-                type: InputType.number,
-                attributes: {
-                  'placeholder': '120',
-                  'required': '',
-                  'min': '0',
-                  'value': _sellingPrice,
-                },
-                hintText: 'Selling price is required.',
-                onChange: (value) => _sellingPrice = value as String,
-              ),
-            ]),
 
-            // Tax Rate
-            FormField(
-              id: 'taxRate',
-              labelText: 'Tax Rate (%)',
-              type: InputType.number,
-              attributes: {
-                'placeholder': '0',
-                'min': '0',
-                'max': '100',
-                'step': '0.01',
-                'value': _taxRate,
-              },
-              onChange: (value) => _taxRate = value as String,
-            ),
-
-            // SKU & Barcode stacked vertically
-            FormField(
-              id: 'sku',
-              labelText: 'SKU (optional)',
-              type: InputType.text,
-              attributes: {
-                'placeholder': 'DF-BISCUIT-01',
-                'value': _sku,
-              },
-              onChange: (value) => _sku = value as String,
-            ),
-            FormField(
-              id: 'barcode',
-              labelText: 'Barcode (optional)',
-              type: InputType.text,
-              attributes: {
-                'placeholder': '8901728281223',
-                'value': _barcode,
-              },
-              onChange: (value) => _barcode = value as String,
-            ),
-
-            // Image URL
-            FormField(
-              id: 'imageUrl',
-              labelText: 'Image URL (optional)',
-              type: InputType.url,
-              attributes: {
-                'placeholder': 'https://example.com/image.png',
-                'value': _imageUrl,
-              },
-              onChange: (value) => _imageUrl = value as String,
-            ),
-
-            // Active toggle (edit only)
-            if (component.product != null)
-              div(
-                classes: 'form-control mb-4 flex flex-row items-center gap-3',
-                [
-                  p(
-                    classes: 'text-[14px] font-semibold text-gray-500',
-                    [.text('Active')],
-                  ),
-                  input(
-                    type: InputType.checkbox,
+              // Category & Counter dropdowns stacked vertically
+              // Category dropdown
+              fieldset(classes: 'fieldset w-full mb-4', [
+                label(
+                  htmlFor: 'categoryId',
+                  classes: 'label text-[14px] font-semibold text-gray-500',
+                  [.text('Category')],
+                ),
+                div(classes: 'dropdown w-full', [
+                  div(
                     classes:
-                        'toggle ${_isActive ? 'toggle-success' : ''} hover:cursor-pointer',
-                    checked: _isActive,
-                    events: {
-                      'change': (e) {
-                        final target = e.target as HTMLInputElement;
-                        setState(() {
-                          _isActive = target.checked;
-                        });
-                      },
+                        'btn border border-border-medium bg-white hover:bg-base-200 text-sm h-11 w-full justify-between font-normal px-3 rounded-lg ${_categoryId.isEmpty ? 'text-gray-400' : 'text-base-content'}',
+                    attributes: {
+                      'tabindex': '0',
+                      'role': 'button',
                     },
+                    [
+                      span([
+                        .text(
+                          _categoryId.isEmpty
+                              ? 'Select Category'
+                              : (categories.any((c) => c.id == _categoryId)
+                                    ? categories
+                                          .firstWhere(
+                                            (c) => c.id == _categoryId,
+                                          )
+                                          .name
+                                    : 'Select Category'),
+                        ),
+                      ]),
+                      ChevronDown(classes: 'w-4 h-4 opacity-50'),
+                    ],
                   ),
-                ],
+                  ul(
+                    attributes: {'tabindex': '-1'},
+                    classes:
+                        'dropdown-content menu bg-base-100 rounded-box z-50 mt-1 p-2 shadow-sm border border-border-light w-full max-h-48 overflow-y-auto',
+                    [
+                      for (final cat in categories)
+                        li([
+                          a(
+                            href: '#',
+                            classes:
+                                'rounded-md hover:bg-neutral py-2 px-3 block ${cat.id == _categoryId ? 'bg-neutral font-semibold' : ''}',
+                            onClick: () {
+                              setState(() {
+                                _categoryId = cat.id;
+                              });
+                              final activeElement = document.activeElement;
+                              if (activeElement != null) {
+                                (activeElement as HTMLElement).blur();
+                              }
+                            },
+                            [.text(cat.name)],
+                          ),
+                        ]),
+                    ],
+                  ),
+                ]),
+              ]),
+
+              // Counter dropdown
+              fieldset(classes: 'fieldset w-full mb-4', [
+                label(
+                  htmlFor: 'counterId',
+                  classes: 'label text-[14px] font-semibold text-gray-500',
+                  [.text('Counter')],
+                ),
+                div(classes: 'dropdown w-full', [
+                  div(
+                    classes:
+                        'btn border border-border-medium bg-white hover:bg-base-200 text-sm h-11 w-full justify-between font-normal px-3 rounded-lg ${_counterId.isEmpty ? 'text-gray-400' : 'text-base-content'}',
+                    attributes: {
+                      'tabindex': '0',
+                      'role': 'button',
+                    },
+                    [
+                      span([
+                        .text(
+                          _counterId.isEmpty
+                              ? 'Select Counter'
+                              : (counters.any((c) => c.id == _counterId)
+                                    ? counters
+                                          .firstWhere((c) => c.id == _counterId)
+                                          .name
+                                    : 'Select Counter'),
+                        ),
+                      ]),
+                      ChevronDown(classes: 'w-4 h-4 opacity-50'),
+                    ],
+                  ),
+                  ul(
+                    attributes: {'tabindex': '-1'},
+                    classes:
+                        'dropdown-content menu bg-base-100 rounded-box z-50 mt-1 p-2 shadow-sm border border-border-light w-full max-h-48 overflow-y-auto',
+                    [
+                      for (final cnt in counters)
+                        li([
+                          a(
+                            href: '#',
+                            classes:
+                                'rounded-md hover:bg-neutral py-2 px-3 block ${cnt.id == _counterId ? 'bg-neutral font-semibold' : ''}',
+                            onClick: () {
+                              setState(() {
+                                _counterId = cnt.id;
+                              });
+                              final activeElement = document.activeElement;
+                              if (activeElement != null) {
+                                (activeElement as HTMLElement).blur();
+                              }
+                            },
+                            [.text(cnt.name)],
+                          ),
+                        ]),
+                    ],
+                  ),
+                ]),
+              ]),
+
+              // Base Price & Selling Price side by side
+              div(classes: 'flex gap-4', [
+                FormField(
+                  id: 'basePrice',
+                  labelText: 'Base Price (₹)',
+                  type: InputType.number,
+                  attributes: {
+                    'placeholder': '100',
+                    'required': '',
+                    'min': '0',
+                    'value': _basePrice,
+                  },
+                  hintText: 'Base price is required.',
+                  onChange: (value) => _basePrice = value as String,
+                ),
+                FormField(
+                  id: 'sellingPrice',
+                  labelText: 'Selling Price (₹)',
+                  type: InputType.number,
+                  attributes: {
+                    'placeholder': '120',
+                    'required': '',
+                    'min': '0',
+                    'value': _sellingPrice,
+                  },
+                  hintText: 'Selling price is required.',
+                  onChange: (value) => _sellingPrice = value as String,
+                ),
+              ]),
+
+              // Tax Rate
+              FormField(
+                id: 'taxRate',
+                labelText: 'Tax Rate (%)',
+                type: InputType.number,
+                attributes: {
+                  'placeholder': '0',
+                  'min': '0',
+                  'max': '100',
+                  'step': '0.01',
+                  'value': _taxRate,
+                },
+                onChange: (value) => _taxRate = value as String,
               ),
-          ]),
+
+              // SKU & Barcode stacked vertically
+              FormField(
+                id: 'sku',
+                labelText: 'SKU (optional)',
+                type: InputType.text,
+                attributes: {
+                  'placeholder': 'DF-BISCUIT-01',
+                  'value': _sku,
+                },
+                onChange: (value) => _sku = value as String,
+              ),
+              FormField(
+                id: 'barcode',
+                labelText: 'Barcode (optional)',
+                type: InputType.text,
+                attributes: {
+                  'placeholder': '8901728281223',
+                  'value': _barcode,
+                },
+                onChange: (value) => _barcode = value as String,
+              ),
+
+              // Image URL
+              FormField(
+                id: 'imageUrl',
+                labelText: 'Image URL (optional)',
+                type: InputType.url,
+                attributes: {
+                  'placeholder': 'https://example.com/image.png',
+                  'value': _imageUrl,
+                },
+                onChange: (value) => _imageUrl = value as String,
+              ),
+
+              // Active toggle (edit only)
+              if (component.product != null)
+                div(
+                  classes: 'form-control mb-4 flex flex-row items-center gap-3',
+                  [
+                    p(
+                      classes: 'text-[14px] font-semibold text-gray-500',
+                      [.text('Active')],
+                    ),
+                    input(
+                      type: InputType.checkbox,
+                      classes:
+                          'toggle ${_isActive ? 'toggle-success' : ''} hover:cursor-pointer',
+                      checked: _isActive,
+                      events: {
+                        'change': (e) {
+                          final target = e.target as HTMLInputElement;
+                          setState(() {
+                            _isActive = target.checked;
+                          });
+                        },
+                      },
+                    ),
+                  ],
+                ),
+            ],
+          ),
 
           // Submit button
           div(classes: 'flex justify-end items-center pt-2', [

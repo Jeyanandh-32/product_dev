@@ -20,7 +20,7 @@ abstract final class MerchantRow extends Row {
 
   String get name;
   String get businessName;
-  
+
   @Unique.field()
   String get whatsappNumber;
 
@@ -42,11 +42,15 @@ abstract final class StoreRow extends Row {
   @DefaultValue('gen_random_uuid()')
   String get id;
 
-  @References(table: 'merchants', field: 'id', onDelete: ReferentialAction.cascade)
+  @References(
+    table: 'merchants',
+    field: 'id',
+    onDelete: ReferentialAction.cascade,
+  )
   String get merchantId;
 
   String get name;
-  
+
   String? get storeType;
 
   @DefaultValue(true)
@@ -67,7 +71,11 @@ abstract final class CategoryRow extends Row {
 
   String get name;
 
-  @References(table: 'merchants', field: 'id', onDelete: ReferentialAction.cascade)
+  @References(
+    table: 'merchants',
+    field: 'id',
+    onDelete: ReferentialAction.cascade,
+  )
   String get merchantId;
 
   @References(table: 'stores', field: 'id', onDelete: ReferentialAction.cascade)
@@ -95,7 +103,11 @@ abstract final class CounterRow extends Row {
 
   String get name;
 
-  @References(table: 'merchants', field: 'id', onDelete: ReferentialAction.cascade)
+  @References(
+    table: 'merchants',
+    field: 'id',
+    onDelete: ReferentialAction.cascade,
+  )
   String get merchantId;
 
   @References(table: 'stores', field: 'id', onDelete: ReferentialAction.cascade)
@@ -122,7 +134,11 @@ abstract final class ProductRow extends Row {
   @DefaultValue('gen_random_uuid()')
   String get id;
 
-  @References(table: 'merchants', field: 'id', onDelete: ReferentialAction.cascade)
+  @References(
+    table: 'merchants',
+    field: 'id',
+    onDelete: ReferentialAction.cascade,
+  )
   String get merchantId;
 
   @References(table: 'stores', field: 'id', onDelete: ReferentialAction.cascade)
@@ -138,10 +154,18 @@ abstract final class ProductRow extends Row {
 
   String? get imageUrl;
 
-  @References(table: 'categories', field: 'id', onDelete: ReferentialAction.setNull)
+  @References(
+    table: 'categories',
+    field: 'id',
+    onDelete: ReferentialAction.setNull,
+  )
   String? get categoryId;
 
-  @References(table: 'counters', field: 'id', onDelete: ReferentialAction.setNull)
+  @References(
+    table: 'counters',
+    field: 'id',
+    onDelete: ReferentialAction.setNull,
+  )
   String? get counterId;
 
   @DefaultValue(0.00)
@@ -170,7 +194,11 @@ abstract final class StockRow extends Row {
   @DefaultValue('gen_random_uuid()')
   String get id;
 
-  @References(table: 'products', field: 'id', onDelete: ReferentialAction.cascade)
+  @References(
+    table: 'products',
+    field: 'id',
+    onDelete: ReferentialAction.cascade,
+  )
   String get productId;
 
   @References(table: 'stores', field: 'id', onDelete: ReferentialAction.cascade)
@@ -198,7 +226,11 @@ abstract final class TerminalRow extends Row {
   @SqlOverride.field(dialect: 'postgres', columnType: 'VARCHAR(12)')
   String get code;
 
-  @References(table: 'merchants', field: 'id', onDelete: ReferentialAction.cascade)
+  @References(
+    table: 'merchants',
+    field: 'id',
+    onDelete: ReferentialAction.cascade,
+  )
   String get merchantId;
 
   @References(table: 'stores', field: 'id', onDelete: ReferentialAction.cascade)

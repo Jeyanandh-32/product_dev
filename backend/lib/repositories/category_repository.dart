@@ -31,8 +31,9 @@ class CategoryRepository {
     required String merchantId,
     String? storeId,
   }) async {
-    final query = _db.categories
-        .where((c) => c.merchantId.equalsValue(merchantId));
+    final query = _db.categories.where(
+      (c) => c.merchantId.equalsValue(merchantId),
+    );
 
     if (storeId != null) {
       final rows = await query
@@ -65,8 +66,9 @@ class CategoryRepository {
           (c, set) => set(
             name: name != null ? ts.toExpr(name) : c.name,
             isActive: isActive != null ? ts.toExpr(isActive) : c.isActive,
-            description:
-                descriptionPresent ? ts.toExpr(description) : c.description,
+            description: descriptionPresent
+                ? ts.toExpr(description)
+                : c.description,
             imageUrl: imageUrlPresent ? ts.toExpr(imageUrl) : c.imageUrl,
             updatedAt: ts.Expr.currentTimestamp,
           ),

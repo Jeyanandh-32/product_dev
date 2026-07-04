@@ -30,4 +30,3 @@ abstract class Product with _$Product {
   factory Product.fromJson(Map<String, Object?> json) =>
       _$ProductFromJson(json);
 }
-

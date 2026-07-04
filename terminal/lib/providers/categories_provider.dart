@@ -17,6 +17,7 @@ class CategoriesProvider extends AsyncNotifier<List<Category>> {
   }
 }
 
-final categoriesProvider = AsyncNotifierProvider<CategoriesProvider, List<Category>>(
-  () => CategoriesProvider(),
-);
+final categoriesProvider =
+    AsyncNotifierProvider<CategoriesProvider, List<Category>>(
+      () => CategoriesProvider(),
+    );

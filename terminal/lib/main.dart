@@ -5,4 +5,3 @@ import 'package:terminal/app.dart';
 void main() {
   runApp(const ProviderScope(child: MyApp()));
 }
-

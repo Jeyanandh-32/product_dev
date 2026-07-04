@@ -15,8 +15,7 @@ class Loading extends StatelessComponent {
           : 'flex flex-col items-center justify-center h-full text-center text-gray-400 py-10 w-full gap-2',
       [
         span(classes: 'loading loading-spinner text-primary', []),
-        if (text != null && text!.isNotEmpty)
-          p([.text(text!)]),
+        if (text != null && text!.isNotEmpty) p([.text(text!)]),
       ],
     );
   }

@@ -29,7 +29,6 @@ class PaymentModeNotifier extends Notifier<String> {
   }
 }
 
-final paymentModeProvider =
-    NotifierProvider<PaymentModeNotifier, String>(
-      () => PaymentModeNotifier(),
-    );
+final paymentModeProvider = NotifierProvider<PaymentModeNotifier, String>(
+  () => PaymentModeNotifier(),
+);

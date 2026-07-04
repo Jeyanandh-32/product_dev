@@ -16,6 +16,5 @@ abstract class Stock with _$Stock {
     required DateTime updatedAt,
   }) = _Stock;
 
-  factory Stock.fromJson(Map<String, Object?> json) =>
-      _$StockFromJson(json);
+  factory Stock.fromJson(Map<String, Object?> json) => _$StockFromJson(json);
 }

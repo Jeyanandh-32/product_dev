@@ -38,8 +38,6 @@ class _CategoriesState extends State<Categories> {
     }
   }
 
-
-
   int _getAssociatedCount(Category category) {
     return (category.name.hashCode.abs() % 900) + 100;
   }
@@ -160,25 +158,28 @@ class _CategoriesState extends State<Categories> {
           CenteredMessage(message: 'No matching categories found.')
         else
           div(classes: 'h-full overflow-x-auto', [
-            table(classes: 'table table-zebra table-pin-rows sm:table-pin-cols', [
-              tableHead(),
-              tbody([
-                for (final category in paginated)
-                  tableRow(
-                    name: category.name,
-                    image: category.imageUrl,
-                    isActive: category.isActive,
-                    productsCount: _getAssociatedCount(category),
-                    description: category.description ?? 'N/A',
-                    onEdit: () {
-                      context.read(editingCategoryProvider.notifier).state =
-                          category;
-                      context.read(activeModalProvider.notifier).state =
-                          ActiveModal.editCategory;
-                    },
-                  ),
-              ]),
-            ]),
+            table(
+              classes: 'table table-zebra table-pin-rows sm:table-pin-cols',
+              [
+                tableHead(),
+                tbody([
+                  for (final category in paginated)
+                    tableRow(
+                      name: category.name,
+                      image: category.imageUrl,
+                      isActive: category.isActive,
+                      productsCount: _getAssociatedCount(category),
+                      description: category.description ?? 'N/A',
+                      onEdit: () {
+                        context.read(editingCategoryProvider.notifier).state =
+                            category;
+                        context.read(activeModalProvider.notifier).state =
+                            ActiveModal.editCategory;
+                      },
+                    ),
+                ]),
+              ],
+            ),
           ]),
 
         TablePagination(

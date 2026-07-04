@@ -55,7 +55,9 @@ class TablePagination extends StatelessComponent {
         button(
           classes:
               'btn border-none bg-white shadow-none hover:bg-neutral h-8 hover:text-black ${currentPage == 1 ? 'btn-disabled opacity-50' : ''}',
-          onClick: currentPage > 1 ? () => onPageChanged(currentPage - 1) : null,
+          onClick: currentPage > 1
+              ? () => onPageChanged(currentPage - 1)
+              : null,
           [
             .text('Previous'),
           ],
@@ -71,7 +73,9 @@ class TablePagination extends StatelessComponent {
                 button(
                   classes:
                       'btn w-8 h-8 rounded-lg ${page == currentPage ? 'bg-accent text-white hover:bg-accent' : 'bg-neutral hover:bg-base-300'}',
-                  onClick: page == currentPage ? null : () => onPageChanged(page as int),
+                  onClick: page == currentPage
+                      ? null
+                      : () => onPageChanged(page as int),
                   [
                     .text('$page'),
                   ],
@@ -88,7 +92,9 @@ class TablePagination extends StatelessComponent {
         button(
           classes:
               'btn border-none bg-white shadow-none hover:bg-neutral h-8 hover:text-black ${currentPage == totalPages ? 'btn-disabled opacity-50' : ''}',
-          onClick: currentPage < totalPages ? () => onPageChanged(currentPage + 1) : null,
+          onClick: currentPage < totalPages
+              ? () => onPageChanged(currentPage + 1)
+              : null,
           [
             .text('Next'),
           ],

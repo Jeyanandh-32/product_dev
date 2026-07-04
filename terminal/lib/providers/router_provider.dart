@@ -50,18 +50,10 @@ final routerProvider = Provider<GoRouter>((ref) {
     routes: [
       GoRoute(
         path: '/loading',
-        builder: (context, state) => const Scaffold(
-          body: Loading(),
-        ),
+        builder: (context, state) => const Scaffold(body: Loading()),
       ),
-      GoRoute(
-        path: '/login',
-        builder: (context, state) => const Login(),
-      ),
-      GoRoute(
-        path: '/',
-        builder: (context, state) => const Home(),
-      ),
+      GoRoute(path: '/login', builder: (context, state) => const Login()),
+      GoRoute(path: '/', builder: (context, state) => const Home()),
     ],
   );
 });

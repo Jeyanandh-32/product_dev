@@ -44,19 +44,23 @@ class _AddEditCategoryModalState extends State<AddEditCategoryModal> {
     context.read(activeModalProvider.notifier).state = ActiveModal.none;
 
     if (component.category != null) {
-      context.read(categoriesProvider.notifier).updateCategory(
-        id: component.category!.id,
-        name: categoryName,
-        isActive: isActive,
-        description: description,
-        imageUrl: imageUrl,
-      );
+      context
+          .read(categoriesProvider.notifier)
+          .updateCategory(
+            id: component.category!.id,
+            name: categoryName,
+            isActive: isActive,
+            description: description,
+            imageUrl: imageUrl,
+          );
     } else {
-      context.read(categoriesProvider.notifier).create(
-        name: categoryName,
-        description: description,
-        imageUrl: imageUrl,
-      );
+      context
+          .read(categoriesProvider.notifier)
+          .create(
+            name: categoryName,
+            description: description,
+            imageUrl: imageUrl,
+          );
     }
   }
 

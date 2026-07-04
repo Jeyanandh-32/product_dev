@@ -28,7 +28,10 @@ Future<Response> _onGet(RequestContext context, String id) async {
   try {
     final productRow = await repo.getById(id);
     if (productRow == null) {
-      return error(message: 'Product not found.', statusCode: HttpStatus.notFound);
+      return error(
+        message: 'Product not found.',
+        statusCode: HttpStatus.notFound,
+      );
     }
 
     final product = productRow.toProduct();
@@ -152,13 +155,19 @@ Future<Response> _onPutOrPatch(RequestContext context, String id) async {
     );
 
     if (updatedRow == null) {
-      return error(message: 'Product not found.', statusCode: HttpStatus.notFound);
+      return error(
+        message: 'Product not found.',
+        statusCode: HttpStatus.notFound,
+      );
     }
 
     // Fetch the product with fully joined stock details after updating
     final completeProductRow = await repo.getById(id);
     if (completeProductRow == null) {
-      return error(message: 'Product not found.', statusCode: HttpStatus.notFound);
+      return error(
+        message: 'Product not found.',
+        statusCode: HttpStatus.notFound,
+      );
     }
 
     final completeProduct = completeProductRow.toProduct();

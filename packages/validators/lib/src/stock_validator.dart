@@ -33,7 +33,9 @@ class StockValidator {
     if (quantityPresent && quantity != null && quantity < 0) {
       return 'Quantity cannot be negative.';
     }
-    if (lowStockThresholdPresent && lowStockThreshold != null && lowStockThreshold < 0) {
+    if (lowStockThresholdPresent &&
+        lowStockThreshold != null &&
+        lowStockThreshold < 0) {
       return 'Low stock threshold cannot be negative.';
     }
     if (!quantityPresent && !lowStockThresholdPresent && !stockMonitorPresent) {

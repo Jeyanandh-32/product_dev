@@ -22,10 +22,7 @@ class CartSummary extends ConsumerWidget {
           style: TextStyler().fontSize(16).fontWeight(.w600),
         ),
         const Gap(16),
-        _summaryTile(
-          title: 'Total No of Items',
-          value: '${cart.noOfItems}',
-        ),
+        _summaryTile(title: 'Total No of Items', value: '${cart.noOfItems}'),
         const Gap(4),
         _summaryTile(
           title: 'Total Order Quantity',
@@ -78,17 +75,11 @@ class CartSummary extends ConsumerWidget {
               items: [
                 ShadRadio(
                   value: 'cash',
-                  label: StyledText(
-                    'Cash',
-                    style: TextStyler().fontSize(14),
-                  ),
+                  label: StyledText('Cash', style: TextStyler().fontSize(14)),
                 ),
                 ShadRadio(
                   value: 'upi',
-                  label: StyledText(
-                    'UPI',
-                    style: TextStyler().fontSize(14),
-                  ),
+                  label: StyledText('UPI', style: TextStyler().fontSize(14)),
                 ),
               ],
             ),
@@ -98,10 +89,7 @@ class CartSummary extends ConsumerWidget {
         ShadButton(
           width: double.infinity,
           height: 44,
-          child: StyledText(
-            'Save & Print',
-            style: TextStyler().fontSize(16),
-          ),
+          child: StyledText('Save & Print', style: TextStyler().fontSize(16)),
         ),
       ],
     );

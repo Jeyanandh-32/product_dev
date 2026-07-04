@@ -35,8 +35,9 @@ class StockRepository {
             lowStockThreshold: lowStockThreshold != null
                 ? ts.toExpr(lowStockThreshold)
                 : s.lowStockThreshold,
-            stockMonitor:
-                stockMonitor != null ? ts.toExpr(stockMonitor) : s.stockMonitor,
+            stockMonitor: stockMonitor != null
+                ? ts.toExpr(stockMonitor)
+                : s.stockMonitor,
             updatedAt: ts.Expr.currentTimestamp,
           ),
         )
