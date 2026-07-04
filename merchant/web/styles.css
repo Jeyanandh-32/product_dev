@@ -2115,11 +2115,6 @@
       }
     }
   }
-  .sm\:block {
-    @media (width >= 40rem) {
-      display: block;
-    }
-  }
   .sm\:flex {
     @media (width >= 40rem) {
       display: flex;

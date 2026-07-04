@@ -4,6 +4,8 @@ import 'package:gap/gap.dart';
 import 'package:mix/mix.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:styled_divider/styled_divider.dart';
+import 'package:terminal/models/cart_item.dart';
+import 'package:terminal/providers/cart_provider.dart';
 import 'package:terminal/providers/ui_providers.dart';
 
 class Cart extends ConsumerWidget {
@@ -20,6 +22,7 @@ class Cart extends ConsumerWidget {
         .width(screenWidth * .40)
         .onMobile(.width(.infinity))
         .borderLeft(color: theme.colorScheme.border);
+    final cart = ref.watch(cartProvider);
 
     return ColumnBox(
       style: cartStyle,
@@ -37,7 +40,7 @@ class Cart extends ConsumerWidget {
                   .color(Colors.grey.shade900),
             ),
             PressableBox(
-              onPress: () {},
+              onPress: () => ref.read(cartProvider.notifier).clear(),
               style: BoxStyler()
                   .paddingX(12)
                   .paddingY(6)
@@ -55,46 +58,46 @@ class Cart extends ConsumerWidget {
         ),
         Gap(16),
         Expanded(
-          child: ScrollConfiguration(
-            behavior: ScrollConfiguration.of(
-              context,
-            ).copyWith(scrollbars: false),
-            child: SingleChildScrollView(
-              child: ColumnBox(
-                children: [
-                  _cartItem(),
-                  StyledDivider(
-                    lineStyle: .dashed,
-                    thickness: 1.5,
-                    indent: 32,
-                    endIndent: 32,
+          child: cart.items.isEmpty
+              ? ColumnBox(
+                  style: FlexBoxStyler().mainAxisAlignment(.center),
+                  children: [
+                    Icon(LucideIcons.badgeX, size: 24),
+                    Gap(8),
+                    StyledText(
+                      style: TextStyler().fontSize(16).fontWeight(.w600),
+                      'Your current order is empty',
+                    ),
+                    Gap(8),
+                    StyledText(
+                      style: TextStyler().color(Colors.grey.shade600),
+                      'Please add some products from the menu',
+                    ),
+                  ],
+                )
+              : ScrollConfiguration(
+                  behavior: ScrollConfiguration.of(
+                    context,
+                  ).copyWith(scrollbars: false),
+                  child: ListView.builder(
+                    itemCount: cart.items.length,
+                    itemBuilder: (context, index) {
+                      final item = cart.items[index];
+                      return ColumnBox(
+                        style: FlexBoxStyler().mainAxisSize(.min),
+                        children: [
+                          _cartItem(item, ref),
+                          StyledDivider(
+                            lineStyle: .dashed,
+                            thickness: 1.5,
+                            indent: 32,
+                            endIndent: 32,
+                          ),
+                        ],
+                      );
+                    },
                   ),
-                  _cartItem(),
-                  StyledDivider(
-                    lineStyle: .dashed,
-                    thickness: 1.5,
-                    indent: 32,
-                    endIndent: 32,
-                  ),
-                  _cartItem(),
-                  StyledDivider(
-                    lineStyle: .dashed,
-                    thickness: 1.5,
-                    indent: 32,
-                    endIndent: 32,
-                  ),
-                  _cartItem(),
-                  StyledDivider(
-                    lineStyle: .dashed,
-                    thickness: 1.5,
-                    indent: 32,
-                    endIndent: 32,
-                  ),
-                  _cartItem(),
-                ],
-              ),
-            ),
-          ),
+                ),
         ),
         ColumnBox(
           style: FlexBoxStyler().paddingTop(16),
@@ -104,11 +107,19 @@ class Cart extends ConsumerWidget {
               style: TextStyler().fontSize(16).fontWeight(.w600),
             ),
             Gap(16),
-            _summaryTile(title: 'Total No of Items', value: '2'),
+            _summaryTile(
+              title: 'Total No of Items',
+              value: '${cart.noOfItems}',
+            ),
             Gap(4),
-            _summaryTile(title: 'Total Order Quantity', value: '2'),
+            _summaryTile(
+              title: 'Total Order Quantity',
+              value: '${cart.orderQuantity}',
+            ),
             Gap(4),
-            _summaryTile(title: 'Order Summary', value: '₹26.70'),
+            _summaryTile(title: 'Order Summary', value: '₹${cart.subtotal}0'),
+            Gap(4),
+            _summaryTile(title: 'Total Tax', value: '₹${cart.taxTotal}0'),
             Gap(4),
             StyledDivider(lineStyle: .dashed),
             Gap(4),
@@ -120,7 +131,7 @@ class Cart extends ConsumerWidget {
                   style: TextStyler().fontSize(16).fontWeight(.bold),
                 ),
                 StyledText(
-                  '₹26.70',
+                  '₹${cart.grandTotal}0',
                   style: TextStyler().fontSize(16).fontWeight(.bold),
                 ),
               ],
@@ -195,7 +206,7 @@ class Cart extends ConsumerWidget {
     );
   }
 
-  RowBox _cartItem() {
+  RowBox _cartItem(CartItem item, WidgetRef ref) {
     return RowBox(
       style: FlexBoxStyler()
           .height(80)
@@ -210,7 +221,7 @@ class Cart extends ConsumerWidget {
             child: Box(
               style: BoxStyler().color(const Color(0xFFF9FAFB)),
               child: Image.network(
-                'https://positeasy.s3.ap-south-1.amazonaws.com/MID-7efd859e-a0f7-4864-a70b-69f918b99c4b/Store1s/product-image/photos/T1-Img-203a5a62-3861-46e2-b3b5-668141e23bbb.jpeg',
+                item.product.imageUrl ?? '',
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) {
                   return Icon(
@@ -230,7 +241,7 @@ class Cart extends ConsumerWidget {
                 .mainAxisAlignment(MainAxisAlignment.center),
             children: [
               StyledText(
-                'Black Coffee',
+                item.product.name,
                 style: TextStyler()
                     .fontSize(14)
                     .fontWeight(.w600)
@@ -239,7 +250,7 @@ class Cart extends ConsumerWidget {
               ),
               const Gap(4),
               StyledText(
-                '₹15.00',
+                '₹${item.product.sellingPrice}.00',
                 style: TextStyler()
                     .fontSize(13)
                     .fontWeight(.w500)
@@ -269,12 +280,14 @@ class Cart extends ConsumerWidget {
                   backgroundColor: Colors.white,
                   foregroundColor: Colors.black87,
                   decoration: const ShadDecoration(shape: BoxShape.circle),
-                  onPressed: () {},
+                  onPressed: () => ref
+                      .read(cartProvider.notifier)
+                      .updateQuantity(item.product.id, item.quantity - 1),
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8),
                   child: StyledText(
-                    '1',
+                    '${item.quantity}',
                     style: TextStyler().fontSize(13).fontWeight(.w600),
                   ),
                 ),
@@ -286,7 +299,9 @@ class Cart extends ConsumerWidget {
                   backgroundColor: Colors.white,
                   foregroundColor: Colors.black87,
                   decoration: const ShadDecoration(shape: BoxShape.circle),
-                  onPressed: () {},
+                  onPressed: () => ref
+                      .read(cartProvider.notifier)
+                      .updateQuantity(item.product.id, item.quantity + 1),
                 ),
               ],
             ),
@@ -297,7 +312,8 @@ class Cart extends ConsumerWidget {
               foregroundColor: Colors.red.shade400,
               hoverBackgroundColor: Colors.red.shade400,
               hoverForegroundColor: Colors.white,
-              onPressed: () {},
+              onPressed: () =>
+                  ref.read(cartProvider.notifier).removeItem(item.product.id),
               icon: const Icon(LucideIcons.trash),
             ),
           ],

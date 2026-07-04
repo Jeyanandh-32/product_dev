@@ -4,10 +4,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mix/mix.dart';
+import 'package:models/models.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:terminal/components/cart.dart';
 import 'package:terminal/pages/loading.dart';
 import 'package:terminal/providers/auth_provider.dart';
+import 'package:terminal/providers/cart_provider.dart';
 import 'package:terminal/providers/categories_provider.dart';
 import 'package:terminal/providers/products_provider.dart';
 import 'package:terminal/providers/ui_providers.dart';
@@ -87,7 +89,9 @@ class Home extends ConsumerWidget {
                               )
                               .textStyle(
                                 .color(
-                                  isSelected ? Colors.white : Colors.grey.shade800,
+                                  isSelected
+                                      ? Colors.white
+                                      : Colors.grey.shade800,
                                 ).fontSize(14).fontWeight(.w600),
                               )
                               .paddingY(8)
@@ -123,7 +127,9 @@ class Home extends ConsumerWidget {
                         .paddingRight(6)
                         .paddingY(4),
                     child: RowBox(
-                      style: FlexBoxStyler().crossAxisAlignment(CrossAxisAlignment.center),
+                      style: FlexBoxStyler().crossAxisAlignment(
+                        CrossAxisAlignment.center,
+                      ),
                       children: [
                         Expanded(
                           child: ShadInput(
@@ -168,74 +174,7 @@ class Home extends ConsumerWidget {
                           mainAxisSpacing: 8,
                           builder: (context, index) {
                             final product = filteredProducts[index];
-                            return PressableBox(
-                              onPress: () {},
-                              style: BoxStyler()
-                                  .color(const Color(0xFFF9FAFB))
-                                  .paddingAll(12)
-                                  .borderRadiusAll(.circular(16))
-                                  .borderAll(
-                                    color: theme.colorScheme.border.withValues(
-                                      alpha: .3,
-                                    ),
-                                  )
-                                  .shadowOnly(
-                                    color: Colors.black.withValues(alpha: 0.03),
-                                    offset: const Offset(0, 1),
-                                    blurRadius: 3,
-                                  )
-                                  .scale(1.0)
-                                  .onPressed(BoxStyler().scale(0.95))
-                                  .animate(.easeInOut(150.ms)),
-                              child: ColumnBox(
-                                style: FlexBoxStyler()
-                                    .mainAxisSize(.min)
-                                    .crossAxisAlignment(.start),
-                                children: [
-                                  AspectRatio(
-                                    aspectRatio: 3 / 2,
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(10),
-                                      child: Box(
-                                        style: BoxStyler().color(
-                                          const Color(0xFFF1F2F3),
-                                        ),
-                                        child: Image.network(
-                                          product.imageUrl ?? '',
-                                          fit: .cover,
-                                          errorBuilder:
-                                              (context, error, stackTrace) {
-                                                return Icon(
-                                                  LucideIcons.image,
-                                                  size: 32,
-                                                  color: Colors.grey.shade400,
-                                                );
-                                              },
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-
-                                  Gap(12),
-                                  StyledText(
-                                    product.name,
-                                    style: TextStyler()
-                                        .fontSize(14)
-                                        .fontWeight(.w600)
-                                        .color(Colors.grey.shade800)
-                                        .overflow(.ellipsis),
-                                  ),
-                                  Gap(6),
-                                  StyledText(
-                                    '₹${product.sellingPrice}.00',
-                                    style: TextStyler()
-                                        .fontSize(14)
-                                        .fontWeight(.bold)
-                                        .color(Colors.black),
-                                  ),
-                                ],
-                              ),
-                            );
+                            return _productCard(ref, product, theme);
                           },
                           itemCount: filteredProducts.length,
                           crossAxisCount: 4,
@@ -249,6 +188,76 @@ class Home extends ConsumerWidget {
             ],
           );
         },
+      ),
+    );
+  }
+
+  PressableBox _productCard(
+    WidgetRef ref,
+    Product product,
+    ShadThemeData theme,
+  ) {
+    final cart = ref.watch(cartProvider);
+    final isExisting =
+        cart.items.indexWhere((item) => item.product.id == product.id) >= 0;
+
+    return PressableBox(
+      onPress: () => ref.read(cartProvider.notifier).addItem(product),
+      style: BoxStyler()
+          .color(isExisting ? theme.colorScheme.accent : Colors.white)
+          .paddingAll(12)
+          .borderRadiusAll(.circular(16))
+          .borderAll(color: theme.colorScheme.border.withValues(alpha: .3))
+          .shadowOnly(
+            color: Colors.black.withValues(alpha: 0.03),
+            offset: const Offset(0, 1),
+            blurRadius: 3,
+          )
+          .scale(1.0)
+          .onPressed(BoxStyler().scale(0.95))
+          .animate(.easeInOut(150.ms)),
+      child: ColumnBox(
+        style: FlexBoxStyler().mainAxisSize(.min).crossAxisAlignment(.start),
+        children: [
+          AspectRatio(
+            aspectRatio: 3 / 2,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Box(
+                style: BoxStyler().color(const Color(0xFFF1F2F3)),
+                child: Image.network(
+                  product.imageUrl ?? '',
+                  fit: .cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Icon(
+                      LucideIcons.image,
+                      size: 32,
+                 ₹     color: Colors.grey.shade400,
+                    );
+                  },
+                ),
+              ),
+            ),
+          ),
+
+          Gap(12),
+          StyledText(
+            product.name,
+            style: TextStyler()
+                .fontSize(14)
+                .fontWeight(.w600)
+                .color(isExisting ? Colors.white : Colors.grey.shade800)
+                .overflow(.ellipsis),
+          ),
+          Gap(6),
+          StyledText(
+            '₹${product.sellingPrice}.00',
+            style: TextStyler()
+                .fontSize(14)
+                .fontWeight(.bold)
+                .color(isExisting ? Colors.white : Colors.black),
+          ),
+        ],
       ),
     );
   }
