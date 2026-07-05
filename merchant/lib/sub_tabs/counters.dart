@@ -156,9 +156,9 @@ class _CountersState extends State<Counters> {
         else if (filtered.isEmpty)
           CenteredMessage(message: 'No matching counters found.')
         else
-          div(classes: 'h-full overflow-x-auto', [
+          div(classes: 'flex-1 min-h-0 overflow-auto', [
             table(
-              classes: 'table table-zebra table-pin-rows sm:table-pin-cols',
+              classes: 'table table-zebra table-pin-rows table-pin-cols',
               [
                 tableHead(),
                 tbody([
@@ -194,12 +194,12 @@ class _CountersState extends State<Counters> {
     return thead([
       tr([
         th([]),
-        td([.text('Action')]),
-        td([.text('Image')]),
-        th([.text('Counter Name')]),
-        td([.text('Status')]),
-        td([.text('Products Associated')]),
-        td([.text('Description')]),
+        th([.text('Action')]),
+        th([.text('Image')]),
+        th(classes: 'pin-col', [.text('Counter Name')]),
+        th([.text('Status')]),
+        th([.text('Products Associated')]),
+        th([.text('Description')]),
         th([]),
       ]),
     ]);
@@ -248,7 +248,7 @@ class _CountersState extends State<Counters> {
         else
           .text('-'),
       ]),
-      th(classes: 'whitespace-nowrap font-semibold text-gray-900', [
+      th(classes: 'whitespace-nowrap font-semibold text-gray-900 pin-col', [
         .text(name),
       ]),
       td([

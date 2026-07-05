@@ -117,9 +117,9 @@ class Products extends StatelessComponent {
             products.value!.isEmpty)
           CenteredMessage(message: 'No Products were added.')
         else
-          div(classes: 'h-full overflow-x-auto', [
+          div(classes: 'flex-1 min-h-0 overflow-auto', [
             table(
-              classes: 'table table-zebra table-pin-rows sm:table-pin-cols',
+              classes: 'table table-zebra table-pin-rows table-pin-cols',
               [
                 tableHead(),
 

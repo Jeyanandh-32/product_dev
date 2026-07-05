@@ -1633,11 +1633,11 @@
       margin-block-end: calc(calc(var(--spacing) * 1) * calc(1 - var(--tw-space-y-reverse)));
     }
   }
+  .overflow-auto {
+    overflow: auto;
+  }
   .overflow-hidden {
     overflow: hidden;
-  }
-  .overflow-x-auto {
-    overflow-x: auto;
   }
   .overflow-x-hidden {
     overflow-x: hidden;
@@ -2277,18 +2277,6 @@
 }
 .table-zebra tbody tr:nth-child(even), .table-zebra tbody tr:nth-child(even) th {
   background-color: #f8fafc;
-}
-@media (min-width: 640px) {
-  .sm\:table-pin-cols tr th {
-    position: sticky;
-    left: 0;
-    right: 0;
-    z-index: 10;
-    background-color: var(--color-base-100);
-  }
-  .table-zebra.sm\:table-pin-cols tbody tr:nth-child(even) th {
-    background-color: #f8fafc;
-  }
 }
 @layer base {
   :root:not(span) {
