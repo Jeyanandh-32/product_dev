@@ -15,7 +15,7 @@ class StockRepository {
           productId: productId,
           storeId: storeId,
         )
-        .returning((ts.Expr<StockRow> s) => (s,))
+        .returnInserted()
         .executeAndFetch();
 
     return row;

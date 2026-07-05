@@ -35,7 +35,7 @@ class ProductRepository {
           description: description,
           imageUrl: imageUrl,
         )
-        .returning((ts.Expr<ProductRow> p) => (p,))
+        .returnInserted()
         .executeAndFetch();
 
     return row;

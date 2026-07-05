@@ -21,7 +21,7 @@ class CounterRepository {
           description: description,
           imageUrl: imageUrl,
         )
-        .returning((ts.Expr<CounterRow> c) => (c,))
+        .returnInserted()
         .executeAndFetch();
 
     return row;

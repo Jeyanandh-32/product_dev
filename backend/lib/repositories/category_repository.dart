@@ -21,7 +21,7 @@ class CategoryRepository {
           description: description,
           imageUrl: imageUrl,
         )
-        .returning((ts.Expr<CategoryRow> c) => (c,))
+        .returnInserted()
         .executeAndFetch();
 
     return row;

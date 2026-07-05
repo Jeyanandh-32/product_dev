@@ -17,7 +17,7 @@ class StoreRepository {
           name: name,
           storeType: storeType,
         )
-        .returning((ts.Expr<StoreRow> s) => (s,))
+        .returnInserted()
         .executeAndFetch();
 
     return row;

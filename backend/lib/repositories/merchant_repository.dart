@@ -21,7 +21,7 @@ class MerchantRepository {
           email: email,
           passwordHash: passwordHash,
         )
-        .returning((ts.Expr<MerchantRow> m) => (m,))
+        .returnInserted()
         .executeAndFetch();
 
     return row;

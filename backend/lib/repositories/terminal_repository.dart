@@ -21,7 +21,7 @@ class TerminalRepository {
           name: name,
           passwordHash: passwordHash,
         )
-        .returning((ts.Expr<TerminalRow> t) => (t,))
+        .returnInserted()
         .executeAndFetch();
 
     return row;
