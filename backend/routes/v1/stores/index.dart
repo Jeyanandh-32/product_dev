@@ -51,10 +51,7 @@ Future<Response> _onPost(RequestContext context) async {
   final name = body['name'] as String?;
   final storeType = body['storeType'] as String?;
 
-  final errorMessage = StoreValidator.create(
-    name: name,
-    storeType: storeType,
-  );
+  final errorMessage = await StoreValidator.create(body);
 
   if (errorMessage != null) {
     return badRequest(message: errorMessage);

@@ -43,19 +43,9 @@ Future<Response> _onPutOrPatch(RequestContext context, String id) async {
   final name = body['name'] as String?;
   final storeType = body['storeType'] as String?;
   final isActive = body['isActive'] as bool?;
-
-  final namePresent = body.containsKey('name');
   final storeTypePresent = body.containsKey('storeType');
-  final isActivePresent = body.containsKey('isActive');
 
-  final errorMessage = StoreValidator.update(
-    name: name,
-    storeType: storeType,
-    isActive: isActive,
-    namePresent: namePresent,
-    storeTypePresent: storeTypePresent,
-    isActivePresent: isActivePresent,
-  );
+  final errorMessage = await StoreValidator.update(body);
 
   if (errorMessage != null) {
     return badRequest(message: errorMessage);

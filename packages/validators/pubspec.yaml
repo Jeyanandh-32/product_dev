@@ -8,10 +8,10 @@ environment:
 
 resolution: workspace
 
-# Add regular dependencies here.
 dependencies:
   # path: ^1.9.0
   string_validator: ^1.2.0
+  json_schema_builder: ^0.1.5
 
 dev_dependencies:
   lints: ^6.0.0
