@@ -120,3 +120,39 @@ CREATE TABLE IF NOT EXISTS stocks (
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     CONSTRAINT unique_store_product_stock UNIQUE (store_id, product_id)
 );
+
+
+CREATE TABLE IF NOT EXISTS orders (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    merchant_id UUID NOT NULL REFERENCES merchants(id) ON DELETE CASCADE,
+    store_id UUID NOT NULL REFERENCES stores(id) ON DELETE CASCADE,
+    order_reference VARCHAR(50) NOT NULL UNIQUE,
+    bill_no INT NOT NULL,
+    source VARCHAR(20) NOT NULL,
+    type VARCHAR(20) NOT NULL,
+    status VARCHAR(20) NOT NULL DEFAULT 'pending',
+    payment_status VARCHAR(20) NOT NULL DEFAULT 'unpaid',
+    payment_method VARCHAR(20) NOT NULL,
+    subtotal INT NOT NULL,
+    tax_total INT NOT NULL,
+    grand_total INT NOT NULL,
+    terminal_code VARCHAR(12) REFERENCES terminals(code) ON DELETE SET NULL,
+
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS order_items (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    order_id UUID NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
+    product_id UUID NOT NULL REFERENCES products(id) ON DELETE CASCADE,
+    store_id UUID NOT NULL REFERENCES stores(id) ON DELETE CASCADE,
+    quantity INT NOT NULL CHECK (quantity > 0),
+    unit_price INT NOT NULL,
+    tax_rate NUMERIC(5, 2) NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_order_items_order_id ON order_items(order_id);
+CREATE INDEX IF NOT EXISTS idx_order_items_product_id ON order_items(product_id);
+CREATE INDEX IF NOT EXISTS idx_orders_order_reference ON orders(order_reference);
+CREATE INDEX IF NOT EXISTS idx_orders_store_created_at ON orders(store_id, created_at);

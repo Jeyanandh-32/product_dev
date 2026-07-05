@@ -16,6 +16,8 @@ extension DatabaseSchemaSchema on Database<DatabaseSchema> {
     _$ProductRow._$table,
     _$StockRow._$table,
     _$TerminalRow._$table,
+    _$OrderRow._$table,
+    _$OrderItemRow._$table,
   ];
 
   Table<MerchantRow> get merchants =>
@@ -38,6 +40,12 @@ extension DatabaseSchemaSchema on Database<DatabaseSchema> {
 
   Table<TerminalRow> get terminals =>
       $ForGeneratedCode.declareTable(this, _$TerminalRow._$table);
+
+  Table<OrderRow> get orders =>
+      $ForGeneratedCode.declareTable(this, _$OrderRow._$table);
+
+  Table<OrderItemRow> get orderItems =>
+      $ForGeneratedCode.declareTable(this, _$OrderItemRow._$table);
 
   /// Create tables defined in [DatabaseSchema].
   ///
@@ -5850,6 +5858,1800 @@ extension InsertOnConflictSingleTerminalRowExt
         isActive,
         createdAt,
         updatedAt,
+      ]),
+    ),
+  );
+}
+
+final class _$OrderRow extends OrderRow {
+  _$OrderRow._(
+    this.id,
+    this.merchantId,
+    this.storeId,
+    this.orderReference,
+    this.billNo,
+    this.source,
+    this.type,
+    this.status,
+    this.paymentStatus,
+    this.paymentMethod,
+    this.subtotal,
+    this.taxTotal,
+    this.grandTotal,
+    this.terminalCode,
+    this.createdAt,
+    this.updatedAt,
+  );
+
+  @override
+  final String id;
+
+  @override
+  final String merchantId;
+
+  @override
+  final String storeId;
+
+  @override
+  final String orderReference;
+
+  @override
+  final int billNo;
+
+  @override
+  final String source;
+
+  @override
+  final String type;
+
+  @override
+  final String status;
+
+  @override
+  final String paymentStatus;
+
+  @override
+  final String paymentMethod;
+
+  @override
+  final int subtotal;
+
+  @override
+  final int taxTotal;
+
+  @override
+  final int grandTotal;
+
+  @override
+  final String? terminalCode;
+
+  @override
+  final DateTime createdAt;
+
+  @override
+  final DateTime updatedAt;
+
+  static final _$table = $ForGeneratedCode.tableDefinition(
+    tableName: 'orders',
+    columns: <String>[
+      'id',
+      'merchant_id',
+      'store_id',
+      'order_reference',
+      'bill_no',
+      'source',
+      'type',
+      'status',
+      'payment_status',
+      'payment_method',
+      'subtotal',
+      'tax_total',
+      'grand_total',
+      'terminal_code',
+      'created_at',
+      'updated_at',
+    ],
+    columnInfo: [
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: true,
+        defaultValue: (kind: 'raw', value: 'gen_random_uuid()'),
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: true,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: true,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: true,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.integer,
+        isNotNull: true,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: true,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: true,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: true,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: true,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: true,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.integer,
+        isNotNull: true,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.integer,
+        isNotNull: true,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.integer,
+        isNotNull: true,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: false,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.dateTime,
+        isNotNull: true,
+        defaultValue: (kind: 'datetime', value: 'now'),
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.dateTime,
+        isNotNull: true,
+        defaultValue: (kind: 'datetime', value: 'now'),
+        autoIncrement: false,
+        overrides: [],
+      ),
+    ],
+    primaryKey: <String>['id'],
+    unique: <List<String>>[
+      ['order_reference'],
+    ],
+    foreignKeys: [
+      $ForGeneratedCode.foreignKeyDefinition(
+        name: 'null',
+        columns: ['merchant_id'],
+        referencedTable: 'merchants',
+        referencedColumns: ['id'],
+        onDelete: .cascade,
+        onUpdate: .noAction,
+      ),
+      $ForGeneratedCode.foreignKeyDefinition(
+        name: 'null',
+        columns: ['store_id'],
+        referencedTable: 'stores',
+        referencedColumns: ['id'],
+        onDelete: .cascade,
+        onUpdate: .noAction,
+      ),
+      $ForGeneratedCode.foreignKeyDefinition(
+        name: 'null',
+        columns: ['terminal_code'],
+        referencedTable: 'terminals',
+        referencedColumns: ['code'],
+        onDelete: .setNull,
+        onUpdate: .noAction,
+      ),
+    ],
+    readRow: _$OrderRow._$fromDatabase,
+  );
+
+  static OrderRow? _$fromDatabase(RowReader row) {
+    final id = row.readString();
+    final merchantId = row.readString();
+    final storeId = row.readString();
+    final orderReference = row.readString();
+    final billNo = row.readInt();
+    final source = row.readString();
+    final type = row.readString();
+    final status = row.readString();
+    final paymentStatus = row.readString();
+    final paymentMethod = row.readString();
+    final subtotal = row.readInt();
+    final taxTotal = row.readInt();
+    final grandTotal = row.readInt();
+    final terminalCode = row.readString();
+    final createdAt = row.readDateTime();
+    final updatedAt = row.readDateTime();
+    if (id == null &&
+        merchantId == null &&
+        storeId == null &&
+        orderReference == null &&
+        billNo == null &&
+        source == null &&
+        type == null &&
+        status == null &&
+        paymentStatus == null &&
+        paymentMethod == null &&
+        subtotal == null &&
+        taxTotal == null &&
+        grandTotal == null &&
+        terminalCode == null &&
+        createdAt == null &&
+        updatedAt == null) {
+      return null;
+    }
+    return _$OrderRow._(
+      id!,
+      merchantId!,
+      storeId!,
+      orderReference!,
+      billNo!,
+      source!,
+      type!,
+      status!,
+      paymentStatus!,
+      paymentMethod!,
+      subtotal!,
+      taxTotal!,
+      grandTotal!,
+      terminalCode,
+      createdAt!,
+      updatedAt!,
+    );
+  }
+
+  @override
+  String toString() =>
+      'OrderRow(id: "$id", merchantId: "$merchantId", storeId: "$storeId", orderReference: "$orderReference", billNo: "$billNo", source: "$source", type: "$type", status: "$status", paymentStatus: "$paymentStatus", paymentMethod: "$paymentMethod", subtotal: "$subtotal", taxTotal: "$taxTotal", grandTotal: "$grandTotal", terminalCode: "$terminalCode", createdAt: "$createdAt", updatedAt: "$updatedAt")';
+}
+
+/// Extension methods for table defined in [OrderRow].
+extension TableOrderRowExt on Table<OrderRow> {
+  /// Insert row into the `orders` table.
+  ///
+  /// Returns a [InsertSingle] statement on which `.execute` must be
+  /// called for the row to be inserted.
+  InsertSingle<OrderRow> insert({
+    Expr<String>? id,
+    required Expr<String> merchantId,
+    required Expr<String> storeId,
+    required Expr<String> orderReference,
+    required Expr<int> billNo,
+    required Expr<String> source,
+    required Expr<String> type,
+    required Expr<String> status,
+    required Expr<String> paymentStatus,
+    required Expr<String> paymentMethod,
+    required Expr<int> subtotal,
+    required Expr<int> taxTotal,
+    required Expr<int> grandTotal,
+    Expr<String?>? terminalCode,
+    Expr<DateTime>? createdAt,
+    Expr<DateTime>? updatedAt,
+  }) => $ForGeneratedCode.insertInto(
+    table: this,
+    values: [
+      id,
+      merchantId,
+      storeId,
+      orderReference,
+      billNo,
+      source,
+      type,
+      status,
+      paymentStatus,
+      paymentMethod,
+      subtotal,
+      taxTotal,
+      grandTotal,
+      terminalCode,
+      createdAt,
+      updatedAt,
+    ],
+  );
+
+  /// Insert row into the `orders` table.
+  ///
+  /// Returns a [InsertSingle] statement on which `.execute` must be
+  /// called for the row to be inserted.
+  InsertSingle<OrderRow> insertValue({
+    String? id,
+    required String merchantId,
+    required String storeId,
+    required String orderReference,
+    required int billNo,
+    required String source,
+    required String type,
+    required String status,
+    required String paymentStatus,
+    required String paymentMethod,
+    required int subtotal,
+    required int taxTotal,
+    required int grandTotal,
+    String? terminalCode,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) => $ForGeneratedCode.insertInto(
+    table: this,
+    values: [
+      id?.asExpr,
+      merchantId.asExpr,
+      storeId.asExpr,
+      orderReference.asExpr,
+      billNo.asExpr,
+      source.asExpr,
+      type.asExpr,
+      status.asExpr,
+      paymentStatus.asExpr,
+      paymentMethod.asExpr,
+      subtotal.asExpr,
+      taxTotal.asExpr,
+      grandTotal.asExpr,
+      terminalCode.asExpr,
+      createdAt?.asExpr,
+      updatedAt?.asExpr,
+    ],
+  );
+
+  /// Bulk insert rows into the `orders` table.
+  ///
+  /// This method takes an `Iterable<T>` and requires that you provide
+  /// a _mapping function_ from `T` to each column to be inserted.
+  ///
+  /// If a mapping function is omitted, the _default value_ will be
+  /// inserted, or `NULL` if column is nullable and as no default value.
+  /// To explicitely insert `NULL`, use a _mapping function_ that maps
+  /// `T` to `null`.
+  ///
+  /// > [!NOTE]
+  /// > This method aims utilize database specific bulk insertion logic
+  /// > to ensure good performance. Database adapters may pipeline bulk
+  /// > insertions through multiple statements inside a transaction.
+  ///
+  /// Returns a [Insert] statement on which `.execute` must be
+  /// called for the rows to be inserted.
+  Insert<OrderRow> insertValuesMapped<T>(
+    Iterable<T> rows, {
+    String Function(T row)? id,
+    required String Function(T row) merchantId,
+    required String Function(T row) storeId,
+    required String Function(T row) orderReference,
+    required int Function(T row) billNo,
+    required String Function(T row) source,
+    required String Function(T row) type,
+    required String Function(T row) status,
+    required String Function(T row) paymentStatus,
+    required String Function(T row) paymentMethod,
+    required int Function(T row) subtotal,
+    required int Function(T row) taxTotal,
+    required int Function(T row) grandTotal,
+    String? Function(T row)? terminalCode,
+    DateTime Function(T row)? createdAt,
+    DateTime Function(T row)? updatedAt,
+  }) => $ForGeneratedCode.insertValuesMapped(
+    table: this,
+    rows: rows,
+    mappings: [
+      id,
+      merchantId,
+      storeId,
+      orderReference,
+      billNo,
+      source,
+      type,
+      status,
+      paymentStatus,
+      paymentMethod,
+      subtotal,
+      taxTotal,
+      grandTotal,
+      terminalCode,
+      createdAt,
+      updatedAt,
+    ],
+  );
+
+  /// Delete a single row from the `orders` table, specified by
+  /// _primary key_.
+  ///
+  /// Returns a [DeleteSingle] statement on which `.execute()` must be
+  /// called for the row to be deleted.
+  ///
+  /// To delete multiple rows, using `.where()` to filter which rows
+  /// should be deleted. If you wish to delete all rows, use
+  /// `.where((_) => toExpr(true)).delete()`.
+  DeleteSingle<OrderRow> delete(String id) =>
+      $ForGeneratedCode.deleteSingle(byKey(id), _$OrderRow._$table);
+}
+
+/// Extension methods for building queries against the `orders` table.
+extension QueryOrderRowExt on Query<(Expr<OrderRow>,)> {
+  /// Lookup a single row in `orders` table using the _primary key_.
+  ///
+  /// Returns a [QuerySingle] object, which returns at-most one row,
+  /// when `.fetch()` is called.
+  QuerySingle<(Expr<OrderRow>,)> byKey(String id) =>
+      where((orderRow) => orderRow.id.equalsValue(id)).first;
+
+  /// Update all rows in the `orders` table matching this [Query].
+  ///
+  /// The changes to be applied to each row matching this [Query] are
+  /// defined using the [updateBuilder], which is given an [Expr]
+  /// representation of the row being updated and a `set` function to
+  /// specify which fields should be updated. The result of the `set`
+  /// function should always be returned from the `updateBuilder`.
+  ///
+  /// Returns an [Update] statement on which `.execute()` must be called
+  /// for the rows to be updated.
+  ///
+  /// **Example:** decrementing `1` from the `value` field for each row
+  /// where `value > 0`.
+  /// ```dart
+  /// await db.mytable
+  ///   .where((row) => row.value > toExpr(0))
+  ///   .update((row, set) => set(
+  ///     value: row.value - toExpr(1),
+  ///   ))
+  ///   .execute();
+  /// ```
+  ///
+  /// > [!WARNING]
+  /// > The `updateBuilder` callback does not make the update, it builds
+  /// > the expressions for updating the rows. You should **never** invoke
+  /// > the `set` function more than once, and the result should always
+  /// > be returned immediately.
+  Update<OrderRow> update(
+    UpdateSet<OrderRow> Function(
+      Expr<OrderRow> orderRow,
+      UpdateSet<OrderRow> Function({
+        Expr<String> id,
+        Expr<String> merchantId,
+        Expr<String> storeId,
+        Expr<String> orderReference,
+        Expr<int> billNo,
+        Expr<String> source,
+        Expr<String> type,
+        Expr<String> status,
+        Expr<String> paymentStatus,
+        Expr<String> paymentMethod,
+        Expr<int> subtotal,
+        Expr<int> taxTotal,
+        Expr<int> grandTotal,
+        Expr<String?> terminalCode,
+        Expr<DateTime> createdAt,
+        Expr<DateTime> updatedAt,
+      })
+      set,
+    )
+    updateBuilder,
+  ) => $ForGeneratedCode.update<OrderRow>(
+    this,
+    _$OrderRow._$table,
+    (orderRow) => updateBuilder(
+      orderRow,
+      ({
+        Expr<String>? id,
+        Expr<String>? merchantId,
+        Expr<String>? storeId,
+        Expr<String>? orderReference,
+        Expr<int>? billNo,
+        Expr<String>? source,
+        Expr<String>? type,
+        Expr<String>? status,
+        Expr<String>? paymentStatus,
+        Expr<String>? paymentMethod,
+        Expr<int>? subtotal,
+        Expr<int>? taxTotal,
+        Expr<int>? grandTotal,
+        Expr<String?>? terminalCode,
+        Expr<DateTime>? createdAt,
+        Expr<DateTime>? updatedAt,
+      }) => $ForGeneratedCode.buildUpdate<OrderRow>([
+        id,
+        merchantId,
+        storeId,
+        orderReference,
+        billNo,
+        source,
+        type,
+        status,
+        paymentStatus,
+        paymentMethod,
+        subtotal,
+        taxTotal,
+        grandTotal,
+        terminalCode,
+        createdAt,
+        updatedAt,
+      ]),
+    ),
+  );
+
+  /// Lookup a single row in `orders` table using the
+  /// `orderReference` field
+  ///
+  /// We know that lookup by the `orderReference` field returns
+  /// at-most one row because the [Unique] annotation in [OrderRow].
+  ///
+  /// Returns a [QuerySingle] object, which returns at-most one row,
+  /// when `.fetch()` is called.
+  QuerySingle<(Expr<OrderRow>,)> byOrderReference(String orderReference) =>
+      where(
+        (orderRow) => orderRow.orderReference.equalsValue(orderReference),
+      ).first;
+
+  /// Delete all rows in the `orders` table matching this [Query].
+  ///
+  /// Returns a [Delete] statement on which `.execute()` must be called
+  /// for the rows to be deleted.
+  Delete<OrderRow> delete() =>
+      $ForGeneratedCode.delete(this, _$OrderRow._$table);
+}
+
+/// Extension methods for building point queries against the `orders` table.
+extension QuerySingleOrderRowExt on QuerySingle<(Expr<OrderRow>,)> {
+  /// Update the row (if any) in the `orders` table matching this
+  /// [QuerySingle].
+  ///
+  /// The changes to be applied to the row matching this [QuerySingle] are
+  /// defined using the [updateBuilder], which is given an [Expr]
+  /// representation of the row being updated and a `set` function to
+  /// specify which fields should be updated. The result of the `set`
+  /// function should always be returned from the `updateBuilder`.
+  ///
+  /// Returns an [UpdateSingle] statement on which `.execute()` must be
+  /// called for the row to be updated. The resulting statement will
+  /// **not** fail, if there are no rows matching this query exists.
+  ///
+  /// **Example:** decrementing `1` from the `value` field the row with
+  /// `id = 1`.
+  /// ```dart
+  /// await db.mytable
+  ///   .byKey(1)
+  ///   .update((row, set) => set(
+  ///     value: row.value - toExpr(1),
+  ///   ))
+  ///   .execute();
+  /// ```
+  ///
+  /// > [!WARNING]
+  /// > The `updateBuilder` callback does not make the update, it builds
+  /// > the expressions for updating the rows. You should **never** invoke
+  /// > the `set` function more than once, and the result should always
+  /// > be returned immediately.
+  UpdateSingle<OrderRow> update(
+    UpdateSet<OrderRow> Function(
+      Expr<OrderRow> orderRow,
+      UpdateSet<OrderRow> Function({
+        Expr<String> id,
+        Expr<String> merchantId,
+        Expr<String> storeId,
+        Expr<String> orderReference,
+        Expr<int> billNo,
+        Expr<String> source,
+        Expr<String> type,
+        Expr<String> status,
+        Expr<String> paymentStatus,
+        Expr<String> paymentMethod,
+        Expr<int> subtotal,
+        Expr<int> taxTotal,
+        Expr<int> grandTotal,
+        Expr<String?> terminalCode,
+        Expr<DateTime> createdAt,
+        Expr<DateTime> updatedAt,
+      })
+      set,
+    )
+    updateBuilder,
+  ) => $ForGeneratedCode.updateSingle<OrderRow>(
+    this,
+    _$OrderRow._$table,
+    (orderRow) => updateBuilder(
+      orderRow,
+      ({
+        Expr<String>? id,
+        Expr<String>? merchantId,
+        Expr<String>? storeId,
+        Expr<String>? orderReference,
+        Expr<int>? billNo,
+        Expr<String>? source,
+        Expr<String>? type,
+        Expr<String>? status,
+        Expr<String>? paymentStatus,
+        Expr<String>? paymentMethod,
+        Expr<int>? subtotal,
+        Expr<int>? taxTotal,
+        Expr<int>? grandTotal,
+        Expr<String?>? terminalCode,
+        Expr<DateTime>? createdAt,
+        Expr<DateTime>? updatedAt,
+      }) => $ForGeneratedCode.buildUpdate<OrderRow>([
+        id,
+        merchantId,
+        storeId,
+        orderReference,
+        billNo,
+        source,
+        type,
+        status,
+        paymentStatus,
+        paymentMethod,
+        subtotal,
+        taxTotal,
+        grandTotal,
+        terminalCode,
+        createdAt,
+        updatedAt,
+      ]),
+    ),
+  );
+
+  /// Delete the row (if any) in the `orders` table matching this [QuerySingle].
+  ///
+  /// Returns a [DeleteSingle] statement on which `.execute()` must be called
+  /// for the row to be deleted. The resulting statement will **not**
+  /// fail, if there are no rows matching this query exists.
+  DeleteSingle<OrderRow> delete() =>
+      $ForGeneratedCode.deleteSingle(this, _$OrderRow._$table);
+}
+
+/// Extension methods for expressions on a row in the `orders` table.
+extension ExpressionOrderRowExt on Expr<OrderRow> {
+  Expr<String> get id =>
+      $ForGeneratedCode.field(this, 0, $ForGeneratedCode.text);
+
+  Expr<String> get merchantId =>
+      $ForGeneratedCode.field(this, 1, $ForGeneratedCode.text);
+
+  Expr<String> get storeId =>
+      $ForGeneratedCode.field(this, 2, $ForGeneratedCode.text);
+
+  Expr<String> get orderReference =>
+      $ForGeneratedCode.field(this, 3, $ForGeneratedCode.text);
+
+  Expr<int> get billNo =>
+      $ForGeneratedCode.field(this, 4, $ForGeneratedCode.integer);
+
+  Expr<String> get source =>
+      $ForGeneratedCode.field(this, 5, $ForGeneratedCode.text);
+
+  Expr<String> get type =>
+      $ForGeneratedCode.field(this, 6, $ForGeneratedCode.text);
+
+  Expr<String> get status =>
+      $ForGeneratedCode.field(this, 7, $ForGeneratedCode.text);
+
+  Expr<String> get paymentStatus =>
+      $ForGeneratedCode.field(this, 8, $ForGeneratedCode.text);
+
+  Expr<String> get paymentMethod =>
+      $ForGeneratedCode.field(this, 9, $ForGeneratedCode.text);
+
+  Expr<int> get subtotal =>
+      $ForGeneratedCode.field(this, 10, $ForGeneratedCode.integer);
+
+  Expr<int> get taxTotal =>
+      $ForGeneratedCode.field(this, 11, $ForGeneratedCode.integer);
+
+  Expr<int> get grandTotal =>
+      $ForGeneratedCode.field(this, 12, $ForGeneratedCode.integer);
+
+  Expr<String?> get terminalCode =>
+      $ForGeneratedCode.field(this, 13, $ForGeneratedCode.text);
+
+  Expr<DateTime> get createdAt =>
+      $ForGeneratedCode.field(this, 14, $ForGeneratedCode.dateTime);
+
+  Expr<DateTime> get updatedAt =>
+      $ForGeneratedCode.field(this, 15, $ForGeneratedCode.dateTime);
+}
+
+extension ExpressionNullableOrderRowExt on Expr<OrderRow?> {
+  Expr<String?> get id =>
+      $ForGeneratedCode.field(this, 0, $ForGeneratedCode.text);
+
+  Expr<String?> get merchantId =>
+      $ForGeneratedCode.field(this, 1, $ForGeneratedCode.text);
+
+  Expr<String?> get storeId =>
+      $ForGeneratedCode.field(this, 2, $ForGeneratedCode.text);
+
+  Expr<String?> get orderReference =>
+      $ForGeneratedCode.field(this, 3, $ForGeneratedCode.text);
+
+  Expr<int?> get billNo =>
+      $ForGeneratedCode.field(this, 4, $ForGeneratedCode.integer);
+
+  Expr<String?> get source =>
+      $ForGeneratedCode.field(this, 5, $ForGeneratedCode.text);
+
+  Expr<String?> get type =>
+      $ForGeneratedCode.field(this, 6, $ForGeneratedCode.text);
+
+  Expr<String?> get status =>
+      $ForGeneratedCode.field(this, 7, $ForGeneratedCode.text);
+
+  Expr<String?> get paymentStatus =>
+      $ForGeneratedCode.field(this, 8, $ForGeneratedCode.text);
+
+  Expr<String?> get paymentMethod =>
+      $ForGeneratedCode.field(this, 9, $ForGeneratedCode.text);
+
+  Expr<int?> get subtotal =>
+      $ForGeneratedCode.field(this, 10, $ForGeneratedCode.integer);
+
+  Expr<int?> get taxTotal =>
+      $ForGeneratedCode.field(this, 11, $ForGeneratedCode.integer);
+
+  Expr<int?> get grandTotal =>
+      $ForGeneratedCode.field(this, 12, $ForGeneratedCode.integer);
+
+  Expr<String?> get terminalCode =>
+      $ForGeneratedCode.field(this, 13, $ForGeneratedCode.text);
+
+  Expr<DateTime?> get createdAt =>
+      $ForGeneratedCode.field(this, 14, $ForGeneratedCode.dateTime);
+
+  Expr<DateTime?> get updatedAt =>
+      $ForGeneratedCode.field(this, 15, $ForGeneratedCode.dateTime);
+
+  /// Check if the row is not `NULL`.
+  ///
+  /// This will check if _primary key_ fields in this row are `NULL`.
+  ///
+  /// If this is a reference lookup by subquery it might be more efficient
+  /// to check if the referencing field is `NULL`.
+  Expr<bool> isNotNull() => id.isNotNull();
+
+  /// Check if the row is `NULL`.
+  ///
+  /// This will check if _primary key_ fields in this row are `NULL`.
+  ///
+  /// If this is a reference lookup by subquery it might be more efficient
+  /// to check if the referencing field is `NULL`.
+  Expr<bool> isNull() => isNotNull().not();
+}
+
+/// `Table<OrderRow>` conflict targets for use with `.onConflict`.
+enum OrderRowConflict {
+  /// Conflict with an existing row that has a matching primary key.
+  ///
+  /// Thus, the other row has matching values for:
+  /// `id`.
+  primaryKey(['id']),
+
+  /// `orderReference` conflict.
+  ///
+  /// Due to violation of the `UNIQUE` constraint on
+  /// `orderReference`.
+  ///
+  /// Thus, the conflicting row has matching values for these fields.
+  orderReference(['order_reference']);
+
+  const OrderRowConflict(this._fields);
+
+  final List<String> _fields;
+}
+
+extension InsertOrderRowExt on Insert<OrderRow> {
+  /// Build an `INSERT` statement with an `ON CONFLICT` clause.
+  ///
+  /// The [target] argument specifies the _conflict target_ to be
+  /// handled. The _conflict target_ is always a `UNIQUE` constraint or
+  /// `PRIMARY KEY` constraint.
+  ///
+  /// If a row to be inserted violates the _conflict target_ constraint,
+  /// then the conflict action is triggered:
+  /// * `.doNothing()` to skip insertion of the new row, and,
+  /// * `.update((orderRow, excluded, set) => set(...))` to
+  ///   update the conflicting row.
+  ///
+  /// If a row to be inserted violates a constraint other than the one
+  /// specified in _conflict target_ then the entire `INSERT` statement
+  /// will fail.
+  ///
+  /// This is equivalent to `INSERT ... ON CONFLICT (...)` in SQL.
+  InsertOnConflict<OrderRow> onConflict(OrderRowConflict target) =>
+      $ForGeneratedCode.insertOnConflict(this, target._fields);
+}
+
+extension InsertOnConflictOrderRowExt on InsertOnConflict<OrderRow> {
+  /// Build an `INSERT` statement an [upsert-clause][1].
+  ///
+  /// When a row to be inserted violates the `UNIQUE` or `PRIMARY KEY`
+  /// constraint previously specified as _conflict target_, the existing
+  /// row is updated using the expressions defined with the
+  /// [updateBuilder]. The [updateBuilder] is given 3 parameters:
+  ///   * `orderRow` an [Expr] representing the existing row in
+  ///     the database,
+  ///   * `excluded` an [Expr] representing the row to be inserted in the
+  ///     database, and,
+  ///   * `set` a function to specify which fields should be updated and
+  ///     build the [UpdateSet].
+  ///
+  /// The result of the `set` function should always be immediately
+  /// returned from the [updateBuilder].
+  ///
+  /// **Example:** Insert a counter with `count = 2` or increment the
+  /// existing row, if a `PRIMARY KEY` conflict occurs.
+  /// ```dart
+  /// await db.counters.insertValue(
+  ///     name: 'my-counter', // primary key
+  ///     count: 2,
+  ///   )
+  ///   .onConflict(.primaryKey)
+  ///   .update((counter, excluded, set) => set(
+  ///     count: counter.count + excluded.count,
+  ///   ))
+  ///   .execute();
+  /// ```
+  ///
+  /// This is equivalent to
+  /// `INSERT ... ON CONFLICT (...) UPDATE SET ...` in SQL.
+  ///
+  /// > [!WARNING]
+  /// > The `updateBuilder` callback does not make the update, it builds
+  /// > the expressions for updating the rows. You should **never** invoke
+  /// > the `set` function more than once, and the result should always
+  /// > be returned immediately.
+  ///
+  /// [1]: https://www.sqlite.org/lang_upsert.html
+  Upsert<OrderRow> update(
+    UpdateSet<OrderRow> Function(
+      Expr<OrderRow> orderRow,
+      Expr<OrderRow> excluded,
+      UpdateSet<OrderRow> Function({
+        Expr<String> id,
+        Expr<String> merchantId,
+        Expr<String> storeId,
+        Expr<String> orderReference,
+        Expr<int> billNo,
+        Expr<String> source,
+        Expr<String> type,
+        Expr<String> status,
+        Expr<String> paymentStatus,
+        Expr<String> paymentMethod,
+        Expr<int> subtotal,
+        Expr<int> taxTotal,
+        Expr<int> grandTotal,
+        Expr<String?> terminalCode,
+        Expr<DateTime> createdAt,
+        Expr<DateTime> updatedAt,
+      })
+      set,
+    )
+    updateBuilder,
+  ) => $ForGeneratedCode.updateOnConflict<OrderRow>(
+    this,
+    (orderRow, excluded) => updateBuilder(
+      orderRow,
+      excluded,
+      ({
+        Expr<String>? id,
+        Expr<String>? merchantId,
+        Expr<String>? storeId,
+        Expr<String>? orderReference,
+        Expr<int>? billNo,
+        Expr<String>? source,
+        Expr<String>? type,
+        Expr<String>? status,
+        Expr<String>? paymentStatus,
+        Expr<String>? paymentMethod,
+        Expr<int>? subtotal,
+        Expr<int>? taxTotal,
+        Expr<int>? grandTotal,
+        Expr<String?>? terminalCode,
+        Expr<DateTime>? createdAt,
+        Expr<DateTime>? updatedAt,
+      }) => $ForGeneratedCode.buildUpdate<OrderRow>([
+        id,
+        merchantId,
+        storeId,
+        orderReference,
+        billNo,
+        source,
+        type,
+        status,
+        paymentStatus,
+        paymentMethod,
+        subtotal,
+        taxTotal,
+        grandTotal,
+        terminalCode,
+        createdAt,
+        updatedAt,
+      ]),
+    ),
+  );
+}
+
+extension InsertSingleOrderRowExt on InsertSingle<OrderRow> {
+  /// Build an `INSERT` statement with an `ON CONFLICT` clause.
+  ///
+  /// The [target] argument specifies the _conflict target_ to be
+  /// handled. The _conflict target_ is always a `UNIQUE` constraint or
+  /// `PRIMARY KEY` constraint.
+  ///
+  /// If a row to be inserted violates the _conflict target_ constraint,
+  /// then the conflict action is triggered:
+  /// * `.doNothing()` to skip insertion of the new row, and,
+  /// * `.update((orderRow, excluded, set) => set(...))` to
+  ///   update the conflicting row.
+  ///
+  /// If a row to be inserted violates a constraint other than the one
+  /// specified in _conflict target_ then the entire `INSERT` statement
+  /// will fail.
+  ///
+  /// This is equivalent to `INSERT ... ON CONFLICT (...)` in SQL.
+  InsertOnConflictSingle<OrderRow> onConflict(OrderRowConflict target) =>
+      $ForGeneratedCode.insertOnConflictSingle(this, target._fields);
+}
+
+extension InsertOnConflictSingleOrderRowExt
+    on InsertOnConflictSingle<OrderRow> {
+  /// Build an `INSERT` statement an [upsert-clause][1].
+  ///
+  /// When a row to be inserted violates the `UNIQUE` or `PRIMARY KEY`
+  /// constraint previously specified as _conflict target_, the existing
+  /// row is updated using the expressions defined with the
+  /// [updateBuilder]. The [updateBuilder] is given 3 parameters:
+  ///   * `orderRow` an [Expr] representing the existing row in
+  ///     the database,
+  ///   * `excluded` an [Expr] representing the row to be inserted in the
+  ///     database, and,
+  ///   * `set` a function to specify which fields should be updated and
+  ///     build the [UpdateSet].
+  ///
+  /// The result of the `set` function should always be immediately
+  /// returned from the [updateBuilder].
+  ///
+  /// **Example:** Insert a counter with `count = 2` or increment the
+  /// existing row, if a `PRIMARY KEY` conflict occurs.
+  /// ```dart
+  /// await db.counters.insertValue(
+  ///     name: 'my-counter', // primary key
+  ///     count: 2,
+  ///   )
+  ///   .onConflict(.primaryKey)
+  ///   .update((counter, excluded, set) => set(
+  ///     count: counter.count + excluded.count,
+  ///   ))
+  ///   .execute();
+  /// ```
+  ///
+  /// This is equivalent to
+  /// `INSERT ... ON CONFLICT (...) UPDATE SET ...` in SQL.
+  ///
+  /// > [!WARNING]
+  /// > The `updateBuilder` callback does not make the update, it builds
+  /// > the expressions for updating the rows. You should **never** invoke
+  /// > the `set` function more than once, and the result should always
+  /// > be returned immediately.
+  ///
+  /// [1]: https://www.sqlite.org/lang_upsert.html
+  UpsertSingle<OrderRow> update(
+    UpdateSet<OrderRow> Function(
+      Expr<OrderRow> orderRow,
+      Expr<OrderRow> excluded,
+      UpdateSet<OrderRow> Function({
+        Expr<String> id,
+        Expr<String> merchantId,
+        Expr<String> storeId,
+        Expr<String> orderReference,
+        Expr<int> billNo,
+        Expr<String> source,
+        Expr<String> type,
+        Expr<String> status,
+        Expr<String> paymentStatus,
+        Expr<String> paymentMethod,
+        Expr<int> subtotal,
+        Expr<int> taxTotal,
+        Expr<int> grandTotal,
+        Expr<String?> terminalCode,
+        Expr<DateTime> createdAt,
+        Expr<DateTime> updatedAt,
+      })
+      set,
+    )
+    updateBuilder,
+  ) => $ForGeneratedCode.updateOnConflictSingle<OrderRow>(
+    this,
+    (orderRow, excluded) => updateBuilder(
+      orderRow,
+      excluded,
+      ({
+        Expr<String>? id,
+        Expr<String>? merchantId,
+        Expr<String>? storeId,
+        Expr<String>? orderReference,
+        Expr<int>? billNo,
+        Expr<String>? source,
+        Expr<String>? type,
+        Expr<String>? status,
+        Expr<String>? paymentStatus,
+        Expr<String>? paymentMethod,
+        Expr<int>? subtotal,
+        Expr<int>? taxTotal,
+        Expr<int>? grandTotal,
+        Expr<String?>? terminalCode,
+        Expr<DateTime>? createdAt,
+        Expr<DateTime>? updatedAt,
+      }) => $ForGeneratedCode.buildUpdate<OrderRow>([
+        id,
+        merchantId,
+        storeId,
+        orderReference,
+        billNo,
+        source,
+        type,
+        status,
+        paymentStatus,
+        paymentMethod,
+        subtotal,
+        taxTotal,
+        grandTotal,
+        terminalCode,
+        createdAt,
+        updatedAt,
+      ]),
+    ),
+  );
+}
+
+final class _$OrderItemRow extends OrderItemRow {
+  _$OrderItemRow._(
+    this.id,
+    this.orderId,
+    this.productId,
+    this.storeId,
+    this.quantity,
+    this.unitPrice,
+    this.taxRate,
+  );
+
+  @override
+  final String id;
+
+  @override
+  final String orderId;
+
+  @override
+  final String productId;
+
+  @override
+  final String storeId;
+
+  @override
+  final int quantity;
+
+  @override
+  final int unitPrice;
+
+  @override
+  final double taxRate;
+
+  static final _$table = $ForGeneratedCode.tableDefinition(
+    tableName: 'order_items',
+    columns: <String>[
+      'id',
+      'order_id',
+      'product_id',
+      'store_id',
+      'quantity',
+      'unit_price',
+      'tax_rate',
+    ],
+    columnInfo: [
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: true,
+        defaultValue: (kind: 'raw', value: 'gen_random_uuid()'),
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: true,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: true,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: true,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.integer,
+        isNotNull: true,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.integer,
+        isNotNull: true,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.real,
+        isNotNull: true,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [
+          (
+            dialect: 'postgres',
+            columnType: 'NUMERIC(5, 2)',
+            defaultValue: null,
+            collation: null,
+          ),
+        ],
+      ),
+    ],
+    primaryKey: <String>['id'],
+    unique: <List<String>>[],
+    foreignKeys: [
+      $ForGeneratedCode.foreignKeyDefinition(
+        name: 'null',
+        columns: ['order_id'],
+        referencedTable: 'orders',
+        referencedColumns: ['id'],
+        onDelete: .noAction,
+        onUpdate: .noAction,
+      ),
+      $ForGeneratedCode.foreignKeyDefinition(
+        name: 'null',
+        columns: ['product_id'],
+        referencedTable: 'products',
+        referencedColumns: ['id'],
+        onDelete: .noAction,
+        onUpdate: .noAction,
+      ),
+      $ForGeneratedCode.foreignKeyDefinition(
+        name: 'null',
+        columns: ['store_id'],
+        referencedTable: 'stores',
+        referencedColumns: ['id'],
+        onDelete: .noAction,
+        onUpdate: .noAction,
+      ),
+    ],
+    readRow: _$OrderItemRow._$fromDatabase,
+  );
+
+  static OrderItemRow? _$fromDatabase(RowReader row) {
+    final id = row.readString();
+    final orderId = row.readString();
+    final productId = row.readString();
+    final storeId = row.readString();
+    final quantity = row.readInt();
+    final unitPrice = row.readInt();
+    final taxRate = row.readDouble();
+    if (id == null &&
+        orderId == null &&
+        productId == null &&
+        storeId == null &&
+        quantity == null &&
+        unitPrice == null &&
+        taxRate == null) {
+      return null;
+    }
+    return _$OrderItemRow._(
+      id!,
+      orderId!,
+      productId!,
+      storeId!,
+      quantity!,
+      unitPrice!,
+      taxRate!,
+    );
+  }
+
+  @override
+  String toString() =>
+      'OrderItemRow(id: "$id", orderId: "$orderId", productId: "$productId", storeId: "$storeId", quantity: "$quantity", unitPrice: "$unitPrice", taxRate: "$taxRate")';
+}
+
+/// Extension methods for table defined in [OrderItemRow].
+extension TableOrderItemRowExt on Table<OrderItemRow> {
+  /// Insert row into the `orderItems` table.
+  ///
+  /// Returns a [InsertSingle] statement on which `.execute` must be
+  /// called for the row to be inserted.
+  InsertSingle<OrderItemRow> insert({
+    Expr<String>? id,
+    required Expr<String> orderId,
+    required Expr<String> productId,
+    required Expr<String> storeId,
+    required Expr<int> quantity,
+    required Expr<int> unitPrice,
+    required Expr<double> taxRate,
+  }) => $ForGeneratedCode.insertInto(
+    table: this,
+    values: [id, orderId, productId, storeId, quantity, unitPrice, taxRate],
+  );
+
+  /// Insert row into the `orderItems` table.
+  ///
+  /// Returns a [InsertSingle] statement on which `.execute` must be
+  /// called for the row to be inserted.
+  InsertSingle<OrderItemRow> insertValue({
+    String? id,
+    required String orderId,
+    required String productId,
+    required String storeId,
+    required int quantity,
+    required int unitPrice,
+    required double taxRate,
+  }) => $ForGeneratedCode.insertInto(
+    table: this,
+    values: [
+      id?.asExpr,
+      orderId.asExpr,
+      productId.asExpr,
+      storeId.asExpr,
+      quantity.asExpr,
+      unitPrice.asExpr,
+      taxRate.asExpr,
+    ],
+  );
+
+  /// Bulk insert rows into the `orderItems` table.
+  ///
+  /// This method takes an `Iterable<T>` and requires that you provide
+  /// a _mapping function_ from `T` to each column to be inserted.
+  ///
+  /// If a mapping function is omitted, the _default value_ will be
+  /// inserted, or `NULL` if column is nullable and as no default value.
+  /// To explicitely insert `NULL`, use a _mapping function_ that maps
+  /// `T` to `null`.
+  ///
+  /// > [!NOTE]
+  /// > This method aims utilize database specific bulk insertion logic
+  /// > to ensure good performance. Database adapters may pipeline bulk
+  /// > insertions through multiple statements inside a transaction.
+  ///
+  /// Returns a [Insert] statement on which `.execute` must be
+  /// called for the rows to be inserted.
+  Insert<OrderItemRow> insertValuesMapped<T>(
+    Iterable<T> rows, {
+    String Function(T row)? id,
+    required String Function(T row) orderId,
+    required String Function(T row) productId,
+    required String Function(T row) storeId,
+    required int Function(T row) quantity,
+    required int Function(T row) unitPrice,
+    required double Function(T row) taxRate,
+  }) => $ForGeneratedCode.insertValuesMapped(
+    table: this,
+    rows: rows,
+    mappings: [id, orderId, productId, storeId, quantity, unitPrice, taxRate],
+  );
+
+  /// Delete a single row from the `orderItems` table, specified by
+  /// _primary key_.
+  ///
+  /// Returns a [DeleteSingle] statement on which `.execute()` must be
+  /// called for the row to be deleted.
+  ///
+  /// To delete multiple rows, using `.where()` to filter which rows
+  /// should be deleted. If you wish to delete all rows, use
+  /// `.where((_) => toExpr(true)).delete()`.
+  DeleteSingle<OrderItemRow> delete(String id) =>
+      $ForGeneratedCode.deleteSingle(byKey(id), _$OrderItemRow._$table);
+}
+
+/// Extension methods for building queries against the `orderItems` table.
+extension QueryOrderItemRowExt on Query<(Expr<OrderItemRow>,)> {
+  /// Lookup a single row in `orderItems` table using the _primary key_.
+  ///
+  /// Returns a [QuerySingle] object, which returns at-most one row,
+  /// when `.fetch()` is called.
+  QuerySingle<(Expr<OrderItemRow>,)> byKey(String id) =>
+      where((orderItemRow) => orderItemRow.id.equalsValue(id)).first;
+
+  /// Update all rows in the `orderItems` table matching this [Query].
+  ///
+  /// The changes to be applied to each row matching this [Query] are
+  /// defined using the [updateBuilder], which is given an [Expr]
+  /// representation of the row being updated and a `set` function to
+  /// specify which fields should be updated. The result of the `set`
+  /// function should always be returned from the `updateBuilder`.
+  ///
+  /// Returns an [Update] statement on which `.execute()` must be called
+  /// for the rows to be updated.
+  ///
+  /// **Example:** decrementing `1` from the `value` field for each row
+  /// where `value > 0`.
+  /// ```dart
+  /// await db.mytable
+  ///   .where((row) => row.value > toExpr(0))
+  ///   .update((row, set) => set(
+  ///     value: row.value - toExpr(1),
+  ///   ))
+  ///   .execute();
+  /// ```
+  ///
+  /// > [!WARNING]
+  /// > The `updateBuilder` callback does not make the update, it builds
+  /// > the expressions for updating the rows. You should **never** invoke
+  /// > the `set` function more than once, and the result should always
+  /// > be returned immediately.
+  Update<OrderItemRow> update(
+    UpdateSet<OrderItemRow> Function(
+      Expr<OrderItemRow> orderItemRow,
+      UpdateSet<OrderItemRow> Function({
+        Expr<String> id,
+        Expr<String> orderId,
+        Expr<String> productId,
+        Expr<String> storeId,
+        Expr<int> quantity,
+        Expr<int> unitPrice,
+        Expr<double> taxRate,
+      })
+      set,
+    )
+    updateBuilder,
+  ) => $ForGeneratedCode.update<OrderItemRow>(
+    this,
+    _$OrderItemRow._$table,
+    (orderItemRow) => updateBuilder(
+      orderItemRow,
+      ({
+        Expr<String>? id,
+        Expr<String>? orderId,
+        Expr<String>? productId,
+        Expr<String>? storeId,
+        Expr<int>? quantity,
+        Expr<int>? unitPrice,
+        Expr<double>? taxRate,
+      }) => $ForGeneratedCode.buildUpdate<OrderItemRow>([
+        id,
+        orderId,
+        productId,
+        storeId,
+        quantity,
+        unitPrice,
+        taxRate,
+      ]),
+    ),
+  );
+
+  /// Delete all rows in the `orderItems` table matching this [Query].
+  ///
+  /// Returns a [Delete] statement on which `.execute()` must be called
+  /// for the rows to be deleted.
+  Delete<OrderItemRow> delete() =>
+      $ForGeneratedCode.delete(this, _$OrderItemRow._$table);
+}
+
+/// Extension methods for building point queries against the `orderItems` table.
+extension QuerySingleOrderItemRowExt on QuerySingle<(Expr<OrderItemRow>,)> {
+  /// Update the row (if any) in the `orderItems` table matching this
+  /// [QuerySingle].
+  ///
+  /// The changes to be applied to the row matching this [QuerySingle] are
+  /// defined using the [updateBuilder], which is given an [Expr]
+  /// representation of the row being updated and a `set` function to
+  /// specify which fields should be updated. The result of the `set`
+  /// function should always be returned from the `updateBuilder`.
+  ///
+  /// Returns an [UpdateSingle] statement on which `.execute()` must be
+  /// called for the row to be updated. The resulting statement will
+  /// **not** fail, if there are no rows matching this query exists.
+  ///
+  /// **Example:** decrementing `1` from the `value` field the row with
+  /// `id = 1`.
+  /// ```dart
+  /// await db.mytable
+  ///   .byKey(1)
+  ///   .update((row, set) => set(
+  ///     value: row.value - toExpr(1),
+  ///   ))
+  ///   .execute();
+  /// ```
+  ///
+  /// > [!WARNING]
+  /// > The `updateBuilder` callback does not make the update, it builds
+  /// > the expressions for updating the rows. You should **never** invoke
+  /// > the `set` function more than once, and the result should always
+  /// > be returned immediately.
+  UpdateSingle<OrderItemRow> update(
+    UpdateSet<OrderItemRow> Function(
+      Expr<OrderItemRow> orderItemRow,
+      UpdateSet<OrderItemRow> Function({
+        Expr<String> id,
+        Expr<String> orderId,
+        Expr<String> productId,
+        Expr<String> storeId,
+        Expr<int> quantity,
+        Expr<int> unitPrice,
+        Expr<double> taxRate,
+      })
+      set,
+    )
+    updateBuilder,
+  ) => $ForGeneratedCode.updateSingle<OrderItemRow>(
+    this,
+    _$OrderItemRow._$table,
+    (orderItemRow) => updateBuilder(
+      orderItemRow,
+      ({
+        Expr<String>? id,
+        Expr<String>? orderId,
+        Expr<String>? productId,
+        Expr<String>? storeId,
+        Expr<int>? quantity,
+        Expr<int>? unitPrice,
+        Expr<double>? taxRate,
+      }) => $ForGeneratedCode.buildUpdate<OrderItemRow>([
+        id,
+        orderId,
+        productId,
+        storeId,
+        quantity,
+        unitPrice,
+        taxRate,
+      ]),
+    ),
+  );
+
+  /// Delete the row (if any) in the `orderItems` table matching this [QuerySingle].
+  ///
+  /// Returns a [DeleteSingle] statement on which `.execute()` must be called
+  /// for the row to be deleted. The resulting statement will **not**
+  /// fail, if there are no rows matching this query exists.
+  DeleteSingle<OrderItemRow> delete() =>
+      $ForGeneratedCode.deleteSingle(this, _$OrderItemRow._$table);
+}
+
+/// Extension methods for expressions on a row in the `orderItems` table.
+extension ExpressionOrderItemRowExt on Expr<OrderItemRow> {
+  Expr<String> get id =>
+      $ForGeneratedCode.field(this, 0, $ForGeneratedCode.text);
+
+  Expr<String> get orderId =>
+      $ForGeneratedCode.field(this, 1, $ForGeneratedCode.text);
+
+  Expr<String> get productId =>
+      $ForGeneratedCode.field(this, 2, $ForGeneratedCode.text);
+
+  Expr<String> get storeId =>
+      $ForGeneratedCode.field(this, 3, $ForGeneratedCode.text);
+
+  Expr<int> get quantity =>
+      $ForGeneratedCode.field(this, 4, $ForGeneratedCode.integer);
+
+  Expr<int> get unitPrice =>
+      $ForGeneratedCode.field(this, 5, $ForGeneratedCode.integer);
+
+  Expr<double> get taxRate =>
+      $ForGeneratedCode.field(this, 6, $ForGeneratedCode.real);
+}
+
+extension ExpressionNullableOrderItemRowExt on Expr<OrderItemRow?> {
+  Expr<String?> get id =>
+      $ForGeneratedCode.field(this, 0, $ForGeneratedCode.text);
+
+  Expr<String?> get orderId =>
+      $ForGeneratedCode.field(this, 1, $ForGeneratedCode.text);
+
+  Expr<String?> get productId =>
+      $ForGeneratedCode.field(this, 2, $ForGeneratedCode.text);
+
+  Expr<String?> get storeId =>
+      $ForGeneratedCode.field(this, 3, $ForGeneratedCode.text);
+
+  Expr<int?> get quantity =>
+      $ForGeneratedCode.field(this, 4, $ForGeneratedCode.integer);
+
+  Expr<int?> get unitPrice =>
+      $ForGeneratedCode.field(this, 5, $ForGeneratedCode.integer);
+
+  Expr<double?> get taxRate =>
+      $ForGeneratedCode.field(this, 6, $ForGeneratedCode.real);
+
+  /// Check if the row is not `NULL`.
+  ///
+  /// This will check if _primary key_ fields in this row are `NULL`.
+  ///
+  /// If this is a reference lookup by subquery it might be more efficient
+  /// to check if the referencing field is `NULL`.
+  Expr<bool> isNotNull() => id.isNotNull();
+
+  /// Check if the row is `NULL`.
+  ///
+  /// This will check if _primary key_ fields in this row are `NULL`.
+  ///
+  /// If this is a reference lookup by subquery it might be more efficient
+  /// to check if the referencing field is `NULL`.
+  Expr<bool> isNull() => isNotNull().not();
+}
+
+/// `Table<OrderItemRow>` conflict targets for use with `.onConflict`.
+enum OrderItemRowConflict {
+  /// Conflict with an existing row that has a matching primary key.
+  ///
+  /// Thus, the other row has matching values for:
+  /// `id`.
+  primaryKey(['id']);
+
+  const OrderItemRowConflict(this._fields);
+
+  final List<String> _fields;
+}
+
+extension InsertOrderItemRowExt on Insert<OrderItemRow> {
+  /// Build an `INSERT` statement with an `ON CONFLICT` clause.
+  ///
+  /// The [target] argument specifies the _conflict target_ to be
+  /// handled. The _conflict target_ is always a `UNIQUE` constraint or
+  /// `PRIMARY KEY` constraint.
+  ///
+  /// If a row to be inserted violates the _conflict target_ constraint,
+  /// then the conflict action is triggered:
+  /// * `.doNothing()` to skip insertion of the new row, and,
+  /// * `.update((orderItemRow, excluded, set) => set(...))` to
+  ///   update the conflicting row.
+  ///
+  /// If a row to be inserted violates a constraint other than the one
+  /// specified in _conflict target_ then the entire `INSERT` statement
+  /// will fail.
+  ///
+  /// This is equivalent to `INSERT ... ON CONFLICT (...)` in SQL.
+  InsertOnConflict<OrderItemRow> onConflict(OrderItemRowConflict target) =>
+      $ForGeneratedCode.insertOnConflict(this, target._fields);
+}
+
+extension InsertOnConflictOrderItemRowExt on InsertOnConflict<OrderItemRow> {
+  /// Build an `INSERT` statement an [upsert-clause][1].
+  ///
+  /// When a row to be inserted violates the `UNIQUE` or `PRIMARY KEY`
+  /// constraint previously specified as _conflict target_, the existing
+  /// row is updated using the expressions defined with the
+  /// [updateBuilder]. The [updateBuilder] is given 3 parameters:
+  ///   * `orderItemRow` an [Expr] representing the existing row in
+  ///     the database,
+  ///   * `excluded` an [Expr] representing the row to be inserted in the
+  ///     database, and,
+  ///   * `set` a function to specify which fields should be updated and
+  ///     build the [UpdateSet].
+  ///
+  /// The result of the `set` function should always be immediately
+  /// returned from the [updateBuilder].
+  ///
+  /// **Example:** Insert a counter with `count = 2` or increment the
+  /// existing row, if a `PRIMARY KEY` conflict occurs.
+  /// ```dart
+  /// await db.counters.insertValue(
+  ///     name: 'my-counter', // primary key
+  ///     count: 2,
+  ///   )
+  ///   .onConflict(.primaryKey)
+  ///   .update((counter, excluded, set) => set(
+  ///     count: counter.count + excluded.count,
+  ///   ))
+  ///   .execute();
+  /// ```
+  ///
+  /// This is equivalent to
+  /// `INSERT ... ON CONFLICT (...) UPDATE SET ...` in SQL.
+  ///
+  /// > [!WARNING]
+  /// > The `updateBuilder` callback does not make the update, it builds
+  /// > the expressions for updating the rows. You should **never** invoke
+  /// > the `set` function more than once, and the result should always
+  /// > be returned immediately.
+  ///
+  /// [1]: https://www.sqlite.org/lang_upsert.html
+  Upsert<OrderItemRow> update(
+    UpdateSet<OrderItemRow> Function(
+      Expr<OrderItemRow> orderItemRow,
+      Expr<OrderItemRow> excluded,
+      UpdateSet<OrderItemRow> Function({
+        Expr<String> id,
+        Expr<String> orderId,
+        Expr<String> productId,
+        Expr<String> storeId,
+        Expr<int> quantity,
+        Expr<int> unitPrice,
+        Expr<double> taxRate,
+      })
+      set,
+    )
+    updateBuilder,
+  ) => $ForGeneratedCode.updateOnConflict<OrderItemRow>(
+    this,
+    (orderItemRow, excluded) => updateBuilder(
+      orderItemRow,
+      excluded,
+      ({
+        Expr<String>? id,
+        Expr<String>? orderId,
+        Expr<String>? productId,
+        Expr<String>? storeId,
+        Expr<int>? quantity,
+        Expr<int>? unitPrice,
+        Expr<double>? taxRate,
+      }) => $ForGeneratedCode.buildUpdate<OrderItemRow>([
+        id,
+        orderId,
+        productId,
+        storeId,
+        quantity,
+        unitPrice,
+        taxRate,
+      ]),
+    ),
+  );
+}
+
+extension InsertSingleOrderItemRowExt on InsertSingle<OrderItemRow> {
+  /// Build an `INSERT` statement with an `ON CONFLICT` clause.
+  ///
+  /// The [target] argument specifies the _conflict target_ to be
+  /// handled. The _conflict target_ is always a `UNIQUE` constraint or
+  /// `PRIMARY KEY` constraint.
+  ///
+  /// If a row to be inserted violates the _conflict target_ constraint,
+  /// then the conflict action is triggered:
+  /// * `.doNothing()` to skip insertion of the new row, and,
+  /// * `.update((orderItemRow, excluded, set) => set(...))` to
+  ///   update the conflicting row.
+  ///
+  /// If a row to be inserted violates a constraint other than the one
+  /// specified in _conflict target_ then the entire `INSERT` statement
+  /// will fail.
+  ///
+  /// This is equivalent to `INSERT ... ON CONFLICT (...)` in SQL.
+  InsertOnConflictSingle<OrderItemRow> onConflict(
+    OrderItemRowConflict target,
+  ) => $ForGeneratedCode.insertOnConflictSingle(this, target._fields);
+}
+
+extension InsertOnConflictSingleOrderItemRowExt
+    on InsertOnConflictSingle<OrderItemRow> {
+  /// Build an `INSERT` statement an [upsert-clause][1].
+  ///
+  /// When a row to be inserted violates the `UNIQUE` or `PRIMARY KEY`
+  /// constraint previously specified as _conflict target_, the existing
+  /// row is updated using the expressions defined with the
+  /// [updateBuilder]. The [updateBuilder] is given 3 parameters:
+  ///   * `orderItemRow` an [Expr] representing the existing row in
+  ///     the database,
+  ///   * `excluded` an [Expr] representing the row to be inserted in the
+  ///     database, and,
+  ///   * `set` a function to specify which fields should be updated and
+  ///     build the [UpdateSet].
+  ///
+  /// The result of the `set` function should always be immediately
+  /// returned from the [updateBuilder].
+  ///
+  /// **Example:** Insert a counter with `count = 2` or increment the
+  /// existing row, if a `PRIMARY KEY` conflict occurs.
+  /// ```dart
+  /// await db.counters.insertValue(
+  ///     name: 'my-counter', // primary key
+  ///     count: 2,
+  ///   )
+  ///   .onConflict(.primaryKey)
+  ///   .update((counter, excluded, set) => set(
+  ///     count: counter.count + excluded.count,
+  ///   ))
+  ///   .execute();
+  /// ```
+  ///
+  /// This is equivalent to
+  /// `INSERT ... ON CONFLICT (...) UPDATE SET ...` in SQL.
+  ///
+  /// > [!WARNING]
+  /// > The `updateBuilder` callback does not make the update, it builds
+  /// > the expressions for updating the rows. You should **never** invoke
+  /// > the `set` function more than once, and the result should always
+  /// > be returned immediately.
+  ///
+  /// [1]: https://www.sqlite.org/lang_upsert.html
+  UpsertSingle<OrderItemRow> update(
+    UpdateSet<OrderItemRow> Function(
+      Expr<OrderItemRow> orderItemRow,
+      Expr<OrderItemRow> excluded,
+      UpdateSet<OrderItemRow> Function({
+        Expr<String> id,
+        Expr<String> orderId,
+        Expr<String> productId,
+        Expr<String> storeId,
+        Expr<int> quantity,
+        Expr<int> unitPrice,
+        Expr<double> taxRate,
+      })
+      set,
+    )
+    updateBuilder,
+  ) => $ForGeneratedCode.updateOnConflictSingle<OrderItemRow>(
+    this,
+    (orderItemRow, excluded) => updateBuilder(
+      orderItemRow,
+      excluded,
+      ({
+        Expr<String>? id,
+        Expr<String>? orderId,
+        Expr<String>? productId,
+        Expr<String>? storeId,
+        Expr<int>? quantity,
+        Expr<int>? unitPrice,
+        Expr<double>? taxRate,
+      }) => $ForGeneratedCode.buildUpdate<OrderItemRow>([
+        id,
+        orderId,
+        productId,
+        storeId,
+        quantity,
+        unitPrice,
+        taxRate,
       ]),
     ),
   );
