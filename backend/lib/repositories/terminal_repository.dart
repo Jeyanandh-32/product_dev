@@ -69,7 +69,7 @@ class TerminalRepository {
             updatedAt: ts.Expr.currentTimestamp,
           ),
         )
-        .returning((ts.Expr<TerminalRow> t) => (t,))
+        .returnUpdated()
         .executeAndFetch();
 
     return row;

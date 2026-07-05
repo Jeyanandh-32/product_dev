@@ -73,7 +73,7 @@ class CounterRepository {
             updatedAt: ts.Expr.currentTimestamp,
           ),
         )
-        .returning((ts.Expr<CounterRow> c) => (c,))
+        .returnUpdated()
         .executeAndFetch();
 
     return row;

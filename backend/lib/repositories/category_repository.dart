@@ -73,7 +73,7 @@ class CategoryRepository {
             updatedAt: ts.Expr.currentTimestamp,
           ),
         )
-        .returning((ts.Expr<CategoryRow> c) => (c,))
+        .returnUpdated()
         .executeAndFetch();
 
     return row;

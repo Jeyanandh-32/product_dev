@@ -83,7 +83,7 @@ class ProductRepository {
             updatedAt: ts.Expr.currentTimestamp,
           ),
         )
-        .returning((ts.Expr<ProductRow> p) => (p,))
+        .returnUpdated()
         .executeAndFetch();
 
     return row;

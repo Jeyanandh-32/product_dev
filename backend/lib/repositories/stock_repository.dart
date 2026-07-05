@@ -41,7 +41,7 @@ class StockRepository {
             updatedAt: ts.Expr.currentTimestamp,
           ),
         )
-        .returning((ts.Expr<StockRow> s) => (s,))
+        .returnUpdated()
         .executeAndFetch();
 
     if (rows.isEmpty) return null;
