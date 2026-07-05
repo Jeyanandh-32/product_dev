@@ -37,47 +37,58 @@ class CounterValidator {
   );
 
   static Future<String?> create(Map<String, dynamic> json) async {
-    final errors = await _createSchema.validate(json);
+    final errors = await _createSchema.validate(json.cast<String, Object?>());
     if (errors.isNotEmpty) {
       final firstError = errors.first;
-      final details = firstError.details ?? '';
-      if (details.contains('Required property "name" is missing') ||
-          (firstError.path.contains('name') && details.contains('minLength'))) {
+      final path = firstError.path;
+      final type = firstError.error;
+
+      if (type == ValidationErrorType.requiredPropertyMissing &&
+          (firstError.details?.contains('"name"') == true)) {
         return 'Name is required.';
       }
-      if (firstError.path.contains('description') &&
-          details.contains('maxLength')) {
+      if (path.contains('name') &&
+          (type == ValidationErrorType.typeMismatch ||
+              type == ValidationErrorType.minLengthNotMet)) {
+        return 'Name is required.';
+      }
+      if (path.contains('description') &&
+          type == ValidationErrorType.maxLengthExceeded) {
         return 'Description must be 255 characters or fewer.';
       }
-      if (firstError.path.contains('imageUrl') &&
-          details.contains('maxLength')) {
+      if (path.contains('imageUrl') &&
+          type == ValidationErrorType.maxLengthExceeded) {
         return 'Image URL must be 255 characters or fewer.';
       }
-      return details;
+      return firstError.details;
     }
     return null;
   }
 
   static Future<String?> update(Map<String, dynamic> json) async {
-    final errors = await _updateSchema.validate(json);
+    final errors = await _updateSchema.validate(json.cast<String, Object?>());
     if (errors.isNotEmpty) {
       final firstError = errors.first;
-      final details = firstError.details ?? '';
-      if (details.contains('minProperties')) {
+      final path = firstError.path;
+      final type = firstError.error;
+
+      if (type == ValidationErrorType.minPropertiesNotMet) {
         return 'At least one field is required to update.';
       }
-      if (firstError.path.contains('name') && details.contains('minLength')) {
+      if (path.contains('name') &&
+          (type == ValidationErrorType.typeMismatch ||
+              type == ValidationErrorType.minLengthNotMet)) {
         return 'Name cannot be empty.';
       }
-      if (firstError.path.contains('description') &&
-          details.contains('maxLength')) {
+      if (path.contains('description') &&
+          type == ValidationErrorType.maxLengthExceeded) {
         return 'Description must be 255 characters or fewer.';
       }
-      if (firstError.path.contains('imageUrl') &&
-          details.contains('maxLength')) {
+      if (path.contains('imageUrl') &&
+          type == ValidationErrorType.maxLengthExceeded) {
         return 'Image URL must be 255 characters or fewer.';
       }
-      return details;
+      return firstError.details;
     }
     return null;
   }

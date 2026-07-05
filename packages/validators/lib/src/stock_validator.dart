@@ -29,46 +29,62 @@ class StockValidator {
   );
 
   static Future<String?> create(Map<String, dynamic> json) async {
-    final errors = await _createSchema.validate(json);
+    final errors = await _createSchema.validate(json.cast<String, Object?>());
     if (errors.isNotEmpty) {
       final firstError = errors.first;
-      final details = firstError.details ?? '';
-      if (firstError.path.contains('productId') &&
-          (details.contains('Required') || details.contains('minLength'))) {
+      final path = firstError.path;
+      final type = firstError.error;
+
+      if (type == ValidationErrorType.requiredPropertyMissing) {
+        if (firstError.details?.contains('"productId"') == true) {
+          return 'Product ID is required.';
+        }
+        if (firstError.details?.contains('"storeId"') == true) {
+          return 'Store ID is required.';
+        }
+      }
+      if (path.contains('productId') &&
+          (type == ValidationErrorType.typeMismatch ||
+              type == ValidationErrorType.minLengthNotMet)) {
         return 'Product ID is required.';
       }
-      if (firstError.path.contains('storeId') &&
-          (details.contains('Required') || details.contains('minLength'))) {
+      if (path.contains('storeId') &&
+          (type == ValidationErrorType.typeMismatch ||
+              type == ValidationErrorType.minLengthNotMet)) {
         return 'Store ID is required.';
       }
-      if (firstError.path.contains('quantity') && details.contains('minimum')) {
+      if (path.contains('quantity') &&
+          type == ValidationErrorType.minimumNotMet) {
         return 'Quantity cannot be negative.';
       }
-      if (firstError.path.contains('lowStockThreshold') &&
-          details.contains('minimum')) {
+      if (path.contains('lowStockThreshold') &&
+          type == ValidationErrorType.minimumNotMet) {
         return 'Low stock threshold cannot be negative.';
       }
-      return details;
+      return firstError.details;
     }
     return null;
   }
 
   static Future<String?> update(Map<String, dynamic> json) async {
-    final errors = await _updateSchema.validate(json);
+    final errors = await _updateSchema.validate(json.cast<String, Object?>());
     if (errors.isNotEmpty) {
       final firstError = errors.first;
-      final details = firstError.details ?? '';
-      if (details.contains('minProperties')) {
+      final path = firstError.path;
+      final type = firstError.error;
+
+      if (type == ValidationErrorType.minPropertiesNotMet) {
         return 'At least one field is required to update.';
       }
-      if (firstError.path.contains('quantity') && details.contains('minimum')) {
+      if (path.contains('quantity') &&
+          type == ValidationErrorType.minimumNotMet) {
         return 'Quantity cannot be negative.';
       }
-      if (firstError.path.contains('lowStockThreshold') &&
-          details.contains('minimum')) {
+      if (path.contains('lowStockThreshold') &&
+          type == ValidationErrorType.minimumNotMet) {
         return 'Low stock threshold cannot be negative.';
       }
-      return details;
+      return firstError.details;
     }
     return null;
   }

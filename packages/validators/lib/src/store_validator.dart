@@ -21,12 +21,19 @@ class StoreValidator {
   );
 
   static Future<String?> create(Map<String, dynamic> json) async {
-    final errors = await _createSchema.validate(json);
+    final errors = await _createSchema.validate(json.cast<String, Object?>());
     if (errors.isNotEmpty) {
       final firstError = errors.first;
-      final details = firstError.details ?? '';
-      if (details.contains('Required property "name" is missing') ||
-          details.contains('minLength')) {
+      final path = firstError.path;
+      final type = firstError.error;
+
+      if (type == ValidationErrorType.requiredPropertyMissing &&
+          (firstError.details?.contains('"name"') == true)) {
+        return 'Name is required.';
+      }
+      if (path.contains('name') &&
+          (type == ValidationErrorType.typeMismatch ||
+              type == ValidationErrorType.minLengthNotMet)) {
         return 'Name is required.';
       }
       return firstError.details;
@@ -35,14 +42,18 @@ class StoreValidator {
   }
 
   static Future<String?> update(Map<String, dynamic> json) async {
-    final errors = await _updateSchema.validate(json);
+    final errors = await _updateSchema.validate(json.cast<String, Object?>());
     if (errors.isNotEmpty) {
       final firstError = errors.first;
-      final details = firstError.details ?? '';
-      if (details.contains('minProperties')) {
+      final path = firstError.path;
+      final type = firstError.error;
+
+      if (type == ValidationErrorType.minPropertiesNotMet) {
         return 'At least one field is required to update.';
       }
-      if (details.contains('minLength')) {
+      if (path.contains('name') &&
+          (type == ValidationErrorType.typeMismatch ||
+              type == ValidationErrorType.minLengthNotMet)) {
         return 'Name cannot be empty.';
       }
       return firstError.details;

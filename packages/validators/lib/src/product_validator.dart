@@ -51,108 +51,140 @@ class ProductValidator {
   );
 
   static Future<String?> create(Map<String, dynamic> json) async {
-    final errors = await _createSchema.validate(json);
+    final errors = await _createSchema.validate(json.cast<String, Object?>());
     if (errors.isNotEmpty) {
       final firstError = errors.first;
-      final details = firstError.details ?? '';
-      if (firstError.path.contains('name')) {
-        if (details.contains('Required') || details.contains('minLength')) {
+      final path = firstError.path;
+      final type = firstError.error;
+
+      // Handle required fields
+      if (type == ValidationErrorType.requiredPropertyMissing) {
+        final details = firstError.details ?? '';
+        if (details.contains('"name"')) {
           return 'Name is required.';
         }
-        if (details.contains('maxLength')) {
+        if (details.contains('"categoryId"')) {
+          return 'Category ID is required.';
+        }
+        if (details.contains('"counterId"')) {
+          return 'Counter ID is required.';
+        }
+        if (details.contains('"basePrice"')) {
+          return 'Base price is required.';
+        }
+        if (details.contains('"sellingPrice"')) {
+          return 'Selling price is required.';
+        }
+      }
+
+      if (path.contains('name')) {
+        if (type == ValidationErrorType.typeMismatch ||
+            type == ValidationErrorType.minLengthNotMet) {
+          return 'Name is required.';
+        }
+        if (type == ValidationErrorType.maxLengthExceeded) {
           return 'Name must be 255 characters or fewer.';
         }
       }
-      if (firstError.path.contains('categoryId') &&
-          (details.contains('Required') || details.contains('minLength'))) {
+      if (path.contains('categoryId') &&
+          (type == ValidationErrorType.typeMismatch ||
+              type == ValidationErrorType.minLengthNotMet)) {
         return 'Category ID is required.';
       }
-      if (firstError.path.contains('counterId') &&
-          (details.contains('Required') || details.contains('minLength'))) {
+      if (path.contains('counterId') &&
+          (type == ValidationErrorType.typeMismatch ||
+              type == ValidationErrorType.minLengthNotMet)) {
         return 'Counter ID is required.';
       }
-      if (firstError.path.contains('basePrice')) {
-        if (details.contains('Required')) {
+      if (path.contains('basePrice')) {
+        if (type == ValidationErrorType.typeMismatch) {
           return 'Base price is required.';
         }
-        if (details.contains('minimum')) {
+        if (type == ValidationErrorType.minimumNotMet) {
           return 'Base price cannot be negative.';
         }
       }
-      if (firstError.path.contains('sellingPrice')) {
-        if (details.contains('Required')) {
+      if (path.contains('sellingPrice')) {
+        if (type == ValidationErrorType.typeMismatch) {
           return 'Selling price is required.';
         }
-        if (details.contains('minimum')) {
+        if (type == ValidationErrorType.minimumNotMet) {
           return 'Selling price cannot be negative.';
         }
       }
-      if (firstError.path.contains('sku') && details.contains('maxLength')) {
+      if (path.contains('sku') &&
+          type == ValidationErrorType.maxLengthExceeded) {
         return 'SKU must be 100 characters or fewer.';
       }
-      if (firstError.path.contains('barcode') &&
-          details.contains('maxLength')) {
+      if (path.contains('barcode') &&
+          type == ValidationErrorType.maxLengthExceeded) {
         return 'Barcode must be 100 characters or fewer.';
       }
-      if (firstError.path.contains('description') &&
-          details.contains('maxLength')) {
+      if (path.contains('description') &&
+          type == ValidationErrorType.maxLengthExceeded) {
         return 'Description must be 255 characters or fewer.';
       }
-      if (firstError.path.contains('imageUrl') &&
-          details.contains('maxLength')) {
+      if (path.contains('imageUrl') &&
+          type == ValidationErrorType.maxLengthExceeded) {
         return 'Image URL must be 255 characters or fewer.';
       }
-      if (firstError.path.contains('taxRate') && details.contains('minimum')) {
+      if (path.contains('taxRate') &&
+          type == ValidationErrorType.minimumNotMet) {
         return 'Tax rate cannot be negative.';
       }
-      return details;
+      return firstError.details;
     }
     return null;
   }
 
   static Future<String?> update(Map<String, dynamic> json) async {
-    final errors = await _updateSchema.validate(json);
+    final errors = await _updateSchema.validate(json.cast<String, Object?>());
     if (errors.isNotEmpty) {
       final firstError = errors.first;
-      final details = firstError.details ?? '';
-      if (details.contains('minProperties')) {
+      final path = firstError.path;
+      final type = firstError.error;
+
+      if (type == ValidationErrorType.minPropertiesNotMet) {
         return 'At least one field is required to update.';
       }
-      if (firstError.path.contains('name')) {
-        if (details.contains('minLength')) {
+      if (path.contains('name')) {
+        if (type == ValidationErrorType.minLengthNotMet ||
+            type == ValidationErrorType.typeMismatch) {
           return 'Name cannot be empty.';
         }
-        if (details.contains('maxLength')) {
+        if (type == ValidationErrorType.maxLengthExceeded) {
           return 'Name must be 255 characters or fewer.';
         }
       }
-      if (firstError.path.contains('sku') && details.contains('maxLength')) {
+      if (path.contains('sku') &&
+          type == ValidationErrorType.maxLengthExceeded) {
         return 'SKU must be 100 characters or fewer.';
       }
-      if (firstError.path.contains('barcode') &&
-          details.contains('maxLength')) {
+      if (path.contains('barcode') &&
+          type == ValidationErrorType.maxLengthExceeded) {
         return 'Barcode must be 100 characters or fewer.';
       }
-      if (firstError.path.contains('description') &&
-          details.contains('maxLength')) {
+      if (path.contains('description') &&
+          type == ValidationErrorType.maxLengthExceeded) {
         return 'Description must be 255 characters or fewer.';
       }
-      if (firstError.path.contains('imageUrl') &&
-          details.contains('maxLength')) {
+      if (path.contains('imageUrl') &&
+          type == ValidationErrorType.maxLengthExceeded) {
         return 'Image URL must be 255 characters or fewer.';
       }
-      if (firstError.path.contains('taxRate') && details.contains('minimum')) {
+      if (path.contains('taxRate') &&
+          type == ValidationErrorType.minimumNotMet) {
         return 'Tax rate cannot be negative.';
       }
-      if (firstError.path.contains('basePrice') &&
-          details.contains('minimum')) {
+      if (path.contains('basePrice') &&
+          type == ValidationErrorType.minimumNotMet) {
         return 'Base price cannot be negative.';
       }
-      if (firstError.path.contains('sellingPrice') &&
-          details.contains('minimum')) {
+      if (path.contains('sellingPrice') &&
+          type == ValidationErrorType.minimumNotMet) {
         return 'Selling price cannot be negative.';
       }
-      return details;
+      return firstError.details;
     }
     return null;
   }

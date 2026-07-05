@@ -46,66 +46,97 @@ class TerminalValidator {
   );
 
   static Future<String?> create(Map<String, dynamic> json) async {
-    final errors = await _createSchema.validate(json);
+    final errors = await _createSchema.validate(json.cast<String, Object?>());
     if (errors.isNotEmpty) {
       final firstError = errors.first;
-      final details = firstError.details ?? '';
-      if (firstError.path.contains('name') &&
-          (details.contains('Required') || details.contains('minLength'))) {
+      final path = firstError.path;
+      final type = firstError.error;
+
+      if (type == ValidationErrorType.requiredPropertyMissing) {
+        final details = firstError.details ?? '';
+        if (details.contains('"name"')) return 'Terminal Name is required.';
+        if (details.contains('"password"')) return 'Password is required.';
+      }
+
+      if (path.contains('name') &&
+          (type == ValidationErrorType.typeMismatch ||
+              type == ValidationErrorType.minLengthNotMet)) {
         return 'Terminal Name is required.';
       }
-      if (firstError.path.contains('password')) {
-        if (details.contains('Required')) return 'Password is required.';
-        if (details.contains('minLength') || details.contains('pattern')) {
+      if (path.contains('password')) {
+        if (type == ValidationErrorType.typeMismatch) {
+          return 'Password is required.';
+        }
+        if (type == ValidationErrorType.minLengthNotMet ||
+            type == ValidationErrorType.patternMismatch) {
           return 'Password must be at least 6 characters long and contain at least one number, one uppercase letter, and one lowercase letter.';
         }
       }
-      return details;
+      return firstError.details;
     }
     return null;
   }
 
   static Future<String?> login(Map<String, dynamic> json) async {
-    // Normalise fields like code to upper case if passed in json,
-    // but the handler trims/uppercases it. We will validate whatever is passed.
-    final errors = await _loginSchema.validate(json);
+    final errors = await _loginSchema.validate(json.cast<String, Object?>());
     if (errors.isNotEmpty) {
       final firstError = errors.first;
-      final details = firstError.details ?? '';
-      if (firstError.path.contains('code')) {
-        if (details.contains('Required')) return 'Terminal Code is required.';
-        if (details.contains('minLength') || details.contains('maxLength')) {
+      final path = firstError.path;
+      final type = firstError.error;
+
+      if (type == ValidationErrorType.requiredPropertyMissing) {
+        final details = firstError.details ?? '';
+        if (details.contains('"code"')) return 'Terminal Code is required.';
+        if (details.contains('"password"')) return 'Password is required.';
+      }
+
+      if (path.contains('code')) {
+        if (type == ValidationErrorType.typeMismatch ||
+            type == ValidationErrorType.minLengthNotMet) {
+          return 'Terminal Code is required.';
+        }
+        if (type == ValidationErrorType.maxLengthExceeded) {
           return 'Terminal Code must be exactly 12 characters.';
         }
       }
-      if (firstError.path.contains('password')) {
-        if (details.contains('Required')) return 'Password is required.';
-        if (details.contains('minLength') || details.contains('pattern')) {
+      if (path.contains('password')) {
+        if (type == ValidationErrorType.typeMismatch) {
+          return 'Password is required.';
+        }
+        if (type == ValidationErrorType.minLengthNotMet ||
+            type == ValidationErrorType.patternMismatch) {
           return 'Password must be at least 6 characters long and contain at least one number, one uppercase letter, and one lowercase letter.';
         }
       }
-      return details;
+      return firstError.details;
     }
     return null;
   }
 
   static Future<String?> update(Map<String, dynamic> json) async {
-    final errors = await _updateSchema.validate(json);
+    final errors = await _updateSchema.validate(json.cast<String, Object?>());
     if (errors.isNotEmpty) {
       final firstError = errors.first;
-      final details = firstError.details ?? '';
-      if (details.contains('minProperties')) {
+      final path = firstError.path;
+      final type = firstError.error;
+
+      if (type == ValidationErrorType.minPropertiesNotMet) {
         return 'At least one field (name, password, or isActive) is required to update.';
       }
-      if (firstError.path.contains('name') && details.contains('minLength')) {
+      if (path.contains('name') &&
+          (type == ValidationErrorType.minLengthNotMet ||
+              type == ValidationErrorType.typeMismatch)) {
         return 'Terminal Name cannot be empty.';
       }
-      if (firstError.path.contains('password')) {
-        if (details.contains('minLength') || details.contains('pattern')) {
+      if (path.contains('password')) {
+        if (type == ValidationErrorType.minLengthNotMet) {
+          return 'Password cannot be empty.';
+        }
+        if (type == ValidationErrorType.patternMismatch) {
           return 'Password must be at least 6 characters long and contain at least one number, one uppercase letter, and one lowercase letter.';
         }
       }
-      return details;
+      return firstError.details;
     }
     return null;
   }
