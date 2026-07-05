@@ -9,6 +9,7 @@ export 'src/category_validator.dart';
 export 'src/counter_validator.dart';
 export 'src/merchant_validator.dart';
 export 'src/product_validator.dart';
+export 'src/order_validator.dart';
 export 'src/stock_validator.dart';
 export 'src/store_validator.dart';
 export 'src/terminal_validator.dart';
