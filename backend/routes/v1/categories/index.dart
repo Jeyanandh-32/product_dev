@@ -77,11 +77,7 @@ Future<Response> _onPost(RequestContext context) async {
   final description = readOptionalString(body, 'description');
   final imageUrl = readOptionalString(body, 'imageUrl');
 
-  final errorMessage = CategoryValidator.create(
-    name: name,
-    description: description,
-    imageUrl: imageUrl,
-  );
+  final errorMessage = await CategoryValidator.create(body);
 
   if (errorMessage != null) {
     return badRequest(message: errorMessage);

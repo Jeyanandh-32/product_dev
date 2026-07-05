@@ -93,42 +93,12 @@ Future<Response> _onPutOrPatch(RequestContext context, String id) async {
   final imageUrl = readOptionalString(body, 'imageUrl');
   final taxRate = (taxRateVal as num?)?.toDouble();
 
-  final namePresent = body.containsKey('name');
-  final categoryIdPresent = body.containsKey('categoryId');
-  final counterIdPresent = body.containsKey('counterId');
-  final isActivePresent = body.containsKey('isActive');
-  final basePricePresent = body.containsKey('basePrice');
-  final sellingPricePresent = body.containsKey('sellingPrice');
   final skuPresent = body.containsKey('sku');
   final barcodePresent = body.containsKey('barcode');
   final descriptionPresent = body.containsKey('description');
   final imageUrlPresent = body.containsKey('imageUrl');
-  final taxRatePresent = body.containsKey('taxRate');
 
-  final errorMessage = ProductValidator.update(
-    name: name,
-    sku: sku,
-    barcode: barcode,
-    description: description,
-    imageUrl: imageUrl,
-    taxRate: taxRate,
-    basePrice: basePrice,
-    sellingPrice: sellingPrice,
-    isActive: isActive,
-    categoryId: categoryId,
-    counterId: counterId,
-    namePresent: namePresent,
-    skuPresent: skuPresent,
-    barcodePresent: barcodePresent,
-    descriptionPresent: descriptionPresent,
-    imageUrlPresent: imageUrlPresent,
-    taxRatePresent: taxRatePresent,
-    basePricePresent: basePricePresent,
-    sellingPricePresent: sellingPricePresent,
-    isActivePresent: isActivePresent,
-    categoryIdPresent: categoryIdPresent,
-    counterIdPresent: counterIdPresent,
-  );
+  final errorMessage = await ProductValidator.update(body);
 
   if (errorMessage != null) {
     return badRequest(message: errorMessage);

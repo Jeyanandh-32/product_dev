@@ -26,10 +26,10 @@ Future<Response> _onPost(RequestContext context) async {
   final email = (body['email'] as String?)?.trim().toLowerCase();
   final password = (body['password'] as String?)?.trim();
 
-  final errorMessage = MerchantValidator.login(
-    email: email,
-    password: password,
-  );
+  final errorMessage = await MerchantValidator.login({
+    'email': email,
+    'password': password,
+  });
 
   if (errorMessage != null) {
     return badRequest(message: errorMessage);

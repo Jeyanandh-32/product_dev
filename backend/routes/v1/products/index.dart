@@ -134,18 +134,7 @@ Future<Response> _onPost(RequestContext context) async {
   final imageUrl = readOptionalString(body, 'imageUrl');
   final taxRate = (taxRateVal as num?)?.toDouble() ?? 0.0;
 
-  final errorMessage = ProductValidator.create(
-    name: name,
-    categoryId: categoryId,
-    counterId: counterId,
-    basePrice: basePrice,
-    sellingPrice: sellingPrice,
-    sku: sku,
-    barcode: barcode,
-    description: description,
-    imageUrl: imageUrl,
-    taxRate: taxRate,
-  );
+  final errorMessage = await ProductValidator.create(body);
 
   if (errorMessage != null) {
     return badRequest(message: errorMessage);

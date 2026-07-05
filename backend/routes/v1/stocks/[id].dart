@@ -47,18 +47,7 @@ Future<Response> _onPutOrPatch(RequestContext context, String id) async {
   final lowStockThreshold = lowStockThresholdVal as int?;
   final stockMonitor = stockMonitorVal as bool?;
 
-  final quantityPresent = body.containsKey('quantity');
-  final lowStockThresholdPresent = body.containsKey('lowStockThreshold');
-  final stockMonitorPresent = body.containsKey('stockMonitor');
-
-  final errorMessage = StockValidator.update(
-    quantity: quantity,
-    lowStockThreshold: lowStockThreshold,
-    stockMonitor: stockMonitor,
-    quantityPresent: quantityPresent,
-    lowStockThresholdPresent: lowStockThresholdPresent,
-    stockMonitorPresent: stockMonitorPresent,
-  );
+  final errorMessage = await StockValidator.update(body);
 
   if (errorMessage != null) {
     return badRequest(message: errorMessage);

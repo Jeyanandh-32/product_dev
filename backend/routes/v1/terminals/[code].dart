@@ -45,11 +45,7 @@ Future<Response> _onPutOrPatch(RequestContext context, String code) async {
   final password = body['password'] as String?;
   final isActive = body['isActive'] as bool?;
 
-  final errorMessage = TerminalValidator.update(
-    name: name,
-    password: password,
-    isActive: isActive,
-  );
+  final errorMessage = await TerminalValidator.update(body);
 
   if (errorMessage != null) {
     return badRequest(message: errorMessage);

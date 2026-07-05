@@ -1,128 +1,159 @@
+import 'package:json_schema_builder/json_schema_builder.dart';
+
 class ProductValidator {
   const ProductValidator._();
 
-  static String? create({
-    required String? name,
-    required String? categoryId,
-    required String? counterId,
-    required int? basePrice,
-    required int? sellingPrice,
-    String? sku,
-    String? barcode,
-    String? description,
-    String? imageUrl,
-    double? taxRate,
-  }) {
-    if (name == null || name.trim().isEmpty) {
-      return 'Name is required.';
-    }
-    if (name.length > 255) {
-      return 'Name must be 255 characters or fewer.';
-    }
-    if (categoryId == null || categoryId.trim().isEmpty) {
-      return 'Category ID is required.';
-    }
-    if (counterId == null || counterId.trim().isEmpty) {
-      return 'Counter ID is required.';
-    }
-    if (basePrice == null) {
-      return 'Base price is required.';
-    }
-    if (basePrice < 0) {
-      return 'Base price cannot be negative.';
-    }
-    if (sellingPrice == null) {
-      return 'Selling price is required.';
-    }
-    if (sellingPrice < 0) {
-      return 'Selling price cannot be negative.';
-    }
-    if (sku != null && sku.length > 100) {
-      return 'SKU must be 100 characters or fewer.';
-    }
-    if (barcode != null && barcode.length > 100) {
-      return 'Barcode must be 100 characters or fewer.';
-    }
-    if (description != null && description.length > 255) {
-      return 'Description must be 255 characters or fewer.';
-    }
-    if (imageUrl != null && imageUrl.length > 255) {
-      return 'Image URL must be 255 characters or fewer.';
-    }
-    if (taxRate != null && taxRate < 0) {
-      return 'Tax rate cannot be negative.';
+  static final _createSchema = S.object(
+    properties: {
+      'name': S.string(
+        minLength: 1,
+        maxLength: 255,
+        description: 'Product name',
+      ),
+      'categoryId': S.string(minLength: 1, description: 'Category ID'),
+      'counterId': S.string(minLength: 1, description: 'Counter ID'),
+      'basePrice': S.integer(minimum: 0, description: 'Base price'),
+      'sellingPrice': S.integer(minimum: 0, description: 'Selling price'),
+      'sku': S.string(maxLength: 100, description: 'SKU'),
+      'barcode': S.string(maxLength: 100, description: 'Barcode'),
+      'description': S.string(
+        maxLength: 255,
+        description: 'Product description',
+      ),
+      'imageUrl': S.string(maxLength: 255, description: 'Product image URL'),
+      'taxRate': S.number(minimum: 0, description: 'Tax rate'),
+    },
+    required: ['name', 'categoryId', 'counterId', 'basePrice', 'sellingPrice'],
+  );
+
+  static final _updateSchema = S.object(
+    properties: {
+      'name': S.string(
+        minLength: 1,
+        maxLength: 255,
+        description: 'Product name',
+      ),
+      'categoryId': S.string(minLength: 1, description: 'Category ID'),
+      'counterId': S.string(minLength: 1, description: 'Counter ID'),
+      'basePrice': S.integer(minimum: 0, description: 'Base price'),
+      'sellingPrice': S.integer(minimum: 0, description: 'Selling price'),
+      'sku': S.string(maxLength: 100, description: 'SKU'),
+      'barcode': S.string(maxLength: 100, description: 'Barcode'),
+      'description': S.string(
+        maxLength: 255,
+        description: 'Product description',
+      ),
+      'imageUrl': S.string(maxLength: 255, description: 'Product image URL'),
+      'taxRate': S.number(minimum: 0, description: 'Tax rate'),
+      'isActive': S.boolean(description: 'Is active status'),
+    },
+    minProperties: 1,
+  );
+
+  static Future<String?> create(Map<String, dynamic> json) async {
+    final errors = await _createSchema.validate(json);
+    if (errors.isNotEmpty) {
+      final firstError = errors.first;
+      final details = firstError.details ?? '';
+      if (firstError.path.contains('name')) {
+        if (details.contains('Required') || details.contains('minLength')) {
+          return 'Name is required.';
+        }
+        if (details.contains('maxLength')) {
+          return 'Name must be 255 characters or fewer.';
+        }
+      }
+      if (firstError.path.contains('categoryId') &&
+          (details.contains('Required') || details.contains('minLength'))) {
+        return 'Category ID is required.';
+      }
+      if (firstError.path.contains('counterId') &&
+          (details.contains('Required') || details.contains('minLength'))) {
+        return 'Counter ID is required.';
+      }
+      if (firstError.path.contains('basePrice')) {
+        if (details.contains('Required')) {
+          return 'Base price is required.';
+        }
+        if (details.contains('minimum')) {
+          return 'Base price cannot be negative.';
+        }
+      }
+      if (firstError.path.contains('sellingPrice')) {
+        if (details.contains('Required')) {
+          return 'Selling price is required.';
+        }
+        if (details.contains('minimum')) {
+          return 'Selling price cannot be negative.';
+        }
+      }
+      if (firstError.path.contains('sku') && details.contains('maxLength')) {
+        return 'SKU must be 100 characters or fewer.';
+      }
+      if (firstError.path.contains('barcode') &&
+          details.contains('maxLength')) {
+        return 'Barcode must be 100 characters or fewer.';
+      }
+      if (firstError.path.contains('description') &&
+          details.contains('maxLength')) {
+        return 'Description must be 255 characters or fewer.';
+      }
+      if (firstError.path.contains('imageUrl') &&
+          details.contains('maxLength')) {
+        return 'Image URL must be 255 characters or fewer.';
+      }
+      if (firstError.path.contains('taxRate') && details.contains('minimum')) {
+        return 'Tax rate cannot be negative.';
+      }
+      return details;
     }
     return null;
   }
 
-  static String? update({
-    String? name,
-    String? sku,
-    String? barcode,
-    String? description,
-    String? imageUrl,
-    double? taxRate,
-    int? basePrice,
-    int? sellingPrice,
-    bool? isActive,
-    String? categoryId,
-    String? counterId,
-    bool namePresent = false,
-    bool skuPresent = false,
-    bool barcodePresent = false,
-    bool descriptionPresent = false,
-    bool imageUrlPresent = false,
-    bool taxRatePresent = false,
-    bool basePricePresent = false,
-    bool sellingPricePresent = false,
-    bool isActivePresent = false,
-    bool categoryIdPresent = false,
-    bool counterIdPresent = false,
-  }) {
-    if (namePresent) {
-      if (name == null || name.trim().isEmpty) {
-        return 'Name cannot be empty.';
+  static Future<String?> update(Map<String, dynamic> json) async {
+    final errors = await _updateSchema.validate(json);
+    if (errors.isNotEmpty) {
+      final firstError = errors.first;
+      final details = firstError.details ?? '';
+      if (details.contains('minProperties')) {
+        return 'At least one field is required to update.';
       }
-      if (name.length > 255) {
-        return 'Name must be 255 characters or fewer.';
+      if (firstError.path.contains('name')) {
+        if (details.contains('minLength')) {
+          return 'Name cannot be empty.';
+        }
+        if (details.contains('maxLength')) {
+          return 'Name must be 255 characters or fewer.';
+        }
       }
+      if (firstError.path.contains('sku') && details.contains('maxLength')) {
+        return 'SKU must be 100 characters or fewer.';
+      }
+      if (firstError.path.contains('barcode') &&
+          details.contains('maxLength')) {
+        return 'Barcode must be 100 characters or fewer.';
+      }
+      if (firstError.path.contains('description') &&
+          details.contains('maxLength')) {
+        return 'Description must be 255 characters or fewer.';
+      }
+      if (firstError.path.contains('imageUrl') &&
+          details.contains('maxLength')) {
+        return 'Image URL must be 255 characters or fewer.';
+      }
+      if (firstError.path.contains('taxRate') && details.contains('minimum')) {
+        return 'Tax rate cannot be negative.';
+      }
+      if (firstError.path.contains('basePrice') &&
+          details.contains('minimum')) {
+        return 'Base price cannot be negative.';
+      }
+      if (firstError.path.contains('sellingPrice') &&
+          details.contains('minimum')) {
+        return 'Selling price cannot be negative.';
+      }
+      return details;
     }
-    if (skuPresent && sku != null && sku.length > 100) {
-      return 'SKU must be 100 characters or fewer.';
-    }
-    if (barcodePresent && barcode != null && barcode.length > 100) {
-      return 'Barcode must be 100 characters or fewer.';
-    }
-    if (descriptionPresent && description != null && description.length > 255) {
-      return 'Description must be 255 characters or fewer.';
-    }
-    if (imageUrlPresent && imageUrl != null && imageUrl.length > 255) {
-      return 'Image URL must be 255 characters or fewer.';
-    }
-    if (taxRatePresent && taxRate != null && taxRate < 0) {
-      return 'Tax rate cannot be negative.';
-    }
-    if (basePricePresent && basePrice != null && basePrice < 0) {
-      return 'Base price cannot be negative.';
-    }
-    if (sellingPricePresent && sellingPrice != null && sellingPrice < 0) {
-      return 'Selling price cannot be negative.';
-    }
-
-    if (!namePresent &&
-        !skuPresent &&
-        !barcodePresent &&
-        !descriptionPresent &&
-        !imageUrlPresent &&
-        !taxRatePresent &&
-        !basePricePresent &&
-        !sellingPricePresent &&
-        !isActivePresent &&
-        !categoryIdPresent &&
-        !counterIdPresent) {
-      return 'At least one field is required to update.';
-    }
-
     return null;
   }
 }

@@ -57,21 +57,10 @@ Future<Response> _onPutOrPatch(RequestContext context, String id) async {
   final description = readOptionalString(body, 'description');
   final imageUrl = readOptionalString(body, 'imageUrl');
 
-  final namePresent = body.containsKey('name');
-  final isActivePresent = body.containsKey('isActive');
   final descriptionPresent = body.containsKey('description');
   final imageUrlPresent = body.containsKey('imageUrl');
 
-  final errorMessage = CategoryValidator.update(
-    name: name,
-    isActive: isActive,
-    description: description,
-    imageUrl: imageUrl,
-    namePresent: namePresent,
-    isActivePresent: isActivePresent,
-    descriptionPresent: descriptionPresent,
-    imageUrlPresent: imageUrlPresent,
-  );
+  final errorMessage = await CategoryValidator.update(body);
 
   if (errorMessage != null) {
     return badRequest(message: errorMessage);

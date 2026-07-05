@@ -24,7 +24,10 @@ Future<Response> _onPost(RequestContext context) async {
   final code = (body['code'] as String?)?.trim().toUpperCase();
   final password = (body['password'] as String?)?.trim();
 
-  final errorMessage = TerminalValidator.login(code: code, password: password);
+  final errorMessage = await TerminalValidator.login({
+    'code': code,
+    'password': password,
+  });
 
   if (errorMessage != null) return badRequest(message: errorMessage);
 

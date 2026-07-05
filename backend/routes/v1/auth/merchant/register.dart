@@ -29,13 +29,13 @@ Future<Response> _onPost(RequestContext context) async {
   final email = (body['email'] as String?)?.trim().toLowerCase();
   final password = (body['password'] as String?)?.trim();
 
-  final errorMessage = MerchantValidator.register(
-    name: name,
-    businessName: businessName,
-    whatsappNumber: whatsappNumber,
-    email: email,
-    password: password,
-  );
+  final errorMessage = await MerchantValidator.register({
+    'name': name,
+    'businessName': businessName,
+    'whatsappNumber': whatsappNumber,
+    'email': email,
+    'password': password,
+  });
 
   if (errorMessage != null) {
     return badRequest(message: errorMessage);

@@ -101,10 +101,7 @@ Future<Response> _onPost(RequestContext context, String storeId) async {
   final name = body['name'] as String?;
   final password = body['password'] as String?;
 
-  final errorMessage = TerminalValidator.create(
-    name: name,
-    password: password,
-  );
+  final errorMessage = await TerminalValidator.create(body);
 
   if (errorMessage != null) {
     return badRequest(message: errorMessage);
