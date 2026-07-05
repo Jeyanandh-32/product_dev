@@ -2,3 +2,7 @@
 
 *.rest
 .dart_tool/
+
+# IntelliJ/Android Studio files
+*.iml
+.idea/
