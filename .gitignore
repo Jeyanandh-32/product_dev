@@ -6,3 +6,6 @@
 # IntelliJ/Android Studio files
 *.iml
 .idea/
+
+.agent/
+.dart_skills/
