@@ -23,15 +23,16 @@ class ProductsProvider extends AsyncNotifier<List<Product>> {
     final page = ref.watch(productsPageProvider);
 
     try {
-      final (products, total) = await ProductRepository.getAll(
+      final result = await ProductRepository.getAll(
         storeId: selectedStore.id,
         page: page,
         size: size,
       );
 
-      ref.read(productsTotalProvider.notifier).state = total;
+      ref.read(productsTotalProvider.notifier).state = result.totalItems;
+      ref.read(productsTotalPagesProvider.notifier).state = result.totalPages;
 
-      return products;
+      return result.products;
     } catch (e) {
       return [];
     }

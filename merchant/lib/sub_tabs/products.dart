@@ -31,9 +31,8 @@ class Products extends StatelessComponent {
   Component build(BuildContext context) {
     final entries = context.watch(entriesProvider);
     final products = context.watch(productsProvider);
-    final total = context.watch(productsTotalProvider);
     final currentPage = context.watch(productsPageProvider);
-    final totalPages = (total / entries).ceil();
+    final totalPages = context.watch(productsTotalPagesProvider);
     final activeModal = context.watch(activeModalProvider);
     final editingProduct = context.watch(editingProductProvider);
 

@@ -85,11 +85,16 @@ class ProductRepository {
     }
   }
 
-  static Future<(List<Product>, int)> getAll({
-    required String storeId,
-    int? page,
-    int? size,
-  }) async {
+  static Future<
+    ({
+      List<Product> products,
+      int currentPage,
+      int pageSize,
+      int totalItems,
+      int totalPages,
+    })
+  >
+  getAll({required String storeId, int? page, int? size}) async {
     try {
       final result = await ApiClient.dio.get(
         ApiEndpoints.products,
@@ -97,12 +102,22 @@ class ProductRepository {
       );
 
       final list = result.data['data']['products'] as List<dynamic>;
-      final total = result.data['data']['totalItems'] as int? ?? list.length;
+      final currentPage = result.data['data']['currentPage'] as int? ?? 1;
+      final pageSize = result.data['data']['pageSize'] as int? ?? 50;
+      final totalItems =
+          result.data['data']['totalItems'] as int? ?? list.length;
+      final totalPages = result.data['data']['totalPages'] as int? ?? 1;
 
       final products = list
           .map((s) => Product.fromJson(s as Map<String, Object?>))
           .toList();
-      return (products, total);
+      return (
+        products: products,
+        currentPage: currentPage,
+        pageSize: pageSize,
+        totalItems: totalItems,
+        totalPages: totalPages,
+      );
     } on DioException catch (e) {
       ApiClient.handleDioError(e, 'Failed to fetch products.');
     }

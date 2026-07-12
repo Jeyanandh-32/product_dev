@@ -35,6 +35,8 @@ final productsPageProvider = StateProvider.autoDispose<int>((ref) => 1);
 
 final productsTotalProvider = StateProvider.autoDispose<int>((ref) => 0);
 
+final productsTotalPagesProvider = StateProvider.autoDispose<int>((ref) => 1);
+
 enum ActiveModal {
   none,
   addStore,
