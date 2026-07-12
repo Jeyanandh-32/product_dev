@@ -1,4 +1,5 @@
 import 'package:json_schema_builder/json_schema_builder.dart';
+import 'package:validators/src/validation_utils.dart';
 
 class CategoryValidator {
   const CategoryValidator._();
@@ -37,59 +38,55 @@ class CategoryValidator {
   );
 
   static Future<String?> create(Map<String, dynamic> json) async {
-    final errors = await _createSchema.validate(json.cast<String, Object?>());
-    if (errors.isNotEmpty) {
-      final firstError = errors.first;
-      final path = firstError.path;
-      final type = firstError.error;
-
-      if (type == ValidationErrorType.requiredPropertyMissing &&
-          (firstError.details?.contains('"name"') == true)) {
-        return 'Name is required.';
-      }
-      if (path.contains('name') &&
-          (type == ValidationErrorType.typeMismatch ||
-              type == ValidationErrorType.minLengthNotMet)) {
-        return 'Name is required.';
-      }
-      if (path.contains('description') &&
-          type == ValidationErrorType.maxLengthExceeded) {
-        return 'Description must be 255 characters or fewer.';
-      }
-      if (path.contains('imageUrl') &&
-          type == ValidationErrorType.maxLengthExceeded) {
-        return 'Image URL must be 255 characters or fewer.';
-      }
-      return firstError.details;
-    }
-    return null;
+    return validateSchema(
+      schema: _createSchema,
+      json: json,
+      mapError: (error, path, type) {
+        if (type == ValidationErrorType.requiredPropertyMissing &&
+            (error.details?.contains('"name"') == true)) {
+          return 'Name is required.';
+        }
+        if (path.contains('name') &&
+            (type == ValidationErrorType.typeMismatch ||
+                type == ValidationErrorType.minLengthNotMet)) {
+          return 'Name is required.';
+        }
+        if (path.contains('description') &&
+            type == ValidationErrorType.maxLengthExceeded) {
+          return 'Description must be 255 characters or fewer.';
+        }
+        if (path.contains('imageUrl') &&
+            type == ValidationErrorType.maxLengthExceeded) {
+          return 'Image URL must be 255 characters or fewer.';
+        }
+        return null;
+      },
+    );
   }
 
   static Future<String?> update(Map<String, dynamic> json) async {
-    final errors = await _updateSchema.validate(json.cast<String, Object?>());
-    if (errors.isNotEmpty) {
-      final firstError = errors.first;
-      final path = firstError.path;
-      final type = firstError.error;
-
-      if (type == ValidationErrorType.minPropertiesNotMet) {
-        return 'At least one field is required to update.';
-      }
-      if (path.contains('name') &&
-          (type == ValidationErrorType.typeMismatch ||
-              type == ValidationErrorType.minLengthNotMet)) {
-        return 'Name cannot be empty.';
-      }
-      if (path.contains('description') &&
-          type == ValidationErrorType.maxLengthExceeded) {
-        return 'Description must be 255 characters or fewer.';
-      }
-      if (path.contains('imageUrl') &&
-          type == ValidationErrorType.maxLengthExceeded) {
-        return 'Image URL must be 255 characters or fewer.';
-      }
-      return firstError.details;
-    }
-    return null;
+    return validateSchema(
+      schema: _updateSchema,
+      json: json,
+      mapError: (error, path, type) {
+        if (type == ValidationErrorType.minPropertiesNotMet) {
+          return 'At least one field is required to update.';
+        }
+        if (path.contains('name') &&
+            (type == ValidationErrorType.typeMismatch ||
+                type == ValidationErrorType.minLengthNotMet)) {
+          return 'Name cannot be empty.';
+        }
+        if (path.contains('description') &&
+            type == ValidationErrorType.maxLengthExceeded) {
+          return 'Description must be 255 characters or fewer.';
+        }
+        if (path.contains('imageUrl') &&
+            type == ValidationErrorType.maxLengthExceeded) {
+          return 'Image URL must be 255 characters or fewer.';
+        }
+        return null;
+      },
+    );
   }
 }

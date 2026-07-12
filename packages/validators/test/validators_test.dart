@@ -90,22 +90,11 @@ void main() {
 
   group('OrderValidator.create', () {
     final validOrder = {
-      'merchantId': 'merchant-123',
-      'storeId': 'store-123',
-      'orderReference': 'ref-123',
       'source': 'terminal',
       'type': 'takeaway',
       'paymentMethod': 'cash',
-      'subtotal': 1000,
-      'taxTotal': 100,
-      'grandTotal': 1100,
-      'items': [
-        {
-          'productId': 'prod-123',
-          'quantity': 2,
-          'unitPrice': 500,
-          'taxRate': 10.0,
-        },
+      'products': [
+        {'productId': 'prod-123', 'quantity': 2},
       ],
     };
 
@@ -115,45 +104,39 @@ void main() {
 
     test('returns error when required field is missing', () async {
       final invalidOrder = Map<String, Object?>.from(validOrder)
-        ..remove('merchantId');
+        ..remove('products');
       expect(
         await OrderValidator.create(invalidOrder),
-        'Merchant ID is required.',
+        'Products list is required.',
       );
     });
 
-    test('returns error when subtotal is negative', () async {
+    test('returns error when products list is empty', () async {
       final invalidOrder = Map<String, Object?>.from(validOrder)
-        ..['subtotal'] = -50;
+        ..['products'] = <dynamic>[];
       expect(
         await OrderValidator.create(invalidOrder),
-        'Subtotal cannot be negative.',
+        'Products list must contain at least one item.',
       );
     });
 
-    test('returns error when items is empty', () async {
+    test('returns error when product quantity is negative or zero', () async {
       final invalidOrder = Map<String, Object?>.from(validOrder)
-        ..['items'] = <dynamic>[];
-      expect(
-        await OrderValidator.create(invalidOrder),
-        'At least one order item is required.',
-      );
-    });
-
-    test('returns error when item quantity is negative or zero', () async {
-      final invalidOrder = Map<String, Object?>.from(validOrder)
-        ..['items'] = [
-          {
-            'productId': 'prod-123',
-            'quantity': 0,
-            'unitPrice': 500,
-            'taxRate': 10.0,
-          },
+        ..['products'] = [
+          {'productId': 'prod-123', 'quantity': 0},
         ];
       expect(
         await OrderValidator.create(invalidOrder),
-        'Quantity must be greater than 0.',
+        'Quantity must be a positive integer.',
       );
+    });
+
+    test('returns error when productId is empty', () async {
+      final invalidOrder = Map<String, Object?>.from(validOrder)
+        ..['products'] = [
+          {'productId': '', 'quantity': 1},
+        ];
+      expect(await OrderValidator.create(invalidOrder), 'Invalid Product ID.');
     });
   });
 }

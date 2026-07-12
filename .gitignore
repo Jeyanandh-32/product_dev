@@ -8,4 +8,6 @@
 .idea/
 
 .agent/
+.agents/
 .dart_skills/
+prompt.md

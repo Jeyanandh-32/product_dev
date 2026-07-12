@@ -1,4 +1,5 @@
 import 'package:json_schema_builder/json_schema_builder.dart';
+import 'package:validators/src/validation_utils.dart';
 
 class StockValidator {
   const StockValidator._();
@@ -29,63 +30,59 @@ class StockValidator {
   );
 
   static Future<String?> create(Map<String, dynamic> json) async {
-    final errors = await _createSchema.validate(json.cast<String, Object?>());
-    if (errors.isNotEmpty) {
-      final firstError = errors.first;
-      final path = firstError.path;
-      final type = firstError.error;
-
-      if (type == ValidationErrorType.requiredPropertyMissing) {
-        if (firstError.details?.contains('"productId"') == true) {
+    return validateSchema(
+      schema: _createSchema,
+      json: json,
+      mapError: (error, path, type) {
+        if (type == ValidationErrorType.requiredPropertyMissing) {
+          if (error.details?.contains('"productId"') == true) {
+            return 'Product ID is required.';
+          }
+          if (error.details?.contains('"storeId"') == true) {
+            return 'Store ID is required.';
+          }
+        }
+        if (path.contains('productId') &&
+            (type == ValidationErrorType.typeMismatch ||
+                type == ValidationErrorType.minLengthNotMet)) {
           return 'Product ID is required.';
         }
-        if (firstError.details?.contains('"storeId"') == true) {
+        if (path.contains('storeId') &&
+            (type == ValidationErrorType.typeMismatch ||
+                type == ValidationErrorType.minLengthNotMet)) {
           return 'Store ID is required.';
         }
-      }
-      if (path.contains('productId') &&
-          (type == ValidationErrorType.typeMismatch ||
-              type == ValidationErrorType.minLengthNotMet)) {
-        return 'Product ID is required.';
-      }
-      if (path.contains('storeId') &&
-          (type == ValidationErrorType.typeMismatch ||
-              type == ValidationErrorType.minLengthNotMet)) {
-        return 'Store ID is required.';
-      }
-      if (path.contains('quantity') &&
-          type == ValidationErrorType.minimumNotMet) {
-        return 'Quantity cannot be negative.';
-      }
-      if (path.contains('lowStockThreshold') &&
-          type == ValidationErrorType.minimumNotMet) {
-        return 'Low stock threshold cannot be negative.';
-      }
-      return firstError.details;
-    }
-    return null;
+        if (path.contains('quantity') &&
+            type == ValidationErrorType.minimumNotMet) {
+          return 'Quantity cannot be negative.';
+        }
+        if (path.contains('lowStockThreshold') &&
+            type == ValidationErrorType.minimumNotMet) {
+          return 'Low stock threshold cannot be negative.';
+        }
+        return null;
+      },
+    );
   }
 
   static Future<String?> update(Map<String, dynamic> json) async {
-    final errors = await _updateSchema.validate(json.cast<String, Object?>());
-    if (errors.isNotEmpty) {
-      final firstError = errors.first;
-      final path = firstError.path;
-      final type = firstError.error;
-
-      if (type == ValidationErrorType.minPropertiesNotMet) {
-        return 'At least one field is required to update.';
-      }
-      if (path.contains('quantity') &&
-          type == ValidationErrorType.minimumNotMet) {
-        return 'Quantity cannot be negative.';
-      }
-      if (path.contains('lowStockThreshold') &&
-          type == ValidationErrorType.minimumNotMet) {
-        return 'Low stock threshold cannot be negative.';
-      }
-      return firstError.details;
-    }
-    return null;
+    return validateSchema(
+      schema: _updateSchema,
+      json: json,
+      mapError: (error, path, type) {
+        if (type == ValidationErrorType.minPropertiesNotMet) {
+          return 'At least one field is required to update.';
+        }
+        if (path.contains('quantity') &&
+            type == ValidationErrorType.minimumNotMet) {
+          return 'Quantity cannot be negative.';
+        }
+        if (path.contains('lowStockThreshold') &&
+            type == ValidationErrorType.minimumNotMet) {
+          return 'Low stock threshold cannot be negative.';
+        }
+        return null;
+      },
+    );
   }
 }

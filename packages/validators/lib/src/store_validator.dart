@@ -1,4 +1,5 @@
 import 'package:json_schema_builder/json_schema_builder.dart';
+import 'package:validators/src/validation_utils.dart';
 
 class StoreValidator {
   const StoreValidator._();
@@ -21,43 +22,39 @@ class StoreValidator {
   );
 
   static Future<String?> create(Map<String, dynamic> json) async {
-    final errors = await _createSchema.validate(json.cast<String, Object?>());
-    if (errors.isNotEmpty) {
-      final firstError = errors.first;
-      final path = firstError.path;
-      final type = firstError.error;
-
-      if (type == ValidationErrorType.requiredPropertyMissing &&
-          (firstError.details?.contains('"name"') == true)) {
-        return 'Name is required.';
-      }
-      if (path.contains('name') &&
-          (type == ValidationErrorType.typeMismatch ||
-              type == ValidationErrorType.minLengthNotMet)) {
-        return 'Name is required.';
-      }
-      return firstError.details;
-    }
-    return null;
+    return validateSchema(
+      schema: _createSchema,
+      json: json,
+      mapError: (error, path, type) {
+        if (type == ValidationErrorType.requiredPropertyMissing &&
+            (error.details?.contains('"name"') == true)) {
+          return 'Name is required.';
+        }
+        if (path.contains('name') &&
+            (type == ValidationErrorType.typeMismatch ||
+                type == ValidationErrorType.minLengthNotMet)) {
+          return 'Name is required.';
+        }
+        return null;
+      },
+    );
   }
 
   static Future<String?> update(Map<String, dynamic> json) async {
-    final errors = await _updateSchema.validate(json.cast<String, Object?>());
-    if (errors.isNotEmpty) {
-      final firstError = errors.first;
-      final path = firstError.path;
-      final type = firstError.error;
-
-      if (type == ValidationErrorType.minPropertiesNotMet) {
-        return 'At least one field is required to update.';
-      }
-      if (path.contains('name') &&
-          (type == ValidationErrorType.typeMismatch ||
-              type == ValidationErrorType.minLengthNotMet)) {
-        return 'Name cannot be empty.';
-      }
-      return firstError.details;
-    }
-    return null;
+    return validateSchema(
+      schema: _updateSchema,
+      json: json,
+      mapError: (error, path, type) {
+        if (type == ValidationErrorType.minPropertiesNotMet) {
+          return 'At least one field is required to update.';
+        }
+        if (path.contains('name') &&
+            (type == ValidationErrorType.typeMismatch ||
+                type == ValidationErrorType.minLengthNotMet)) {
+          return 'Name cannot be empty.';
+        }
+        return null;
+      },
+    );
   }
 }
