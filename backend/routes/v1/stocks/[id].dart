@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:backend/extensions/request_context_extension.dart';
 import 'package:backend/extensions/stock_row_extension.dart';
 import 'package:backend/repositories/stock_repository.dart';
 import 'package:backend/utils/responses.dart';
@@ -23,42 +24,14 @@ Future<Response> onRequest(
 Future<Response> _onPutOrPatch(RequestContext context, String id) async {
   final repo = context.read<StockRepository>();
 
-  final jsonBody = await context.request.json();
-  if (jsonBody is! Map<String, Object?>) return inValidBody();
-
-  final body = jsonBody;
-
-  final quantityVal = body['quantity'];
-  if (quantityVal != null && quantityVal is! int) {
-    return badRequest(message: 'quantity must be an integer.');
-  }
-
-  final lowStockThresholdVal = body['lowStockThreshold'];
-  if (lowStockThresholdVal != null && lowStockThresholdVal is! int) {
-    return badRequest(message: 'lowStockThreshold must be an integer.');
-  }
-
-  final stockMonitorVal = body['stockMonitor'];
-  if (stockMonitorVal != null && stockMonitorVal is! bool) {
-    return badRequest(message: 'stockMonitor must be a boolean.');
-  }
-
-  final quantity = quantityVal as int?;
-  final lowStockThreshold = lowStockThresholdVal as int?;
-  final stockMonitor = stockMonitorVal as bool?;
-
-  final errorMessage = await StockValidator.update(body);
-
-  if (errorMessage != null) {
-    return badRequest(message: errorMessage);
-  }
-
   try {
+    final body = await context.validateBody(StockValidator.update);
+
     final updatedRow = await repo.update(
       id: id,
-      quantity: quantity,
-      lowStockThreshold: lowStockThreshold,
-      stockMonitor: stockMonitor,
+      quantity: body['quantity'] as int?,
+      lowStockThreshold: body['lowStockThreshold'] as int?,
+      stockMonitor: body['stockMonitor'] as bool?,
     );
 
     if (updatedRow == null) {
@@ -73,6 +46,8 @@ Future<Response> _onPutOrPatch(RequestContext context, String id) async {
         'stock': updatedRow.toStock(),
       },
     );
+  } on ResponseException catch (e) {
+    return e.response;
   } catch (e) {
     return error(message: e.toString());
   }

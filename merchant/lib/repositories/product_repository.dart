@@ -87,21 +87,21 @@ class ProductRepository {
 
   static Future<(List<Product>, int)> getAll({
     required String storeId,
-    int? limit,
-    int? offset,
+    int? page,
+    int? size,
   }) async {
     try {
       final result = await ApiClient.dio.get(
         ApiEndpoints.products,
         queryParameters: {
           'storeId': storeId,
-          'limit': ?limit,
-          'offset': ?offset,
+          'page': ?page,
+          'size': ?size,
         },
       );
 
       final list = result.data['data']['products'] as List<dynamic>;
-      final total = result.data['data']['total'] as int? ?? list.length;
+      final total = result.data['data']['totalItems'] as int? ?? list.length;
 
       final products = list
           .map((s) => Product.fromJson(s as Map<String, Object?>))

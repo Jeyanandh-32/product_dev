@@ -1,5 +1,5 @@
 import 'package:backend/extensions/merchant_row_extension.dart';
-import 'package:backend/models/token_payload/token_payload.dart';
+import 'package:backend/extensions/request_context_extension.dart';
 import 'package:backend/repositories/merchant_repository.dart';
 import 'package:backend/utils/responses.dart';
 import 'package:dart_frog/dart_frog.dart';
@@ -13,7 +13,7 @@ Future<Response> onRequest(RequestContext context) async {
 
 Future<Response> _onGet(RequestContext context) async {
   final repo = context.read<MerchantRepository>();
-  final tokenPayload = context.read<TokenPayload>();
+  final tokenPayload = context.tokenPayload;
 
   try {
     final merchantRow = await repo.getById(tokenPayload.sub);
@@ -21,9 +21,7 @@ Future<Response> _onGet(RequestContext context) async {
       return badRequest(message: 'Merchant not exists.');
     }
 
-    final merchant = merchantRow.toMerchant();
-
-    return success(data: {'merchant': merchant});
+    return success(data: {'merchant': merchantRow.toMerchant()});
   } on Exception catch (e) {
     return error(message: e.toString());
   }

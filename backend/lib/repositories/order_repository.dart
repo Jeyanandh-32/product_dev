@@ -117,6 +117,22 @@ class OrderRepository {
     return rows;
   }
 
+  Future<int> count({
+    required String merchantId,
+    String? storeId,
+  }) async {
+    var query = _db.orders.where(
+      (o) => o.merchantId.equals(ts.toExpr(merchantId)),
+    );
+
+    if (storeId != null) {
+      query = query.where((o) => o.storeId.equals(ts.toExpr(storeId)));
+    }
+
+    final total = await query.count().fetch();
+    return total ?? 0;
+  }
+
   Future<OrderRow?> getById(String id) async {
     final row = _db.orders
         .where((o) => o.id.equals(ts.toExpr(id)))

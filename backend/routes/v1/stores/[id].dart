@@ -1,3 +1,4 @@
+import 'package:backend/extensions/request_context_extension.dart';
 import 'package:backend/extensions/store_row_extension.dart';
 import 'package:backend/repositories/store_repository.dart';
 import 'package:backend/utils/responses.dart';
@@ -8,6 +9,10 @@ Future<Response> onRequest(
   RequestContext context,
   String id,
 ) async {
+  if (!id.isUUID()) {
+    return badRequest(message: 'Invalid store id.');
+  }
+
   return switch (context.request.method) {
     HttpMethod.get => _onGet(context, id),
     HttpMethod.put || HttpMethod.patch => _onPutOrPatch(context, id),
@@ -34,30 +39,15 @@ Future<Response> _onGet(RequestContext context, String id) async {
 Future<Response> _onPutOrPatch(RequestContext context, String id) async {
   final repo = context.read<StoreRepository>();
 
-  final jsonBody = await context.request.json();
-
-  if (jsonBody is! Map<String, Object?>) return inValidBody();
-
-  final body = jsonBody;
-
-  final name = body['name'] as String?;
-  final storeType = body['storeType'] as String?;
-  final isActive = body['isActive'] as bool?;
-  final storeTypePresent = body.containsKey('storeType');
-
-  final errorMessage = await StoreValidator.update(body);
-
-  if (errorMessage != null) {
-    return badRequest(message: errorMessage);
-  }
-
   try {
+    final body = await context.validateBody(StoreValidator.update);
+
     final storeRow = await repo.update(
       id: id,
-      name: name?.trim(),
-      storeType: storeType?.trim(),
-      isActive: isActive,
-      updateStoreType: storeTypePresent,
+      name: (body['name'] as String?)?.trim(),
+      storeType: (body['storeType'] as String?)?.trim(),
+      isActive: body['isActive'] as bool?,
+      updateStoreType: body.containsKey('storeType'),
     );
 
     return success(
@@ -65,6 +55,8 @@ Future<Response> _onPutOrPatch(RequestContext context, String id) async {
         'store': storeRow?.toStore(),
       },
     );
+  } on ResponseException catch (e) {
+    return e.response;
   } catch (e) {
     if (e.toString().contains('unique_merchant_store_name')) {
       return badRequest(

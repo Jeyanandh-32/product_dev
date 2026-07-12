@@ -9,12 +9,32 @@ import 'package:backend/repositories/product_repository.dart';
 import 'package:backend/repositories/stock_repository.dart';
 import 'package:backend/repositories/store_repository.dart';
 import 'package:backend/repositories/terminal_repository.dart';
+import 'package:backend/services/order_service.dart';
+import 'package:backend/services/product_service.dart';
 import 'package:dart_frog/dart_frog.dart';
 import 'package:typed_sql/typed_sql.dart' as ts;
 
 Middleware providerMiddleware() {
   return (handler) {
     return handler
+        .use(
+          provider<ProductService>(
+            (context) => ProductService(
+              productRepo: context.read<ProductRepository>(),
+              stockRepo: context.read<StockRepository>(),
+            ),
+          ),
+        )
+        .use(
+          provider<OrderService>(
+            (context) => OrderService(
+              orderRepo: context.read<OrderRepository>(),
+              orderItemRepo: context.read<OrderItemRepository>(),
+              productRepo: context.read<ProductRepository>(),
+              stockRepo: context.read<StockRepository>(),
+            ),
+          ),
+        )
         .use(
           provider<OrderRepository>(
             (context) => OrderRepository(

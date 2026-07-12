@@ -1,7 +1,7 @@
 import 'dart:io';
 
+import 'package:backend/extensions/request_context_extension.dart';
 import 'package:backend/extensions/store_row_extension.dart';
-import 'package:backend/models/token_payload/token_payload.dart';
 import 'package:backend/repositories/store_repository.dart';
 import 'package:backend/utils/responses.dart';
 import 'package:dart_frog/dart_frog.dart';
@@ -16,19 +16,36 @@ Future<Response> onRequest(RequestContext context) async {
 }
 
 Future<Response> _onGet(RequestContext context) async {
+  final (pageError, page) = context.parsePage();
+  if (pageError != null) return pageError;
+
+  final (sizeError, size) = context.parseSize();
+  if (sizeError != null) return sizeError;
+
   final repo = context.read<StoreRepository>();
-  final tokenPayload = context.read<TokenPayload>();
-  final merchantId = tokenPayload.sub;
+  final tokenPayload = context.tokenPayload;
 
   try {
+    final total = await repo.count(
+      merchantId: tokenPayload.sub,
+    );
+
+    final offset = (page - 1) * size;
     final storeRows = await repo.getAll(
-      merchantId: merchantId,
+      merchantId: tokenPayload.sub,
+      limit: size,
+      offset: offset,
     );
 
     final stores = storeRows.map((s) => s.toStore()).toList();
+    final totalPages = (total / size).ceil();
 
     return success(
       data: {
+        'currentPage': page,
+        'pageSize': size,
+        'totalItems': total,
+        'totalPages': totalPages,
         'stores': stores,
       },
     );
@@ -39,37 +56,23 @@ Future<Response> _onGet(RequestContext context) async {
 
 Future<Response> _onPost(RequestContext context) async {
   final repo = context.read<StoreRepository>();
-  final tokenPayload = context.read<TokenPayload>();
-  final merchantId = tokenPayload.sub;
-
-  final jsonBody = await context.request.json();
-
-  if (jsonBody is! Map<String, Object?>) return inValidBody();
-
-  final body = jsonBody;
-
-  final name = body['name'] as String?;
-  final storeType = body['storeType'] as String?;
-
-  final errorMessage = await StoreValidator.create(body);
-
-  if (errorMessage != null) {
-    return badRequest(message: errorMessage);
-  }
+  final tokenPayload = context.tokenPayload;
 
   try {
+    final body = await context.validateBody(StoreValidator.create);
+
     final storeRow = await repo.create(
-      merchantId: merchantId,
-      name: name!.trim(),
-      storeType: storeType?.trim(),
+      merchantId: tokenPayload.sub,
+      name: (body['name'] as String).trim(),
+      storeType: (body['storeType'] as String?)?.trim(),
     );
 
     return success(
       statusCode: HttpStatus.created,
-      data: {
-        'store': storeRow.toStore(),
-      },
+      data: {'store': storeRow.toStore()},
     );
+  } on ResponseException catch (e) {
+    return e.response;
   } catch (e) {
     if (e.toString().contains('unique_merchant_store_name')) {
       return badRequest(

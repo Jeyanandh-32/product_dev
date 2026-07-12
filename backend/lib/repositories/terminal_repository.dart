@@ -30,20 +30,43 @@ class TerminalRepository {
   Future<List<TerminalRow>> getAll({
     required String merchantId,
     String? storeId,
+    int? limit,
+    int? offset,
   }) async {
-    final query = _db.terminals.where(
+    var query = _db.terminals.where(
       (t) => t.merchantId.equalsValue(merchantId),
     );
 
     if (storeId != null) {
-      final rows = await query
-          .where((t) => t.storeId.equalsValue(storeId))
-          .fetch();
-      return rows;
+      query = query.where((t) => t.storeId.equalsValue(storeId));
+    }
+
+    if (offset != null) {
+      query = query.offset(offset);
+    }
+
+    if (limit != null) {
+      query = query.limit(limit);
     }
 
     final rows = await query.fetch();
     return rows;
+  }
+
+  Future<int> count({
+    required String merchantId,
+    String? storeId,
+  }) async {
+    var query = _db.terminals.where(
+      (t) => t.merchantId.equalsValue(merchantId),
+    );
+
+    if (storeId != null) {
+      query = query.where((t) => t.storeId.equalsValue(storeId));
+    }
+
+    final total = await query.count().fetch();
+    return total ?? 0;
   }
 
   Future<TerminalRow?> getByCode(String code) async {

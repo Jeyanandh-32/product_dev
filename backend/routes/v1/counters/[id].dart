@@ -1,4 +1,5 @@
 import 'package:backend/extensions/counter_row_extension.dart';
+import 'package:backend/extensions/request_context_extension.dart';
 import 'package:backend/repositories/counter_repository.dart';
 import 'package:backend/utils/request_body.dart';
 import 'package:backend/utils/responses.dart';
@@ -39,42 +40,17 @@ Future<Response> _onGet(RequestContext context, String id) async {
 Future<Response> _onPutOrPatch(RequestContext context, String id) async {
   final repo = context.read<CounterRepository>();
 
-  final jsonBody = await context.request.json();
-
-  if (jsonBody is! Map<String, Object?>) return inValidBody();
-
-  final body = jsonBody;
-
-  if (hasNonStringValue(body, 'name') ||
-      hasNonBoolValue(body, 'isActive') ||
-      hasNonStringValue(body, 'description') ||
-      hasNonStringValue(body, 'imageUrl')) {
-    return inValidBody();
-  }
-
-  final name = body['name'] as String?;
-  final isActive = body['isActive'] as bool?;
-  final description = readOptionalString(body, 'description');
-  final imageUrl = readOptionalString(body, 'imageUrl');
-
-  final descriptionPresent = body.containsKey('description');
-  final imageUrlPresent = body.containsKey('imageUrl');
-
-  final errorMessage = await CounterValidator.update(body);
-
-  if (errorMessage != null) {
-    return badRequest(message: errorMessage);
-  }
-
   try {
+    final body = await context.validateBody(CounterValidator.update);
+
     final counterRow = await repo.update(
       id: id,
-      name: name?.trim(),
-      isActive: isActive,
-      description: description,
-      descriptionPresent: descriptionPresent,
-      imageUrl: imageUrl,
-      imageUrlPresent: imageUrlPresent,
+      name: (body['name'] as String?)?.trim(),
+      isActive: body['isActive'] as bool?,
+      description: readOptionalString(body, 'description'),
+      descriptionPresent: body.containsKey('description'),
+      imageUrl: readOptionalString(body, 'imageUrl'),
+      imageUrlPresent: body.containsKey('imageUrl'),
     );
 
     return success(
@@ -82,6 +58,8 @@ Future<Response> _onPutOrPatch(RequestContext context, String id) async {
         'counter': counterRow?.toCounter(),
       },
     );
+  } on ResponseException catch (e) {
+    return e.response;
   } catch (e) {
     if (e.toString().contains('unique_store_counter_name')) {
       return badRequest(

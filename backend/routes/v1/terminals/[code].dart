@@ -1,3 +1,4 @@
+import 'package:backend/extensions/request_context_extension.dart';
 import 'package:backend/extensions/terminal_row_extension.dart';
 import 'package:backend/repositories/terminal_repository.dart';
 import 'package:backend/services/auth_service.dart';
@@ -35,28 +36,17 @@ Future<Response> _onGet(RequestContext context, String code) async {
 Future<Response> _onPutOrPatch(RequestContext context, String code) async {
   final repo = context.read<TerminalRepository>();
 
-  final jsonBody = await context.request.json();
-
-  if (jsonBody is! Map<String, Object?>) return inValidBody();
-
-  final body = jsonBody;
-
-  final name = body['name'] as String?;
-  final password = body['password'] as String?;
-  final isActive = body['isActive'] as bool?;
-
-  final errorMessage = await TerminalValidator.update(body);
-
-  if (errorMessage != null) {
-    return badRequest(message: errorMessage);
-  }
-
-  String? passwordHash;
-  if (password != null && password.isNotEmpty) {
-    passwordHash = await AuthService.hashPassword(password);
-  }
-
   try {
+    final body = await context.validateBody(TerminalValidator.update);
+    final name = body['name'] as String?;
+    final password = body['password'] as String?;
+    final isActive = body['isActive'] as bool?;
+
+    String? passwordHash;
+    if (password != null && password.isNotEmpty) {
+      passwordHash = await AuthService.hashPassword(password);
+    }
+
     final terminalRow = await repo.update(
       code: code,
       name: name?.trim(),
@@ -69,6 +59,8 @@ Future<Response> _onPutOrPatch(RequestContext context, String code) async {
         'terminal': terminalRow?.toTerminal(),
       },
     );
+  } on ResponseException catch (e) {
+    return e.response;
   } catch (e) {
     if (e.toString().contains('unique_store_terminal_name')) {
       return badRequest(

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:backend/extensions/product_row_extension.dart';
+import 'package:backend/extensions/request_context_extension.dart';
 import 'package:backend/repositories/product_repository.dart';
 import 'package:backend/utils/request_body.dart';
 import 'package:backend/utils/responses.dart';
@@ -34,11 +35,9 @@ Future<Response> _onGet(RequestContext context, String id) async {
       );
     }
 
-    final product = productRow.toProduct();
-
     return success(
       data: {
-        'product': product,
+        'product': productRow.toProduct(),
       },
     );
   } catch (e) {
@@ -49,62 +48,21 @@ Future<Response> _onGet(RequestContext context, String id) async {
 Future<Response> _onPutOrPatch(RequestContext context, String id) async {
   final repo = context.read<ProductRepository>();
 
-  final jsonBody = await context.request.json();
-  if (jsonBody is! Map<String, Object?>) return inValidBody();
-
-  final body = jsonBody;
-
-  // Validate value types
-  if (hasNonStringValue(body, 'name') ||
-      hasNonStringValue(body, 'categoryId') ||
-      hasNonStringValue(body, 'counterId') ||
-      hasNonStringValue(body, 'sku') ||
-      hasNonStringValue(body, 'barcode') ||
-      hasNonStringValue(body, 'description') ||
-      hasNonStringValue(body, 'imageUrl') ||
-      hasNonBoolValue(body, 'isActive')) {
-    return inValidBody();
-  }
-
-  final basePriceVal = body['basePrice'];
-  if (basePriceVal != null && basePriceVal is! int) {
-    return badRequest(message: 'basePrice must be an integer.');
-  }
-
-  final sellingPriceVal = body['sellingPrice'];
-  if (sellingPriceVal != null && sellingPriceVal is! int) {
-    return badRequest(message: 'sellingPrice must be an integer.');
-  }
-
-  final taxRateVal = body['taxRate'];
-  if (taxRateVal != null && taxRateVal is! num) {
-    return badRequest(message: 'taxRate must be a number.');
-  }
-
-  final name = body['name'] as String?;
-  final categoryId = body['categoryId'] as String?;
-  final counterId = body['counterId'] as String?;
-  final isActive = body['isActive'] as bool?;
-  final basePrice = basePriceVal as int?;
-  final sellingPrice = sellingPriceVal as int?;
-  final sku = readOptionalString(body, 'sku');
-  final barcode = readOptionalString(body, 'barcode');
-  final description = readOptionalString(body, 'description');
-  final imageUrl = readOptionalString(body, 'imageUrl');
-  final taxRate = (taxRateVal as num?)?.toDouble();
-
-  final skuPresent = body.containsKey('sku');
-  final barcodePresent = body.containsKey('barcode');
-  final descriptionPresent = body.containsKey('description');
-  final imageUrlPresent = body.containsKey('imageUrl');
-
-  final errorMessage = await ProductValidator.update(body);
-
-  if (errorMessage != null) {
-    return badRequest(message: errorMessage);
-  }
-
   try {
+    final body = await context.validateBody(ProductValidator.update);
+
+    final name = body['name'] as String?;
+    final categoryId = body['categoryId'] as String?;
+    final counterId = body['counterId'] as String?;
+    final isActive = body['isActive'] as bool?;
+    final basePrice = body['basePrice'] as int?;
+    final sellingPrice = body['sellingPrice'] as int?;
+    final sku = readOptionalString(body, 'sku');
+    final barcode = readOptionalString(body, 'barcode');
+    final description = readOptionalString(body, 'description');
+    final imageUrl = readOptionalString(body, 'imageUrl');
+    final taxRate = (body['taxRate'] as num?)?.toDouble();
+
     final updatedRow = await repo.update(
       id: id,
       name: name?.trim(),
@@ -118,10 +76,10 @@ Future<Response> _onPutOrPatch(RequestContext context, String id) async {
       barcode: barcode,
       description: description,
       imageUrl: imageUrl,
-      skuPresent: skuPresent,
-      barcodePresent: barcodePresent,
-      descriptionPresent: descriptionPresent,
-      imageUrlPresent: imageUrlPresent,
+      skuPresent: body.containsKey('sku'),
+      barcodePresent: body.containsKey('barcode'),
+      descriptionPresent: body.containsKey('description'),
+      imageUrlPresent: body.containsKey('imageUrl'),
     );
 
     if (updatedRow == null) {
@@ -131,7 +89,6 @@ Future<Response> _onPutOrPatch(RequestContext context, String id) async {
       );
     }
 
-    // Fetch the product with fully joined stock details after updating
     final completeProductRow = await repo.getById(id);
     if (completeProductRow == null) {
       return error(
@@ -140,13 +97,13 @@ Future<Response> _onPutOrPatch(RequestContext context, String id) async {
       );
     }
 
-    final completeProduct = completeProductRow.toProduct();
-
     return success(
       data: {
-        'product': completeProduct,
+        'product': completeProductRow.toProduct(),
       },
     );
+  } on ResponseException catch (e) {
+    return e.response;
   } catch (e) {
     if (e.toString().contains('unique_merchant_product_sku')) {
       return badRequest(message: 'You already have a product with this SKU.');

@@ -19,15 +19,14 @@ class ProductsProvider extends AsyncNotifier<List<Product>> {
     final selectedStore = ref.watch(storeProvider);
     if (selectedStore == null) return [];
 
-    final limit = ref.watch(entriesProvider);
+    final size = ref.watch(entriesProvider);
     final page = ref.watch(productsPageProvider);
-    final offset = (page - 1) * limit;
 
     try {
       final (products, total) = await ProductRepository.getAll(
         storeId: selectedStore.id,
-        limit: limit,
-        offset: offset,
+        page: page,
+        size: size,
       );
 
       ref.read(productsTotalProvider.notifier).state = total;

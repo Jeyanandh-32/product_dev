@@ -30,20 +30,43 @@ class CounterRepository {
   Future<List<CounterRow>> getAll({
     required String merchantId,
     String? storeId,
+    int? limit,
+    int? offset,
   }) async {
-    final query = _db.counters.where(
+    var query = _db.counters.where(
       (c) => c.merchantId.equalsValue(merchantId),
     );
 
     if (storeId != null) {
-      final rows = await query
-          .where((c) => c.storeId.equalsValue(storeId))
-          .fetch();
-      return rows;
+      query = query.where((c) => c.storeId.equalsValue(storeId));
+    }
+
+    if (offset != null) {
+      query = query.offset(offset);
+    }
+
+    if (limit != null) {
+      query = query.limit(limit);
     }
 
     final rows = await query.fetch();
     return rows;
+  }
+
+  Future<int> count({
+    required String merchantId,
+    String? storeId,
+  }) async {
+    var query = _db.counters.where(
+      (c) => c.merchantId.equalsValue(merchantId),
+    );
+
+    if (storeId != null) {
+      query = query.where((c) => c.storeId.equalsValue(storeId));
+    }
+
+    final total = await query.count().fetch();
+    return total ?? 0;
   }
 
   Future<CounterRow?> getById(String id) async {

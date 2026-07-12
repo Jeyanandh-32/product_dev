@@ -23,12 +23,29 @@ class StoreRepository {
     return row;
   }
 
-  Future<List<StoreRow>> getAll({required String merchantId}) async {
-    final rows = await _db.stores
-        .where((s) => s.merchantId.equalsValue(merchantId))
-        .fetch();
+  Future<List<StoreRow>> getAll({
+    required String merchantId,
+    int? limit,
+    int? offset,
+  }) async {
+    var query = _db.stores.where((s) => s.merchantId.equalsValue(merchantId));
 
+    if (offset != null) {
+      query = query.offset(offset);
+    }
+
+    if (limit != null) {
+      query = query.limit(limit);
+    }
+
+    final rows = await query.fetch();
     return rows;
+  }
+
+  Future<int> count({required String merchantId}) async {
+    final query = _db.stores.where((s) => s.merchantId.equalsValue(merchantId));
+    final total = await query.count().fetch();
+    return total ?? 0;
   }
 
   Future<StoreRow?> getById(String id) async {

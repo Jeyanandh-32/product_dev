@@ -127,10 +127,7 @@ class _CartSummaryState extends ConsumerState<CartSummary> {
                   description: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(
-                        LucideIcons.check,
-                        size: 20,
-                      ),
+                      const Icon(LucideIcons.check, size: 20),
                       const Gap(8),
                       StyledText(
                         'Order no:${order.billNo} placed successfully!',

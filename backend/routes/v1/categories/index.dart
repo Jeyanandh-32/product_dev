@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:backend/extensions/category_row_extension.dart';
-import 'package:backend/models/token_payload/token_payload.dart';
+import 'package:backend/extensions/request_context_extension.dart';
 import 'package:backend/repositories/category_repository.dart';
 import 'package:backend/utils/request_body.dart';
 import 'package:backend/utils/responses.dart';
@@ -17,27 +17,43 @@ Future<Response> onRequest(RequestContext context) async {
 }
 
 Future<Response> _onGet(RequestContext context) async {
-  final parameters = context.request.uri.queryParameters;
-  final storeId = parameters['storeId'];
-
+  final storeId = context.request.uri.queryParameters['storeId'];
   if (storeId != null && storeId.isNotEmpty && !storeId.isUUID()) {
     return badRequest(message: 'Invalid store id.');
   }
 
+  final (pageError, page) = context.parsePage();
+  if (pageError != null) return pageError;
+
+  final (sizeError, size) = context.parseSize();
+  if (sizeError != null) return sizeError;
+
   final repo = context.read<CategoryRepository>();
-  final tokenPayload = context.read<TokenPayload>();
-  final merchantId = tokenPayload.sub;
+  final tokenPayload = context.tokenPayload;
 
   try {
+    final total = await repo.count(
+      merchantId: tokenPayload.sub,
+      storeId: storeId,
+    );
+
+    final offset = (page - 1) * size;
     final categoryRows = await repo.getAll(
       storeId: storeId,
-      merchantId: merchantId,
+      merchantId: tokenPayload.sub,
+      limit: size,
+      offset: offset,
     );
 
     final categories = categoryRows.map((s) => s.toCategory()).toList();
+    final totalPages = (total / size).ceil();
 
     return success(
       data: {
+        'currentPage': page,
+        'pageSize': size,
+        'totalItems': total,
+        'totalPages': totalPages,
         'categories': categories,
       },
     );
@@ -47,57 +63,29 @@ Future<Response> _onGet(RequestContext context) async {
 }
 
 Future<Response> _onPost(RequestContext context) async {
-  final parameters = context.request.uri.queryParameters;
-  final storeId = parameters['storeId'];
-
-  if (storeId == null || storeId.isEmpty) {
-    return badRequest(message: 'Store Id is required.');
-  }
-  if (!storeId.isUUID()) {
-    return badRequest(message: 'Invalid store id.');
-  }
+  final storeIdError = context.validateStoreId();
+  if (storeIdError != null) return storeIdError;
 
   final repo = context.read<CategoryRepository>();
-  final tokenPayload = context.read<TokenPayload>();
-  final merchantId = tokenPayload.sub;
-
-  final jsonBody = await context.request.json();
-
-  if (jsonBody is! Map<String, Object?>) return inValidBody();
-
-  final body = jsonBody;
-
-  if (hasNonStringValue(body, 'name') ||
-      hasNonStringValue(body, 'description') ||
-      hasNonStringValue(body, 'imageUrl')) {
-    return inValidBody();
-  }
-
-  final name = body['name'] as String?;
-  final description = readOptionalString(body, 'description');
-  final imageUrl = readOptionalString(body, 'imageUrl');
-
-  final errorMessage = await CategoryValidator.create(body);
-
-  if (errorMessage != null) {
-    return badRequest(message: errorMessage);
-  }
+  final tokenPayload = context.tokenPayload;
 
   try {
+    final body = await context.validateBody(CategoryValidator.create);
+
     final categoryRow = await repo.create(
-      merchantId: merchantId,
-      storeId: storeId,
-      name: name!.trim(),
-      description: description,
-      imageUrl: imageUrl,
+      merchantId: tokenPayload.sub,
+      storeId: context.storeId,
+      name: (body['name'] as String).trim(),
+      description: readOptionalString(body, 'description'),
+      imageUrl: readOptionalString(body, 'imageUrl'),
     );
 
     return success(
       statusCode: HttpStatus.created,
-      data: {
-        'category': categoryRow.toCategory(),
-      },
+      data: {'category': categoryRow.toCategory()},
     );
+  } on ResponseException catch (e) {
+    return e.response;
   } catch (e) {
     if (e.toString().contains('unique_store_category_name')) {
       return badRequest(
