@@ -1,47 +1,13 @@
-import 'package:json_schema_builder/json_schema_builder.dart';
-import 'package:validators/src/validation_patterns.dart';
+import 'package:validators/src/schemas.dart';
 import 'package:validators/src/validation_utils.dart';
+import 'package:schemantic/schemantic.dart';
 
 class MerchantValidator {
   const MerchantValidator._();
 
-  static final _registerSchema = S.object(
-    properties: {
-      'name': S.string(minLength: 1, description: 'Merchant name'),
-      'businessName': S.string(minLength: 1, description: 'Business name'),
-      'whatsappNumber': S.string(
-        pattern: ValidationPatterns.whatsapp,
-        description: 'Whatsapp number',
-      ),
-      'email': S.string(
-        pattern: r'^[^@\s]+@[^@\s]+\.[^@\s]+$',
-        description: 'Email address',
-      ),
-      'password': S.string(
-        pattern: ValidationPatterns.password,
-        description: 'Password',
-      ),
-    },
-    required: ['name', 'businessName', 'whatsappNumber', 'email', 'password'],
-  );
-
-  static final _loginSchema = S.object(
-    properties: {
-      'email': S.string(
-        pattern: r'^[^@\s]+@[^@\s]+\.[^@\s]+$',
-        description: 'Email address',
-      ),
-      'password': S.string(
-        pattern: ValidationPatterns.password,
-        description: 'Password',
-      ),
-    },
-    required: ['email', 'password'],
-  );
-
   static Future<String?> register(Map<String, dynamic> json) async {
     return validateSchema(
-      schema: _registerSchema,
+      schema: MerchantRegister.$schema,
       json: json,
       mapError: (error, path, type) {
         if (type == ValidationErrorType.requiredPropertyMissing) {
@@ -105,7 +71,7 @@ class MerchantValidator {
 
   static Future<String?> login(Map<String, dynamic> json) async {
     return validateSchema(
-      schema: _loginSchema,
+      schema: MerchantLogin.$schema,
       json: json,
       mapError: (error, path, type) {
         if (type == ValidationErrorType.requiredPropertyMissing) {

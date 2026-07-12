@@ -38,20 +38,18 @@ Future<Response> _onPutOrPatch(RequestContext context, String code) async {
 
   try {
     final body = await context.validateBody(TerminalValidator.update);
-    final name = body['name'] as String?;
-    final password = body['password'] as String?;
-    final isActive = body['isActive'] as bool?;
+    final input = TerminalUpdate.fromJson(body);
 
     String? passwordHash;
-    if (password != null && password.isNotEmpty) {
-      passwordHash = await AuthService.hashPassword(password);
+    if (input.password != null && input.password!.isNotEmpty) {
+      passwordHash = await AuthService.hashPassword(input.password!);
     }
 
     final terminalRow = await repo.update(
       code: code,
-      name: name?.trim(),
+      name: input.name?.trim(),
       passwordHash: passwordHash,
-      isActive: isActive,
+      isActive: input.isActive,
     );
 
     return success(

@@ -26,12 +26,13 @@ Future<Response> _onPutOrPatch(RequestContext context, String id) async {
 
   try {
     final body = await context.validateBody(StockValidator.update);
+    final input = StockUpdate.fromJson(body);
 
     final updatedRow = await repo.update(
       id: id,
-      quantity: body['quantity'] as int?,
-      lowStockThreshold: body['lowStockThreshold'] as int?,
-      stockMonitor: body['stockMonitor'] as bool?,
+      quantity: input.quantity,
+      lowStockThreshold: input.lowStockThreshold,
+      stockMonitor: input.stockMonitor,
     );
 
     if (updatedRow == null) {

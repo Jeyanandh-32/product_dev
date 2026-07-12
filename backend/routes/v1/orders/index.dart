@@ -22,22 +22,24 @@ Future<Response> _onPost(RequestContext context) async {
 
   try {
     final body = await context.validateBody(OrderValidator.create);
+    final input = OrderCreate.fromJson(body);
     final tokenPayload = context.tokenPayload;
     final orderService = context.read<OrderService>();
 
-    final productsList = (body['products'] as List<dynamic>)
-        .cast<Map<String, dynamic>>();
+    final productsList = input.products
+        .map((p) => {'productId': p.productId, 'quantity': p.quantity})
+        .toList();
 
     final source = OrderSource.values.firstWhere(
-      (e) => e.name == body['source'],
+      (e) => e.name == input.source,
       orElse: () => OrderSource.terminal,
     );
     final type = OrderType.values.firstWhere(
-      (e) => e.name == body['type'],
+      (e) => e.name == input.type,
       orElse: () => OrderType.dineIn,
     );
     final paymentMethod = PaymentMethod.values.firstWhere(
-      (e) => e.name == body['paymentMethod'],
+      (e) => e.name == input.paymentMethod,
       orElse: () => PaymentMethod.cash,
     );
 

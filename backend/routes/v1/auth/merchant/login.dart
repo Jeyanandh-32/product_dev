@@ -35,15 +35,20 @@ Future<Response> _onPost(RequestContext context) async {
     return badRequest(message: errorMessage);
   }
 
+  final input = MerchantLogin.fromJson({
+    'email': email,
+    'password': password,
+  });
+
   try {
-    final merchantRow = await repo.getByEmail(email!);
+    final merchantRow = await repo.getByEmail(input.email);
 
     if (merchantRow == null) {
       return badRequest(message: 'Invalid email or password.');
     }
 
     final isValid = await AuthService.verifyPassword(
-      password!,
+      input.password,
       merchantRow.passwordHash,
     );
 

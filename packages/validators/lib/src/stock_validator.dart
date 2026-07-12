@@ -1,33 +1,12 @@
-import 'package:json_schema_builder/json_schema_builder.dart';
+import 'package:validators/src/schemas.dart';
 import 'package:validators/src/validation_utils.dart';
+import 'package:schemantic/schemantic.dart';
 
 class StockValidator {
   const StockValidator._();
 
-  static final _createSchema = S.object(
-    properties: {
-      'productId': S.string(minLength: 1, description: 'Product ID'),
-      'storeId': S.string(minLength: 1, description: 'Store ID'),
-      'quantity': S.integer(minimum: 0, description: 'Stock quantity'),
-      'lowStockThreshold': S.integer(
-        minimum: 0,
-        description: 'Low stock threshold',
-      ),
-    },
-    required: ['productId', 'storeId'],
-  );
-
-  static final _updateSchema = S.object(
-    properties: {
-      'quantity': S.integer(minimum: 0, description: 'Stock quantity'),
-      'lowStockThreshold': S.integer(
-        minimum: 0,
-        description: 'Low stock threshold',
-      ),
-      'stockMonitor': S.boolean(description: 'Is stock monitored'),
-    },
-    minProperties: 1,
-  );
+  static final _createSchema = StockCreate.$schema;
+  static final _updateSchema = StockUpdate.$schema;
 
   static Future<String?> create(Map<String, dynamic> json) async {
     return validateSchema(
@@ -66,13 +45,13 @@ class StockValidator {
   }
 
   static Future<String?> update(Map<String, dynamic> json) async {
+    if (json.isEmpty) {
+      return 'At least one field is required to update.';
+    }
     return validateSchema(
       schema: _updateSchema,
       json: json,
       mapError: (error, path, type) {
-        if (type == ValidationErrorType.minPropertiesNotMet) {
-          return 'At least one field is required to update.';
-        }
         if (path.contains('quantity') &&
             type == ValidationErrorType.minimumNotMet) {
           return 'Quantity cannot be negative.';

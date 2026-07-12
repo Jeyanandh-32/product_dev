@@ -1,50 +1,13 @@
-import 'package:json_schema_builder/json_schema_builder.dart';
-import 'package:validators/src/validation_patterns.dart';
+import 'package:validators/src/schemas.dart';
 import 'package:validators/src/validation_utils.dart';
+import 'package:schemantic/schemantic.dart';
 
 class TerminalValidator {
   const TerminalValidator._();
 
-  static final _createSchema = S.object(
-    properties: {
-      'name': S.string(minLength: 1, description: 'Terminal name'),
-      'password': S.string(
-        minLength: 6,
-        pattern: ValidationPatterns.password,
-        description: 'Terminal password',
-      ),
-    },
-    required: ['name', 'password'],
-  );
-
-  static final _loginSchema = S.object(
-    properties: {
-      'code': S.string(
-        minLength: 12,
-        maxLength: 12,
-        description: 'Terminal code',
-      ),
-      'password': S.string(
-        minLength: 6,
-        pattern: ValidationPatterns.password,
-        description: 'Terminal password',
-      ),
-    },
-    required: ['code', 'password'],
-  );
-
-  static final _updateSchema = S.object(
-    properties: {
-      'name': S.string(minLength: 1, description: 'Terminal name'),
-      'password': S.string(
-        minLength: 6,
-        pattern: ValidationPatterns.password,
-        description: 'Terminal password',
-      ),
-      'isActive': S.boolean(description: 'Is active status'),
-    },
-    minProperties: 1,
-  );
+  static final _createSchema = TerminalCreate.$schema;
+  static final _loginSchema = TerminalLogin.$schema;
+  static final _updateSchema = TerminalUpdate.$schema;
 
   static Future<String?> create(Map<String, dynamic> json) async {
     return validateSchema(
@@ -113,13 +76,13 @@ class TerminalValidator {
   }
 
   static Future<String?> update(Map<String, dynamic> json) async {
+    if (json.isEmpty) {
+      return 'At least one field (name, password, or isActive) is required to update.';
+    }
     return validateSchema(
       schema: _updateSchema,
       json: json,
       mapError: (error, path, type) {
-        if (type == ValidationErrorType.minPropertiesNotMet) {
-          return 'At least one field (name, password, or isActive) is required to update.';
-        }
         if (path.contains('name') &&
             (type == ValidationErrorType.minLengthNotMet ||
                 type == ValidationErrorType.typeMismatch)) {

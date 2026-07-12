@@ -41,12 +41,13 @@ Future<Response> _onPutOrPatch(RequestContext context, String id) async {
 
   try {
     final body = await context.validateBody(StoreValidator.update);
+    final input = StoreUpdate.fromJson(body);
 
     final storeRow = await repo.update(
       id: id,
-      name: (body['name'] as String?)?.trim(),
-      storeType: (body['storeType'] as String?)?.trim(),
-      isActive: body['isActive'] as bool?,
+      name: input.name?.trim(),
+      storeType: input.storeType?.trim(),
+      isActive: input.isActive,
       updateStoreType: body.containsKey('storeType'),
     );
 

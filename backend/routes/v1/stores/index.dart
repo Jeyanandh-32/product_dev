@@ -60,11 +60,12 @@ Future<Response> _onPost(RequestContext context) async {
 
   try {
     final body = await context.validateBody(StoreValidator.create);
+    final input = StoreCreate.fromJson(body);
 
     final storeRow = await repo.create(
       merchantId: tokenPayload.sub,
-      name: (body['name'] as String).trim(),
-      storeType: (body['storeType'] as String?)?.trim(),
+      name: input.name.trim(),
+      storeType: input.storeType?.trim(),
     );
 
     return success(

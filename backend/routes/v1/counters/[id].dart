@@ -1,7 +1,6 @@
 import 'package:backend/extensions/counter_row_extension.dart';
 import 'package:backend/extensions/request_context_extension.dart';
 import 'package:backend/repositories/counter_repository.dart';
-import 'package:backend/utils/request_body.dart';
 import 'package:backend/utils/responses.dart';
 import 'package:dart_frog/dart_frog.dart';
 import 'package:validators/validators.dart';
@@ -42,14 +41,15 @@ Future<Response> _onPutOrPatch(RequestContext context, String id) async {
 
   try {
     final body = await context.validateBody(CounterValidator.update);
+    final input = CounterUpdate.fromJson(body);
 
     final counterRow = await repo.update(
       id: id,
-      name: (body['name'] as String?)?.trim(),
-      isActive: body['isActive'] as bool?,
-      description: readOptionalString(body, 'description'),
+      name: input.name?.trim(),
+      isActive: input.isActive,
+      description: input.description,
       descriptionPresent: body.containsKey('description'),
-      imageUrl: readOptionalString(body, 'imageUrl'),
+      imageUrl: input.imageUrl,
       imageUrlPresent: body.containsKey('imageUrl'),
     );
 

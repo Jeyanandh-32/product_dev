@@ -66,13 +66,25 @@ Future<Response> _onPost(RequestContext context) async {
 
   try {
     final body = await context.validateBody(ProductValidator.create);
+    final input = ProductCreate.fromJson(body);
     final productService = context.read<ProductService>();
     final tokenPayload = context.tokenPayload;
 
     final completeProduct = await productService.create(
       merchantId: tokenPayload.sub,
       storeId: context.storeId,
-      body: body,
+      body: {
+        'name': input.name,
+        'categoryId': input.categoryId,
+        'counterId': input.counterId,
+        'basePrice': input.basePrice,
+        'sellingPrice': input.sellingPrice,
+        'sku': input.sku,
+        'barcode': input.barcode,
+        'description': input.description,
+        'imageUrl': input.imageUrl,
+        'taxRate': input.taxRate,
+      },
     );
 
     return success(

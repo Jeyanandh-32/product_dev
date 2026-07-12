@@ -1,39 +1,27 @@
-import 'package:json_schema_builder/json_schema_builder.dart';
+import 'package:validators/src/schemas.dart';
 import 'package:validators/src/validation_utils.dart';
+import 'package:schemantic/schemantic.dart';
 
 class OrderValidator {
   const OrderValidator._();
 
-  static final _createSchema = S.object(
-    properties: {
-      'source': S.string(description: 'Order source'),
-      'type': S.string(description: 'Order type'),
-      'paymentMethod': S.string(description: 'Payment method'),
-      'products': S.list(
-        items: S.object(
-          properties: {
-            'productId': S.string(minLength: 1, description: 'Product ID'),
-            'quantity': S.integer(minimum: 1, description: 'Quantity'),
-          },
-          required: ['productId', 'quantity'],
-        ),
-        minItems: 1,
-        description: 'Products list',
-      ),
-    },
-    required: ['products'],
-  );
+  static final _createSchema = OrderCreate.$schema;
 
   static Future<String?> create(Map<String, dynamic> json) async {
+    final products = json['products'];
+    if (products == null) {
+      return 'Products list is required.';
+    }
+    if (products is! List || products.isEmpty) {
+      return 'Products list must contain at least one item.';
+    }
+
     return validateSchema(
       schema: _createSchema,
       json: json,
       mapError: (error, path, type) {
         if (type == ValidationErrorType.requiredPropertyMissing) {
           final details = error.details ?? '';
-          if (details.contains('"products"')) {
-            return 'Products list is required.';
-          }
           if (details.contains('"productId"')) {
             return 'Product ID is required.';
           }
@@ -42,8 +30,7 @@ class OrderValidator {
           }
         }
 
-        if (path.contains('source') &&
-            type == ValidationErrorType.typeMismatch) {
+        if (path.contains('source') && type == ValidationErrorType.typeMismatch) {
           return 'Invalid order source.';
         }
         if (path.contains('type') && type == ValidationErrorType.typeMismatch) {
@@ -55,10 +42,6 @@ class OrderValidator {
         }
 
         if (path.contains('products')) {
-          if (type == ValidationErrorType.minItemsNotMet ||
-              type == ValidationErrorType.typeMismatch) {
-            return 'Products list must contain at least one item.';
-          }
           if (path.contains('productId') &&
               (type == ValidationErrorType.typeMismatch ||
                   type == ValidationErrorType.minLengthNotMet)) {

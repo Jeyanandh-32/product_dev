@@ -41,14 +41,22 @@ Future<Response> _onPost(RequestContext context) async {
     return badRequest(message: errorMessage);
   }
 
-  final passwordHash = await AuthService.hashPassword(password!);
+  final input = MerchantRegister.fromJson({
+    'name': name,
+    'businessName': businessName,
+    'whatsappNumber': whatsappNumber,
+    'email': email,
+    'password': password,
+  });
+
+  final passwordHash = await AuthService.hashPassword(input.password);
 
   try {
     final merchantRow = await repo.create(
-      name: name!.trim(),
-      businessName: businessName!.trim(),
-      whatsappNumber: whatsappNumber!.trim(),
-      email: email!,
+      name: input.name.trim(),
+      businessName: input.businessName.trim(),
+      whatsappNumber: input.whatsappNumber.trim(),
+      email: input.email,
       passwordHash: passwordHash,
     );
 

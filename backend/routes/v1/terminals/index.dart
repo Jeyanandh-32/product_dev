@@ -105,17 +105,16 @@ Future<Response> _onPost(RequestContext context, String storeId) async {
 
   try {
     final body = await context.validateBody(TerminalValidator.create);
-    final name = body['name'] as String;
-    final password = body['password'] as String;
+    final input = TerminalCreate.fromJson(body);
 
-    final passwordHash = await AuthService.hashPassword(password);
+    final passwordHash = await AuthService.hashPassword(input.password);
     final code = _generateTerminalCode();
 
     final terminalRow = await repo.create(
       code: code,
       merchantId: tokenPayload.sub,
       storeId: storeId,
-      name: name.trim(),
+      name: input.name.trim(),
       passwordHash: passwordHash,
     );
 

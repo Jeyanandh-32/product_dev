@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:backend/extensions/product_row_extension.dart';
 import 'package:backend/extensions/request_context_extension.dart';
 import 'package:backend/repositories/product_repository.dart';
-import 'package:backend/utils/request_body.dart';
 import 'package:backend/utils/responses.dart';
 import 'package:dart_frog/dart_frog.dart';
 import 'package:validators/validators.dart';
@@ -50,32 +49,21 @@ Future<Response> _onPutOrPatch(RequestContext context, String id) async {
 
   try {
     final body = await context.validateBody(ProductValidator.update);
-
-    final name = body['name'] as String?;
-    final categoryId = body['categoryId'] as String?;
-    final counterId = body['counterId'] as String?;
-    final isActive = body['isActive'] as bool?;
-    final basePrice = body['basePrice'] as int?;
-    final sellingPrice = body['sellingPrice'] as int?;
-    final sku = readOptionalString(body, 'sku');
-    final barcode = readOptionalString(body, 'barcode');
-    final description = readOptionalString(body, 'description');
-    final imageUrl = readOptionalString(body, 'imageUrl');
-    final taxRate = (body['taxRate'] as num?)?.toDouble();
+    final input = ProductUpdate.fromJson(body);
 
     final updatedRow = await repo.update(
       id: id,
-      name: name?.trim(),
-      categoryId: categoryId,
-      counterId: counterId,
-      isActive: isActive,
-      basePrice: basePrice,
-      sellingPrice: sellingPrice,
-      taxRate: taxRate,
-      sku: sku,
-      barcode: barcode,
-      description: description,
-      imageUrl: imageUrl,
+      name: input.name?.trim(),
+      categoryId: input.categoryId,
+      counterId: input.counterId,
+      isActive: input.isActive,
+      basePrice: input.basePrice,
+      sellingPrice: input.sellingPrice,
+      taxRate: input.taxRate,
+      sku: input.sku,
+      barcode: input.barcode,
+      description: input.description,
+      imageUrl: input.imageUrl,
       skuPresent: body.containsKey('sku'),
       barcodePresent: body.containsKey('barcode'),
       descriptionPresent: body.containsKey('description'),

@@ -1,45 +1,13 @@
-import 'package:json_schema_builder/json_schema_builder.dart';
+import 'package:validators/src/schemas.dart';
 import 'package:validators/src/validation_utils.dart';
+import 'package:schemantic/schemantic.dart';
 
 class CounterValidator {
   const CounterValidator._();
 
-  static final _createSchema = S.object(
-    properties: {
-      'name': S.string(
-        minLength: 1,
-        maxLength: 255,
-        description: 'Counter name',
-      ),
-      'description': S.string(
-        maxLength: 255,
-        description: 'Counter description',
-      ),
-      'imageUrl': S.string(maxLength: 255, description: 'Counter image URL'),
-    },
-    required: ['name'],
-  );
-
-  static final _updateSchema = S.object(
-    properties: {
-      'name': S.string(
-        minLength: 1,
-        maxLength: 255,
-        description: 'Counter name',
-      ),
-      'isActive': S.boolean(description: 'Is active status'),
-      'description': S.string(
-        maxLength: 255,
-        description: 'Counter description',
-      ),
-      'imageUrl': S.string(maxLength: 255, description: 'Counter image URL'),
-    },
-    minProperties: 1,
-  );
-
   static Future<String?> create(Map<String, dynamic> json) async {
     return validateSchema(
-      schema: _createSchema,
+      schema: CounterCreate.$schema,
       json: json,
       mapError: (error, path, type) {
         if (type == ValidationErrorType.requiredPropertyMissing &&
@@ -65,13 +33,13 @@ class CounterValidator {
   }
 
   static Future<String?> update(Map<String, dynamic> json) async {
+    if (json.isEmpty) {
+      return 'At least one field is required to update.';
+    }
     return validateSchema(
-      schema: _updateSchema,
+      schema: CounterUpdate.$schema,
       json: json,
       mapError: (error, path, type) {
-        if (type == ValidationErrorType.minPropertiesNotMet) {
-          return 'At least one field is required to update.';
-        }
         if (path.contains('name') &&
             (type == ValidationErrorType.typeMismatch ||
                 type == ValidationErrorType.minLengthNotMet)) {

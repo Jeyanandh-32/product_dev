@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:backend/extensions/category_row_extension.dart';
 import 'package:backend/extensions/request_context_extension.dart';
 import 'package:backend/repositories/category_repository.dart';
-import 'package:backend/utils/request_body.dart';
 import 'package:backend/utils/responses.dart';
 import 'package:dart_frog/dart_frog.dart';
 import 'package:validators/validators.dart';
@@ -71,13 +70,14 @@ Future<Response> _onPost(RequestContext context) async {
 
   try {
     final body = await context.validateBody(CategoryValidator.create);
+    final input = CategoryCreate.fromJson(body);
 
     final categoryRow = await repo.create(
       merchantId: tokenPayload.sub,
       storeId: context.storeId,
-      name: (body['name'] as String).trim(),
-      description: readOptionalString(body, 'description'),
-      imageUrl: readOptionalString(body, 'imageUrl'),
+      name: input.name.trim(),
+      description: input.description,
+      imageUrl: input.imageUrl,
     );
 
     return success(
