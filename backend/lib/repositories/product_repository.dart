@@ -144,6 +144,17 @@ class ProductRepository {
     return row;
   }
 
+  Future<List<ProductRow>> getByIds(List<String> ids) async {
+    if (ids.isEmpty) return const [];
+    return _db.products.where((p) {
+      var expr = p.id.equals(ts.toExpr(ids.first));
+      for (var i = 1; i < ids.length; i++) {
+        expr = expr.or(p.id.equals(ts.toExpr(ids[i])));
+      }
+      return expr;
+    }).fetch();
+  }
+
   Future<int> count({
     required String merchantId,
     String? storeId,

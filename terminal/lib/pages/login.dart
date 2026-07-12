@@ -36,7 +36,15 @@ class _LoginState extends ConsumerState<Login> {
             : 'Login failed. Please check your credentials.';
         ShadToaster.of(context).show(
           ShadToast.destructive(
-            description: Text(message),
+            closeIcon: const Icon(LucideIcons.x, color: Colors.white, size: 16),
+            description: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(LucideIcons.x, color: Colors.white, size: 20),
+                const Gap(8),
+                Text(message),
+              ],
+            ),
             alignment: Alignment.topCenter,
             duration: const Duration(seconds: 3),
           ),

@@ -36,11 +36,26 @@ class OrderRepository {
           subtotal: subtotal,
           taxTotal: taxTotal,
           grandTotal: grandTotal,
+          terminalCode: terminalCode,
         )
         .returnInserted()
         .executeAndFetch();
 
     return row;
+  }
+
+  Future<int> getNextBillNo(String storeId) async {
+    final today = DateTime.now().toUtc();
+    final startOfToday = DateTime.utc(today.year, today.month, today.day);
+
+    final lastOrder = await _db.orders
+        .where((o) => o.storeId.equals(ts.toExpr(storeId)))
+        .where((o) => o.createdAt.isAfterValue(startOfToday))
+        .orderBy((o) => [(o.billNo, ts.Order.descending)])
+        .first
+        .fetch();
+
+    return (lastOrder?.billNo ?? 0) + 1;
   }
 
   Future<OrderRow?> update({

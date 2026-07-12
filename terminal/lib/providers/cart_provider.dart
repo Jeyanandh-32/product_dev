@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:models/models.dart';
 import 'package:terminal/models/cart_item.dart';
+import 'package:terminal/repositories/order_repository.dart';
 
 class CartState {
   final List<CartItem> items;
@@ -116,5 +117,30 @@ class CartNotifier extends Notifier<CartState> {
       taxTotal: taxTotal,
       grandTotal: subtotal + taxTotal,
     );
+  }
+
+  Future<Order> checkout({
+    required String storeId,
+    required String paymentMethod,
+  }) async {
+    final products = state.items
+        .map(
+          (item) => {'productId': item.product.id, 'quantity': item.quantity},
+        )
+        .toList();
+
+    try {
+      final order = await OrderRepository.create(
+        storeId: storeId,
+        products: products,
+        paymentMethod: paymentMethod,
+        source: 'terminal',
+        type: 'dineIn',
+      );
+      clear();
+      return order;
+    } catch (e) {
+      rethrow;
+    }
   }
 }

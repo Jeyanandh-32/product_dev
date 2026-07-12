@@ -4,15 +4,27 @@ import 'package:gap/gap.dart';
 import 'package:mix/mix.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:styled_divider/styled_divider.dart';
+import 'package:terminal/exceptions/api_exception.dart';
+import 'package:terminal/providers/auth_provider.dart';
 import 'package:terminal/providers/cart_provider.dart';
 import 'package:terminal/providers/ui_providers.dart';
 
-class CartSummary extends ConsumerWidget {
+class CartSummary extends ConsumerStatefulWidget {
   const CartSummary({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<CartSummary> createState() => _CartSummaryState();
+}
+
+class _CartSummaryState extends ConsumerState<CartSummary> {
+  bool _isCheckingOut = false;
+
+  @override
+  Widget build(BuildContext context) {
     final cart = ref.watch(cartProvider);
+    final paymentMode = ref.watch(paymentModeProvider);
+    final authState = ref.watch(authProvider);
+    final terminal = authState.value;
 
     return ColumnBox(
       style: FlexBoxStyler().paddingTop(16),
@@ -64,12 +76,16 @@ class CartSummary extends ConsumerWidget {
                   .color(Colors.grey.shade700),
             ),
             ShadRadioGroup<String>(
-              initialValue: ref.watch(paymentModeProvider),
-              onChanged: (value) {
-                if (value != null) {
-                  ref.read(paymentModeProvider.notifier).setPaymentMode(value);
-                }
-              },
+              initialValue: paymentMode,
+              onChanged: _isCheckingOut
+                  ? null
+                  : (value) {
+                      if (value != null) {
+                        ref
+                            .read(paymentModeProvider.notifier)
+                            .setPaymentMode(value);
+                      }
+                    },
               axis: Axis.horizontal,
               spacing: 16,
               items: [
@@ -89,7 +105,79 @@ class CartSummary extends ConsumerWidget {
         ShadButton(
           width: double.infinity,
           height: 44,
-          child: StyledText('Save & Print', style: TextStyler().fontSize(16)),
+          enabled: !_isCheckingOut && cart.items.isNotEmpty && terminal != null,
+          onPressed: () async {
+            if (terminal == null) return;
+
+            setState(() {
+              _isCheckingOut = true;
+            });
+
+            try {
+              final order = await ref
+                  .read(cartProvider.notifier)
+                  .checkout(
+                    storeId: terminal.storeId,
+                    paymentMethod: paymentMode,
+                  );
+
+              if (!context.mounted) return;
+              ShadToaster.of(context).show(
+                ShadToast(
+                  description: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(
+                        LucideIcons.check,
+                        size: 20,
+                      ),
+                      const Gap(8),
+                      StyledText(
+                        'Order no:${order.billNo} placed successfully!',
+                      ),
+                    ],
+                  ),
+                  alignment: Alignment.topCenter,
+                  duration: const Duration(seconds: 4),
+                ),
+              );
+            } catch (e) {
+              if (!context.mounted) return;
+              final message = e is ApiException
+                  ? e.message
+                  : 'Failed to place order. Please try again.';
+              ShadToaster.of(context).show(
+                ShadToast.destructive(
+                  description: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(LucideIcons.x, color: Colors.white, size: 20),
+                      const Gap(8),
+                      Text(message),
+                    ],
+                  ),
+                  alignment: Alignment.topCenter,
+                  duration: const Duration(seconds: 4),
+                ),
+              );
+            } finally {
+              if (mounted) {
+                setState(() {
+                  _isCheckingOut = false;
+                });
+              }
+            }
+          },
+          child: _isCheckingOut
+              ? const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  ),
+                )
+              : StyledText('Save & Print', style: TextStyler().fontSize(16)),
         ),
       ],
     );

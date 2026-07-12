@@ -12,6 +12,18 @@ class OrderItemRepository {
         .fetch();
   }
 
+  Future<List<OrderItemRow>> getAllForOrders(List<String> orderIds) async {
+    if (orderIds.isEmpty) return const [];
+
+    return _db.orderItems.where((item) {
+      var expr = item.orderId.equals(ts.toExpr(orderIds.first));
+      for (var i = 1; i < orderIds.length; i++) {
+        expr = expr.or(item.orderId.equals(ts.toExpr(orderIds[i])));
+      }
+      return expr;
+    }).fetch();
+  }
+
   Future<OrderItemRow> create({
     required String orderId,
     required String productId,
@@ -33,5 +45,22 @@ class OrderItemRepository {
         .executeAndFetch();
 
     return row;
+  }
+
+  Future<List<OrderItemRow>> createItems(List<OrderItemRow> items) async {
+    final rows = _db.orderItems
+        .insertValuesMapped(
+          items,
+          orderId: (o) => o.orderId,
+          productId: (o) => o.productId,
+          storeId: (o) => o.storeId,
+          quantity: (o) => o.quantity,
+          unitPrice: (o) => o.unitPrice,
+          taxRate: (o) => o.taxRate,
+        )
+        .returnInserted()
+        .executeAndFetch();
+
+    return rows;
   }
 }

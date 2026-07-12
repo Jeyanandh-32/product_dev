@@ -55,4 +55,5 @@ class ApiEndpoints {
   static const String categories = '/$version/categories';
   static const String stores = '/$version/stores';
   static const String stocks = '/$version/stocks';
+  static const String orders = '/$version/orders';
 }

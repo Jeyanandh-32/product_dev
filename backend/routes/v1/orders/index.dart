@@ -1,10 +1,12 @@
+import 'dart:math';
+
 import 'package:backend/config/database.dart';
 import 'package:backend/database/schema.dart';
-import 'package:backend/enums/user_role.dart';
 import 'package:backend/extensions/order_row_extension.dart';
 import 'package:backend/models/token_payload/token_payload.dart';
 import 'package:backend/repositories/order_item_repository.dart';
 import 'package:backend/repositories/order_repository.dart';
+import 'package:backend/repositories/product_repository.dart';
 import 'package:backend/repositories/stock_repository.dart';
 import 'package:backend/utils/responses.dart';
 import 'package:dart_frog/dart_frog.dart';
@@ -19,6 +21,16 @@ Future<Response> onRequest(RequestContext context) async {
   };
 }
 
+String _generateOrderReference() {
+  final random = Random();
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  final suffix = List.generate(
+    6,
+    (index) => chars[random.nextInt(chars.length)],
+  ).join();
+  return 'ORD-${DateTime.now().millisecondsSinceEpoch}-$suffix';
+}
+
 Future<Response> _onPost(RequestContext context) async {
   final tokenPayload = context.read<TokenPayload>();
   final body = await context.request.json() as Map<String, dynamic>;
@@ -28,26 +40,36 @@ Future<Response> _onPost(RequestContext context) async {
     return badRequest(message: validationError);
   }
 
-  final storeId = body['storeId'] as String;
-  final orderReference = body['orderReference'] as String;
-  final sourceStr = body['source'] as String;
-  final typeStr = body['type'] as String;
-  final paymentMethodStr = body['paymentMethod'] as String;
-  final subtotal = body['subtotal'] as int;
-  final taxTotal = body['taxTotal'] as int;
-  final grandTotal = body['grandTotal'] as int;
-  final terminalCode = body['terminalCode'] as String?;
-  final items = body['items'] as List<dynamic>;
+  final parameters = context.request.uri.queryParameters;
+  final storeId = parameters['storeId'];
 
-  if (tokenPayload.role == UserRole.terminal &&
-      terminalCode != tokenPayload.terminalCode) {
-    return unauthorized(message: 'Unauthorized terminal code.');
+  if (storeId == null || storeId.isEmpty) {
+    return badRequest(message: 'Store ID is required.');
+  }
+  if (!storeId.isUUID()) {
+    return badRequest(message: 'Invalid store id.');
   }
 
-  final source = OrderSource.values.firstWhere((e) => e.name == sourceStr);
-  final type = OrderType.values.firstWhere((e) => e.name == typeStr);
+  final merchantId = tokenPayload.sub;
+  final terminalCode = tokenPayload.terminalCode;
+
+  final productsList = body['products'] as List<dynamic>;
+
+  final sourceStr = body['source'] as String? ?? 'terminal';
+  final typeStr = body['type'] as String? ?? 'dineIn';
+  final paymentMethodStr = body['paymentMethod'] as String? ?? 'cash';
+
+  final source = OrderSource.values.firstWhere(
+    (e) => e.name == sourceStr,
+    orElse: () => OrderSource.terminal,
+  );
+  final type = OrderType.values.firstWhere(
+    (e) => e.name == typeStr,
+    orElse: () => OrderType.dineIn,
+  );
   final paymentMethod = PaymentMethod.values.firstWhere(
     (e) => e.name == paymentMethodStr,
+    orElse: () => PaymentMethod.cash,
   );
 
   const status = OrderStatus.completed;
@@ -55,14 +77,56 @@ Future<Response> _onPost(RequestContext context) async {
 
   final orderRepo = context.read<OrderRepository>();
   final orderItemRepo = context.read<OrderItemRepository>();
+  final productRepo = context.read<ProductRepository>();
   final stockRepo = context.read<StockRepository>();
+
+  final itemProductIds = productsList
+      .map((e) => (e as Map<String, dynamic>)['productId'] as String)
+      .toList();
+  final products = await productRepo.getByIds(itemProductIds);
+  final productMap = {for (final p in products) p.id: p};
+
+  var calculatedSubtotal = 0;
+  var calculatedTaxTotal = 0;
+  final calculatedItems = <Map<String, dynamic>>[];
+
+  for (final itemData in productsList) {
+    final itemMap = itemData as Map<String, dynamic>;
+    final productId = itemMap['productId'] as String;
+    final quantity = itemMap['quantity'] as int;
+
+    final product = productMap[productId];
+    if (product == null) {
+      return badRequest(message: 'Product with ID $productId not found.');
+    }
+
+    final unitPrice = product.sellingPrice;
+    final taxRate = product.taxRate;
+
+    final itemSubtotal = unitPrice * quantity;
+    final itemTax = (itemSubtotal * taxRate) / 100.0;
+    final roundedItemTax = itemTax.round();
+
+    calculatedSubtotal += itemSubtotal;
+    calculatedTaxTotal += roundedItemTax;
+
+    calculatedItems.add({
+      'productId': productId,
+      'quantity': quantity,
+      'unitPrice': unitPrice,
+      'taxRate': taxRate,
+    });
+  }
+
+  final calculatedGrandTotal = calculatedSubtotal + calculatedTaxTotal;
 
   try {
     final completeOrder = await Database.db.transact(() async {
       final billNo = await orderRepo.getNextBillNo(storeId);
+      final orderReference = _generateOrderReference();
 
       final orderRow = await orderRepo.create(
-        merchantId: tokenPayload.sub,
+        merchantId: merchantId,
         storeId: storeId,
         orderReference: orderReference,
         billNo: billNo,
@@ -71,19 +135,18 @@ Future<Response> _onPost(RequestContext context) async {
         status: status,
         paymentStatus: paymentStatus,
         paymentMethod: paymentMethod,
-        subtotal: subtotal,
-        taxTotal: taxTotal,
-        grandTotal: grandTotal,
+        subtotal: calculatedSubtotal,
+        taxTotal: calculatedTaxTotal,
+        grandTotal: calculatedGrandTotal,
         terminalCode: terminalCode,
       );
 
       final createdItems = <OrderItemRow>[];
-      for (final itemData in items) {
-        final itemMap = itemData as Map<String, dynamic>;
-        final productId = itemMap['productId'] as String;
-        final quantity = itemMap['quantity'] as int;
-        final unitPrice = itemMap['unitPrice'] as int;
-        final taxRate = (itemMap['taxRate'] as num).toDouble();
+      for (final item in calculatedItems) {
+        final productId = item['productId'] as String;
+        final quantity = item['quantity'] as int;
+        final unitPrice = item['unitPrice'] as int;
+        final taxRate = item['taxRate'] as double;
 
         final orderItem = await orderItemRepo.create(
           orderId: orderRow.id,

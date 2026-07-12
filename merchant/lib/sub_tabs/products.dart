@@ -1,7 +1,6 @@
 import 'package:jaspr/client.dart';
 import 'package:jaspr/dom.dart';
-import 'package:jaspr_lucide/generated_icons/chevron_down.dart';
-import 'package:jaspr_lucide/generated_icons/square_pen.dart';
+import 'package:jaspr_lucide/jaspr_lucide.dart';
 import 'package:jaspr_riverpod/jaspr_riverpod.dart';
 import 'package:merchant/components/buttons/add_button.dart';
 import 'package:merchant/components/centered_message.dart';
@@ -187,53 +186,31 @@ class Products extends StatelessComponent {
     return tr([
       th([]),
       td([
-        div(classes: 'dropdown dropdown-right dropdown-bottom', [
+        div(classes: 'flex items-center gap-4', [
           button(
             classes:
                 'hover:cursor-pointer btn btn-ghost btn-xs h-8 w-8 p-0 rounded-full',
-            attributes: {
-              'tabindex': '0',
-              'role': 'button',
+            events: {
+              'click': (e) {
+                e.stopPropagation();
+                onEdit?.call();
+              },
             },
             [
-              SquarePen(classes: 'w-5 h-5 text-gray-500'),
+              SquarePen(classes: 'w-5 h-5 text-gray-500 hover:text-accent'),
             ],
           ),
-          ul(
-            attributes: {'tabindex': '-1'},
+          button(
             classes:
-                'dropdown-content menu bg-base-100 rounded-box z-50 mt-1 p-2 shadow-md border border-border-light w-36',
+                'hover:cursor-pointer btn btn-ghost btn-xs h-8 w-8 p-0 rounded-full',
+            events: {
+              'click': (e) {
+                e.stopPropagation();
+                onUpdateStock?.call();
+              },
+            },
             [
-              li([
-                a(
-                  href: '#',
-                  classes:
-                      'rounded-md hover:bg-neutral py-2 px-3 block text-sm',
-                  onClick: () {
-                    onEdit?.call();
-                    final activeElement = document.activeElement;
-                    if (activeElement != null) {
-                      (activeElement as HTMLElement).blur();
-                    }
-                  },
-                  [.text('Edit Product')],
-                ),
-              ]),
-              li([
-                a(
-                  href: '#',
-                  classes:
-                      'rounded-md hover:bg-neutral py-2 px-3 block text-sm',
-                  onClick: () {
-                    onUpdateStock?.call();
-                    final activeElement = document.activeElement;
-                    if (activeElement != null) {
-                      (activeElement as HTMLElement).blur();
-                    }
-                  },
-                  [.text('Update Stock')],
-                ),
-              ]),
+              PackagePlus(classes: 'w-5 h-5 text-gray-500 hover:text-accent'),
             ],
           ),
         ]),

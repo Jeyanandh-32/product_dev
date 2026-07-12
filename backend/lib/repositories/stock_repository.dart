@@ -47,4 +47,38 @@ class StockRepository {
     if (rows.isEmpty) return null;
     return rows.first;
   }
+
+  Future<StockRow?> getByProductAndStore({
+    required String productId,
+    required String storeId,
+  }) async {
+    final rows = await _db.stocks
+        .where((s) => s.productId.equals(ts.toExpr(productId)))
+        .where((s) => s.storeId.equals(ts.toExpr(storeId)))
+        .fetch();
+
+    if (rows.isEmpty) return null;
+    return rows.first;
+  }
+
+  Future<StockRow?> deductStock({
+    required String productId,
+    required String storeId,
+    required int quantityToDeduct,
+  }) async {
+    final rows = await _db.stocks
+        .where((s) => s.productId.equals(ts.toExpr(productId)))
+        .where((s) => s.storeId.equals(ts.toExpr(storeId)))
+        .update(
+          (s, set) => set(
+            quantity: s.quantity.subtractValue(quantityToDeduct),
+            updatedAt: ts.Expr.currentTimestamp,
+          ),
+        )
+        .returnUpdated()
+        .executeAndFetch();
+
+    if (rows.isEmpty) return null;
+    return rows.first;
+  }
 }
