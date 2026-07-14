@@ -57,20 +57,48 @@ class CategoryRepository {
     }
   }
 
-  static Future<List<Category>> getAll({String? storeId}) async {
+  static Future<
+    ({
+      List<Category> categories,
+      int currentPage,
+      int pageSize,
+      int totalItems,
+      int totalPages,
+    })
+  >
+  getAll({
+    required String storeId,
+    int? page,
+    int? size,
+  }) async {
     try {
       final result = await ApiClient.dio.get(
         ApiEndpoints.categories,
         queryParameters: {
-          'storeId': ?storeId,
+          'storeId': storeId,
+          'page': ?page,
+          'size': ?size,
         },
       );
 
       final list = result.data['data']['categories'] as List<dynamic>;
+      final currentPage = result.data['data']['currentPage'] as int? ?? 1;
+      final pageSize = result.data['data']['pageSize'] as int? ?? 50;
+      final totalItems =
+          result.data['data']['totalItems'] as int? ?? list.length;
+      final totalPages = result.data['data']['totalPages'] as int? ?? 1;
 
-      return list
+      final categories = list
           .map((s) => Category.fromJson(s as Map<String, Object?>))
           .toList();
+
+      return (
+        categories: categories,
+        currentPage: currentPage,
+        pageSize: pageSize,
+        totalItems: totalItems,
+        totalPages: totalPages,
+      );
     } on DioException catch (e) {
       ApiClient.handleDioError(e, 'Failed to fetch categories.');
     }

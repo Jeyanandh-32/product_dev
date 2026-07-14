@@ -17,8 +17,21 @@ class CategoriesProvider extends AsyncNotifier<List<Category>> {
   FutureOr<List<Category>> build() async {
     final selectedStore = ref.watch(storeProvider);
     if (selectedStore == null) return [];
+
+    final size = ref.watch(entriesProvider);
+    final page = ref.watch(categoriesPageProvider);
+
     try {
-      return await CategoryRepository.getAll(storeId: selectedStore.id);
+      final result = await CategoryRepository.getAll(
+        storeId: selectedStore.id,
+        page: page,
+        size: size,
+      );
+
+      ref.read(categoriesTotalProvider.notifier).state = result.totalItems;
+      ref.read(categoriesTotalPagesProvider.notifier).state = result.totalPages;
+
+      return result.categories;
     } catch (e) {
       return [];
     }

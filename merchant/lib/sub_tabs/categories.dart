@@ -14,23 +14,12 @@ import 'package:merchant/providers/ui_providers.dart';
 import 'package:models/models.dart';
 import 'package:web/web.dart';
 
-class Categories extends StatefulComponent {
+class Categories extends StatelessComponent {
   const Categories({super.key});
 
-  @override
-  State<Categories> createState() => _CategoriesState();
-}
-
-class _CategoriesState extends State<Categories> {
-  int _currentPage = 1;
-  int _entries = 10;
-  String _searchQuery = '';
-
-  void _changeEntry(int entry) {
-    setState(() {
-      _entries = entry;
-      _currentPage = 1;
-    });
+  void _changeEntry(BuildContext context, int entry) {
+    context.read(entriesProvider.notifier).state = entry;
+    context.read(categoriesPageProvider.notifier).state = 1;
 
     final activeElement = document.activeElement;
     if (activeElement != null) {
@@ -44,32 +33,13 @@ class _CategoriesState extends State<Categories> {
 
   @override
   Component build(BuildContext context) {
-    final store = context.watch(storeProvider);
+    final entries = context.watch(entriesProvider);
     final categories = context.watch(categoriesProvider);
+    final currentPage = context.watch(categoriesPageProvider);
+    final totalPages = context.watch(categoriesTotalPagesProvider);
     final activeModal = context.watch(activeModalProvider);
     final editingCategory = context.watch(editingCategoryProvider);
-
-    final categoriesList = categories.value ?? [];
-    final filtered = categoriesList.where((cat) {
-      if (_searchQuery.isEmpty) return true;
-      return cat.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-          (cat.description ?? '').toLowerCase().contains(
-            _searchQuery.toLowerCase(),
-          );
-    }).toList();
-
-    final totalPages = (filtered.length / _entries).ceil();
-    if (_currentPage > totalPages && totalPages > 0) {
-      _currentPage = totalPages;
-    }
-
-    final startIndex = (_currentPage - 1) * _entries;
-    final endIndex = (startIndex + _entries) > filtered.length
-        ? filtered.length
-        : (startIndex + _entries);
-    final paginated = filtered.isEmpty
-        ? <Category>[]
-        : filtered.sublist(startIndex, endIndex);
+    final store = context.watch(storeProvider);
 
     return div(
       classes:
@@ -95,7 +65,7 @@ class _CategoriesState extends State<Categories> {
                     'role': 'button',
                   },
                   [
-                    .text('$_entries'),
+                    .text('$entries'),
                     ChevronDown(classes: 'w-4 h-4'),
                   ],
                 ),
@@ -106,19 +76,19 @@ class _CategoriesState extends State<Categories> {
                   [
                     dropdownButton(
                       name: '10',
-                      onClick: () => _changeEntry(10),
+                      onClick: () => _changeEntry(context, 10),
                     ),
                     dropdownButton(
                       name: '25',
-                      onClick: () => _changeEntry(25),
+                      onClick: () => _changeEntry(context, 25),
                     ),
                     dropdownButton(
                       name: '50',
-                      onClick: () => _changeEntry(50),
+                      onClick: () => _changeEntry(context, 50),
                     ),
                     dropdownButton(
                       name: '100',
-                      onClick: () => _changeEntry(100),
+                      onClick: () => _changeEntry(context, 100),
                     ),
                   ],
                 ),
@@ -129,12 +99,6 @@ class _CategoriesState extends State<Categories> {
               Searchbar(
                 placeholder: 'Search Categories...',
                 classes: 'flex-1 sm:flex-none sm:w-64',
-                onInput: (val) {
-                  setState(() {
-                    _searchQuery = val;
-                    _currentPage = 1;
-                  });
-                },
               ),
               AddButton(
                 name: 'Add Category',
@@ -152,10 +116,10 @@ class _CategoriesState extends State<Categories> {
           Loading(text: 'Loading categories...', fullScreen: false)
         else if (store == null)
           CenteredMessage(message: 'Create Store to add categories.')
-        else if (categoriesList.isEmpty)
+        else if (categories.hasValue &&
+            categories.value != null &&
+            categories.value!.isEmpty)
           CenteredMessage(message: 'No Categories were added.')
-        else if (filtered.isEmpty)
-          CenteredMessage(message: 'No matching categories found.')
         else
           div(classes: 'flex-1 min-h-0 overflow-auto', [
             table(
@@ -163,7 +127,7 @@ class _CategoriesState extends State<Categories> {
               [
                 tableHead(),
                 tbody([
-                  for (final category in paginated)
+                  for (final category in categories.value!)
                     tableRow(
                       name: category.name,
                       image: category.imageUrl,
@@ -183,9 +147,10 @@ class _CategoriesState extends State<Categories> {
           ]),
 
         TablePagination(
-          currentPage: _currentPage,
+          currentPage: currentPage,
           totalPages: totalPages,
-          onPageChanged: (page) => setState(() => _currentPage = page),
+          onPageChanged: (page) =>
+              context.read(categoriesPageProvider.notifier).state = page,
         ),
       ],
     );
@@ -195,12 +160,12 @@ class _CategoriesState extends State<Categories> {
     return thead([
       tr([
         th([]),
-        th([.text('Action')]),
-        th([.text('Image')]),
-        th(classes: 'pin-col', [.text('Category Name')]),
-        th([.text('Status')]),
-        th([.text('Products Associated')]),
-        th([.text('Description')]),
+        td([.text('Action')]),
+        td([.text('Image')]),
+        th([.text('Category Name')]),
+        td([.text('Status')]),
+        td([.text('Products Associated')]),
+        td([.text('Description')]),
         th([]),
       ]),
     ]);
@@ -249,7 +214,7 @@ class _CategoriesState extends State<Categories> {
         else
           .text('-'),
       ]),
-      th(classes: 'whitespace-nowrap font-semibold text-gray-900 pin-col', [
+      th(classes: 'whitespace-nowrap', [
         .text(name),
       ]),
       td([

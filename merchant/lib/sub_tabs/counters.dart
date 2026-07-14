@@ -14,23 +14,12 @@ import 'package:merchant/providers/ui_providers.dart';
 import 'package:models/models.dart';
 import 'package:web/web.dart';
 
-class Counters extends StatefulComponent {
+class Counters extends StatelessComponent {
   const Counters({super.key});
 
-  @override
-  State<Counters> createState() => _CountersState();
-}
-
-class _CountersState extends State<Counters> {
-  int _currentPage = 1;
-  int _entries = 10;
-  String _searchQuery = '';
-
-  void _changeEntry(int entry) {
-    setState(() {
-      _entries = entry;
-      _currentPage = 1;
-    });
+  void _changeEntry(BuildContext context, int entry) {
+    context.read(entriesProvider.notifier).state = entry;
+    context.read(countersPageProvider.notifier).state = 1;
 
     final activeElement = document.activeElement;
     if (activeElement != null) {
@@ -44,32 +33,13 @@ class _CountersState extends State<Counters> {
 
   @override
   Component build(BuildContext context) {
-    final store = context.watch(storeProvider);
+    final entries = context.watch(entriesProvider);
     final counters = context.watch(countersProvider);
+    final currentPage = context.watch(countersPageProvider);
+    final totalPages = context.watch(countersTotalPagesProvider);
     final activeModal = context.watch(activeModalProvider);
     final editingCounter = context.watch(editingCounterProvider);
-
-    final countersList = counters.value ?? [];
-    final filtered = countersList.where((cnt) {
-      if (_searchQuery.isEmpty) return true;
-      return cnt.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-          (cnt.description ?? '').toLowerCase().contains(
-            _searchQuery.toLowerCase(),
-          );
-    }).toList();
-
-    final totalPages = (filtered.length / _entries).ceil();
-    if (_currentPage > totalPages && totalPages > 0) {
-      _currentPage = totalPages;
-    }
-
-    final startIndex = (_currentPage - 1) * _entries;
-    final endIndex = (startIndex + _entries) > filtered.length
-        ? filtered.length
-        : (startIndex + _entries);
-    final paginated = filtered.isEmpty
-        ? <Counter>[]
-        : filtered.sublist(startIndex, endIndex);
+    final store = context.watch(storeProvider);
 
     return div(
       classes:
@@ -94,7 +64,7 @@ class _CountersState extends State<Counters> {
                     'role': 'button',
                   },
                   [
-                    .text('$_entries'),
+                    .text('$entries'),
                     ChevronDown(classes: 'w-4 h-4'),
                   ],
                 ),
@@ -105,19 +75,19 @@ class _CountersState extends State<Counters> {
                   [
                     dropdownButton(
                       name: '10',
-                      onClick: () => _changeEntry(10),
+                      onClick: () => _changeEntry(context, 10),
                     ),
                     dropdownButton(
                       name: '25',
-                      onClick: () => _changeEntry(25),
+                      onClick: () => _changeEntry(context, 25),
                     ),
                     dropdownButton(
                       name: '50',
-                      onClick: () => _changeEntry(50),
+                      onClick: () => _changeEntry(context, 50),
                     ),
                     dropdownButton(
                       name: '100',
-                      onClick: () => _changeEntry(100),
+                      onClick: () => _changeEntry(context, 100),
                     ),
                   ],
                 ),
@@ -128,12 +98,6 @@ class _CountersState extends State<Counters> {
               Searchbar(
                 placeholder: 'Search Counters...',
                 classes: 'flex-1 sm:flex-none sm:w-64',
-                onInput: (val) {
-                  setState(() {
-                    _searchQuery = val;
-                    _currentPage = 1;
-                  });
-                },
               ),
               AddButton(
                 name: 'Add Counter',
@@ -151,10 +115,10 @@ class _CountersState extends State<Counters> {
           Loading(text: 'Loading counters...', fullScreen: false)
         else if (store == null)
           CenteredMessage(message: 'Create Store to add counters.')
-        else if (countersList.isEmpty)
+        else if (counters.hasValue &&
+            counters.value != null &&
+            counters.value!.isEmpty)
           CenteredMessage(message: 'No Counters were added.')
-        else if (filtered.isEmpty)
-          CenteredMessage(message: 'No matching counters found.')
         else
           div(classes: 'flex-1 min-h-0 overflow-auto', [
             table(
@@ -162,7 +126,7 @@ class _CountersState extends State<Counters> {
               [
                 tableHead(),
                 tbody([
-                  for (final counter in paginated)
+                  for (final counter in counters.value!)
                     tableRow(
                       name: counter.name,
                       image: counter.imageUrl,
@@ -182,9 +146,10 @@ class _CountersState extends State<Counters> {
           ]),
 
         TablePagination(
-          currentPage: _currentPage,
+          currentPage: currentPage,
           totalPages: totalPages,
-          onPageChanged: (page) => setState(() => _currentPage = page),
+          onPageChanged: (page) =>
+              context.read(countersPageProvider.notifier).state = page,
         ),
       ],
     );
@@ -194,12 +159,12 @@ class _CountersState extends State<Counters> {
     return thead([
       tr([
         th([]),
-        th([.text('Action')]),
-        th([.text('Image')]),
-        th(classes: 'pin-col', [.text('Counter Name')]),
-        th([.text('Status')]),
-        th([.text('Products Associated')]),
-        th([.text('Description')]),
+        td([.text('Action')]),
+        td([.text('Image')]),
+        th([.text('Counter Name')]),
+        td([.text('Status')]),
+        td([.text('Products Associated')]),
+        td([.text('Description')]),
         th([]),
       ]),
     ]);
@@ -248,7 +213,7 @@ class _CountersState extends State<Counters> {
         else
           .text('-'),
       ]),
-      th(classes: 'whitespace-nowrap font-semibold text-gray-900 pin-col', [
+      th(classes: 'whitespace-nowrap', [
         .text(name),
       ]),
       td([

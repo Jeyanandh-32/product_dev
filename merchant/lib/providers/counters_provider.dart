@@ -17,8 +17,21 @@ class CountersProvider extends AsyncNotifier<List<Counter>> {
   FutureOr<List<Counter>> build() async {
     final selectedStore = ref.watch(storeProvider);
     if (selectedStore == null) return [];
+
+    final size = ref.watch(entriesProvider);
+    final page = ref.watch(countersPageProvider);
+
     try {
-      return await CounterRepository.getAll(storeId: selectedStore.id);
+      final result = await CounterRepository.getAll(
+        storeId: selectedStore.id,
+        page: page,
+        size: size,
+      );
+
+      ref.read(countersTotalProvider.notifier).state = result.totalItems;
+      ref.read(countersTotalPagesProvider.notifier).state = result.totalPages;
+
+      return result.counters;
     } catch (e) {
       return [];
     }

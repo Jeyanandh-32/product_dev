@@ -32,10 +32,16 @@ final headerSubTitleProvider = StateProvider.autoDispose<String?>(
 final entriesProvider = StateProvider.autoDispose<int>((ref) => 10);
 
 final productsPageProvider = StateProvider.autoDispose<int>((ref) => 1);
-
 final productsTotalProvider = StateProvider.autoDispose<int>((ref) => 0);
-
 final productsTotalPagesProvider = StateProvider.autoDispose<int>((ref) => 1);
+
+final categoriesPageProvider = StateProvider.autoDispose<int>((ref) => 1);
+final categoriesTotalProvider = StateProvider.autoDispose<int>((ref) => 0);
+final categoriesTotalPagesProvider = StateProvider.autoDispose<int>((ref) => 1);
+
+final countersPageProvider = StateProvider.autoDispose<int>((ref) => 1);
+final countersTotalProvider = StateProvider.autoDispose<int>((ref) => 0);
+final countersTotalPagesProvider = StateProvider.autoDispose<int>((ref) => 1);
 
 enum ActiveModal {
   none,
