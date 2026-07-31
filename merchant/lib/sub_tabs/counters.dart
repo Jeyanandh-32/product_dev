@@ -9,6 +9,7 @@ import 'package:merchant/components/fields/searchbar.dart';
 import 'package:merchant/components/loading.dart';
 import 'package:merchant/components/modals/add_edit_counter_modal.dart';
 import 'package:merchant/components/table_pagination.dart';
+import 'package:merchant/exceptions/api_exception.dart';
 import 'package:merchant/providers/counters_provider.dart';
 import 'package:merchant/providers/ui_providers.dart';
 import 'package:models/models.dart';
@@ -115,9 +116,13 @@ class Counters extends StatelessComponent {
           Loading(text: 'Loading counters...', fullScreen: false)
         else if (store == null)
           CenteredMessage(message: 'Create Store to add counters.')
-        else if (counters.hasValue &&
-            counters.value != null &&
-            counters.value!.isEmpty)
+        else if (counters.hasError)
+          CenteredMessage(
+            message: counters.error is ApiException
+                ? (counters.error as ApiException).message
+                : 'Failed to load counters. Please try again.',
+          )
+        else if (counters.hasValue && counters.value!.isEmpty)
           CenteredMessage(message: 'No Counters were added.')
         else
           div(classes: 'flex-1 min-h-0 overflow-auto', [

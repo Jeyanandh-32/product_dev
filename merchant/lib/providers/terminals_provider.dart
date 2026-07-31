@@ -15,11 +15,7 @@ final terminalsProvider =
 class TerminalsProvider extends AsyncNotifier<List<Terminal>> {
   @override
   FutureOr<List<Terminal>> build() async {
-    try {
-      return await TerminalRepository.getAll();
-    } catch (e) {
-      return [];
-    }
+    return await TerminalRepository.getAll();
   }
 
   Future<void> create({required String name, required String password}) async {

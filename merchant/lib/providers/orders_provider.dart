@@ -19,19 +19,15 @@ class OrdersProvider extends AsyncNotifier<List<Order>> {
     final size = ref.watch(entriesProvider);
     final page = ref.watch(ordersPageProvider);
 
-    try {
-      final result = await OrderRepository.getAll(
-        storeId: selectedStore.id,
-        page: page,
-        size: size,
-      );
+    final result = await OrderRepository.getAll(
+      storeId: selectedStore.id,
+      page: page,
+      size: size,
+    );
 
-      ref.read(ordersTotalProvider.notifier).state = result.totalItems;
-      ref.read(ordersTotalPagesProvider.notifier).state = result.totalPages;
+    ref.read(ordersTotalProvider.notifier).state = result.totalItems;
+    ref.read(ordersTotalPagesProvider.notifier).state = result.totalPages;
 
-      return result.items;
-    } catch (e) {
-      return [];
-    }
+    return result.items;
   }
 }

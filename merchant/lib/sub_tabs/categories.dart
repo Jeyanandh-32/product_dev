@@ -9,6 +9,7 @@ import 'package:merchant/components/fields/searchbar.dart';
 import 'package:merchant/components/loading.dart';
 import 'package:merchant/components/modals/add_edit_category_modal.dart';
 import 'package:merchant/components/table_pagination.dart';
+import 'package:merchant/exceptions/api_exception.dart';
 import 'package:merchant/providers/categories_provider.dart';
 import 'package:merchant/providers/ui_providers.dart';
 import 'package:models/models.dart';
@@ -116,9 +117,13 @@ class Categories extends StatelessComponent {
           Loading(text: 'Loading categories...', fullScreen: false)
         else if (store == null)
           CenteredMessage(message: 'Create Store to add categories.')
-        else if (categories.hasValue &&
-            categories.value != null &&
-            categories.value!.isEmpty)
+        else if (categories.hasError)
+          CenteredMessage(
+            message: categories.error is ApiException
+                ? (categories.error as ApiException).message
+                : 'Failed to load categories. Please try again.',
+          )
+        else if (categories.hasValue && categories.value!.isEmpty)
           CenteredMessage(message: 'No Categories were added.')
         else
           div(classes: 'flex-1 min-h-0 overflow-auto', [

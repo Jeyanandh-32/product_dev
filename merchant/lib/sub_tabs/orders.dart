@@ -6,6 +6,7 @@ import 'package:merchant/components/centered_message.dart';
 import 'package:merchant/components/fields/searchbar.dart';
 import 'package:merchant/components/loading.dart';
 import 'package:merchant/components/table_pagination.dart';
+import 'package:merchant/exceptions/api_exception.dart';
 import 'package:merchant/providers/orders_provider.dart';
 import 'package:merchant/providers/ui_providers.dart';
 import 'package:models/models.dart';
@@ -133,9 +134,13 @@ class Orders extends StatelessComponent {
           Loading(text: 'Loading orders...', fullScreen: false)
         else if (store == null)
           CenteredMessage(message: 'Create Store to view orders.')
-        else if (orders.hasValue &&
-            orders.value != null &&
-            orders.value!.isEmpty)
+        else if (orders.hasError)
+          CenteredMessage(
+            message: orders.error is ApiException
+                ? (orders.error as ApiException).message
+                : 'Failed to load orders. Please try again.',
+          )
+        else if (orders.hasValue && orders.value!.isEmpty)
           CenteredMessage(message: 'No Orders found.')
         else
           div(classes: 'flex-1 min-h-0 overflow-auto', [

@@ -6,6 +6,7 @@ import 'package:merchant/components/cards/store_card.dart';
 import 'package:merchant/components/centered_message.dart';
 import 'package:merchant/components/fields/searchbar.dart';
 import 'package:merchant/components/loading.dart';
+import 'package:merchant/exceptions/api_exception.dart';
 import 'package:merchant/providers/stores_provider.dart';
 import 'package:merchant/providers/terminals_provider.dart';
 import 'package:merchant/providers/ui_providers.dart';
@@ -56,6 +57,12 @@ class StoresContainer extends StatelessComponent {
 
         if (storesState.isLoading)
           Loading(text: 'Loading stores...', fullScreen: false)
+        else if (storesState.hasError)
+          CenteredMessage(
+            message: storesState.error is ApiException
+                ? (storesState.error as ApiException).message
+                : 'Failed to load stores. Please try again.',
+          )
         else if (storesState.hasValue && storesState.value!.isEmpty)
           CenteredMessage(message: 'No stores were added.')
         else

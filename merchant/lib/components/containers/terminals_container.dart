@@ -6,6 +6,7 @@ import 'package:merchant/components/cards/terminal_card.dart';
 import 'package:merchant/components/centered_message.dart';
 import 'package:merchant/components/fields/searchbar.dart';
 import 'package:merchant/components/loading.dart';
+import 'package:merchant/exceptions/api_exception.dart';
 import 'package:merchant/providers/terminals_provider.dart';
 import 'package:merchant/providers/ui_providers.dart';
 
@@ -72,6 +73,12 @@ class TerminalsContainer extends StatelessComponent {
           CenteredMessage(message: 'Select a store to view terminals.')
         else if (terminalsState.isLoading)
           Loading(text: 'Loading terminals...', fullScreen: false)
+        else if (terminalsState.hasError)
+          CenteredMessage(
+            message: terminalsState.error is ApiException
+                ? (terminalsState.error as ApiException).message
+                : 'Failed to load terminals. Please try again.',
+          )
         else if (terminalsList.isEmpty)
           CenteredMessage(message: 'No terminals found.')
         else

@@ -21,20 +21,16 @@ class ProductsProvider extends AsyncNotifier<List<Product>> {
     final size = ref.watch(entriesProvider);
     final page = ref.watch(productsPageProvider);
 
-    try {
-      final result = await ProductRepository.getAll(
-        storeId: selectedStore.id,
-        page: page,
-        size: size,
-      );
+    final result = await ProductRepository.getAll(
+      storeId: selectedStore.id,
+      page: page,
+      size: size,
+    );
 
-      ref.read(productsTotalProvider.notifier).state = result.totalItems;
-      ref.read(productsTotalPagesProvider.notifier).state = result.totalPages;
+    ref.read(productsTotalProvider.notifier).state = result.totalItems;
+    ref.read(productsTotalPagesProvider.notifier).state = result.totalPages;
 
-      return result.items;
-    } catch (e) {
-      return [];
-    }
+    return result.items;
   }
 
   Future<void> create({

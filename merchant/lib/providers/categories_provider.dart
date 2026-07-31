@@ -21,20 +21,16 @@ class CategoriesProvider extends AsyncNotifier<List<Category>> {
     final size = ref.watch(entriesProvider);
     final page = ref.watch(categoriesPageProvider);
 
-    try {
-      final result = await CategoryRepository.getAll(
-        storeId: selectedStore.id,
-        page: page,
-        size: size,
-      );
+    final result = await CategoryRepository.getAll(
+      storeId: selectedStore.id,
+      page: page,
+      size: size,
+    );
 
-      ref.read(categoriesTotalProvider.notifier).state = result.totalItems;
-      ref.read(categoriesTotalPagesProvider.notifier).state = result.totalPages;
+    ref.read(categoriesTotalProvider.notifier).state = result.totalItems;
+    ref.read(categoriesTotalPagesProvider.notifier).state = result.totalPages;
 
-      return result.items;
-    } catch (e) {
-      return [];
-    }
+    return result.items;
   }
 
   Future<void> create({

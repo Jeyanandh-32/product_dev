@@ -9,6 +9,7 @@ import 'package:merchant/components/loading.dart';
 import 'package:merchant/components/modals/add_edit_product_modal.dart';
 import 'package:merchant/components/modals/update_stock_modal.dart';
 import 'package:merchant/components/table_pagination.dart';
+import 'package:merchant/exceptions/api_exception.dart';
 import 'package:merchant/providers/products_provider.dart';
 import 'package:merchant/providers/ui_providers.dart';
 import 'package:web/web.dart';
@@ -29,6 +30,7 @@ class Products extends StatelessComponent {
 
   @override
   Component build(BuildContext context) {
+    final store = context.watch(storeProvider);
     final entries = context.watch(entriesProvider);
     final products = context.watch(productsProvider);
     final currentPage = context.watch(productsPageProvider);
@@ -110,9 +112,15 @@ class Products extends StatelessComponent {
 
         if (products.isLoading)
           Loading(text: 'Loading products...', fullScreen: false)
-        else if (products.hasValue &&
-            products.value != null &&
-            products.value!.isEmpty)
+        else if (store == null)
+          CenteredMessage(message: 'Create Store to add products.')
+        else if (products.hasError)
+          CenteredMessage(
+            message: products.error is ApiException
+                ? (products.error as ApiException).message
+                : 'Failed to load products. Please try again.',
+          )
+        else if (products.hasValue && products.value!.isEmpty)
           CenteredMessage(message: 'No Products were added.')
         else
           div(classes: 'flex-1 min-h-0 overflow-auto', [

@@ -15,11 +15,7 @@ final storesProvider =
 class StoresProvider extends AsyncNotifier<List<Store>> {
   @override
   FutureOr<List<Store>> build() async {
-    try {
-      return await StoreRepository.getAll();
-    } catch (e) {
-      return [];
-    }
+    return await StoreRepository.getAll();
   }
 
   Future<void> create({required String name, String? storeType}) async {
