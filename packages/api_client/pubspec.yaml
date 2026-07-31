@@ -1,0 +1,12 @@
+name: api_client
+description: Shared HTTP client infrastructure for client apps.
+version: 1.0.0
+publish_to: none
+
+environment:
+  sdk: ^3.12.0
+
+resolution: workspace
+
+dependencies:
+  dio: ^5.9.2

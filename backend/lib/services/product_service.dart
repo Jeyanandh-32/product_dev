@@ -23,8 +23,9 @@ class ProductService {
     final name = body['name'] as String;
     final categoryId = body['categoryId'] as String;
     final counterId = body['counterId'] as String;
-    final basePrice = body['basePrice'] as int;
-    final sellingPrice = body['sellingPrice'] as int;
+    final basePrice = ((body['basePrice'] as num).toDouble() * 100).round();
+    final sellingPrice = ((body['sellingPrice'] as num).toDouble() * 100)
+        .round();
     final sku = readOptionalString(body, 'sku');
     final barcode = readOptionalString(body, 'barcode');
     final description = readOptionalString(body, 'description');

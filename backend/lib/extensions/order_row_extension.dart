@@ -18,7 +18,7 @@ extension OrderRowExtension on OrderRow {
     taxTotal: taxTotal / 100,
     grandTotal: grandTotal / 100,
     terminalCode: terminalCode,
-    items: items.map((o) => o.toOrderitem()).toList(),
+    items: items.map((o) => o.toOrderItem()).toList(),
     createdAt: createdAt,
     updatedAt: updatedAt,
   );

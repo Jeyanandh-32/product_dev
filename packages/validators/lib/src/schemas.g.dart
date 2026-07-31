@@ -653,8 +653,8 @@ base class ProductCreate {
     required String name,
     required String categoryId,
     required String counterId,
-    required int basePrice,
-    required int sellingPrice,
+    required double basePrice,
+    required double sellingPrice,
     String? sku,
     String? barcode,
     String? description,
@@ -705,19 +705,19 @@ base class ProductCreate {
     _json['counterId'] = value;
   }
 
-  int get basePrice {
-    return _json['basePrice'] as int;
+  double get basePrice {
+    return (_json['basePrice'] as num).toDouble();
   }
 
-  set basePrice(int value) {
+  set basePrice(double value) {
     _json['basePrice'] = value;
   }
 
-  int get sellingPrice {
-    return _json['sellingPrice'] as int;
+  double get sellingPrice {
+    return (_json['sellingPrice'] as num).toDouble();
   }
 
-  set sellingPrice(int value) {
+  set sellingPrice(double value) {
     _json['sellingPrice'] = value;
   }
 
@@ -819,8 +819,8 @@ base class _ProductCreateTypeFactory extends SchemanticType<ProductCreate> {
               description: 'Counter ID',
               minLength: 1,
             ),
-            'basePrice': $Schema.integer(description: 'Base price', minimum: 0),
-            'sellingPrice': $Schema.integer(
+            'basePrice': $Schema.number(description: 'Base price', minimum: 0),
+            'sellingPrice': $Schema.number(
               description: 'Selling price',
               minimum: 0,
             ),
@@ -860,8 +860,8 @@ base class ProductUpdate {
     String? name,
     String? categoryId,
     String? counterId,
-    int? basePrice,
-    int? sellingPrice,
+    double? basePrice,
+    double? sellingPrice,
     String? sku,
     String? barcode,
     String? description,
@@ -926,11 +926,11 @@ base class ProductUpdate {
     }
   }
 
-  int? get basePrice {
-    return _json['basePrice'] as int?;
+  double? get basePrice {
+    return (_json['basePrice'] as num?)?.toDouble();
   }
 
-  set basePrice(int? value) {
+  set basePrice(double? value) {
     if (value == null) {
       _json.remove('basePrice');
     } else {
@@ -938,11 +938,11 @@ base class ProductUpdate {
     }
   }
 
-  int? get sellingPrice {
-    return _json['sellingPrice'] as int?;
+  double? get sellingPrice {
+    return (_json['sellingPrice'] as num?)?.toDouble();
   }
 
-  set sellingPrice(int? value) {
+  set sellingPrice(double? value) {
     if (value == null) {
       _json.remove('sellingPrice');
     } else {
@@ -1060,8 +1060,8 @@ base class _ProductUpdateTypeFactory extends SchemanticType<ProductUpdate> {
               description: 'Counter ID',
               minLength: 1,
             ),
-            'basePrice': $Schema.integer(description: 'Base price', minimum: 0),
-            'sellingPrice': $Schema.integer(
+            'basePrice': $Schema.number(description: 'Base price', minimum: 0),
+            'sellingPrice': $Schema.number(
               description: 'Selling price',
               minimum: 0,
             ),

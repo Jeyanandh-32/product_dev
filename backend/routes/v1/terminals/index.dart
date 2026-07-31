@@ -7,6 +7,7 @@ import 'package:backend/extensions/terminal_row_extension.dart';
 import 'package:backend/models/token_payload/token_payload.dart';
 import 'package:backend/repositories/terminal_repository.dart';
 import 'package:backend/services/auth_service.dart';
+import 'package:backend/utils/constraint_errors.dart';
 import 'package:backend/utils/responses.dart';
 import 'package:dart_frog/dart_frog.dart';
 import 'package:validators/validators.dart';
@@ -107,7 +108,7 @@ Future<Response> _onPost(RequestContext context, String storeId) async {
     final body = await context.validateBody(TerminalValidator.create);
     final input = TerminalCreate.fromJson(body);
 
-    final passwordHash = await AuthService.hashPassword(input.password);
+    final passwordHash = await PasswordService.hash(input.password);
     final code = _generateTerminalCode();
 
     final terminalRow = await repo.create(
@@ -125,17 +126,7 @@ Future<Response> _onPost(RequestContext context, String storeId) async {
   } on ResponseException catch (e) {
     return e.response;
   } catch (e) {
-    if (e.toString().contains('unique_store_terminal_name')) {
-      return badRequest(
-        message: 'You already have a terminal with this name in this store.',
-      );
-    }
-    if (e.toString().contains('terminals_pkey')) {
-      return badRequest(
-        message: 'Something went wrong. Please try again.',
-      );
-    }
-    return error(message: e.toString());
+    return tryConstraintError(e) ?? error(message: e.toString());
   }
 }
 

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:backend/extensions/product_row_extension.dart';
 import 'package:backend/extensions/request_context_extension.dart';
 import 'package:backend/repositories/product_repository.dart';
+import 'package:backend/utils/constraint_errors.dart';
 import 'package:backend/utils/responses.dart';
 import 'package:dart_frog/dart_frog.dart';
 import 'package:validators/validators.dart';
@@ -50,6 +51,8 @@ Future<Response> _onPutOrPatch(RequestContext context, String id) async {
   try {
     final body = await context.validateBody(ProductValidator.update);
     final input = ProductUpdate.fromJson(body);
+    final basePrice = input.basePrice;
+    final sellingPrice = input.sellingPrice;
 
     final updatedRow = await repo.update(
       id: id,
@@ -57,8 +60,8 @@ Future<Response> _onPutOrPatch(RequestContext context, String id) async {
       categoryId: input.categoryId,
       counterId: input.counterId,
       isActive: input.isActive,
-      basePrice: input.basePrice,
-      sellingPrice: input.sellingPrice,
+      basePrice: basePrice != null ? (basePrice * 100).round() : null,
+      sellingPrice: sellingPrice != null ? (sellingPrice * 100).round() : null,
       taxRate: input.taxRate,
       sku: input.sku,
       barcode: input.barcode,
@@ -93,14 +96,6 @@ Future<Response> _onPutOrPatch(RequestContext context, String id) async {
   } on ResponseException catch (e) {
     return e.response;
   } catch (e) {
-    if (e.toString().contains('unique_merchant_product_sku')) {
-      return badRequest(message: 'You already have a product with this SKU.');
-    }
-    if (e.toString().contains('unique_store_product_name')) {
-      return badRequest(
-        message: 'You already have a product with this name in this store.',
-      );
-    }
-    return error(message: e.toString());
+    return tryConstraintError(e) ?? error(message: e.toString());
   }
 }

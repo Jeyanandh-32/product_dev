@@ -4,7 +4,7 @@ import 'package:jaspr_riverpod/jaspr_riverpod.dart';
 import 'package:merchant/exceptions/api_exception.dart';
 import 'package:merchant/providers/toast_provider.dart';
 import 'package:merchant/providers/ui_providers.dart';
-import 'package:merchant/repositories/store_repository.dart';
+import 'package:client_repositories/client_repositories.dart';
 import 'package:models/models.dart';
 
 final storesProvider =

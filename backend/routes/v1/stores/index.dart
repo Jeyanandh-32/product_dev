@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:backend/extensions/request_context_extension.dart';
 import 'package:backend/extensions/store_row_extension.dart';
 import 'package:backend/repositories/store_repository.dart';
+import 'package:backend/utils/constraint_errors.dart';
 import 'package:backend/utils/responses.dart';
 import 'package:dart_frog/dart_frog.dart';
 import 'package:validators/validators.dart';
@@ -75,11 +76,6 @@ Future<Response> _onPost(RequestContext context) async {
   } on ResponseException catch (e) {
     return e.response;
   } catch (e) {
-    if (e.toString().contains('unique_merchant_store_name')) {
-      return badRequest(
-        message: 'You already have a store with this name.',
-      );
-    }
-    return error(message: e.toString());
+    return tryConstraintError(e) ?? error(message: e.toString());
   }
 }

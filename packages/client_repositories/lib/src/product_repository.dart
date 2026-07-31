@@ -1,5 +1,5 @@
+import 'package:api_client/api_client.dart';
 import 'package:dio/dio.dart';
-import 'package:merchant/config/api_client.dart';
 import 'package:models/models.dart';
 
 class ProductRepository {
@@ -10,8 +10,8 @@ class ProductRepository {
     required String name,
     required String categoryId,
     required String counterId,
-    required int basePrice,
-    required int sellingPrice,
+    required double basePrice,
+    required double sellingPrice,
     double? taxRate,
     String? sku,
     String? barcode,
@@ -19,7 +19,7 @@ class ProductRepository {
     String? imageUrl,
   }) async {
     try {
-      final result = await ApiClient.dio.post(
+      final result = await dio.post(
         ApiEndpoints.products,
         queryParameters: {'storeId': storeId},
         data: {
@@ -40,7 +40,7 @@ class ProductRepository {
         result.data['data']['product'] as Map<String, Object?>,
       );
     } on DioException catch (e) {
-      ApiClient.handleDioError(e, 'Failed to create product.');
+      handleDioError(e, 'Failed to create product.');
     }
   }
 
@@ -50,8 +50,8 @@ class ProductRepository {
     String? categoryId,
     String? counterId,
     bool? isActive,
-    int? basePrice,
-    int? sellingPrice,
+    double? basePrice,
+    double? sellingPrice,
     double? taxRate,
     String? sku,
     String? barcode,
@@ -60,13 +60,13 @@ class ProductRepository {
   }) async {
     try {
       final path = '${ApiEndpoints.products}/$id';
-      final result = await ApiClient.dio.patch(
+      final result = await dio.patch(
         path,
         data: {
           'name': ?name,
-          'isActive': ?isActive,
           'categoryId': ?categoryId,
           'counterId': ?counterId,
+          'isActive': ?isActive,
           'basePrice': ?basePrice,
           'sellingPrice': ?sellingPrice,
           'taxRate': ?taxRate,
@@ -81,53 +81,28 @@ class ProductRepository {
         result.data['data']['product'] as Map<String, Object?>,
       );
     } on DioException catch (e) {
-      ApiClient.handleDioError(e, 'Failed to update product.');
+      handleDioError(e, 'Failed to update product.');
     }
   }
 
-  static Future<
-    ({
-      List<Product> products,
-      int currentPage,
-      int pageSize,
-      int totalItems,
-      int totalPages,
-    })
-  >
-  getAll({
+  static Future<PaginatedResponse<Product>> getAll({
     required String storeId,
     int? page,
     int? size,
   }) async {
     try {
-      final result = await ApiClient.dio.get(
+      final result = await dio.get(
         ApiEndpoints.products,
-        queryParameters: {
-          'storeId': storeId,
-          'page': ?page,
-          'size': ?size,
-        },
+        queryParameters: {'storeId': storeId, 'page': ?page, 'size': ?size},
       );
 
-      final list = result.data['data']['products'] as List<dynamic>;
-      final currentPage = result.data['data']['currentPage'] as int? ?? 1;
-      final pageSize = result.data['data']['pageSize'] as int? ?? 50;
-      final totalItems =
-          result.data['data']['totalItems'] as int? ?? list.length;
-      final totalPages = result.data['data']['totalPages'] as int? ?? 1;
-
-      final products = list
-          .map((s) => Product.fromJson(s as Map<String, Object?>))
-          .toList();
-      return (
-        products: products,
-        currentPage: currentPage,
-        pageSize: pageSize,
-        totalItems: totalItems,
-        totalPages: totalPages,
+      return parsePaginatedResponse(
+        data: result.data['data'] as Map<String, dynamic>,
+        key: 'products',
+        fromJson: Product.fromJson,
       );
     } on DioException catch (e) {
-      ApiClient.handleDioError(e, 'Failed to fetch products.');
+      handleDioError(e, 'Failed to fetch products.');
     }
   }
 }

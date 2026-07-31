@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:models/models.dart';
 import 'package:terminal/models/cart_item.dart';
-import 'package:terminal/repositories/order_repository.dart';
+import 'package:client_repositories/client_repositories.dart';
 
 class CartState {
   final List<CartItem> items;

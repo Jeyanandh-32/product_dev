@@ -67,7 +67,7 @@ class ProductCard extends ConsumerWidget {
           ),
           const Gap(6),
           StyledText(
-            '₹${product.sellingPrice}.00',
+            '₹${product.sellingPrice.toStringAsFixed(2)}',
             style: TextStyler()
                 .fontSize(14)
                 .fontWeight(.bold)

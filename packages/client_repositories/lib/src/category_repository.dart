@@ -1,6 +1,6 @@
+import 'package:api_client/api_client.dart';
 import 'package:dio/dio.dart';
 import 'package:models/models.dart';
-import 'package:terminal/config/api_client.dart';
 
 class CategoryRepository {
   const CategoryRepository._();
@@ -12,7 +12,7 @@ class CategoryRepository {
     String? imageUrl,
   }) async {
     try {
-      final result = await ApiClient.dio.post(
+      final result = await dio.post(
         ApiEndpoints.categories,
         queryParameters: {'storeId': storeId},
         data: {
@@ -26,7 +26,7 @@ class CategoryRepository {
         result.data['data']['category'] as Map<String, Object?>,
       );
     } on DioException catch (e) {
-      ApiClient.handleDioError(e, 'Failed to create category.');
+      handleDioError(e, 'Failed to create category.');
     }
   }
 
@@ -39,7 +39,7 @@ class CategoryRepository {
   }) async {
     try {
       final path = '${ApiEndpoints.categories}/$id';
-      final result = await ApiClient.dio.patch(
+      final result = await dio.patch(
         path,
         data: {
           'name': ?name,
@@ -53,24 +53,28 @@ class CategoryRepository {
         result.data['data']['category'] as Map<String, Object?>,
       );
     } on DioException catch (e) {
-      ApiClient.handleDioError(e, 'Failed to update category.');
+      handleDioError(e, 'Failed to update category.');
     }
   }
 
-  static Future<List<Category>> getAll({String? storeId}) async {
+  static Future<PaginatedResponse<Category>> getAll({
+    required String storeId,
+    int? page,
+    int? size,
+  }) async {
     try {
-      final result = await ApiClient.dio.get(
+      final result = await dio.get(
         ApiEndpoints.categories,
-        queryParameters: {'storeId': ?storeId},
+        queryParameters: {'storeId': storeId, 'page': ?page, 'size': ?size},
       );
 
-      final list = result.data['data']['categories'] as List<dynamic>;
-
-      return list
-          .map((s) => Category.fromJson(s as Map<String, Object?>))
-          .toList();
+      return parsePaginatedResponse(
+        data: result.data['data'] as Map<String, dynamic>,
+        key: 'categories',
+        fromJson: Category.fromJson,
+      );
     } on DioException catch (e) {
-      ApiClient.handleDioError(e, 'Failed to fetch categories.');
+      handleDioError(e, 'Failed to fetch categories.');
     }
   }
 }

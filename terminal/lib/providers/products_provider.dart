@@ -3,8 +3,7 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:models/models.dart';
 import 'package:terminal/providers/auth_provider.dart';
-import 'package:terminal/repositories/product_repository.dart';
-import 'package:terminal/repositories/stock_repository.dart';
+import 'package:client_repositories/client_repositories.dart';
 
 final productsProvider =
     AsyncNotifierProvider.autoDispose<ProductsProvider, List<Product>>(
@@ -19,9 +18,12 @@ class ProductsProvider extends AsyncNotifier<List<Product>> {
     if (storeId == null) return [];
 
     try {
-      final result = await ProductRepository.getAll(storeId: storeId);
+      final result = await ProductRepository.getAll(
+        storeId: storeId,
+        size: 1000,
+      );
 
-      return result.products;
+      return result.items;
     } catch (e) {
       return [];
     }
@@ -31,8 +33,8 @@ class ProductsProvider extends AsyncNotifier<List<Product>> {
     required String name,
     required String categoryId,
     required String counterId,
-    required int basePrice,
-    required int sellingPrice,
+    required double basePrice,
+    required double sellingPrice,
     double? taxRate,
     String? sku,
     String? barcode,
@@ -74,8 +76,8 @@ class ProductsProvider extends AsyncNotifier<List<Product>> {
     String? categoryId,
     String? counterId,
     bool? isActive,
-    int? basePrice,
-    int? sellingPrice,
+    double? basePrice,
+    double? sellingPrice,
     double? taxRate,
     String? sku,
     String? barcode,

@@ -32,7 +32,7 @@ extension RequestContextExtension on RequestContext {
   ) async {
     final json = await request.json();
     if (json is! Map<String, dynamic>) {
-      throw ResponseException(inValidBody());
+      throw ResponseException(invalidBody());
     }
     final errorMsg = await validator(json);
     if (errorMsg != null) {

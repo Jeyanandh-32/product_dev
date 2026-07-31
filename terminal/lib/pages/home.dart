@@ -29,9 +29,19 @@ class Home extends ConsumerWidget {
     }
 
     final selectedCategory = ref.watch(selectedCategoryProvider);
+    final searchQuery = ref.watch(searchQueryProvider);
+
     final filteredProducts =
         products.value?.where((product) {
-          return product.category?.id == selectedCategory?.id;
+          // Universal search across all categories when search query is non-empty
+          if (searchQuery.isNotEmpty) {
+            return product.name.toLowerCase().contains(searchQuery) ||
+                (product.sku?.toLowerCase().contains(searchQuery) ?? false) ||
+                (product.barcode?.toLowerCase().contains(searchQuery) ?? false);
+          }
+          // Category filter when search query is empty
+          if (selectedCategory == null) return true;
+          return product.category?.id == selectedCategory.id;
         }).toList() ??
         [];
 
@@ -72,7 +82,11 @@ class Home extends ConsumerWidget {
                 children: [
                   const CategoryFilterList(),
                   const Gap(16),
-                  const ProductSearchBar(),
+                  ProductSearchBar(
+                    onChanged: (val) => ref
+                        .read(searchQueryProvider.notifier)
+                        .setSearchQuery(val),
+                  ),
                   const Gap(16),
                   Expanded(
                     child: ExcludeSemantics(

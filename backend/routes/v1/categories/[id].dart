@@ -1,6 +1,7 @@
 import 'package:backend/extensions/category_row_extension.dart';
 import 'package:backend/extensions/request_context_extension.dart';
 import 'package:backend/repositories/category_repository.dart';
+import 'package:backend/utils/constraint_errors.dart';
 import 'package:backend/utils/responses.dart';
 import 'package:dart_frog/dart_frog.dart';
 import 'package:validators/validators.dart';
@@ -61,11 +62,6 @@ Future<Response> _onPutOrPatch(RequestContext context, String id) async {
   } on ResponseException catch (e) {
     return e.response;
   } catch (e) {
-    if (e.toString().contains('unique_store_category_name')) {
-      return badRequest(
-        message: 'You already have a category with this name in this store.',
-      );
-    }
-    return error(message: e.toString());
+    return tryConstraintError(e) ?? error(message: e.toString());
   }
 }

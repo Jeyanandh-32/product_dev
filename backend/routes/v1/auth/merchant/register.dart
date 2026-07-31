@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:backend/extensions/merchant_row_extension.dart';
 import 'package:backend/repositories/merchant_repository.dart';
 import 'package:backend/services/auth_service.dart';
+import 'package:backend/utils/constraint_errors.dart';
 import 'package:backend/utils/responses.dart';
 import 'package:dart_frog/dart_frog.dart';
 import 'package:validators/validators.dart';
@@ -19,7 +20,7 @@ Future<Response> _onPost(RequestContext context) async {
 
   final jsonBody = await context.request.json();
 
-  if (jsonBody is! Map<String, Object?>) return inValidBody();
+  if (jsonBody is! Map<String, Object?>) return invalidBody();
 
   final body = jsonBody;
 
@@ -49,7 +50,7 @@ Future<Response> _onPost(RequestContext context) async {
     'password': password,
   });
 
-  final passwordHash = await AuthService.hashPassword(input.password);
+  final passwordHash = await PasswordService.hash(input.password);
 
   try {
     final merchantRow = await repo.create(
@@ -60,18 +61,18 @@ Future<Response> _onPost(RequestContext context) async {
       passwordHash: passwordHash,
     );
 
-    final accessToken = AuthService.generateAccessToken(
+    final accessToken = JwtService.generateAccessToken(
       id: merchantRow.id,
       role: .merchant,
     );
-    final refreshToken = AuthService.generateRefreshToken(
+    final refreshToken = JwtService.generateRefreshToken(
       id: merchantRow.id,
       role: .merchant,
     );
 
     final cookies = [
-      AuthService.buildAccessTokenCookie(accessToken),
-      AuthService.buildRefreshTokenCookie(refreshToken),
+      CookieService.buildAccessTokenCookie(accessToken),
+      CookieService.buildRefreshTokenCookie(refreshToken),
     ];
 
     return success(
@@ -84,17 +85,6 @@ Future<Response> _onPost(RequestContext context) async {
       },
     );
   } catch (e) {
-    if (e.toString().contains('merchants_email_key')) {
-      return badRequest(
-        message: 'Email already exists.',
-      );
-    }
-
-    if (e.toString().contains('merchants_whatsapp_number_key')) {
-      return badRequest(
-        message: 'Whatsapp Number already exists.',
-      );
-    }
-    return error(message: e.toString());
+    return tryConstraintError(e) ?? error(message: e.toString());
   }
 }

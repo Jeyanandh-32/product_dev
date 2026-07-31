@@ -1,16 +1,22 @@
 import 'dart:async';
 
+import 'package:client_repositories/client_repositories.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:models/models.dart';
 import 'package:terminal/providers/auth_provider.dart';
-import 'package:terminal/repositories/category_repository.dart';
 
 class CategoriesProvider extends AsyncNotifier<List<Category>> {
   @override
   FutureOr<List<Category>> build() async {
     final terminal = ref.watch(authProvider);
+    final storeId = terminal.value?.storeId;
+    if (storeId == null) return [];
     try {
-      return await CategoryRepository.getAll(storeId: terminal.value?.storeId);
+      final result = await CategoryRepository.getAll(
+        storeId: storeId,
+        size: 1000,
+      );
+      return result.items;
     } catch (e) {
       return [];
     }

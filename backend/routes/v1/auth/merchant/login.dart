@@ -19,7 +19,7 @@ Future<Response> _onPost(RequestContext context) async {
 
   final jsonBody = await context.request.json();
 
-  if (jsonBody is! Map<String, Object?>) return inValidBody();
+  if (jsonBody is! Map<String, Object?>) return invalidBody();
 
   final body = jsonBody;
 
@@ -47,26 +47,26 @@ Future<Response> _onPost(RequestContext context) async {
       return badRequest(message: 'Invalid email or password.');
     }
 
-    final isValid = await AuthService.verifyPassword(
+    final isValid = await PasswordService.verify(
       input.password,
       merchantRow.passwordHash,
     );
 
     if (!isValid) return badRequest(message: 'Invalid email or password.');
 
-    final accessToken = AuthService.generateAccessToken(
+    final accessToken = JwtService.generateAccessToken(
       id: merchantRow.id,
       role: .merchant,
     );
 
-    final refreshToken = AuthService.generateRefreshToken(
+    final refreshToken = JwtService.generateRefreshToken(
       id: merchantRow.id,
       role: .merchant,
     );
 
     final cookies = [
-      AuthService.buildAccessTokenCookie(accessToken),
-      AuthService.buildRefreshTokenCookie(refreshToken),
+      CookieService.buildAccessTokenCookie(accessToken),
+      CookieService.buildRefreshTokenCookie(refreshToken),
     ];
 
     return success(

@@ -41,9 +41,15 @@ class _CartSummaryState extends ConsumerState<CartSummary> {
           value: '${cart.orderQuantity}',
         ),
         const Gap(4),
-        _summaryTile(title: 'Order Summary', value: '₹${cart.subtotal}0'),
+        _summaryTile(
+          title: 'Order Summary',
+          value: '₹${cart.subtotal.toStringAsFixed(2)}',
+        ),
         const Gap(4),
-        _summaryTile(title: 'Total Tax', value: '₹${cart.taxTotal}0'),
+        _summaryTile(
+          title: 'Total Tax',
+          value: '₹${cart.taxTotal.toStringAsFixed(2)}',
+        ),
         const Gap(4),
         const StyledDivider(lineStyle: DividerLineStyle.dashed),
         const Gap(4),
@@ -55,7 +61,7 @@ class _CartSummaryState extends ConsumerState<CartSummary> {
               style: TextStyler().fontSize(16).fontWeight(.bold),
             ),
             StyledText(
-              '₹${cart.grandTotal}0',
+              '₹${cart.grandTotal.toStringAsFixed(2)}',
               style: TextStyler().fontSize(16).fontWeight(.bold),
             ),
           ],

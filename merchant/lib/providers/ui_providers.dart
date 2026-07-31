@@ -43,6 +43,10 @@ final countersPageProvider = StateProvider.autoDispose<int>((ref) => 1);
 final countersTotalProvider = StateProvider.autoDispose<int>((ref) => 0);
 final countersTotalPagesProvider = StateProvider.autoDispose<int>((ref) => 1);
 
+final ordersPageProvider = StateProvider.autoDispose<int>((ref) => 1);
+final ordersTotalProvider = StateProvider.autoDispose<int>((ref) => 0);
+final ordersTotalPagesProvider = StateProvider.autoDispose<int>((ref) => 1);
+
 enum ActiveModal {
   none,
   addStore,

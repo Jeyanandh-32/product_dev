@@ -56,7 +56,7 @@ class CartItemRow extends ConsumerWidget {
               ),
               const Gap(4),
               StyledText(
-                '₹${item.product.sellingPrice}.00',
+                '₹${item.product.sellingPrice.toStringAsFixed(2)}',
                 style: TextStyler()
                     .fontSize(13)
                     .fontWeight(.w500)

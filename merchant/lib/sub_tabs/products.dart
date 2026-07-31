@@ -172,8 +172,8 @@ class Products extends StatelessComponent {
     required int stock,
     required int lowStock,
     required bool stockMonitor,
-    required int basePrice,
-    required int sellingPrice,
+    required double basePrice,
+    required double sellingPrice,
     required String category,
     required String counter,
     String? sku,
@@ -209,30 +209,36 @@ class Products extends StatelessComponent {
               },
             },
             [
-              PackagePlus(classes: 'w-5 h-5 text-gray-500 hover:text-accent'),
+              Boxes(classes: 'w-5 h-5 text-gray-500 hover:text-accent'),
             ],
           ),
         ]),
       ]),
       td([
         if (image != null && image.isNotEmpty)
-          div(classes: 'h-12 w-12 overflow-hidden rounded-2xl', [
-            img(
-              src: image,
-              alt: 'Avatar Tailwind CSS Component',
-              classes: 'block h-full w-full object-cover',
-            ),
-          ])
+          div(
+            classes:
+                'h-12 w-12 overflow-hidden rounded-2xl bg-gray-100 shrink-0',
+            [
+              img(
+                src: image,
+                alt: name,
+                classes: 'block h-full w-full object-cover',
+              ),
+            ],
+          )
         else
           .text('-'),
       ]),
-      th(classes: 'whitespace-nowrap', [.text(name)]),
-      td(classes: 'whitespace-nowrap', [.text(sku ?? '-')]),
+      th(classes: 'whitespace-nowrap', [
+        .text(name),
+      ]),
+      td([.text(sku ?? '-')]),
       td([.text(barcode ?? '-')]),
       td([
         div(
           classes:
-              '${isActive ? 'bg-soft-green text-soft-green-content ' : 'bg-soft-red text-soft-red-content'} rounded-full px-3 py-1 text-xs font-semibold',
+              '${isActive ? 'bg-soft-green text-soft-green-content' : 'bg-soft-red text-soft-red-content'} rounded-full px-3 py-1 text-center text-xs font-semibold inline-block',
           [
             .text(isActive ? 'ACTIVE' : 'INACTIVE'),
           ],
@@ -249,8 +255,8 @@ class Products extends StatelessComponent {
           ],
         ),
       ]),
-      td([.text('$basePrice')]),
-      td([.text('$sellingPrice')]),
+      td([.text(basePrice.toStringAsFixed(2))]),
+      td([.text(sellingPrice.toStringAsFixed(2))]),
       td([.text('${taxRate.toStringAsFixed(2)}%')]),
       td(classes: 'whitespace-nowrap', [.text(category)]),
       td(classes: 'whitespace-nowrap', [.text(counter)]),

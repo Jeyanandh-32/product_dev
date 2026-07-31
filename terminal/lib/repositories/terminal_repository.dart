@@ -1,18 +1,18 @@
+import 'package:api_client/api_client.dart';
 import 'package:dio/dio.dart';
 import 'package:models/models.dart';
-import 'package:terminal/config/api_client.dart';
 import 'package:terminal/config/secure_storage.dart';
 
-class TerminalRepository {
-  const TerminalRepository._();
+class TerminalAuthRepository {
+  const TerminalAuthRepository._();
 
   static Future<Terminal> login({
     required String code,
     required String password,
   }) async {
     try {
-      final result = await ApiClient.dio.post(
-        ApiEndpoints.login,
+      final result = await dio.post(
+        ApiEndpoints.terminalLogin,
         data: {'code': code, 'password': password},
       );
 
@@ -25,7 +25,7 @@ class TerminalRepository {
       final terminal = Terminal.fromJson(data['terminal']);
       return terminal;
     } on DioException catch (e) {
-      ApiClient.handleDioError(e, 'Login failed.');
+      handleDioError(e, 'Login failed.');
     }
   }
 
@@ -34,7 +34,7 @@ class TerminalRepository {
     if (token == null) return null;
 
     try {
-      final result = await ApiClient.dio.get(
+      final result = await dio.get(
         ApiEndpoints.terminals,
         options: Options(headers: {'Authorization': 'Bearer $token'}),
       );

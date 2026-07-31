@@ -1,5 +1,5 @@
+import 'package:api_client/api_client.dart';
 import 'package:dio/dio.dart';
-import 'package:merchant/config/api_client.dart';
 import 'package:models/models.dart';
 
 class CounterRepository {
@@ -12,7 +12,7 @@ class CounterRepository {
     String? imageUrl,
   }) async {
     try {
-      final result = await ApiClient.dio.post(
+      final result = await dio.post(
         ApiEndpoints.counters,
         queryParameters: {'storeId': storeId},
         data: {
@@ -26,7 +26,7 @@ class CounterRepository {
         result.data['data']['counter'] as Map<String, Object?>,
       );
     } on DioException catch (e) {
-      ApiClient.handleDioError(e, 'Failed to create counter.');
+      handleDioError(e, 'Failed to create counter.');
     }
   }
 
@@ -39,7 +39,7 @@ class CounterRepository {
   }) async {
     try {
       final path = '${ApiEndpoints.counters}/$id';
-      final result = await ApiClient.dio.patch(
+      final result = await dio.patch(
         path,
         data: {
           'name': ?name,
@@ -53,54 +53,28 @@ class CounterRepository {
         result.data['data']['counter'] as Map<String, Object?>,
       );
     } on DioException catch (e) {
-      ApiClient.handleDioError(e, 'Failed to update counter.');
+      handleDioError(e, 'Failed to update counter.');
     }
   }
 
-  static Future<
-    ({
-      List<Counter> counters,
-      int currentPage,
-      int pageSize,
-      int totalItems,
-      int totalPages,
-    })
-  >
-  getAll({
+  static Future<PaginatedResponse<Counter>> getAll({
     required String storeId,
     int? page,
     int? size,
   }) async {
     try {
-      final result = await ApiClient.dio.get(
+      final result = await dio.get(
         ApiEndpoints.counters,
-        queryParameters: {
-          'storeId': storeId,
-          'page': ?page,
-          'size': ?size,
-        },
+        queryParameters: {'storeId': storeId, 'page': ?page, 'size': ?size},
       );
 
-      final list = result.data['data']['counters'] as List<dynamic>;
-      final currentPage = result.data['data']['currentPage'] as int? ?? 1;
-      final pageSize = result.data['data']['pageSize'] as int? ?? 50;
-      final totalItems =
-          result.data['data']['totalItems'] as int? ?? list.length;
-      final totalPages = result.data['data']['totalPages'] as int? ?? 1;
-
-      final counters = list
-          .map((s) => Counter.fromJson(s as Map<String, Object?>))
-          .toList();
-
-      return (
-        counters: counters,
-        currentPage: currentPage,
-        pageSize: pageSize,
-        totalItems: totalItems,
-        totalPages: totalPages,
+      return parsePaginatedResponse(
+        data: result.data['data'] as Map<String, dynamic>,
+        key: 'counters',
+        fromJson: Counter.fromJson,
       );
     } on DioException catch (e) {
-      ApiClient.handleDioError(e, 'Failed to fetch counters.');
+      handleDioError(e, 'Failed to fetch counters.');
     }
   }
 }

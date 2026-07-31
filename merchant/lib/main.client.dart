@@ -9,8 +9,10 @@ import 'package:jaspr_riverpod/jaspr_riverpod.dart';
 
 // Imports the [App] component.
 import 'app.dart';
+import 'config/api_client.dart';
 
 void main() {
+  initMerchantDio();
   // Attaches the [App] component to the <body> of the page.
   runApp(ProviderScope(child: App()));
 }

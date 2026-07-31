@@ -1,6 +1,6 @@
+import 'package:api_client/api_client.dart';
 import 'package:dio/dio.dart';
 import 'package:models/models.dart';
-import 'package:terminal/config/api_client.dart';
 
 class StockRepository {
   const StockRepository._();
@@ -13,7 +13,7 @@ class StockRepository {
   }) async {
     try {
       final path = '${ApiEndpoints.stocks}/$id';
-      final result = await ApiClient.dio.patch(
+      final result = await dio.patch(
         path,
         data: {
           'quantity': ?quantity,
@@ -26,7 +26,7 @@ class StockRepository {
         result.data['data']['stock'] as Map<String, Object?>,
       );
     } on DioException catch (e) {
-      ApiClient.handleDioError(e, 'Failed to update stock.');
+      handleDioError(e, 'Failed to update stock.');
     }
   }
 }

@@ -4,8 +4,7 @@ import 'package:jaspr_riverpod/jaspr_riverpod.dart';
 import 'package:merchant/exceptions/api_exception.dart';
 import 'package:merchant/providers/toast_provider.dart';
 import 'package:merchant/providers/ui_providers.dart';
-import 'package:merchant/repositories/product_repository.dart';
-import 'package:merchant/repositories/stock_repository.dart';
+import 'package:client_repositories/client_repositories.dart';
 import 'package:models/models.dart';
 
 final productsProvider =
@@ -32,7 +31,7 @@ class ProductsProvider extends AsyncNotifier<List<Product>> {
       ref.read(productsTotalProvider.notifier).state = result.totalItems;
       ref.read(productsTotalPagesProvider.notifier).state = result.totalPages;
 
-      return result.products;
+      return result.items;
     } catch (e) {
       return [];
     }
@@ -42,8 +41,8 @@ class ProductsProvider extends AsyncNotifier<List<Product>> {
     required String name,
     required String categoryId,
     required String counterId,
-    required int basePrice,
-    required int sellingPrice,
+    required double basePrice,
+    required double sellingPrice,
     double? taxRate,
     String? sku,
     String? barcode,
@@ -86,8 +85,8 @@ class ProductsProvider extends AsyncNotifier<List<Product>> {
     String? categoryId,
     String? counterId,
     bool? isActive,
-    int? basePrice,
-    int? sellingPrice,
+    double? basePrice,
+    double? sellingPrice,
     double? taxRate,
     String? sku,
     String? barcode,

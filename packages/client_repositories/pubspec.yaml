@@ -1,0 +1,16 @@
+name: client_repositories
+description: Shared client-side HTTP repositories for merchant and terminal apps.
+version: 1.0.0
+publish_to: none
+
+environment:
+  sdk: ^3.12.0
+
+resolution: workspace
+
+dependencies:
+  api_client:
+    path: ../api_client
+  dio: ^5.9.2
+  models:
+    path: ../models

@@ -65,10 +65,16 @@ abstract class $MerchantRegister {
   @StringField(minLength: 1, description: 'Business name')
   String get businessName;
 
-  @StringField(pattern: ValidationPatterns.whatsapp, description: 'Whatsapp number')
+  @StringField(
+    pattern: ValidationPatterns.whatsapp,
+    description: 'Whatsapp number',
+  )
   String get whatsappNumber;
 
-  @StringField(pattern: r'^[^@\s]+@[^@\s]+\.[^@\s]+$', description: 'Email address')
+  @StringField(
+    pattern: r'^[^@\s]+@[^@\s]+\.[^@\s]+$',
+    description: 'Email address',
+  )
   String get email;
 
   @StringField(pattern: ValidationPatterns.password, description: 'Password')
@@ -77,7 +83,10 @@ abstract class $MerchantRegister {
 
 @Schema()
 abstract class $MerchantLogin {
-  @StringField(pattern: r'^[^@\s]+@[^@\s]+\.[^@\s]+$', description: 'Email address')
+  @StringField(
+    pattern: r'^[^@\s]+@[^@\s]+\.[^@\s]+$',
+    description: 'Email address',
+  )
   String get email;
 
   @StringField(pattern: ValidationPatterns.password, description: 'Password')
@@ -95,11 +104,11 @@ abstract class $ProductCreate {
   @StringField(minLength: 1, description: 'Counter ID')
   String get counterId;
 
-  @IntegerField(minimum: 0, description: 'Base price')
-  int get basePrice;
+  @DoubleField(minimum: 0, description: 'Base price')
+  double get basePrice;
 
-  @IntegerField(minimum: 0, description: 'Selling price')
-  int get sellingPrice;
+  @DoubleField(minimum: 0, description: 'Selling price')
+  double get sellingPrice;
 
   @StringField(maxLength: 100, description: 'SKU')
   String? get sku;
@@ -128,11 +137,11 @@ abstract class $ProductUpdate {
   @StringField(minLength: 1, description: 'Counter ID')
   String? get counterId;
 
-  @IntegerField(minimum: 0, description: 'Base price')
-  int? get basePrice;
+  @DoubleField(minimum: 0, description: 'Base price')
+  double? get basePrice;
 
-  @IntegerField(minimum: 0, description: 'Selling price')
-  int? get sellingPrice;
+  @DoubleField(minimum: 0, description: 'Selling price')
+  double? get sellingPrice;
 
   @StringField(maxLength: 100, description: 'SKU')
   String? get sku;
@@ -230,7 +239,11 @@ abstract class $TerminalCreate {
   @StringField(minLength: 1, description: 'Terminal name')
   String get name;
 
-  @StringField(minLength: 6, pattern: ValidationPatterns.password, description: 'Terminal password')
+  @StringField(
+    minLength: 6,
+    pattern: ValidationPatterns.password,
+    description: 'Terminal password',
+  )
   String get password;
 }
 
@@ -239,7 +252,11 @@ abstract class $TerminalLogin {
   @StringField(minLength: 12, maxLength: 12, description: 'Terminal code')
   String get code;
 
-  @StringField(minLength: 6, pattern: ValidationPatterns.password, description: 'Terminal password')
+  @StringField(
+    minLength: 6,
+    pattern: ValidationPatterns.password,
+    description: 'Terminal password',
+  )
   String get password;
 }
 
@@ -248,7 +265,11 @@ abstract class $TerminalUpdate {
   @StringField(minLength: 1, description: 'Terminal name')
   String? get name;
 
-  @StringField(minLength: 6, pattern: ValidationPatterns.password, description: 'Terminal password')
+  @StringField(
+    minLength: 6,
+    pattern: ValidationPatterns.password,
+    description: 'Terminal password',
+  )
   String? get password;
 
   @Field(description: 'Is active status')

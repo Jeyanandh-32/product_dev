@@ -30,7 +30,8 @@ class OrderValidator {
           }
         }
 
-        if (path.contains('source') && type == ValidationErrorType.typeMismatch) {
+        if (path.contains('source') &&
+            type == ValidationErrorType.typeMismatch) {
           return 'Invalid order source.';
         }
         if (path.contains('type') && type == ValidationErrorType.typeMismatch) {

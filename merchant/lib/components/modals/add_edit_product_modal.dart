@@ -69,8 +69,8 @@ class _AddEditProductModalState extends State<AddEditProductModal> {
 
     context.read(activeModalProvider.notifier).state = ActiveModal.none;
 
-    final basePrice = int.tryParse(_basePrice.trim()) ?? 0;
-    final sellingPrice = int.tryParse(_sellingPrice.trim()) ?? 0;
+    final basePrice = double.tryParse(_basePrice.trim()) ?? 0.0;
+    final sellingPrice = double.tryParse(_sellingPrice.trim()) ?? 0.0;
     final taxRate = double.tryParse(_taxRate.trim()) ?? 0.0;
 
     if (component.product != null) {

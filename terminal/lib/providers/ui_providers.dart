@@ -32,3 +32,16 @@ class PaymentModeNotifier extends Notifier<String> {
 final paymentModeProvider = NotifierProvider<PaymentModeNotifier, String>(
   () => PaymentModeNotifier(),
 );
+
+class SearchQueryNotifier extends Notifier<String> {
+  @override
+  String build() => '';
+
+  void setSearchQuery(String query) {
+    state = query.trim().toLowerCase();
+  }
+}
+
+final searchQueryProvider = NotifierProvider<SearchQueryNotifier, String>(
+  () => SearchQueryNotifier(),
+);

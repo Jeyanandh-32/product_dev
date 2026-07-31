@@ -1,5 +1,5 @@
+import 'package:api_client/api_client.dart';
 import 'package:dio/dio.dart';
-import 'package:merchant/config/api_client.dart';
 import 'package:models/models.dart';
 
 class StoreRepository {
@@ -7,19 +7,16 @@ class StoreRepository {
 
   static Future<Store> create({required String name, String? storeType}) async {
     try {
-      final result = await ApiClient.dio.post(
+      final result = await dio.post(
         ApiEndpoints.stores,
-        data: {
-          'name': name,
-          'storeType': ?storeType,
-        },
+        data: {'name': name, 'storeType': ?storeType},
       );
 
       return Store.fromJson(
         result.data['data']['store'] as Map<String, Object?>,
       );
     } on DioException catch (e) {
-      ApiClient.handleDioError(e, 'Failed to create store.');
+      handleDioError(e, 'Failed to create store.');
     }
   }
 
@@ -31,26 +28,22 @@ class StoreRepository {
   }) async {
     try {
       final path = '${ApiEndpoints.stores}/$id';
-      final result = await ApiClient.dio.patch(
+      final result = await dio.patch(
         path,
-        data: {
-          'name': ?name,
-          'storeType': ?storeType,
-          'isActive': ?isActive,
-        },
+        data: {'name': ?name, 'storeType': ?storeType, 'isActive': ?isActive},
       );
 
       return Store.fromJson(
         result.data['data']['store'] as Map<String, Object?>,
       );
     } on DioException catch (e) {
-      ApiClient.handleDioError(e, 'Failed to update store.');
+      handleDioError(e, 'Failed to update store.');
     }
   }
 
   static Future<List<Store>> getAll() async {
     try {
-      final result = await ApiClient.dio.get(ApiEndpoints.stores);
+      final result = await dio.get(ApiEndpoints.stores);
 
       final list = result.data['data']['stores'] as List<dynamic>;
 
@@ -58,7 +51,7 @@ class StoreRepository {
           .map((s) => Store.fromJson(s as Map<String, Object?>))
           .toList();
     } on DioException catch (e) {
-      ApiClient.handleDioError(e, 'Failed to fetch stores.');
+      handleDioError(e, 'Failed to fetch stores.');
     }
   }
 }

@@ -17,7 +17,7 @@ Future<Response> _onPost(RequestContext context) async {
 
   final jsonBody = await context.request.json();
 
-  if (jsonBody is! Map<String, Object?>) return inValidBody();
+  if (jsonBody is! Map<String, Object?>) return invalidBody();
 
   final body = jsonBody;
 
@@ -42,7 +42,7 @@ Future<Response> _onPost(RequestContext context) async {
       return badRequest(message: 'This terminal is deactivated.');
     }
 
-    final isValid = await AuthService.verifyPassword(
+    final isValid = await PasswordService.verify(
       password!,
       terminalRow.passwordHash,
     );
@@ -51,7 +51,7 @@ Future<Response> _onPost(RequestContext context) async {
       return badRequest(message: 'Invalid Terminal code or password.');
     }
 
-    final accessToken = AuthService.generateAccessToken(
+    final accessToken = JwtService.generateAccessToken(
       id: terminalRow.merchantId,
       role: .terminal,
       terminalCode: terminalRow.code,

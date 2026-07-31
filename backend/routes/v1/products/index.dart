@@ -4,6 +4,7 @@ import 'package:backend/extensions/product_row_extension.dart';
 import 'package:backend/extensions/request_context_extension.dart';
 import 'package:backend/repositories/product_repository.dart';
 import 'package:backend/services/product_service.dart';
+import 'package:backend/utils/constraint_errors.dart';
 import 'package:backend/utils/responses.dart';
 import 'package:dart_frog/dart_frog.dart';
 import 'package:validators/validators.dart';
@@ -96,14 +97,6 @@ Future<Response> _onPost(RequestContext context) async {
   } on ResponseException catch (e) {
     return e.response;
   } catch (e) {
-    if (e.toString().contains('unique_merchant_product_sku')) {
-      return badRequest(message: 'You already have a product with this SKU.');
-    }
-    if (e.toString().contains('unique_store_product_name')) {
-      return badRequest(
-        message: 'You already have a product with this name in this store.',
-      );
-    }
-    return error(message: e.toString());
+    return tryConstraintError(e) ?? error(message: e.toString());
   }
 }

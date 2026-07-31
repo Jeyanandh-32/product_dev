@@ -13,7 +13,6 @@
     --color-gray-400: oklch(70.7% 0.022 261.325);
     --color-gray-500: oklch(55.1% 0.027 264.364);
     --color-gray-600: oklch(44.6% 0.03 256.802);
-    --color-gray-900: oklch(21% 0.034 264.665);
     --color-black: #000;
     --color-white: #fff;
     --spacing: 0.25rem;
@@ -44,6 +43,8 @@
     --color-soft-blue-content: #2BC5F4;
     --color-soft-green: #E8FFFC;
     --color-soft-green-content: #167B6C;
+    --color-soft-yellow: #FFF5E1;
+    --color-soft-yellow-content: #FFA700;
     --color-soft-red: #FFF2F2;
     --color-soft-red-content: #FE5454;
     --color-soft-purple: #FBF1FF;
@@ -661,65 +662,6 @@
     &:user-invalid, &:has(:user-invalid), &[aria-invalid]:not([aria-invalid="false"]), &:has([aria-invalid]:not([aria-invalid="false"])) {
       & ~ .validator-hint {
         display: revert-layer;
-      }
-    }
-  }
-  .list {
-    @layer daisyui.l1.l2.l3 {
-      display: flex;
-      flex-direction: column;
-      font-size: 0.875rem;
-      .list-row {
-        --list-grid-cols: minmax(0, auto) 1fr;
-        position: relative;
-        display: grid;
-        grid-auto-flow: column;
-        gap: calc(0.25rem * 4);
-        border-radius: var(--radius-box);
-        padding: calc(0.25rem * 4);
-        word-break: break-word;
-        grid-template-columns: var(--list-grid-cols);
-      }
-      & > :not(:last-child) {
-        &.list-row, .list-row {
-          &:after {
-            content: "";
-            border-bottom: var(--border) solid;
-            inset-inline: var(--radius-box);
-            position: absolute;
-            bottom: calc(0.25rem * 0);
-            border-color: var(--color-base-content);
-            @supports (color: color-mix(in lab, red, red)) {
-              border-color: color-mix(in oklab, var(--color-base-content) 5%, transparent);
-            }
-          }
-        }
-      }
-    }
-    @layer daisyui.l1.l2 {
-      .list-row {
-        &:has(.list-col-grow:nth-child(1)) {
-          --list-grid-cols: 1fr;
-        }
-        &:has(.list-col-grow:nth-child(2)) {
-          --list-grid-cols: minmax(0, auto) 1fr;
-        }
-        &:has(.list-col-grow:nth-child(3)) {
-          --list-grid-cols: minmax(0, auto) minmax(0, auto) 1fr;
-        }
-        &:has(.list-col-grow:nth-child(4)) {
-          --list-grid-cols: minmax(0, auto) minmax(0, auto) minmax(0, auto) 1fr;
-        }
-        &:has(.list-col-grow:nth-child(5)) {
-          --list-grid-cols: minmax(0, auto) minmax(0, auto) minmax(0, auto) minmax(0, auto) 1fr;
-        }
-        &:has(.list-col-grow:nth-child(6)) {
-          --list-grid-cols: minmax(0, auto) minmax(0, auto) minmax(0, auto) minmax(0, auto)
-          minmax(0, auto) 1fr;
-        }
-        > * {
-          grid-row-start: 1;
-        }
       }
     }
   }
@@ -1737,6 +1679,9 @@
   .bg-soft-red {
     background-color: var(--color-soft-red);
   }
+  .bg-soft-yellow {
+    background-color: var(--color-soft-yellow);
+  }
   .bg-white {
     background-color: var(--color-white);
   }
@@ -1881,9 +1826,6 @@
   .text-gray-500 {
     color: var(--color-gray-500);
   }
-  .text-gray-900 {
-    color: var(--color-gray-900);
-  }
   .text-primary {
     color: var(--color-primary);
   }
@@ -1901,6 +1843,9 @@
   }
   .text-soft-red-content {
     color: var(--color-soft-red-content);
+  }
+  .text-soft-yellow-content {
+    color: var(--color-soft-yellow-content);
   }
   .text-white {
     color: var(--color-white);
@@ -2093,6 +2038,13 @@
     &:hover {
       @media (hover: hover) {
         color: var(--color-gray-600);
+      }
+    }
+  }
+  .hover\:underline {
+    &:hover {
+      @media (hover: hover) {
+        text-decoration-line: underline;
       }
     }
   }

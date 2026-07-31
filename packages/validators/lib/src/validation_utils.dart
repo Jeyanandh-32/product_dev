@@ -4,7 +4,12 @@ import 'package:schemantic/schemantic.dart';
 Future<String?> validateSchema({
   required SchemanticType schema,
   required Map<String, dynamic> json,
-  required String? Function(ValidationError error, List<String> path, ValidationErrorType type) mapError,
+  required String? Function(
+    ValidationError error,
+    List<String> path,
+    ValidationErrorType type,
+  )
+  mapError,
 }) async {
   final errors = await schema.validate(json);
   if (errors.isEmpty) return null;

@@ -1,4 +1,2 @@
-class ApiException implements Exception {
-  const ApiException(this.message);
-  final String message;
-}
+// Re-export from shared package for backwards compatibility.
+export 'package:api_client/api_client.dart' show ApiException;

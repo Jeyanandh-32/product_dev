@@ -9,7 +9,7 @@ class AuthProvider extends AsyncNotifier<Terminal?> {
   @override
   FutureOr<Terminal?> build() async {
     try {
-      return await TerminalRepository.getTerminal();
+      return await TerminalAuthRepository.getTerminal();
     } catch (_) {
       return null;
     }
@@ -18,7 +18,7 @@ class AuthProvider extends AsyncNotifier<Terminal?> {
   Future<void> login({required String code, required String password}) async {
     state = const AsyncLoading();
     try {
-      final terminal = await TerminalRepository.login(
+      final terminal = await TerminalAuthRepository.login(
         code: code,
         password: password,
       );

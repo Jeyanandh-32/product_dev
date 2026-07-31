@@ -16,9 +16,9 @@ Middleware authMiddleware({
   return (handler) => (context) async {
     final authorization = context.request.headers['authorization'];
 
-    final bearerToken = AuthService.extractBearerToken(authorization);
+    final bearerToken = CookieService.extractBearerToken(authorization);
 
-    final cookieToken = AuthService.extractAccessCookieToken(
+    final cookieToken = CookieService.extractAccessCookieToken(
       context.request.headers[HttpHeaders.cookieHeader],
     );
 
@@ -31,7 +31,7 @@ Middleware authMiddleware({
     late final TokenPayload tokenPayload;
 
     try {
-      final jwt = AuthService.verifyAccessToken(token);
+      final jwt = JwtService.verifyAccessToken(token);
 
       tokenPayload = TokenPayload.fromJson(
         jwt.payload as Map<String, Object?>,

@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Product {
 
- String get id; String get merchantId; String get name; double get taxRate; int get basePrice; int get sellingPrice; bool get isActive; DateTime get createdAt; DateTime get updatedAt; String? get sku; String? get barcode; String? get description; String? get imageUrl; Stock? get stock; Category? get category; Counter? get counter;
+ String get id; String get merchantId; String get name; double get taxRate; double get basePrice; double get sellingPrice; bool get isActive; DateTime get createdAt; DateTime get updatedAt; String? get sku; String? get barcode; String? get description; String? get imageUrl; Stock? get stock; Category? get category; Counter? get counter;
 /// Create a copy of Product
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -48,7 +48,7 @@ abstract mixin class $ProductCopyWith<$Res>  {
   factory $ProductCopyWith(Product value, $Res Function(Product) _then) = _$ProductCopyWithImpl;
 @useResult
 $Res call({
- String id, String merchantId, String name, double taxRate, int basePrice, int sellingPrice, bool isActive, DateTime createdAt, DateTime updatedAt, String? sku, String? barcode, String? description, String? imageUrl, Stock? stock, Category? category, Counter? counter
+ String id, String merchantId, String name, double taxRate, double basePrice, double sellingPrice, bool isActive, DateTime createdAt, DateTime updatedAt, String? sku, String? barcode, String? description, String? imageUrl, Stock? stock, Category? category, Counter? counter
 });
 
 
@@ -72,8 +72,8 @@ as String,merchantId: null == merchantId ? _self.merchantId : merchantId // igno
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,taxRate: null == taxRate ? _self.taxRate : taxRate // ignore: cast_nullable_to_non_nullable
 as double,basePrice: null == basePrice ? _self.basePrice : basePrice // ignore: cast_nullable_to_non_nullable
-as int,sellingPrice: null == sellingPrice ? _self.sellingPrice : sellingPrice // ignore: cast_nullable_to_non_nullable
-as int,isActive: null == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
+as double,sellingPrice: null == sellingPrice ? _self.sellingPrice : sellingPrice // ignore: cast_nullable_to_non_nullable
+as double,isActive: null == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
 as bool,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
 as DateTime,sku: freezed == sku ? _self.sku : sku // ignore: cast_nullable_to_non_nullable
@@ -204,7 +204,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String merchantId,  String name,  double taxRate,  int basePrice,  int sellingPrice,  bool isActive,  DateTime createdAt,  DateTime updatedAt,  String? sku,  String? barcode,  String? description,  String? imageUrl,  Stock? stock,  Category? category,  Counter? counter)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String merchantId,  String name,  double taxRate,  double basePrice,  double sellingPrice,  bool isActive,  DateTime createdAt,  DateTime updatedAt,  String? sku,  String? barcode,  String? description,  String? imageUrl,  Stock? stock,  Category? category,  Counter? counter)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Product() when $default != null:
 return $default(_that.id,_that.merchantId,_that.name,_that.taxRate,_that.basePrice,_that.sellingPrice,_that.isActive,_that.createdAt,_that.updatedAt,_that.sku,_that.barcode,_that.description,_that.imageUrl,_that.stock,_that.category,_that.counter);case _:
@@ -225,7 +225,7 @@ return $default(_that.id,_that.merchantId,_that.name,_that.taxRate,_that.basePri
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String merchantId,  String name,  double taxRate,  int basePrice,  int sellingPrice,  bool isActive,  DateTime createdAt,  DateTime updatedAt,  String? sku,  String? barcode,  String? description,  String? imageUrl,  Stock? stock,  Category? category,  Counter? counter)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String merchantId,  String name,  double taxRate,  double basePrice,  double sellingPrice,  bool isActive,  DateTime createdAt,  DateTime updatedAt,  String? sku,  String? barcode,  String? description,  String? imageUrl,  Stock? stock,  Category? category,  Counter? counter)  $default,) {final _that = this;
 switch (_that) {
 case _Product():
 return $default(_that.id,_that.merchantId,_that.name,_that.taxRate,_that.basePrice,_that.sellingPrice,_that.isActive,_that.createdAt,_that.updatedAt,_that.sku,_that.barcode,_that.description,_that.imageUrl,_that.stock,_that.category,_that.counter);case _:
@@ -245,7 +245,7 @@ return $default(_that.id,_that.merchantId,_that.name,_that.taxRate,_that.basePri
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String merchantId,  String name,  double taxRate,  int basePrice,  int sellingPrice,  bool isActive,  DateTime createdAt,  DateTime updatedAt,  String? sku,  String? barcode,  String? description,  String? imageUrl,  Stock? stock,  Category? category,  Counter? counter)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String merchantId,  String name,  double taxRate,  double basePrice,  double sellingPrice,  bool isActive,  DateTime createdAt,  DateTime updatedAt,  String? sku,  String? barcode,  String? description,  String? imageUrl,  Stock? stock,  Category? category,  Counter? counter)?  $default,) {final _that = this;
 switch (_that) {
 case _Product() when $default != null:
 return $default(_that.id,_that.merchantId,_that.name,_that.taxRate,_that.basePrice,_that.sellingPrice,_that.isActive,_that.createdAt,_that.updatedAt,_that.sku,_that.barcode,_that.description,_that.imageUrl,_that.stock,_that.category,_that.counter);case _:
@@ -267,8 +267,8 @@ class _Product implements Product {
 @override final  String merchantId;
 @override final  String name;
 @override final  double taxRate;
-@override final  int basePrice;
-@override final  int sellingPrice;
+@override final  double basePrice;
+@override final  double sellingPrice;
 @override final  bool isActive;
 @override final  DateTime createdAt;
 @override final  DateTime updatedAt;
@@ -313,7 +313,7 @@ abstract mixin class _$ProductCopyWith<$Res> implements $ProductCopyWith<$Res> {
   factory _$ProductCopyWith(_Product value, $Res Function(_Product) _then) = __$ProductCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String merchantId, String name, double taxRate, int basePrice, int sellingPrice, bool isActive, DateTime createdAt, DateTime updatedAt, String? sku, String? barcode, String? description, String? imageUrl, Stock? stock, Category? category, Counter? counter
+ String id, String merchantId, String name, double taxRate, double basePrice, double sellingPrice, bool isActive, DateTime createdAt, DateTime updatedAt, String? sku, String? barcode, String? description, String? imageUrl, Stock? stock, Category? category, Counter? counter
 });
 
 
@@ -337,8 +337,8 @@ as String,merchantId: null == merchantId ? _self.merchantId : merchantId // igno
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,taxRate: null == taxRate ? _self.taxRate : taxRate // ignore: cast_nullable_to_non_nullable
 as double,basePrice: null == basePrice ? _self.basePrice : basePrice // ignore: cast_nullable_to_non_nullable
-as int,sellingPrice: null == sellingPrice ? _self.sellingPrice : sellingPrice // ignore: cast_nullable_to_non_nullable
-as int,isActive: null == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
+as double,sellingPrice: null == sellingPrice ? _self.sellingPrice : sellingPrice // ignore: cast_nullable_to_non_nullable
+as double,isActive: null == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
 as bool,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
 as DateTime,sku: freezed == sku ? _self.sku : sku // ignore: cast_nullable_to_non_nullable

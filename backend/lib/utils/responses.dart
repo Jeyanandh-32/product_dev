@@ -29,7 +29,7 @@ Response methodNotAllowed() => error(
   statusCode: HttpStatus.methodNotAllowed,
 );
 
-Response inValidBody() =>
+Response invalidBody() =>
     error(statusCode: HttpStatus.badRequest, message: 'Invalid Body');
 
 Response badRequest({required String message}) =>
