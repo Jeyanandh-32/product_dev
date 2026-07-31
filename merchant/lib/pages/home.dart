@@ -4,6 +4,7 @@ import 'package:merchant/components/drawer.dart';
 import 'package:merchant/components/header.dart';
 import 'package:merchant/components/signal_component.dart';
 import 'package:merchant/signals/navigation_signal.dart';
+import 'package:merchant/signals/stores_signal.dart';
 import 'package:merchant/tabs/account.dart';
 import 'package:merchant/tabs/dashboard.dart';
 import 'package:merchant/tabs/inventory.dart';
@@ -19,6 +20,12 @@ class Home extends SignalComponent {
 }
 
 class _HomeState extends SignalState<Home> {
+  @override
+  void initState() {
+    super.initState();
+    refreshStoresSignal();
+  }
+
   @override
   Component buildSignal(BuildContext context) {
     final index = indexSignal.value;
