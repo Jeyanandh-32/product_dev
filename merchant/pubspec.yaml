@@ -12,7 +12,7 @@ dependencies:
   dio: ^5.9.2
   jaspr: ^0.23.2
   jaspr_lucide: ^0.55.0
-  jaspr_riverpod: ^0.4.5
+  signals: ^7.1.0
   jaspr_router: ^0.8.2
   models:
     path: ../packages/models

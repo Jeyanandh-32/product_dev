@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:mix/mix.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
+import 'package:signals_flutter/signals_flutter.dart';
 import 'package:styled_divider/styled_divider.dart';
 import 'package:terminal/components/cart_item_row.dart';
 import 'package:terminal/components/cart_summary.dart';
 import 'package:terminal/providers/cart_provider.dart';
 
-class Cart extends ConsumerWidget {
+class Cart extends SignalWidget {
   const Cart({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final theme = ShadTheme.of(context);
     final screenWidth = MediaQuery.sizeOf(context).width;
     final cartStyle = FlexBoxStyler()
@@ -22,7 +22,7 @@ class Cart extends ConsumerWidget {
         .width(screenWidth * .40)
         .onMobile(.width(.infinity))
         .borderLeft(color: theme.colorScheme.border);
-    final cart = ref.watch(cartProvider);
+    final cart = cartSignal.value;
 
     return ColumnBox(
       style: cartStyle,
@@ -40,7 +40,7 @@ class Cart extends ConsumerWidget {
                   .color(Colors.grey.shade900),
             ),
             PressableBox(
-              onPress: () => ref.read(cartProvider.notifier).clear(),
+              onPress: () => CartController.clear(),
               style: BoxStyler()
                   .paddingX(12)
                   .paddingY(6)

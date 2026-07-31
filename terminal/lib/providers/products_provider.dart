@@ -1,35 +1,30 @@
-import 'dart:async';
-
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:models/models.dart';
-import 'package:terminal/providers/auth_provider.dart';
 import 'package:client_repositories/client_repositories.dart';
+import 'package:models/models.dart';
+import 'package:signals_flutter/signals_flutter.dart';
+import 'package:terminal/providers/auth_provider.dart';
 
-final productsProvider =
-    AsyncNotifierProvider.autoDispose<ProductsProvider, List<Product>>(
-      () => ProductsProvider(),
-    );
+final productsSignal = asyncSignal<List<Product>>(const AsyncLoading());
 
-class ProductsProvider extends AsyncNotifier<List<Product>> {
-  @override
-  FutureOr<List<Product>> build() async {
-    final terminal = ref.watch(authProvider);
-    final storeId = terminal.value?.storeId;
-    if (storeId == null) return [];
-
-    try {
-      final result = await ProductRepository.getAll(
-        storeId: storeId,
-        size: 1000,
-      );
-
-      return result.items;
-    } catch (e) {
-      return [];
-    }
+Future<void> refreshProductsSignal() async {
+  final terminal = authSignal.value.value;
+  final storeId = terminal?.storeId;
+  if (storeId == null) {
+    productsSignal.value = const AsyncData([]);
+    return;
   }
 
-  Future<void> create({
+  try {
+    final result = await ProductRepository.getAll(storeId: storeId, size: 1000);
+    productsSignal.value = AsyncData(result.items);
+  } catch (e, stack) {
+    productsSignal.value = AsyncError(e, stack);
+  }
+}
+
+class ProductsActions {
+  const ProductsActions._();
+
+  static Future<void> create({
     required String name,
     required String categoryId,
     required String counterId,
@@ -41,12 +36,12 @@ class ProductsProvider extends AsyncNotifier<List<Product>> {
     String? description,
     String? imageUrl,
   }) async {
-    final terminal = ref.read(authProvider);
-    final storeId = terminal.value?.storeId;
+    final terminal = authSignal.value.value;
+    final storeId = terminal?.storeId;
     if (storeId == null) return;
 
-    final currentProducts = state.value ?? [];
-    state = const AsyncLoading();
+    final currentProducts = productsSignal.value.value ?? [];
+    productsSignal.value = const AsyncLoading();
 
     try {
       final product = await ProductRepository.create(
@@ -63,14 +58,14 @@ class ProductsProvider extends AsyncNotifier<List<Product>> {
         imageUrl: imageUrl,
       );
 
-      state = AsyncData([...currentProducts, product]);
+      productsSignal.value = AsyncData([...currentProducts, product]);
     } catch (e) {
-      state = AsyncData(currentProducts);
+      productsSignal.value = AsyncData(currentProducts);
       rethrow;
     }
   }
 
-  Future<void> updateProduct({
+  static Future<void> updateProduct({
     required String id,
     String? name,
     String? categoryId,
@@ -84,8 +79,8 @@ class ProductsProvider extends AsyncNotifier<List<Product>> {
     String? description,
     String? imageUrl,
   }) async {
-    final currentProducts = state.value ?? [];
-    state = const AsyncLoading();
+    final currentProducts = productsSignal.value.value ?? [];
+    productsSignal.value = const AsyncLoading();
 
     try {
       final updatedProduct = await ProductRepository.update(
@@ -103,24 +98,24 @@ class ProductsProvider extends AsyncNotifier<List<Product>> {
         imageUrl: imageUrl,
       );
 
-      state = AsyncData(
+      productsSignal.value = AsyncData(
         currentProducts.map((p) => p.id == id ? updatedProduct : p).toList(),
       );
     } catch (e) {
-      state = AsyncData(currentProducts);
+      productsSignal.value = AsyncData(currentProducts);
       rethrow;
     }
   }
 
-  Future<void> updateStock({
+  static Future<void> updateStock({
     required String stockId,
     required String productId,
     int? quantity,
     int? lowStockThreshold,
     bool? stockMonitor,
   }) async {
-    final currentProducts = state.value ?? [];
-    state = const AsyncLoading();
+    final currentProducts = productsSignal.value.value ?? [];
+    productsSignal.value = const AsyncLoading();
 
     try {
       final updatedStock = await StockRepository.update(
@@ -130,7 +125,7 @@ class ProductsProvider extends AsyncNotifier<List<Product>> {
         stockMonitor: stockMonitor,
       );
 
-      state = AsyncData(
+      productsSignal.value = AsyncData(
         currentProducts.map((p) {
           if (p.id == productId) {
             return p.copyWith(stock: updatedStock);
@@ -139,7 +134,7 @@ class ProductsProvider extends AsyncNotifier<List<Product>> {
         }).toList(),
       );
     } catch (e) {
-      state = AsyncData(currentProducts);
+      productsSignal.value = AsyncData(currentProducts);
       rethrow;
     }
   }

@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:mix/mix.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:terminal/models/cart_item.dart';
 import 'package:terminal/providers/cart_provider.dart';
 
-class CartItemRow extends ConsumerWidget {
+class CartItemRow extends StatelessWidget {
   final CartItem item;
 
   const CartItemRow({super.key, required this.item});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     return RowBox(
       style: FlexBoxStyler()
           .height(80)
@@ -86,9 +85,10 @@ class CartItemRow extends ConsumerWidget {
                   backgroundColor: Colors.white,
                   foregroundColor: Colors.black87,
                   decoration: const ShadDecoration(shape: BoxShape.circle),
-                  onPressed: () => ref
-                      .read(cartProvider.notifier)
-                      .updateQuantity(item.product.id, item.quantity - 1),
+                  onPressed: () => CartController.updateQuantity(
+                    item.product.id,
+                    item.quantity - 1,
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -105,9 +105,10 @@ class CartItemRow extends ConsumerWidget {
                   backgroundColor: Colors.white,
                   foregroundColor: Colors.black87,
                   decoration: const ShadDecoration(shape: BoxShape.circle),
-                  onPressed: () => ref
-                      .read(cartProvider.notifier)
-                      .updateQuantity(item.product.id, item.quantity + 1),
+                  onPressed: () => CartController.updateQuantity(
+                    item.product.id,
+                    item.quantity + 1,
+                  ),
                 ),
               ],
             ),
@@ -119,8 +120,7 @@ class CartItemRow extends ConsumerWidget {
               hoverBackgroundColor: Colors.red.shade400,
               hoverForegroundColor: Colors.white,
               decoration: ShadDecoration(shape: .circle),
-              onPressed: () =>
-                  ref.read(cartProvider.notifier).removeItem(item.product.id),
+              onPressed: () => CartController.removeItem(item.product.id),
               icon: const Icon(LucideIcons.trash),
             ),
           ],

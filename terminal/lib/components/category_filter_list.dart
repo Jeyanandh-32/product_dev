@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mix/mix.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
+import 'package:signals_flutter/signals_flutter.dart';
 import 'package:terminal/providers/categories_provider.dart';
 import 'package:terminal/providers/ui_providers.dart';
 
-class CategoryFilterList extends ConsumerWidget {
+class CategoryFilterList extends SignalWidget {
   const CategoryFilterList({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final theme = ShadTheme.of(context);
-    final categoriesAsync = ref.watch(categoriesProvider);
-    final selectedCategory = ref.watch(selectedCategoryProvider);
+    final categoriesState = categoriesSignal.value;
+    final selectedCategory = selectedCategorySignal.value;
 
-    return categoriesAsync.when(
+    return categoriesState.map(
       loading: () => const SizedBox(
         height: 38,
         child: Center(child: CircularProgressIndicator()),
@@ -49,9 +49,7 @@ class CategoryFilterList extends ConsumerWidget {
                           : Colors.grey.shade200,
                     )
                     .borderRadiusAll(.circular(16)),
-                onPress: () => ref
-                    .read(selectedCategoryProvider.notifier)
-                    .select(category),
+                onPress: () => selectedCategorySignal.value = category,
                 child: StyledText(category.name),
               );
             }),

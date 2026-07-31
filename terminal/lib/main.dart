@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:terminal/app.dart';
 import 'package:terminal/config/api_client.dart';
+import 'package:terminal/providers/auth_provider.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   initTerminalDio();
-  runApp(const ProviderScope(child: MyApp()));
+  await initAuthSignal();
+  runApp(const MyApp());
 }

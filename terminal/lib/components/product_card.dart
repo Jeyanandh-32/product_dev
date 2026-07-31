@@ -1,25 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:mix/mix.dart';
-import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:models/models.dart';
+import 'package:shadcn_ui/shadcn_ui.dart';
+import 'package:signals_flutter/signals_flutter.dart';
 import 'package:terminal/providers/cart_provider.dart';
 
-class ProductCard extends ConsumerWidget {
+class ProductCard extends SignalWidget {
   final Product product;
 
   const ProductCard({super.key, required this.product});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final theme = ShadTheme.of(context);
-    final cart = ref.watch(cartProvider);
+    final cart = cartSignal.value;
     final isExisting =
         cart.items.indexWhere((item) => item.product.id == product.id) >= 0;
 
     return PressableBox(
-      onPress: () => ref.read(cartProvider.notifier).addItem(product),
+      onPress: () => CartController.addItem(product),
       style: BoxStyler()
           .color(isExisting ? theme.colorScheme.accent : Colors.white)
           .paddingAll(12)

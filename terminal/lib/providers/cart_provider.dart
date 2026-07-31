@@ -1,7 +1,7 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:models/models.dart';
-import 'package:terminal/models/cart_item.dart';
 import 'package:client_repositories/client_repositories.dart';
+import 'package:models/models.dart';
+import 'package:signals_flutter/signals_flutter.dart';
+import 'package:terminal/models/cart_item.dart';
 
 class CartState {
   final List<CartItem> items;
@@ -19,33 +19,31 @@ class CartState {
     required this.taxTotal,
     required this.grandTotal,
   });
+
+  factory CartState.initial() => CartState(
+    items: [],
+    noOfItems: 0,
+    orderQuantity: 0,
+    subtotal: 0.0,
+    taxTotal: 0.0,
+    grandTotal: 0.0,
+  );
 }
 
-final cartProvider = NotifierProvider<CartNotifier, CartState>(
-  CartNotifier.new,
-);
+final cartSignal = signal<CartState>(CartState.initial());
 
-class CartNotifier extends Notifier<CartState> {
-  @override
-  CartState build() {
-    return CartState(
-      items: [],
-      noOfItems: 0,
-      orderQuantity: 0,
-      subtotal: 0.0,
-      taxTotal: 0.0,
-      grandTotal: 0.0,
-    );
-  }
+class CartController {
+  const CartController._();
 
-  void addItem(Product product, {int quantity = 1}) {
-    final existingIndex = state.items.indexWhere(
+  static void addItem(Product product, {int quantity = 1}) {
+    final current = cartSignal.value;
+    final existingIndex = current.items.indexWhere(
       (item) => item.product.id == product.id,
     );
-    List<CartItem> updatedItems = List.from(state.items);
+    List<CartItem> updatedItems = List.from(current.items);
 
     if (existingIndex >= 0) {
-      final existing = state.items[existingIndex];
+      final existing = current.items[existingIndex];
       updatedItems[existingIndex] = existing.copyWith(
         quantity: existing.quantity + quantity,
       );
@@ -56,21 +54,23 @@ class CartNotifier extends Notifier<CartState> {
     _updateState(updatedItems);
   }
 
-  void removeItem(String productId) {
-    final updatedItems = state.items
+  static void removeItem(String productId) {
+    final current = cartSignal.value;
+    final updatedItems = current.items
         .where((item) => item.product.id != productId)
         .toList();
 
     _updateState(updatedItems);
   }
 
-  void updateQuantity(String productId, int quantity) {
+  static void updateQuantity(String productId, int quantity) {
     if (quantity <= 0) {
       removeItem(productId);
       return;
     }
 
-    final updatedItems = state.items
+    final current = cartSignal.value;
+    final updatedItems = current.items
         .map(
           (item) => item.product.id == productId
               ? item.copyWith(quantity: quantity)
@@ -81,18 +81,11 @@ class CartNotifier extends Notifier<CartState> {
     _updateState(updatedItems);
   }
 
-  void clear() {
-    state = CartState(
-      items: [],
-      noOfItems: 0,
-      orderQuantity: 0,
-      subtotal: 0.0,
-      taxTotal: 0.0,
-      grandTotal: 0.0,
-    );
+  static void clear() {
+    cartSignal.value = CartState.initial();
   }
 
-  void _updateState(List<CartItem> items) {
+  static void _updateState(List<CartItem> items) {
     int noOfItems = items.length;
     int orderQuantity = 0;
 
@@ -109,7 +102,7 @@ class CartNotifier extends Notifier<CartState> {
       orderQuantity += item.quantity;
     }
 
-    state = CartState(
+    cartSignal.value = CartState(
       items: items,
       noOfItems: noOfItems,
       orderQuantity: orderQuantity,
@@ -119,11 +112,11 @@ class CartNotifier extends Notifier<CartState> {
     );
   }
 
-  Future<Order> checkout({
+  static Future<Order> checkout({
     required String storeId,
     required String paymentMethod,
   }) async {
-    final products = state.items
+    final products = cartSignal.value.items
         .map(
           (item) => {'productId': item.product.id, 'quantity': item.quantity},
         )
