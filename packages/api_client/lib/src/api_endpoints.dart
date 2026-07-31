@@ -1,6 +1,4 @@
-class ApiEndpoints {
-  const ApiEndpoints._();
-
+abstract final class ApiEndpoints {
   static const String version = 'v1';
 
   // Auth

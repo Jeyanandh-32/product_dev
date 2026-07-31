@@ -38,9 +38,7 @@ Future<void> refreshCategoriesSignal() async {
   }
 }
 
-class CategoriesActions {
-  const CategoriesActions._();
-
+abstract final class CategoriesActions {
   static Future<void> create({
     required String name,
     String? description,

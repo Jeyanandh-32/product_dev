@@ -2,9 +2,7 @@ import 'package:api_client/api_client.dart';
 import 'package:dio/dio.dart';
 import 'package:models/models.dart';
 
-class StockRepository {
-  const StockRepository._();
-
+abstract final class StockRepository {
   static Future<Stock> update({
     required String id,
     int? quantity,

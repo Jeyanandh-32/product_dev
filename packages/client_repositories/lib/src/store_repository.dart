@@ -2,9 +2,7 @@ import 'package:api_client/api_client.dart';
 import 'package:dio/dio.dart';
 import 'package:models/models.dart';
 
-class StoreRepository {
-  const StoreRepository._();
-
+abstract final class StoreRepository {
   static Future<Store> create({required String name, String? storeType}) async {
     try {
       final result = await dio.post(

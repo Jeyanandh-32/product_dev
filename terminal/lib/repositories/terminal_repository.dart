@@ -3,9 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:models/models.dart';
 import 'package:terminal/config/secure_storage.dart';
 
-class TerminalAuthRepository {
-  const TerminalAuthRepository._();
-
+abstract final class TerminalAuthRepository {
   static Future<Terminal> login({
     required String code,
     required String password,

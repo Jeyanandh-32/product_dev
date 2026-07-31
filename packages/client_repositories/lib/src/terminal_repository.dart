@@ -3,9 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:models/models.dart';
 
 /// Client-side repository for terminal CRUD management (used by merchant app).
-class TerminalRepository {
-  const TerminalRepository._();
-
+abstract final class TerminalRepository {
   static Future<Terminal> create({
     required String storeId,
     required String name,

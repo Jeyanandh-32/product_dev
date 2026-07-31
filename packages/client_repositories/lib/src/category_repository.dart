@@ -2,9 +2,7 @@ import 'package:api_client/api_client.dart';
 import 'package:dio/dio.dart';
 import 'package:models/models.dart';
 
-class CategoryRepository {
-  const CategoryRepository._();
-
+abstract final class CategoryRepository {
   static Future<Category> create({
     required String storeId,
     required String name,

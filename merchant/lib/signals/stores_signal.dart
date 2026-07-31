@@ -19,9 +19,7 @@ Future<void> refreshStoresSignal() async {
   }
 }
 
-class StoresActions {
-  const StoresActions._();
-
+abstract final class StoresActions {
   static Future<void> create({required String name, String? storeType}) async {
     final currentStores = storesSignal.value.value ?? [];
     storesSignal.value = const AsyncLoading();

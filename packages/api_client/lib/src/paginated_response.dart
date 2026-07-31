@@ -17,19 +17,19 @@ PaginatedResponse<T> parsePaginatedResponse<T>({
   required String key,
   required T Function(Map<String, Object?>) fromJson,
 }) {
+  final {
+    'currentPage': int? currentPage,
+    'pageSize': int? pageSize,
+    'totalItems': int? totalItems,
+    'totalPages': int? totalPages,
+  } = data;
   final list = data[key] as List<dynamic>;
-  final currentPage = data['currentPage'] as int? ?? 1;
-  final pageSize = data['pageSize'] as int? ?? 50;
-  final totalItems = data['totalItems'] as int? ?? list.length;
-  final totalPages = data['totalPages'] as int? ?? 1;
-
-  final items = list.map((e) => fromJson(e as Map<String, Object?>)).toList();
 
   return (
-    items: items,
-    currentPage: currentPage,
-    pageSize: pageSize,
-    totalItems: totalItems,
-    totalPages: totalPages,
+    items: list.map((e) => fromJson(e as Map<String, Object?>)).toList(),
+    currentPage: currentPage ?? 1,
+    pageSize: pageSize ?? 50,
+    totalItems: totalItems ?? list.length,
+    totalPages: totalPages ?? 1,
   );
 }

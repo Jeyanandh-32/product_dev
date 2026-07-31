@@ -38,9 +38,7 @@ Future<void> refreshProductsSignal() async {
   }
 }
 
-class ProductsActions {
-  const ProductsActions._();
-
+abstract final class ProductsActions {
   static Future<void> create({
     required String name,
     required String categoryId,

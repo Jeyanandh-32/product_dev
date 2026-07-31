@@ -2,9 +2,7 @@ import 'package:api_client/api_client.dart';
 import 'package:dio/dio.dart';
 import 'package:models/models.dart';
 
-class AuthRepository {
-  const AuthRepository._();
-
+abstract final class AuthRepository {
   static Future<Merchant?> login({
     required String email,
     required String password,

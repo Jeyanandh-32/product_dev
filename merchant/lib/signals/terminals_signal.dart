@@ -18,9 +18,7 @@ Future<void> refreshTerminalsSignal() async {
   }
 }
 
-class TerminalsActions {
-  const TerminalsActions._();
-
+abstract final class TerminalsActions {
   static Future<void> create({
     required String name,
     required String password,

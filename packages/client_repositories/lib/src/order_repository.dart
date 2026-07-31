@@ -2,9 +2,7 @@ import 'package:api_client/api_client.dart';
 import 'package:dio/dio.dart';
 import 'package:models/models.dart';
 
-class OrderRepository {
-  const OrderRepository._();
-
+abstract final class OrderRepository {
   static Future<Order> create({
     required String storeId,
     required List<Map<String, dynamic>> products,

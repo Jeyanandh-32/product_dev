@@ -34,9 +34,7 @@ class CartState {
 
 final cartSignal = signal<CartState>(CartState.initial());
 
-class CartController {
-  const CartController._();
-
+abstract final class CartController {
   static void addItem(Product product, {int quantity = 1}) {
     final current = cartSignal.value;
     final existingIndex = current.items.indexWhere(

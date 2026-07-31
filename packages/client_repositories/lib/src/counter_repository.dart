@@ -2,9 +2,7 @@ import 'package:api_client/api_client.dart';
 import 'package:dio/dio.dart';
 import 'package:models/models.dart';
 
-class CounterRepository {
-  const CounterRepository._();
-
+abstract final class CounterRepository {
   static Future<Counter> create({
     required String storeId,
     required String name,

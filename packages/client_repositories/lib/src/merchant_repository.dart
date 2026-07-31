@@ -2,9 +2,7 @@ import 'package:api_client/api_client.dart';
 import 'package:dio/dio.dart';
 import 'package:models/models.dart';
 
-class MerchantRepository {
-  const MerchantRepository._();
-
+abstract final class MerchantRepository {
   static Future<Merchant?> getMerchant() async {
     try {
       final result = await dio.get(ApiEndpoints.merchants);

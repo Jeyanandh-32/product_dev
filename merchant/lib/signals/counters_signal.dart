@@ -38,9 +38,7 @@ Future<void> refreshCountersSignal() async {
   }
 }
 
-class CountersActions {
-  const CountersActions._();
-
+abstract final class CountersActions {
   static Future<void> create({
     required String name,
     String? description,
