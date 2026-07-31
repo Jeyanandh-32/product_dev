@@ -8,9 +8,9 @@ class OrderRepository {
   static Future<Order> create({
     required String storeId,
     required List<Map<String, dynamic>> products,
-    String? source,
-    String? type,
-    String? paymentMethod,
+    OrderSource? source,
+    OrderType? type,
+    PaymentMethod? paymentMethod,
   }) async {
     try {
       final result = await dio.post(
@@ -18,9 +18,9 @@ class OrderRepository {
         queryParameters: {'storeId': storeId},
         data: {
           'products': products,
-          'source': ?source,
-          'type': ?type,
-          'paymentMethod': ?paymentMethod,
+          'source': ?source?.name,
+          'type': ?type?.name,
+          'paymentMethod': ?paymentMethod?.name,
         },
       );
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:mix/mix.dart';
+import 'package:models/models.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:signals_flutter/signals_flutter.dart';
 import 'package:styled_divider/styled_divider.dart';
@@ -85,7 +86,7 @@ class _CartSummaryState extends State<CartSummary> {
                       .fontWeight(.w500)
                       .color(Colors.grey.shade700),
                 ),
-                ShadRadioGroup<String>(
+                ShadRadioGroup<PaymentMethod>(
                   initialValue: paymentMode,
                   onChanged: _isCheckingOut
                       ? null
@@ -98,14 +99,14 @@ class _CartSummaryState extends State<CartSummary> {
                   spacing: 16,
                   items: [
                     ShadRadio(
-                      value: 'cash',
+                      value: PaymentMethod.cash,
                       label: StyledText(
                         'Cash',
                         style: TextStyler().fontSize(14),
                       ),
                     ),
                     ShadRadio(
-                      value: 'upi',
+                      value: PaymentMethod.upi,
                       label: StyledText(
                         'UPI',
                         style: TextStyler().fontSize(14),

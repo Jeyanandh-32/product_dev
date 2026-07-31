@@ -3,7 +3,7 @@ import 'package:models/models.dart';
 import 'package:signals_flutter/signals_flutter.dart';
 import 'package:terminal/models/cart_item.dart';
 
-final paymentModeSignal = signal<String>('cash');
+final paymentModeSignal = signal<PaymentMethod>(PaymentMethod.cash);
 
 class CartState {
   final List<CartItem> items;
@@ -116,7 +116,7 @@ class CartController {
 
   static Future<Order> checkout({
     required String storeId,
-    required String paymentMethod,
+    required PaymentMethod paymentMethod,
   }) async {
     final products = cartSignal.value.items
         .map(
@@ -129,8 +129,8 @@ class CartController {
         storeId: storeId,
         products: products,
         paymentMethod: paymentMethod,
-        source: 'terminal',
-        type: 'dineIn',
+        source: OrderSource.terminal,
+        type: OrderType.dineIn,
       );
       clear();
       return order;
