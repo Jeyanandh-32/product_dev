@@ -1,17 +1,22 @@
 import 'package:jaspr/client.dart';
 import 'package:jaspr/dom.dart';
 import 'package:jaspr_lucide/jaspr_lucide.dart' hide Store;
-import 'package:jaspr_riverpod/jaspr_riverpod.dart';
+import 'package:merchant/components/signal_component.dart';
 import 'package:merchant/providers/stores_provider.dart';
 import 'package:merchant/providers/ui_providers.dart';
 import 'package:models/models.dart';
 import 'package:web/web.dart';
 
-class Header extends StatelessComponent {
+class Header extends SignalComponent {
   const Header({super.key});
 
-  void _changeStore(BuildContext context, Store store) {
-    context.read(storeProvider.notifier).state = store;
+  @override
+  SignalState<Header> createState() => _HeaderState();
+}
+
+class _HeaderState extends SignalState<Header> {
+  void _changeStore(Store store) {
+    storeSignal.value = store;
     final activeElement = document.activeElement;
     if (activeElement != null) {
       (activeElement as HTMLElement).blur();
@@ -19,18 +24,18 @@ class Header extends StatelessComponent {
   }
 
   @override
-  Component build(BuildContext context) {
-    final store = context.watch(storeProvider);
-    final isNavOpen = context.watch(navOpenProvider);
-    final stores = context.watch(storesProvider).value;
-    final headerTitle = context.watch(headerTitleProvider);
-    final headerSubTitle = context.watch(headerSubTitleProvider);
-    final index = context.watch(indexProvider);
+  Component buildSignal(BuildContext context) {
+    final store = storeSignal.value;
+    final isNavOpen = navOpenSignal.value;
+    final stores = storesSignal.value.value;
+    final headerTitle = headerTitleSignal.value;
+    final headerSubTitle = headerSubTitleSignal.value;
+    final index = indexSignal.value;
 
     if (stores != null && stores.isNotEmpty) {
       if (store == null || !stores.any((st) => st.id == store.id)) {
         Future.microtask(() {
-          context.read(storeProvider.notifier).state = stores.first;
+          storeSignal.value = stores.first;
         });
       }
     }
@@ -43,8 +48,7 @@ class Header extends StatelessComponent {
           button(
             classes:
                 'block lg:hidden hover:cursor-pointer transition-all duration-300',
-            onClick: () =>
-                context.read(navOpenProvider.notifier).state = !isNavOpen,
+            onClick: () => navOpenSignal.value = !isNavOpen,
             [
               Menu(classes: 'w-5 h-5'),
             ],
@@ -85,7 +89,7 @@ class Header extends StatelessComponent {
                   for (final s in stores)
                     dropdownButton(
                       name: s.name,
-                      onClick: () => _changeStore(context, s),
+                      onClick: () => _changeStore(s),
                     ),
               ],
             ),

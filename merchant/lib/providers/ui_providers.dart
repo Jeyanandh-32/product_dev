@@ -1,51 +1,31 @@
-import 'package:jaspr_riverpod/legacy.dart';
 import 'package:models/models.dart';
+import 'package:signals/signals.dart';
 
-final indexProvider = StateProvider.autoDispose<int>(
-  (ref) => 0,
-);
+final indexSignal = signal<int>(0);
+final subIndexSignal = signal<int>(0);
+final storeSignal = signal<Store?>(null);
+final selectedTabStoreSignal = signal<Store?>(null);
+final navOpenSignal = signal<bool>(false);
+final headerTitleSignal = signal<String>('Dashboard');
+final headerSubTitleSignal = signal<String?>(null);
 
-final subIndexProvider = StateProvider.autoDispose<int>(
-  (ref) => 0,
-);
+final entriesSignal = signal<int>(10);
 
-final storeProvider = StateProvider.autoDispose<Store?>(
-  (ref) => null,
-);
+final productsPageSignal = signal<int>(1);
+final productsTotalSignal = signal<int>(0);
+final productsTotalPagesSignal = signal<int>(1);
 
-final selectedTabStoreProvider = StateProvider.autoDispose<Store?>(
-  (ref) => null,
-);
+final categoriesPageSignal = signal<int>(1);
+final categoriesTotalSignal = signal<int>(0);
+final categoriesTotalPagesSignal = signal<int>(1);
 
-final navOpenProvider = StateProvider.autoDispose<bool>(
-  (ref) => false,
-);
+final countersPageSignal = signal<int>(1);
+final countersTotalSignal = signal<int>(0);
+final countersTotalPagesSignal = signal<int>(1);
 
-final headerTitleProvider = StateProvider.autoDispose<String>(
-  (ref) => 'Dashboard',
-);
-
-final headerSubTitleProvider = StateProvider.autoDispose<String?>(
-  (ref) => null,
-);
-
-final entriesProvider = StateProvider.autoDispose<int>((ref) => 10);
-
-final productsPageProvider = StateProvider.autoDispose<int>((ref) => 1);
-final productsTotalProvider = StateProvider.autoDispose<int>((ref) => 0);
-final productsTotalPagesProvider = StateProvider.autoDispose<int>((ref) => 1);
-
-final categoriesPageProvider = StateProvider.autoDispose<int>((ref) => 1);
-final categoriesTotalProvider = StateProvider.autoDispose<int>((ref) => 0);
-final categoriesTotalPagesProvider = StateProvider.autoDispose<int>((ref) => 1);
-
-final countersPageProvider = StateProvider.autoDispose<int>((ref) => 1);
-final countersTotalProvider = StateProvider.autoDispose<int>((ref) => 0);
-final countersTotalPagesProvider = StateProvider.autoDispose<int>((ref) => 1);
-
-final ordersPageProvider = StateProvider.autoDispose<int>((ref) => 1);
-final ordersTotalProvider = StateProvider.autoDispose<int>((ref) => 0);
-final ordersTotalPagesProvider = StateProvider.autoDispose<int>((ref) => 1);
+final ordersPageSignal = signal<int>(1);
+final ordersTotalSignal = signal<int>(0);
+final ordersTotalPagesSignal = signal<int>(1);
 
 enum ActiveModal {
   none,
@@ -62,26 +42,10 @@ enum ActiveModal {
   updateStock,
 }
 
-final activeModalProvider = StateProvider.autoDispose<ActiveModal>(
-  (ref) => .none,
-);
+final activeModalSignal = signal<ActiveModal>(ActiveModal.none);
 
-final editingStoreProvider = StateProvider.autoDispose<Store?>(
-  (ref) => null,
-);
-
-final editingTerminalProvider = StateProvider.autoDispose<Terminal?>(
-  (ref) => null,
-);
-
-final editingCounterProvider = StateProvider.autoDispose<Counter?>(
-  (ref) => null,
-);
-
-final editingCategoryProvider = StateProvider.autoDispose<Category?>(
-  (ref) => null,
-);
-
-final editingProductProvider = StateProvider.autoDispose<Product?>(
-  (ref) => null,
-);
+final editingStoreSignal = signal<Store?>(null);
+final editingTerminalSignal = signal<Terminal?>(null);
+final editingCounterSignal = signal<Counter?>(null);
+final editingCategorySignal = signal<Category?>(null);
+final editingProductSignal = signal<Product?>(null);

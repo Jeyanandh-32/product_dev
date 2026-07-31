@@ -2,12 +2,12 @@ import 'package:jaspr/client.dart';
 import 'package:jaspr/dom.dart';
 import 'package:jaspr_lucide/generated_icons/chevron_down.dart';
 import 'package:jaspr_lucide/generated_icons/square_pen.dart';
-import 'package:jaspr_riverpod/jaspr_riverpod.dart';
 import 'package:merchant/components/buttons/add_button.dart';
 import 'package:merchant/components/centered_message.dart';
 import 'package:merchant/components/fields/searchbar.dart';
 import 'package:merchant/components/loading.dart';
 import 'package:merchant/components/modals/add_edit_category_modal.dart';
+import 'package:merchant/components/signal_component.dart';
 import 'package:merchant/components/table_pagination.dart';
 import 'package:merchant/exceptions/api_exception.dart';
 import 'package:merchant/providers/categories_provider.dart';
@@ -15,12 +15,24 @@ import 'package:merchant/providers/ui_providers.dart';
 import 'package:models/models.dart';
 import 'package:web/web.dart';
 
-class Categories extends StatelessComponent {
+class Categories extends SignalComponent {
   const Categories({super.key});
 
-  void _changeEntry(BuildContext context, int entry) {
-    context.read(entriesProvider.notifier).state = entry;
-    context.read(categoriesPageProvider.notifier).state = 1;
+  @override
+  SignalState<Categories> createState() => _CategoriesState();
+}
+
+class _CategoriesState extends SignalState<Categories> {
+  @override
+  void initState() {
+    super.initState();
+    refreshCategoriesSignal();
+  }
+
+  void _changeEntry(int entry) {
+    entriesSignal.value = entry;
+    categoriesPageSignal.value = 1;
+    refreshCategoriesSignal();
 
     final activeElement = document.activeElement;
     if (activeElement != null) {
@@ -33,14 +45,14 @@ class Categories extends StatelessComponent {
   }
 
   @override
-  Component build(BuildContext context) {
-    final entries = context.watch(entriesProvider);
-    final categories = context.watch(categoriesProvider);
-    final currentPage = context.watch(categoriesPageProvider);
-    final totalPages = context.watch(categoriesTotalPagesProvider);
-    final activeModal = context.watch(activeModalProvider);
-    final editingCategory = context.watch(editingCategoryProvider);
-    final store = context.watch(storeProvider);
+  Component buildSignal(BuildContext context) {
+    final entries = entriesSignal.value;
+    final categories = categoriesSignal.value;
+    final currentPage = categoriesPageSignal.value;
+    final totalPages = categoriesTotalPagesSignal.value;
+    final activeModal = activeModalSignal.value;
+    final editingCategory = editingCategorySignal.value;
+    final store = storeSignal.value;
 
     return div(
       classes:
@@ -77,19 +89,19 @@ class Categories extends StatelessComponent {
                   [
                     dropdownButton(
                       name: '10',
-                      onClick: () => _changeEntry(context, 10),
+                      onClick: () => _changeEntry(10),
                     ),
                     dropdownButton(
                       name: '25',
-                      onClick: () => _changeEntry(context, 25),
+                      onClick: () => _changeEntry(25),
                     ),
                     dropdownButton(
                       name: '50',
-                      onClick: () => _changeEntry(context, 50),
+                      onClick: () => _changeEntry(50),
                     ),
                     dropdownButton(
                       name: '100',
-                      onClick: () => _changeEntry(context, 100),
+                      onClick: () => _changeEntry(100),
                     ),
                   ],
                 ),
@@ -104,9 +116,8 @@ class Categories extends StatelessComponent {
               AddButton(
                 name: 'Add Category',
                 onClick: () {
-                  context.read(editingCategoryProvider.notifier).state = null;
-                  context.read(activeModalProvider.notifier).state =
-                      ActiveModal.addCategory;
+                  editingCategorySignal.value = null;
+                  activeModalSignal.value = ActiveModal.addCategory;
                 },
               ),
             ]),
@@ -140,10 +151,8 @@ class Categories extends StatelessComponent {
                       productsCount: _getAssociatedCount(category),
                       description: category.description ?? 'N/A',
                       onEdit: () {
-                        context.read(editingCategoryProvider.notifier).state =
-                            category;
-                        context.read(activeModalProvider.notifier).state =
-                            ActiveModal.editCategory;
+                        editingCategorySignal.value = category;
+                        activeModalSignal.value = ActiveModal.editCategory;
                       },
                     ),
                 ]),
@@ -154,8 +163,10 @@ class Categories extends StatelessComponent {
         TablePagination(
           currentPage: currentPage,
           totalPages: totalPages,
-          onPageChanged: (page) =>
-              context.read(categoriesPageProvider.notifier).state = page,
+          onPageChanged: (page) {
+            categoriesPageSignal.value = page;
+            refreshCategoriesSignal();
+          },
         ),
       ],
     );

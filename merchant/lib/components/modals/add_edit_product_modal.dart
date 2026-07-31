@@ -1,7 +1,6 @@
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_lucide/generated_icons/chevron_down.dart';
-import 'package:jaspr_riverpod/jaspr_riverpod.dart';
 import 'package:merchant/components/fields/form_field.dart';
 import 'package:merchant/components/modals/modal.dart';
 import 'package:merchant/providers/categories_provider.dart';
@@ -49,73 +48,63 @@ class _AddEditProductModalState extends State<AddEditProductModal> {
     _isActive = p?.isActive ?? true;
   }
 
-  void _onSubmit(BuildContext context, Event e) {
+  void _onSubmit(Event e) {
     e.preventDefault();
 
     if (_categoryId.isEmpty) {
-      context.read(toastProvider.notifier).state = 'Category is required.';
-      Future.delayed(const Duration(seconds: 3), () {
-        context.read(toastProvider.notifier).state = null;
-      });
+      showToast('Category is required.');
       return;
     }
     if (_counterId.isEmpty) {
-      context.read(toastProvider.notifier).state = 'Counter is required.';
-      Future.delayed(const Duration(seconds: 3), () {
-        context.read(toastProvider.notifier).state = null;
-      });
+      showToast('Counter is required.');
       return;
     }
 
-    context.read(activeModalProvider.notifier).state = ActiveModal.none;
+    activeModalSignal.value = ActiveModal.none;
 
     final basePrice = double.tryParse(_basePrice.trim()) ?? 0.0;
     final sellingPrice = double.tryParse(_sellingPrice.trim()) ?? 0.0;
     final taxRate = double.tryParse(_taxRate.trim()) ?? 0.0;
 
     if (component.product != null) {
-      context
-          .read(productsProvider.notifier)
-          .updateProduct(
-            id: component.product!.id,
-            name: _name.trim(),
-            categoryId: _categoryId,
-            counterId: _counterId,
-            basePrice: basePrice,
-            sellingPrice: sellingPrice,
-            taxRate: taxRate,
-            isActive: _isActive,
-            sku: _sku.trim().isEmpty ? null : _sku.trim(),
-            barcode: _barcode.trim().isEmpty ? null : _barcode.trim(),
-            imageUrl: _imageUrl.trim().isEmpty ? null : _imageUrl.trim(),
-          );
+      ProductsActions.updateProduct(
+        id: component.product!.id,
+        name: _name.trim(),
+        categoryId: _categoryId,
+        counterId: _counterId,
+        basePrice: basePrice,
+        sellingPrice: sellingPrice,
+        taxRate: taxRate,
+        isActive: _isActive,
+        sku: _sku.trim().isEmpty ? null : _sku.trim(),
+        barcode: _barcode.trim().isEmpty ? null : _barcode.trim(),
+        imageUrl: _imageUrl.trim().isEmpty ? null : _imageUrl.trim(),
+      );
     } else {
-      context
-          .read(productsProvider.notifier)
-          .create(
-            name: _name.trim(),
-            categoryId: _categoryId,
-            counterId: _counterId,
-            basePrice: basePrice,
-            sellingPrice: sellingPrice,
-            taxRate: taxRate,
-            sku: _sku.trim().isEmpty ? null : _sku.trim(),
-            barcode: _barcode.trim().isEmpty ? null : _barcode.trim(),
-            imageUrl: _imageUrl.trim().isEmpty ? null : _imageUrl.trim(),
-          );
+      ProductsActions.create(
+        name: _name.trim(),
+        categoryId: _categoryId,
+        counterId: _counterId,
+        basePrice: basePrice,
+        sellingPrice: sellingPrice,
+        taxRate: taxRate,
+        sku: _sku.trim().isEmpty ? null : _sku.trim(),
+        barcode: _barcode.trim().isEmpty ? null : _barcode.trim(),
+        imageUrl: _imageUrl.trim().isEmpty ? null : _imageUrl.trim(),
+      );
     }
   }
 
   @override
   Component build(BuildContext context) {
-    final categories = context.watch(categoriesProvider).value ?? [];
-    final counters = context.watch(countersProvider).value ?? [];
+    final categories = categoriesSignal.value.value ?? [];
+    final counters = countersSignal.value.value ?? [];
 
     return Modal(
       title: component.product != null ? 'Edit Product' : 'Add Product',
       child: form(
         method: FormMethod.post,
-        events: {'submit': (e) => _onSubmit(context, e)},
+        events: {'submit': (e) => _onSubmit(e)},
         [
           div(
             classes:
@@ -135,7 +124,6 @@ class _AddEditProductModalState extends State<AddEditProductModal> {
                 onChange: (value) => _name = value as String,
               ),
 
-              // Category & Counter dropdowns stacked vertically
               // Category dropdown
               fieldset(classes: 'fieldset w-full mb-4', [
                 label(

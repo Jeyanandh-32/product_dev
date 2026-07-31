@@ -1,6 +1,5 @@
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
-import 'package:jaspr_riverpod/jaspr_riverpod.dart';
 import 'package:merchant/components/fields/form_field.dart';
 import 'package:merchant/components/modals/modal.dart';
 import 'package:merchant/providers/categories_provider.dart';
@@ -32,7 +31,7 @@ class _AddEditCategoryModalState extends State<AddEditCategoryModal> {
     _isActive = component.category?.isActive ?? true;
   }
 
-  void _onSubmit(BuildContext context, Event e) {
+  void _onSubmit(Event e) {
     e.preventDefault();
     final categoryName = _categoryName.trim();
     final descriptionVal = _description.trim();
@@ -41,26 +40,22 @@ class _AddEditCategoryModalState extends State<AddEditCategoryModal> {
     final imageUrl = imageUrlVal.isNotEmpty ? imageUrlVal : null;
     final isActive = _isActive;
 
-    context.read(activeModalProvider.notifier).state = ActiveModal.none;
+    activeModalSignal.value = ActiveModal.none;
 
     if (component.category != null) {
-      context
-          .read(categoriesProvider.notifier)
-          .updateCategory(
-            id: component.category!.id,
-            name: categoryName,
-            isActive: isActive,
-            description: description,
-            imageUrl: imageUrl,
-          );
+      CategoriesActions.updateCategory(
+        id: component.category!.id,
+        name: categoryName,
+        isActive: isActive,
+        description: description,
+        imageUrl: imageUrl,
+      );
     } else {
-      context
-          .read(categoriesProvider.notifier)
-          .create(
-            name: categoryName,
-            description: description,
-            imageUrl: imageUrl,
-          );
+      CategoriesActions.create(
+        name: categoryName,
+        description: description,
+        imageUrl: imageUrl,
+      );
     }
   }
 
@@ -70,7 +65,7 @@ class _AddEditCategoryModalState extends State<AddEditCategoryModal> {
       title: component.category != null ? 'Edit Category' : 'Add Category',
       child: form(
         method: FormMethod.post,
-        events: {'submit': (e) => _onSubmit(context, e)},
+        events: {'submit': (e) => _onSubmit(e)},
         [
           FormField(
             id: 'categoryName',

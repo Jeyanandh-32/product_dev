@@ -1,29 +1,33 @@
-import 'dart:async';
-
-import 'package:jaspr_riverpod/jaspr_riverpod.dart';
+import 'package:client_repositories/client_repositories.dart';
 import 'package:merchant/exceptions/api_exception.dart';
 import 'package:merchant/providers/toast_provider.dart';
 import 'package:merchant/providers/ui_providers.dart';
-import 'package:client_repositories/client_repositories.dart';
 import 'package:models/models.dart';
+import 'package:signals/signals.dart';
 
-final terminalsProvider =
-    AsyncNotifierProvider.autoDispose<TerminalsProvider, List<Terminal>>(
-      () => TerminalsProvider(),
-    );
+final terminalsSignal = asyncSignal<List<Terminal>>(const AsyncLoading());
 
-class TerminalsProvider extends AsyncNotifier<List<Terminal>> {
-  @override
-  FutureOr<List<Terminal>> build() async {
-    return await TerminalRepository.getAll();
+Future<void> refreshTerminalsSignal() async {
+  try {
+    final terminals = await TerminalRepository.getAll();
+    terminalsSignal.value = AsyncData(terminals);
+  } catch (e, stack) {
+    terminalsSignal.value = AsyncError(e, stack);
   }
+}
 
-  Future<void> create({required String name, required String password}) async {
-    final selectedStore = ref.read(selectedTabStoreProvider);
+class TerminalsActions {
+  const TerminalsActions._();
+
+  static Future<void> create({
+    required String name,
+    required String password,
+  }) async {
+    final selectedStore = selectedTabStoreSignal.value;
     if (selectedStore == null) return;
 
-    final currentTerminals = state.value ?? [];
-    state = const AsyncLoading();
+    final currentTerminals = terminalsSignal.value.value ?? [];
+    terminalsSignal.value = const AsyncLoading();
 
     try {
       final terminal = await TerminalRepository.create(
@@ -32,20 +36,20 @@ class TerminalsProvider extends AsyncNotifier<List<Terminal>> {
         password: password,
       );
 
-      state = AsyncData([...currentTerminals, terminal]);
+      terminalsSignal.value = AsyncData([...currentTerminals, terminal]);
     } catch (e) {
       final message = e is ApiException ? e.message : 'Something went wrong.';
-      ref.showToast(message);
+      showToast(message);
 
-      state = AsyncData(currentTerminals);
+      terminalsSignal.value = AsyncData(currentTerminals);
     }
   }
 
-  Future<void> updateStatus({
+  static Future<void> updateStatus({
     required String code,
     required bool isActive,
   }) async {
-    final currentTerminals = state.value ?? [];
+    final currentTerminals = terminalsSignal.value.value ?? [];
 
     try {
       final updatedTerminal = await TerminalRepository.update(
@@ -53,25 +57,25 @@ class TerminalsProvider extends AsyncNotifier<List<Terminal>> {
         isActive: isActive,
       );
 
-      state = AsyncData(
+      terminalsSignal.value = AsyncData(
         currentTerminals
             .map((t) => t.code == code ? updatedTerminal : t)
             .toList(),
       );
     } catch (e) {
       final message = e is ApiException ? e.message : 'Something went wrong.';
-      ref.showToast(message);
+      showToast(message);
     }
   }
 
-  Future<void> updateTerminal({
+  static Future<void> updateTerminal({
     required String code,
     String? name,
     String? password,
     bool? isActive,
   }) async {
-    final currentTerminals = state.value ?? [];
-    state = const AsyncLoading();
+    final currentTerminals = terminalsSignal.value.value ?? [];
+    terminalsSignal.value = const AsyncLoading();
 
     try {
       final updatedTerminal = await TerminalRepository.update(
@@ -81,16 +85,16 @@ class TerminalsProvider extends AsyncNotifier<List<Terminal>> {
         isActive: isActive,
       );
 
-      state = AsyncData(
+      terminalsSignal.value = AsyncData(
         currentTerminals
             .map((t) => t.code == code ? updatedTerminal : t)
             .toList(),
       );
     } catch (e) {
       final message = e is ApiException ? e.message : 'Something went wrong.';
-      ref.showToast(message);
+      showToast(message);
 
-      state = AsyncData(currentTerminals);
+      terminalsSignal.value = AsyncData(currentTerminals);
     }
   }
 }

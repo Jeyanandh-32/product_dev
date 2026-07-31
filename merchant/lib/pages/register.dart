@@ -1,7 +1,6 @@
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_lucide/jaspr_lucide.dart' hide Map;
-import 'package:jaspr_riverpod/jaspr_riverpod.dart';
 import 'package:jaspr_router/jaspr_router.dart';
 import 'package:merchant/components/fields/form_field.dart';
 import 'package:merchant/components/layouts/auth_layout.dart';
@@ -23,7 +22,7 @@ class _RegisterState extends State<Register> {
   String _email = '';
   String _password = '';
 
-  void _onSubmit(BuildContext context, Event e) {
+  void _onSubmit(Event e) {
     e.preventDefault();
     final fullName = _fullName.trim();
     final businessName = _businessName.trim();
@@ -31,21 +30,13 @@ class _RegisterState extends State<Register> {
     final email = _email.trim();
     final password = _password.trim();
 
-    print('full name = $fullName');
-    print('business name = $businessName');
-    print('whatsapp number = $whatsappNumber');
-    print('email = $email');
-    print('password = $password');
-
-    context
-        .read(authProvider.notifier)
-        .register(
-          name: fullName,
-          businessName: businessName,
-          whatsappNumber: whatsappNumber,
-          email: email,
-          password: password,
-        );
+    registerMerchant(
+      name: fullName,
+      businessName: businessName,
+      whatsappNumber: whatsappNumber,
+      email: email,
+      password: password,
+    );
   }
 
   @override
@@ -58,7 +49,7 @@ class _RegisterState extends State<Register> {
         classes: 'card-body items-start',
         method: .post,
         events: {
-          'submit': (e) => _onSubmit(context, e),
+          'submit': (e) => _onSubmit(e),
         },
         [
           FormField(

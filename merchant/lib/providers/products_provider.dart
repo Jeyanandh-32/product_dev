@@ -1,39 +1,41 @@
-import 'dart:async';
-
-import 'package:jaspr_riverpod/jaspr_riverpod.dart';
+import 'package:client_repositories/client_repositories.dart';
 import 'package:merchant/exceptions/api_exception.dart';
 import 'package:merchant/providers/toast_provider.dart';
 import 'package:merchant/providers/ui_providers.dart';
-import 'package:client_repositories/client_repositories.dart';
 import 'package:models/models.dart';
+import 'package:signals/signals.dart';
 
-final productsProvider =
-    AsyncNotifierProvider.autoDispose<ProductsProvider, List<Product>>(
-      () => ProductsProvider(),
-    );
+final productsSignal = asyncSignal<List<Product>>(const AsyncLoading());
 
-class ProductsProvider extends AsyncNotifier<List<Product>> {
-  @override
-  FutureOr<List<Product>> build() async {
-    final selectedStore = ref.watch(storeProvider);
-    if (selectedStore == null) return [];
+Future<void> refreshProductsSignal() async {
+  final selectedStore = storeSignal.value;
+  if (selectedStore == null) {
+    productsSignal.value = const AsyncData([]);
+    return;
+  }
 
-    final size = ref.watch(entriesProvider);
-    final page = ref.watch(productsPageProvider);
+  final size = entriesSignal.value;
+  final page = productsPageSignal.value;
 
+  try {
     final result = await ProductRepository.getAll(
       storeId: selectedStore.id,
       page: page,
       size: size,
     );
 
-    ref.read(productsTotalProvider.notifier).state = result.totalItems;
-    ref.read(productsTotalPagesProvider.notifier).state = result.totalPages;
-
-    return result.items;
+    productsTotalSignal.value = result.totalItems;
+    productsTotalPagesSignal.value = result.totalPages;
+    productsSignal.value = AsyncData(result.items);
+  } catch (e, stack) {
+    productsSignal.value = AsyncError(e, stack);
   }
+}
 
-  Future<void> create({
+class ProductsActions {
+  const ProductsActions._();
+
+  static Future<void> create({
     required String name,
     required String categoryId,
     required String counterId,
@@ -45,11 +47,11 @@ class ProductsProvider extends AsyncNotifier<List<Product>> {
     String? description,
     String? imageUrl,
   }) async {
-    final selectedStore = ref.read(storeProvider);
+    final selectedStore = storeSignal.value;
     if (selectedStore == null) return;
 
-    final currentProducts = state.value ?? [];
-    state = const AsyncLoading();
+    final currentProducts = productsSignal.value.value ?? [];
+    productsSignal.value = const AsyncLoading();
 
     try {
       final product = await ProductRepository.create(
@@ -66,16 +68,16 @@ class ProductsProvider extends AsyncNotifier<List<Product>> {
         imageUrl: imageUrl,
       );
 
-      state = AsyncData([...currentProducts, product]);
+      productsSignal.value = AsyncData([...currentProducts, product]);
     } catch (e) {
       final message = e is ApiException ? e.message : 'Something went wrong.';
-      ref.showToast(message);
+      showToast(message);
 
-      state = AsyncData(currentProducts);
+      productsSignal.value = AsyncData(currentProducts);
     }
   }
 
-  Future<void> updateProduct({
+  static Future<void> updateProduct({
     required String id,
     String? name,
     String? categoryId,
@@ -89,8 +91,8 @@ class ProductsProvider extends AsyncNotifier<List<Product>> {
     String? description,
     String? imageUrl,
   }) async {
-    final currentProducts = state.value ?? [];
-    state = const AsyncLoading();
+    final currentProducts = productsSignal.value.value ?? [];
+    productsSignal.value = const AsyncLoading();
 
     try {
       final updatedProduct = await ProductRepository.update(
@@ -108,26 +110,26 @@ class ProductsProvider extends AsyncNotifier<List<Product>> {
         imageUrl: imageUrl,
       );
 
-      state = AsyncData(
+      productsSignal.value = AsyncData(
         currentProducts.map((p) => p.id == id ? updatedProduct : p).toList(),
       );
     } catch (e) {
       final message = e is ApiException ? e.message : 'Something went wrong.';
-      ref.showToast(message);
+      showToast(message);
 
-      state = AsyncData(currentProducts);
+      productsSignal.value = AsyncData(currentProducts);
     }
   }
 
-  Future<void> updateStock({
+  static Future<void> updateStock({
     required String stockId,
     required String productId,
     int? quantity,
     int? lowStockThreshold,
     bool? stockMonitor,
   }) async {
-    final currentProducts = state.value ?? [];
-    state = const AsyncLoading();
+    final currentProducts = productsSignal.value.value ?? [];
+    productsSignal.value = const AsyncLoading();
 
     try {
       final updatedStock = await StockRepository.update(
@@ -137,7 +139,7 @@ class ProductsProvider extends AsyncNotifier<List<Product>> {
         stockMonitor: stockMonitor,
       );
 
-      state = AsyncData(
+      productsSignal.value = AsyncData(
         currentProducts.map((p) {
           if (p.id == productId) {
             return p.copyWith(stock: updatedStock);
@@ -147,9 +149,9 @@ class ProductsProvider extends AsyncNotifier<List<Product>> {
       );
     } catch (e) {
       final message = e is ApiException ? e.message : 'Something went wrong.';
-      ref.showToast(message);
+      showToast(message);
 
-      state = AsyncData(currentProducts);
+      productsSignal.value = AsyncData(currentProducts);
     }
   }
 }

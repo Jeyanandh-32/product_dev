@@ -1,41 +1,38 @@
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_lucide/jaspr_lucide.dart' hide Map;
-import 'package:jaspr_riverpod/jaspr_riverpod.dart';
 import 'package:jaspr_router/jaspr_router.dart';
-import 'package:merchant/components/layouts/auth_layout.dart';
 import 'package:merchant/components/fields/form_field.dart';
+import 'package:merchant/components/layouts/auth_layout.dart';
 import 'package:merchant/components/loading.dart';
+import 'package:merchant/components/signal_component.dart';
 import 'package:merchant/providers/auth_provider.dart';
 import 'package:validators/validators.dart';
 import 'package:web/web.dart' hide Lock;
 
-class Login extends StatefulComponent {
+class Login extends SignalComponent {
   const Login({super.key});
 
   @override
-  State<Login> createState() => _LoginState();
+  SignalState<Login> createState() => _LoginState();
 }
 
-class _LoginState extends State<Login> {
+class _LoginState extends SignalState<Login> {
   String _email = '';
   String _password = '';
 
-  void _onSubmit(BuildContext context, Event e) {
+  void _onSubmit(Event e) {
     e.preventDefault();
     final email = _email.trim();
     final password = _password.trim();
 
-    print('email = $email');
-    print('password = $password');
-
-    context.read(authProvider.notifier).login(email: email, password: password);
+    loginMerchant(email: email, password: password);
   }
 
   @override
-  Component build(BuildContext context) {
-    final authState = context.watch(authProvider);
-    if (authState.isLoading) return Loading();
+  Component buildSignal(BuildContext context) {
+    final authState = authSignal.value;
+    if (authState.isLoading) return const Loading();
 
     return AuthLayout(
       title: 'Sign in to your account',
@@ -45,7 +42,7 @@ class _LoginState extends State<Login> {
         classes: 'card-body items-start',
         method: .post,
         events: {
-          'submit': (e) => _onSubmit(context, e),
+          'submit': (e) => _onSubmit(e),
         },
         [
           FormField(

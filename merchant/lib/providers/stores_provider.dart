@@ -1,26 +1,27 @@
-import 'dart:async';
-
-import 'package:jaspr_riverpod/jaspr_riverpod.dart';
+import 'package:client_repositories/client_repositories.dart';
 import 'package:merchant/exceptions/api_exception.dart';
 import 'package:merchant/providers/toast_provider.dart';
 import 'package:merchant/providers/ui_providers.dart';
-import 'package:client_repositories/client_repositories.dart';
 import 'package:models/models.dart';
+import 'package:signals/signals.dart';
 
-final storesProvider =
-    AsyncNotifierProvider.autoDispose<StoresProvider, List<Store>>(
-      () => StoresProvider(),
-    );
+final storesSignal = asyncSignal<List<Store>>(const AsyncLoading());
 
-class StoresProvider extends AsyncNotifier<List<Store>> {
-  @override
-  FutureOr<List<Store>> build() async {
-    return await StoreRepository.getAll();
+Future<void> refreshStoresSignal() async {
+  try {
+    final stores = await StoreRepository.getAll();
+    storesSignal.value = AsyncData(stores);
+  } catch (e, stack) {
+    storesSignal.value = AsyncError(e, stack);
   }
+}
 
-  Future<void> create({required String name, String? storeType}) async {
-    final currentStores = state.value ?? [];
-    state = const AsyncLoading();
+class StoresActions {
+  const StoresActions._();
+
+  static Future<void> create({required String name, String? storeType}) async {
+    final currentStores = storesSignal.value.value ?? [];
+    storesSignal.value = const AsyncLoading();
 
     try {
       final store = await StoreRepository.create(
@@ -28,23 +29,23 @@ class StoresProvider extends AsyncNotifier<List<Store>> {
         storeType: storeType,
       );
 
-      state = AsyncData([...currentStores, store]);
+      storesSignal.value = AsyncData([...currentStores, store]);
     } catch (e) {
       final message = e is ApiException ? e.message : 'Something went wrong.';
-      ref.showToast(message);
+      showToast(message);
 
-      state = AsyncData(currentStores);
+      storesSignal.value = AsyncData(currentStores);
     }
   }
 
-  Future<void> updateStore({
+  static Future<void> updateStore({
     required String id,
     String? name,
     String? storeType,
     bool? isActive,
   }) async {
-    final currentStores = state.value ?? [];
-    state = const AsyncLoading();
+    final currentStores = storesSignal.value.value ?? [];
+    storesSignal.value = const AsyncLoading();
 
     try {
       final updatedStore = await StoreRepository.update(
@@ -54,19 +55,19 @@ class StoresProvider extends AsyncNotifier<List<Store>> {
         isActive: isActive,
       );
 
-      state = AsyncData(
+      storesSignal.value = AsyncData(
         currentStores.map((s) => s.id == id ? updatedStore : s).toList(),
       );
 
-      final selectedStore = ref.read(selectedTabStoreProvider);
+      final selectedStore = selectedTabStoreSignal.value;
       if (selectedStore != null && selectedStore.id == id) {
-        ref.read(selectedTabStoreProvider.notifier).state = updatedStore;
+        selectedTabStoreSignal.value = updatedStore;
       }
     } catch (e) {
       final message = e is ApiException ? e.message : 'Something went wrong.';
-      ref.showToast(message);
+      showToast(message);
 
-      state = AsyncData(currentStores);
+      storesSignal.value = AsyncData(currentStores);
     }
   }
 }

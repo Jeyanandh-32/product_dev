@@ -1,48 +1,50 @@
-import 'dart:async';
-
-import 'package:jaspr_riverpod/jaspr_riverpod.dart';
+import 'package:client_repositories/client_repositories.dart';
 import 'package:merchant/exceptions/api_exception.dart';
 import 'package:merchant/providers/toast_provider.dart';
 import 'package:merchant/providers/ui_providers.dart';
-import 'package:client_repositories/client_repositories.dart';
 import 'package:models/models.dart';
+import 'package:signals/signals.dart';
 
-final categoriesProvider =
-    AsyncNotifierProvider.autoDispose<CategoriesProvider, List<Category>>(
-      () => CategoriesProvider(),
-    );
+final categoriesSignal = asyncSignal<List<Category>>(const AsyncLoading());
 
-class CategoriesProvider extends AsyncNotifier<List<Category>> {
-  @override
-  FutureOr<List<Category>> build() async {
-    final selectedStore = ref.watch(storeProvider);
-    if (selectedStore == null) return [];
+Future<void> refreshCategoriesSignal() async {
+  final selectedStore = storeSignal.value;
+  if (selectedStore == null) {
+    categoriesSignal.value = const AsyncData([]);
+    return;
+  }
 
-    final size = ref.watch(entriesProvider);
-    final page = ref.watch(categoriesPageProvider);
+  final size = entriesSignal.value;
+  final page = categoriesPageSignal.value;
 
+  try {
     final result = await CategoryRepository.getAll(
       storeId: selectedStore.id,
       page: page,
       size: size,
     );
 
-    ref.read(categoriesTotalProvider.notifier).state = result.totalItems;
-    ref.read(categoriesTotalPagesProvider.notifier).state = result.totalPages;
-
-    return result.items;
+    categoriesTotalSignal.value = result.totalItems;
+    categoriesTotalPagesSignal.value = result.totalPages;
+    categoriesSignal.value = AsyncData(result.items);
+  } catch (e, stack) {
+    categoriesSignal.value = AsyncError(e, stack);
   }
+}
 
-  Future<void> create({
+class CategoriesActions {
+  const CategoriesActions._();
+
+  static Future<void> create({
     required String name,
     String? description,
     String? imageUrl,
   }) async {
-    final selectedStore = ref.read(storeProvider);
+    final selectedStore = storeSignal.value;
     if (selectedStore == null) return;
 
-    final currentCategories = state.value ?? [];
-    state = const AsyncLoading();
+    final currentCategories = categoriesSignal.value.value ?? [];
+    categoriesSignal.value = const AsyncLoading();
 
     try {
       final category = await CategoryRepository.create(
@@ -52,24 +54,24 @@ class CategoriesProvider extends AsyncNotifier<List<Category>> {
         imageUrl: imageUrl,
       );
 
-      state = AsyncData([...currentCategories, category]);
+      categoriesSignal.value = AsyncData([...currentCategories, category]);
     } catch (e) {
       final message = e is ApiException ? e.message : 'Something went wrong.';
-      ref.showToast(message);
+      showToast(message);
 
-      state = AsyncData(currentCategories);
+      categoriesSignal.value = AsyncData(currentCategories);
     }
   }
 
-  Future<void> updateCategory({
+  static Future<void> updateCategory({
     required String id,
     String? name,
     bool? isActive,
     String? description,
     String? imageUrl,
   }) async {
-    final currentCategories = state.value ?? [];
-    state = const AsyncLoading();
+    final currentCategories = categoriesSignal.value.value ?? [];
+    categoriesSignal.value = const AsyncLoading();
 
     try {
       final updatedCategory = await CategoryRepository.update(
@@ -80,14 +82,14 @@ class CategoriesProvider extends AsyncNotifier<List<Category>> {
         imageUrl: imageUrl,
       );
 
-      state = AsyncData(
+      categoriesSignal.value = AsyncData(
         currentCategories.map((s) => s.id == id ? updatedCategory : s).toList(),
       );
     } catch (e) {
       final message = e is ApiException ? e.message : 'Something went wrong.';
-      ref.showToast(message);
+      showToast(message);
 
-      state = AsyncData(currentCategories);
+      categoriesSignal.value = AsyncData(currentCategories);
     }
   }
 }

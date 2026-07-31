@@ -1,6 +1,5 @@
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
-import 'package:jaspr_riverpod/jaspr_riverpod.dart';
 import 'package:merchant/components/fields/form_field.dart';
 import 'package:merchant/components/modals/modal.dart';
 import 'package:merchant/providers/stores_provider.dart';
@@ -30,30 +29,26 @@ class _AddEditStoreModalState extends State<AddEditStoreModal> {
     _isActive = component.store?.isActive ?? true;
   }
 
-  void _onSubmit(BuildContext context, Event e) {
+  void _onSubmit(Event e) {
     e.preventDefault();
     final storeName = _storeName.trim();
     final storeType = _storeType.trim();
     final isActive = _isActive;
 
-    context.read(activeModalProvider.notifier).state = ActiveModal.none;
+    activeModalSignal.value = ActiveModal.none;
 
     if (component.store != null) {
-      context
-          .read(storesProvider.notifier)
-          .updateStore(
-            id: component.store!.id,
-            name: storeName,
-            storeType: storeType.isEmpty ? null : storeType,
-            isActive: isActive,
-          );
+      StoresActions.updateStore(
+        id: component.store!.id,
+        name: storeName,
+        storeType: storeType.isEmpty ? null : storeType,
+        isActive: isActive,
+      );
     } else {
-      context
-          .read(storesProvider.notifier)
-          .create(
-            name: storeName,
-            storeType: storeType.isEmpty ? null : storeType,
-          );
+      StoresActions.create(
+        name: storeName,
+        storeType: storeType.isEmpty ? null : storeType,
+      );
     }
   }
 
@@ -63,7 +58,7 @@ class _AddEditStoreModalState extends State<AddEditStoreModal> {
       title: component.store != null ? 'Edit Store' : 'Add Store',
       child: form(
         method: FormMethod.post,
-        events: {'submit': (e) => _onSubmit(context, e)},
+        events: {'submit': (e) => _onSubmit(e)},
         [
           FormField(
             id: 'storeName',

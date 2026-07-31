@@ -1,5 +1,5 @@
 import 'package:jaspr/client.dart';
-import 'package:jaspr_riverpod/jaspr_riverpod.dart';
+import 'package:merchant/components/signal_component.dart';
 import 'package:merchant/providers/ui_providers.dart';
 import 'package:merchant/sub_tabs/credits.dart';
 import 'package:merchant/sub_tabs/orders.dart';
@@ -7,19 +7,24 @@ import 'package:merchant/sub_tabs/payments.dart';
 import 'package:merchant/sub_tabs/profit_loss.dart';
 import 'package:merchant/sub_tabs/stock_summary.dart';
 
-class Reports extends StatelessComponent {
+class Reports extends SignalComponent {
   const Reports({super.key});
 
   @override
-  Component build(BuildContext context) {
-    final subIndex = context.watch(subIndexProvider);
+  SignalState<Reports> createState() => _ReportsState();
+}
+
+class _ReportsState extends SignalState<Reports> {
+  @override
+  Component buildSignal(BuildContext context) {
+    final subIndex = subIndexSignal.value;
 
     final tabs = [
-      Orders(),
-      Payments(),
-      Credits(),
-      ProfitLoss(),
-      StockSummary(),
+      const Orders(),
+      const Payments(),
+      const Credits(),
+      const ProfitLoss(),
+      const StockSummary(),
     ];
 
     return tabs[subIndex];

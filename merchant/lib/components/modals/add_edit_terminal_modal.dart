@@ -1,6 +1,5 @@
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
-import 'package:jaspr_riverpod/jaspr_riverpod.dart';
 import 'package:merchant/components/fields/form_field.dart';
 import 'package:merchant/components/modals/modal.dart';
 import 'package:merchant/providers/terminals_provider.dart';
@@ -31,27 +30,23 @@ class _AddEditTerminalModalState extends State<AddEditTerminalModal> {
     _isActive = component.terminal?.isActive ?? true;
   }
 
-  void _onSubmit(BuildContext context, Event e) {
+  void _onSubmit(Event e) {
     e.preventDefault();
     final name = _name.trim();
     final password = _password.trim();
     final isActive = _isActive;
 
-    context.read(activeModalProvider.notifier).state = ActiveModal.none;
+    activeModalSignal.value = ActiveModal.none;
 
     if (component.terminal != null) {
-      context
-          .read(terminalsProvider.notifier)
-          .updateTerminal(
-            code: component.terminal!.code,
-            name: name,
-            password: password.isEmpty ? null : password,
-            isActive: isActive,
-          );
+      TerminalsActions.updateTerminal(
+        code: component.terminal!.code,
+        name: name,
+        password: password.isEmpty ? null : password,
+        isActive: isActive,
+      );
     } else {
-      context
-          .read(terminalsProvider.notifier)
-          .create(name: name, password: password);
+      TerminalsActions.create(name: name, password: password);
     }
   }
 
@@ -61,7 +56,7 @@ class _AddEditTerminalModalState extends State<AddEditTerminalModal> {
       title: component.terminal != null ? 'Edit Terminal' : 'Add Terminal',
       child: form(
         method: FormMethod.post,
-        events: {'submit': (e) => _onSubmit(context, e)},
+        events: {'submit': (e) => _onSubmit(e)},
         [
           FormField(
             id: 'terminalName',

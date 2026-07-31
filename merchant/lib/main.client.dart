@@ -5,14 +5,15 @@ library;
 
 // Client-specific Jaspr import.
 import 'package:jaspr/client.dart';
-import 'package:jaspr_riverpod/jaspr_riverpod.dart';
 
 // Imports the [App] component.
 import 'app.dart';
 import 'config/api_client.dart';
+import 'providers/auth_provider.dart';
 
-void main() {
+void main() async {
   initMerchantDio();
+  await initAuthSignal();
   // Attaches the [App] component to the <body> of the page.
-  runApp(ProviderScope(child: App()));
+  runApp(const App());
 }

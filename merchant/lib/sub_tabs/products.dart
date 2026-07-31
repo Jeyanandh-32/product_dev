@@ -1,42 +1,53 @@
 import 'package:jaspr/client.dart';
 import 'package:jaspr/dom.dart';
 import 'package:jaspr_lucide/jaspr_lucide.dart';
-import 'package:jaspr_riverpod/jaspr_riverpod.dart';
 import 'package:merchant/components/buttons/add_button.dart';
 import 'package:merchant/components/centered_message.dart';
 import 'package:merchant/components/fields/searchbar.dart';
 import 'package:merchant/components/loading.dart';
 import 'package:merchant/components/modals/add_edit_product_modal.dart';
 import 'package:merchant/components/modals/update_stock_modal.dart';
+import 'package:merchant/components/signal_component.dart';
 import 'package:merchant/components/table_pagination.dart';
 import 'package:merchant/exceptions/api_exception.dart';
 import 'package:merchant/providers/products_provider.dart';
 import 'package:merchant/providers/ui_providers.dart';
 import 'package:web/web.dart';
 
-class Products extends StatelessComponent {
+class Products extends SignalComponent {
   const Products({super.key});
 
-  void _changeEntry(BuildContext context, int entry) {
-    context.read(entriesProvider.notifier).state = entry;
-    context.read(productsPageProvider.notifier).state = 1;
+  @override
+  SignalState<Products> createState() => _ProductsState();
+}
+
+class _ProductsState extends SignalState<Products> {
+  @override
+  void initState() {
+    super.initState();
+    refreshProductsSignal();
+  }
+
+  void _changeEntry(int entry) {
+    entriesSignal.value = entry;
+    productsPageSignal.value = 1;
+    refreshProductsSignal();
 
     final activeElement = document.activeElement;
-
     if (activeElement != null) {
       (activeElement as HTMLElement).blur();
     }
   }
 
   @override
-  Component build(BuildContext context) {
-    final store = context.watch(storeProvider);
-    final entries = context.watch(entriesProvider);
-    final products = context.watch(productsProvider);
-    final currentPage = context.watch(productsPageProvider);
-    final totalPages = context.watch(productsTotalPagesProvider);
-    final activeModal = context.watch(activeModalProvider);
-    final editingProduct = context.watch(editingProductProvider);
+  Component buildSignal(BuildContext context) {
+    final store = storeSignal.value;
+    final entries = entriesSignal.value;
+    final products = productsSignal.value;
+    final currentPage = productsPageSignal.value;
+    final totalPages = productsTotalPagesSignal.value;
+    final activeModal = activeModalSignal.value;
+    final editingProduct = editingProductSignal.value;
 
     return div(
       classes:
@@ -74,19 +85,19 @@ class Products extends StatelessComponent {
                   [
                     dropdownButton(
                       name: '10',
-                      onClick: () => _changeEntry(context, 10),
+                      onClick: () => _changeEntry(10),
                     ),
                     dropdownButton(
                       name: '25',
-                      onClick: () => _changeEntry(context, 25),
+                      onClick: () => _changeEntry(25),
                     ),
                     dropdownButton(
                       name: '50',
-                      onClick: () => _changeEntry(context, 50),
+                      onClick: () => _changeEntry(50),
                     ),
                     dropdownButton(
                       name: '100',
-                      onClick: () => _changeEntry(context, 100),
+                      onClick: () => _changeEntry(100),
                     ),
                   ],
                 ),
@@ -101,9 +112,8 @@ class Products extends StatelessComponent {
               AddButton(
                 name: 'Add Product',
                 onClick: () {
-                  context.read(editingProductProvider.notifier).state = null;
-                  context.read(activeModalProvider.notifier).state =
-                      ActiveModal.addProduct;
+                  editingProductSignal.value = null;
+                  activeModalSignal.value = ActiveModal.addProduct;
                 },
               ),
             ]),
@@ -146,16 +156,12 @@ class Products extends StatelessComponent {
                       barcode: product.barcode,
                       taxRate: product.taxRate,
                       onEdit: () {
-                        context.read(editingProductProvider.notifier).state =
-                            product;
-                        context.read(activeModalProvider.notifier).state =
-                            ActiveModal.editProduct;
+                        editingProductSignal.value = product;
+                        activeModalSignal.value = ActiveModal.editProduct;
                       },
                       onUpdateStock: () {
-                        context.read(editingProductProvider.notifier).state =
-                            product;
-                        context.read(activeModalProvider.notifier).state =
-                            ActiveModal.updateStock;
+                        editingProductSignal.value = product;
+                        activeModalSignal.value = ActiveModal.updateStock;
                       },
                     ),
                 ]),
@@ -166,8 +172,10 @@ class Products extends StatelessComponent {
         TablePagination(
           currentPage: currentPage,
           totalPages: totalPages,
-          onPageChanged: (page) =>
-              context.read(productsPageProvider.notifier).state = page,
+          onPageChanged: (page) {
+            productsPageSignal.value = page;
+            refreshProductsSignal();
+          },
         ),
       ],
     );

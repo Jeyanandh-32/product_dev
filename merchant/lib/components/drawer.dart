@@ -1,48 +1,49 @@
 import 'package:jaspr/client.dart';
 import 'package:jaspr/dom.dart';
 import 'package:jaspr_lucide/jaspr_lucide.dart';
-import 'package:jaspr_riverpod/jaspr_riverpod.dart';
+import 'package:merchant/components/signal_component.dart';
 import 'package:merchant/providers/auth_provider.dart';
 import 'package:merchant/providers/ui_providers.dart';
 
-class Drawer extends StatelessComponent {
+class Drawer extends SignalComponent {
   const Drawer({super.key, this.classes});
 
   final String? classes;
 
-  void _changeIndex(BuildContext context, int index, String headerTitle) {
-    context.read(headerTitleProvider.notifier).state = headerTitle;
-    context.read(indexProvider.notifier).state = index;
-    context.read(headerSubTitleProvider.notifier).state = null;
-    if (index != 1 && index != 2) _toggleDrawer(context);
+  @override
+  SignalState<Drawer> createState() => _DrawerState();
+}
+
+class _DrawerState extends SignalState<Drawer> {
+  void _changeIndex(int index, String headerTitle) {
+    headerTitleSignal.value = headerTitle;
+    indexSignal.value = index;
+    headerSubTitleSignal.value = null;
+    if (index != 1 && index != 2) _toggleDrawer();
   }
 
   void _changeSubIndex(
-    BuildContext context,
     int subIndex,
     String headerTitle,
     String headerSubTitle,
   ) {
-    context.read(headerTitleProvider.notifier).state = headerTitle;
-    context.read(subIndexProvider.notifier).state = subIndex;
-    context.read(headerSubTitleProvider.notifier).state = headerSubTitle;
-    _toggleDrawer(context);
+    headerTitleSignal.value = headerTitle;
+    subIndexSignal.value = subIndex;
+    headerSubTitleSignal.value = headerSubTitle;
+    _toggleDrawer();
   }
 
-  void _toggleDrawer(BuildContext context) =>
-      context.read(navOpenProvider.notifier).state = !context.read(
-        navOpenProvider,
-      );
+  void _toggleDrawer() => navOpenSignal.value = !navOpenSignal.value;
 
   @override
-  Component build(BuildContext context) {
-    final index = context.watch(indexProvider);
-    final subIndex = context.watch(subIndexProvider);
-    final isNavOpen = context.watch(navOpenProvider);
+  Component buildSignal(BuildContext context) {
+    final index = indexSignal.value;
+    final subIndex = subIndexSignal.value;
+    final isNavOpen = navOpenSignal.value;
 
     return div(
       classes:
-          'fixed z-50 ${isNavOpen ? 'left-0' : '-left-full'} transition-all duration-300 lg:left-0 flex w-64 h-full bg-white border-r border-border-medium flex-col items-center $classes',
+          'fixed z-50 ${isNavOpen ? 'left-0' : '-left-full'} transition-all duration-300 lg:left-0 flex w-64 h-full bg-white border-r border-border-medium flex-col items-center ${component.classes ?? ''}',
       [
         h1(
           classes:
@@ -57,7 +58,7 @@ class Drawer extends StatelessComponent {
             name: 'Dashboard',
             prefixIcon: LayoutGrid(classes: 'w-4.5 h-4.5'),
             isSelected: index == 0,
-            onClick: () => _changeIndex(context, 0, 'Dashboard'),
+            onClick: () => _changeIndex(0, 'Dashboard'),
           ),
           navButton(
             name: 'Inventory',
@@ -67,9 +68,9 @@ class Drawer extends StatelessComponent {
                 : ChevronRight(classes: 'w-4.5 h-4.5 ml-auto mr-6'),
             isSelected: index == 1,
             onClick: () {
-              _changeIndex(context, 1, 'Inventory');
-              context.read(subIndexProvider.notifier).state = 0;
-              context.read(headerSubTitleProvider.notifier).state = 'Products';
+              _changeIndex(1, 'Inventory');
+              subIndexSignal.value = 0;
+              headerSubTitleSignal.value = 'Products';
             },
           ),
           if (index == 1)
@@ -79,20 +80,17 @@ class Drawer extends StatelessComponent {
                 navSubButton(
                   name: 'Products',
                   isSelected: index == 1 && subIndex == 0,
-                  onClick: () =>
-                      _changeSubIndex(context, 0, 'Inventory', 'Products'),
+                  onClick: () => _changeSubIndex(0, 'Inventory', 'Products'),
                 ),
                 navSubButton(
                   name: 'Category',
                   isSelected: index == 1 && subIndex == 1,
-                  onClick: () =>
-                      _changeSubIndex(context, 1, 'Inventory', 'Category'),
+                  onClick: () => _changeSubIndex(1, 'Inventory', 'Category'),
                 ),
                 navSubButton(
                   name: 'Counters',
                   isSelected: index == 1 && subIndex == 2,
-                  onClick: () =>
-                      _changeSubIndex(context, 2, 'Inventory', 'Counters'),
+                  onClick: () => _changeSubIndex(2, 'Inventory', 'Counters'),
                 ),
               ],
             ),
@@ -104,9 +102,9 @@ class Drawer extends StatelessComponent {
                 : ChevronRight(classes: 'w-4.5 h-4.5 ml-auto mr-6'),
             isSelected: index == 2,
             onClick: () {
-              _changeIndex(context, 2, 'Reports');
-              context.read(subIndexProvider.notifier).state = 0;
-              context.read(headerSubTitleProvider.notifier).state = 'Orders';
+              _changeIndex(2, 'Reports');
+              subIndexSignal.value = 0;
+              headerSubTitleSignal.value = 'Orders';
             },
           ),
           if (index == 2)
@@ -116,32 +114,27 @@ class Drawer extends StatelessComponent {
                 navSubButton(
                   name: 'Orders',
                   isSelected: index == 2 && subIndex == 0,
-                  onClick: () =>
-                      _changeSubIndex(context, 0, 'Reports', 'Orders'),
+                  onClick: () => _changeSubIndex(0, 'Reports', 'Orders'),
                 ),
                 navSubButton(
                   name: 'Payments',
                   isSelected: index == 2 && subIndex == 1,
-                  onClick: () =>
-                      _changeSubIndex(context, 1, 'Reports', 'Payments'),
+                  onClick: () => _changeSubIndex(1, 'Reports', 'Payments'),
                 ),
                 navSubButton(
                   name: 'Credits',
                   isSelected: index == 2 && subIndex == 2,
-                  onClick: () =>
-                      _changeSubIndex(context, 2, 'Reports', 'Credits'),
+                  onClick: () => _changeSubIndex(2, 'Reports', 'Credits'),
                 ),
                 navSubButton(
                   name: 'Profit & Loss',
                   isSelected: index == 2 && subIndex == 3,
-                  onClick: () =>
-                      _changeSubIndex(context, 3, 'Reports', 'Profit & Loss'),
+                  onClick: () => _changeSubIndex(3, 'Reports', 'Profit & Loss'),
                 ),
                 navSubButton(
                   name: 'Stock Summary',
                   isSelected: index == 2 && subIndex == 4,
-                  onClick: () =>
-                      _changeSubIndex(context, 4, 'Reports', 'Stock Summary'),
+                  onClick: () => _changeSubIndex(4, 'Reports', 'Stock Summary'),
                 ),
               ],
             ),
@@ -149,26 +142,26 @@ class Drawer extends StatelessComponent {
             name: 'Stores',
             prefixIcon: Store(classes: 'w-4.5 h-4.5'),
             isSelected: index == 3,
-            onClick: () => _changeIndex(context, 3, 'Stores'),
+            onClick: () => _changeIndex(3, 'Stores'),
           ),
           navButton(
             name: 'Account',
             prefixIcon: UserRound(classes: 'w-4.5 h-4.5'),
             isSelected: index == 4,
-            onClick: () => _changeIndex(context, 4, 'Account'),
+            onClick: () => _changeIndex(4, 'Account'),
           ),
           navButton(
             name: 'Settings',
             prefixIcon: Settings(classes: 'w-4.5 h-4.5'),
             isSelected: index == 5,
-            onClick: () => _changeIndex(context, 5, 'Settings'),
+            onClick: () => _changeIndex(5, 'Settings'),
           ),
         ]),
         div(classes: 'w-full px-4 pb-4 mt-auto', [
           button(
             classes:
                 'btn border-none flex items-center justify-center gap-2 w-full h-10 font-semibold text-sm bg-soft-red text-soft-red-content rounded-lg hover:cursor-pointer',
-            onClick: () => context.read(authProvider.notifier).logout(),
+            onClick: () => logoutMerchant(),
             [LogOut(classes: 'w-4.5 h-4.5'), .text('Log Out')],
           ),
         ]),

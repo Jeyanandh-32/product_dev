@@ -1,22 +1,33 @@
 import 'package:jaspr/client.dart';
 import 'package:jaspr/dom.dart';
-import 'package:jaspr_riverpod/jaspr_riverpod.dart';
 import 'package:merchant/components/buttons/add_button.dart';
 import 'package:merchant/components/cards/terminal_card.dart';
 import 'package:merchant/components/centered_message.dart';
 import 'package:merchant/components/fields/searchbar.dart';
 import 'package:merchant/components/loading.dart';
+import 'package:merchant/components/signal_component.dart';
 import 'package:merchant/exceptions/api_exception.dart';
 import 'package:merchant/providers/terminals_provider.dart';
 import 'package:merchant/providers/ui_providers.dart';
 
-class TerminalsContainer extends StatelessComponent {
+class TerminalsContainer extends SignalComponent {
   const TerminalsContainer({super.key});
 
   @override
-  Component build(BuildContext context) {
-    final selectedStore = context.watch(selectedTabStoreProvider);
-    final terminalsState = context.watch(terminalsProvider);
+  SignalState<TerminalsContainer> createState() => _TerminalsContainerState();
+}
+
+class _TerminalsContainerState extends SignalState<TerminalsContainer> {
+  @override
+  void initState() {
+    super.initState();
+    refreshTerminalsSignal();
+  }
+
+  @override
+  Component buildSignal(BuildContext context) {
+    final selectedStore = selectedTabStoreSignal.value;
+    final terminalsState = terminalsSignal.value;
 
     final terminalsList =
         terminalsState.value
@@ -54,9 +65,8 @@ class TerminalsContainer extends StatelessComponent {
               AddButton(
                 name: 'Add Terminal',
                 onClick: () {
-                  context.read(editingTerminalProvider.notifier).state = null;
-                  context.read(activeModalProvider.notifier).state =
-                      ActiveModal.addTerminal;
+                  editingTerminalSignal.value = null;
+                  activeModalSignal.value = ActiveModal.addTerminal;
                 },
               ),
             ]),
@@ -90,10 +100,8 @@ class TerminalsContainer extends StatelessComponent {
                 TerminalCard(
                   terminal: terminal,
                   onEdit: () {
-                    context.read(editingTerminalProvider.notifier).state =
-                        terminal;
-                    context.read(activeModalProvider.notifier).state =
-                        ActiveModal.editTerminal;
+                    editingTerminalSignal.value = terminal;
+                    activeModalSignal.value = ActiveModal.editTerminal;
                   },
                 ),
             ],

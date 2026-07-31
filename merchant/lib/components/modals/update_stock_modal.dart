@@ -1,6 +1,5 @@
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
-import 'package:jaspr_riverpod/jaspr_riverpod.dart';
 import 'package:merchant/components/fields/form_field.dart';
 import 'package:merchant/components/modals/modal.dart';
 import 'package:merchant/providers/products_provider.dart';
@@ -32,33 +31,29 @@ class _UpdateStockModalState extends State<UpdateStockModal> {
     _stockMonitor = s?.stockMonitor ?? false;
   }
 
-  void _onSubmit(BuildContext context, Event e) {
+  void _onSubmit(Event e) {
     e.preventDefault();
 
     final quantity = int.tryParse(_quantity.trim());
     final lowStockThreshold = int.tryParse(_lowStockThreshold.trim());
 
     if (_stockMonitor && lowStockThreshold == null) {
-      context.read(toastProvider.notifier).state =
-          'Low Stock Threshold is required when Stock Monitor is enabled.';
-      Future.delayed(const Duration(seconds: 3), () {
-        context.read(toastProvider.notifier).state = null;
-      });
+      showToast(
+        'Low Stock Threshold is required when Stock Monitor is enabled.',
+      );
       return;
     }
 
-    context.read(activeModalProvider.notifier).state = ActiveModal.none;
+    activeModalSignal.value = ActiveModal.none;
 
     if (component.product.stock != null) {
-      context
-          .read(productsProvider.notifier)
-          .updateStock(
-            stockId: component.product.stock!.id,
-            productId: component.product.id,
-            quantity: quantity,
-            lowStockThreshold: lowStockThreshold,
-            stockMonitor: _stockMonitor,
-          );
+      ProductsActions.updateStock(
+        stockId: component.product.stock!.id,
+        productId: component.product.id,
+        quantity: quantity,
+        lowStockThreshold: lowStockThreshold,
+        stockMonitor: _stockMonitor,
+      );
     }
   }
 
@@ -68,7 +63,7 @@ class _UpdateStockModalState extends State<UpdateStockModal> {
       title: 'Update Stock - ${component.product.name}',
       child: form(
         method: FormMethod.post,
-        events: {'submit': (e) => _onSubmit(context, e)},
+        events: {'submit': (e) => _onSubmit(e)},
         [
           FormField(
             id: 'quantity',

@@ -1,6 +1,5 @@
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
-import 'package:jaspr_riverpod/jaspr_riverpod.dart';
 import 'package:merchant/components/fields/form_field.dart';
 import 'package:merchant/components/modals/modal.dart';
 import 'package:merchant/providers/counters_provider.dart';
@@ -32,7 +31,7 @@ class _AddEditCounterModalState extends State<AddEditCounterModal> {
     _isActive = component.counter?.isActive ?? true;
   }
 
-  void _onSubmit(BuildContext context, Event e) {
+  void _onSubmit(Event e) {
     e.preventDefault();
     final counterName = _counterName.trim();
     final descriptionVal = _description.trim();
@@ -41,26 +40,22 @@ class _AddEditCounterModalState extends State<AddEditCounterModal> {
     final imageUrl = imageUrlVal.isNotEmpty ? imageUrlVal : null;
     final isActive = _isActive;
 
-    context.read(activeModalProvider.notifier).state = ActiveModal.none;
+    activeModalSignal.value = ActiveModal.none;
 
     if (component.counter != null) {
-      context
-          .read(countersProvider.notifier)
-          .updateCounter(
-            id: component.counter!.id,
-            name: counterName,
-            isActive: isActive,
-            description: description,
-            imageUrl: imageUrl,
-          );
+      CountersActions.updateCounter(
+        id: component.counter!.id,
+        name: counterName,
+        isActive: isActive,
+        description: description,
+        imageUrl: imageUrl,
+      );
     } else {
-      context
-          .read(countersProvider.notifier)
-          .create(
-            name: counterName,
-            description: description,
-            imageUrl: imageUrl,
-          );
+      CountersActions.create(
+        name: counterName,
+        description: description,
+        imageUrl: imageUrl,
+      );
     }
   }
 
@@ -70,7 +65,7 @@ class _AddEditCounterModalState extends State<AddEditCounterModal> {
       title: component.counter != null ? 'Edit Counter' : 'Add Counter',
       child: form(
         method: FormMethod.post,
-        events: {'submit': (e) => _onSubmit(context, e)},
+        events: {'submit': (e) => _onSubmit(e)},
         [
           FormField(
             id: 'counterName',

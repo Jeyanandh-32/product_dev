@@ -1,24 +1,29 @@
 import 'package:jaspr/client.dart';
 import 'package:jaspr/dom.dart';
-import 'package:jaspr_riverpod/jaspr_riverpod.dart';
 import 'package:merchant/components/buttons/add_button.dart';
 import 'package:merchant/components/cards/store_card.dart';
 import 'package:merchant/components/centered_message.dart';
 import 'package:merchant/components/fields/searchbar.dart';
 import 'package:merchant/components/loading.dart';
+import 'package:merchant/components/signal_component.dart';
 import 'package:merchant/exceptions/api_exception.dart';
 import 'package:merchant/providers/stores_provider.dart';
 import 'package:merchant/providers/terminals_provider.dart';
 import 'package:merchant/providers/ui_providers.dart';
 
-class StoresContainer extends StatelessComponent {
+class StoresContainer extends SignalComponent {
   const StoresContainer({super.key});
 
   @override
-  Component build(BuildContext context) {
-    final storesState = context.watch(storesProvider);
-    final selectedStore = context.watch(selectedTabStoreProvider);
-    final terminalsState = context.watch(terminalsProvider);
+  SignalState<StoresContainer> createState() => _StoresContainerState();
+}
+
+class _StoresContainerState extends SignalState<StoresContainer> {
+  @override
+  Component buildSignal(BuildContext context) {
+    final storesState = storesSignal.value;
+    final selectedStore = selectedTabStoreSignal.value;
+    final terminalsState = terminalsSignal.value;
 
     return div(
       classes:
@@ -40,9 +45,8 @@ class StoresContainer extends StatelessComponent {
               AddButton(
                 name: 'Add Store',
                 onClick: () {
-                  context.read(editingStoreProvider.notifier).state = null;
-                  context.read(activeModalProvider.notifier).state =
-                      ActiveModal.addStore;
+                  editingStoreSignal.value = null;
+                  activeModalSignal.value = ActiveModal.addStore;
                 },
               ),
             ]),
@@ -80,13 +84,11 @@ class StoresContainer extends StatelessComponent {
                   store: store,
                   isSelected: store.id == selectedStore?.id,
                   onClick: () {
-                    context.read(selectedTabStoreProvider.notifier).state =
-                        store;
+                    selectedTabStoreSignal.value = store;
                   },
                   onEdit: () {
-                    context.read(editingStoreProvider.notifier).state = store;
-                    context.read(activeModalProvider.notifier).state =
-                        ActiveModal.editStore;
+                    editingStoreSignal.value = store;
+                    activeModalSignal.value = ActiveModal.editStore;
                   },
                 ),
             ],

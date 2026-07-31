@@ -1,82 +1,82 @@
-import 'dart:async';
-
-import 'package:jaspr_riverpod/jaspr_riverpod.dart';
+import 'package:client_repositories/client_repositories.dart';
 import 'package:merchant/exceptions/api_exception.dart';
 import 'package:merchant/providers/toast_provider.dart';
 import 'package:merchant/repositories/auth_repository.dart';
-import 'package:client_repositories/client_repositories.dart';
 import 'package:models/models.dart';
+import 'package:signals/signals.dart';
 
-class AuthProvider extends AsyncNotifier<Merchant?> {
-  @override
-  FutureOr<Merchant?> build() async {
-    try {
-      return await MerchantRepository.getMerchant();
-    } catch (_) {
-      return null;
-    }
-  }
+final authSignal = asyncSignal<Merchant?>(const AsyncLoading());
 
-  Future<void> getMerchant() async {
-    state = AsyncLoading();
-    state = await AsyncValue.guard(
-      () => MerchantRepository.getMerchant(),
-    );
-  }
-
-  Future<void> login({required String email, required String password}) async {
-    state = AsyncLoading();
-    try {
-      final merchant = await AuthRepository.login(
-        email: email,
-        password: password,
-      );
-      state = AsyncData(merchant);
-    } catch (e) {
-      final message = e is ApiException ? e.message : 'Something went wrong.';
-      ref.showToast(message);
-      state = const AsyncData(null);
-    }
-  }
-
-  Future<void> register({
-    required String name,
-    required String businessName,
-    required String whatsappNumber,
-    required String email,
-    required String password,
-  }) async {
-    state = AsyncLoading();
-    try {
-      final merchant = await AuthRepository.register(
-        name: name,
-        businessName: businessName,
-        whatsappNumber: whatsappNumber,
-        email: email,
-        password: password,
-      );
-      state = AsyncData(merchant);
-    } catch (e) {
-      final message = e is ApiException ? e.message : 'Something went wrong.';
-      ref.showToast(message);
-      state = const AsyncData(null);
-    }
-  }
-
-  Future<void> logout() async {
-    state = const AsyncLoading();
-
-    try {
-      await AuthRepository.logout();
-      state = const AsyncData(null);
-    } catch (e) {
-      final message = e is ApiException ? e.message : 'Something went wrong.';
-      ref.showToast(message);
-      state = const AsyncData(null);
-    }
+Future<void> initAuthSignal() async {
+  try {
+    final merchant = await MerchantRepository.getMerchant();
+    authSignal.value = AsyncData(merchant);
+  } catch (e, stack) {
+    authSignal.value = AsyncError(e, stack);
   }
 }
 
-final authProvider = AsyncNotifierProvider<AuthProvider, Merchant?>(
-  () => AuthProvider(),
-);
+Future<void> getMerchant() async {
+  authSignal.value = const AsyncLoading();
+  try {
+    final merchant = await MerchantRepository.getMerchant();
+    authSignal.value = AsyncData(merchant);
+  } catch (e, stack) {
+    authSignal.value = AsyncError(e, stack);
+  }
+}
+
+Future<void> loginMerchant({
+  required String email,
+  required String password,
+}) async {
+  authSignal.value = const AsyncLoading();
+  try {
+    final merchant = await AuthRepository.login(
+      email: email,
+      password: password,
+    );
+    authSignal.value = AsyncData(merchant);
+  } catch (e) {
+    final message = e is ApiException ? e.message : 'Something went wrong.';
+    showToast(message);
+    authSignal.value = const AsyncData(null);
+  }
+}
+
+Future<void> registerMerchant({
+  required String name,
+  required String businessName,
+  required String whatsappNumber,
+  required String email,
+  required String password,
+}) async {
+  authSignal.value = const AsyncLoading();
+  try {
+    final merchant = await AuthRepository.register(
+      name: name,
+      businessName: businessName,
+      whatsappNumber: whatsappNumber,
+      email: email,
+      password: password,
+    );
+    authSignal.value = AsyncData(merchant);
+  } catch (e) {
+    final message = e is ApiException ? e.message : 'Something went wrong.';
+    showToast(message);
+    authSignal.value = const AsyncData(null);
+  }
+}
+
+Future<void> logoutMerchant() async {
+  authSignal.value = const AsyncLoading();
+
+  try {
+    await AuthRepository.logout();
+    authSignal.value = const AsyncData(null);
+  } catch (e) {
+    final message = e is ApiException ? e.message : 'Something went wrong.';
+    showToast(message);
+    authSignal.value = const AsyncData(null);
+  }
+}

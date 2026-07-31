@@ -1,33 +1,31 @@
-import 'dart:async';
-
 import 'package:client_repositories/client_repositories.dart';
-import 'package:jaspr_riverpod/jaspr_riverpod.dart';
 import 'package:merchant/providers/ui_providers.dart';
 import 'package:models/models.dart';
+import 'package:signals/signals.dart';
 
-final ordersProvider =
-    AsyncNotifierProvider.autoDispose<OrdersProvider, List<Order>>(
-      () => OrdersProvider(),
-    );
+final ordersSignal = asyncSignal<List<Order>>(const AsyncLoading());
 
-class OrdersProvider extends AsyncNotifier<List<Order>> {
-  @override
-  FutureOr<List<Order>> build() async {
-    final selectedStore = ref.watch(storeProvider);
-    if (selectedStore == null) return [];
+Future<void> refreshOrdersSignal() async {
+  final selectedStore = storeSignal.value;
+  if (selectedStore == null) {
+    ordersSignal.value = const AsyncData([]);
+    return;
+  }
 
-    final size = ref.watch(entriesProvider);
-    final page = ref.watch(ordersPageProvider);
+  final size = entriesSignal.value;
+  final page = ordersPageSignal.value;
 
+  try {
     final result = await OrderRepository.getAll(
       storeId: selectedStore.id,
       page: page,
       size: size,
     );
 
-    ref.read(ordersTotalProvider.notifier).state = result.totalItems;
-    ref.read(ordersTotalPagesProvider.notifier).state = result.totalPages;
-
-    return result.items;
+    ordersTotalSignal.value = result.totalItems;
+    ordersTotalPagesSignal.value = result.totalPages;
+    ordersSignal.value = AsyncData(result.items);
+  } catch (e, stack) {
+    ordersSignal.value = AsyncError(e, stack);
   }
 }

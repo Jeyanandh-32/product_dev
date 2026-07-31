@@ -1,14 +1,19 @@
-import 'package:jaspr/client.dart';
 import 'package:jaspr/dom.dart';
-import 'package:jaspr_riverpod/jaspr_riverpod.dart';
+import 'package:jaspr/jaspr.dart';
+import 'package:merchant/components/signal_component.dart';
 import 'package:merchant/providers/toast_provider.dart';
 
-class Toast extends StatelessComponent {
+class Toast extends SignalComponent {
   const Toast({super.key});
 
   @override
-  Component build(BuildContext context) {
-    final message = context.watch(toastProvider);
+  SignalState<Toast> createState() => _ToastState();
+}
+
+class _ToastState extends SignalState<Toast> {
+  @override
+  Component buildSignal(BuildContext context) {
+    final message = toastSignal.value;
     if (message == null) return div([]);
 
     return div(classes: 'toast toast-top toast-center z-[100]', [
