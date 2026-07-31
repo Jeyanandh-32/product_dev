@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:terminal/pages/home.dart';
 import 'package:terminal/pages/loading.dart';
 import 'package:terminal/pages/login.dart';
-import 'package:terminal/providers/auth_provider.dart';
+import 'package:terminal/signals/auth_signal.dart';
 
 class RouterListenable extends ChangeNotifier {
   RouterListenable() {

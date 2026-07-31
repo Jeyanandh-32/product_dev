@@ -5,8 +5,8 @@ import 'package:merchant/components/containers/terminals_container.dart';
 import 'package:merchant/components/modals/add_edit_store_modal.dart';
 import 'package:merchant/components/modals/add_edit_terminal_modal.dart';
 import 'package:merchant/components/signal_component.dart';
-import 'package:merchant/providers/stores_provider.dart';
-import 'package:merchant/providers/ui_providers.dart';
+import 'package:merchant/signals/stores_signal.dart';
+import 'package:merchant/signals/ui_signals.dart';
 
 class Stores extends SignalComponent {
   const Stores({super.key});

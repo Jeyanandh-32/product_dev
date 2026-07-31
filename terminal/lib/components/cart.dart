@@ -6,7 +6,7 @@ import 'package:signals_flutter/signals_flutter.dart';
 import 'package:styled_divider/styled_divider.dart';
 import 'package:terminal/components/cart_item_row.dart';
 import 'package:terminal/components/cart_summary.dart';
-import 'package:terminal/providers/cart_provider.dart';
+import 'package:terminal/signals/cart_signal.dart';
 
 class Cart extends SignalWidget {
   const Cart({super.key});

@@ -3,7 +3,7 @@ import 'package:jaspr/jaspr.dart';
 import 'package:merchant/components/drawer.dart';
 import 'package:merchant/components/header.dart';
 import 'package:merchant/components/signal_component.dart';
-import 'package:merchant/providers/ui_providers.dart';
+import 'package:merchant/signals/ui_signals.dart';
 import 'package:merchant/tabs/account.dart';
 import 'package:merchant/tabs/dashboard.dart';
 import 'package:merchant/tabs/inventory.dart';

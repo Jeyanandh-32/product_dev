@@ -1,5 +1,5 @@
 import 'package:client_repositories/client_repositories.dart';
-import 'package:merchant/providers/ui_providers.dart';
+import 'package:merchant/signals/ui_signals.dart';
 import 'package:models/models.dart';
 import 'package:signals/signals.dart';
 

@@ -10,8 +10,8 @@ import 'package:merchant/components/modals/add_edit_counter_modal.dart';
 import 'package:merchant/components/signal_component.dart';
 import 'package:merchant/components/table_pagination.dart';
 import 'package:merchant/exceptions/api_exception.dart';
-import 'package:merchant/providers/counters_provider.dart';
-import 'package:merchant/providers/ui_providers.dart';
+import 'package:merchant/signals/counters_signal.dart';
+import 'package:merchant/signals/ui_signals.dart';
 import 'package:models/models.dart';
 import 'package:web/web.dart';
 

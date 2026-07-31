@@ -7,7 +7,7 @@ import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:signals_flutter/signals_flutter.dart';
 import 'package:terminal/exceptions/api_exception.dart';
 import 'package:terminal/pages/loading.dart';
-import 'package:terminal/providers/auth_provider.dart';
+import 'package:terminal/signals/auth_signal.dart';
 import 'package:validators/validators.dart';
 
 class Login extends StatefulWidget {

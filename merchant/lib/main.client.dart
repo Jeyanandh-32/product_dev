@@ -9,7 +9,7 @@ import 'package:jaspr/client.dart';
 // Imports the [App] component.
 import 'app.dart';
 import 'config/api_client.dart';
-import 'providers/auth_provider.dart';
+import 'signals/auth_signal.dart';
 
 void main() async {
   initMerchantDio();

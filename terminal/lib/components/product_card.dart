@@ -4,7 +4,7 @@ import 'package:mix/mix.dart';
 import 'package:models/models.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:signals_flutter/signals_flutter.dart';
-import 'package:terminal/providers/cart_provider.dart';
+import 'package:terminal/signals/cart_signal.dart';
 
 class ProductCard extends SignalWidget {
   final Product product;

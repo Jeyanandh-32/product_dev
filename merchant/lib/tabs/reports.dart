@@ -1,6 +1,6 @@
 import 'package:jaspr/client.dart';
 import 'package:merchant/components/signal_component.dart';
-import 'package:merchant/providers/ui_providers.dart';
+import 'package:merchant/signals/ui_signals.dart';
 import 'package:merchant/sub_tabs/credits.dart';
 import 'package:merchant/sub_tabs/orders.dart';
 import 'package:merchant/sub_tabs/payments.dart';

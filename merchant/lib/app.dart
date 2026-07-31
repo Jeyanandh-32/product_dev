@@ -8,7 +8,7 @@ import 'package:merchant/pages/forgot_password.dart';
 import 'package:merchant/pages/home.dart';
 import 'package:merchant/pages/login.dart';
 import 'package:merchant/pages/register.dart';
-import 'package:merchant/providers/auth_provider.dart';
+import 'package:merchant/signals/auth_signal.dart';
 
 class App extends SignalComponent {
   const App({super.key});

@@ -1,7 +1,7 @@
 import 'package:client_repositories/client_repositories.dart';
 import 'package:models/models.dart';
 import 'package:signals_flutter/signals_flutter.dart';
-import 'package:terminal/providers/auth_provider.dart';
+import 'package:terminal/signals/auth_signal.dart';
 
 final categoriesSignal = futureSignal<List<Category>>(() async {
   final terminal = authSignal.value.value;

@@ -10,10 +10,10 @@ import 'package:terminal/components/category_filter_list.dart';
 import 'package:terminal/components/product_card.dart';
 import 'package:terminal/components/product_search_bar.dart';
 import 'package:terminal/pages/loading.dart';
-import 'package:terminal/providers/auth_provider.dart';
-import 'package:terminal/providers/categories_provider.dart';
-import 'package:terminal/providers/products_provider.dart';
-import 'package:terminal/providers/ui_providers.dart';
+import 'package:terminal/signals/auth_signal.dart';
+import 'package:terminal/signals/categories_signal.dart';
+import 'package:terminal/signals/products_signal.dart';
+import 'package:terminal/signals/ui_signals.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});

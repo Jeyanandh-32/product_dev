@@ -3,7 +3,7 @@ import 'package:gap/gap.dart';
 import 'package:mix/mix.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:terminal/models/cart_item.dart';
-import 'package:terminal/providers/cart_provider.dart';
+import 'package:terminal/signals/cart_signal.dart';
 
 class CartItemRow extends StatelessWidget {
   final CartItem item;

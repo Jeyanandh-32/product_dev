@@ -2,8 +2,8 @@ import 'package:jaspr/client.dart';
 import 'package:jaspr/dom.dart';
 import 'package:jaspr_lucide/jaspr_lucide.dart' hide Store;
 import 'package:merchant/components/signal_component.dart';
-import 'package:merchant/providers/stores_provider.dart';
-import 'package:merchant/providers/ui_providers.dart';
+import 'package:merchant/signals/stores_signal.dart';
+import 'package:merchant/signals/ui_signals.dart';
 import 'package:models/models.dart';
 import 'package:web/web.dart';
 

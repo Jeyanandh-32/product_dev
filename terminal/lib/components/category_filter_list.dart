@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:mix/mix.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:signals_flutter/signals_flutter.dart';
-import 'package:terminal/providers/categories_provider.dart';
-import 'package:terminal/providers/ui_providers.dart';
+import 'package:terminal/signals/categories_signal.dart';
+import 'package:terminal/signals/ui_signals.dart';
 
 class CategoryFilterList extends SignalWidget {
   const CategoryFilterList({super.key});

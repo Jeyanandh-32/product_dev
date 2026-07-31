@@ -6,7 +6,7 @@ import 'package:merchant/components/fields/form_field.dart';
 import 'package:merchant/components/layouts/auth_layout.dart';
 import 'package:merchant/components/loading.dart';
 import 'package:merchant/components/signal_component.dart';
-import 'package:merchant/providers/auth_provider.dart';
+import 'package:merchant/signals/auth_signal.dart';
 import 'package:validators/validators.dart';
 import 'package:web/web.dart' hide Lock;
 

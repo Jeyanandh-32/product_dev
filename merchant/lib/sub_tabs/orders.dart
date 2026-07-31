@@ -7,8 +7,8 @@ import 'package:merchant/components/loading.dart';
 import 'package:merchant/components/signal_component.dart';
 import 'package:merchant/components/table_pagination.dart';
 import 'package:merchant/exceptions/api_exception.dart';
-import 'package:merchant/providers/orders_provider.dart';
-import 'package:merchant/providers/ui_providers.dart';
+import 'package:merchant/signals/orders_signal.dart';
+import 'package:merchant/signals/ui_signals.dart';
 import 'package:models/models.dart';
 import 'package:web/web.dart';
 

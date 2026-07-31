@@ -2,8 +2,8 @@ import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:merchant/components/fields/form_field.dart';
 import 'package:merchant/components/modals/modal.dart';
-import 'package:merchant/providers/stores_provider.dart';
-import 'package:merchant/providers/ui_providers.dart';
+import 'package:merchant/signals/stores_signal.dart';
+import 'package:merchant/signals/ui_signals.dart';
 import 'package:models/models.dart';
 import 'package:web/web.dart';
 

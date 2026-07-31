@@ -1,7 +1,7 @@
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:merchant/components/signal_component.dart';
-import 'package:merchant/providers/toast_provider.dart';
+import 'package:merchant/signals/toast_signal.dart';
 
 class Toast extends SignalComponent {
   const Toast({super.key});

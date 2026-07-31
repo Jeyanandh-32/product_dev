@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
-import 'package:terminal/providers/router_provider.dart';
+import 'package:terminal/signals/router_signal.dart';
 import 'package:terminal/theme.dart';
 
 class MyApp extends StatelessWidget {

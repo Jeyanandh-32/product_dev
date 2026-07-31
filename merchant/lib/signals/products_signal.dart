@@ -1,20 +1,31 @@
 import 'package:client_repositories/client_repositories.dart';
+import 'package:merchant/exceptions/api_exception.dart';
+import 'package:merchant/signals/toast_signal.dart';
+import 'package:merchant/signals/ui_signals.dart';
 import 'package:models/models.dart';
-import 'package:signals_flutter/signals_flutter.dart';
-import 'package:terminal/providers/auth_provider.dart';
+import 'package:signals/signals.dart';
 
 final productsSignal = asyncSignal<List<Product>>(const AsyncLoading());
 
 Future<void> refreshProductsSignal() async {
-  final terminal = authSignal.value.value;
-  final storeId = terminal?.storeId;
-  if (storeId == null) {
+  final selectedStore = storeSignal.value;
+  if (selectedStore == null) {
     productsSignal.value = const AsyncData([]);
     return;
   }
 
+  final size = entriesSignal.value;
+  final page = productsPageSignal.value;
+
   try {
-    final result = await ProductRepository.getAll(storeId: storeId, size: 1000);
+    final result = await ProductRepository.getAll(
+      storeId: selectedStore.id,
+      page: page,
+      size: size,
+    );
+
+    productsTotalSignal.value = result.totalItems;
+    productsTotalPagesSignal.value = result.totalPages;
     productsSignal.value = AsyncData(result.items);
   } catch (e, stack) {
     productsSignal.value = AsyncError(e, stack);
@@ -36,16 +47,15 @@ class ProductsActions {
     String? description,
     String? imageUrl,
   }) async {
-    final terminal = authSignal.value.value;
-    final storeId = terminal?.storeId;
-    if (storeId == null) return;
+    final selectedStore = storeSignal.value;
+    if (selectedStore == null) return;
 
     final currentProducts = productsSignal.value.value ?? [];
     productsSignal.value = const AsyncLoading();
 
     try {
       final product = await ProductRepository.create(
-        storeId: storeId,
+        storeId: selectedStore.id,
         name: name,
         categoryId: categoryId,
         counterId: counterId,
@@ -60,8 +70,10 @@ class ProductsActions {
 
       productsSignal.value = AsyncData([...currentProducts, product]);
     } catch (e) {
+      final message = e is ApiException ? e.message : 'Something went wrong.';
+      showToast(message);
+
       productsSignal.value = AsyncData(currentProducts);
-      rethrow;
     }
   }
 
@@ -102,8 +114,10 @@ class ProductsActions {
         currentProducts.map((p) => p.id == id ? updatedProduct : p).toList(),
       );
     } catch (e) {
+      final message = e is ApiException ? e.message : 'Something went wrong.';
+      showToast(message);
+
       productsSignal.value = AsyncData(currentProducts);
-      rethrow;
     }
   }
 
@@ -134,8 +148,10 @@ class ProductsActions {
         }).toList(),
       );
     } catch (e) {
+      final message = e is ApiException ? e.message : 'Something went wrong.';
+      showToast(message);
+
       productsSignal.value = AsyncData(currentProducts);
-      rethrow;
     }
   }
 }

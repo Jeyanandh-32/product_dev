@@ -3,11 +3,11 @@ import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_lucide/generated_icons/chevron_down.dart';
 import 'package:merchant/components/fields/form_field.dart';
 import 'package:merchant/components/modals/modal.dart';
-import 'package:merchant/providers/categories_provider.dart';
-import 'package:merchant/providers/counters_provider.dart';
-import 'package:merchant/providers/products_provider.dart';
-import 'package:merchant/providers/toast_provider.dart';
-import 'package:merchant/providers/ui_providers.dart';
+import 'package:merchant/signals/categories_signal.dart';
+import 'package:merchant/signals/counters_signal.dart';
+import 'package:merchant/signals/products_signal.dart';
+import 'package:merchant/signals/toast_signal.dart';
+import 'package:merchant/signals/ui_signals.dart';
 import 'package:models/models.dart';
 import 'package:web/web.dart';
 
