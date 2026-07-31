@@ -14,7 +14,14 @@ final categoriesSignal = futureSignal<List<Category>>(() async {
       storeId: storeId,
       size: 1000,
     );
-    return result.items;
+    final items = result.items;
+    if (items.isNotEmpty) {
+      final current = selectedCategorySignal.value;
+      if (current == null || !items.any((c) => c.id == current.id)) {
+        selectedCategorySignal.value = items.first;
+      }
+    }
+    return items;
   } catch (e) {
     return [];
   }

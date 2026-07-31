@@ -22,6 +22,14 @@ class CategoryFilterList extends SignalWidget {
           SizedBox(height: 38, child: Center(child: Text('Error: $err'))),
       data: (categories) {
         if (categories.isEmpty) return const SizedBox.shrink();
+
+        if (selectedCategory == null ||
+            !categories.any((c) => c.id == selectedCategory.id)) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            selectedCategorySignal.value = categories.first;
+          });
+        }
+
         return SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: RowBox(
