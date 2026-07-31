@@ -1,9 +1,15 @@
 import 'package:client_repositories/client_repositories.dart';
 import 'package:merchant/exceptions/api_exception.dart';
+import 'package:merchant/signals/navigation_signal.dart';
+import 'package:merchant/signals/stores_signal.dart';
 import 'package:merchant/signals/toast_signal.dart';
-import 'package:merchant/signals/ui_signals.dart';
 import 'package:models/models.dart';
 import 'package:signals/signals.dart';
+
+final countersPageSignal = signal<int>(1);
+final countersTotalSignal = signal<int>(0);
+final countersTotalPagesSignal = signal<int>(1);
+final editingCounterSignal = signal<Counter?>(null);
 
 final countersSignal = asyncSignal<List<Counter>>(const AsyncLoading());
 

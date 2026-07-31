@@ -3,6 +3,8 @@ import 'package:models/models.dart';
 import 'package:signals_flutter/signals_flutter.dart';
 import 'package:terminal/models/cart_item.dart';
 
+final paymentModeSignal = signal<String>('cash');
+
 class CartState {
   final List<CartItem> items;
   final int noOfItems;

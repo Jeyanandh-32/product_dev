@@ -1,9 +1,11 @@
 import 'package:client_repositories/client_repositories.dart';
 import 'package:merchant/exceptions/api_exception.dart';
+import 'package:merchant/signals/stores_signal.dart';
 import 'package:merchant/signals/toast_signal.dart';
-import 'package:merchant/signals/ui_signals.dart';
 import 'package:models/models.dart';
 import 'package:signals/signals.dart';
+
+final editingTerminalSignal = signal<Terminal?>(null);
 
 final terminalsSignal = asyncSignal<List<Terminal>>(const AsyncLoading());
 

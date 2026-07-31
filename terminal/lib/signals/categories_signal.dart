@@ -3,6 +3,8 @@ import 'package:models/models.dart';
 import 'package:signals_flutter/signals_flutter.dart';
 import 'package:terminal/signals/auth_signal.dart';
 
+final selectedCategorySignal = signal<Category?>(null);
+
 final categoriesSignal = futureSignal<List<Category>>(() async {
   final terminal = authSignal.value.value;
   final storeId = terminal?.storeId;

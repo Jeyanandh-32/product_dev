@@ -3,7 +3,7 @@ import 'package:jaspr/jaspr.dart';
 import 'package:merchant/components/fields/form_field.dart';
 import 'package:merchant/components/modals/modal.dart';
 import 'package:merchant/signals/categories_signal.dart';
-import 'package:merchant/signals/ui_signals.dart';
+import 'package:merchant/signals/navigation_signal.dart';
 import 'package:models/models.dart';
 import 'package:web/web.dart';
 

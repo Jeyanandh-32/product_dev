@@ -13,7 +13,6 @@ import 'package:terminal/pages/loading.dart';
 import 'package:terminal/signals/auth_signal.dart';
 import 'package:terminal/signals/categories_signal.dart';
 import 'package:terminal/signals/products_signal.dart';
-import 'package:terminal/signals/ui_signals.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});

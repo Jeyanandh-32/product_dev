@@ -3,7 +3,7 @@ import 'package:jaspr/dom.dart';
 import 'package:jaspr_lucide/jaspr_lucide.dart';
 import 'package:merchant/components/signal_component.dart';
 import 'package:merchant/signals/auth_signal.dart';
-import 'package:merchant/signals/ui_signals.dart';
+import 'package:merchant/signals/navigation_signal.dart';
 
 class Drawer extends SignalComponent {
   const Drawer({super.key, this.classes});

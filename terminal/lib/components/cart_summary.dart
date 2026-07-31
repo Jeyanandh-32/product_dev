@@ -7,7 +7,6 @@ import 'package:styled_divider/styled_divider.dart';
 import 'package:terminal/exceptions/api_exception.dart';
 import 'package:terminal/signals/auth_signal.dart';
 import 'package:terminal/signals/cart_signal.dart';
-import 'package:terminal/signals/ui_signals.dart';
 
 class CartSummary extends StatefulWidget {
   const CartSummary({super.key});

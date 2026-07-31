@@ -1,7 +1,12 @@
 import 'package:client_repositories/client_repositories.dart';
-import 'package:merchant/signals/ui_signals.dart';
+import 'package:merchant/signals/navigation_signal.dart';
+import 'package:merchant/signals/stores_signal.dart';
 import 'package:models/models.dart';
 import 'package:signals/signals.dart';
+
+final ordersPageSignal = signal<int>(1);
+final ordersTotalSignal = signal<int>(0);
+final ordersTotalPagesSignal = signal<int>(1);
 
 final ordersSignal = asyncSignal<List<Order>>(const AsyncLoading());
 

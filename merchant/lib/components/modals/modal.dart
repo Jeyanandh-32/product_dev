@@ -1,7 +1,7 @@
 import 'package:jaspr/client.dart';
 import 'package:jaspr/dom.dart';
 import 'package:jaspr_lucide/generated_icons/x.dart';
-import 'package:merchant/signals/ui_signals.dart';
+import 'package:merchant/signals/navigation_signal.dart';
 
 class Modal extends StatelessComponent {
   final String title;

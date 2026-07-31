@@ -11,7 +11,8 @@ import 'package:merchant/components/signal_component.dart';
 import 'package:merchant/components/table_pagination.dart';
 import 'package:merchant/exceptions/api_exception.dart';
 import 'package:merchant/signals/products_signal.dart';
-import 'package:merchant/signals/ui_signals.dart';
+import 'package:merchant/signals/navigation_signal.dart';
+import 'package:merchant/signals/stores_signal.dart';
 import 'package:web/web.dart';
 
 class Products extends SignalComponent {

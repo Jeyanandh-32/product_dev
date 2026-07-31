@@ -3,6 +3,8 @@ import 'package:models/models.dart';
 import 'package:signals_flutter/signals_flutter.dart';
 import 'package:terminal/signals/auth_signal.dart';
 
+final searchQuerySignal = signal<String>('');
+
 final productsSignal = asyncSignal<List<Product>>(const AsyncLoading());
 
 Future<void> refreshProductsSignal() async {

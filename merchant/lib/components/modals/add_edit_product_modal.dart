@@ -7,7 +7,7 @@ import 'package:merchant/signals/categories_signal.dart';
 import 'package:merchant/signals/counters_signal.dart';
 import 'package:merchant/signals/products_signal.dart';
 import 'package:merchant/signals/toast_signal.dart';
-import 'package:merchant/signals/ui_signals.dart';
+import 'package:merchant/signals/navigation_signal.dart';
 import 'package:models/models.dart';
 import 'package:web/web.dart';
 

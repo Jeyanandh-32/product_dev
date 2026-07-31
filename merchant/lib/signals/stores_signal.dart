@@ -1,9 +1,12 @@
 import 'package:client_repositories/client_repositories.dart';
 import 'package:merchant/exceptions/api_exception.dart';
 import 'package:merchant/signals/toast_signal.dart';
-import 'package:merchant/signals/ui_signals.dart';
 import 'package:models/models.dart';
 import 'package:signals/signals.dart';
+
+final storeSignal = signal<Store?>(null);
+final selectedTabStoreSignal = signal<Store?>(null);
+final editingStoreSignal = signal<Store?>(null);
 
 final storesSignal = asyncSignal<List<Store>>(const AsyncLoading());
 

@@ -9,7 +9,7 @@ import 'package:merchant/components/signal_component.dart';
 import 'package:merchant/exceptions/api_exception.dart';
 import 'package:merchant/signals/stores_signal.dart';
 import 'package:merchant/signals/terminals_signal.dart';
-import 'package:merchant/signals/ui_signals.dart';
+import 'package:merchant/signals/navigation_signal.dart';
 
 class StoresContainer extends SignalComponent {
   const StoresContainer({super.key});

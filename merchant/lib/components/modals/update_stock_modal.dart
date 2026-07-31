@@ -4,7 +4,7 @@ import 'package:merchant/components/fields/form_field.dart';
 import 'package:merchant/components/modals/modal.dart';
 import 'package:merchant/signals/products_signal.dart';
 import 'package:merchant/signals/toast_signal.dart';
-import 'package:merchant/signals/ui_signals.dart';
+import 'package:merchant/signals/navigation_signal.dart';
 import 'package:models/models.dart';
 import 'package:web/web.dart';
 
