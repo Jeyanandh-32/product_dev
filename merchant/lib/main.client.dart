@@ -11,9 +11,9 @@ import 'app.dart';
 import 'config/api_client.dart';
 import 'signals/auth_signal.dart';
 
-void main() async {
+void main() {
   initMerchantDio();
-  await initAuthSignal();
+  initAuthSignal();
   // Attaches the [App] component to the <body> of the page.
   runApp(const App());
 }
