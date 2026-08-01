@@ -16,4 +16,5 @@ abstract final class ApiEndpoints {
   static const String products = '/$version/products';
   static const String stocks = '/$version/stocks';
   static const String orders = '/$version/orders';
+  static const String payments = '/$version/payments';
 }

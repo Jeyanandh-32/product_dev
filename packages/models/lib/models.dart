@@ -8,6 +8,7 @@ export 'src/order_item/order_item.dart';
 export 'src/order_source.dart';
 export 'src/order_status.dart';
 export 'src/order_type.dart';
+export 'src/payment/payment.dart';
 export 'src/payment_method.dart';
 export 'src/payment_status.dart';
 export 'src/product/product.dart';

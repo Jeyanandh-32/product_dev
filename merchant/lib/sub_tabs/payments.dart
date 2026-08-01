@@ -1,30 +1,17 @@
 import 'package:jaspr/client.dart';
 import 'package:jaspr/dom.dart';
 import 'package:jaspr_lucide/generated_icons/chevron_down.dart';
+import 'package:merchant/components/centered_message.dart';
 import 'package:merchant/components/fields/searchbar.dart';
+import 'package:merchant/components/loading.dart';
 import 'package:merchant/components/signal_component.dart';
 import 'package:merchant/components/table_pagination.dart';
+import 'package:merchant/exceptions/api_exception.dart';
 import 'package:merchant/signals/navigation_signal.dart';
+import 'package:merchant/signals/payments_signal.dart';
+import 'package:merchant/signals/stores_signal.dart';
 import 'package:models/models.dart';
 import 'package:web/web.dart';
-
-class PaymentItem {
-  final String orderReference;
-  final String date;
-  final String orderId;
-  final double orderAmount;
-  final double paidAmount;
-  final PaymentMethod paymentMode;
-
-  const PaymentItem({
-    required this.orderReference,
-    required this.date,
-    required this.orderId,
-    required this.orderAmount,
-    required this.paidAmount,
-    required this.paymentMode,
-  });
-}
 
 class Payments extends SignalComponent {
   const Payments({super.key});
@@ -34,52 +21,47 @@ class Payments extends SignalComponent {
 }
 
 class _PaymentsState extends SignalState<Payments> {
-  int _currentPage = 1;
-
-  final List<PaymentItem> _mockPayments = const [
-    PaymentItem(
-      orderReference: 'REF-2026-001',
-      date: '01-Aug-2026 10:30 AM',
-      orderId: '1001',
-      orderAmount: 35.06,
-      paidAmount: 35.06,
-      paymentMode: PaymentMethod.cash,
-    ),
-    PaymentItem(
-      orderReference: 'REF-2026-002',
-      date: '01-Aug-2026 11:15 AM',
-      orderId: '1002',
-      orderAmount: 120.50,
-      paidAmount: 120.50,
-      paymentMode: PaymentMethod.upi,
-    ),
-    PaymentItem(
-      orderReference: 'REF-2026-003',
-      date: '01-Aug-2026 12:45 PM',
-      orderId: '1003',
-      orderAmount: 450.00,
-      paidAmount: 450.00,
-      paymentMode: PaymentMethod.cash,
-    ),
-    PaymentItem(
-      orderReference: 'REF-2026-004',
-      date: '01-Aug-2026 01:20 PM',
-      orderId: '1004',
-      orderAmount: 89.99,
-      paidAmount: 89.99,
-      paymentMode: PaymentMethod.upi,
-    ),
-  ];
+  @override
+  void initState() {
+    super.initState();
+    refreshPaymentsSignal();
+  }
 
   void _changeEntry(int entry) {
     entriesSignal.value = entry;
-    _currentPage = 1;
-    setState(() {});
+    paymentsPageSignal.value = 1;
+    refreshPaymentsSignal();
 
     final activeElement = document.activeElement;
     if (activeElement != null) {
       (activeElement as HTMLElement).blur();
     }
+  }
+
+  String _formatDate(DateTime dt) {
+    final local = dt.toLocal();
+    final day = local.day.toString().padLeft(2, '0');
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+    final month = months[local.month - 1];
+    final year = local.year;
+    final hourNum = local.hour % 12 == 0 ? 12 : local.hour % 12;
+    final hour = hourNum.toString().padLeft(2, '0');
+    final minute = local.minute.toString().padLeft(2, '0');
+    final ampm = local.hour >= 12 ? 'PM' : 'AM';
+    return '$day-$month-$year $hour:$minute $ampm';
   }
 
   String _formatPaymentType(PaymentMethod method) {
@@ -92,6 +74,10 @@ class _PaymentsState extends SignalState<Payments> {
   @override
   Component buildSignal(BuildContext context) {
     final entries = entriesSignal.value;
+    final payments = paymentsSignal.value;
+    final currentPage = paymentsPageSignal.value;
+    final totalPages = paymentsTotalPagesSignal.value;
+    final store = storeSignal.value;
 
     return div(
       classes:
@@ -155,33 +141,45 @@ class _PaymentsState extends SignalState<Payments> {
           ],
         ),
 
-        div(classes: 'flex-1 min-h-0 overflow-auto', [
-          table(
-            classes: 'table table-zebra table-pin-rows table-pin-cols',
-            [
-              tableHead(),
-              tbody([
-                for (final item in _mockPayments)
-                  tableRow(
-                    orderReference: item.orderReference,
-                    date: item.date,
-                    orderId: item.orderId,
-                    orderAmount: item.orderAmount,
-                    paidAmount: item.paidAmount,
-                    paymentMode: _formatPaymentType(item.paymentMode),
-                  ),
-              ]),
-            ],
-          ),
-        ]),
+        if (payments.isLoading)
+          Loading(text: 'Loading payments...', fullScreen: false)
+        else if (store == null)
+          CenteredMessage(message: 'Create Store to view payments.')
+        else if (payments.hasError)
+          CenteredMessage(
+            message: payments.error is ApiException
+                ? (payments.error as ApiException).message
+                : 'Failed to load payments. Please try again.',
+          )
+        else if (payments.hasValue && payments.value!.isEmpty)
+          CenteredMessage(message: 'No Payments found.')
+        else
+          div(classes: 'flex-1 min-h-0 overflow-auto', [
+            table(
+              classes: 'table table-zebra table-pin-rows table-pin-cols',
+              [
+                tableHead(),
+                tbody([
+                  for (final payment in payments.value!)
+                    tableRow(
+                      orderReference: payment.orderReference,
+                      date: _formatDate(payment.date),
+                      orderId: payment.orderId,
+                      orderAmount: payment.orderAmount,
+                      paidAmount: payment.paidAmount,
+                      paymentMode: _formatPaymentType(payment.paymentMode),
+                    ),
+                ]),
+              ],
+            ),
+          ]),
 
         TablePagination(
-          currentPage: _currentPage,
-          totalPages: 1,
+          currentPage: currentPage,
+          totalPages: totalPages,
           onPageChanged: (page) {
-            setState(() {
-              _currentPage = page;
-            });
+            paymentsPageSignal.value = page;
+            refreshPaymentsSignal();
           },
         ),
       ],

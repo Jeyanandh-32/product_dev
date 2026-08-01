@@ -6,6 +6,7 @@ import 'package:merchant/signals/categories_signal.dart';
 import 'package:merchant/signals/counters_signal.dart';
 import 'package:merchant/signals/navigation_signal.dart';
 import 'package:merchant/signals/orders_signal.dart';
+import 'package:merchant/signals/payments_signal.dart';
 import 'package:merchant/signals/products_signal.dart';
 import 'package:merchant/signals/stores_signal.dart';
 import 'package:models/models.dart';
@@ -25,6 +26,7 @@ class _HeaderState extends SignalState<Header> {
     refreshCategoriesSignal();
     refreshCountersSignal();
     refreshOrdersSignal();
+    refreshPaymentsSignal();
 
     final activeElement = document.activeElement;
     if (activeElement != null) {
