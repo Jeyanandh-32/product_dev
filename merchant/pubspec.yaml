@@ -9,6 +9,7 @@ environment:
 resolution: workspace
 
 dependencies:
+  date_format: ^2.0.9
   dio: ^5.9.2
   jaspr: ^0.23.2
   jaspr_lucide: ^0.55.0

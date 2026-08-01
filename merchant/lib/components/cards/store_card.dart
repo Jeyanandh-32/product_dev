@@ -19,11 +19,24 @@ class StoreCard extends StatelessComponent {
   final VoidCallback? onClick;
   final VoidCallback? onEdit;
 
+  String get _containerClass {
+    if (isSelected) {
+      return 'flex flex-col gap-4 p-4 border border-accent border-2 rounded-lg shadow-2xs transition-all duration-200 hover:cursor-pointer hover:border-accent/50';
+    }
+    return 'flex flex-col gap-4 p-4 border border-border-medium rounded-lg shadow-2xs transition-all duration-200 hover:cursor-pointer hover:border-accent/50';
+  }
+
+  String get _statusBadgeClass {
+    if (store.isActive) {
+      return 'bg-soft-green text-soft-green-content rounded-full px-3 py-1 text-xs font-semibold';
+    }
+    return 'bg-soft-red text-soft-red-content rounded-full px-3 py-1 text-xs font-semibold';
+  }
+
   @override
   Component build(BuildContext context) {
     return div(
-      classes:
-          'flex flex-col gap-4 p-4 border ${isSelected ? 'border-accent border-2' : 'border-border-medium'} rounded-lg shadow-2xs transition-all duration-200 hover:cursor-pointer hover:border-accent/50',
+      classes: _containerClass,
       events: {
         if (onClick != null) 'click': (e) => onClick!(),
       },
@@ -55,8 +68,7 @@ class StoreCard extends StatelessComponent {
               ],
             ),
             div(
-              classes:
-                  '${store.isActive ? 'bg-soft-green text-soft-green-content' : 'bg-soft-red text-soft-red-content'} rounded-full px-3 py-1 text-xs font-semibold',
+              classes: _statusBadgeClass,
               [
                 .text(store.isActive ? 'ACTIVE' : 'INACTIVE'),
               ],

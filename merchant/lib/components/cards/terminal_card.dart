@@ -13,6 +13,13 @@ class TerminalCard extends StatelessComponent {
   final Terminal terminal;
   final VoidCallback? onEdit;
 
+  String get _statusBadgeClass {
+    if (terminal.isActive) {
+      return 'bg-soft-green text-soft-green-content rounded-full px-3 py-1 text-xs font-semibold hover:cursor-pointer transition-all duration-300';
+    }
+    return 'bg-soft-red text-soft-red-content rounded-full px-3 py-1 text-xs font-semibold hover:cursor-pointer transition-all duration-300';
+  }
+
   @override
   Component build(BuildContext context) {
     return div(
@@ -46,8 +53,7 @@ class TerminalCard extends StatelessComponent {
               ],
             ),
             div(
-              classes:
-                  '${terminal.isActive ? 'bg-soft-green text-soft-green-content' : 'bg-soft-red text-soft-red-content'} rounded-full px-3 py-1 text-xs font-semibold hover:cursor-pointer transition-all duration-300',
+              classes: _statusBadgeClass,
               [
                 .text(terminal.isActive ? 'ACTIVE' : 'INACTIVE'),
               ],

@@ -69,8 +69,7 @@ class TablePagination extends StatelessComponent {
             for (final item in _getPageNumbers())
               switch (item) {
                 final int p => button(
-                  classes:
-                      'btn w-8 h-8 rounded-lg ${p == currentPage ? 'bg-accent text-white hover:bg-accent' : 'bg-neutral hover:bg-base-300'}',
+                  classes: _pageButtonClass(p, currentPage),
                   onClick: p == currentPage ? null : () => onPageChanged(p),
                   [
                     .text('$p'),
@@ -101,5 +100,12 @@ class TablePagination extends StatelessComponent {
         ),
       ],
     );
+  }
+
+  String _pageButtonClass(int page, int currentPage) {
+    if (page == currentPage) {
+      return 'btn w-8 h-8 rounded-lg bg-accent text-white hover:bg-accent';
+    }
+    return 'btn w-8 h-8 rounded-lg bg-neutral hover:bg-base-300';
   }
 }

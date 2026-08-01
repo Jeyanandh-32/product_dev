@@ -1,3 +1,4 @@
+import 'package:date_format/date_format.dart' as df;
 import 'package:jaspr/client.dart';
 import 'package:jaspr/dom.dart';
 import 'package:jaspr_lucide/generated_icons/calendar.dart';
@@ -38,68 +39,48 @@ class _DateRangePickerState extends SignalState<DateRangePicker> {
   String _formatDateForDisplay(String? dateStr) {
     final cleaned = _cleanDate(dateStr);
     if (cleaned.isEmpty) return '';
-    final parts = cleaned.split('-');
-    if (parts.length != 3) return cleaned;
-    final year = parts[0];
-    final month = int.tryParse(parts[1]) ?? 1;
-    final day = parts[2];
-    const months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ];
-    return '$day ${months[month - 1]} $year';
+    final dt = DateTime.tryParse(cleaned);
+    if (dt == null) return cleaned;
+    return df.formatDate(dt.toLocal(), [df.dd, ' ', df.M, ' ', df.yyyy]);
   }
 
-  String _getTodayString() {
-    final now = DateTime.now().toLocal();
-    final year = now.year;
-    final month = now.month.toString().padLeft(2, '0');
-    final day = now.day.toString().padLeft(2, '0');
-    return '$year-$month-$day';
-  }
+  String _getTodayString() => df.formatDate(DateTime.now().toLocal(), [
+    df.yyyy,
+    '-',
+    df.mm,
+    '-',
+    df.dd,
+  ]);
 
-  String _getYesterdayString() {
-    final yesterday = DateTime.now().toLocal().subtract(
-      const Duration(days: 1),
-    );
-    final year = yesterday.year;
-    final month = yesterday.month.toString().padLeft(2, '0');
-    final day = yesterday.day.toString().padLeft(2, '0');
-    return '$year-$month-$day';
-  }
+  String _getYesterdayString() => df.formatDate(
+    DateTime.now().toLocal().subtract(const Duration(days: 1)),
+    [df.yyyy, '-', df.mm, '-', df.dd],
+  );
 
-  String _getLast7DaysString() {
-    final past = DateTime.now().toLocal().subtract(const Duration(days: 6));
-    final year = past.year;
-    final month = past.month.toString().padLeft(2, '0');
-    final day = past.day.toString().padLeft(2, '0');
-    return '$year-$month-$day';
-  }
+  String _getLast7DaysString() => df.formatDate(
+    DateTime.now().toLocal().subtract(const Duration(days: 6)),
+    [df.yyyy, '-', df.mm, '-', df.dd],
+  );
 
   String _getStartOfMonthString() {
     final now = DateTime.now().toLocal();
-    final year = now.year;
-    final month = now.month.toString().padLeft(2, '0');
-    return '$year-$month-01';
+    return df.formatDate(
+      DateTime(now.year, now.month, 1),
+      [df.yyyy, '-', df.mm, '-', df.dd],
+    );
   }
 
   String _getEndOfMonthString() {
     final now = DateTime.now().toLocal();
     final lastDay = DateTime(now.year, now.month + 1, 0);
-    final year = lastDay.year;
-    final month = lastDay.month.toString().padLeft(2, '0');
-    final day = lastDay.day.toString().padLeft(2, '0');
-    return '$year-$month-$day';
+    return df.formatDate(lastDay, [df.yyyy, '-', df.mm, '-', df.dd]);
+  }
+
+  String _presetButtonClass(bool isSelected) {
+    if (isSelected) {
+      return 'btn btn-xs rounded-full border-0 shadow-none btn-primary text-white font-medium transition-colors';
+    }
+    return 'btn btn-xs rounded-full border-0 shadow-none bg-base-200 text-gray-700 hover:bg-primary hover:text-white font-normal transition-colors';
   }
 
   void _closeDropdown() {
@@ -194,32 +175,27 @@ class _DateRangePickerState extends SignalState<DateRangePicker> {
             ),
             div(classes: 'flex flex-wrap gap-1.5', [
               button(
-                classes:
-                    'btn btn-xs rounded-full border-0 shadow-none ${isToday ? 'btn-primary text-white font-medium' : 'bg-base-200 text-gray-700 hover:bg-primary hover:text-white font-normal'} transition-colors',
+                classes: _presetButtonClass(isToday),
                 onClick: () => _applyRange(today, today),
                 [.text('Today')],
               ),
               button(
-                classes:
-                    'btn btn-xs rounded-full border-0 shadow-none ${isYesterday ? 'btn-primary text-white font-medium' : 'bg-base-200 text-gray-700 hover:bg-primary hover:text-white font-normal'} transition-colors',
+                classes: _presetButtonClass(isYesterday),
                 onClick: () => _applyRange(yesterday, yesterday),
                 [.text('Yesterday')],
               ),
               button(
-                classes:
-                    'btn btn-xs rounded-full border-0 shadow-none ${isLast7 ? 'btn-primary text-white font-medium' : 'bg-base-200 text-gray-700 hover:bg-primary hover:text-white font-normal'} transition-colors',
+                classes: _presetButtonClass(isLast7),
                 onClick: () => _applyRange(last7, today),
                 [.text('Last 7 Days')],
               ),
               button(
-                classes:
-                    'btn btn-xs rounded-full border-0 shadow-none ${isThisMonth ? 'btn-primary text-white font-medium' : 'bg-base-200 text-gray-700 hover:bg-primary hover:text-white font-normal'} transition-colors',
+                classes: _presetButtonClass(isThisMonth),
                 onClick: () => _applyRange(monthStart, monthEnd),
                 [.text('This Month')],
               ),
               button(
-                classes:
-                    'btn btn-xs rounded-full border-0 shadow-none ${isAllTime ? 'btn-primary text-white font-medium' : 'bg-base-200 text-gray-700 hover:bg-primary hover:text-white font-normal'} transition-colors',
+                classes: _presetButtonClass(isAllTime),
                 onClick: () => _applyRange(null, null),
                 [.text('All Time')],
               ),

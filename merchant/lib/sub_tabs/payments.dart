@@ -1,3 +1,4 @@
+import 'package:date_format/date_format.dart' as df;
 import 'package:jaspr/client.dart';
 import 'package:jaspr/dom.dart';
 import 'package:jaspr_lucide/generated_icons/chevron_down.dart';
@@ -47,27 +48,8 @@ class _PaymentsState extends SignalState<Payments> {
     _closeDropdowns();
   }
 
-  String _formatDate(DateTime dt) {
-    final local = dt.toLocal();
-    final day = local.day.toString().padLeft(2, '0');
-    const months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ];
-    final month = months[local.month - 1];
-    final year = local.year;
-    return '$day-$month-$year';
-  }
+  String _formatDate(DateTime dt) =>
+      df.formatDate(dt.toLocal(), [df.dd, '-', df.M, '-', df.yyyy]);
 
   String _formatPaymentType(PaymentMethod method) {
     return switch (method) {
