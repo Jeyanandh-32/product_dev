@@ -11,6 +11,7 @@ final editingStoreSignal = signal<Store?>(null);
 final storesSignal = asyncSignal<List<Store>>(const AsyncLoading());
 
 Future<void> refreshStoresSignal() async {
+  storesSignal.value = const AsyncLoading();
   try {
     final stores = await StoreRepository.getAll();
     storesSignal.value = AsyncData(stores);

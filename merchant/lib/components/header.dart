@@ -2,8 +2,12 @@ import 'package:jaspr/client.dart';
 import 'package:jaspr/dom.dart';
 import 'package:jaspr_lucide/jaspr_lucide.dart' hide Store;
 import 'package:merchant/components/signal_component.dart';
-import 'package:merchant/signals/stores_signal.dart';
+import 'package:merchant/signals/categories_signal.dart';
+import 'package:merchant/signals/counters_signal.dart';
 import 'package:merchant/signals/navigation_signal.dart';
+import 'package:merchant/signals/orders_signal.dart';
+import 'package:merchant/signals/products_signal.dart';
+import 'package:merchant/signals/stores_signal.dart';
 import 'package:models/models.dart';
 import 'package:web/web.dart';
 
@@ -17,6 +21,11 @@ class Header extends SignalComponent {
 class _HeaderState extends SignalState<Header> {
   void _changeStore(Store store) {
     storeSignal.value = store;
+    refreshProductsSignal();
+    refreshCategoriesSignal();
+    refreshCountersSignal();
+    refreshOrdersSignal();
+
     final activeElement = document.activeElement;
     if (activeElement != null) {
       (activeElement as HTMLElement).blur();

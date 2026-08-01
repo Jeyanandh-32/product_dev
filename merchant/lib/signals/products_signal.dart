@@ -20,6 +20,8 @@ Future<void> refreshProductsSignal() async {
     return;
   }
 
+  productsSignal.value = const AsyncLoading();
+
   final size = entriesSignal.value;
   final page = productsPageSignal.value;
 

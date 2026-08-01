@@ -10,6 +10,7 @@ final editingTerminalSignal = signal<Terminal?>(null);
 final terminalsSignal = asyncSignal<List<Terminal>>(const AsyncLoading());
 
 Future<void> refreshTerminalsSignal() async {
+  terminalsSignal.value = const AsyncLoading();
   try {
     final terminals = await TerminalRepository.getAll();
     terminalsSignal.value = AsyncData(terminals);

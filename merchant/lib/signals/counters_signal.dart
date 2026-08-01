@@ -20,6 +20,8 @@ Future<void> refreshCountersSignal() async {
     return;
   }
 
+  countersSignal.value = const AsyncLoading();
+
   final size = entriesSignal.value;
   final page = countersPageSignal.value;
 

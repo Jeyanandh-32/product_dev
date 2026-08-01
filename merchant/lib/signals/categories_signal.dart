@@ -20,6 +20,8 @@ Future<void> refreshCategoriesSignal() async {
     return;
   }
 
+  categoriesSignal.value = const AsyncLoading();
+
   final size = entriesSignal.value;
   final page = categoriesPageSignal.value;
 
