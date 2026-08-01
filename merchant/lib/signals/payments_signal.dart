@@ -24,6 +24,8 @@ Future<void> refreshPaymentsSignal() async {
   final page = paymentsPageSignal.value;
   final fromDate = reportsFromDateSignal.value;
   final toDate = reportsToDateSignal.value;
+  final paymentMethod = reportsPaymentMethodSignal.value;
+  final paymentStatus = reportsPaymentStatusSignal.value;
 
   try {
     final result = await PaymentRepository.getAll(
@@ -32,6 +34,8 @@ Future<void> refreshPaymentsSignal() async {
       size: size,
       fromDate: fromDate,
       toDate: toDate,
+      paymentMethod: paymentMethod,
+      paymentStatus: paymentStatus,
     );
 
     paymentsTotalSignal.value = result.totalItems;

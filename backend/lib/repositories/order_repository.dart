@@ -18,12 +18,12 @@ class OrderRepository {
     required PaymentStatus paymentStatus,
     required PaymentMethod paymentMethod,
     required int subtotal,
+    required int discountTotal,
     required int taxTotal,
     required int grandTotal,
-    int discountTotal = 0,
     String? terminalCode,
   }) async {
-    final row = _db.orders
+    final row = await _db.orders
         .insertValue(
           merchantId: merchantId,
           storeId: storeId,
@@ -95,6 +95,9 @@ class OrderRepository {
     String? storeId,
     DateTime? fromDate,
     DateTime? toDate,
+    String? paymentMethod,
+    String? status,
+    String? paymentStatus,
     int? limit,
     int? offset,
   }) async {
@@ -112,6 +115,22 @@ class OrderRepository {
 
     if (toDate != null) {
       query = query.where((o) => o.createdAt.isBeforeValue(toDate));
+    }
+
+    if (paymentMethod != null && paymentMethod.isNotEmpty) {
+      query = query.where(
+        (o) => o.paymentMethod.equals(ts.toExpr(paymentMethod)),
+      );
+    }
+
+    if (status != null && status.isNotEmpty) {
+      query = query.where((o) => o.status.equals(ts.toExpr(status)));
+    }
+
+    if (paymentStatus != null && paymentStatus.isNotEmpty) {
+      query = query.where(
+        (o) => o.paymentStatus.equals(ts.toExpr(paymentStatus)),
+      );
     }
 
     if (offset != null) {
@@ -134,6 +153,9 @@ class OrderRepository {
     String? storeId,
     DateTime? fromDate,
     DateTime? toDate,
+    String? paymentMethod,
+    String? status,
+    String? paymentStatus,
   }) async {
     var query = _db.orders.where(
       (o) => o.merchantId.equals(ts.toExpr(merchantId)),
@@ -149,6 +171,22 @@ class OrderRepository {
 
     if (toDate != null) {
       query = query.where((o) => o.createdAt.isBeforeValue(toDate));
+    }
+
+    if (paymentMethod != null && paymentMethod.isNotEmpty) {
+      query = query.where(
+        (o) => o.paymentMethod.equals(ts.toExpr(paymentMethod)),
+      );
+    }
+
+    if (status != null && status.isNotEmpty) {
+      query = query.where((o) => o.status.equals(ts.toExpr(status)));
+    }
+
+    if (paymentStatus != null && paymentStatus.isNotEmpty) {
+      query = query.where(
+        (o) => o.paymentStatus.equals(ts.toExpr(paymentStatus)),
+      );
     }
 
     final total = await query.count().fetch();

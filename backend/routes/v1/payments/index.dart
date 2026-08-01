@@ -26,6 +26,8 @@ Future<Response> _onGet(RequestContext context) async {
   final queryParams = context.request.uri.queryParameters;
   final fromDateStr = queryParams['fromDate'];
   final toDateStr = queryParams['toDate'];
+  final paymentMethodStr = queryParams['paymentMethod'];
+  final paymentStatusStr = queryParams['paymentStatus'];
 
   final fromDate = fromDateStr != null && fromDateStr.isNotEmpty
       ? DateTime.tryParse(fromDateStr)?.toUtc()
@@ -55,6 +57,8 @@ Future<Response> _onGet(RequestContext context) async {
       storeId: context.storeId,
       fromDate: fromDate,
       toDate: toDate,
+      paymentMethod: paymentMethodStr,
+      paymentStatus: paymentStatusStr,
     );
 
     final offset = (page - 1) * size;
@@ -63,6 +67,8 @@ Future<Response> _onGet(RequestContext context) async {
       storeId: context.storeId,
       fromDate: fromDate,
       toDate: toDate,
+      paymentMethod: paymentMethodStr,
+      paymentStatus: paymentStatusStr,
       limit: size,
       offset: offset,
     );

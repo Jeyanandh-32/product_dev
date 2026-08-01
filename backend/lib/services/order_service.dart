@@ -98,9 +98,7 @@ class OrderService {
       calculatedSubtotal + calculatedTaxTotal - calculatedDiscountTotal,
     );
 
-    final paymentStatus = isComplimentary || calculatedGrandTotal == 0
-        ? PaymentStatus.complimentary
-        : PaymentStatus.paid;
+    const paymentStatus = PaymentStatus.paid;
 
     return Database.db.transact(() async {
       final billNo = await _orderRepo.getNextBillNo(storeId);

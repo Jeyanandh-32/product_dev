@@ -24,6 +24,9 @@ Future<void> refreshOrdersSignal() async {
   final page = ordersPageSignal.value;
   final fromDate = reportsFromDateSignal.value;
   final toDate = reportsToDateSignal.value;
+  final paymentMethod = reportsPaymentMethodSignal.value;
+  final status = reportsOrderStatusSignal.value;
+  final paymentStatus = reportsPaymentStatusSignal.value;
 
   try {
     final result = await OrderRepository.getAll(
@@ -32,6 +35,9 @@ Future<void> refreshOrdersSignal() async {
       size: size,
       fromDate: fromDate,
       toDate: toDate,
+      paymentMethod: paymentMethod,
+      status: status,
+      paymentStatus: paymentStatus,
     );
 
     ordersTotalSignal.value = result.totalItems;

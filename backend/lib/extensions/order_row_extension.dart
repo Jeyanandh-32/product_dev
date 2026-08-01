@@ -9,11 +9,26 @@ extension OrderRowExtension on OrderRow {
     storeId: storeId,
     orderReference: orderReference,
     billNo: billNo,
-    source: .values.byName(source),
-    type: .values.byName(type),
-    status: .values.byName(status),
-    paymentStatus: .values.byName(paymentStatus),
-    paymentMethod: .values.byName(paymentMethod),
+    source: OrderSource.values.firstWhere(
+      (e) => e.name == source,
+      orElse: () => OrderSource.terminal,
+    ),
+    type: OrderType.values.firstWhere(
+      (e) => e.name == type,
+      orElse: () => OrderType.dineIn,
+    ),
+    status: OrderStatus.values.firstWhere(
+      (e) => e.name == status,
+      orElse: () => OrderStatus.completed,
+    ),
+    paymentStatus: PaymentStatus.values.firstWhere(
+      (e) => e.name == paymentStatus,
+      orElse: () => PaymentStatus.paid,
+    ),
+    paymentMethod: PaymentMethod.values.firstWhere(
+      (e) => e.name == paymentMethod,
+      orElse: () => PaymentMethod.cash,
+    ),
     subtotal: subtotal / 100,
     discountTotal: discountTotal / 100,
     taxTotal: taxTotal / 100,

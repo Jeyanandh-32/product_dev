@@ -9,6 +9,8 @@ abstract final class PaymentRepository {
     int? size,
     String? fromDate,
     String? toDate,
+    String? paymentMethod,
+    String? paymentStatus,
   }) async {
     try {
       final result = await dio.get(
@@ -19,6 +21,8 @@ abstract final class PaymentRepository {
           'size': ?size,
           'fromDate': ?fromDate,
           'toDate': ?toDate,
+          'paymentMethod': ?paymentMethod,
+          'paymentStatus': ?paymentStatus,
         },
       );
 

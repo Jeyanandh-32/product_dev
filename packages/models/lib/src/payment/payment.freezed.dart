@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Payment {
 
- String get id; String get orderReference; String get orderId; double get orderAmount; double get paidAmount; PaymentMethod get paymentMode; PaymentStatus get paymentStatus; DateTime get date;
+ String get id; String get orderReference; String get orderId; double get orderAmount; double get paidAmount; PaymentMethod get paymentMode;@JsonKey(unknownEnumValue: PaymentStatus.paid) PaymentStatus get paymentStatus; DateTime get date;
 /// Create a copy of Payment
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -48,7 +48,7 @@ abstract mixin class $PaymentCopyWith<$Res>  {
   factory $PaymentCopyWith(Payment value, $Res Function(Payment) _then) = _$PaymentCopyWithImpl;
 @useResult
 $Res call({
- String id, String orderReference, String orderId, double orderAmount, double paidAmount, PaymentMethod paymentMode, PaymentStatus paymentStatus, DateTime date
+ String id, String orderReference, String orderId, double orderAmount, double paidAmount, PaymentMethod paymentMode,@JsonKey(unknownEnumValue: PaymentStatus.paid) PaymentStatus paymentStatus, DateTime date
 });
 
 
@@ -160,7 +160,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String orderReference,  String orderId,  double orderAmount,  double paidAmount,  PaymentMethod paymentMode,  PaymentStatus paymentStatus,  DateTime date)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String orderReference,  String orderId,  double orderAmount,  double paidAmount,  PaymentMethod paymentMode, @JsonKey(unknownEnumValue: PaymentStatus.paid)  PaymentStatus paymentStatus,  DateTime date)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Payment() when $default != null:
 return $default(_that.id,_that.orderReference,_that.orderId,_that.orderAmount,_that.paidAmount,_that.paymentMode,_that.paymentStatus,_that.date);case _:
@@ -181,7 +181,7 @@ return $default(_that.id,_that.orderReference,_that.orderId,_that.orderAmount,_t
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String orderReference,  String orderId,  double orderAmount,  double paidAmount,  PaymentMethod paymentMode,  PaymentStatus paymentStatus,  DateTime date)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String orderReference,  String orderId,  double orderAmount,  double paidAmount,  PaymentMethod paymentMode, @JsonKey(unknownEnumValue: PaymentStatus.paid)  PaymentStatus paymentStatus,  DateTime date)  $default,) {final _that = this;
 switch (_that) {
 case _Payment():
 return $default(_that.id,_that.orderReference,_that.orderId,_that.orderAmount,_that.paidAmount,_that.paymentMode,_that.paymentStatus,_that.date);case _:
@@ -201,7 +201,7 @@ return $default(_that.id,_that.orderReference,_that.orderId,_that.orderAmount,_t
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String orderReference,  String orderId,  double orderAmount,  double paidAmount,  PaymentMethod paymentMode,  PaymentStatus paymentStatus,  DateTime date)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String orderReference,  String orderId,  double orderAmount,  double paidAmount,  PaymentMethod paymentMode, @JsonKey(unknownEnumValue: PaymentStatus.paid)  PaymentStatus paymentStatus,  DateTime date)?  $default,) {final _that = this;
 switch (_that) {
 case _Payment() when $default != null:
 return $default(_that.id,_that.orderReference,_that.orderId,_that.orderAmount,_that.paidAmount,_that.paymentMode,_that.paymentStatus,_that.date);case _:
@@ -216,7 +216,7 @@ return $default(_that.id,_that.orderReference,_that.orderId,_that.orderAmount,_t
 @JsonSerializable()
 
 class _Payment implements Payment {
-  const _Payment({required this.id, required this.orderReference, required this.orderId, required this.orderAmount, required this.paidAmount, required this.paymentMode, required this.paymentStatus, required this.date});
+  const _Payment({required this.id, required this.orderReference, required this.orderId, required this.orderAmount, required this.paidAmount, required this.paymentMode, @JsonKey(unknownEnumValue: PaymentStatus.paid) required this.paymentStatus, required this.date});
   factory _Payment.fromJson(Map<String, dynamic> json) => _$PaymentFromJson(json);
 
 @override final  String id;
@@ -225,7 +225,7 @@ class _Payment implements Payment {
 @override final  double orderAmount;
 @override final  double paidAmount;
 @override final  PaymentMethod paymentMode;
-@override final  PaymentStatus paymentStatus;
+@override@JsonKey(unknownEnumValue: PaymentStatus.paid) final  PaymentStatus paymentStatus;
 @override final  DateTime date;
 
 /// Create a copy of Payment
@@ -261,7 +261,7 @@ abstract mixin class _$PaymentCopyWith<$Res> implements $PaymentCopyWith<$Res> {
   factory _$PaymentCopyWith(_Payment value, $Res Function(_Payment) _then) = __$PaymentCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String orderReference, String orderId, double orderAmount, double paidAmount, PaymentMethod paymentMode, PaymentStatus paymentStatus, DateTime date
+ String id, String orderReference, String orderId, double orderAmount, double paidAmount, PaymentMethod paymentMode,@JsonKey(unknownEnumValue: PaymentStatus.paid) PaymentStatus paymentStatus, DateTime date
 });
 
 

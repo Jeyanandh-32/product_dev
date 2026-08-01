@@ -10,3 +10,7 @@ String _getTodayString() {
 
 final reportsFromDateSignal = signal<String?>(_getTodayString());
 final reportsToDateSignal = signal<String?>(_getTodayString());
+
+final reportsPaymentMethodSignal = signal<String?>(null);
+final reportsOrderStatusSignal = signal<String?>(null);
+final reportsPaymentStatusSignal = signal<String?>(null);

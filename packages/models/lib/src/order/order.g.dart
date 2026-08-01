@@ -15,7 +15,11 @@ _Order _$OrderFromJson(Map<String, dynamic> json) => _Order(
   source: $enumDecode(_$OrderSourceEnumMap, json['source']),
   type: $enumDecode(_$OrderTypeEnumMap, json['type']),
   status: $enumDecode(_$OrderStatusEnumMap, json['status']),
-  paymentStatus: $enumDecode(_$PaymentStatusEnumMap, json['paymentStatus']),
+  paymentStatus: $enumDecode(
+    _$PaymentStatusEnumMap,
+    json['paymentStatus'],
+    unknownValue: PaymentStatus.paid,
+  ),
   paymentMethod: $enumDecode(_$PaymentMethodEnumMap, json['paymentMethod']),
   subtotal: (json['subtotal'] as num).toDouble(),
   discountTotal: (json['discountTotal'] as num?)?.toDouble() ?? 0.0,
@@ -72,7 +76,6 @@ const _$OrderStatusEnumMap = {
 const _$PaymentStatusEnumMap = {
   PaymentStatus.unpaid: 'unpaid',
   PaymentStatus.paid: 'paid',
-  PaymentStatus.complimentary: 'complimentary',
   PaymentStatus.refunded: 'refunded',
   PaymentStatus.cancelled: 'cancelled',
 };

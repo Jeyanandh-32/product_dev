@@ -18,6 +18,17 @@
         <!-- Loads and runs the compiled 'main.client.dart' file. -->
         <!-- Can be changed to any other '.client.dart' file inside /lib. -->
         <script defer src="main.client.dart.js"></script>
+
+        <!-- Automatically closes open details dropdowns when clicking outside -->
+        <script>
+            document.addEventListener('click', function(e) {
+                document.querySelectorAll('details[open]').forEach(function(details) {
+                    if (!details.contains(e.target)) {
+                        details.removeAttribute('open');
+                    }
+                });
+            });
+        </script>
     </head>
     <body>
         <!-- Your app component will be inserted here. -->

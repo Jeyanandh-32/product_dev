@@ -15,6 +15,7 @@ abstract class Order with _$Order {
     required OrderSource source,
     required OrderType type,
     required OrderStatus status,
+    @JsonKey(unknownEnumValue: PaymentStatus.paid)
     required PaymentStatus paymentStatus,
     required PaymentMethod paymentMethod,
     required double subtotal,

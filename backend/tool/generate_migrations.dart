@@ -49,9 +49,9 @@ void main() async {
       ..writeln("    '$version',")
       ..writeln('    [');
     for (final stmt in statements) {
-      final isMultiline = stmt.contains('\n');
+      final isMultiline = stmt.contains('\n') || stmt.contains("'");
       if (isMultiline) {
-        buffer.writeln("      '''\n$stmt''',");
+        buffer.writeln("      '''\n$stmt\n''',");
       } else {
         buffer.writeln("      '$stmt',");
       }

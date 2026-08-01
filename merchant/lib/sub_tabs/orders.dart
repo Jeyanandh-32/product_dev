@@ -13,7 +13,7 @@ import 'package:merchant/signals/orders_signal.dart';
 import 'package:merchant/signals/reports_date_signal.dart';
 import 'package:merchant/signals/stores_signal.dart';
 import 'package:models/models.dart';
-import 'package:web/web.dart';
+import 'package:web/web.dart' as web;
 
 class Orders extends SignalComponent {
   const Orders({super.key});
@@ -29,15 +29,23 @@ class _OrdersState extends SignalState<Orders> {
     refreshOrdersSignal();
   }
 
+  void _closeDropdowns() {
+    final activeElement = web.document.activeElement;
+    if (activeElement != null) {
+      final element = activeElement as web.HTMLElement;
+      element.blur();
+      final details = element.closest('details');
+      if (details != null) {
+        details.removeAttribute('open');
+      }
+    }
+  }
+
   void _changeEntry(int entry) {
     entriesSignal.value = entry;
     ordersPageSignal.value = 1;
     refreshOrdersSignal();
-
-    final activeElement = document.activeElement;
-    if (activeElement != null) {
-      (activeElement as HTMLElement).blur();
-    }
+    _closeDropdowns();
   }
 
   String _formatDate(DateTime dt) {
@@ -70,6 +78,197 @@ class _OrdersState extends SignalState<Orders> {
     };
   }
 
+  Component _buildPaymentModeFilter() {
+    final currentMode = reportsPaymentMethodSignal.value;
+    final label = switch (currentMode) {
+      'cash' => 'Payment: Cash',
+      'upi' => 'Payment: UPI',
+      'complimentary' => 'Payment: Free',
+      _ => 'Payment Mode: All',
+    };
+
+    return details(
+      classes: 'dropdown dropdown-bottom dropdown-start inline-block',
+      [
+        summary(
+          classes:
+              'btn btn-sm rounded-full border border-border-medium bg-base-100 hover:bg-base-200 text-xs px-3 font-medium flex items-center gap-1.5 shadow-2xs cursor-pointer list-none select-none',
+          [
+            span(classes: 'text-xs text-base-content font-medium', [
+              .text(label),
+            ]),
+            ChevronDown(classes: 'w-3.5 h-3.5 opacity-60'),
+          ],
+        ),
+        ul(
+          classes:
+              'dropdown-content menu bg-base-100 rounded-2xl z-30 mt-2 p-2 shadow-xl border border-border-medium w-48 flex flex-col gap-1',
+          [
+            li([
+              a(
+                href: '#',
+                classes:
+                    'rounded-md text-xs hover:bg-neutral ${currentMode == null ? 'bg-neutral font-bold text-primary' : ''}',
+                onClick: () {
+                  reportsPaymentMethodSignal.value = null;
+                  ordersPageSignal.value = 1;
+                  refreshOrdersSignal();
+                  _closeDropdowns();
+                },
+                [.text('All Payment Modes')],
+              ),
+            ]),
+            li([
+              a(
+                href: '#',
+                classes:
+                    'rounded-md text-xs hover:bg-neutral ${currentMode == 'cash' ? 'bg-neutral font-bold text-primary' : ''}',
+                onClick: () {
+                  reportsPaymentMethodSignal.value = 'cash';
+                  ordersPageSignal.value = 1;
+                  refreshOrdersSignal();
+                  _closeDropdowns();
+                },
+                [.text('Cash')],
+              ),
+            ]),
+            li([
+              a(
+                href: '#',
+                classes:
+                    'rounded-md text-xs hover:bg-neutral ${currentMode == 'upi' ? 'bg-neutral font-bold text-primary' : ''}',
+                onClick: () {
+                  reportsPaymentMethodSignal.value = 'upi';
+                  ordersPageSignal.value = 1;
+                  refreshOrdersSignal();
+                  _closeDropdowns();
+                },
+                [.text('UPI')],
+              ),
+            ]),
+            li([
+              a(
+                href: '#',
+                classes:
+                    'rounded-md text-xs hover:bg-neutral ${currentMode == 'complimentary' ? 'bg-neutral font-bold text-primary' : ''}',
+                onClick: () {
+                  reportsPaymentMethodSignal.value = 'complimentary';
+                  ordersPageSignal.value = 1;
+                  refreshOrdersSignal();
+                  _closeDropdowns();
+                },
+                [.text('Complimentary / Free')],
+              ),
+            ]),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Component _buildStatusFilter() {
+    final currentStatus = reportsOrderStatusSignal.value;
+    final label = switch (currentStatus) {
+      'completed' => 'Status: Completed',
+      'pending' => 'Status: Pending',
+      'preparing' => 'Status: Preparing',
+      'cancelled' => 'Status: Cancelled',
+      _ => 'Status: All',
+    };
+
+    return details(
+      classes: 'dropdown dropdown-bottom dropdown-start inline-block',
+      [
+        summary(
+          classes:
+              'btn btn-sm rounded-full border border-border-medium bg-base-100 hover:bg-base-200 text-xs px-3 font-medium flex items-center gap-1.5 shadow-2xs cursor-pointer list-none select-none',
+          [
+            span(classes: 'text-xs text-base-content font-medium', [
+              .text(label),
+            ]),
+            ChevronDown(classes: 'w-3.5 h-3.5 opacity-60'),
+          ],
+        ),
+        ul(
+          classes:
+              'dropdown-content menu bg-base-100 rounded-2xl z-30 mt-2 p-2 shadow-xl border border-border-medium w-40 flex flex-col gap-1',
+          [
+            li([
+              a(
+                href: '#',
+                classes:
+                    'rounded-md text-xs hover:bg-neutral ${currentStatus == null ? 'bg-neutral font-bold text-primary' : ''}',
+                onClick: () {
+                  reportsOrderStatusSignal.value = null;
+                  ordersPageSignal.value = 1;
+                  refreshOrdersSignal();
+                  _closeDropdowns();
+                },
+                [.text('All Statuses')],
+              ),
+            ]),
+            li([
+              a(
+                href: '#',
+                classes:
+                    'rounded-md text-xs hover:bg-neutral ${currentStatus == 'completed' ? 'bg-neutral font-bold text-primary' : ''}',
+                onClick: () {
+                  reportsOrderStatusSignal.value = 'completed';
+                  ordersPageSignal.value = 1;
+                  refreshOrdersSignal();
+                  _closeDropdowns();
+                },
+                [.text('Completed')],
+              ),
+            ]),
+            li([
+              a(
+                href: '#',
+                classes:
+                    'rounded-md text-xs hover:bg-neutral ${currentStatus == 'pending' ? 'bg-neutral font-bold text-primary' : ''}',
+                onClick: () {
+                  reportsOrderStatusSignal.value = 'pending';
+                  ordersPageSignal.value = 1;
+                  refreshOrdersSignal();
+                  _closeDropdowns();
+                },
+                [.text('Pending')],
+              ),
+            ]),
+            li([
+              a(
+                href: '#',
+                classes:
+                    'rounded-md text-xs hover:bg-neutral ${currentStatus == 'preparing' ? 'bg-neutral font-bold text-primary' : ''}',
+                onClick: () {
+                  reportsOrderStatusSignal.value = 'preparing';
+                  ordersPageSignal.value = 1;
+                  refreshOrdersSignal();
+                  _closeDropdowns();
+                },
+                [.text('Preparing')],
+              ),
+            ]),
+            li([
+              a(
+                href: '#',
+                classes:
+                    'rounded-md text-xs hover:bg-neutral ${currentStatus == 'cancelled' ? 'bg-neutral font-bold text-primary' : ''}',
+                onClick: () {
+                  reportsOrderStatusSignal.value = 'cancelled';
+                  ordersPageSignal.value = 1;
+                  refreshOrdersSignal();
+                  _closeDropdowns();
+                },
+                [.text('Cancelled')],
+              ),
+            ]),
+          ],
+        ),
+      ],
+    );
+  }
+
   @override
   Component buildSignal(BuildContext context) {
     final entries = entriesSignal.value;
@@ -86,7 +285,7 @@ class _OrdersState extends SignalState<Orders> {
           classes:
               'flex flex-col md:items-center md:flex-row md:justify-between w-full border-b border-border-medium p-4 gap-4',
           [
-            div(classes: 'flex flex-wrap items-center gap-4 text-sm font-medium', [
+            div(classes: 'flex flex-wrap items-center gap-3 text-sm font-medium', [
               span(classes: 'flex gap-2 items-center text-sm font-medium', [
                 .text('Show'),
                 div(classes: 'dropdown dropdown-bottom dropdown-center', [
@@ -109,18 +308,22 @@ class _OrdersState extends SignalState<Orders> {
                     [
                       dropdownButton(
                         name: '10',
+                        isSelected: entries == 10,
                         onClick: () => _changeEntry(10),
                       ),
                       dropdownButton(
                         name: '25',
+                        isSelected: entries == 25,
                         onClick: () => _changeEntry(25),
                       ),
                       dropdownButton(
                         name: '50',
+                        isSelected: entries == 50,
                         onClick: () => _changeEntry(50),
                       ),
                       dropdownButton(
                         name: '100',
+                        isSelected: entries == 100,
                         onClick: () => _changeEntry(100),
                       ),
                     ],
@@ -142,6 +345,8 @@ class _OrdersState extends SignalState<Orders> {
                   refreshOrdersSignal();
                 },
               ),
+              _buildPaymentModeFilter(),
+              _buildStatusFilter(),
             ]),
             div(
               classes:
@@ -259,12 +464,14 @@ class _OrdersState extends SignalState<Orders> {
 
   li dropdownButton({
     required String name,
+    required bool isSelected,
     VoidCallback? onClick,
   }) {
     return li([
       a(
         href: '#',
-        classes: 'rounded-md hover:bg-neutral',
+        classes:
+            'rounded-md text-xs hover:bg-neutral ${isSelected ? 'bg-neutral font-bold text-primary' : ''}',
         onClick: onClick,
         [
           .text(name),

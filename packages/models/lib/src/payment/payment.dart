@@ -13,6 +13,7 @@ abstract class Payment with _$Payment {
     required double orderAmount,
     required double paidAmount,
     required PaymentMethod paymentMode,
+    @JsonKey(unknownEnumValue: PaymentStatus.paid)
     required PaymentStatus paymentStatus,
     required DateTime date,
   }) = _Payment;

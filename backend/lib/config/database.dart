@@ -58,6 +58,11 @@ class Database {
     final gateway = PostgreSQLGateway(connection);
 
     await migrant.Database(gateway).upgrade(migrations);
+    try {
+      await connection.execute(
+        "UPDATE orders SET payment_status = 'paid' WHERE payment_status = 'complimentary';",
+      );
+    } catch (_) {}
 
     await connection.close();
   }

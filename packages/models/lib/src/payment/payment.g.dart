@@ -13,7 +13,11 @@ _Payment _$PaymentFromJson(Map<String, dynamic> json) => _Payment(
   orderAmount: (json['orderAmount'] as num).toDouble(),
   paidAmount: (json['paidAmount'] as num).toDouble(),
   paymentMode: $enumDecode(_$PaymentMethodEnumMap, json['paymentMode']),
-  paymentStatus: $enumDecode(_$PaymentStatusEnumMap, json['paymentStatus']),
+  paymentStatus: $enumDecode(
+    _$PaymentStatusEnumMap,
+    json['paymentStatus'],
+    unknownValue: PaymentStatus.paid,
+  ),
   date: DateTime.parse(json['date'] as String),
 );
 
@@ -37,7 +41,6 @@ const _$PaymentMethodEnumMap = {
 const _$PaymentStatusEnumMap = {
   PaymentStatus.unpaid: 'unpaid',
   PaymentStatus.paid: 'paid',
-  PaymentStatus.complimentary: 'complimentary',
   PaymentStatus.refunded: 'refunded',
   PaymentStatus.cancelled: 'cancelled',
 };
