@@ -7,11 +7,19 @@ abstract final class PaymentRepository {
     required String storeId,
     int? page,
     int? size,
+    String? fromDate,
+    String? toDate,
   }) async {
     try {
       final result = await dio.get(
         ApiEndpoints.payments,
-        queryParameters: {'storeId': storeId, 'page': ?page, 'size': ?size},
+        queryParameters: {
+          'storeId': storeId,
+          'page': ?page,
+          'size': ?size,
+          'fromDate': ?fromDate,
+          'toDate': ?toDate,
+        },
       );
 
       return parsePaginatedResponse(

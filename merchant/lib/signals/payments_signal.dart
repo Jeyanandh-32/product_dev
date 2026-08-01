@@ -1,5 +1,6 @@
 import 'package:client_repositories/client_repositories.dart';
 import 'package:merchant/signals/navigation_signal.dart';
+import 'package:merchant/signals/reports_date_signal.dart';
 import 'package:merchant/signals/stores_signal.dart';
 import 'package:models/models.dart';
 import 'package:signals/signals.dart';
@@ -21,12 +22,16 @@ Future<void> refreshPaymentsSignal() async {
 
   final size = entriesSignal.value;
   final page = paymentsPageSignal.value;
+  final fromDate = reportsFromDateSignal.value;
+  final toDate = reportsToDateSignal.value;
 
   try {
     final result = await PaymentRepository.getAll(
       storeId: selectedStore.id,
       page: page,
       size: size,
+      fromDate: fromDate,
+      toDate: toDate,
     );
 
     paymentsTotalSignal.value = result.totalItems;

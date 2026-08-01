@@ -74,6 +74,7 @@ const _$PaymentStatusEnumMap = {
   PaymentStatus.paid: 'paid',
   PaymentStatus.complimentary: 'complimentary',
   PaymentStatus.refunded: 'refunded',
+  PaymentStatus.cancelled: 'cancelled',
 };
 
 const _$PaymentMethodEnumMap = {

@@ -23,6 +23,29 @@ Future<Response> _onGet(RequestContext context) async {
   final (sizeError, size) = context.parseSize();
   if (sizeError != null) return sizeError;
 
+  final queryParams = context.request.uri.queryParameters;
+  final fromDateStr = queryParams['fromDate'];
+  final toDateStr = queryParams['toDate'];
+
+  final fromDate = fromDateStr != null && fromDateStr.isNotEmpty
+      ? DateTime.tryParse(fromDateStr)?.toUtc()
+      : null;
+  DateTime? toDate;
+  if (toDateStr != null && toDateStr.isNotEmpty) {
+    final parsed = DateTime.tryParse(toDateStr);
+    if (parsed != null) {
+      toDate = DateTime.utc(
+        parsed.year,
+        parsed.month,
+        parsed.day,
+        23,
+        59,
+        59,
+        999,
+      );
+    }
+  }
+
   final orderRepo = context.read<OrderRepository>();
   final tokenPayload = context.tokenPayload;
 
@@ -30,12 +53,16 @@ Future<Response> _onGet(RequestContext context) async {
     final total = await orderRepo.count(
       merchantId: tokenPayload.sub,
       storeId: context.storeId,
+      fromDate: fromDate,
+      toDate: toDate,
     );
 
     final offset = (page - 1) * size;
     final orderRows = await orderRepo.getAll(
       merchantId: tokenPayload.sub,
       storeId: context.storeId,
+      fromDate: fromDate,
+      toDate: toDate,
       limit: size,
       offset: offset,
     );
@@ -52,6 +79,7 @@ Future<Response> _onGet(RequestContext context) async {
         orderAmount: originalOrderAmount,
         paidAmount: isPaid ? order.grandTotal : 0.0,
         paymentMode: order.paymentMethod,
+        paymentStatus: order.paymentStatus,
         date: order.createdAt,
       ).toJson();
     }).toList();

@@ -2,13 +2,15 @@ import 'package:jaspr/client.dart';
 import 'package:jaspr/dom.dart';
 import 'package:jaspr_lucide/generated_icons/chevron_down.dart';
 import 'package:merchant/components/centered_message.dart';
+import 'package:merchant/components/fields/date_range_picker.dart';
 import 'package:merchant/components/fields/searchbar.dart';
 import 'package:merchant/components/loading.dart';
 import 'package:merchant/components/signal_component.dart';
 import 'package:merchant/components/table_pagination.dart';
 import 'package:merchant/exceptions/api_exception.dart';
-import 'package:merchant/signals/orders_signal.dart';
 import 'package:merchant/signals/navigation_signal.dart';
+import 'package:merchant/signals/orders_signal.dart';
+import 'package:merchant/signals/reports_date_signal.dart';
 import 'package:merchant/signals/stores_signal.dart';
 import 'package:models/models.dart';
 import 'package:web/web.dart';
@@ -57,11 +59,7 @@ class _OrdersState extends SignalState<Orders> {
     ];
     final month = months[local.month - 1];
     final year = local.year;
-    final hourNum = local.hour % 12 == 0 ? 12 : local.hour % 12;
-    final hour = hourNum.toString().padLeft(2, '0');
-    final minute = local.minute.toString().padLeft(2, '0');
-    final ampm = local.hour >= 12 ? 'PM' : 'AM';
-    return '$day-$month-$year $hour:$minute $ampm';
+    return '$day-$month-$year';
   }
 
   String _formatPaymentType(PaymentMethod method) {
@@ -88,46 +86,62 @@ class _OrdersState extends SignalState<Orders> {
           classes:
               'flex flex-col md:items-center md:flex-row md:justify-between w-full border-b border-border-medium p-4 gap-4',
           [
-            span(classes: 'flex gap-2 items-center text-sm font-medium', [
-              .text('Show'),
-              div(classes: 'dropdown dropdown-bottom dropdown-center', [
-                div(
-                  classes:
-                      'btn rounded-full border border-border-medium bg-white hover:bg-base-200 text-sm h-8 min-h-0',
-                  attributes: {
-                    'tabindex': '0',
-                    'role': 'button',
-                  },
-                  [
-                    .text('$entries'),
-                    ChevronDown(classes: 'w-4 h-4'),
-                  ],
-                ),
-                ul(
-                  attributes: {'tabindex': '-1'},
-                  classes:
-                      'dropdown-content menu bg-base-100 rounded-box z-10 mt-2.5 p-2 shadow-sm border border-border-light',
-                  [
-                    dropdownButton(
-                      name: '10',
-                      onClick: () => _changeEntry(10),
-                    ),
-                    dropdownButton(
-                      name: '25',
-                      onClick: () => _changeEntry(25),
-                    ),
-                    dropdownButton(
-                      name: '50',
-                      onClick: () => _changeEntry(50),
-                    ),
-                    dropdownButton(
-                      name: '100',
-                      onClick: () => _changeEntry(100),
-                    ),
-                  ],
-                ),
+            div(classes: 'flex flex-wrap items-center gap-4 text-sm font-medium', [
+              span(classes: 'flex gap-2 items-center text-sm font-medium', [
+                .text('Show'),
+                div(classes: 'dropdown dropdown-bottom dropdown-center', [
+                  div(
+                    classes:
+                        'btn rounded-full border border-border-medium bg-white hover:bg-base-200 text-sm h-8 min-h-0',
+                    attributes: {
+                      'tabindex': '0',
+                      'role': 'button',
+                    },
+                    [
+                      .text('$entries'),
+                      ChevronDown(classes: 'w-4 h-4'),
+                    ],
+                  ),
+                  ul(
+                    attributes: {'tabindex': '-1'},
+                    classes:
+                        'dropdown-content menu bg-base-100 rounded-box z-10 mt-2.5 p-2 shadow-sm border border-border-light',
+                    [
+                      dropdownButton(
+                        name: '10',
+                        onClick: () => _changeEntry(10),
+                      ),
+                      dropdownButton(
+                        name: '25',
+                        onClick: () => _changeEntry(25),
+                      ),
+                      dropdownButton(
+                        name: '50',
+                        onClick: () => _changeEntry(50),
+                      ),
+                      dropdownButton(
+                        name: '100',
+                        onClick: () => _changeEntry(100),
+                      ),
+                    ],
+                  ),
+                ]),
+                .text('entries'),
               ]),
-              .text('entries'),
+              DateRangePicker(
+                fromDate: reportsFromDateSignal.value,
+                toDate: reportsToDateSignal.value,
+                onFromDateChanged: (val) {
+                  reportsFromDateSignal.value = val;
+                  ordersPageSignal.value = 1;
+                  refreshOrdersSignal();
+                },
+                onToDateChanged: (val) {
+                  reportsToDateSignal.value = val;
+                  ordersPageSignal.value = 1;
+                  refreshOrdersSignal();
+                },
+              ),
             ]),
             div(
               classes:
@@ -193,7 +207,7 @@ class _OrdersState extends SignalState<Orders> {
         th([.text('Order ID')]),
         td([.text('Date')]),
         td([.text('Total Amount (₹)')]),
-        td([.text('Payment Type')]),
+        td([.text('Payment Mode')]),
         td([.text('Status')]),
         th([]),
       ]),

@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Payment {
 
- String get id; String get orderReference; String get orderId; double get orderAmount; double get paidAmount; PaymentMethod get paymentMode; DateTime get date;
+ String get id; String get orderReference; String get orderId; double get orderAmount; double get paidAmount; PaymentMethod get paymentMode; PaymentStatus get paymentStatus; DateTime get date;
 /// Create a copy of Payment
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $PaymentCopyWith<Payment> get copyWith => _$PaymentCopyWithImpl<Payment>(this as
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Payment&&(identical(other.id, id) || other.id == id)&&(identical(other.orderReference, orderReference) || other.orderReference == orderReference)&&(identical(other.orderId, orderId) || other.orderId == orderId)&&(identical(other.orderAmount, orderAmount) || other.orderAmount == orderAmount)&&(identical(other.paidAmount, paidAmount) || other.paidAmount == paidAmount)&&(identical(other.paymentMode, paymentMode) || other.paymentMode == paymentMode)&&(identical(other.date, date) || other.date == date));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Payment&&(identical(other.id, id) || other.id == id)&&(identical(other.orderReference, orderReference) || other.orderReference == orderReference)&&(identical(other.orderId, orderId) || other.orderId == orderId)&&(identical(other.orderAmount, orderAmount) || other.orderAmount == orderAmount)&&(identical(other.paidAmount, paidAmount) || other.paidAmount == paidAmount)&&(identical(other.paymentMode, paymentMode) || other.paymentMode == paymentMode)&&(identical(other.paymentStatus, paymentStatus) || other.paymentStatus == paymentStatus)&&(identical(other.date, date) || other.date == date));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,orderReference,orderId,orderAmount,paidAmount,paymentMode,date);
+int get hashCode => Object.hash(runtimeType,id,orderReference,orderId,orderAmount,paidAmount,paymentMode,paymentStatus,date);
 
 @override
 String toString() {
-  return 'Payment(id: $id, orderReference: $orderReference, orderId: $orderId, orderAmount: $orderAmount, paidAmount: $paidAmount, paymentMode: $paymentMode, date: $date)';
+  return 'Payment(id: $id, orderReference: $orderReference, orderId: $orderId, orderAmount: $orderAmount, paidAmount: $paidAmount, paymentMode: $paymentMode, paymentStatus: $paymentStatus, date: $date)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $PaymentCopyWith<$Res>  {
   factory $PaymentCopyWith(Payment value, $Res Function(Payment) _then) = _$PaymentCopyWithImpl;
 @useResult
 $Res call({
- String id, String orderReference, String orderId, double orderAmount, double paidAmount, PaymentMethod paymentMode, DateTime date
+ String id, String orderReference, String orderId, double orderAmount, double paidAmount, PaymentMethod paymentMode, PaymentStatus paymentStatus, DateTime date
 });
 
 
@@ -65,7 +65,7 @@ class _$PaymentCopyWithImpl<$Res>
 
 /// Create a copy of Payment
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? orderReference = null,Object? orderId = null,Object? orderAmount = null,Object? paidAmount = null,Object? paymentMode = null,Object? date = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? orderReference = null,Object? orderId = null,Object? orderAmount = null,Object? paidAmount = null,Object? paymentMode = null,Object? paymentStatus = null,Object? date = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,orderReference: null == orderReference ? _self.orderReference : orderReference // ignore: cast_nullable_to_non_nullable
@@ -73,7 +73,8 @@ as String,orderId: null == orderId ? _self.orderId : orderId // ignore: cast_nul
 as String,orderAmount: null == orderAmount ? _self.orderAmount : orderAmount // ignore: cast_nullable_to_non_nullable
 as double,paidAmount: null == paidAmount ? _self.paidAmount : paidAmount // ignore: cast_nullable_to_non_nullable
 as double,paymentMode: null == paymentMode ? _self.paymentMode : paymentMode // ignore: cast_nullable_to_non_nullable
-as PaymentMethod,date: null == date ? _self.date : date // ignore: cast_nullable_to_non_nullable
+as PaymentMethod,paymentStatus: null == paymentStatus ? _self.paymentStatus : paymentStatus // ignore: cast_nullable_to_non_nullable
+as PaymentStatus,date: null == date ? _self.date : date // ignore: cast_nullable_to_non_nullable
 as DateTime,
   ));
 }
@@ -159,10 +160,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String orderReference,  String orderId,  double orderAmount,  double paidAmount,  PaymentMethod paymentMode,  DateTime date)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String orderReference,  String orderId,  double orderAmount,  double paidAmount,  PaymentMethod paymentMode,  PaymentStatus paymentStatus,  DateTime date)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Payment() when $default != null:
-return $default(_that.id,_that.orderReference,_that.orderId,_that.orderAmount,_that.paidAmount,_that.paymentMode,_that.date);case _:
+return $default(_that.id,_that.orderReference,_that.orderId,_that.orderAmount,_that.paidAmount,_that.paymentMode,_that.paymentStatus,_that.date);case _:
   return orElse();
 
 }
@@ -180,10 +181,10 @@ return $default(_that.id,_that.orderReference,_that.orderId,_that.orderAmount,_t
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String orderReference,  String orderId,  double orderAmount,  double paidAmount,  PaymentMethod paymentMode,  DateTime date)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String orderReference,  String orderId,  double orderAmount,  double paidAmount,  PaymentMethod paymentMode,  PaymentStatus paymentStatus,  DateTime date)  $default,) {final _that = this;
 switch (_that) {
 case _Payment():
-return $default(_that.id,_that.orderReference,_that.orderId,_that.orderAmount,_that.paidAmount,_that.paymentMode,_that.date);case _:
+return $default(_that.id,_that.orderReference,_that.orderId,_that.orderAmount,_that.paidAmount,_that.paymentMode,_that.paymentStatus,_that.date);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -200,10 +201,10 @@ return $default(_that.id,_that.orderReference,_that.orderId,_that.orderAmount,_t
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String orderReference,  String orderId,  double orderAmount,  double paidAmount,  PaymentMethod paymentMode,  DateTime date)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String orderReference,  String orderId,  double orderAmount,  double paidAmount,  PaymentMethod paymentMode,  PaymentStatus paymentStatus,  DateTime date)?  $default,) {final _that = this;
 switch (_that) {
 case _Payment() when $default != null:
-return $default(_that.id,_that.orderReference,_that.orderId,_that.orderAmount,_that.paidAmount,_that.paymentMode,_that.date);case _:
+return $default(_that.id,_that.orderReference,_that.orderId,_that.orderAmount,_that.paidAmount,_that.paymentMode,_that.paymentStatus,_that.date);case _:
   return null;
 
 }
@@ -215,7 +216,7 @@ return $default(_that.id,_that.orderReference,_that.orderId,_that.orderAmount,_t
 @JsonSerializable()
 
 class _Payment implements Payment {
-  const _Payment({required this.id, required this.orderReference, required this.orderId, required this.orderAmount, required this.paidAmount, required this.paymentMode, required this.date});
+  const _Payment({required this.id, required this.orderReference, required this.orderId, required this.orderAmount, required this.paidAmount, required this.paymentMode, required this.paymentStatus, required this.date});
   factory _Payment.fromJson(Map<String, dynamic> json) => _$PaymentFromJson(json);
 
 @override final  String id;
@@ -224,6 +225,7 @@ class _Payment implements Payment {
 @override final  double orderAmount;
 @override final  double paidAmount;
 @override final  PaymentMethod paymentMode;
+@override final  PaymentStatus paymentStatus;
 @override final  DateTime date;
 
 /// Create a copy of Payment
@@ -239,16 +241,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Payment&&(identical(other.id, id) || other.id == id)&&(identical(other.orderReference, orderReference) || other.orderReference == orderReference)&&(identical(other.orderId, orderId) || other.orderId == orderId)&&(identical(other.orderAmount, orderAmount) || other.orderAmount == orderAmount)&&(identical(other.paidAmount, paidAmount) || other.paidAmount == paidAmount)&&(identical(other.paymentMode, paymentMode) || other.paymentMode == paymentMode)&&(identical(other.date, date) || other.date == date));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Payment&&(identical(other.id, id) || other.id == id)&&(identical(other.orderReference, orderReference) || other.orderReference == orderReference)&&(identical(other.orderId, orderId) || other.orderId == orderId)&&(identical(other.orderAmount, orderAmount) || other.orderAmount == orderAmount)&&(identical(other.paidAmount, paidAmount) || other.paidAmount == paidAmount)&&(identical(other.paymentMode, paymentMode) || other.paymentMode == paymentMode)&&(identical(other.paymentStatus, paymentStatus) || other.paymentStatus == paymentStatus)&&(identical(other.date, date) || other.date == date));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,orderReference,orderId,orderAmount,paidAmount,paymentMode,date);
+int get hashCode => Object.hash(runtimeType,id,orderReference,orderId,orderAmount,paidAmount,paymentMode,paymentStatus,date);
 
 @override
 String toString() {
-  return 'Payment(id: $id, orderReference: $orderReference, orderId: $orderId, orderAmount: $orderAmount, paidAmount: $paidAmount, paymentMode: $paymentMode, date: $date)';
+  return 'Payment(id: $id, orderReference: $orderReference, orderId: $orderId, orderAmount: $orderAmount, paidAmount: $paidAmount, paymentMode: $paymentMode, paymentStatus: $paymentStatus, date: $date)';
 }
 
 
@@ -259,7 +261,7 @@ abstract mixin class _$PaymentCopyWith<$Res> implements $PaymentCopyWith<$Res> {
   factory _$PaymentCopyWith(_Payment value, $Res Function(_Payment) _then) = __$PaymentCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String orderReference, String orderId, double orderAmount, double paidAmount, PaymentMethod paymentMode, DateTime date
+ String id, String orderReference, String orderId, double orderAmount, double paidAmount, PaymentMethod paymentMode, PaymentStatus paymentStatus, DateTime date
 });
 
 
@@ -276,7 +278,7 @@ class __$PaymentCopyWithImpl<$Res>
 
 /// Create a copy of Payment
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? orderReference = null,Object? orderId = null,Object? orderAmount = null,Object? paidAmount = null,Object? paymentMode = null,Object? date = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? orderReference = null,Object? orderId = null,Object? orderAmount = null,Object? paidAmount = null,Object? paymentMode = null,Object? paymentStatus = null,Object? date = null,}) {
   return _then(_Payment(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,orderReference: null == orderReference ? _self.orderReference : orderReference // ignore: cast_nullable_to_non_nullable
@@ -284,7 +286,8 @@ as String,orderId: null == orderId ? _self.orderId : orderId // ignore: cast_nul
 as String,orderAmount: null == orderAmount ? _self.orderAmount : orderAmount // ignore: cast_nullable_to_non_nullable
 as double,paidAmount: null == paidAmount ? _self.paidAmount : paidAmount // ignore: cast_nullable_to_non_nullable
 as double,paymentMode: null == paymentMode ? _self.paymentMode : paymentMode // ignore: cast_nullable_to_non_nullable
-as PaymentMethod,date: null == date ? _self.date : date // ignore: cast_nullable_to_non_nullable
+as PaymentMethod,paymentStatus: null == paymentStatus ? _self.paymentStatus : paymentStatus // ignore: cast_nullable_to_non_nullable
+as PaymentStatus,date: null == date ? _self.date : date // ignore: cast_nullable_to_non_nullable
 as DateTime,
   ));
 }

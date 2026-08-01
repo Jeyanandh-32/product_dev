@@ -93,6 +93,8 @@ class OrderRepository {
   Future<List<OrderRow>> getAll({
     required String merchantId,
     String? storeId,
+    DateTime? fromDate,
+    DateTime? toDate,
     int? limit,
     int? offset,
   }) async {
@@ -102,6 +104,14 @@ class OrderRepository {
 
     if (storeId != null) {
       query = query.where((o) => o.storeId.equals(ts.toExpr(storeId)));
+    }
+
+    if (fromDate != null) {
+      query = query.where((o) => o.createdAt.isAfterValue(fromDate));
+    }
+
+    if (toDate != null) {
+      query = query.where((o) => o.createdAt.isBeforeValue(toDate));
     }
 
     if (offset != null) {
@@ -122,6 +132,8 @@ class OrderRepository {
   Future<int> count({
     required String merchantId,
     String? storeId,
+    DateTime? fromDate,
+    DateTime? toDate,
   }) async {
     var query = _db.orders.where(
       (o) => o.merchantId.equals(ts.toExpr(merchantId)),
@@ -129,6 +141,14 @@ class OrderRepository {
 
     if (storeId != null) {
       query = query.where((o) => o.storeId.equals(ts.toExpr(storeId)));
+    }
+
+    if (fromDate != null) {
+      query = query.where((o) => o.createdAt.isAfterValue(fromDate));
+    }
+
+    if (toDate != null) {
+      query = query.where((o) => o.createdAt.isBeforeValue(toDate));
     }
 
     final total = await query.count().fetch();

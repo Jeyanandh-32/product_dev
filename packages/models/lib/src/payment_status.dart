@@ -1,1 +1,1 @@
-enum PaymentStatus { unpaid, paid, complimentary, refunded }
+enum PaymentStatus { unpaid, paid, complimentary, refunded, cancelled }

@@ -2,6 +2,7 @@ import 'package:jaspr/client.dart';
 import 'package:jaspr/dom.dart';
 import 'package:jaspr_lucide/generated_icons/chevron_down.dart';
 import 'package:merchant/components/centered_message.dart';
+import 'package:merchant/components/fields/date_range_picker.dart';
 import 'package:merchant/components/fields/searchbar.dart';
 import 'package:merchant/components/loading.dart';
 import 'package:merchant/components/signal_component.dart';
@@ -9,6 +10,7 @@ import 'package:merchant/components/table_pagination.dart';
 import 'package:merchant/exceptions/api_exception.dart';
 import 'package:merchant/signals/navigation_signal.dart';
 import 'package:merchant/signals/payments_signal.dart';
+import 'package:merchant/signals/reports_date_signal.dart';
 import 'package:merchant/signals/stores_signal.dart';
 import 'package:models/models.dart';
 import 'package:web/web.dart';
@@ -57,11 +59,7 @@ class _PaymentsState extends SignalState<Payments> {
     ];
     final month = months[local.month - 1];
     final year = local.year;
-    final hourNum = local.hour % 12 == 0 ? 12 : local.hour % 12;
-    final hour = hourNum.toString().padLeft(2, '0');
-    final minute = local.minute.toString().padLeft(2, '0');
-    final ampm = local.hour >= 12 ? 'PM' : 'AM';
-    return '$day-$month-$year $hour:$minute $ampm';
+    return '$day-$month-$year';
   }
 
   String _formatPaymentType(PaymentMethod method) {
@@ -69,6 +67,31 @@ class _PaymentsState extends SignalState<Payments> {
       PaymentMethod.cash => 'CASH',
       PaymentMethod.upi => 'UPI',
       PaymentMethod.complimentary => 'FREE',
+    };
+  }
+
+  (String label, String badgeClass) _formatPaymentStatus(PaymentStatus status) {
+    return switch (status) {
+      PaymentStatus.paid => (
+        'COMPLETED',
+        'bg-emerald-50 text-emerald-700 border border-emerald-200',
+      ),
+      PaymentStatus.unpaid => (
+        'PENDING',
+        'bg-amber-50 text-amber-700 border border-amber-200',
+      ),
+      PaymentStatus.complimentary => (
+        'COMPLETED',
+        'bg-emerald-50 text-emerald-700 border border-emerald-200',
+      ),
+      PaymentStatus.refunded => (
+        'CANCELLED',
+        'bg-rose-50 text-rose-700 border border-rose-200',
+      ),
+      PaymentStatus.cancelled => (
+        'CANCELLED',
+        'bg-rose-50 text-rose-700 border border-rose-200',
+      ),
     };
   }
 
@@ -88,46 +111,62 @@ class _PaymentsState extends SignalState<Payments> {
           classes:
               'flex flex-col md:items-center md:flex-row md:justify-between w-full border-b border-border-medium p-4 gap-4',
           [
-            span(classes: 'flex gap-2 items-center text-sm font-medium', [
-              .text('Show'),
-              div(classes: 'dropdown dropdown-bottom dropdown-center', [
-                div(
-                  classes:
-                      'btn rounded-full border border-border-medium bg-white hover:bg-base-200 text-sm h-8 min-h-0',
-                  attributes: {
-                    'tabindex': '0',
-                    'role': 'button',
-                  },
-                  [
-                    .text('$entries'),
-                    ChevronDown(classes: 'w-4 h-4'),
-                  ],
-                ),
-                ul(
-                  attributes: {'tabindex': '-1'},
-                  classes:
-                      'dropdown-content menu bg-base-100 rounded-box z-10 mt-2.5 p-2 shadow-sm border border-border-light',
-                  [
-                    dropdownButton(
-                      name: '10',
-                      onClick: () => _changeEntry(10),
-                    ),
-                    dropdownButton(
-                      name: '25',
-                      onClick: () => _changeEntry(25),
-                    ),
-                    dropdownButton(
-                      name: '50',
-                      onClick: () => _changeEntry(50),
-                    ),
-                    dropdownButton(
-                      name: '100',
-                      onClick: () => _changeEntry(100),
-                    ),
-                  ],
-                ),
+            div(classes: 'flex flex-wrap items-center gap-4 text-sm font-medium', [
+              span(classes: 'flex gap-2 items-center text-sm font-medium', [
+                .text('Show'),
+                div(classes: 'dropdown dropdown-bottom dropdown-center', [
+                  div(
+                    classes:
+                        'btn rounded-full border border-border-medium bg-white hover:bg-base-200 text-sm h-8 min-h-0',
+                    attributes: {
+                      'tabindex': '0',
+                      'role': 'button',
+                    },
+                    [
+                      .text('$entries'),
+                      ChevronDown(classes: 'w-4 h-4'),
+                    ],
+                  ),
+                  ul(
+                    attributes: {'tabindex': '-1'},
+                    classes:
+                        'dropdown-content menu bg-base-100 rounded-box z-10 mt-2.5 p-2 shadow-sm border border-border-light',
+                    [
+                      dropdownButton(
+                        name: '10',
+                        onClick: () => _changeEntry(10),
+                      ),
+                      dropdownButton(
+                        name: '25',
+                        onClick: () => _changeEntry(25),
+                      ),
+                      dropdownButton(
+                        name: '50',
+                        onClick: () => _changeEntry(50),
+                      ),
+                      dropdownButton(
+                        name: '100',
+                        onClick: () => _changeEntry(100),
+                      ),
+                    ],
+                  ),
+                ]),
+                .text('entries'),
               ]),
-              .text('entries'),
+              DateRangePicker(
+                fromDate: reportsFromDateSignal.value,
+                toDate: reportsToDateSignal.value,
+                onFromDateChanged: (val) {
+                  reportsFromDateSignal.value = val;
+                  paymentsPageSignal.value = 1;
+                  refreshPaymentsSignal();
+                },
+                onToDateChanged: (val) {
+                  reportsToDateSignal.value = val;
+                  paymentsPageSignal.value = 1;
+                  refreshPaymentsSignal();
+                },
+              ),
             ]),
             div(
               classes:
@@ -169,6 +208,7 @@ class _PaymentsState extends SignalState<Payments> {
                       orderAmount: payment.orderAmount,
                       paidAmount: payment.paidAmount,
                       paymentMode: _formatPaymentType(payment.paymentMode),
+                      paymentStatus: payment.paymentStatus,
                     ),
                 ]),
               ],
@@ -197,6 +237,7 @@ class _PaymentsState extends SignalState<Payments> {
         td([.text('Order Amount (₹)')]),
         td([.text('Paid Amount (₹)')]),
         td([.text('Payment Mode')]),
+        td([.text('Payment Status')]),
         th([]),
       ]),
     ]);
@@ -209,8 +250,10 @@ class _PaymentsState extends SignalState<Payments> {
     required double orderAmount,
     required double paidAmount,
     required String paymentMode,
+    required PaymentStatus paymentStatus,
   }) {
     final isCash = paymentMode == 'CASH';
+    final (statusLabel, statusClass) = _formatPaymentStatus(paymentStatus);
 
     return tr([
       th([]),
@@ -235,6 +278,15 @@ class _PaymentsState extends SignalState<Payments> {
               '${isCash ? 'bg-soft-blue text-soft-blue-content' : 'bg-soft-purple text-soft-purple-content'} rounded-full px-3 py-1 text-center text-xs font-semibold inline-block',
           [
             .text(paymentMode),
+          ],
+        ),
+      ]),
+      td([
+        div(
+          classes:
+              '$statusClass rounded-full px-3 py-1 text-center text-xs font-semibold inline-block',
+          [
+            .text(statusLabel),
           ],
         ),
       ]),
