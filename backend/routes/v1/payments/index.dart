@@ -51,7 +51,7 @@ Future<Response> _onGet(RequestContext context) async {
         paidAmount: isPaid ? order.grandTotal : 0.0,
         paymentMode: order.paymentMethod,
         date: order.createdAt,
-      );
+      ).toJson();
     }).toList();
 
     final totalPages = (total / size).ceil();

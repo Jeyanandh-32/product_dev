@@ -89,7 +89,7 @@ Future<Response> _onGet(RequestContext context) async {
     );
 
     final orders = orderRows
-        .map((orderRow) => orderRow.toOrder(const <OrderItemRow>[]))
+        .map((orderRow) => orderRow.toOrder(const <OrderItemRow>[]).toJson())
         .toList();
     final totalPages = (total / size).ceil();
 
