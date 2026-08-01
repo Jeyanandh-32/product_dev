@@ -5881,6 +5881,7 @@ final class _$OrderRow extends OrderRow {
     this.terminalCode,
     this.createdAt,
     this.updatedAt,
+    this.discountTotal,
   );
 
   @override
@@ -5931,6 +5932,9 @@ final class _$OrderRow extends OrderRow {
   @override
   final DateTime updatedAt;
 
+  @override
+  final int discountTotal;
+
   static final _$table = $ForGeneratedCode.tableDefinition(
     tableName: 'orders',
     columns: <String>[
@@ -5950,6 +5954,7 @@ final class _$OrderRow extends OrderRow {
       'terminal_code',
       'created_at',
       'updated_at',
+      'discount_total',
     ],
     columnInfo: [
       $ForGeneratedCode.columnDefinition(
@@ -6064,6 +6069,13 @@ final class _$OrderRow extends OrderRow {
         autoIncrement: false,
         overrides: [],
       ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.integer,
+        isNotNull: true,
+        defaultValue: (kind: 'raw', value: 0),
+        autoIncrement: false,
+        overrides: [],
+      ),
     ],
     primaryKey: <String>['id'],
     unique: <List<String>>[
@@ -6115,6 +6127,7 @@ final class _$OrderRow extends OrderRow {
     final terminalCode = row.readString();
     final createdAt = row.readDateTime();
     final updatedAt = row.readDateTime();
+    final discountTotal = row.readInt();
     if (id == null &&
         merchantId == null &&
         storeId == null &&
@@ -6130,7 +6143,8 @@ final class _$OrderRow extends OrderRow {
         grandTotal == null &&
         terminalCode == null &&
         createdAt == null &&
-        updatedAt == null) {
+        updatedAt == null &&
+        discountTotal == null) {
       return null;
     }
     return _$OrderRow._(
@@ -6150,12 +6164,13 @@ final class _$OrderRow extends OrderRow {
       terminalCode,
       createdAt!,
       updatedAt!,
+      discountTotal!,
     );
   }
 
   @override
   String toString() =>
-      'OrderRow(id: "$id", merchantId: "$merchantId", storeId: "$storeId", orderReference: "$orderReference", billNo: "$billNo", source: "$source", type: "$type", status: "$status", paymentStatus: "$paymentStatus", paymentMethod: "$paymentMethod", subtotal: "$subtotal", taxTotal: "$taxTotal", grandTotal: "$grandTotal", terminalCode: "$terminalCode", createdAt: "$createdAt", updatedAt: "$updatedAt")';
+      'OrderRow(id: "$id", merchantId: "$merchantId", storeId: "$storeId", orderReference: "$orderReference", billNo: "$billNo", source: "$source", type: "$type", status: "$status", paymentStatus: "$paymentStatus", paymentMethod: "$paymentMethod", subtotal: "$subtotal", taxTotal: "$taxTotal", grandTotal: "$grandTotal", terminalCode: "$terminalCode", createdAt: "$createdAt", updatedAt: "$updatedAt", discountTotal: "$discountTotal")';
 }
 
 /// Extension methods for table defined in [OrderRow].
@@ -6181,6 +6196,7 @@ extension TableOrderRowExt on Table<OrderRow> {
     Expr<String?>? terminalCode,
     Expr<DateTime>? createdAt,
     Expr<DateTime>? updatedAt,
+    Expr<int>? discountTotal,
   }) => $ForGeneratedCode.insertInto(
     table: this,
     values: [
@@ -6200,6 +6216,7 @@ extension TableOrderRowExt on Table<OrderRow> {
       terminalCode,
       createdAt,
       updatedAt,
+      discountTotal,
     ],
   );
 
@@ -6224,6 +6241,7 @@ extension TableOrderRowExt on Table<OrderRow> {
     String? terminalCode,
     DateTime? createdAt,
     DateTime? updatedAt,
+    int? discountTotal,
   }) => $ForGeneratedCode.insertInto(
     table: this,
     values: [
@@ -6243,6 +6261,7 @@ extension TableOrderRowExt on Table<OrderRow> {
       terminalCode.asExpr,
       createdAt?.asExpr,
       updatedAt?.asExpr,
+      discountTotal?.asExpr,
     ],
   );
 
@@ -6281,6 +6300,7 @@ extension TableOrderRowExt on Table<OrderRow> {
     String? Function(T row)? terminalCode,
     DateTime Function(T row)? createdAt,
     DateTime Function(T row)? updatedAt,
+    int Function(T row)? discountTotal,
   }) => $ForGeneratedCode.insertValuesMapped(
     table: this,
     rows: rows,
@@ -6301,6 +6321,7 @@ extension TableOrderRowExt on Table<OrderRow> {
       terminalCode,
       createdAt,
       updatedAt,
+      discountTotal,
     ],
   );
 
@@ -6373,6 +6394,7 @@ extension QueryOrderRowExt on Query<(Expr<OrderRow>,)> {
         Expr<String?> terminalCode,
         Expr<DateTime> createdAt,
         Expr<DateTime> updatedAt,
+        Expr<int> discountTotal,
       })
       set,
     )
@@ -6399,6 +6421,7 @@ extension QueryOrderRowExt on Query<(Expr<OrderRow>,)> {
         Expr<String?>? terminalCode,
         Expr<DateTime>? createdAt,
         Expr<DateTime>? updatedAt,
+        Expr<int>? discountTotal,
       }) => $ForGeneratedCode.buildUpdate<OrderRow>([
         id,
         merchantId,
@@ -6416,6 +6439,7 @@ extension QueryOrderRowExt on Query<(Expr<OrderRow>,)> {
         terminalCode,
         createdAt,
         updatedAt,
+        discountTotal,
       ]),
     ),
   );
@@ -6492,6 +6516,7 @@ extension QuerySingleOrderRowExt on QuerySingle<(Expr<OrderRow>,)> {
         Expr<String?> terminalCode,
         Expr<DateTime> createdAt,
         Expr<DateTime> updatedAt,
+        Expr<int> discountTotal,
       })
       set,
     )
@@ -6518,6 +6543,7 @@ extension QuerySingleOrderRowExt on QuerySingle<(Expr<OrderRow>,)> {
         Expr<String?>? terminalCode,
         Expr<DateTime>? createdAt,
         Expr<DateTime>? updatedAt,
+        Expr<int>? discountTotal,
       }) => $ForGeneratedCode.buildUpdate<OrderRow>([
         id,
         merchantId,
@@ -6535,6 +6561,7 @@ extension QuerySingleOrderRowExt on QuerySingle<(Expr<OrderRow>,)> {
         terminalCode,
         createdAt,
         updatedAt,
+        discountTotal,
       ]),
     ),
   );
@@ -6597,6 +6624,9 @@ extension ExpressionOrderRowExt on Expr<OrderRow> {
 
   Expr<DateTime> get updatedAt =>
       $ForGeneratedCode.field(this, 15, $ForGeneratedCode.dateTime);
+
+  Expr<int> get discountTotal =>
+      $ForGeneratedCode.field(this, 16, $ForGeneratedCode.integer);
 }
 
 extension ExpressionNullableOrderRowExt on Expr<OrderRow?> {
@@ -6647,6 +6677,9 @@ extension ExpressionNullableOrderRowExt on Expr<OrderRow?> {
 
   Expr<DateTime?> get updatedAt =>
       $ForGeneratedCode.field(this, 15, $ForGeneratedCode.dateTime);
+
+  Expr<int?> get discountTotal =>
+      $ForGeneratedCode.field(this, 16, $ForGeneratedCode.integer);
 
   /// Check if the row is not `NULL`.
   ///
@@ -6770,6 +6803,7 @@ extension InsertOnConflictOrderRowExt on InsertOnConflict<OrderRow> {
         Expr<String?> terminalCode,
         Expr<DateTime> createdAt,
         Expr<DateTime> updatedAt,
+        Expr<int> discountTotal,
       })
       set,
     )
@@ -6796,6 +6830,7 @@ extension InsertOnConflictOrderRowExt on InsertOnConflict<OrderRow> {
         Expr<String?>? terminalCode,
         Expr<DateTime>? createdAt,
         Expr<DateTime>? updatedAt,
+        Expr<int>? discountTotal,
       }) => $ForGeneratedCode.buildUpdate<OrderRow>([
         id,
         merchantId,
@@ -6813,6 +6848,7 @@ extension InsertOnConflictOrderRowExt on InsertOnConflict<OrderRow> {
         terminalCode,
         createdAt,
         updatedAt,
+        discountTotal,
       ]),
     ),
   );
@@ -6903,6 +6939,7 @@ extension InsertOnConflictSingleOrderRowExt
         Expr<String?> terminalCode,
         Expr<DateTime> createdAt,
         Expr<DateTime> updatedAt,
+        Expr<int> discountTotal,
       })
       set,
     )
@@ -6929,6 +6966,7 @@ extension InsertOnConflictSingleOrderRowExt
         Expr<String?>? terminalCode,
         Expr<DateTime>? createdAt,
         Expr<DateTime>? updatedAt,
+        Expr<int>? discountTotal,
       }) => $ForGeneratedCode.buildUpdate<OrderRow>([
         id,
         merchantId,
@@ -6946,6 +6984,7 @@ extension InsertOnConflictSingleOrderRowExt
         terminalCode,
         createdAt,
         updatedAt,
+        discountTotal,
       ]),
     ),
   );
@@ -6960,6 +6999,7 @@ final class _$OrderItemRow extends OrderItemRow {
     this.quantity,
     this.unitPrice,
     this.taxRate,
+    this.discount,
   );
 
   @override
@@ -6983,6 +7023,9 @@ final class _$OrderItemRow extends OrderItemRow {
   @override
   final double taxRate;
 
+  @override
+  final int discount;
+
   static final _$table = $ForGeneratedCode.tableDefinition(
     tableName: 'order_items',
     columns: <String>[
@@ -6993,6 +7036,7 @@ final class _$OrderItemRow extends OrderItemRow {
       'quantity',
       'unit_price',
       'tax_rate',
+      'discount',
     ],
     columnInfo: [
       $ForGeneratedCode.columnDefinition(
@@ -7051,6 +7095,13 @@ final class _$OrderItemRow extends OrderItemRow {
           ),
         ],
       ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.integer,
+        isNotNull: true,
+        defaultValue: (kind: 'raw', value: 0),
+        autoIncrement: false,
+        overrides: [],
+      ),
     ],
     primaryKey: <String>['id'],
     unique: <List<String>>[],
@@ -7091,13 +7142,15 @@ final class _$OrderItemRow extends OrderItemRow {
     final quantity = row.readInt();
     final unitPrice = row.readInt();
     final taxRate = row.readDouble();
+    final discount = row.readInt();
     if (id == null &&
         orderId == null &&
         productId == null &&
         storeId == null &&
         quantity == null &&
         unitPrice == null &&
-        taxRate == null) {
+        taxRate == null &&
+        discount == null) {
       return null;
     }
     return _$OrderItemRow._(
@@ -7108,12 +7161,13 @@ final class _$OrderItemRow extends OrderItemRow {
       quantity!,
       unitPrice!,
       taxRate!,
+      discount!,
     );
   }
 
   @override
   String toString() =>
-      'OrderItemRow(id: "$id", orderId: "$orderId", productId: "$productId", storeId: "$storeId", quantity: "$quantity", unitPrice: "$unitPrice", taxRate: "$taxRate")';
+      'OrderItemRow(id: "$id", orderId: "$orderId", productId: "$productId", storeId: "$storeId", quantity: "$quantity", unitPrice: "$unitPrice", taxRate: "$taxRate", discount: "$discount")';
 }
 
 /// Extension methods for table defined in [OrderItemRow].
@@ -7130,9 +7184,19 @@ extension TableOrderItemRowExt on Table<OrderItemRow> {
     required Expr<int> quantity,
     required Expr<int> unitPrice,
     required Expr<double> taxRate,
+    Expr<int>? discount,
   }) => $ForGeneratedCode.insertInto(
     table: this,
-    values: [id, orderId, productId, storeId, quantity, unitPrice, taxRate],
+    values: [
+      id,
+      orderId,
+      productId,
+      storeId,
+      quantity,
+      unitPrice,
+      taxRate,
+      discount,
+    ],
   );
 
   /// Insert row into the `orderItems` table.
@@ -7147,6 +7211,7 @@ extension TableOrderItemRowExt on Table<OrderItemRow> {
     required int quantity,
     required int unitPrice,
     required double taxRate,
+    int? discount,
   }) => $ForGeneratedCode.insertInto(
     table: this,
     values: [
@@ -7157,6 +7222,7 @@ extension TableOrderItemRowExt on Table<OrderItemRow> {
       quantity.asExpr,
       unitPrice.asExpr,
       taxRate.asExpr,
+      discount?.asExpr,
     ],
   );
 
@@ -7186,10 +7252,20 @@ extension TableOrderItemRowExt on Table<OrderItemRow> {
     required int Function(T row) quantity,
     required int Function(T row) unitPrice,
     required double Function(T row) taxRate,
+    int Function(T row)? discount,
   }) => $ForGeneratedCode.insertValuesMapped(
     table: this,
     rows: rows,
-    mappings: [id, orderId, productId, storeId, quantity, unitPrice, taxRate],
+    mappings: [
+      id,
+      orderId,
+      productId,
+      storeId,
+      quantity,
+      unitPrice,
+      taxRate,
+      discount,
+    ],
   );
 
   /// Delete a single row from the `orderItems` table, specified by
@@ -7252,6 +7328,7 @@ extension QueryOrderItemRowExt on Query<(Expr<OrderItemRow>,)> {
         Expr<int> quantity,
         Expr<int> unitPrice,
         Expr<double> taxRate,
+        Expr<int> discount,
       })
       set,
     )
@@ -7269,6 +7346,7 @@ extension QueryOrderItemRowExt on Query<(Expr<OrderItemRow>,)> {
         Expr<int>? quantity,
         Expr<int>? unitPrice,
         Expr<double>? taxRate,
+        Expr<int>? discount,
       }) => $ForGeneratedCode.buildUpdate<OrderItemRow>([
         id,
         orderId,
@@ -7277,6 +7355,7 @@ extension QueryOrderItemRowExt on Query<(Expr<OrderItemRow>,)> {
         quantity,
         unitPrice,
         taxRate,
+        discount,
       ]),
     ),
   );
@@ -7331,6 +7410,7 @@ extension QuerySingleOrderItemRowExt on QuerySingle<(Expr<OrderItemRow>,)> {
         Expr<int> quantity,
         Expr<int> unitPrice,
         Expr<double> taxRate,
+        Expr<int> discount,
       })
       set,
     )
@@ -7348,6 +7428,7 @@ extension QuerySingleOrderItemRowExt on QuerySingle<(Expr<OrderItemRow>,)> {
         Expr<int>? quantity,
         Expr<int>? unitPrice,
         Expr<double>? taxRate,
+        Expr<int>? discount,
       }) => $ForGeneratedCode.buildUpdate<OrderItemRow>([
         id,
         orderId,
@@ -7356,6 +7437,7 @@ extension QuerySingleOrderItemRowExt on QuerySingle<(Expr<OrderItemRow>,)> {
         quantity,
         unitPrice,
         taxRate,
+        discount,
       ]),
     ),
   );
@@ -7391,6 +7473,9 @@ extension ExpressionOrderItemRowExt on Expr<OrderItemRow> {
 
   Expr<double> get taxRate =>
       $ForGeneratedCode.field(this, 6, $ForGeneratedCode.real);
+
+  Expr<int> get discount =>
+      $ForGeneratedCode.field(this, 7, $ForGeneratedCode.integer);
 }
 
 extension ExpressionNullableOrderItemRowExt on Expr<OrderItemRow?> {
@@ -7414,6 +7499,9 @@ extension ExpressionNullableOrderItemRowExt on Expr<OrderItemRow?> {
 
   Expr<double?> get taxRate =>
       $ForGeneratedCode.field(this, 6, $ForGeneratedCode.real);
+
+  Expr<int?> get discount =>
+      $ForGeneratedCode.field(this, 7, $ForGeneratedCode.integer);
 
   /// Check if the row is not `NULL`.
   ///
@@ -7520,6 +7608,7 @@ extension InsertOnConflictOrderItemRowExt on InsertOnConflict<OrderItemRow> {
         Expr<int> quantity,
         Expr<int> unitPrice,
         Expr<double> taxRate,
+        Expr<int> discount,
       })
       set,
     )
@@ -7537,6 +7626,7 @@ extension InsertOnConflictOrderItemRowExt on InsertOnConflict<OrderItemRow> {
         Expr<int>? quantity,
         Expr<int>? unitPrice,
         Expr<double>? taxRate,
+        Expr<int>? discount,
       }) => $ForGeneratedCode.buildUpdate<OrderItemRow>([
         id,
         orderId,
@@ -7545,6 +7635,7 @@ extension InsertOnConflictOrderItemRowExt on InsertOnConflict<OrderItemRow> {
         quantity,
         unitPrice,
         taxRate,
+        discount,
       ]),
     ),
   );
@@ -7627,6 +7718,7 @@ extension InsertOnConflictSingleOrderItemRowExt
         Expr<int> quantity,
         Expr<int> unitPrice,
         Expr<double> taxRate,
+        Expr<int> discount,
       })
       set,
     )
@@ -7644,6 +7736,7 @@ extension InsertOnConflictSingleOrderItemRowExt
         Expr<int>? quantity,
         Expr<int>? unitPrice,
         Expr<double>? taxRate,
+        Expr<int>? discount,
       }) => $ForGeneratedCode.buildUpdate<OrderItemRow>([
         id,
         orderId,
@@ -7652,6 +7745,7 @@ extension InsertOnConflictSingleOrderItemRowExt
         quantity,
         unitPrice,
         taxRate,
+        discount,
       ]),
     ),
   );

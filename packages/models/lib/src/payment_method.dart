@@ -1,1 +1,1 @@
-enum PaymentMethod { cash, upi }
+enum PaymentMethod { cash, upi, complimentary }

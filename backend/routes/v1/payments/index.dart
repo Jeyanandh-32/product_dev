@@ -43,11 +43,13 @@ Future<Response> _onGet(RequestContext context) async {
     final payments = orderRows.map((row) {
       final order = row.toOrder(const <OrderItemRow>[]);
       final isPaid = order.paymentStatus == PaymentStatus.paid;
+      final originalOrderAmount = order.subtotal + order.taxTotal;
+
       return Payment(
         id: order.id,
         orderReference: order.orderReference,
         orderId: '${order.billNo}',
-        orderAmount: order.grandTotal,
+        orderAmount: originalOrderAmount,
         paidAmount: isPaid ? order.grandTotal : 0.0,
         paymentMode: order.paymentMethod,
         date: order.createdAt,

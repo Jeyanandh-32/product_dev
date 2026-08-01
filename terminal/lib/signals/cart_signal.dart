@@ -1,15 +1,18 @@
+import 'dart:math';
 import 'package:client_repositories/client_repositories.dart';
 import 'package:models/models.dart';
 import 'package:signals_flutter/signals_flutter.dart';
 import 'package:terminal/models/cart_item.dart';
 
 final paymentModeSignal = signal<PaymentMethod>(PaymentMethod.cash);
+final discountInputSignal = signal<double>(0.0);
 
 class CartState {
   final List<CartItem> items;
   final int noOfItems;
   final int orderQuantity;
   final double subtotal;
+  final double discountTotal;
   final double taxTotal;
   final double grandTotal;
 
@@ -18,6 +21,7 @@ class CartState {
     required this.noOfItems,
     required this.orderQuantity,
     required this.subtotal,
+    required this.discountTotal,
     required this.taxTotal,
     required this.grandTotal,
   });
@@ -27,6 +31,7 @@ class CartState {
     noOfItems: 0,
     orderQuantity: 0,
     subtotal: 0.0,
+    discountTotal: 0.0,
     taxTotal: 0.0,
     grandTotal: 0.0,
   );
@@ -81,7 +86,14 @@ abstract final class CartController {
     _updateState(updatedItems);
   }
 
+  static void setDiscount(double discount) {
+    discountInputSignal.value = max(0.0, discount);
+    _updateState(cartSignal.value.items);
+  }
+
   static void clear() {
+    discountInputSignal.value = 0.0;
+    paymentModeSignal.value = PaymentMethod.cash;
     cartSignal.value = CartState.initial();
   }
 
@@ -102,13 +114,20 @@ abstract final class CartController {
       orderQuantity += item.quantity;
     }
 
+    final isComplimentary =
+        paymentModeSignal.value == PaymentMethod.complimentary;
+    double discountTotal = isComplimentary
+        ? (subtotal + taxTotal)
+        : discountInputSignal.value;
+
     cartSignal.value = CartState(
       items: items,
       noOfItems: noOfItems,
       orderQuantity: orderQuantity,
       subtotal: subtotal,
+      discountTotal: discountTotal,
       taxTotal: taxTotal,
-      grandTotal: subtotal + taxTotal,
+      grandTotal: max(0.0, subtotal - discountTotal + taxTotal),
     );
   }
 
@@ -122,11 +141,14 @@ abstract final class CartController {
         )
         .toList();
 
+    final discountTotal = cartSignal.value.discountTotal;
+
     try {
       final order = await OrderRepository.create(
         storeId: storeId,
         products: products,
         paymentMethod: paymentMethod,
+        discountTotal: discountTotal,
         source: OrderSource.terminal,
         type: OrderType.dineIn,
       );

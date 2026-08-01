@@ -13,6 +13,7 @@ abstract class OrderItem with _$OrderItem {
     required String storeId,
     required int quantity,
     required double unitPrice,
+    @Default(0.0) double discount,
     required double taxRate,
   }) = _OrderItem;
 

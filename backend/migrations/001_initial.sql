@@ -139,7 +139,8 @@ CREATE TABLE IF NOT EXISTS orders (
     terminal_code VARCHAR(12) REFERENCES terminals(code) ON DELETE SET NULL,
 
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    discount_total INT NOT NULL DEFAULT 0
 );
 
 CREATE TABLE IF NOT EXISTS order_items (
@@ -149,7 +150,8 @@ CREATE TABLE IF NOT EXISTS order_items (
     store_id UUID NOT NULL REFERENCES stores(id) ON DELETE CASCADE,
     quantity INT NOT NULL CHECK (quantity > 0),
     unit_price INT NOT NULL,
-    tax_rate NUMERIC(5, 2) NOT NULL
+    tax_rate NUMERIC(5, 2) NOT NULL,
+    discount INT NOT NULL DEFAULT 0
 );
 
 CREATE INDEX IF NOT EXISTS idx_order_items_order_id ON order_items(order_id);

@@ -169,6 +169,9 @@ abstract class $OrderProduct {
 
   @IntegerField(minimum: 1, description: 'Quantity')
   int get quantity;
+
+  @DoubleField(minimum: 0, description: 'Discount')
+  double? get discount;
 }
 
 @Schema()
@@ -181,6 +184,9 @@ abstract class $OrderCreate {
 
   @StringField(description: 'Order payment method')
   String? get paymentMethod;
+
+  @DoubleField(minimum: 0, description: 'Discount total')
+  double? get discountTotal;
 
   @Field(description: 'Products list')
   List<$OrderProduct> get products;

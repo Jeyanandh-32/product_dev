@@ -9,6 +9,7 @@ abstract final class OrderRepository {
     OrderSource? source,
     OrderType? type,
     PaymentMethod? paymentMethod,
+    double? discountTotal,
   }) async {
     try {
       final result = await dio.post(
@@ -19,6 +20,7 @@ abstract final class OrderRepository {
           'source': ?source?.name,
           'type': ?type?.name,
           'paymentMethod': ?paymentMethod?.name,
+          'discountTotal': ?discountTotal,
         },
       );
 

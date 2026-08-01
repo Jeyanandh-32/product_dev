@@ -20,6 +20,7 @@ class OrderRepository {
     required int subtotal,
     required int taxTotal,
     required int grandTotal,
+    int discountTotal = 0,
     String? terminalCode,
   }) async {
     final row = _db.orders
@@ -34,6 +35,7 @@ class OrderRepository {
           paymentStatus: paymentStatus.name,
           paymentMethod: paymentMethod.name,
           subtotal: subtotal,
+          discountTotal: discountTotal,
           taxTotal: taxTotal,
           grandTotal: grandTotal,
           terminalCode: terminalCode,

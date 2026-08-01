@@ -41,6 +41,7 @@ class OrderService {
     required OrderSource source,
     required OrderType type,
     required PaymentMethod paymentMethod,
+    double discountTotalInput = 0.0,
     String? terminalCode,
   }) async {
     final itemProductIds = productsInput
@@ -51,11 +52,14 @@ class OrderService {
 
     var calculatedSubtotal = 0;
     var calculatedTaxTotal = 0;
+    var calculatedItemDiscounts = 0;
     final calculatedItems = <Map<String, dynamic>>[];
 
     for (final itemData in productsInput) {
       final productId = itemData['productId'] as String;
       final quantity = itemData['quantity'] as int;
+      final itemDiscount = ((itemData['discount'] as double? ?? 0.0) * 100)
+          .round();
 
       final product = productMap[productId];
       if (product == null) {
@@ -71,16 +75,32 @@ class OrderService {
 
       calculatedSubtotal += itemSubtotal;
       calculatedTaxTotal += roundedItemTax;
+      calculatedItemDiscounts += itemDiscount;
 
       calculatedItems.add({
         'productId': productId,
         'quantity': quantity,
         'unitPrice': unitPrice,
+        'discount': itemDiscount,
         'taxRate': taxRate,
       });
     }
 
-    final calculatedGrandTotal = calculatedSubtotal + calculatedTaxTotal;
+    final isComplimentary = paymentMethod == PaymentMethod.complimentary;
+    var calculatedDiscountTotal =
+        ((discountTotalInput * 100).round()) + calculatedItemDiscounts;
+    if (isComplimentary) {
+      calculatedDiscountTotal = calculatedSubtotal + calculatedTaxTotal;
+    }
+
+    final calculatedGrandTotal = max(
+      0,
+      calculatedSubtotal + calculatedTaxTotal - calculatedDiscountTotal,
+    );
+
+    final paymentStatus = isComplimentary || calculatedGrandTotal == 0
+        ? PaymentStatus.complimentary
+        : PaymentStatus.paid;
 
     return Database.db.transact(() async {
       final billNo = await _orderRepo.getNextBillNo(storeId);
@@ -94,9 +114,10 @@ class OrderService {
         source: source,
         type: type,
         status: OrderStatus.completed,
-        paymentStatus: PaymentStatus.paid,
+        paymentStatus: paymentStatus,
         paymentMethod: paymentMethod,
         subtotal: calculatedSubtotal,
+        discountTotal: calculatedDiscountTotal,
         taxTotal: calculatedTaxTotal,
         grandTotal: calculatedGrandTotal,
         terminalCode: terminalCode,
@@ -107,6 +128,7 @@ class OrderService {
         final productId = item['productId'] as String;
         final quantity = item['quantity'] as int;
         final unitPrice = item['unitPrice'] as int;
+        final discount = item['discount'] as int;
         final taxRate = item['taxRate'] as double;
 
         final orderItem = await _orderItemRepo.create(
@@ -115,6 +137,7 @@ class OrderService {
           storeId: storeId,
           quantity: quantity,
           unitPrice: unitPrice,
+          discount: discount,
           taxRate: taxRate,
         );
         createdItems.add(orderItem);

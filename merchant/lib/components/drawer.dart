@@ -122,19 +122,14 @@ class _DrawerState extends SignalState<Drawer> {
                   onClick: () => _changeSubIndex(1, 'Reports', 'Payments'),
                 ),
                 navSubButton(
-                  name: 'Credits',
-                  isSelected: index == 2 && subIndex == 2,
-                  onClick: () => _changeSubIndex(2, 'Reports', 'Credits'),
-                ),
-                navSubButton(
                   name: 'Profit & Loss',
-                  isSelected: index == 2 && subIndex == 3,
-                  onClick: () => _changeSubIndex(3, 'Reports', 'Profit & Loss'),
+                  isSelected: index == 2 && subIndex == 2,
+                  onClick: () => _changeSubIndex(2, 'Reports', 'Profit & Loss'),
                 ),
                 navSubButton(
                   name: 'Stock Summary',
-                  isSelected: index == 2 && subIndex == 4,
-                  onClick: () => _changeSubIndex(4, 'Reports', 'Stock Summary'),
+                  isSelected: index == 2 && subIndex == 3,
+                  onClick: () => _changeSubIndex(3, 'Reports', 'Stock Summary'),
                 ),
               ],
             ),

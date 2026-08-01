@@ -15,6 +15,7 @@ _OrderItem _$OrderItemFromJson(Map<String, dynamic> json) => _OrderItem(
   storeId: json['storeId'] as String,
   quantity: (json['quantity'] as num).toInt(),
   unitPrice: (json['unitPrice'] as num).toDouble(),
+  discount: (json['discount'] as num?)?.toDouble() ?? 0.0,
   taxRate: (json['taxRate'] as num).toDouble(),
 );
 
@@ -26,5 +27,6 @@ Map<String, dynamic> _$OrderItemToJson(_OrderItem instance) =>
       'storeId': instance.storeId,
       'quantity': instance.quantity,
       'unitPrice': instance.unitPrice,
+      'discount': instance.discount,
       'taxRate': instance.taxRate,
     };

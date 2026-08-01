@@ -15,6 +15,7 @@ extension OrderRowExtension on OrderRow {
     paymentStatus: .values.byName(paymentStatus),
     paymentMethod: .values.byName(paymentMethod),
     subtotal: subtotal / 100,
+    discountTotal: discountTotal / 100,
     taxTotal: taxTotal / 100,
     grandTotal: grandTotal / 100,
     terminalCode: terminalCode,

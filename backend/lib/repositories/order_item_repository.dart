@@ -31,6 +31,7 @@ class OrderItemRepository {
     required int quantity,
     required int unitPrice,
     required double taxRate,
+    int discount = 0,
   }) async {
     final row = _db.orderItems
         .insertValue(
@@ -39,6 +40,7 @@ class OrderItemRepository {
           storeId: storeId,
           quantity: quantity,
           unitPrice: unitPrice,
+          discount: discount,
           taxRate: taxRate,
         )
         .returnInserted()
@@ -56,6 +58,7 @@ class OrderItemRepository {
           storeId: (o) => o.storeId,
           quantity: (o) => o.quantity,
           unitPrice: (o) => o.unitPrice,
+          discount: (o) => o.discount,
           taxRate: (o) => o.taxRate,
         )
         .returnInserted()

@@ -18,6 +18,7 @@ abstract class Order with _$Order {
     required PaymentStatus paymentStatus,
     required PaymentMethod paymentMethod,
     required double subtotal,
+    @Default(0.0) double discountTotal,
     required double taxTotal,
     required double grandTotal,
     String? terminalCode,

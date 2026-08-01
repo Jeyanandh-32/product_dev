@@ -1091,8 +1091,16 @@ base class OrderProduct {
 
   OrderProduct._(this._json);
 
-  OrderProduct({required String productId, required int quantity}) {
-    _json = {'productId': productId, 'quantity': quantity};
+  OrderProduct({
+    required String productId,
+    required int quantity,
+    double? discount,
+  }) {
+    _json = {
+      'productId': productId,
+      'quantity': quantity,
+      'discount': ?discount,
+    };
   }
 
   late final Map<String, dynamic> _json;
@@ -1115,6 +1123,18 @@ base class OrderProduct {
 
   set quantity(int value) {
     _json['quantity'] = value;
+  }
+
+  double? get discount {
+    return (_json['discount'] as num?)?.toDouble();
+  }
+
+  set discount(double? value) {
+    if (value == null) {
+      _json.remove('discount');
+    } else {
+      _json['discount'] = value;
+    }
   }
 
   @override
@@ -1147,6 +1167,7 @@ base class _OrderProductTypeFactory extends SchemanticType<OrderProduct> {
               minLength: 1,
             ),
             'quantity': $Schema.integer(description: 'Quantity', minimum: 1),
+            'discount': $Schema.number(description: 'Discount', minimum: 0),
           },
           required: ['productId', 'quantity'],
         )
@@ -1166,12 +1187,14 @@ base class OrderCreate {
     String? source,
     String? type,
     String? paymentMethod,
+    double? discountTotal,
     required List<OrderProduct> products,
   }) {
     _json = {
       'source': ?source,
       'type': ?type,
       'paymentMethod': ?paymentMethod,
+      'discountTotal': ?discountTotal,
       'products': products.map((e) => e.toJson()).toList(),
     };
   }
@@ -1217,6 +1240,18 @@ base class OrderCreate {
     }
   }
 
+  double? get discountTotal {
+    return (_json['discountTotal'] as num?)?.toDouble();
+  }
+
+  set discountTotal(double? value) {
+    if (value == null) {
+      _json.remove('discountTotal');
+    } else {
+      _json['discountTotal'] = value;
+    }
+  }
+
   List<OrderProduct> get products {
     return (_json['products'] as List)
         .map((e) => OrderProduct.fromJson(e as Map<String, dynamic>))
@@ -1256,6 +1291,10 @@ base class _OrderCreateTypeFactory extends SchemanticType<OrderCreate> {
             'type': $Schema.string(description: 'Order type'),
             'paymentMethod': $Schema.string(
               description: 'Order payment method',
+            ),
+            'discountTotal': $Schema.number(
+              description: 'Discount total',
+              minimum: 0,
             ),
             'products': $Schema.list(
               description: 'Products list',

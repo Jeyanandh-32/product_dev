@@ -27,7 +27,13 @@ Future<Response> _onPost(RequestContext context) async {
     final orderService = context.read<OrderService>();
 
     final productsList = input.products
-        .map((p) => {'productId': p.productId, 'quantity': p.quantity})
+        .map(
+          (p) => {
+            'productId': p.productId,
+            'quantity': p.quantity,
+            'discount': p.discount,
+          },
+        )
         .toList();
 
     final source = OrderSource.values.firstWhere(
@@ -50,6 +56,7 @@ Future<Response> _onPost(RequestContext context) async {
       source: source,
       type: type,
       paymentMethod: paymentMethod,
+      discountTotalInput: input.discountTotal ?? 0.0,
       terminalCode: tokenPayload.terminalCode,
     );
 

@@ -17,15 +17,16 @@ void initMerchantDio() {
     Dio(
       BaseOptions(
         baseUrl: baseUrl,
-        connectTimeout: Duration(seconds: 10),
-        receiveTimeout: Duration(seconds: 10),
+        connectTimeout: const Duration(seconds: 10),
+        receiveTimeout: const Duration(seconds: 10),
         extra: {'withCredentials': true},
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
         validateStatus: (status) =>
-            status != null && status >= 200 && status < 300,
+            status != null &&
+            ((status >= 200 && status < 300) || status == 401),
       ),
     ),
   );

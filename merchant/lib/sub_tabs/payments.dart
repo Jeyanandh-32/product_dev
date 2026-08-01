@@ -68,6 +68,7 @@ class _PaymentsState extends SignalState<Payments> {
     return switch (method) {
       PaymentMethod.cash => 'CASH',
       PaymentMethod.upi => 'UPI',
+      PaymentMethod.complimentary => 'FREE',
     };
   }
 

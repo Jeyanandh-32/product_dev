@@ -9,6 +9,7 @@ extension OrderItemRowExtension on OrderItemRow {
     storeId: storeId,
     quantity: quantity,
     unitPrice: unitPrice / 100,
+    discount: discount / 100,
     taxRate: taxRate,
     product: productRow?.toProduct(),
   );

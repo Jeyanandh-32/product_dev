@@ -292,6 +292,9 @@ abstract final class OrderRow extends Row {
 
   @DefaultValue.now
   DateTime get updatedAt;
+
+  @DefaultValue(0)
+  int get discountTotal;
 }
 
 @PrimaryKey(['id'])
@@ -314,4 +317,7 @@ abstract final class OrderItemRow extends Row {
 
   @SqlOverride.field(dialect: 'postgres', columnType: 'NUMERIC(5, 2)')
   double get taxRate;
+
+  @DefaultValue(0)
+  int get discount;
 }

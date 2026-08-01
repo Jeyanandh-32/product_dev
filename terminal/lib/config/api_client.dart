@@ -17,7 +17,8 @@ void initTerminalDio() {
             'Accept': 'application/json',
           },
           validateStatus: (status) =>
-              status != null && status >= 200 && status < 300,
+              status != null &&
+              ((status >= 200 && status < 300) || status == 401),
         ),
       )
       ..interceptors.add(

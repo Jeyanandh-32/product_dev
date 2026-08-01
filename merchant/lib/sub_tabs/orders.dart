@@ -65,12 +65,11 @@ class _OrdersState extends SignalState<Orders> {
   }
 
   String _formatPaymentType(PaymentMethod method) {
-    switch (method) {
-      case PaymentMethod.cash:
-        return 'CASH';
-      case PaymentMethod.upi:
-        return 'UPI';
-    }
+    return switch (method) {
+      PaymentMethod.cash => 'CASH',
+      PaymentMethod.upi => 'UPI',
+      PaymentMethod.complimentary => 'FREE',
+    };
   }
 
   @override
