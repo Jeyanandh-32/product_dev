@@ -8,7 +8,7 @@ import 'package:models/models.dart';
 
 Future<Response> onRequest(RequestContext context) async {
   return switch (context.request.method) {
-    HttpMethod.get => _onGet(context),
+    .get => _onGet(context),
     _ => methodNotAllowed(),
   };
 }
@@ -75,7 +75,7 @@ Future<Response> _onGet(RequestContext context) async {
 
     final payments = orderRows.map((row) {
       final order = row.toOrder(const <OrderItemRow>[]);
-      final isPaid = order.paymentStatus == PaymentStatus.paid;
+      final isPaid = order.paymentStatus == .paid;
       final originalOrderAmount = order.subtotal + order.taxTotal;
 
       return Payment(

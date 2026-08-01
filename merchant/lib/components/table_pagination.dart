@@ -2,10 +2,6 @@ import 'package:jaspr/client.dart';
 import 'package:jaspr/dom.dart';
 
 class TablePagination extends StatelessComponent {
-  final int currentPage;
-  final int totalPages;
-  final ValueChanged<int> onPageChanged;
-
   const TablePagination({
     super.key,
     required this.currentPage,
@@ -13,10 +9,14 @@ class TablePagination extends StatelessComponent {
     required this.onPageChanged,
   });
 
-  List<dynamic> _getPageNumbers() {
-    final List<dynamic> pages = [];
+  final int currentPage;
+  final int totalPages;
+  final ValueChanged<int> onPageChanged;
+
+  List<Object> _getPageNumbers() {
+    final pages = <Object>[];
     if (totalPages <= 5) {
-      for (int i = 1; i <= totalPages; i++) {
+      for (var i = 1; i <= totalPages; i++) {
         pages.add(i);
       }
     } else {
@@ -24,16 +24,16 @@ class TablePagination extends StatelessComponent {
       if (currentPage > 3) {
         pages.add('...');
       }
-      final int start = (currentPage - 1).clamp(2, totalPages - 1);
-      final int end = (currentPage + 1).clamp(2, totalPages - 1);
-      int finalStart = start;
-      int finalEnd = end;
+      final start = (currentPage - 1).clamp(2, totalPages - 1);
+      final end = (currentPage + 1).clamp(2, totalPages - 1);
+      var finalStart = start;
+      var finalEnd = end;
       if (currentPage <= 3) {
         finalEnd = 4;
       } else if (currentPage >= totalPages - 2) {
         finalStart = totalPages - 3;
       }
-      for (int i = finalStart; i <= finalEnd; i++) {
+      for (var i = finalStart; i <= finalEnd; i++) {
         pages.add(i);
       }
       if (currentPage < totalPages - 2) {
@@ -66,20 +66,20 @@ class TablePagination extends StatelessComponent {
         div(
           classes: 'hidden sm:flex items-center gap-2',
           [
-            for (final page in _getPageNumbers())
-              if (page == '...')
-                span(classes: 'px-2 text-gray-400 select-none', [.text('...')])
-              else
-                button(
+            for (final item in _getPageNumbers())
+              switch (item) {
+                final int p => button(
                   classes:
-                      'btn w-8 h-8 rounded-lg ${page == currentPage ? 'bg-accent text-white hover:bg-accent' : 'bg-neutral hover:bg-base-300'}',
-                  onClick: page == currentPage
-                      ? null
-                      : () => onPageChanged(page as int),
+                      'btn w-8 h-8 rounded-lg ${p == currentPage ? 'bg-accent text-white hover:bg-accent' : 'bg-neutral hover:bg-base-300'}',
+                  onClick: p == currentPage ? null : () => onPageChanged(p),
                   [
-                    .text('$page'),
+                    .text('$p'),
                   ],
                 ),
+                _ => span(classes: 'px-2 text-gray-400 select-none', [
+                  .text('...'),
+                ]),
+              },
           ],
         ),
         // Mobile Page Info Indicator (Hidden on desktop)

@@ -11,23 +11,23 @@ extension OrderRowExtension on OrderRow {
     billNo: billNo,
     source: OrderSource.values.firstWhere(
       (e) => e.name == source,
-      orElse: () => OrderSource.terminal,
+      orElse: () => .terminal,
     ),
     type: OrderType.values.firstWhere(
       (e) => e.name == type,
-      orElse: () => OrderType.dineIn,
+      orElse: () => .dineIn,
     ),
     status: OrderStatus.values.firstWhere(
       (e) => e.name == status,
-      orElse: () => OrderStatus.completed,
+      orElse: () => .completed,
     ),
     paymentStatus: PaymentStatus.values.firstWhere(
       (e) => e.name == paymentStatus,
-      orElse: () => PaymentStatus.paid,
+      orElse: () => .paid,
     ),
     paymentMethod: PaymentMethod.values.firstWhere(
       (e) => e.name == paymentMethod,
-      orElse: () => PaymentMethod.cash,
+      orElse: () => .cash,
     ),
     subtotal: subtotal / 100,
     discountTotal: discountTotal / 100,

@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'dart:math';
 
-import 'package:backend/enums/user_role.dart';
 import 'package:backend/extensions/request_context_extension.dart';
 import 'package:backend/extensions/terminal_row_extension.dart';
 import 'package:backend/models/token_payload/token_payload.dart';
@@ -14,25 +13,27 @@ import 'package:validators/validators.dart';
 
 Future<Response> onRequest(RequestContext context) async {
   final storeId = context.request.uri.queryParameters['storeId'];
+  final tokenPayload = context.tokenPayload;
 
-  if (context.request.method == HttpMethod.get) {
-    final tokenPayload = context.tokenPayload;
-
-    if (tokenPayload.role == UserRole.terminal &&
-        tokenPayload.terminalCode != null) {
-      return _onGetTerminal(context, tokenPayload);
-    }
-
-    if (storeId != null && storeId.isNotEmpty && !storeId.isUUID()) {
-      return badRequest(message: 'Invalid store id.');
-    }
-    return _onGet(context, storeId);
-  } else if (context.request.method == HttpMethod.post) {
-    final storeIdError = context.validateStoreId();
-    if (storeIdError != null) return storeIdError;
-    return _onPost(context, context.storeId);
-  } else {
-    return methodNotAllowed();
+  switch (context.request.method) {
+    case .get:
+      if (tokenPayload.role == .terminal && tokenPayload.terminalCode != null) {
+        return _onGetTerminal(context, tokenPayload);
+      }
+      if (storeId != null && storeId.isNotEmpty && !storeId.isUUID()) {
+        return badRequest(message: 'Invalid store id.');
+      }
+      return _onGet(context, storeId);
+    case .post:
+      final storeIdError = context.validateStoreId();
+      if (storeIdError != null) return storeIdError;
+      return _onPost(context, context.storeId);
+    case .put:
+    case .delete:
+    case .patch:
+    case .head:
+    case .options:
+      return methodNotAllowed();
   }
 }
 

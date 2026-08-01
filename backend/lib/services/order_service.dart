@@ -44,54 +44,48 @@ class OrderService {
     double discountTotalInput = 0.0,
     String? terminalCode,
   }) async {
-    final itemProductIds = productsInput
-        .map((e) => e['productId'] as String)
-        .toList();
-    final products = await _productRepo.getByIds(itemProductIds);
-    final productMap = {for (final p in products) p.id: p};
+    final isComplimentary = paymentMethod == .complimentary;
 
     var calculatedSubtotal = 0;
     var calculatedTaxTotal = 0;
-    var calculatedItemDiscounts = 0;
     final calculatedItems = <Map<String, dynamic>>[];
 
-    for (final itemData in productsInput) {
-      final productId = itemData['productId'] as String;
-      final quantity = itemData['quantity'] as int;
-      final itemDiscount = ((itemData['discount'] as double? ?? 0.0) * 100)
-          .round();
+    for (final p in productsInput) {
+      final productId = p['productId'] as String;
+      final quantity = p['quantity'] as int;
+      final itemDiscountDouble = (p['discount'] as num?)?.toDouble() ?? 0.0;
+      final itemDiscountPaise = (itemDiscountDouble * 100).round();
 
-      final product = productMap[productId];
-      if (product == null) {
-        throw Exception('Product with ID $productId not found.');
+      final result = await _productRepo.getById(productId);
+      if (result == null) {
+        throw Exception('Product with id "$productId" not found');
       }
+      final (productRow, _, _, _) = result;
 
-      final unitPrice = product.sellingPrice;
-      final taxRate = product.taxRate;
+      final sellingPricePaise = productRow.sellingPrice;
+      final itemSubtotalPaise = sellingPricePaise * quantity;
 
-      final itemSubtotal = unitPrice * quantity;
-      final itemTax = (itemSubtotal * taxRate) / 100.0;
-      final roundedItemTax = itemTax.round();
+      final taxRateDouble = productRow.taxRate;
+      final taxRateDecimal = taxRateDouble / 100.0;
+      final taxableAmountPaise = max(0, itemSubtotalPaise - itemDiscountPaise);
+      final itemTaxPaise = (taxableAmountPaise * taxRateDecimal).round();
 
-      calculatedSubtotal += itemSubtotal;
-      calculatedTaxTotal += roundedItemTax;
-      calculatedItemDiscounts += itemDiscount;
+      calculatedSubtotal += itemSubtotalPaise;
+      calculatedTaxTotal += itemTaxPaise;
 
       calculatedItems.add({
         'productId': productId,
         'quantity': quantity,
-        'unitPrice': unitPrice,
-        'discount': itemDiscount,
-        'taxRate': taxRate,
+        'unitPrice': sellingPricePaise,
+        'discount': itemDiscountPaise,
+        'taxRate': taxRateDouble,
       });
     }
 
-    final isComplimentary = paymentMethod == PaymentMethod.complimentary;
-    var calculatedDiscountTotal =
-        ((discountTotalInput * 100).round()) + calculatedItemDiscounts;
-    if (isComplimentary) {
-      calculatedDiscountTotal = calculatedSubtotal + calculatedTaxTotal;
-    }
+    final overallDiscountPaise = (discountTotalInput * 100).round();
+    final calculatedDiscountTotal = isComplimentary
+        ? (calculatedSubtotal + calculatedTaxTotal)
+        : overallDiscountPaise;
 
     final calculatedGrandTotal = max(
       0,
@@ -111,7 +105,7 @@ class OrderService {
         billNo: billNo,
         source: source,
         type: type,
-        status: OrderStatus.completed,
+        status: .completed,
         paymentStatus: paymentStatus,
         paymentMethod: paymentMethod,
         subtotal: calculatedSubtotal,
@@ -135,16 +129,20 @@ class OrderService {
           storeId: storeId,
           quantity: quantity,
           unitPrice: unitPrice,
-          discount: discount,
           taxRate: taxRate,
+          discount: discount,
         );
         createdItems.add(orderItem);
 
-        await _stockRepo.deductStock(
-          productId: productId,
+        final stockRow = await _stockRepo.getByProductAndStore(
           storeId: storeId,
-          quantityToDeduct: quantity,
+          productId: productId,
         );
+
+        if (stockRow != null && stockRow.stockMonitor) {
+          final newQty = max(0, stockRow.quantity - quantity);
+          await _stockRepo.update(id: stockRow.id, quantity: newQty);
+        }
       }
 
       return orderRow.toOrder(createdItems);

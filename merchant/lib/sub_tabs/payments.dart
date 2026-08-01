@@ -17,7 +17,6 @@ import 'package:web/web.dart' as web;
 
 class Payments extends SignalComponent {
   const Payments({super.key});
-
   @override
   SignalState<Payments> createState() => _PaymentsState();
 }
@@ -72,27 +71,27 @@ class _PaymentsState extends SignalState<Payments> {
 
   String _formatPaymentType(PaymentMethod method) {
     return switch (method) {
-      PaymentMethod.cash => 'CASH',
-      PaymentMethod.upi => 'UPI',
-      PaymentMethod.complimentary => 'FREE',
+      .cash => 'CASH',
+      .upi => 'UPI',
+      .complimentary => 'FREE',
     };
   }
 
   (String label, String badgeClass) _formatPaymentStatus(PaymentStatus status) {
     return switch (status) {
-      PaymentStatus.paid => (
+      .paid => (
         'COMPLETED',
         'bg-emerald-50 text-emerald-700 border border-emerald-200',
       ),
-      PaymentStatus.unpaid => (
+      .unpaid => (
         'PENDING',
         'bg-amber-50 text-amber-700 border border-amber-200',
       ),
-      PaymentStatus.refunded => (
+      .refunded => (
         'CANCELLED',
         'bg-rose-50 text-rose-700 border border-rose-200',
       ),
-      PaymentStatus.cancelled => (
+      .cancelled => (
         'CANCELLED',
         'bg-rose-50 text-rose-700 border border-rose-200',
       ),

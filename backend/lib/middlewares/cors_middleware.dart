@@ -5,7 +5,7 @@ Middleware corsMiddleware() {
     final request = context.request;
     final origin = request.headers['origin'] ?? '*';
 
-    if (request.method == HttpMethod.options) {
+    if (request.method == .options) {
       return Response(
         statusCode: 204,
         headers: {

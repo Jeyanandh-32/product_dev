@@ -12,8 +12,8 @@ Future<Response> onRequest(
   String code,
 ) async {
   return switch (context.request.method) {
-    HttpMethod.get => _onGet(context, code),
-    HttpMethod.put || HttpMethod.patch => _onPutOrPatch(context, code),
+    .get => _onGet(context, code),
+    .put || .patch => _onPutOrPatch(context, code),
     _ => methodNotAllowed(),
   };
 }

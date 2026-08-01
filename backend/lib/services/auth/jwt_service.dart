@@ -21,7 +21,7 @@ class JwtService {
 
     return jwt.sign(
       SecretKey(Env.accessSecret),
-      expiresIn: role == UserRole.terminal ? null : const Duration(hours: 24),
+      expiresIn: role == .terminal ? null : const Duration(hours: 24),
     );
   }
 

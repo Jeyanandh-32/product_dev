@@ -17,8 +17,8 @@ Future<Response> onRequest(
   }
 
   return switch (context.request.method) {
-    HttpMethod.get => _onGet(context, id),
-    HttpMethod.put || HttpMethod.patch => _onPutOrPatch(context, id),
+    .get => _onGet(context, id),
+    .put || .patch => _onPutOrPatch(context, id),
     _ => methodNotAllowed(),
   };
 }

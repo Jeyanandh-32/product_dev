@@ -6,7 +6,6 @@ class OrderRepository {
   OrderRepository({required ts.Database<DatabaseSchema> db}) : _db = db;
 
   final ts.Database<DatabaseSchema> _db;
-
   Future<OrderRow> create({
     required String merchantId,
     required String storeId,

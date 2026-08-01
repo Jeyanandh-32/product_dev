@@ -11,8 +11,8 @@ import 'package:validators/validators.dart';
 
 Future<Response> onRequest(RequestContext context) async {
   return switch (context.request.method) {
-    HttpMethod.get => _onGet(context),
-    HttpMethod.post => _onPost(context),
+    .get => _onGet(context),
+    .post => _onPost(context),
     _ => methodNotAllowed(),
   };
 }

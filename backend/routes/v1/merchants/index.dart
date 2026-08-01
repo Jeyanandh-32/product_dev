@@ -6,7 +6,7 @@ import 'package:dart_frog/dart_frog.dart';
 
 Future<Response> onRequest(RequestContext context) async {
   return switch (context.request.method) {
-    HttpMethod.get => _onGet(context),
+    .get => _onGet(context),
     _ => methodNotAllowed(),
   };
 }

@@ -47,7 +47,7 @@ abstract final class StoreRow extends Row {
   @References(
     table: 'merchants',
     field: 'id',
-    onDelete: ReferentialAction.cascade,
+    onDelete: .cascade,
   )
   String get merchantId;
 
@@ -76,11 +76,11 @@ abstract final class CategoryRow extends Row {
   @References(
     table: 'merchants',
     field: 'id',
-    onDelete: ReferentialAction.cascade,
+    onDelete: .cascade,
   )
   String get merchantId;
 
-  @References(table: 'stores', field: 'id', onDelete: ReferentialAction.cascade)
+  @References(table: 'stores', field: 'id', onDelete: .cascade)
   String get storeId;
 
   @DefaultValue(true)
@@ -108,11 +108,11 @@ abstract final class CounterRow extends Row {
   @References(
     table: 'merchants',
     field: 'id',
-    onDelete: ReferentialAction.cascade,
+    onDelete: .cascade,
   )
   String get merchantId;
 
-  @References(table: 'stores', field: 'id', onDelete: ReferentialAction.cascade)
+  @References(table: 'stores', field: 'id', onDelete: .cascade)
   String get storeId;
 
   @DefaultValue(true)
@@ -139,11 +139,11 @@ abstract final class ProductRow extends Row {
   @References(
     table: 'merchants',
     field: 'id',
-    onDelete: ReferentialAction.cascade,
+    onDelete: .cascade,
   )
   String get merchantId;
 
-  @References(table: 'stores', field: 'id', onDelete: ReferentialAction.cascade)
+  @References(table: 'stores', field: 'id', onDelete: .cascade)
   String get storeId;
 
   String get name;
@@ -159,14 +159,14 @@ abstract final class ProductRow extends Row {
   @References(
     table: 'categories',
     field: 'id',
-    onDelete: ReferentialAction.setNull,
+    onDelete: .setNull,
   )
   String? get categoryId;
 
   @References(
     table: 'counters',
     field: 'id',
-    onDelete: ReferentialAction.setNull,
+    onDelete: .setNull,
   )
   String? get counterId;
 
@@ -199,11 +199,11 @@ abstract final class StockRow extends Row {
   @References(
     table: 'products',
     field: 'id',
-    onDelete: ReferentialAction.cascade,
+    onDelete: .cascade,
   )
   String get productId;
 
-  @References(table: 'stores', field: 'id', onDelete: ReferentialAction.cascade)
+  @References(table: 'stores', field: 'id', onDelete: .cascade)
   String get storeId;
 
   @DefaultValue(0)
@@ -231,11 +231,11 @@ abstract final class TerminalRow extends Row {
   @References(
     table: 'merchants',
     field: 'id',
-    onDelete: ReferentialAction.cascade,
+    onDelete: .cascade,
   )
   String get merchantId;
 
-  @References(table: 'stores', field: 'id', onDelete: ReferentialAction.cascade)
+  @References(table: 'stores', field: 'id', onDelete: .cascade)
   String get storeId;
 
   String get name;
