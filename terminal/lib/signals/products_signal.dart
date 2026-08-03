@@ -2,10 +2,29 @@ import 'package:client_repositories/client_repositories.dart';
 import 'package:models/models.dart';
 import 'package:signals_flutter/signals_flutter.dart';
 import 'package:terminal/signals/auth_signal.dart';
+import 'package:terminal/signals/categories_signal.dart';
 
 final searchQuerySignal = signal<String>('');
 
 final productsSignal = asyncSignal<List<Product>>(const AsyncLoading());
+
+final filteredProductsSignal = computed(() {
+  final products = productsSignal.value.value ?? [];
+  final searchQuery = searchQuerySignal.value;
+  final selectedCategory = selectedCategorySignal.value;
+
+  if (searchQuery.isEmpty && selectedCategory == null) return products;
+
+  return products.where((product) {
+    if (searchQuery.isNotEmpty) {
+      return product.name.toLowerCase().contains(searchQuery) ||
+          (product.sku?.toLowerCase().contains(searchQuery) ?? false) ||
+          (product.barcode?.toLowerCase().contains(searchQuery) ?? false);
+    }
+    if (selectedCategory == null) return true;
+    return product.category?.id == selectedCategory.id;
+  }).toList();
+});
 
 Future<void> refreshProductsSignal() async {
   final terminal = authSignal.value.value;

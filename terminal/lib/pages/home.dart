@@ -22,6 +22,8 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  static final String _arizoniaFontFamily = GoogleFonts.arizonia().fontFamily!;
+
   @override
   void initState() {
     super.initState();
@@ -41,23 +43,6 @@ class _HomeState extends State<Home> {
           return const Scaffold(body: Loading());
         }
 
-        final selectedCategory = selectedCategorySignal.value;
-        final searchQuery = searchQuerySignal.value;
-
-        final filteredProducts =
-            products.value?.where((product) {
-              if (searchQuery.isNotEmpty) {
-                return product.name.toLowerCase().contains(searchQuery) ||
-                    (product.sku?.toLowerCase().contains(searchQuery) ??
-                        false) ||
-                    (product.barcode?.toLowerCase().contains(searchQuery) ??
-                        false);
-              }
-              if (selectedCategory == null) return true;
-              return product.category?.id == selectedCategory.id;
-            }).toList() ??
-            [];
-
         return Scaffold(
           appBar: AppBar(
             backgroundColor: Colors.white,
@@ -67,7 +52,7 @@ class _HomeState extends State<Home> {
               'Branding',
               style: TextStyler()
                   .fontSize(40)
-                  .fontFamily(GoogleFonts.arizonia().fontFamily!)
+                  .fontFamily(_arizoniaFontFamily)
                   .color(theme.colorScheme.primary),
             ),
             bottom: PreferredSize(
@@ -101,27 +86,37 @@ class _HomeState extends State<Home> {
                       ),
                       const Gap(16),
                       Expanded(
-                        child: ExcludeSemantics(
-                          child: ScrollConfiguration(
-                            behavior: ScrollConfiguration.of(
-                              context,
-                            ).copyWith(scrollbars: false),
-                            child: DynamicHeightGridView(
-                              crossAxisSpacing: 12,
-                              mainAxisSpacing: 8,
-                              builder: (context, index) {
-                                final product = filteredProducts[index];
-                                return ProductCard(product: product);
-                              },
-                              itemCount: filteredProducts.length,
-                              crossAxisCount: 4,
-                            ),
-                          ),
+                        child: SignalBuilder(
+                          builder: (context) {
+                            final filteredProducts =
+                                filteredProductsSignal.value;
+
+                            return ExcludeSemantics(
+                              child: ScrollConfiguration(
+                                behavior: ScrollConfiguration.of(
+                                  context,
+                                ).copyWith(scrollbars: false),
+                                child: DynamicHeightGridView(
+                                  crossAxisSpacing: 12,
+                                  mainAxisSpacing: 8,
+                                  builder: (context, index) {
+                                    final product = filteredProducts[index];
+                                    return ProductCard(
+                                      key: ValueKey(product.id),
+                                      product: product,
+                                    );
+                                  },
+                                  itemCount: filteredProducts.length,
+                                  crossAxisCount: 4,
+                                ),
+                              ),
+                            );
+                          },
                         ),
                       ),
                     ],
                   ),
-                  const Cart(),
+                  const RepaintBoundary(child: Cart()),
                 ],
               );
             },
