@@ -32,6 +32,24 @@ abstract final class OrderRepository {
     }
   }
 
+  static Future<Order> getById({
+    required String storeId,
+    required String id,
+  }) async {
+    try {
+      final result = await dio.get(
+        '${ApiEndpoints.orders}/$id',
+        queryParameters: {'storeId': storeId},
+      );
+
+      return Order.fromJson(
+        result.data['data']['order'] as Map<String, Object?>,
+      );
+    } on DioException catch (e) {
+      handleDioError(e, 'Failed to fetch order details.');
+    }
+  }
+
   static Future<PaginatedResponse<Order>> getAll({
     required String storeId,
     int? page,

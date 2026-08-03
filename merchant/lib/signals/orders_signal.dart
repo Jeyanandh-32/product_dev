@@ -8,17 +8,42 @@ import 'package:signals/signals.dart';
 final ordersPageSignal = signal<int>(1);
 final ordersTotalSignal = signal<int>(0);
 final ordersTotalPagesSignal = signal<int>(1);
+final selectedOrderSignal = asyncSignal<Order?>(const AsyncData(null));
 
 final ordersSignal = asyncSignal<List<Order>>(const AsyncLoading());
+
+Future<void> fetchOrderDetails(String orderId) async {
+  final selectedStore = storeSignal.value;
+  if (selectedStore == null) return;
+
+  activeModalSignal.value = ActiveModal.orderDetails;
+  untracked(() {
+    selectedOrderSignal.value = const AsyncLoading();
+  });
+
+  try {
+    final order = await OrderRepository.getById(
+      storeId: selectedStore.id,
+      id: orderId,
+    );
+    selectedOrderSignal.value = AsyncData(order);
+  } catch (e, stack) {
+    selectedOrderSignal.value = AsyncError(e, stack);
+  }
+}
 
 Future<void> refreshOrdersSignal() async {
   final selectedStore = storeSignal.value;
   if (selectedStore == null) {
-    ordersSignal.value = const AsyncData([]);
+    untracked(() {
+      ordersSignal.value = const AsyncData([]);
+    });
     return;
   }
 
-  ordersSignal.value = const AsyncLoading();
+  untracked(() {
+    ordersSignal.value = const AsyncLoading();
+  });
 
   final size = entriesSignal.value;
   final page = ordersPageSignal.value;

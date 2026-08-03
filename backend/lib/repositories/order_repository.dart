@@ -201,6 +201,29 @@ class OrderRepository {
     return row;
   }
 
+  Future<OrderRow?> getByIdOrBillNo(String idOrBillNo, String storeId) async {
+    final billNo = int.tryParse(idOrBillNo);
+    if (billNo != null) {
+      final row = await _db.orders
+          .where((o) => o.storeId.equals(ts.toExpr(storeId)))
+          .where((o) => o.billNo.equals(ts.toExpr(billNo)))
+          .first
+          .fetch();
+      if (row != null) return row;
+    }
+
+    final byId = await _db.orders
+        .where((o) => o.id.equals(ts.toExpr(idOrBillNo)))
+        .first
+        .fetch();
+    if (byId != null) return byId;
+
+    return _db.orders
+        .where((o) => o.orderReference.equals(ts.toExpr(idOrBillNo)))
+        .first
+        .fetch();
+  }
+
   Future<OrderRow?> getByReference(String reference) async {
     final row = _db.orders
         .where((o) => o.orderReference.equals(ts.toExpr(reference)))

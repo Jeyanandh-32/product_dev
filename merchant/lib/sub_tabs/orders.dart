@@ -6,6 +6,7 @@ import 'package:merchant/components/centered_message.dart';
 import 'package:merchant/components/fields/date_range_picker.dart';
 import 'package:merchant/components/fields/searchbar.dart';
 import 'package:merchant/components/loading.dart';
+import 'package:merchant/components/modals/order_details_modal.dart';
 import 'package:merchant/components/signal_component.dart';
 import 'package:merchant/components/table_pagination.dart';
 import 'package:merchant/exceptions/api_exception.dart';
@@ -257,11 +258,16 @@ class _OrdersState extends SignalState<Orders> {
     final currentPage = ordersPageSignal.value;
     final totalPages = ordersTotalPagesSignal.value;
     final store = storeSignal.value;
+    final activeModal = activeModalSignal.value;
+    final selectedOrderState = selectedOrderSignal.value;
 
     return div(
       classes:
           'flex flex-col flex-1 min-h-0 m-4 bg-white rounded-2xl border border-border-medium shadow-xs overflow-hidden',
       [
+        if (activeModal == ActiveModal.orderDetails)
+          OrderDetailsModal(state: selectedOrderState),
+
         div(
           classes:
               'flex flex-col md:items-center md:flex-row md:justify-between w-full border-b border-border-medium p-4 gap-4',
@@ -342,7 +348,7 @@ class _OrdersState extends SignalState<Orders> {
           ],
         ),
 
-        if (orders.isLoading)
+        if (storesSignal.value.isLoading || orders.isLoading)
           Loading(text: 'Loading orders...', fullScreen: false)
         else if (store == null)
           CenteredMessage(message: 'Create Store to view orders.')
@@ -368,6 +374,7 @@ class _OrdersState extends SignalState<Orders> {
                       totalAmount: order.grandTotal,
                       paymentType: _formatPaymentType(order.paymentMethod),
                       status: order.status.name.toUpperCase(),
+                      onClick: () => fetchOrderDetails(order.id),
                     ),
                 ]),
               ],
@@ -390,7 +397,7 @@ class _OrdersState extends SignalState<Orders> {
     return thead([
       tr([
         th([]),
-        th([.text('Order ID')]),
+        th([.text('Bill No')]),
         td([.text('Date')]),
         td([.text('Total Amount (₹)')]),
         td([.text('Payment Mode')]),
@@ -406,41 +413,44 @@ class _OrdersState extends SignalState<Orders> {
     required double totalAmount,
     required String paymentType,
     required String status,
+    VoidCallback? onClick,
   }) {
     final isCompleted = status == 'COMPLETED';
     final isCash = paymentType == 'CASH';
 
-    return tr([
-      th([]),
-      th(classes: 'whitespace-nowrap', [
-        a(
-          href: '#',
-          classes: 'text-accent font-medium hover:underline',
-          [.text(orderId)],
-        ),
-      ]),
-      td(classes: 'whitespace-nowrap', [.text(date)]),
-      td([.text(totalAmount.toStringAsFixed(2))]),
-      td([
-        div(
-          classes:
-              '${isCash ? 'bg-soft-blue text-soft-blue-content' : 'bg-soft-purple text-soft-purple-content'} rounded-full px-3 py-1 text-center text-xs font-semibold inline-block',
-          [
-            .text(paymentType),
-          ],
-        ),
-      ]),
-      td([
-        div(
-          classes:
-              '${isCompleted ? 'bg-soft-green text-soft-green-content' : 'bg-soft-yellow text-soft-yellow-content'} rounded-full px-3 py-1 text-center text-xs font-semibold inline-block',
-          [
-            .text(status),
-          ],
-        ),
-      ]),
-      th([]),
-    ]);
+    return tr(
+      classes: 'hover:cursor-pointer',
+      events: {
+        if (onClick != null) 'click': (e) => onClick(),
+      },
+      [
+        th([]),
+        th(classes: 'whitespace-nowrap font-medium text-primary', [
+          .text(orderId),
+        ]),
+        td(classes: 'whitespace-nowrap', [.text(date)]),
+        td([.text(totalAmount.toStringAsFixed(2))]),
+        td([
+          div(
+            classes:
+                '${isCash ? 'bg-soft-blue text-soft-blue-content' : 'bg-soft-purple text-soft-purple-content'} rounded-full px-3 py-1 text-center text-xs font-semibold inline-block',
+            [
+              .text(paymentType),
+            ],
+          ),
+        ]),
+        td([
+          div(
+            classes:
+                '${isCompleted ? 'bg-soft-green text-soft-green-content' : 'bg-soft-yellow text-soft-yellow-content'} rounded-full px-3 py-1 text-center text-xs font-semibold inline-block',
+            [
+              .text(status),
+            ],
+          ),
+        ]),
+        th([]),
+      ],
+    );
   }
 
   li dropdownButton({

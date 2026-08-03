@@ -348,7 +348,7 @@ class _PaymentsState extends SignalState<Payments> {
           ],
         ),
 
-        if (payments.isLoading)
+        if (storesSignal.value.isLoading || payments.isLoading)
           Loading(text: 'Loading payments...', fullScreen: false)
         else if (store == null)
           CenteredMessage(message: 'Create Store to view payments.')

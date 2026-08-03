@@ -125,7 +125,7 @@ class _CategoriesState extends SignalState<Categories> {
           ],
         ),
 
-        if (categories.isLoading)
+        if (storesSignal.value.isLoading || categories.isLoading)
           Loading(text: 'Loading categories...', fullScreen: false)
         else if (store == null)
           CenteredMessage(message: 'Create Store to add categories.')

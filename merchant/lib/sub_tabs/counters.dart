@@ -124,7 +124,7 @@ class _CountersState extends SignalState<Counters> {
           ],
         ),
 
-        if (counters.isLoading)
+        if (storesSignal.value.isLoading || counters.isLoading)
           Loading(text: 'Loading counters...', fullScreen: false)
         else if (store == null)
           CenteredMessage(message: 'Create Store to add counters.')

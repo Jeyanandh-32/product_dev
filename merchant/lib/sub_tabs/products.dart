@@ -121,7 +121,7 @@ class _ProductsState extends SignalState<Products> {
           ],
         ),
 
-        if (products.isLoading)
+        if (storesSignal.value.isLoading || products.isLoading)
           Loading(text: 'Loading products...', fullScreen: false)
         else if (store == null)
           CenteredMessage(message: 'Create Store to add products.')

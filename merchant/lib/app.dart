@@ -121,6 +121,10 @@ class _AppState extends SignalState<App> {
               builder: (context, state) => const ForgotPassword(),
               redirect: _guestOnlyRedirect,
             ),
+            Route(
+              path: '/:path*',
+              redirect: (context, state) => '/',
+            ),
           ],
         ),
       ]),

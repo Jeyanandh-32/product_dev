@@ -6,11 +6,19 @@ import 'package:merchant/signals/navigation_signal.dart';
 class Modal extends StatelessComponent {
   final String title;
   final Component child;
+  final String? maxWidthClass;
 
-  const Modal({super.key, required this.title, required this.child});
+  const Modal({
+    super.key,
+    required this.title,
+    required this.child,
+    this.maxWidthClass,
+  });
 
   @override
   Component build(BuildContext context) {
+    final maxWidth = maxWidthClass ?? 'max-w-md';
+
     return div(
       classes:
           'fixed inset-0 bg-black/40 z-50 flex items-center justify-center px-4',
@@ -20,7 +28,7 @@ class Modal extends StatelessComponent {
       [
         div(
           classes:
-              'bg-white w-full max-w-md rounded-2xl shadow-lg p-6 flex flex-col gap-4',
+              'bg-white w-full $maxWidth rounded-2xl shadow-lg p-6 flex flex-col gap-4 max-h-[90vh] overflow-y-auto',
           events: {'click': (e) => e.stopPropagation()},
           [
             div(classes: 'flex justify-between items-center', [

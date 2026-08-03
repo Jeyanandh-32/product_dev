@@ -3,7 +3,10 @@ import 'package:backend/extensions/order_item_row_extension.dart';
 import 'package:models/models.dart';
 
 extension OrderRowExtension on OrderRow {
-  Order toOrder(List<OrderItemRow> items) => Order(
+  Order toOrder(
+    List<OrderItemRow> items, {
+    Map<String, ProductRow>? productRows,
+  }) => Order(
     id: id,
     merchantId: merchantId,
     storeId: storeId,
@@ -11,30 +14,32 @@ extension OrderRowExtension on OrderRow {
     billNo: billNo,
     source: OrderSource.values.firstWhere(
       (e) => e.name == source,
-      orElse: () => .terminal,
+      orElse: () => OrderSource.terminal,
     ),
     type: OrderType.values.firstWhere(
       (e) => e.name == type,
-      orElse: () => .dineIn,
+      orElse: () => OrderType.dineIn,
     ),
     status: OrderStatus.values.firstWhere(
       (e) => e.name == status,
-      orElse: () => .completed,
+      orElse: () => OrderStatus.completed,
     ),
     paymentStatus: PaymentStatus.values.firstWhere(
       (e) => e.name == paymentStatus,
-      orElse: () => .paid,
+      orElse: () => PaymentStatus.paid,
     ),
     paymentMethod: PaymentMethod.values.firstWhere(
       (e) => e.name == paymentMethod,
-      orElse: () => .cash,
+      orElse: () => PaymentMethod.cash,
     ),
     subtotal: subtotal / 100,
     discountTotal: discountTotal / 100,
     taxTotal: taxTotal / 100,
     grandTotal: grandTotal / 100,
     terminalCode: terminalCode,
-    items: items.map((o) => o.toOrderItem()).toList(),
+    items: items
+        .map((o) => o.toOrderItem(productRow: productRows?[o.productId]))
+        .toList(),
     createdAt: createdAt,
     updatedAt: updatedAt,
   );

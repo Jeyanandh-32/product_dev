@@ -40,3 +40,6 @@ Response unauthorized({required String message}) =>
 
 Response forbidden({required String message}) =>
     error(statusCode: HttpStatus.forbidden, message: message);
+
+Response notFound({required String message}) =>
+    error(statusCode: HttpStatus.notFound, message: message);

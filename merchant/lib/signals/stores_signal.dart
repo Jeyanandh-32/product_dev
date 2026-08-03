@@ -17,6 +17,12 @@ Future<void> refreshStoresSignal() async {
   try {
     final stores = await StoreRepository.getAll();
     storesSignal.value = AsyncData(stores);
+    if (stores.isNotEmpty) {
+      final currentStore = storeSignal.value;
+      if (currentStore == null || !stores.any((s) => s.id == currentStore.id)) {
+        storeSignal.value = stores.first;
+      }
+    }
   } catch (e, stack) {
     storesSignal.value = AsyncError(e, stack);
   }
@@ -36,6 +42,9 @@ abstract final class StoresActions {
       );
 
       storesSignal.value = AsyncData([...currentStores, store]);
+      if (storeSignal.value == null) {
+        storeSignal.value = store;
+      }
     } catch (e) {
       final message = e is ApiException ? e.message : 'Something went wrong.';
       showToast(message);
@@ -70,6 +79,11 @@ abstract final class StoresActions {
       final selectedStore = selectedTabStoreSignal.value;
       if (selectedStore != null && selectedStore.id == id) {
         selectedTabStoreSignal.value = updatedStore;
+      }
+
+      final activeStore = storeSignal.value;
+      if (activeStore != null && activeStore.id == id) {
+        storeSignal.value = updatedStore;
       }
     } catch (e) {
       final message = e is ApiException ? e.message : 'Something went wrong.';

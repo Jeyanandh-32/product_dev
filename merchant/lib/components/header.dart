@@ -82,6 +82,11 @@ class _HeaderState extends SignalState<Header> {
       if (store == null || !stores.any((st) => st.id == store.id)) {
         Future.microtask(() {
           storeSignal.value = stores.first;
+          refreshProductsSignal();
+          refreshCategoriesSignal();
+          refreshCountersSignal();
+          refreshOrdersSignal();
+          refreshPaymentsSignal();
         });
       }
     }
