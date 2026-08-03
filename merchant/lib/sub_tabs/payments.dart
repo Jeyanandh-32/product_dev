@@ -342,11 +342,19 @@ class _PaymentsState extends SignalState<Payments> {
                 Searchbar(
                   placeholder: 'Search Payments...',
                   classes: 'flex-1 sm:flex-none sm:w-64',
+                  onInput: (val) {
+                    paymentsSearchSignal.value = val;
+                    paymentsPageSignal.value = 1;
+                    refreshPaymentsSignal();
+                  },
                 ),
               ],
             ),
           ],
         ),
+
+        if (payments.hasValue && payments.value!.isNotEmpty)
+          _buildSummaryCards(payments.value!),
 
         if (storesSignal.value.isLoading || payments.isLoading)
           Loading(text: 'Loading payments...', fullScreen: false)
@@ -459,6 +467,64 @@ class _PaymentsState extends SignalState<Payments> {
       ]),
       th([]),
     ]);
+  }
+
+  Component _buildSummaryCards(List<Payment> paymentsList) {
+    final cashCollected = paymentsList
+        .where((pm) => pm.paymentMode == PaymentMethod.cash)
+        .fold<double>(0.0, (sum, pm) => sum + pm.paidAmount);
+    final upiCollected = paymentsList
+        .where((pm) => pm.paymentMode == PaymentMethod.upi)
+        .fold<double>(0.0, (sum, pm) => sum + pm.paidAmount);
+    final freeTotal = paymentsList
+        .where((pm) => pm.paymentMode == PaymentMethod.complimentary)
+        .fold<double>(0.0, (sum, pm) => sum + pm.orderAmount);
+    final totalCollected = paymentsList.fold<double>(
+      0.0,
+      (sum, pm) => sum + pm.paidAmount,
+    );
+
+    return div(
+      classes:
+          'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 p-4 border-b border-border-medium bg-neutral/20',
+      [
+        summaryCard(
+          title: 'Cash Collected',
+          value: '₹${cashCollected.toStringAsFixed(2)}',
+          textColor: 'text-blue-600',
+        ),
+        summaryCard(
+          title: 'UPI Collected',
+          value: '₹${upiCollected.toStringAsFixed(2)}',
+          textColor: 'text-purple-600',
+        ),
+        summaryCard(
+          title: 'Free / Complimentary',
+          value: '₹${freeTotal.toStringAsFixed(2)}',
+          textColor: 'text-gray-900',
+        ),
+        summaryCard(
+          title: 'Total Collected',
+          value: '₹${totalCollected.toStringAsFixed(2)}',
+          textColor: 'text-emerald-600',
+        ),
+      ],
+    );
+  }
+
+  div summaryCard({
+    required String title,
+    required String value,
+    required String textColor,
+  }) {
+    return div(
+      classes:
+          'flex flex-col gap-1 p-3.5 bg-white rounded-xl border border-border-medium shadow-2xs',
+      [
+        span(classes: 'text-xs text-gray-500 font-medium', [.text(title)]),
+        span(classes: 'text-lg font-bold $textColor', [.text(value)]),
+      ],
+    );
   }
 
   li dropdownButton({

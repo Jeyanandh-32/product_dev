@@ -8,6 +8,7 @@ import 'package:signals/signals.dart';
 final paymentsPageSignal = signal<int>(1);
 final paymentsTotalSignal = signal<int>(0);
 final paymentsTotalPagesSignal = signal<int>(1);
+final paymentsSearchSignal = signal<String>('');
 
 final paymentsSignal = asyncSignal<List<Payment>>(const AsyncLoading());
 
@@ -38,9 +39,19 @@ Future<void> refreshPaymentsSignal() async {
       paymentStatus: paymentStatus,
     );
 
-    paymentsTotalSignal.value = result.totalItems;
+    final search = paymentsSearchSignal.value.trim().toLowerCase();
+    var items = result.items;
+    if (search.isNotEmpty) {
+      items = items.where((p) {
+        return p.orderReference.toLowerCase().contains(search) ||
+            p.id.toLowerCase().contains(search) ||
+            p.orderId.toLowerCase().contains(search);
+      }).toList();
+    }
+
+    paymentsTotalSignal.value = items.length;
     paymentsTotalPagesSignal.value = result.totalPages;
-    paymentsSignal.value = AsyncData(result.items);
+    paymentsSignal.value = AsyncData(items);
   } catch (e, stack) {
     paymentsSignal.value = AsyncError(e, stack);
   }

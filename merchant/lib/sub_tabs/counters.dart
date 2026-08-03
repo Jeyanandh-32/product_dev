@@ -112,7 +112,13 @@ class _CountersState extends SignalState<Counters> {
               Searchbar(
                 placeholder: 'Search Counters...',
                 classes: 'flex-1 sm:flex-none sm:w-64',
+                onInput: (val) {
+                  counterSearchSignal.value = val;
+                  countersPageSignal.value = 1;
+                  refreshCountersSignal();
+                },
               ),
+
               AddButton(
                 name: 'Add Counter',
                 onClick: () {

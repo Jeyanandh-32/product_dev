@@ -17,4 +17,5 @@ abstract final class ApiEndpoints {
   static const String stocks = '/$version/stocks';
   static const String orders = '/$version/orders';
   static const String payments = '/$version/payments';
+  static const String profitLoss = '/$version/reports/profit-loss';
 }

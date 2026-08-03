@@ -8,6 +8,7 @@ import 'package:signals/signals.dart';
 final ordersPageSignal = signal<int>(1);
 final ordersTotalSignal = signal<int>(0);
 final ordersTotalPagesSignal = signal<int>(1);
+final ordersSearchSignal = signal<String>('');
 final selectedOrderSignal = asyncSignal<Order?>(const AsyncData(null));
 
 final ordersSignal = asyncSignal<List<Order>>(const AsyncLoading());
@@ -65,9 +66,18 @@ Future<void> refreshOrdersSignal() async {
       paymentStatus: paymentStatus,
     );
 
-    ordersTotalSignal.value = result.totalItems;
+    final search = ordersSearchSignal.value.trim().toLowerCase();
+    var items = result.items;
+    if (search.isNotEmpty) {
+      items = items.where((o) {
+        return '${o.billNo}'.contains(search) ||
+            o.orderReference.toLowerCase().contains(search);
+      }).toList();
+    }
+
+    ordersTotalSignal.value = items.length;
     ordersTotalPagesSignal.value = result.totalPages;
-    ordersSignal.value = AsyncData(result.items);
+    ordersSignal.value = AsyncData(items);
   } catch (e, stack) {
     ordersSignal.value = AsyncError(e, stack);
   }

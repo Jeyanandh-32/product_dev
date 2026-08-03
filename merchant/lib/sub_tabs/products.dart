@@ -109,7 +109,13 @@ class _ProductsState extends SignalState<Products> {
               Searchbar(
                 placeholder: 'Search Products...',
                 classes: 'flex-1 sm:flex-none sm:w-64',
+                onInput: (val) {
+                  productSearchSignal.value = val;
+                  productsPageSignal.value = 1;
+                  refreshProductsSignal();
+                },
               ),
+
               AddButton(
                 name: 'Add Product',
                 onClick: () {

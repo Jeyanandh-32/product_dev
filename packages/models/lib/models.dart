@@ -15,3 +15,4 @@ export 'src/product/product.dart';
 export 'src/stock/stock.dart';
 export 'src/store/store.dart';
 export 'src/terminal/terminal.dart';
+export 'src/profit_loss_item.dart';

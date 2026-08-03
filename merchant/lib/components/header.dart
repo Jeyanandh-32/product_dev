@@ -9,7 +9,9 @@ import 'package:merchant/signals/navigation_signal.dart';
 import 'package:merchant/signals/orders_signal.dart';
 import 'package:merchant/signals/payments_signal.dart';
 import 'package:merchant/signals/products_signal.dart';
+import 'package:merchant/signals/profit_loss_signal.dart';
 import 'package:merchant/signals/stores_signal.dart';
+
 import 'package:models/models.dart';
 import 'package:web/web.dart';
 
@@ -28,6 +30,7 @@ class _HeaderState extends SignalState<Header> {
     refreshCountersSignal();
     refreshOrdersSignal();
     refreshPaymentsSignal();
+    refreshProfitLossSignal();
 
     final activeElement = document.activeElement;
     if (activeElement != null) {
@@ -87,6 +90,7 @@ class _HeaderState extends SignalState<Header> {
           refreshCountersSignal();
           refreshOrdersSignal();
           refreshPaymentsSignal();
+          refreshProfitLossSignal();
         });
       }
     }

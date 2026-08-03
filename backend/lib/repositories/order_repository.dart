@@ -232,4 +232,160 @@ class OrderRepository {
 
     return row;
   }
+
+  Future<
+    ({
+      int total,
+      List<ProfitLossItem> items,
+      double totalCostPrice,
+      double totalCollectedPrice,
+      double totalProfit,
+      double totalMarginPercentage,
+    })
+  >
+  getProfitLossReport({
+    required String merchantId,
+    required String storeId,
+    DateTime? fromDate,
+    DateTime? toDate,
+    String? searchQuery,
+    int limit = 10,
+    int offset = 0,
+  }) async {
+    var orderQuery = _db.orders
+        .where((o) => o.merchantId.equals(ts.toExpr(merchantId)))
+        .where((o) => o.storeId.equals(ts.toExpr(storeId)));
+
+    if (fromDate != null) {
+      orderQuery = orderQuery.where((o) => o.createdAt.isAfterValue(fromDate));
+    }
+    if (toDate != null) {
+      orderQuery = orderQuery.where((o) => o.createdAt.isBeforeValue(toDate));
+    }
+
+    final orders = await orderQuery.fetch();
+    final orderIds = orders.map((o) => o.id).toSet();
+
+    final products = await _db.products
+        .where((p) => p.storeId.equals(ts.toExpr(storeId)))
+        .fetch();
+
+    final categories = await _db.categories
+        .where((c) => c.storeId.equals(ts.toExpr(storeId)))
+        .fetch();
+
+    final counters = await _db.counters
+        .where((c) => c.storeId.equals(ts.toExpr(storeId)))
+        .fetch();
+
+    final categoryMap = {for (final c in categories) c.id: c.name};
+    final counterMap = {for (final c in counters) c.id: c.name};
+
+    final orderMap = {for (final o in orders) o.id: o};
+
+    final soldQuantityMap = <String, int>{};
+    final collectedPriceMap = <String, double>{};
+
+    if (orderIds.isNotEmpty) {
+      final items = await _db.orderItems
+          .where((i) => i.storeId.equals(ts.toExpr(storeId)))
+          .fetch();
+
+      for (final item in items) {
+        final order = orderMap[item.orderId];
+        if (order == null) continue;
+
+        soldQuantityMap[item.productId] =
+            (soldQuantityMap[item.productId] ?? 0) + item.quantity;
+
+        final isComplimentary =
+            order.paymentMethod.toLowerCase() == 'complimentary';
+        final itemGrossPaise = (item.unitPrice * item.quantity) - item.discount;
+
+        double itemCollected;
+        if (isComplimentary || order.grandTotal <= 0) {
+          itemCollected = 0.0;
+        } else {
+          final orderSubtotal = order.subtotal > 0 ? order.subtotal : 1;
+          final discountRatio = (order.discountTotal / orderSubtotal).clamp(
+            0.0,
+            1.0,
+          );
+          final effectiveItemPaise = itemGrossPaise * (1.0 - discountRatio);
+          itemCollected = effectiveItemPaise / 100.0;
+        }
+
+        collectedPriceMap[item.productId] =
+            (collectedPriceMap[item.productId] ?? 0.0) + itemCollected;
+      }
+    }
+
+    var reportItems = <ProfitLossItem>[];
+
+    for (final p in products) {
+      final soldQty = soldQuantityMap[p.id] ?? 0;
+      if (soldQty <= 0) continue;
+
+      final collectedPrice = collectedPriceMap[p.id] ?? 0.0;
+
+      final costPrice = (p.basePrice / 100.0) * soldQty;
+      final profit = collectedPrice - costPrice;
+      final percentage = costPrice > 0 ? (profit / costPrice) * 100.0 : 0.0;
+
+      final categoryName = p.categoryId != null
+          ? (categoryMap[p.categoryId!] ?? 'Unassigned')
+          : 'Unassigned';
+      final counterName = p.counterId != null
+          ? (counterMap[p.counterId!] ?? 'Unassigned')
+          : 'Unassigned';
+
+      reportItems.add(
+        ProfitLossItem(
+          productId: p.id,
+          productName: p.name,
+          categoryName: categoryName,
+          counterName: counterName,
+          soldQuantity: soldQty,
+          costPrice: costPrice,
+          collectedPrice: collectedPrice,
+          profit: profit,
+          profitLossPercentage: percentage,
+        ),
+      );
+    }
+
+    var totalCostPrice = 0.0;
+    var totalCollectedPrice = 0.0;
+
+    for (final item in reportItems) {
+      totalCostPrice += item.costPrice;
+      totalCollectedPrice += item.collectedPrice;
+    }
+
+    final totalProfit = totalCollectedPrice - totalCostPrice;
+    final totalMarginPercentage = totalCostPrice > 0
+        ? (totalProfit / totalCostPrice) * 100.0
+        : 0.0;
+
+    if (searchQuery != null && searchQuery.trim().isNotEmpty) {
+      final query = searchQuery.trim().toLowerCase();
+      reportItems = reportItems.where((item) {
+        return item.productName.toLowerCase().contains(query) ||
+            item.categoryName.toLowerCase().contains(query) ||
+            item.counterName.toLowerCase().contains(query);
+      }).toList();
+    }
+
+    final total = reportItems.length;
+    final paginatedItems = reportItems.skip(offset).take(limit).toList();
+
+    return (
+      total: total,
+      items: paginatedItems,
+      totalCostPrice: totalCostPrice,
+      totalCollectedPrice: totalCollectedPrice,
+      totalProfit: totalProfit,
+      totalMarginPercentage: totalMarginPercentage,
+    );
+  }
 }

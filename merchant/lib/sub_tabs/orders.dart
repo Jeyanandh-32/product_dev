@@ -342,11 +342,19 @@ class _OrdersState extends SignalState<Orders> {
                 Searchbar(
                   placeholder: 'Search Orders...',
                   classes: 'flex-1 sm:flex-none sm:w-64',
+                  onInput: (val) {
+                    ordersSearchSignal.value = val;
+                    ordersPageSignal.value = 1;
+                    refreshOrdersSignal();
+                  },
                 ),
               ],
             ),
           ],
         ),
+
+        if (orders.hasValue && orders.value!.isNotEmpty)
+          _buildSummaryCards(orders.value!),
 
         if (storesSignal.value.isLoading || orders.isLoading)
           Loading(text: 'Loading orders...', fullScreen: false)
@@ -449,6 +457,64 @@ class _OrdersState extends SignalState<Orders> {
           ),
         ]),
         th([]),
+      ],
+    );
+  }
+
+  Component _buildSummaryCards(List<Order> ordersList) {
+    final totalOrders = ordersList.length;
+    final grossSubtotal = ordersList.fold<double>(
+      0.0,
+      (sum, o) => sum + o.subtotal,
+    );
+    final totalDiscount = ordersList.fold<double>(
+      0.0,
+      (sum, o) => sum + o.discountTotal,
+    );
+    final netRevenue = ordersList.fold<double>(
+      0.0,
+      (sum, o) => sum + o.grandTotal,
+    );
+
+    return div(
+      classes:
+          'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 p-4 border-b border-border-medium bg-neutral/20',
+      [
+        summaryCard(
+          title: 'Total Orders',
+          value: '$totalOrders',
+          textColor: 'text-gray-900',
+        ),
+        summaryCard(
+          title: 'Gross Subtotal',
+          value: '₹${grossSubtotal.toStringAsFixed(2)}',
+          textColor: 'text-gray-900',
+        ),
+        summaryCard(
+          title: 'Total Discounts',
+          value: '₹${totalDiscount.toStringAsFixed(2)}',
+          textColor: 'text-rose-600',
+        ),
+        summaryCard(
+          title: 'Net Revenue',
+          value: '₹${netRevenue.toStringAsFixed(2)}',
+          textColor: 'text-emerald-600',
+        ),
+      ],
+    );
+  }
+
+  div summaryCard({
+    required String title,
+    required String value,
+    required String textColor,
+  }) {
+    return div(
+      classes:
+          'flex flex-col gap-1 p-3.5 bg-white rounded-xl border border-border-medium shadow-2xs',
+      [
+        span(classes: 'text-xs text-gray-500 font-medium', [.text(title)]),
+        span(classes: 'text-lg font-bold $textColor', [.text(value)]),
       ],
     );
   }

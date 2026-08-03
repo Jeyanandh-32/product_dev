@@ -9,6 +9,7 @@ import 'package:signals/signals.dart';
 final categoriesPageSignal = signal<int>(1);
 final categoriesTotalSignal = signal<int>(0);
 final categoriesTotalPagesSignal = signal<int>(1);
+final categorySearchSignal = signal<String>('');
 final editingCategorySignal = signal<Category?>(null);
 
 final categoriesSignal = asyncSignal<List<Category>>(const AsyncLoading());
@@ -36,9 +37,22 @@ Future<void> refreshCategoriesSignal() async {
       size: size,
     );
 
-    categoriesTotalSignal.value = result.totalItems;
+    final search = categorySearchSignal.value.trim().toLowerCase();
+    var items = result.items;
+    if (search.isNotEmpty) {
+      items = items
+          .where(
+            (c) =>
+                c.name.toLowerCase().contains(search) ||
+                (c.description != null &&
+                    c.description!.toLowerCase().contains(search)),
+          )
+          .toList();
+    }
+
+    categoriesTotalSignal.value = items.length;
     categoriesTotalPagesSignal.value = result.totalPages;
-    categoriesSignal.value = AsyncData(result.items);
+    categoriesSignal.value = AsyncData(items);
   } catch (e, stack) {
     categoriesSignal.value = AsyncError(e, stack);
   }

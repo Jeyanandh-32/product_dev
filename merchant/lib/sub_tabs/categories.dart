@@ -113,7 +113,13 @@ class _CategoriesState extends SignalState<Categories> {
               Searchbar(
                 placeholder: 'Search Categories...',
                 classes: 'flex-1 sm:flex-none sm:w-64',
+                onInput: (val) {
+                  categorySearchSignal.value = val;
+                  categoriesPageSignal.value = 1;
+                  refreshCategoriesSignal();
+                },
               ),
+
               AddButton(
                 name: 'Add Category',
                 onClick: () {

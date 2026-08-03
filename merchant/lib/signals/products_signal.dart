@@ -9,6 +9,7 @@ import 'package:signals/signals.dart';
 final productsPageSignal = signal<int>(1);
 final productsTotalSignal = signal<int>(0);
 final productsTotalPagesSignal = signal<int>(1);
+final productSearchSignal = signal<String>('');
 final editingProductSignal = signal<Product?>(null);
 
 final productsSignal = asyncSignal<List<Product>>(const AsyncLoading());
@@ -32,9 +33,19 @@ Future<void> refreshProductsSignal() async {
       size: size,
     );
 
-    productsTotalSignal.value = result.totalItems;
+    final search = productSearchSignal.value.trim().toLowerCase();
+    var items = result.items;
+    if (search.isNotEmpty) {
+      items = items.where((p) {
+        return p.name.toLowerCase().contains(search) ||
+            (p.sku != null && p.sku!.toLowerCase().contains(search)) ||
+            (p.barcode != null && p.barcode!.toLowerCase().contains(search));
+      }).toList();
+    }
+
+    productsTotalSignal.value = items.length;
     productsTotalPagesSignal.value = result.totalPages;
-    productsSignal.value = AsyncData(result.items);
+    productsSignal.value = AsyncData(items);
   } catch (e, stack) {
     productsSignal.value = AsyncError(e, stack);
   }
