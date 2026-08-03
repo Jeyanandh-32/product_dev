@@ -66,6 +66,10 @@
     --noise: 0;
 }
 
+.font-script {
+    font-family: 'Arizonia', cursive !important;
+}
+
 .input {
     --input-color: var(--color-border-light);
     --border: 0.5px;

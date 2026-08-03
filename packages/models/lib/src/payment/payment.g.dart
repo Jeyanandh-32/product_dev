@@ -11,6 +11,7 @@ _Payment _$PaymentFromJson(Map<String, dynamic> json) => _Payment(
   orderReference: json['orderReference'] as String,
   orderId: json['orderId'] as String,
   orderAmount: (json['orderAmount'] as num).toDouble(),
+  discountAmount: (json['discountAmount'] as num).toDouble(),
   paidAmount: (json['paidAmount'] as num).toDouble(),
   paymentMode: $enumDecode(_$PaymentMethodEnumMap, json['paymentMode']),
   paymentStatus: $enumDecode(
@@ -26,6 +27,7 @@ Map<String, dynamic> _$PaymentToJson(_Payment instance) => <String, dynamic>{
   'orderReference': instance.orderReference,
   'orderId': instance.orderId,
   'orderAmount': instance.orderAmount,
+  'discountAmount': instance.discountAmount,
   'paidAmount': instance.paidAmount,
   'paymentMode': _$PaymentMethodEnumMap[instance.paymentMode]!,
   'paymentStatus': _$PaymentStatusEnumMap[instance.paymentStatus]!,

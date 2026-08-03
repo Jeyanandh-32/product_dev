@@ -5,8 +5,8 @@ import 'package:merchant/components/containers/terminals_container.dart';
 import 'package:merchant/components/modals/add_edit_store_modal.dart';
 import 'package:merchant/components/modals/add_edit_terminal_modal.dart';
 import 'package:merchant/components/signal_component.dart';
-import 'package:merchant/signals/stores_signal.dart';
 import 'package:merchant/signals/navigation_signal.dart';
+import 'package:merchant/signals/stores_signal.dart';
 import 'package:merchant/signals/terminals_signal.dart';
 
 class Stores extends SignalComponent {
@@ -20,7 +20,7 @@ class _StoresState extends SignalState<Stores> {
   @override
   void initState() {
     super.initState();
-    refreshStoresSignal();
+    Future.microtask(() => refreshStoresSignal());
   }
 
   @override

@@ -373,6 +373,7 @@ class _PaymentsState extends SignalState<Payments> {
                       date: _formatDate(payment.date),
                       orderId: payment.orderId,
                       orderAmount: payment.orderAmount,
+                      discountAmount: payment.discountAmount,
                       paidAmount: payment.paidAmount,
                       paymentMode: _formatPaymentType(payment.paymentMode),
                       paymentStatus: payment.paymentStatus,
@@ -402,6 +403,7 @@ class _PaymentsState extends SignalState<Payments> {
         td([.text('Date')]),
         th([.text('Order ID')]),
         td([.text('Order Amount (₹)')]),
+        td([.text('Discount Amount (₹)')]),
         td([.text('Paid Amount (₹)')]),
         td([.text('Payment Mode')]),
         td([.text('Payment Status')]),
@@ -415,6 +417,7 @@ class _PaymentsState extends SignalState<Payments> {
     required String date,
     required String orderId,
     required double orderAmount,
+    required double discountAmount,
     required double paidAmount,
     required String paymentMode,
     required PaymentStatus paymentStatus,
@@ -434,6 +437,7 @@ class _PaymentsState extends SignalState<Payments> {
         ),
       ]),
       td([.text(orderAmount.toStringAsFixed(2))]),
+      td([.text(discountAmount.toStringAsFixed(2))]),
       td([.text(paidAmount.toStringAsFixed(2))]),
       td([
         div(

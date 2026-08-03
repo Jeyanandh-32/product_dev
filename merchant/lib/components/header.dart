@@ -1,6 +1,7 @@
 import 'package:jaspr/client.dart';
 import 'package:jaspr/dom.dart';
-import 'package:jaspr_lucide/jaspr_lucide.dart' hide Store;
+import 'package:jaspr_lucide/jaspr_lucide.dart' hide Store, Router;
+import 'package:jaspr_router/jaspr_router.dart';
 import 'package:merchant/components/signal_component.dart';
 import 'package:merchant/signals/categories_signal.dart';
 import 'package:merchant/signals/counters_signal.dart';
@@ -34,14 +35,48 @@ class _HeaderState extends SignalState<Header> {
     }
   }
 
+  (String title, String? subTitle) _getHeaderTitles(String location) {
+    if (location.startsWith('/inventory')) {
+      if (location == '/inventory/categories') {
+        return ('Inventory', 'Category');
+      }
+      if (location == '/inventory/counters') {
+        return ('Inventory', 'Counters');
+      }
+      return ('Inventory', 'Products');
+    }
+    if (location.startsWith('/reports')) {
+      if (location == '/reports/payments') {
+        return ('Reports', 'Payments');
+      }
+      if (location == '/reports/profit-loss') {
+        return ('Reports', 'Profit & Loss');
+      }
+      if (location == '/reports/stock-summary') {
+        return ('Reports', 'Stock Summary');
+      }
+      return ('Reports', 'Orders');
+    }
+    if (location == '/stores') {
+      return ('Stores', null);
+    }
+    if (location == '/account') {
+      return ('Account', null);
+    }
+    if (location == '/settings') {
+      return ('Settings', null);
+    }
+    return ('Dashboard', null);
+  }
+
   @override
   Component buildSignal(BuildContext context) {
     final store = storeSignal.value;
     final isNavOpen = navOpenSignal.value;
     final stores = storesSignal.value.value;
-    final headerTitle = headerTitleSignal.value;
-    final headerSubTitle = headerSubTitleSignal.value;
-    final index = indexSignal.value;
+    final location = Router.of(context).matchList.uri.toString();
+    final (headerTitle, headerSubTitle) = _getHeaderTitles(location);
+    final isStoresPage = location == '/stores';
 
     if (stores != null && stores.isNotEmpty) {
       if (store == null || !stores.any((st) => st.id == store.id)) {
@@ -76,7 +111,7 @@ class _HeaderState extends SignalState<Header> {
           ]),
         ]),
 
-        if (store != null && index != 3)
+        if (store != null && !isStoresPage)
           div(classes: 'dropdown dropdown-bottom dropdown-end', [
             div(
               classes:

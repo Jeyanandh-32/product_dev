@@ -11,7 +11,9 @@ final editingStoreSignal = signal<Store?>(null);
 final storesSignal = asyncSignal<List<Store>>(const AsyncLoading());
 
 Future<void> refreshStoresSignal() async {
-  storesSignal.value = const AsyncLoading();
+  untracked(() {
+    storesSignal.value = const AsyncLoading();
+  });
   try {
     final stores = await StoreRepository.getAll();
     storesSignal.value = AsyncData(stores);
@@ -23,7 +25,9 @@ Future<void> refreshStoresSignal() async {
 abstract final class StoresActions {
   static Future<void> create({required String name, String? storeType}) async {
     final currentStores = storesSignal.value.value ?? [];
-    storesSignal.value = const AsyncLoading();
+    untracked(() {
+      storesSignal.value = const AsyncLoading();
+    });
 
     try {
       final store = await StoreRepository.create(
@@ -47,7 +51,9 @@ abstract final class StoresActions {
     bool? isActive,
   }) async {
     final currentStores = storesSignal.value.value ?? [];
-    storesSignal.value = const AsyncLoading();
+    untracked(() {
+      storesSignal.value = const AsyncLoading();
+    });
 
     try {
       final updatedStore = await StoreRepository.update(

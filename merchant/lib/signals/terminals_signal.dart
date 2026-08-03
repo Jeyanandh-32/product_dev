@@ -10,7 +10,9 @@ final editingTerminalSignal = signal<Terminal?>(null);
 final terminalsSignal = asyncSignal<List<Terminal>>(const AsyncLoading());
 
 Future<void> refreshTerminalsSignal() async {
-  terminalsSignal.value = const AsyncLoading();
+  untracked(() {
+    terminalsSignal.value = const AsyncLoading();
+  });
   try {
     final terminals = await TerminalRepository.getAll();
     terminalsSignal.value = AsyncData(terminals);
@@ -28,7 +30,9 @@ abstract final class TerminalsActions {
     if (selectedStore == null) return;
 
     final currentTerminals = terminalsSignal.value.value ?? [];
-    terminalsSignal.value = const AsyncLoading();
+    untracked(() {
+      terminalsSignal.value = const AsyncLoading();
+    });
 
     try {
       final terminal = await TerminalRepository.create(
@@ -76,7 +80,9 @@ abstract final class TerminalsActions {
     bool? isActive,
   }) async {
     final currentTerminals = terminalsSignal.value.value ?? [];
-    terminalsSignal.value = const AsyncLoading();
+    untracked(() {
+      terminalsSignal.value = const AsyncLoading();
+    });
 
     try {
       final updatedTerminal = await TerminalRepository.update(

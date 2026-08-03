@@ -16,11 +16,15 @@ final countersSignal = asyncSignal<List<Counter>>(const AsyncLoading());
 Future<void> refreshCountersSignal() async {
   final selectedStore = storeSignal.value;
   if (selectedStore == null) {
-    countersSignal.value = const AsyncData([]);
+    untracked(() {
+      countersSignal.value = const AsyncData([]);
+    });
     return;
   }
 
-  countersSignal.value = const AsyncLoading();
+  untracked(() {
+    countersSignal.value = const AsyncLoading();
+  });
 
   final size = entriesSignal.value;
   final page = countersPageSignal.value;
@@ -50,7 +54,9 @@ abstract final class CountersActions {
     if (selectedStore == null) return;
 
     final currentCounters = countersSignal.value.value ?? [];
-    countersSignal.value = const AsyncLoading();
+    untracked(() {
+      countersSignal.value = const AsyncLoading();
+    });
 
     try {
       final counter = await CounterRepository.create(
@@ -77,7 +83,9 @@ abstract final class CountersActions {
     String? imageUrl,
   }) async {
     final currentCounters = countersSignal.value.value ?? [];
-    countersSignal.value = const AsyncLoading();
+    untracked(() {
+      countersSignal.value = const AsyncLoading();
+    });
 
     try {
       final updatedCounter = await CounterRepository.update(

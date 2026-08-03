@@ -11,6 +11,7 @@ abstract class Payment with _$Payment {
     required String orderReference,
     required String orderId,
     required double orderAmount,
+    required double discountAmount,
     required double paidAmount,
     required PaymentMethod paymentMode,
     @JsonKey(unknownEnumValue: PaymentStatus.paid)

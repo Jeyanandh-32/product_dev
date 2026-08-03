@@ -16,11 +16,15 @@ final categoriesSignal = asyncSignal<List<Category>>(const AsyncLoading());
 Future<void> refreshCategoriesSignal() async {
   final selectedStore = storeSignal.value;
   if (selectedStore == null) {
-    categoriesSignal.value = const AsyncData([]);
+    untracked(() {
+      categoriesSignal.value = const AsyncData([]);
+    });
     return;
   }
 
-  categoriesSignal.value = const AsyncLoading();
+  untracked(() {
+    categoriesSignal.value = const AsyncLoading();
+  });
 
   final size = entriesSignal.value;
   final page = categoriesPageSignal.value;
@@ -50,7 +54,9 @@ abstract final class CategoriesActions {
     if (selectedStore == null) return;
 
     final currentCategories = categoriesSignal.value.value ?? [];
-    categoriesSignal.value = const AsyncLoading();
+    untracked(() {
+      categoriesSignal.value = const AsyncLoading();
+    });
 
     try {
       final category = await CategoryRepository.create(
@@ -77,7 +83,9 @@ abstract final class CategoriesActions {
     String? imageUrl,
   }) async {
     final currentCategories = categoriesSignal.value.value ?? [];
-    categoriesSignal.value = const AsyncLoading();
+    untracked(() {
+      categoriesSignal.value = const AsyncLoading();
+    });
 
     try {
       final updatedCategory = await CategoryRepository.update(

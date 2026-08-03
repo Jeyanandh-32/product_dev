@@ -83,6 +83,7 @@ Future<Response> _onGet(RequestContext context) async {
         orderReference: order.orderReference,
         orderId: '${order.billNo}',
         orderAmount: originalOrderAmount,
+        discountAmount: order.discountTotal,
         paidAmount: isPaid ? order.grandTotal : 0.0,
         paymentMode: order.paymentMethod,
         paymentStatus: order.paymentStatus,
