@@ -10,6 +10,7 @@ abstract final class DatabaseSchema extends Schema {
   Table<CounterRow> get counters;
   Table<ProductRow> get products;
   Table<StockRow> get stocks;
+  Table<StockAdjustmentRow> get stockAdjustments;
   Table<TerminalRow> get terminals;
   Table<OrderRow> get orders;
   Table<OrderItemRow> get orderItems;
@@ -220,6 +221,32 @@ abstract final class StockRow extends Row {
 
   @DefaultValue.now
   DateTime get updatedAt;
+}
+
+@PrimaryKey(['id'])
+abstract final class StockAdjustmentRow extends Row {
+  @DefaultValue('gen_random_uuid()')
+  String get id;
+
+  @References(table: 'products', field: 'id', onDelete: .cascade)
+  String get productId;
+
+  @References(table: 'stores', field: 'id', onDelete: .cascade)
+  String get storeId;
+
+  String get adjustmentType; // 'add', 'reduce', 'reset'
+
+  int get quantity; // amount added, reduced, or set
+
+  String get reason; // 'wastage', 'adjustment', 'restock', 'other'
+
+  String? get customReason;
+
+  @DefaultValue(0)
+  int get wastageLossPaise; // basePrice * quantity in paise if reason == 'wastage'
+
+  @DefaultValue.now
+  DateTime get createdAt;
 }
 
 @PrimaryKey(['code'])

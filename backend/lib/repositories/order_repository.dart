@@ -299,7 +299,8 @@ class OrderRepository {
             (soldQuantityMap[item.productId] ?? 0) + item.quantity;
 
         final isComplimentary =
-            order.paymentMethod.toLowerCase() == 'complimentary';
+            order.paymentMethod.toLowerCase() ==
+            PaymentMethod.complimentary.name;
         final itemGrossPaise = (item.unitPrice * item.quantity) - item.discount;
 
         double itemCollected;
@@ -320,17 +321,37 @@ class OrderRepository {
       }
     }
 
+    final stockAdjustments = await _db.stockAdjustments
+        .where((a) => a.storeId.equals(ts.toExpr(storeId)))
+        .where(
+          (a) => a.reason.equals(
+            ts.toExpr(StockAdjustmentReason.wastage.name),
+          ),
+        )
+        .fetch();
+
+    final wastageLossMap = <String, double>{};
+    for (final a in stockAdjustments) {
+      if (fromDate != null && a.createdAt.isBefore(fromDate)) continue;
+      if (toDate != null && a.createdAt.isAfter(toDate)) continue;
+      wastageLossMap[a.productId] =
+          (wastageLossMap[a.productId] ?? 0.0) + (a.wastageLossPaise / 100.0);
+    }
+
     var reportItems = <ProfitLossItem>[];
 
     for (final p in products) {
       final soldQty = soldQuantityMap[p.id] ?? 0;
-      if (soldQty <= 0) continue;
+      final wastageLoss = wastageLossMap[p.id] ?? 0.0;
+
+      if (soldQty <= 0 && wastageLoss <= 0) continue;
 
       final collectedPrice = collectedPriceMap[p.id] ?? 0.0;
 
       final costPrice = (p.basePrice / 100.0) * soldQty;
-      final profit = collectedPrice - costPrice;
-      final percentage = costPrice > 0 ? (profit / costPrice) * 100.0 : 0.0;
+      final profit = collectedPrice - costPrice - wastageLoss;
+      final totalBase = costPrice + wastageLoss;
+      final percentage = totalBase > 0 ? (profit / totalBase) * 100.0 : 0.0;
 
       final categoryName = p.categoryId != null
           ? (categoryMap[p.categoryId!] ?? 'Unassigned')

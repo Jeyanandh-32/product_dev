@@ -16,3 +16,5 @@ export 'src/stock/stock.dart';
 export 'src/store/store.dart';
 export 'src/terminal/terminal.dart';
 export 'src/profit_loss_item.dart';
+export 'src/stock_adjustment_reason.dart';
+export 'src/stock_adjustment_type.dart';

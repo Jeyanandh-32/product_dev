@@ -144,6 +144,10 @@ abstract final class ProductsActions {
     int? quantity,
     int? lowStockThreshold,
     bool? stockMonitor,
+    StockAdjustmentType? adjustmentType,
+    int? amount,
+    StockAdjustmentReason? reason,
+    String? customReason,
   }) async {
     final currentProducts = productsSignal.value.value ?? [];
     productsSignal.value = const AsyncLoading();
@@ -154,6 +158,10 @@ abstract final class ProductsActions {
         quantity: quantity,
         lowStockThreshold: lowStockThreshold,
         stockMonitor: stockMonitor,
+        adjustmentType: adjustmentType,
+        amount: amount,
+        reason: reason,
+        customReason: customReason,
       );
 
       productsSignal.value = AsyncData(

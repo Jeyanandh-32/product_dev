@@ -8,6 +8,10 @@ abstract final class StockRepository {
     int? quantity,
     int? lowStockThreshold,
     bool? stockMonitor,
+    StockAdjustmentType? adjustmentType,
+    int? amount,
+    StockAdjustmentReason? reason,
+    String? customReason,
   }) async {
     try {
       final path = '${ApiEndpoints.stocks}/$id';
@@ -17,6 +21,10 @@ abstract final class StockRepository {
           'quantity': ?quantity,
           'lowStockThreshold': ?lowStockThreshold,
           'stockMonitor': ?stockMonitor,
+          'adjustmentType': adjustmentType?.name,
+          'amount': ?amount,
+          'reason': reason?.name,
+          'customReason': ?customReason,
         },
       );
 
