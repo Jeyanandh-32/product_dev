@@ -63,48 +63,56 @@ class _ProductsState extends SignalState<Products> {
           classes:
               'flex flex-col md:items-center md:flex-row md:justify-between w-full border-b border-border-medium p-4 gap-4',
           [
-            span(classes: 'flex gap-2 items-center text-sm font-medium', [
-              .text('Show'),
-              div(classes: 'dropdown dropdown-bottom dropdown-center', [
-                div(
-                  classes:
-                      'btn rounded-full border border-border-medium bg-white hover:bg-base-200 text-sm h-8 min-h-0',
-                  attributes: {
-                    'tabindex': '0',
-                    'role': 'button',
-                  },
-                  [
-                    .text('$entries'),
-                    ChevronDown(classes: 'w-4 h-4'),
-                  ],
-                ),
+            span(
+              classes:
+                  'flex gap-2 items-center text-sm font-medium whitespace-nowrap',
+              [
+                .text('Show'),
+                div(classes: 'dropdown dropdown-bottom dropdown-center', [
+                  div(
+                    classes:
+                        'btn rounded-full border border-border-medium bg-white hover:bg-base-200 text-sm h-8 min-h-0',
+                    attributes: {
+                      'tabindex': '0',
+                      'role': 'button',
+                    },
+                    [
+                      .text('$entries'),
+                      ChevronDown(classes: 'w-4 h-4'),
+                    ],
+                  ),
 
-                ul(
-                  attributes: {'tabindex': '-1'},
-                  classes:
-                      'dropdown-content menu bg-base-100 rounded-box z-10 mt-2.5 p-2 shadow-sm border border-border-light',
-                  [
-                    dropdownButton(
-                      name: '10',
-                      onClick: () => _changeEntry(10),
-                    ),
-                    dropdownButton(
-                      name: '25',
-                      onClick: () => _changeEntry(25),
-                    ),
-                    dropdownButton(
-                      name: '50',
-                      onClick: () => _changeEntry(50),
-                    ),
-                    dropdownButton(
-                      name: '100',
-                      onClick: () => _changeEntry(100),
-                    ),
-                  ],
+                  ul(
+                    attributes: {'tabindex': '-1'},
+                    classes:
+                        'dropdown-content menu bg-base-100 rounded-box z-10 mt-2.5 p-2 shadow-sm border border-border-light',
+                    [
+                      dropdownButton(
+                        name: '10',
+                        onClick: () => _changeEntry(10),
+                      ),
+                      dropdownButton(
+                        name: '25',
+                        onClick: () => _changeEntry(25),
+                      ),
+                      dropdownButton(
+                        name: '50',
+                        onClick: () => _changeEntry(50),
+                      ),
+                      dropdownButton(
+                        name: '100',
+                        onClick: () => _changeEntry(100),
+                      ),
+                    ],
+                  ),
+                ]),
+                .text(
+                  productsTotalSignal.value <= 0
+                      ? '0 of 0'
+                      : 'Showing ${((currentPage - 1) * entries) + 1}–${(currentPage * entries).clamp(0, productsTotalSignal.value)} of ${productsTotalSignal.value}',
                 ),
-              ]),
-              .text('entries'),
-            ]),
+              ],
+            ),
             div(classes: 'flex justify-between gap-2 items-center w-full', [
               Searchbar(
                 placeholder: 'Search Products...',

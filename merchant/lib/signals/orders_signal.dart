@@ -11,6 +11,13 @@ final ordersTotalPagesSignal = signal<int>(1);
 final ordersSearchSignal = signal<String>('');
 final selectedOrderSignal = asyncSignal<Order?>(const AsyncData(null));
 
+final ordersSummarySignal = signal<OrderSummary>((
+  totalOrders: 0,
+  grossSubtotal: 0.0,
+  totalDiscount: 0.0,
+  netRevenue: 0.0,
+));
+
 final ordersSignal = asyncSignal<List<Order>>(const AsyncLoading());
 
 Future<void> fetchOrderDetails(String orderId) async {
@@ -37,6 +44,12 @@ Future<void> refreshOrdersSignal() async {
   final selectedStore = storeSignal.value;
   if (selectedStore == null) {
     untracked(() {
+      ordersSummarySignal.value = (
+        totalOrders: 0,
+        grossSubtotal: 0.0,
+        totalDiscount: 0.0,
+        netRevenue: 0.0,
+      );
       ordersSignal.value = const AsyncData([]);
     });
     return;
@@ -75,7 +88,8 @@ Future<void> refreshOrdersSignal() async {
       }).toList();
     }
 
-    ordersTotalSignal.value = items.length;
+    ordersSummarySignal.value = result.summary;
+    ordersTotalSignal.value = result.totalItems;
     ordersTotalPagesSignal.value = result.totalPages;
     ordersSignal.value = AsyncData(items);
   } catch (e, stack) {

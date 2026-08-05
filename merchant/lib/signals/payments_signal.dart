@@ -10,11 +10,24 @@ final paymentsTotalSignal = signal<int>(0);
 final paymentsTotalPagesSignal = signal<int>(1);
 final paymentsSearchSignal = signal<String>('');
 
+final paymentsSummarySignal = signal<PaymentSummary>((
+  cashCollected: 0.0,
+  upiCollected: 0.0,
+  freeTotal: 0.0,
+  totalCollected: 0.0,
+));
+
 final paymentsSignal = asyncSignal<List<Payment>>(const AsyncLoading());
 
 Future<void> refreshPaymentsSignal() async {
   final selectedStore = storeSignal.value;
   if (selectedStore == null) {
+    paymentsSummarySignal.value = (
+      cashCollected: 0.0,
+      upiCollected: 0.0,
+      freeTotal: 0.0,
+      totalCollected: 0.0,
+    );
     paymentsSignal.value = const AsyncData([]);
     return;
   }
@@ -49,7 +62,8 @@ Future<void> refreshPaymentsSignal() async {
       }).toList();
     }
 
-    paymentsTotalSignal.value = items.length;
+    paymentsSummarySignal.value = result.summary;
+    paymentsTotalSignal.value = result.totalItems;
     paymentsTotalPagesSignal.value = result.totalPages;
     paymentsSignal.value = AsyncData(items);
   } catch (e, stack) {

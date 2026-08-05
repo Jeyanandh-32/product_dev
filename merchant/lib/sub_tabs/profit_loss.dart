@@ -64,51 +64,59 @@ class _ProfitLossState extends SignalState<ProfitLoss> {
             div(
               classes: 'flex flex-wrap items-center gap-3 text-sm font-medium',
               [
-                span(classes: 'flex gap-2 items-center text-sm font-medium', [
-                  .text('Show'),
-                  div(classes: 'dropdown dropdown-bottom dropdown-center', [
-                    div(
-                      classes:
-                          'btn rounded-full border border-border-medium bg-white hover:bg-base-200 text-sm h-8 min-h-0',
-                      attributes: {
-                        'tabindex': '0',
-                        'role': 'button',
-                      },
-                      [
-                        .text('$entries'),
-                        ChevronDown(classes: 'w-4 h-4'),
-                      ],
+                span(
+                  classes:
+                      'flex gap-2 items-center text-sm font-medium whitespace-nowrap',
+                  [
+                    .text('Show'),
+                    div(classes: 'dropdown dropdown-bottom dropdown-center', [
+                      div(
+                        classes:
+                            'btn rounded-full border border-border-medium bg-white hover:bg-base-200 text-sm h-8 min-h-0',
+                        attributes: {
+                          'tabindex': '0',
+                          'role': 'button',
+                        },
+                        [
+                          .text('$entries'),
+                          ChevronDown(classes: 'w-4 h-4'),
+                        ],
+                      ),
+                      ul(
+                        attributes: {'tabindex': '-1'},
+                        classes:
+                            'dropdown-content menu bg-base-100 rounded-box z-10 mt-2.5 p-2 shadow-sm border border-border-light',
+                        [
+                          dropdownButton(
+                            name: '10',
+                            isSelected: entries == 10,
+                            onClick: () => _changeEntry(10),
+                          ),
+                          dropdownButton(
+                            name: '25',
+                            isSelected: entries == 25,
+                            onClick: () => _changeEntry(25),
+                          ),
+                          dropdownButton(
+                            name: '50',
+                            isSelected: entries == 50,
+                            onClick: () => _changeEntry(50),
+                          ),
+                          dropdownButton(
+                            name: '100',
+                            isSelected: entries == 100,
+                            onClick: () => _changeEntry(100),
+                          ),
+                        ],
+                      ),
+                    ]),
+                    .text(
+                      (reportState.value?.totalItems ?? 0) <= 0
+                          ? '0 of 0'
+                          : 'Showing ${((currentPage - 1) * entries) + 1}–${(currentPage * entries).clamp(0, reportState.value?.totalItems ?? 0)} of ${reportState.value?.totalItems ?? 0}',
                     ),
-                    ul(
-                      attributes: {'tabindex': '-1'},
-                      classes:
-                          'dropdown-content menu bg-base-100 rounded-box z-10 mt-2.5 p-2 shadow-sm border border-border-light',
-                      [
-                        dropdownButton(
-                          name: '10',
-                          isSelected: entries == 10,
-                          onClick: () => _changeEntry(10),
-                        ),
-                        dropdownButton(
-                          name: '25',
-                          isSelected: entries == 25,
-                          onClick: () => _changeEntry(25),
-                        ),
-                        dropdownButton(
-                          name: '50',
-                          isSelected: entries == 50,
-                          onClick: () => _changeEntry(50),
-                        ),
-                        dropdownButton(
-                          name: '100',
-                          isSelected: entries == 100,
-                          onClick: () => _changeEntry(100),
-                        ),
-                      ],
-                    ),
-                  ]),
-                  .text('entries'),
-                ]),
+                  ],
+                ),
                 DateRangePicker(
                   fromDate: reportsFromDateSignal.value,
                   toDate: reportsToDateSignal.value,

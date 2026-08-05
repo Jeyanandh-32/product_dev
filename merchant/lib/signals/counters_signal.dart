@@ -50,7 +50,8 @@ Future<void> refreshCountersSignal() async {
           .toList();
     }
 
-    countersTotalSignal.value = items.length;
+    countersTotalSignal.value = result.totalItems;
+
     countersTotalPagesSignal.value = result.totalPages;
     countersSignal.value = AsyncData(items);
   } catch (e, stack) {

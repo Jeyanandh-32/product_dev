@@ -2,6 +2,22 @@ import 'package:api_client/api_client.dart';
 import 'package:dio/dio.dart';
 import 'package:models/models.dart';
 
+typedef OrderSummary = ({
+  int totalOrders,
+  double grossSubtotal,
+  double totalDiscount,
+  double netRevenue,
+});
+
+typedef OrderPaginatedResponse = ({
+  List<Order> items,
+  int currentPage,
+  int pageSize,
+  int totalItems,
+  int totalPages,
+  OrderSummary summary,
+});
+
 abstract final class OrderRepository {
   static Future<Order> create({
     required String storeId,
@@ -50,7 +66,7 @@ abstract final class OrderRepository {
     }
   }
 
-  static Future<PaginatedResponse<Order>> getAll({
+  static Future<OrderPaginatedResponse> getAll({
     required String storeId,
     int? page,
     int? size,
@@ -75,10 +91,31 @@ abstract final class OrderRepository {
         },
       );
 
-      return parsePaginatedResponse(
-        data: result.data['data'] as Map<String, dynamic>,
+      final data = result.data['data'] as Map<String, dynamic>;
+      final paginated = parsePaginatedResponse(
+        data: data,
         key: 'orders',
         fromJson: Order.fromJson,
+      );
+
+      final summaryData = (data['summary'] as Map<String, dynamic>?) ?? {};
+
+      final summary = (
+        totalOrders: summaryData['totalOrders'] as int? ?? 0,
+        grossSubtotal:
+            (summaryData['grossSubtotal'] as num?)?.toDouble() ?? 0.0,
+        totalDiscount:
+            (summaryData['totalDiscount'] as num?)?.toDouble() ?? 0.0,
+        netRevenue: (summaryData['netRevenue'] as num?)?.toDouble() ?? 0.0,
+      );
+
+      return (
+        items: paginated.items,
+        currentPage: paginated.currentPage,
+        pageSize: paginated.pageSize,
+        totalItems: paginated.totalItems,
+        totalPages: paginated.totalPages,
+        summary: summary,
       );
     } on DioException catch (e) {
       handleDioError(e, 'Failed to fetch orders.');

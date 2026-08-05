@@ -91,6 +91,13 @@ Future<Response> _onGet(RequestContext context) async {
       ).toJson();
     }).toList();
 
+    final paymentSummary = await orderRepo.getPaymentSummary(
+      merchantId: tokenPayload.sub,
+      storeId: context.storeId,
+      fromDate: fromDate,
+      toDate: toDate,
+    );
+
     final totalPages = (total / size).ceil();
 
     return success(
@@ -99,6 +106,12 @@ Future<Response> _onGet(RequestContext context) async {
         'pageSize': size,
         'totalItems': total,
         'totalPages': totalPages,
+        'summary': {
+          'cashCollected': paymentSummary.cashCollected,
+          'upiCollected': paymentSummary.upiCollected,
+          'freeTotal': paymentSummary.freeTotal,
+          'totalCollected': paymentSummary.totalCollected,
+        },
         'payments': payments,
       },
     );

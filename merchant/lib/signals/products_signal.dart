@@ -43,7 +43,8 @@ Future<void> refreshProductsSignal() async {
       }).toList();
     }
 
-    productsTotalSignal.value = items.length;
+    productsTotalSignal.value = result.totalItems;
+
     productsTotalPagesSignal.value = result.totalPages;
     productsSignal.value = AsyncData(items);
   } catch (e, stack) {

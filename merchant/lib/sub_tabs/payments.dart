@@ -273,51 +273,59 @@ class _PaymentsState extends SignalState<Payments> {
               'flex flex-col md:items-center md:flex-row md:justify-between w-full border-b border-border-medium p-4 gap-4',
           [
             div(classes: 'flex flex-wrap items-center gap-3 text-sm font-medium', [
-              span(classes: 'flex gap-2 items-center text-sm font-medium', [
-                .text('Show'),
-                div(classes: 'dropdown dropdown-bottom dropdown-center', [
-                  div(
-                    classes:
-                        'btn rounded-full border border-border-medium bg-white hover:bg-base-200 text-sm h-8 min-h-0',
-                    attributes: {
-                      'tabindex': '0',
-                      'role': 'button',
-                    },
-                    [
-                      .text('$entries'),
-                      ChevronDown(classes: 'w-4 h-4'),
-                    ],
+              span(
+                classes:
+                    'flex gap-2 items-center text-sm font-medium whitespace-nowrap',
+                [
+                  .text('Show'),
+                  div(classes: 'dropdown dropdown-bottom dropdown-center', [
+                    div(
+                      classes:
+                          'btn rounded-full border border-border-medium bg-white hover:bg-base-200 text-sm h-8 min-h-0',
+                      attributes: {
+                        'tabindex': '0',
+                        'role': 'button',
+                      },
+                      [
+                        .text('$entries'),
+                        ChevronDown(classes: 'w-4 h-4'),
+                      ],
+                    ),
+                    ul(
+                      attributes: {'tabindex': '-1'},
+                      classes:
+                          'dropdown-content menu bg-base-100 rounded-box z-10 mt-2.5 p-2 shadow-sm border border-border-light',
+                      [
+                        dropdownButton(
+                          name: '10',
+                          isSelected: entries == 10,
+                          onClick: () => _changeEntry(10),
+                        ),
+                        dropdownButton(
+                          name: '25',
+                          isSelected: entries == 25,
+                          onClick: () => _changeEntry(25),
+                        ),
+                        dropdownButton(
+                          name: '50',
+                          isSelected: entries == 50,
+                          onClick: () => _changeEntry(50),
+                        ),
+                        dropdownButton(
+                          name: '100',
+                          isSelected: entries == 100,
+                          onClick: () => _changeEntry(100),
+                        ),
+                      ],
+                    ),
+                  ]),
+                  .text(
+                    paymentsTotalSignal.value <= 0
+                        ? '0 of 0'
+                        : 'Showing ${((currentPage - 1) * entries) + 1}–${(currentPage * entries).clamp(0, paymentsTotalSignal.value)} of ${paymentsTotalSignal.value}',
                   ),
-                  ul(
-                    attributes: {'tabindex': '-1'},
-                    classes:
-                        'dropdown-content menu bg-base-100 rounded-box z-10 mt-2.5 p-2 shadow-sm border border-border-light',
-                    [
-                      dropdownButton(
-                        name: '10',
-                        isSelected: entries == 10,
-                        onClick: () => _changeEntry(10),
-                      ),
-                      dropdownButton(
-                        name: '25',
-                        isSelected: entries == 25,
-                        onClick: () => _changeEntry(25),
-                      ),
-                      dropdownButton(
-                        name: '50',
-                        isSelected: entries == 50,
-                        onClick: () => _changeEntry(50),
-                      ),
-                      dropdownButton(
-                        name: '100',
-                        isSelected: entries == 100,
-                        onClick: () => _changeEntry(100),
-                      ),
-                    ],
-                  ),
-                ]),
-                .text('entries'),
-              ]),
+                ],
+              ),
               DateRangePicker(
                 fromDate: reportsFromDateSignal.value,
                 toDate: reportsToDateSignal.value,
@@ -354,7 +362,7 @@ class _PaymentsState extends SignalState<Payments> {
         ),
 
         if (payments.hasValue && payments.value!.isNotEmpty)
-          _buildSummaryCards(payments.value!),
+          _buildSummaryCards(),
 
         if (storesSignal.value.isLoading || payments.isLoading)
           Loading(text: 'Loading payments...', fullScreen: false)
@@ -469,20 +477,8 @@ class _PaymentsState extends SignalState<Payments> {
     ]);
   }
 
-  Component _buildSummaryCards(List<Payment> paymentsList) {
-    final cashCollected = paymentsList
-        .where((pm) => pm.paymentMode == PaymentMethod.cash)
-        .fold<double>(0.0, (sum, pm) => sum + pm.paidAmount);
-    final upiCollected = paymentsList
-        .where((pm) => pm.paymentMode == PaymentMethod.upi)
-        .fold<double>(0.0, (sum, pm) => sum + pm.paidAmount);
-    final freeTotal = paymentsList
-        .where((pm) => pm.paymentMode == PaymentMethod.complimentary)
-        .fold<double>(0.0, (sum, pm) => sum + pm.orderAmount);
-    final totalCollected = paymentsList.fold<double>(
-      0.0,
-      (sum, pm) => sum + pm.paidAmount,
-    );
+  Component _buildSummaryCards() {
+    final summary = paymentsSummarySignal.value;
 
     return div(
       classes:
@@ -490,22 +486,22 @@ class _PaymentsState extends SignalState<Payments> {
       [
         summaryCard(
           title: 'Cash Collected',
-          value: '₹${cashCollected.toStringAsFixed(2)}',
+          value: '₹${summary.cashCollected.toStringAsFixed(2)}',
           textColor: 'text-blue-600',
         ),
         summaryCard(
           title: 'UPI Collected',
-          value: '₹${upiCollected.toStringAsFixed(2)}',
+          value: '₹${summary.upiCollected.toStringAsFixed(2)}',
           textColor: 'text-purple-600',
         ),
         summaryCard(
           title: 'Free / Complimentary',
-          value: '₹${freeTotal.toStringAsFixed(2)}',
+          value: '₹${summary.freeTotal.toStringAsFixed(2)}',
           textColor: 'text-gray-900',
         ),
         summaryCard(
           title: 'Total Collected',
-          value: '₹${totalCollected.toStringAsFixed(2)}',
+          value: '₹${summary.totalCollected.toStringAsFixed(2)}',
           textColor: 'text-emerald-600',
         ),
       ],

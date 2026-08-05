@@ -273,51 +273,59 @@ class _OrdersState extends SignalState<Orders> {
               'flex flex-col md:items-center md:flex-row md:justify-between w-full border-b border-border-medium p-4 gap-4',
           [
             div(classes: 'flex flex-wrap items-center gap-3 text-sm font-medium', [
-              span(classes: 'flex gap-2 items-center text-sm font-medium', [
-                .text('Show'),
-                div(classes: 'dropdown dropdown-bottom dropdown-center', [
-                  div(
-                    classes:
-                        'btn rounded-full border border-border-medium bg-white hover:bg-base-200 text-sm h-8 min-h-0',
-                    attributes: {
-                      'tabindex': '0',
-                      'role': 'button',
-                    },
-                    [
-                      .text('$entries'),
-                      ChevronDown(classes: 'w-4 h-4'),
-                    ],
+              span(
+                classes:
+                    'flex gap-2 items-center text-sm font-medium whitespace-nowrap',
+                [
+                  .text('Show'),
+                  div(classes: 'dropdown dropdown-bottom dropdown-center', [
+                    div(
+                      classes:
+                          'btn rounded-full border border-border-medium bg-white hover:bg-base-200 text-sm h-8 min-h-0',
+                      attributes: {
+                        'tabindex': '0',
+                        'role': 'button',
+                      },
+                      [
+                        .text('$entries'),
+                        ChevronDown(classes: 'w-4 h-4'),
+                      ],
+                    ),
+                    ul(
+                      attributes: {'tabindex': '-1'},
+                      classes:
+                          'dropdown-content menu bg-base-100 rounded-box z-10 mt-2.5 p-2 shadow-sm border border-border-light',
+                      [
+                        dropdownButton(
+                          name: '10',
+                          isSelected: entries == 10,
+                          onClick: () => _changeEntry(10),
+                        ),
+                        dropdownButton(
+                          name: '25',
+                          isSelected: entries == 25,
+                          onClick: () => _changeEntry(25),
+                        ),
+                        dropdownButton(
+                          name: '50',
+                          isSelected: entries == 50,
+                          onClick: () => _changeEntry(50),
+                        ),
+                        dropdownButton(
+                          name: '100',
+                          isSelected: entries == 100,
+                          onClick: () => _changeEntry(100),
+                        ),
+                      ],
+                    ),
+                  ]),
+                  .text(
+                    ordersTotalSignal.value <= 0
+                        ? '0 of 0'
+                        : 'Showing ${((currentPage - 1) * entries) + 1}–${(currentPage * entries).clamp(0, ordersTotalSignal.value)} of ${ordersTotalSignal.value}',
                   ),
-                  ul(
-                    attributes: {'tabindex': '-1'},
-                    classes:
-                        'dropdown-content menu bg-base-100 rounded-box z-10 mt-2.5 p-2 shadow-sm border border-border-light',
-                    [
-                      dropdownButton(
-                        name: '10',
-                        isSelected: entries == 10,
-                        onClick: () => _changeEntry(10),
-                      ),
-                      dropdownButton(
-                        name: '25',
-                        isSelected: entries == 25,
-                        onClick: () => _changeEntry(25),
-                      ),
-                      dropdownButton(
-                        name: '50',
-                        isSelected: entries == 50,
-                        onClick: () => _changeEntry(50),
-                      ),
-                      dropdownButton(
-                        name: '100',
-                        isSelected: entries == 100,
-                        onClick: () => _changeEntry(100),
-                      ),
-                    ],
-                  ),
-                ]),
-                .text('entries'),
-              ]),
+                ],
+              ),
               DateRangePicker(
                 fromDate: reportsFromDateSignal.value,
                 toDate: reportsToDateSignal.value,
@@ -353,8 +361,7 @@ class _OrdersState extends SignalState<Orders> {
           ],
         ),
 
-        if (orders.hasValue && orders.value!.isNotEmpty)
-          _buildSummaryCards(orders.value!),
+        if (orders.hasValue && orders.value!.isNotEmpty) _buildSummaryCards(),
 
         if (storesSignal.value.isLoading || orders.isLoading)
           Loading(text: 'Loading orders...', fullScreen: false)
@@ -461,20 +468,8 @@ class _OrdersState extends SignalState<Orders> {
     );
   }
 
-  Component _buildSummaryCards(List<Order> ordersList) {
-    final totalOrders = ordersList.length;
-    final grossSubtotal = ordersList.fold<double>(
-      0.0,
-      (sum, o) => sum + o.subtotal,
-    );
-    final totalDiscount = ordersList.fold<double>(
-      0.0,
-      (sum, o) => sum + o.discountTotal,
-    );
-    final netRevenue = ordersList.fold<double>(
-      0.0,
-      (sum, o) => sum + o.grandTotal,
-    );
+  Component _buildSummaryCards() {
+    final summary = ordersSummarySignal.value;
 
     return div(
       classes:
@@ -482,22 +477,22 @@ class _OrdersState extends SignalState<Orders> {
       [
         summaryCard(
           title: 'Total Orders',
-          value: '$totalOrders',
+          value: '${summary.totalOrders}',
           textColor: 'text-gray-900',
         ),
         summaryCard(
           title: 'Gross Subtotal',
-          value: '₹${grossSubtotal.toStringAsFixed(2)}',
+          value: '₹${summary.grossSubtotal.toStringAsFixed(2)}',
           textColor: 'text-gray-900',
         ),
         summaryCard(
           title: 'Total Discounts',
-          value: '₹${totalDiscount.toStringAsFixed(2)}',
+          value: '₹${summary.totalDiscount.toStringAsFixed(2)}',
           textColor: 'text-rose-600',
         ),
         summaryCard(
           title: 'Net Revenue',
-          value: '₹${netRevenue.toStringAsFixed(2)}',
+          value: '₹${summary.netRevenue.toStringAsFixed(2)}',
           textColor: 'text-emerald-600',
         ),
       ],

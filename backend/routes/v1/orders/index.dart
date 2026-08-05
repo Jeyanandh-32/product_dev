@@ -131,6 +131,13 @@ Future<Response> _onGet(RequestContext context) async {
       offset: offset,
     );
 
+    final orderSummary = await orderRepo.getOrderSummary(
+      merchantId: tokenPayload.sub,
+      storeId: context.storeId,
+      fromDate: fromDate,
+      toDate: toDate,
+    );
+
     final orders = orderRows
         .map((orderRow) => orderRow.toOrder(const <OrderItemRow>[]).toJson())
         .toList();
@@ -142,6 +149,12 @@ Future<Response> _onGet(RequestContext context) async {
         'pageSize': size,
         'totalItems': total,
         'totalPages': totalPages,
+        'summary': {
+          'totalOrders': orderSummary.totalOrders,
+          'grossSubtotal': orderSummary.grossSubtotal,
+          'totalDiscount': orderSummary.totalDiscount,
+          'netRevenue': orderSummary.netRevenue,
+        },
         'orders': orders,
       },
     );

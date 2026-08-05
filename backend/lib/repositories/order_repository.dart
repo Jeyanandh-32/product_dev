@@ -147,6 +147,114 @@ class OrderRepository {
     return rows;
   }
 
+  Future<
+    ({
+      int totalOrders,
+      double grossSubtotal,
+      double totalDiscount,
+      double netRevenue,
+    })
+  >
+  getOrderSummary({
+    required String merchantId,
+    String? storeId,
+    DateTime? fromDate,
+    DateTime? toDate,
+  }) async {
+    var query = _db.orders.where(
+      (o) => o.merchantId.equals(ts.toExpr(merchantId)),
+    );
+
+    if (storeId != null) {
+      query = query.where((o) => o.storeId.equals(ts.toExpr(storeId)));
+    }
+    if (fromDate != null) {
+      query = query.where((o) => o.createdAt.isAfterValue(fromDate));
+    }
+    if (toDate != null) {
+      query = query.where((o) => o.createdAt.isBeforeValue(toDate));
+    }
+
+    final rows = await query.fetch();
+
+    var grossSubtotalPaise = 0;
+    var totalDiscountPaise = 0;
+    var netRevenuePaise = 0;
+
+    for (final row in rows) {
+      grossSubtotalPaise += row.subtotal;
+      totalDiscountPaise += row.discountTotal;
+      netRevenuePaise += row.grandTotal;
+    }
+
+    return (
+      totalOrders: rows.length,
+      grossSubtotal: grossSubtotalPaise / 100.0,
+      totalDiscount: totalDiscountPaise / 100.0,
+      netRevenue: netRevenuePaise / 100.0,
+    );
+  }
+
+  Future<
+    ({
+      double cashCollected,
+      double upiCollected,
+      double freeTotal,
+      double totalCollected,
+    })
+  >
+  getPaymentSummary({
+    required String merchantId,
+    String? storeId,
+    DateTime? fromDate,
+    DateTime? toDate,
+  }) async {
+    var query = _db.orders.where(
+      (o) => o.merchantId.equals(ts.toExpr(merchantId)),
+    );
+
+    if (storeId != null) {
+      query = query.where((o) => o.storeId.equals(ts.toExpr(storeId)));
+    }
+    if (fromDate != null) {
+      query = query.where((o) => o.createdAt.isAfterValue(fromDate));
+    }
+    if (toDate != null) {
+      query = query.where((o) => o.createdAt.isBeforeValue(toDate));
+    }
+
+    final rows = await query.fetch();
+
+    var cashPaise = 0;
+    var upiPaise = 0;
+    var freePaise = 0;
+    var totalPaise = 0;
+
+    for (final row in rows) {
+      final isPaid = row.paymentStatus.toLowerCase() == 'paid';
+      final method = row.paymentMethod.toLowerCase();
+
+      if (method == 'cash') {
+        if (isPaid) cashPaise += row.grandTotal;
+      } else if (method == 'upi') {
+        if (isPaid) upiPaise += row.grandTotal;
+      } else if (method == 'complimentary') {
+        freePaise += row.subtotal + row.taxTotal;
+      }
+
+      if (isPaid) {
+        totalPaise += row.grandTotal;
+      }
+    }
+
+    return (
+      cashCollected: cashPaise / 100.0,
+      upiCollected: upiPaise / 100.0,
+      freeTotal: freePaise / 100.0,
+      totalCollected: totalPaise / 100.0,
+    );
+  }
+
   Future<int> count({
     required String merchantId,
     String? storeId,
