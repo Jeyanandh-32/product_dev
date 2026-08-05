@@ -1,5 +1,4 @@
 import 'package:backend/database/schema.dart';
-import 'package:models/models.dart';
 import 'package:typed_sql/typed_sql.dart' as ts;
 
 class StockRepository {
@@ -27,7 +26,7 @@ class StockRepository {
     int? quantity,
     int? lowStockThreshold,
     bool? stockMonitor,
-    String? adjustmentType,
+    String? transactionType,
     int? amount,
     String? reason,
     String? customReason,
@@ -39,22 +38,15 @@ class StockRepository {
     if (stockRows.isEmpty) return null;
     final stockRow = stockRows.first;
 
-    if (adjustmentType != null && amount != null && reason != null) {
-      final productRow = await _db.products.byKey(stockRow.productId).fetch();
-      final basePricePaise = productRow?.basePrice ?? 0;
-      final isWastage =
-          reason.toLowerCase() == StockAdjustmentReason.wastage.name;
-      final wastageLossPaise = isWastage ? (basePricePaise * amount) : 0;
-
-      await _db.stockAdjustments
+    if (transactionType != null && amount != null && reason != null) {
+      await _db.stockTransactions
           .insertValue(
             productId: stockRow.productId,
             storeId: stockRow.storeId,
-            adjustmentType: adjustmentType,
+            adjustmentType: transactionType,
             quantity: amount,
             reason: reason,
             customReason: customReason,
-            wastageLossPaise: wastageLossPaise,
           )
           .execute();
     }

@@ -33,6 +33,12 @@ Future<Response> _onPutOrPatch(RequestContext context, String id) async {
       quantity: input.quantity,
       lowStockThreshold: input.lowStockThreshold,
       stockMonitor: input.stockMonitor,
+      transactionType:
+          body['transactionType'] as String? ??
+          body['adjustmentType'] as String?,
+      amount: body['amount'] as int?,
+      reason: body['reason'] as String?,
+      customReason: body['customReason'] as String?,
     );
 
     if (updatedRow == null) {

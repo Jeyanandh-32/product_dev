@@ -8,9 +8,9 @@ abstract final class StockRepository {
     int? quantity,
     int? lowStockThreshold,
     bool? stockMonitor,
-    StockAdjustmentType? adjustmentType,
+    StockTransactionType? transactionType,
     int? amount,
-    StockAdjustmentReason? reason,
+    StockTransactionReason? reason,
     String? customReason,
   }) async {
     try {
@@ -21,7 +21,7 @@ abstract final class StockRepository {
           'quantity': ?quantity,
           'lowStockThreshold': ?lowStockThreshold,
           'stockMonitor': ?stockMonitor,
-          'adjustmentType': adjustmentType?.name,
+          'transactionType': transactionType?.name,
           'amount': ?amount,
           'reason': reason?.name,
           'customReason': ?customReason,

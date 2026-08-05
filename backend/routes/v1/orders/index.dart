@@ -38,15 +38,15 @@ Future<Response> _onPost(RequestContext context) async {
 
     final source = OrderSource.values.firstWhere(
       (e) => e.name == input.source,
-      orElse: () => OrderSource.terminal,
+      orElse: () => .terminal,
     );
     final type = OrderType.values.firstWhere(
       (e) => e.name == input.type,
-      orElse: () => OrderType.dineIn,
+      orElse: () => .dineIn,
     );
     final paymentMethod = PaymentMethod.values.firstWhere(
       (e) => e.name == input.paymentMethod,
-      orElse: () => PaymentMethod.cash,
+      orElse: () => .cash,
     );
 
     final completeOrder = await orderService.checkout(

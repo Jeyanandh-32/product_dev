@@ -321,21 +321,24 @@ class OrderRepository {
       }
     }
 
-    final stockAdjustments = await _db.stockAdjustments
+    final stockAdjustments = await _db.stockTransactions
         .where((a) => a.storeId.equals(ts.toExpr(storeId)))
         .where(
           (a) => a.reason.equals(
-            ts.toExpr(StockAdjustmentReason.wastage.name),
+            ts.toExpr(StockTransactionReason.wastage.name),
           ),
         )
         .fetch();
 
     final wastageLossMap = <String, double>{};
+    final productBasePriceMap = {for (final p in products) p.id: p.basePrice};
+
     for (final a in stockAdjustments) {
       if (fromDate != null && a.createdAt.isBefore(fromDate)) continue;
       if (toDate != null && a.createdAt.isAfter(toDate)) continue;
-      wastageLossMap[a.productId] =
-          (wastageLossMap[a.productId] ?? 0.0) + (a.wastageLossPaise / 100.0);
+      final basePricePaise = productBasePriceMap[a.productId] ?? 0;
+      final loss = (basePricePaise * a.quantity) / 100.0;
+      wastageLossMap[a.productId] = (wastageLossMap[a.productId] ?? 0.0) + loss;
     }
 
     var reportItems = <ProfitLossItem>[];

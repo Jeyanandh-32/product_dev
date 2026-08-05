@@ -144,9 +144,9 @@ abstract final class ProductsActions {
     int? quantity,
     int? lowStockThreshold,
     bool? stockMonitor,
-    StockAdjustmentType? adjustmentType,
+    StockTransactionType? transactionType,
     int? amount,
-    StockAdjustmentReason? reason,
+    StockTransactionReason? reason,
     String? customReason,
   }) async {
     final currentProducts = productsSignal.value.value ?? [];
@@ -158,7 +158,7 @@ abstract final class ProductsActions {
         quantity: quantity,
         lowStockThreshold: lowStockThreshold,
         stockMonitor: stockMonitor,
-        adjustmentType: adjustmentType,
+        transactionType: transactionType,
         amount: amount,
         reason: reason,
         customReason: customReason,

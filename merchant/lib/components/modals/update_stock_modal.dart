@@ -18,9 +18,9 @@ class UpdateStockModal extends StatefulComponent {
 }
 
 class _UpdateStockModalState extends State<UpdateStockModal> {
-  late StockAdjustmentType _operation;
+  late StockTransactionType _transactionType;
   late String _amount;
-  late StockAdjustmentReason _reason;
+  late StockTransactionReason _reason;
   late String _customReason;
   late String _lowStockThreshold;
   late bool _stockMonitor;
@@ -34,7 +34,7 @@ class _UpdateStockModalState extends State<UpdateStockModal> {
   void _resetForm() {
     setState(() {
       final s = component.product.stock;
-      _operation = .add;
+      _transactionType = .add;
       _amount = '1';
       _reason = .adjustment;
       _customReason = '';
@@ -62,7 +62,7 @@ class _UpdateStockModalState extends State<UpdateStockModal> {
       return;
     }
 
-    final computedFinalQuantity = switch (_operation) {
+    final computedFinalQuantity = switch (_transactionType) {
       .add => currentQty + inputAmount,
       .reduce => (currentQty - inputAmount).clamp(0, 999999),
       .set => inputAmount,
@@ -77,10 +77,11 @@ class _UpdateStockModalState extends State<UpdateStockModal> {
         quantity: computedFinalQuantity,
         lowStockThreshold: lowStockThreshold,
         stockMonitor: _stockMonitor,
-        adjustmentType: _operation,
+        transactionType: _transactionType,
         amount: inputAmount,
-        reason: _operation == .add ? .restock : _reason,
-        customReason: _operation != .add && _customReason.trim().isNotEmpty
+        reason: _transactionType == .add ? .restock : _reason,
+        customReason:
+            _transactionType != .add && _customReason.trim().isNotEmpty
             ? _customReason.trim()
             : null,
       );
@@ -120,21 +121,21 @@ class _UpdateStockModalState extends State<UpdateStockModal> {
               operationButton(
                 label: 'Add Stock (+)',
                 value: .add,
-                colorClass: _operation == .add
+                colorClass: _transactionType == .add
                     ? 'bg-emerald-600 text-white font-bold'
                     : 'bg-white border border-border-medium hover:bg-neutral text-gray-700',
               ),
               operationButton(
                 label: 'Reduce (-)',
                 value: .reduce,
-                colorClass: _operation == .reduce
+                colorClass: _transactionType == .reduce
                     ? 'bg-rose-600 text-white font-bold'
                     : 'bg-white border border-border-medium hover:bg-neutral text-gray-700',
               ),
               operationButton(
                 label: 'Set Exact (=)',
                 value: .set,
-                colorClass: _operation == .set
+                colorClass: _transactionType == .set
                     ? 'bg-primary text-white font-bold'
                     : 'bg-white border border-border-medium hover:bg-neutral text-gray-700',
               ),
@@ -144,7 +145,7 @@ class _UpdateStockModalState extends State<UpdateStockModal> {
           // Quantity Input
           FormField(
             id: 'amount',
-            labelText: switch (_operation) {
+            labelText: switch (_transactionType) {
               .add => 'Quantity to Add',
               .reduce => 'Quantity to Reduce',
               .set => 'New Stock Count',
@@ -161,7 +162,7 @@ class _UpdateStockModalState extends State<UpdateStockModal> {
           ),
 
           // Reason Section (only for Reduce / Set Exact stock)
-          if (_operation != .add) ...[
+          if (_transactionType != .add) ...[
             div(classes: 'flex flex-col gap-1.5 mb-4', [
               label(classes: 'text-[14px] font-semibold text-gray-700', [
                 .text('Reason for Adjustment'),
@@ -173,7 +174,7 @@ class _UpdateStockModalState extends State<UpdateStockModal> {
                   'change': (e) {
                     final target = e.target as HTMLSelectElement;
                     setState(() {
-                      _reason = StockAdjustmentReason.values.byName(
+                      _reason = StockTransactionReason.values.byName(
                         target.value,
                       );
                     });
@@ -181,12 +182,12 @@ class _UpdateStockModalState extends State<UpdateStockModal> {
                 },
                 [
                   option(
-                    value: StockAdjustmentReason.adjustment.name,
+                    value: StockTransactionReason.adjustment.name,
                     selected: _reason == .adjustment,
                     [.text('Inventory Adjustment / Audit')],
                   ),
                   option(
-                    value: StockAdjustmentReason.wastage.name,
+                    value: StockTransactionReason.wastage.name,
                     selected: _reason == .wastage,
                     [.text('Wastage / Damaged Goods')],
                   ),
@@ -300,7 +301,7 @@ class _UpdateStockModalState extends State<UpdateStockModal> {
 
   button operationButton({
     required String label,
-    required StockAdjustmentType value,
+    required StockTransactionType value,
     required String colorClass,
   }) {
     return button(
@@ -310,7 +311,7 @@ class _UpdateStockModalState extends State<UpdateStockModal> {
       events: {
         'click': (e) {
           setState(() {
-            _operation = value;
+            _transactionType = value;
             _reason = switch (value) {
               .reduce => .wastage,
               .add || .set => .adjustment,

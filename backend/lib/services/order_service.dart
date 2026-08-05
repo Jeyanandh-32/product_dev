@@ -141,7 +141,14 @@ class OrderService {
 
         if (stockRow != null && stockRow.stockMonitor) {
           final newQty = max(0, stockRow.quantity - quantity);
-          await _stockRepo.update(id: stockRow.id, quantity: newQty);
+          await _stockRepo.update(
+            id: stockRow.id,
+            quantity: newQty,
+            transactionType: StockTransactionType.reduce.name,
+            amount: quantity,
+            reason: StockTransactionReason.sale.name,
+            customReason: 'Order #${orderRow.billNo}',
+          );
         }
       }
 

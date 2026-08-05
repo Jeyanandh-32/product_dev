@@ -147,7 +147,7 @@ CREATE TABLE IF NOT EXISTS order_items (
     discount INT NOT NULL DEFAULT 0
 );
 
-CREATE TABLE IF NOT EXISTS stock_adjustments (
+CREATE TABLE IF NOT EXISTS stock_transactions (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     product_id UUID NOT NULL REFERENCES products(id) ON DELETE CASCADE,
     store_id UUID NOT NULL REFERENCES stores(id) ON DELETE CASCADE,
@@ -155,7 +155,6 @@ CREATE TABLE IF NOT EXISTS stock_adjustments (
     quantity INT NOT NULL,
     reason VARCHAR(50) NOT NULL,
     custom_reason TEXT,
-    wastage_loss_paise INT NOT NULL DEFAULT 0,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
@@ -163,6 +162,6 @@ CREATE INDEX IF NOT EXISTS idx_order_items_order_id ON order_items(order_id);
 CREATE INDEX IF NOT EXISTS idx_order_items_product_id ON order_items(product_id);
 CREATE INDEX IF NOT EXISTS idx_orders_order_reference ON orders(order_reference);
 CREATE INDEX IF NOT EXISTS idx_orders_store_created_at ON orders(store_id, created_at);
-CREATE INDEX IF NOT EXISTS idx_stock_adjustments_store_id ON stock_adjustments(store_id);
+CREATE INDEX IF NOT EXISTS idx_stock_transactions_store_id ON stock_transactions(store_id);
 
 UPDATE orders SET payment_status = 'paid' WHERE payment_status = 'complimentary';

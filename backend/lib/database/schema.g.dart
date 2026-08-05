@@ -15,7 +15,7 @@ extension DatabaseSchemaSchema on Database<DatabaseSchema> {
     _$CounterRow._$table,
     _$ProductRow._$table,
     _$StockRow._$table,
-    _$StockAdjustmentRow._$table,
+    _$StockTransactionRow._$table,
     _$TerminalRow._$table,
     _$OrderRow._$table,
     _$OrderItemRow._$table,
@@ -39,8 +39,8 @@ extension DatabaseSchemaSchema on Database<DatabaseSchema> {
   Table<StockRow> get stocks =>
       $ForGeneratedCode.declareTable(this, _$StockRow._$table);
 
-  Table<StockAdjustmentRow> get stockAdjustments =>
-      $ForGeneratedCode.declareTable(this, _$StockAdjustmentRow._$table);
+  Table<StockTransactionRow> get stockTransactions =>
+      $ForGeneratedCode.declareTable(this, _$StockTransactionRow._$table);
 
   Table<TerminalRow> get terminals =>
       $ForGeneratedCode.declareTable(this, _$TerminalRow._$table);
@@ -5088,8 +5088,8 @@ extension InsertOnConflictSingleStockRowExt
   );
 }
 
-final class _$StockAdjustmentRow extends StockAdjustmentRow {
-  _$StockAdjustmentRow._(
+final class _$StockTransactionRow extends StockTransactionRow {
+  _$StockTransactionRow._(
     this.id,
     this.productId,
     this.storeId,
@@ -5097,7 +5097,6 @@ final class _$StockAdjustmentRow extends StockAdjustmentRow {
     this.quantity,
     this.reason,
     this.customReason,
-    this.wastageLossPaise,
     this.createdAt,
   );
 
@@ -5123,13 +5122,10 @@ final class _$StockAdjustmentRow extends StockAdjustmentRow {
   final String? customReason;
 
   @override
-  final int wastageLossPaise;
-
-  @override
   final DateTime createdAt;
 
   static final _$table = $ForGeneratedCode.tableDefinition(
-    tableName: 'stock_adjustments',
+    tableName: 'stock_transactions',
     columns: <String>[
       'id',
       'product_id',
@@ -5138,7 +5134,6 @@ final class _$StockAdjustmentRow extends StockAdjustmentRow {
       'quantity',
       'reason',
       'custom_reason',
-      'wastage_loss_paise',
       'created_at',
     ],
     columnInfo: [
@@ -5192,13 +5187,6 @@ final class _$StockAdjustmentRow extends StockAdjustmentRow {
         overrides: [],
       ),
       $ForGeneratedCode.columnDefinition(
-        type: $ForGeneratedCode.integer,
-        isNotNull: true,
-        defaultValue: (kind: 'raw', value: 0),
-        autoIncrement: false,
-        overrides: [],
-      ),
-      $ForGeneratedCode.columnDefinition(
         type: $ForGeneratedCode.dateTime,
         isNotNull: true,
         defaultValue: (kind: 'datetime', value: 'now'),
@@ -5226,10 +5214,10 @@ final class _$StockAdjustmentRow extends StockAdjustmentRow {
         onUpdate: .noAction,
       ),
     ],
-    readRow: _$StockAdjustmentRow._$fromDatabase,
+    readRow: _$StockTransactionRow._$fromDatabase,
   );
 
-  static StockAdjustmentRow? _$fromDatabase(RowReader row) {
+  static StockTransactionRow? _$fromDatabase(RowReader row) {
     final id = row.readString();
     final productId = row.readString();
     final storeId = row.readString();
@@ -5237,7 +5225,6 @@ final class _$StockAdjustmentRow extends StockAdjustmentRow {
     final quantity = row.readInt();
     final reason = row.readString();
     final customReason = row.readString();
-    final wastageLossPaise = row.readInt();
     final createdAt = row.readDateTime();
     if (id == null &&
         productId == null &&
@@ -5246,11 +5233,10 @@ final class _$StockAdjustmentRow extends StockAdjustmentRow {
         quantity == null &&
         reason == null &&
         customReason == null &&
-        wastageLossPaise == null &&
         createdAt == null) {
       return null;
     }
-    return _$StockAdjustmentRow._(
+    return _$StockTransactionRow._(
       id!,
       productId!,
       storeId!,
@@ -5258,23 +5244,22 @@ final class _$StockAdjustmentRow extends StockAdjustmentRow {
       quantity!,
       reason!,
       customReason,
-      wastageLossPaise!,
       createdAt!,
     );
   }
 
   @override
   String toString() =>
-      'StockAdjustmentRow(id: "$id", productId: "$productId", storeId: "$storeId", adjustmentType: "$adjustmentType", quantity: "$quantity", reason: "$reason", customReason: "$customReason", wastageLossPaise: "$wastageLossPaise", createdAt: "$createdAt")';
+      'StockTransactionRow(id: "$id", productId: "$productId", storeId: "$storeId", adjustmentType: "$adjustmentType", quantity: "$quantity", reason: "$reason", customReason: "$customReason", createdAt: "$createdAt")';
 }
 
-/// Extension methods for table defined in [StockAdjustmentRow].
-extension TableStockAdjustmentRowExt on Table<StockAdjustmentRow> {
-  /// Insert row into the `stockAdjustments` table.
+/// Extension methods for table defined in [StockTransactionRow].
+extension TableStockTransactionRowExt on Table<StockTransactionRow> {
+  /// Insert row into the `stockTransactions` table.
   ///
   /// Returns a [InsertSingle] statement on which `.execute` must be
   /// called for the row to be inserted.
-  InsertSingle<StockAdjustmentRow> insert({
+  InsertSingle<StockTransactionRow> insert({
     Expr<String>? id,
     required Expr<String> productId,
     required Expr<String> storeId,
@@ -5282,7 +5267,6 @@ extension TableStockAdjustmentRowExt on Table<StockAdjustmentRow> {
     required Expr<int> quantity,
     required Expr<String> reason,
     Expr<String?>? customReason,
-    Expr<int>? wastageLossPaise,
     Expr<DateTime>? createdAt,
   }) => $ForGeneratedCode.insertInto(
     table: this,
@@ -5294,16 +5278,15 @@ extension TableStockAdjustmentRowExt on Table<StockAdjustmentRow> {
       quantity,
       reason,
       customReason,
-      wastageLossPaise,
       createdAt,
     ],
   );
 
-  /// Insert row into the `stockAdjustments` table.
+  /// Insert row into the `stockTransactions` table.
   ///
   /// Returns a [InsertSingle] statement on which `.execute` must be
   /// called for the row to be inserted.
-  InsertSingle<StockAdjustmentRow> insertValue({
+  InsertSingle<StockTransactionRow> insertValue({
     String? id,
     required String productId,
     required String storeId,
@@ -5311,7 +5294,6 @@ extension TableStockAdjustmentRowExt on Table<StockAdjustmentRow> {
     required int quantity,
     required String reason,
     String? customReason,
-    int? wastageLossPaise,
     DateTime? createdAt,
   }) => $ForGeneratedCode.insertInto(
     table: this,
@@ -5323,12 +5305,11 @@ extension TableStockAdjustmentRowExt on Table<StockAdjustmentRow> {
       quantity.asExpr,
       reason.asExpr,
       customReason.asExpr,
-      wastageLossPaise?.asExpr,
       createdAt?.asExpr,
     ],
   );
 
-  /// Bulk insert rows into the `stockAdjustments` table.
+  /// Bulk insert rows into the `stockTransactions` table.
   ///
   /// This method takes an `Iterable<T>` and requires that you provide
   /// a _mapping function_ from `T` to each column to be inserted.
@@ -5345,7 +5326,7 @@ extension TableStockAdjustmentRowExt on Table<StockAdjustmentRow> {
   ///
   /// Returns a [Insert] statement on which `.execute` must be
   /// called for the rows to be inserted.
-  Insert<StockAdjustmentRow> insertValuesMapped<T>(
+  Insert<StockTransactionRow> insertValuesMapped<T>(
     Iterable<T> rows, {
     String Function(T row)? id,
     required String Function(T row) productId,
@@ -5354,7 +5335,6 @@ extension TableStockAdjustmentRowExt on Table<StockAdjustmentRow> {
     required int Function(T row) quantity,
     required String Function(T row) reason,
     String? Function(T row)? customReason,
-    int Function(T row)? wastageLossPaise,
     DateTime Function(T row)? createdAt,
   }) => $ForGeneratedCode.insertValuesMapped(
     table: this,
@@ -5367,12 +5347,11 @@ extension TableStockAdjustmentRowExt on Table<StockAdjustmentRow> {
       quantity,
       reason,
       customReason,
-      wastageLossPaise,
       createdAt,
     ],
   );
 
-  /// Delete a single row from the `stockAdjustments` table, specified by
+  /// Delete a single row from the `stockTransactions` table, specified by
   /// _primary key_.
   ///
   /// Returns a [DeleteSingle] statement on which `.execute()` must be
@@ -5381,21 +5360,21 @@ extension TableStockAdjustmentRowExt on Table<StockAdjustmentRow> {
   /// To delete multiple rows, using `.where()` to filter which rows
   /// should be deleted. If you wish to delete all rows, use
   /// `.where((_) => toExpr(true)).delete()`.
-  DeleteSingle<StockAdjustmentRow> delete(String id) =>
-      $ForGeneratedCode.deleteSingle(byKey(id), _$StockAdjustmentRow._$table);
+  DeleteSingle<StockTransactionRow> delete(String id) =>
+      $ForGeneratedCode.deleteSingle(byKey(id), _$StockTransactionRow._$table);
 }
 
-/// Extension methods for building queries against the `stockAdjustments` table.
-extension QueryStockAdjustmentRowExt on Query<(Expr<StockAdjustmentRow>,)> {
-  /// Lookup a single row in `stockAdjustments` table using the _primary key_.
+/// Extension methods for building queries against the `stockTransactions` table.
+extension QueryStockTransactionRowExt on Query<(Expr<StockTransactionRow>,)> {
+  /// Lookup a single row in `stockTransactions` table using the _primary key_.
   ///
   /// Returns a [QuerySingle] object, which returns at-most one row,
   /// when `.fetch()` is called.
-  QuerySingle<(Expr<StockAdjustmentRow>,)> byKey(String id) => where(
-    (stockAdjustmentRow) => stockAdjustmentRow.id.equalsValue(id),
+  QuerySingle<(Expr<StockTransactionRow>,)> byKey(String id) => where(
+    (stockTransactionRow) => stockTransactionRow.id.equalsValue(id),
   ).first;
 
-  /// Update all rows in the `stockAdjustments` table matching this [Query].
+  /// Update all rows in the `stockTransactions` table matching this [Query].
   ///
   /// The changes to be applied to each row matching this [Query] are
   /// defined using the [updateBuilder], which is given an [Expr]
@@ -5422,10 +5401,10 @@ extension QueryStockAdjustmentRowExt on Query<(Expr<StockAdjustmentRow>,)> {
   /// > the expressions for updating the rows. You should **never** invoke
   /// > the `set` function more than once, and the result should always
   /// > be returned immediately.
-  Update<StockAdjustmentRow> update(
-    UpdateSet<StockAdjustmentRow> Function(
-      Expr<StockAdjustmentRow> stockAdjustmentRow,
-      UpdateSet<StockAdjustmentRow> Function({
+  Update<StockTransactionRow> update(
+    UpdateSet<StockTransactionRow> Function(
+      Expr<StockTransactionRow> stockTransactionRow,
+      UpdateSet<StockTransactionRow> Function({
         Expr<String> id,
         Expr<String> productId,
         Expr<String> storeId,
@@ -5433,17 +5412,16 @@ extension QueryStockAdjustmentRowExt on Query<(Expr<StockAdjustmentRow>,)> {
         Expr<int> quantity,
         Expr<String> reason,
         Expr<String?> customReason,
-        Expr<int> wastageLossPaise,
         Expr<DateTime> createdAt,
       })
       set,
     )
     updateBuilder,
-  ) => $ForGeneratedCode.update<StockAdjustmentRow>(
+  ) => $ForGeneratedCode.update<StockTransactionRow>(
     this,
-    _$StockAdjustmentRow._$table,
-    (stockAdjustmentRow) => updateBuilder(
-      stockAdjustmentRow,
+    _$StockTransactionRow._$table,
+    (stockTransactionRow) => updateBuilder(
+      stockTransactionRow,
       ({
         Expr<String>? id,
         Expr<String>? productId,
@@ -5452,9 +5430,8 @@ extension QueryStockAdjustmentRowExt on Query<(Expr<StockAdjustmentRow>,)> {
         Expr<int>? quantity,
         Expr<String>? reason,
         Expr<String?>? customReason,
-        Expr<int>? wastageLossPaise,
         Expr<DateTime>? createdAt,
-      }) => $ForGeneratedCode.buildUpdate<StockAdjustmentRow>([
+      }) => $ForGeneratedCode.buildUpdate<StockTransactionRow>([
         id,
         productId,
         storeId,
@@ -5462,24 +5439,23 @@ extension QueryStockAdjustmentRowExt on Query<(Expr<StockAdjustmentRow>,)> {
         quantity,
         reason,
         customReason,
-        wastageLossPaise,
         createdAt,
       ]),
     ),
   );
 
-  /// Delete all rows in the `stockAdjustments` table matching this [Query].
+  /// Delete all rows in the `stockTransactions` table matching this [Query].
   ///
   /// Returns a [Delete] statement on which `.execute()` must be called
   /// for the rows to be deleted.
-  Delete<StockAdjustmentRow> delete() =>
-      $ForGeneratedCode.delete(this, _$StockAdjustmentRow._$table);
+  Delete<StockTransactionRow> delete() =>
+      $ForGeneratedCode.delete(this, _$StockTransactionRow._$table);
 }
 
-/// Extension methods for building point queries against the `stockAdjustments` table.
-extension QuerySingleStockAdjustmentRowExt
-    on QuerySingle<(Expr<StockAdjustmentRow>,)> {
-  /// Update the row (if any) in the `stockAdjustments` table matching this
+/// Extension methods for building point queries against the `stockTransactions` table.
+extension QuerySingleStockTransactionRowExt
+    on QuerySingle<(Expr<StockTransactionRow>,)> {
+  /// Update the row (if any) in the `stockTransactions` table matching this
   /// [QuerySingle].
   ///
   /// The changes to be applied to the row matching this [QuerySingle] are
@@ -5508,10 +5484,10 @@ extension QuerySingleStockAdjustmentRowExt
   /// > the expressions for updating the rows. You should **never** invoke
   /// > the `set` function more than once, and the result should always
   /// > be returned immediately.
-  UpdateSingle<StockAdjustmentRow> update(
-    UpdateSet<StockAdjustmentRow> Function(
-      Expr<StockAdjustmentRow> stockAdjustmentRow,
-      UpdateSet<StockAdjustmentRow> Function({
+  UpdateSingle<StockTransactionRow> update(
+    UpdateSet<StockTransactionRow> Function(
+      Expr<StockTransactionRow> stockTransactionRow,
+      UpdateSet<StockTransactionRow> Function({
         Expr<String> id,
         Expr<String> productId,
         Expr<String> storeId,
@@ -5519,17 +5495,16 @@ extension QuerySingleStockAdjustmentRowExt
         Expr<int> quantity,
         Expr<String> reason,
         Expr<String?> customReason,
-        Expr<int> wastageLossPaise,
         Expr<DateTime> createdAt,
       })
       set,
     )
     updateBuilder,
-  ) => $ForGeneratedCode.updateSingle<StockAdjustmentRow>(
+  ) => $ForGeneratedCode.updateSingle<StockTransactionRow>(
     this,
-    _$StockAdjustmentRow._$table,
-    (stockAdjustmentRow) => updateBuilder(
-      stockAdjustmentRow,
+    _$StockTransactionRow._$table,
+    (stockTransactionRow) => updateBuilder(
+      stockTransactionRow,
       ({
         Expr<String>? id,
         Expr<String>? productId,
@@ -5538,9 +5513,8 @@ extension QuerySingleStockAdjustmentRowExt
         Expr<int>? quantity,
         Expr<String>? reason,
         Expr<String?>? customReason,
-        Expr<int>? wastageLossPaise,
         Expr<DateTime>? createdAt,
-      }) => $ForGeneratedCode.buildUpdate<StockAdjustmentRow>([
+      }) => $ForGeneratedCode.buildUpdate<StockTransactionRow>([
         id,
         productId,
         storeId,
@@ -5548,23 +5522,22 @@ extension QuerySingleStockAdjustmentRowExt
         quantity,
         reason,
         customReason,
-        wastageLossPaise,
         createdAt,
       ]),
     ),
   );
 
-  /// Delete the row (if any) in the `stockAdjustments` table matching this [QuerySingle].
+  /// Delete the row (if any) in the `stockTransactions` table matching this [QuerySingle].
   ///
   /// Returns a [DeleteSingle] statement on which `.execute()` must be called
   /// for the row to be deleted. The resulting statement will **not**
   /// fail, if there are no rows matching this query exists.
-  DeleteSingle<StockAdjustmentRow> delete() =>
-      $ForGeneratedCode.deleteSingle(this, _$StockAdjustmentRow._$table);
+  DeleteSingle<StockTransactionRow> delete() =>
+      $ForGeneratedCode.deleteSingle(this, _$StockTransactionRow._$table);
 }
 
-/// Extension methods for expressions on a row in the `stockAdjustments` table.
-extension ExpressionStockAdjustmentRowExt on Expr<StockAdjustmentRow> {
+/// Extension methods for expressions on a row in the `stockTransactions` table.
+extension ExpressionStockTransactionRowExt on Expr<StockTransactionRow> {
   Expr<String> get id =>
       $ForGeneratedCode.field(this, 0, $ForGeneratedCode.text);
 
@@ -5586,14 +5559,12 @@ extension ExpressionStockAdjustmentRowExt on Expr<StockAdjustmentRow> {
   Expr<String?> get customReason =>
       $ForGeneratedCode.field(this, 6, $ForGeneratedCode.text);
 
-  Expr<int> get wastageLossPaise =>
-      $ForGeneratedCode.field(this, 7, $ForGeneratedCode.integer);
-
   Expr<DateTime> get createdAt =>
-      $ForGeneratedCode.field(this, 8, $ForGeneratedCode.dateTime);
+      $ForGeneratedCode.field(this, 7, $ForGeneratedCode.dateTime);
 }
 
-extension ExpressionNullableStockAdjustmentRowExt on Expr<StockAdjustmentRow?> {
+extension ExpressionNullableStockTransactionRowExt
+    on Expr<StockTransactionRow?> {
   Expr<String?> get id =>
       $ForGeneratedCode.field(this, 0, $ForGeneratedCode.text);
 
@@ -5615,11 +5586,8 @@ extension ExpressionNullableStockAdjustmentRowExt on Expr<StockAdjustmentRow?> {
   Expr<String?> get customReason =>
       $ForGeneratedCode.field(this, 6, $ForGeneratedCode.text);
 
-  Expr<int?> get wastageLossPaise =>
-      $ForGeneratedCode.field(this, 7, $ForGeneratedCode.integer);
-
   Expr<DateTime?> get createdAt =>
-      $ForGeneratedCode.field(this, 8, $ForGeneratedCode.dateTime);
+      $ForGeneratedCode.field(this, 7, $ForGeneratedCode.dateTime);
 
   /// Check if the row is not `NULL`.
   ///
@@ -5638,20 +5606,20 @@ extension ExpressionNullableStockAdjustmentRowExt on Expr<StockAdjustmentRow?> {
   Expr<bool> isNull() => isNotNull().not();
 }
 
-/// `Table<StockAdjustmentRow>` conflict targets for use with `.onConflict`.
-enum StockAdjustmentRowConflict {
+/// `Table<StockTransactionRow>` conflict targets for use with `.onConflict`.
+enum StockTransactionRowConflict {
   /// Conflict with an existing row that has a matching primary key.
   ///
   /// Thus, the other row has matching values for:
   /// `id`.
   primaryKey(['id']);
 
-  const StockAdjustmentRowConflict(this._fields);
+  const StockTransactionRowConflict(this._fields);
 
   final List<String> _fields;
 }
 
-extension InsertStockAdjustmentRowExt on Insert<StockAdjustmentRow> {
+extension InsertStockTransactionRowExt on Insert<StockTransactionRow> {
   /// Build an `INSERT` statement with an `ON CONFLICT` clause.
   ///
   /// The [target] argument specifies the _conflict target_ to be
@@ -5661,7 +5629,7 @@ extension InsertStockAdjustmentRowExt on Insert<StockAdjustmentRow> {
   /// If a row to be inserted violates the _conflict target_ constraint,
   /// then the conflict action is triggered:
   /// * `.doNothing()` to skip insertion of the new row, and,
-  /// * `.update((stockAdjustmentRow, excluded, set) => set(...))` to
+  /// * `.update((stockTransactionRow, excluded, set) => set(...))` to
   ///   update the conflicting row.
   ///
   /// If a row to be inserted violates a constraint other than the one
@@ -5669,20 +5637,20 @@ extension InsertStockAdjustmentRowExt on Insert<StockAdjustmentRow> {
   /// will fail.
   ///
   /// This is equivalent to `INSERT ... ON CONFLICT (...)` in SQL.
-  InsertOnConflict<StockAdjustmentRow> onConflict(
-    StockAdjustmentRowConflict target,
+  InsertOnConflict<StockTransactionRow> onConflict(
+    StockTransactionRowConflict target,
   ) => $ForGeneratedCode.insertOnConflict(this, target._fields);
 }
 
-extension InsertOnConflictStockAdjustmentRowExt
-    on InsertOnConflict<StockAdjustmentRow> {
+extension InsertOnConflictStockTransactionRowExt
+    on InsertOnConflict<StockTransactionRow> {
   /// Build an `INSERT` statement an [upsert-clause][1].
   ///
   /// When a row to be inserted violates the `UNIQUE` or `PRIMARY KEY`
   /// constraint previously specified as _conflict target_, the existing
   /// row is updated using the expressions defined with the
   /// [updateBuilder]. The [updateBuilder] is given 3 parameters:
-  ///   * `stockAdjustmentRow` an [Expr] representing the existing row in
+  ///   * `stockTransactionRow` an [Expr] representing the existing row in
   ///     the database,
   ///   * `excluded` an [Expr] representing the row to be inserted in the
   ///     database, and,
@@ -5716,11 +5684,11 @@ extension InsertOnConflictStockAdjustmentRowExt
   /// > be returned immediately.
   ///
   /// [1]: https://www.sqlite.org/lang_upsert.html
-  Upsert<StockAdjustmentRow> update(
-    UpdateSet<StockAdjustmentRow> Function(
-      Expr<StockAdjustmentRow> stockAdjustmentRow,
-      Expr<StockAdjustmentRow> excluded,
-      UpdateSet<StockAdjustmentRow> Function({
+  Upsert<StockTransactionRow> update(
+    UpdateSet<StockTransactionRow> Function(
+      Expr<StockTransactionRow> stockTransactionRow,
+      Expr<StockTransactionRow> excluded,
+      UpdateSet<StockTransactionRow> Function({
         Expr<String> id,
         Expr<String> productId,
         Expr<String> storeId,
@@ -5728,16 +5696,15 @@ extension InsertOnConflictStockAdjustmentRowExt
         Expr<int> quantity,
         Expr<String> reason,
         Expr<String?> customReason,
-        Expr<int> wastageLossPaise,
         Expr<DateTime> createdAt,
       })
       set,
     )
     updateBuilder,
-  ) => $ForGeneratedCode.updateOnConflict<StockAdjustmentRow>(
+  ) => $ForGeneratedCode.updateOnConflict<StockTransactionRow>(
     this,
-    (stockAdjustmentRow, excluded) => updateBuilder(
-      stockAdjustmentRow,
+    (stockTransactionRow, excluded) => updateBuilder(
+      stockTransactionRow,
       excluded,
       ({
         Expr<String>? id,
@@ -5747,9 +5714,8 @@ extension InsertOnConflictStockAdjustmentRowExt
         Expr<int>? quantity,
         Expr<String>? reason,
         Expr<String?>? customReason,
-        Expr<int>? wastageLossPaise,
         Expr<DateTime>? createdAt,
-      }) => $ForGeneratedCode.buildUpdate<StockAdjustmentRow>([
+      }) => $ForGeneratedCode.buildUpdate<StockTransactionRow>([
         id,
         productId,
         storeId,
@@ -5757,15 +5723,14 @@ extension InsertOnConflictStockAdjustmentRowExt
         quantity,
         reason,
         customReason,
-        wastageLossPaise,
         createdAt,
       ]),
     ),
   );
 }
 
-extension InsertSingleStockAdjustmentRowExt
-    on InsertSingle<StockAdjustmentRow> {
+extension InsertSingleStockTransactionRowExt
+    on InsertSingle<StockTransactionRow> {
   /// Build an `INSERT` statement with an `ON CONFLICT` clause.
   ///
   /// The [target] argument specifies the _conflict target_ to be
@@ -5775,7 +5740,7 @@ extension InsertSingleStockAdjustmentRowExt
   /// If a row to be inserted violates the _conflict target_ constraint,
   /// then the conflict action is triggered:
   /// * `.doNothing()` to skip insertion of the new row, and,
-  /// * `.update((stockAdjustmentRow, excluded, set) => set(...))` to
+  /// * `.update((stockTransactionRow, excluded, set) => set(...))` to
   ///   update the conflicting row.
   ///
   /// If a row to be inserted violates a constraint other than the one
@@ -5783,20 +5748,20 @@ extension InsertSingleStockAdjustmentRowExt
   /// will fail.
   ///
   /// This is equivalent to `INSERT ... ON CONFLICT (...)` in SQL.
-  InsertOnConflictSingle<StockAdjustmentRow> onConflict(
-    StockAdjustmentRowConflict target,
+  InsertOnConflictSingle<StockTransactionRow> onConflict(
+    StockTransactionRowConflict target,
   ) => $ForGeneratedCode.insertOnConflictSingle(this, target._fields);
 }
 
-extension InsertOnConflictSingleStockAdjustmentRowExt
-    on InsertOnConflictSingle<StockAdjustmentRow> {
+extension InsertOnConflictSingleStockTransactionRowExt
+    on InsertOnConflictSingle<StockTransactionRow> {
   /// Build an `INSERT` statement an [upsert-clause][1].
   ///
   /// When a row to be inserted violates the `UNIQUE` or `PRIMARY KEY`
   /// constraint previously specified as _conflict target_, the existing
   /// row is updated using the expressions defined with the
   /// [updateBuilder]. The [updateBuilder] is given 3 parameters:
-  ///   * `stockAdjustmentRow` an [Expr] representing the existing row in
+  ///   * `stockTransactionRow` an [Expr] representing the existing row in
   ///     the database,
   ///   * `excluded` an [Expr] representing the row to be inserted in the
   ///     database, and,
@@ -5830,11 +5795,11 @@ extension InsertOnConflictSingleStockAdjustmentRowExt
   /// > be returned immediately.
   ///
   /// [1]: https://www.sqlite.org/lang_upsert.html
-  UpsertSingle<StockAdjustmentRow> update(
-    UpdateSet<StockAdjustmentRow> Function(
-      Expr<StockAdjustmentRow> stockAdjustmentRow,
-      Expr<StockAdjustmentRow> excluded,
-      UpdateSet<StockAdjustmentRow> Function({
+  UpsertSingle<StockTransactionRow> update(
+    UpdateSet<StockTransactionRow> Function(
+      Expr<StockTransactionRow> stockTransactionRow,
+      Expr<StockTransactionRow> excluded,
+      UpdateSet<StockTransactionRow> Function({
         Expr<String> id,
         Expr<String> productId,
         Expr<String> storeId,
@@ -5842,16 +5807,15 @@ extension InsertOnConflictSingleStockAdjustmentRowExt
         Expr<int> quantity,
         Expr<String> reason,
         Expr<String?> customReason,
-        Expr<int> wastageLossPaise,
         Expr<DateTime> createdAt,
       })
       set,
     )
     updateBuilder,
-  ) => $ForGeneratedCode.updateOnConflictSingle<StockAdjustmentRow>(
+  ) => $ForGeneratedCode.updateOnConflictSingle<StockTransactionRow>(
     this,
-    (stockAdjustmentRow, excluded) => updateBuilder(
-      stockAdjustmentRow,
+    (stockTransactionRow, excluded) => updateBuilder(
+      stockTransactionRow,
       excluded,
       ({
         Expr<String>? id,
@@ -5861,9 +5825,8 @@ extension InsertOnConflictSingleStockAdjustmentRowExt
         Expr<int>? quantity,
         Expr<String>? reason,
         Expr<String?>? customReason,
-        Expr<int>? wastageLossPaise,
         Expr<DateTime>? createdAt,
-      }) => $ForGeneratedCode.buildUpdate<StockAdjustmentRow>([
+      }) => $ForGeneratedCode.buildUpdate<StockTransactionRow>([
         id,
         productId,
         storeId,
@@ -5871,7 +5834,6 @@ extension InsertOnConflictSingleStockAdjustmentRowExt
         quantity,
         reason,
         customReason,
-        wastageLossPaise,
         createdAt,
       ]),
     ),
