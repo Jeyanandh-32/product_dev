@@ -92,21 +92,29 @@ class ProductRepository {
   Future<List<(ProductRow, StockRow?, CategoryRow?, CounterRow?)>> getAll({
     required String merchantId,
     String? storeId,
+    String? searchQuery,
     int? limit,
     int? offset,
   }) async {
-    var q = _db.products
+    final q = _db.products
         .leftJoin(_db.stocks)
         .on((p, s) => p.id.equals(s.productId))
         .leftJoin(_db.categories)
         .on((p, s, c) => p.categoryId.equals(c.id))
         .leftJoin(_db.counters)
         .on((p, s, c, cnt) => p.counterId.equals(cnt.id))
-        .where((p, s, c, cnt) => p.merchantId.equalsValue(merchantId));
+        .where((p, s, c, cnt) {
+          var expr = p.merchantId.equalsValue(merchantId);
+          if (storeId != null) {
+            expr = expr.and(p.storeId.equalsValue(storeId));
+          }
+          if (searchQuery != null && searchQuery.trim().isNotEmpty) {
+            final term = '%${searchQuery.trim().toLowerCase()}%';
+            expr = expr.and(p.name.toLowerCase().like(term));
+          }
 
-    if (storeId != null) {
-      q = q.where((p, s, c, cnt) => p.storeId.equalsValue(storeId));
-    }
+          return expr;
+        });
 
     var finalQuery = q
         .orderBy(
@@ -158,12 +166,20 @@ class ProductRepository {
   Future<int> count({
     required String merchantId,
     String? storeId,
+    String? searchQuery,
   }) async {
-    var q = _db.products.where((p) => p.merchantId.equalsValue(merchantId));
+    final q = _db.products.where((p) {
+      var expr = p.merchantId.equalsValue(merchantId);
+      if (storeId != null) {
+        expr = expr.and(p.storeId.equalsValue(storeId));
+      }
+      if (searchQuery != null && searchQuery.trim().isNotEmpty) {
+        final term = '%${searchQuery.trim().toLowerCase()}%';
+        expr = expr.and(p.name.toLowerCase().like(term));
+      }
 
-    if (storeId != null) {
-      q = q.where((p) => p.storeId.equalsValue(storeId));
-    }
+      return expr;
+    });
 
     final count = await q.count().fetch();
     return count ?? 0;

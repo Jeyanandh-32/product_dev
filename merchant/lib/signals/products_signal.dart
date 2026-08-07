@@ -1,7 +1,9 @@
 import 'package:client_repositories/client_repositories.dart';
 import 'package:merchant/exceptions/api_exception.dart';
 import 'package:merchant/signals/navigation_signal.dart';
+import 'package:merchant/signals/stock_summary_signal.dart';
 import 'package:merchant/signals/stores_signal.dart';
+
 import 'package:merchant/signals/toast_signal.dart';
 import 'package:models/models.dart';
 import 'package:signals/signals.dart';
@@ -27,26 +29,18 @@ Future<void> refreshProductsSignal() async {
   final page = productsPageSignal.value;
 
   try {
+    final search = productSearchSignal.value.trim();
+
     final result = await ProductRepository.getAll(
       storeId: selectedStore.id,
       page: page,
       size: size,
+      search: search.isNotEmpty ? search : null,
     );
 
-    final search = productSearchSignal.value.trim().toLowerCase();
-    var items = result.items;
-    if (search.isNotEmpty) {
-      items = items.where((p) {
-        return p.name.toLowerCase().contains(search) ||
-            (p.sku != null && p.sku!.toLowerCase().contains(search)) ||
-            (p.barcode != null && p.barcode!.toLowerCase().contains(search));
-      }).toList();
-    }
-
     productsTotalSignal.value = result.totalItems;
-
     productsTotalPagesSignal.value = result.totalPages;
-    productsSignal.value = AsyncData(items);
+    productsSignal.value = AsyncData(result.items);
   } catch (e, stack) {
     productsSignal.value = AsyncError(e, stack);
   }
@@ -154,7 +148,7 @@ abstract final class ProductsActions {
     productsSignal.value = const AsyncLoading();
 
     try {
-      final updatedStock = await StockRepository.update(
+      await StockRepository.update(
         id: stockId,
         quantity: quantity,
         lowStockThreshold: lowStockThreshold,
@@ -165,14 +159,8 @@ abstract final class ProductsActions {
         customReason: customReason,
       );
 
-      productsSignal.value = AsyncData(
-        currentProducts.map((p) {
-          if (p.id == productId) {
-            return p.copyWith(stock: updatedStock);
-          }
-          return p;
-        }).toList(),
-      );
+      await refreshProductsSignal();
+      refreshStockSummarySignal();
     } catch (e) {
       final message = e is ApiException ? e.message : 'Something went wrong.';
       showToast(message);

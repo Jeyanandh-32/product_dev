@@ -31,29 +31,18 @@ Future<void> refreshCountersSignal() async {
   final page = countersPageSignal.value;
 
   try {
+    final search = counterSearchSignal.value.trim();
+
     final result = await CounterRepository.getAll(
       storeId: selectedStore.id,
       page: page,
       size: size,
+      search: search.isNotEmpty ? search : null,
     );
 
-    final search = counterSearchSignal.value.trim().toLowerCase();
-    var items = result.items;
-    if (search.isNotEmpty) {
-      items = items
-          .where(
-            (c) =>
-                c.name.toLowerCase().contains(search) ||
-                (c.description != null &&
-                    c.description!.toLowerCase().contains(search)),
-          )
-          .toList();
-    }
-
     countersTotalSignal.value = result.totalItems;
-
     countersTotalPagesSignal.value = result.totalPages;
-    countersSignal.value = AsyncData(items);
+    countersSignal.value = AsyncData(result.items);
   } catch (e, stack) {
     countersSignal.value = AsyncError(e, stack);
   }

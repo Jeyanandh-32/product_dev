@@ -31,29 +31,18 @@ Future<void> refreshCategoriesSignal() async {
   final page = categoriesPageSignal.value;
 
   try {
+    final search = categorySearchSignal.value.trim();
+
     final result = await CategoryRepository.getAll(
       storeId: selectedStore.id,
       page: page,
       size: size,
+      search: search.isNotEmpty ? search : null,
     );
 
-    final search = categorySearchSignal.value.trim().toLowerCase();
-    var items = result.items;
-    if (search.isNotEmpty) {
-      items = items
-          .where(
-            (c) =>
-                c.name.toLowerCase().contains(search) ||
-                (c.description != null &&
-                    c.description!.toLowerCase().contains(search)),
-          )
-          .toList();
-    }
-
     categoriesTotalSignal.value = result.totalItems;
-
     categoriesTotalPagesSignal.value = result.totalPages;
-    categoriesSignal.value = AsyncData(items);
+    categoriesSignal.value = AsyncData(result.items);
   } catch (e, stack) {
     categoriesSignal.value = AsyncError(e, stack);
   }

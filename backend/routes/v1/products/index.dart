@@ -31,15 +31,19 @@ Future<Response> _onGet(RequestContext context) async {
   final tokenPayload = context.tokenPayload;
 
   try {
+    final searchQuery = context.request.uri.queryParameters['search'];
+
     final total = await repo.count(
       storeId: context.storeId,
       merchantId: tokenPayload.sub,
+      searchQuery: searchQuery,
     );
 
     final offset = (page - 1) * size;
     final productRows = await repo.getAll(
       storeId: context.storeId,
       merchantId: tokenPayload.sub,
+      searchQuery: searchQuery,
       limit: size,
       offset: offset,
     );

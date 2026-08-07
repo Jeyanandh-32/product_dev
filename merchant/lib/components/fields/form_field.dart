@@ -1,6 +1,7 @@
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_router/jaspr_router.dart';
+import 'package:web/web.dart' as web;
 
 class FormField extends StatelessComponent {
   final String id;
@@ -23,6 +24,23 @@ class FormField extends StatelessComponent {
     this.onChange,
     this.enableForgotPassword = false,
   });
+
+  void _handleInput(dynamic eventOrValue) {
+    if (onChange == null) return;
+    try {
+      final event = eventOrValue as web.Event;
+      final target = event.target as web.HTMLInputElement?;
+      if (target != null) {
+        onChange!(target.value);
+        return;
+      }
+    } catch (_) {}
+    if (eventOrValue is String) {
+      onChange!(eventOrValue);
+      return;
+    }
+    onChange!(eventOrValue?.toString());
+  }
 
   @override
   Component build(BuildContext context) {
@@ -47,7 +65,8 @@ class FormField extends StatelessComponent {
         id: id,
         name: id,
         type: type,
-        onChange: onChange,
+        onInput: _handleInput,
+        onChange: _handleInput,
         classes:
             'input validator h-11 border border-border-medium w-full rounded-lg',
         attributes: attributes,

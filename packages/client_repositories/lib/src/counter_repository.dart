@@ -59,11 +59,17 @@ abstract final class CounterRepository {
     required String storeId,
     int? page,
     int? size,
+    String? search,
   }) async {
     try {
       final result = await dio.get(
         ApiEndpoints.counters,
-        queryParameters: {'storeId': storeId, 'page': ?page, 'size': ?size},
+        queryParameters: {
+          'storeId': storeId,
+          'page': ?page,
+          'size': ?size,
+          'search': ?search,
+        },
       );
 
       return parsePaginatedResponse(

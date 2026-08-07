@@ -30,16 +30,21 @@ class CategoryRepository {
   Future<List<CategoryRow>> getAll({
     required String merchantId,
     String? storeId,
+    String? searchQuery,
     int? limit,
     int? offset,
   }) async {
-    var query = _db.categories.where(
-      (c) => c.merchantId.equalsValue(merchantId),
-    );
-
-    if (storeId != null) {
-      query = query.where((c) => c.storeId.equalsValue(storeId));
-    }
+    var query = _db.categories.where((c) {
+      var expr = c.merchantId.equalsValue(merchantId);
+      if (storeId != null) {
+        expr = expr.and(c.storeId.equalsValue(storeId));
+      }
+      if (searchQuery != null && searchQuery.trim().isNotEmpty) {
+        final term = '%${searchQuery.trim().toLowerCase()}%';
+        expr = expr.and(c.name.toLowerCase().like(term));
+      }
+      return expr;
+    });
 
     if (offset != null) {
       query = query.offset(offset);
@@ -56,14 +61,19 @@ class CategoryRepository {
   Future<int> count({
     required String merchantId,
     String? storeId,
+    String? searchQuery,
   }) async {
-    var query = _db.categories.where(
-      (c) => c.merchantId.equalsValue(merchantId),
-    );
-
-    if (storeId != null) {
-      query = query.where((c) => c.storeId.equalsValue(storeId));
-    }
+    final query = _db.categories.where((c) {
+      var expr = c.merchantId.equalsValue(merchantId);
+      if (storeId != null) {
+        expr = expr.and(c.storeId.equalsValue(storeId));
+      }
+      if (searchQuery != null && searchQuery.trim().isNotEmpty) {
+        final term = '%${searchQuery.trim().toLowerCase()}%';
+        expr = expr.and(c.name.toLowerCase().like(term));
+      }
+      return expr;
+    });
 
     final total = await query.count().fetch();
     return total ?? 0;

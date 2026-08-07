@@ -87,11 +87,17 @@ abstract final class ProductRepository {
     required String storeId,
     int? page,
     int? size,
+    String? search,
   }) async {
     try {
       final result = await dio.get(
         ApiEndpoints.products,
-        queryParameters: {'storeId': storeId, 'page': ?page, 'size': ?size},
+        queryParameters: {
+          'storeId': storeId,
+          'page': ?page,
+          'size': ?size,
+          'search': ?search,
+        },
       );
 
       return parsePaginatedResponse(

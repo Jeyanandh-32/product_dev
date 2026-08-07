@@ -68,6 +68,15 @@ class _UpdateStockModalState extends State<UpdateStockModal> {
       .set => inputAmount,
     };
 
+    final showReasonSection =
+        _transactionType == StockTransactionType.reduce ||
+        (_transactionType == StockTransactionType.set &&
+            inputAmount < currentQty);
+
+    final effectiveReason = showReasonSection
+        ? _reason
+        : StockTransactionReason.restock;
+
     activeModalSignal.value = .none;
 
     if (component.product.stock != null) {
@@ -78,10 +87,11 @@ class _UpdateStockModalState extends State<UpdateStockModal> {
         lowStockThreshold: lowStockThreshold,
         stockMonitor: _stockMonitor,
         transactionType: _transactionType,
-        amount: inputAmount,
-        reason: _transactionType == .add ? .restock : _reason,
-        customReason:
-            _transactionType != .add && _customReason.trim().isNotEmpty
+        amount: _transactionType == .set
+            ? (inputAmount - currentQty).abs()
+            : inputAmount,
+        reason: effectiveReason,
+        customReason: showReasonSection && _customReason.trim().isNotEmpty
             ? _customReason.trim()
             : null,
       );
@@ -91,6 +101,12 @@ class _UpdateStockModalState extends State<UpdateStockModal> {
   @override
   Component build(BuildContext context) {
     final currentQty = component.product.stock?.quantity ?? 0;
+    final parsedAmount =
+        int.tryParse(_amount.trim()) ??
+        (_transactionType == .set ? currentQty : 1);
+    final isReduction =
+        _transactionType == .reduce ||
+        (_transactionType == .set && parsedAmount < currentQty);
 
     return Modal(
       title: 'Update Stock - ${component.product.name}',
@@ -144,6 +160,7 @@ class _UpdateStockModalState extends State<UpdateStockModal> {
 
           // Quantity Input
           FormField(
+            key: Key('amount_${_transactionType.name}'),
             id: 'amount',
             labelText: switch (_transactionType) {
               .add => 'Quantity to Add',
@@ -152,17 +169,17 @@ class _UpdateStockModalState extends State<UpdateStockModal> {
             },
             type: .number,
             attributes: {
-              'placeholder': '1',
+              'placeholder': _transactionType == .set ? '$currentQty' : '1',
               'required': '',
               'min': '0',
               'value': _amount,
             },
             hintText: 'Enter a valid quantity.',
-            onChange: (value) => _amount = value as String,
+            onChange: (value) => _amount = value.toString(),
           ),
 
-          // Reason Section (only for Reduce / Set Exact stock)
-          if (_transactionType != .add) ...[
+          // Reason Section (only for Stock Reductions)
+          if (isReduction) ...[
             div(classes: 'flex flex-col gap-1.5 mb-4', [
               label(classes: 'text-[14px] font-semibold text-gray-700', [
                 .text('Reason for Adjustment'),
@@ -310,8 +327,14 @@ class _UpdateStockModalState extends State<UpdateStockModal> {
           'h-9 rounded-lg text-xs font-medium transition-all cursor-pointer $colorClass',
       events: {
         'click': (e) {
+          final currentQty = component.product.stock?.quantity ?? 0;
           setState(() {
             _transactionType = value;
+            if (value == .set) {
+              _amount = '$currentQty';
+            } else {
+              _amount = '1';
+            }
             _reason = switch (value) {
               .reduce => .wastage,
               .add || .set => .adjustment,
