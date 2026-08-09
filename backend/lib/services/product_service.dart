@@ -25,8 +25,8 @@ class ProductService {
     final basePrice = ((body['basePrice'] as num).toDouble() * 100).round();
     final sellingPrice = ((body['sellingPrice'] as num).toDouble() * 100)
         .round();
-    final sku = readOptionalString(body, 'sku');
-    final barcode = readOptionalString(body, 'barcode');
+    final sku = readOptionalString(body, 'sku')?.trim().toUpperCase();
+    final barcode = readOptionalString(body, 'barcode')?.trim().toUpperCase();
     final description = readOptionalString(body, 'description');
     final imageUrl = readOptionalString(body, 'imageUrl');
     final taxRate = (body['taxRate'] as num?)?.toDouble() ?? 0.0;
