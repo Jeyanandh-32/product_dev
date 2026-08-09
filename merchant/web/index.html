@@ -18,8 +18,71 @@
         <!-- Loads the generated CSS file. -->
         <link rel="stylesheet" href="/styles.css">
 
+        <!-- Loads Chart.js library -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
         <!-- Loads and runs the compiled 'main.client.dart' file. -->
         <script defer src="/main.client.dart.js"></script>
+
+        <!-- Chart.js initialization helper for JS Interop -->
+        <script>
+            window._charts = window._charts || {};
+            window.renderChart = function(canvasId, type, data, options, retries) {
+
+                const ctx = document.getElementById(canvasId);
+                if (!ctx) {
+                    retries = retries || 0;
+                    if (retries < 10) {
+                        setTimeout(function() {
+                            window.renderChart(canvasId, type, data, options, retries + 1);
+                        }, 30);
+                    }
+                    return null;
+                }
+
+                if (window._charts[canvasId]) {
+                    window._charts[canvasId].destroy();
+                }
+
+
+                options = options || {};
+
+                if (options.centerHoverLabels) {
+                    const centerConfig = options.centerHoverLabels;
+                    delete options.centerHoverLabels;
+
+                    options.onHover = function(event, chartElement) {
+                        const labelEl = document.getElementById(centerConfig.labelId);
+                        const valueEl = document.getElementById(centerConfig.valueId);
+                        if (!labelEl || !valueEl) return;
+
+                        if (chartElement && chartElement.length > 0) {
+                            const idx = chartElement[0].index;
+                            const item = centerConfig.items[idx];
+                            if (item) {
+                                labelEl.textContent = item.label;
+                                valueEl.textContent = item.value;
+                            }
+                        } else {
+                            labelEl.textContent = centerConfig.defaultLabel;
+                            valueEl.textContent = centerConfig.defaultValue;
+                        }
+                    };
+                }
+
+                const chart = new Chart(ctx, {
+                    type: type,
+                    data: data,
+                    options: options
+                });
+
+                window._charts[canvasId] = chart;
+                return chart;
+            };
+        </script>
+
+
 
         <!-- Automatically closes open details dropdowns when clicking outside -->
         <script>

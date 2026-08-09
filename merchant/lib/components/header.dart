@@ -100,41 +100,57 @@ class _HeaderState extends SignalState<Header> {
 
     return div(
       classes:
-          'w-full h-15 px-4 lg:px-8 flex justify-between items-center bg-white border-b border-border-medium',
+          'w-full h-15 px-3 sm:px-4 lg:px-8 flex justify-between items-center gap-2 bg-white border-b border-border-medium',
       [
-        div(classes: 'flex items-center gap-3 lg:gap-0', [
+        div(classes: 'flex items-center gap-2.5 lg:gap-0 min-w-0 flex-1 mr-1', [
           button(
             classes:
-                'block lg:hidden hover:cursor-pointer transition-all duration-300',
+                'block lg:hidden hover:cursor-pointer transition-all duration-300 flex-shrink-0',
             onClick: () => navOpenSignal.value = !isNavOpen,
             [
-              Menu(classes: 'w-5 h-5'),
+              Menu(classes: 'w-5 h-5 text-gray-700'),
             ],
           ),
 
-          h3(classes: 'font-semibold flex items-center gap-1.5 text-primary', [
-            .text(headerTitle),
-            if (headerSubTitle != null) ...[
-              span(classes: 'text-gray-300 text-sm font-normal', [.text('/')]),
-              span(classes: 'text-sm text-gray-400 font-normal', [
-                .text(headerSubTitle),
-              ]),
+          h3(
+            classes:
+                'font-semibold flex items-center gap-1 sm:gap-1.5 text-primary text-sm sm:text-base min-w-0 truncate',
+            [
+              span(classes: 'truncate font-bold', [.text(headerTitle)]),
+              if (headerSubTitle != null) ...[
+                span(
+                  classes:
+                      'text-gray-300 text-xs sm:text-sm font-normal flex-shrink-0',
+                  [
+                    .text('/'),
+                  ],
+                ),
+                span(
+                  classes:
+                      'text-xs sm:text-sm text-gray-500 font-medium truncate',
+                  [
+                    .text(headerSubTitle),
+                  ],
+                ),
+              ],
             ],
-          ]),
+          ),
         ]),
 
         if (store != null && !isStoresPage)
-          div(classes: 'dropdown dropdown-bottom dropdown-end', [
+          div(classes: 'dropdown dropdown-bottom dropdown-end flex-shrink-0', [
             div(
               classes:
-                  'btn rounded-full border border-border-medium px-4 bg-white hover:bg-base-200 text-sm h-8 min-h-0',
+                  'btn rounded-full border border-border-medium px-2.5 sm:px-4 bg-white hover:bg-base-200 text-xs sm:text-sm h-8 min-h-0 flex items-center gap-1 max-w-[130px] sm:max-w-none',
               attributes: {
                 'tabindex': '0',
                 'role': 'button',
               },
               [
-                .text(store.name),
-                ChevronDown(classes: 'w-4 h-4'),
+                span(classes: 'truncate max-w-[85px] sm:max-w-[160px]', [
+                  .text(store.name),
+                ]),
+                ChevronDown(classes: 'w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0'),
               ],
             ),
 

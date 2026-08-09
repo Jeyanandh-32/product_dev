@@ -1,6 +1,7 @@
 import 'package:jaspr/client.dart';
 import 'package:jaspr/dom.dart';
-import 'package:jaspr_lucide/generated_icons/chevron_down.dart';
+import 'package:jaspr_lucide/jaspr_lucide.dart';
+
 import 'package:merchant/components/centered_message.dart';
 import 'package:merchant/components/fields/date_picker.dart';
 import 'package:merchant/components/fields/searchbar.dart';
@@ -119,6 +120,7 @@ class _StockSummaryState extends SignalState<StockSummary> {
                 ),
                 DatePicker(
                   date: stockSummaryDateSignal.value,
+
                   onDateChanged: (val) {
                     stockSummaryDateSignal.value = val;
                     stockSummaryPageSignal.value = 1;
@@ -148,7 +150,7 @@ class _StockSummaryState extends SignalState<StockSummary> {
         if (reportState.hasValue && reportState.value!.items.isNotEmpty)
           div(
             classes:
-                'grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 p-4 border-b border-border-medium bg-neutral/20',
+                'hidden md:grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 p-4 border-b border-border-medium bg-neutral/20',
             [
               summaryCard(
                 title: 'Opening Stock',
@@ -172,11 +174,14 @@ class _StockSummaryState extends SignalState<StockSummary> {
               ),
               summaryCard(
                 title: 'Adjustment',
-                value:
-                    '${reportState.value!.totalAdjustment >= 0 ? '+' : ''}${reportState.value!.totalAdjustment}',
-                textColor: reportState.value!.totalAdjustment >= 0
-                    ? 'text-emerald-600'
-                    : 'text-rose-600',
+                value: reportState.value!.totalAdjustment > 0
+                    ? '+${reportState.value!.totalAdjustment}'
+                    : '${reportState.value!.totalAdjustment}',
+                textColor: reportState.value!.totalAdjustment != 0
+                    ? (reportState.value!.totalAdjustment > 0
+                          ? 'text-emerald-600'
+                          : 'text-rose-600')
+                    : 'text-gray-700',
               ),
               summaryCard(
                 title: 'Closing Stock',

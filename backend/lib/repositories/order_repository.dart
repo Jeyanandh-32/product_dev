@@ -520,4 +520,147 @@ class OrderRepository {
       totalMarginPercentage: totalMarginPercentage,
     );
   }
+
+  Future<Map<String, dynamic>> getDashboardAnalytics({
+    required String merchantId,
+    required String storeId,
+    DateTime? fromDate,
+    DateTime? toDate,
+  }) async {
+    var query = _db.orders
+        .where((o) => o.merchantId.equals(ts.toExpr(merchantId)))
+        .where((o) => o.storeId.equals(ts.toExpr(storeId)));
+
+    if (fromDate != null) {
+      query = query.where((o) => o.createdAt.isAfterValue(fromDate));
+    }
+    if (toDate != null) {
+      query = query.where((o) => o.createdAt.isBeforeValue(toDate));
+    }
+
+    final orderRows = await query
+        .orderBy((o) => [(o.createdAt, ts.Order.descending)])
+        .fetch();
+
+    var totalRevenuePaise = 0;
+    var upiPaise = 0;
+    var cashPaise = 0;
+    var paidPaise = 0;
+    var freePaise = 0;
+    var paidCount = 0;
+    var freeCount = 0;
+
+    for (final o in orderRows) {
+      final isComplimentary =
+          o.paymentMethod.toLowerCase() == PaymentMethod.complimentary.name ||
+          o.paymentStatus.toLowerCase() == PaymentStatus.refunded.name;
+
+      if (!isComplimentary) {
+        totalRevenuePaise += o.grandTotal;
+        paidPaise += o.grandTotal;
+        paidCount++;
+      } else {
+        freePaise += o.subtotal > 0 ? o.subtotal : 100;
+        freeCount++;
+      }
+
+      if (o.paymentMethod.toLowerCase() == PaymentMethod.upi.name) {
+        upiPaise += o.grandTotal;
+      } else if (o.paymentMethod.toLowerCase() == PaymentMethod.cash.name) {
+        cashPaise += o.grandTotal;
+      }
+    }
+
+    final totalOrders = orderRows.length;
+    final totalRevenue = totalRevenuePaise / 100.0;
+    final aov = totalOrders > 0 ? (totalRevenue / totalOrders) : 0.0;
+
+    final stocks = await _db.stocks
+        .where((s) => s.storeId.equals(ts.toExpr(storeId)))
+        .fetch();
+    final lowStockCount = stocks
+        .where((s) => s.quantity <= s.lowStockThreshold)
+        .length;
+
+    // Previous period comparison for growth percentage
+    var revenueGrowth = 0.0;
+    var ordersGrowth = 0.0;
+    var aovGrowth = 0.0;
+
+    if (fromDate != null) {
+      final now = toDate ?? DateTime.now().toUtc();
+      final duration = now.difference(fromDate);
+      final prevFromDate = fromDate.subtract(duration);
+      final prevToDate = fromDate;
+
+      final prevRows = await _db.orders
+          .where((o) => o.merchantId.equals(ts.toExpr(merchantId)))
+          .where((o) => o.storeId.equals(ts.toExpr(storeId)))
+          .where((o) => o.createdAt.isAfterValue(prevFromDate))
+          .where((o) => o.createdAt.isBeforeValue(prevToDate))
+          .fetch();
+
+      var prevRevenuePaise = 0;
+      for (final p in prevRows) {
+        final isComp =
+            p.paymentMethod.toLowerCase() == PaymentMethod.complimentary.name ||
+            p.paymentStatus.toLowerCase() == PaymentStatus.refunded.name;
+        if (!isComp) prevRevenuePaise += p.grandTotal;
+      }
+
+      final prevRevenue = prevRevenuePaise / 100.0;
+      final prevOrders = prevRows.length;
+      final prevAov = prevOrders > 0 ? (prevRevenue / prevOrders) : 0.0;
+
+      if (prevRevenue > 0) {
+        revenueGrowth = ((totalRevenue - prevRevenue) / prevRevenue) * 100.0;
+      } else if (totalRevenue > 0) {
+        revenueGrowth = 100.0;
+      }
+
+      if (prevOrders > 0) {
+        ordersGrowth = ((totalOrders - prevOrders) / prevOrders) * 100.0;
+      } else if (totalOrders > 0) {
+        ordersGrowth = 100.0;
+      }
+
+      if (prevAov > 0) {
+        aovGrowth = ((aov - prevAov) / prevAov) * 100.0;
+      } else if (aov > 0) {
+        aovGrowth = 100.0;
+      }
+    }
+
+    final recentOrders = orderRows.take(5).map((o) {
+      return {
+        'id': o.id,
+        'billNo': o.billNo,
+        'orderReference': o.orderReference,
+        'paymentMethod': o.paymentMethod,
+        'grandTotal': o.grandTotal / 100.0,
+        'createdAt': o.createdAt.toIso8601String(),
+      };
+    }).toList();
+
+    return {
+      'totalRevenue': totalRevenue,
+      'totalOrders': totalOrders,
+      'aov': aov,
+      'lowStockCount': lowStockCount,
+      'revenueGrowth': revenueGrowth,
+      'ordersGrowth': ordersGrowth,
+      'aovGrowth': aovGrowth,
+      'paymentMethods': {
+        'upiTotal': upiPaise / 100.0,
+        'cashTotal': cashPaise / 100.0,
+      },
+      'paymentStatus': {
+        'paidTotal': paidPaise / 100.0,
+        'freeTotal': freePaise / 100.0,
+        'paidCount': paidCount,
+        'freeCount': freeCount,
+      },
+      'recentOrders': recentOrders,
+    };
+  }
 }

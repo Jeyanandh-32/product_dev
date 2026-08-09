@@ -121,4 +121,25 @@ abstract final class OrderRepository {
       handleDioError(e, 'Failed to fetch orders.');
     }
   }
+
+  static Future<Map<String, dynamic>> getDashboardAnalytics({
+    required String storeId,
+    String? fromDate,
+    String? toDate,
+  }) async {
+    try {
+      final result = await dio.get(
+        ApiEndpoints.dashboardReport,
+        queryParameters: {
+          'storeId': storeId,
+          'fromDate': ?fromDate,
+          'toDate': ?toDate,
+        },
+      );
+
+      return result.data['data'] as Map<String, dynamic>;
+    } on DioException catch (e) {
+      handleDioError(e, 'Failed to fetch dashboard analytics.');
+    }
+  }
 }

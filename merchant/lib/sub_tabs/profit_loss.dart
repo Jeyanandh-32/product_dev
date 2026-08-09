@@ -1,6 +1,7 @@
 import 'package:jaspr/client.dart';
 import 'package:jaspr/dom.dart';
-import 'package:jaspr_lucide/generated_icons/chevron_down.dart';
+import 'package:jaspr_lucide/jaspr_lucide.dart';
+
 import 'package:merchant/components/centered_message.dart';
 import 'package:merchant/components/fields/date_range_picker.dart';
 import 'package:merchant/components/fields/searchbar.dart';
@@ -154,7 +155,7 @@ class _ProfitLossState extends SignalState<ProfitLoss> {
         if (reportState.hasValue && reportState.value!.items.isNotEmpty)
           div(
             classes:
-                'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 p-4 border-b border-border-medium bg-neutral/20',
+                'hidden md:grid grid-cols-2 lg:grid-cols-4 gap-3 p-4 border-b border-border-medium bg-neutral/20',
             [
               summaryCard(
                 title: 'Total Cost Price (COGS)',

@@ -19,4 +19,5 @@ abstract final class ApiEndpoints {
   static const String payments = '/$version/payments';
   static const String profitLoss = '/$version/reports/profit_loss';
   static const String stockSummary = '/$version/reports/stock_summary';
+  static const String dashboardReport = '/$version/reports/dashboard';
 }
