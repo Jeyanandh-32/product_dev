@@ -100,7 +100,7 @@ class _HeaderState extends SignalState<Header> {
 
     return div(
       classes:
-          'w-full h-15 px-3 sm:px-4 lg:px-8 flex justify-between items-center gap-2 bg-white border-b border-border-medium',
+          'w-full h-[60px] min-h-[60px] px-3 sm:px-4 lg:px-8 flex justify-between items-center gap-2 bg-white border-b border-border-medium flex-shrink-0',
       [
         div(classes: 'flex items-center gap-2.5 lg:gap-0 min-w-0 flex-1 mr-1', [
           button(
@@ -167,7 +167,13 @@ class _HeaderState extends SignalState<Header> {
                     ),
               ],
             ),
-          ]),
+          ])
+        else if (!isStoresPage)
+          div(
+            classes:
+                'h-8 w-28 sm:w-36 rounded-full bg-neutral/60 border border-border-light animate-pulse flex-shrink-0',
+            [],
+          ),
       ],
     );
   }

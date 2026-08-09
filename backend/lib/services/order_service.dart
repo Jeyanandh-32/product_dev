@@ -10,14 +10,11 @@ import 'package:models/models.dart';
 
 class OrderService {
   const OrderService({
-    required OrderRepository orderRepo,
-    required OrderItemRepository orderItemRepo,
-    required ProductRepository productRepo,
-    required StockRepository stockRepo,
-  }) : _orderRepo = orderRepo,
-       _orderItemRepo = orderItemRepo,
-       _productRepo = productRepo,
-       _stockRepo = stockRepo;
+    required this._orderRepo,
+    required this._orderItemRepo,
+    required this._productRepo,
+    required this._stockRepo,
+  });
 
   final OrderRepository _orderRepo;
   final OrderItemRepository _orderItemRepo;

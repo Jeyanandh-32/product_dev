@@ -3,11 +3,14 @@ import 'package:dio/dio.dart';
 import 'package:models/models.dart';
 
 abstract final class StoreRepository {
-  static Future<Store> create({required String name, String? storeType}) async {
+  static Future<Store> create({
+    required String name,
+    StoreType? storeType,
+  }) async {
     try {
       final result = await dio.post(
         ApiEndpoints.stores,
-        data: {'name': name, 'storeType': ?storeType},
+        data: {'name': name, 'storeType': ?storeType?.name},
       );
 
       return Store.fromJson(
@@ -21,14 +24,18 @@ abstract final class StoreRepository {
   static Future<Store> update({
     required String id,
     String? name,
-    String? storeType,
+    StoreType? storeType,
     bool? isActive,
   }) async {
     try {
       final path = '${ApiEndpoints.stores}/$id';
       final result = await dio.patch(
         path,
-        data: {'name': ?name, 'storeType': ?storeType, 'isActive': ?isActive},
+        data: {
+          'name': ?name,
+          'storeType': ?storeType?.name,
+          'isActive': ?isActive,
+        },
       );
 
       return Store.fromJson(

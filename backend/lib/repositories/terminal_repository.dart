@@ -2,7 +2,7 @@ import 'package:backend/database/schema.dart';
 import 'package:typed_sql/typed_sql.dart' as ts;
 
 class TerminalRepository {
-  TerminalRepository({required ts.Database<DatabaseSchema> db}) : _db = db;
+  TerminalRepository({required this._db});
 
   final ts.Database<DatabaseSchema> _db;
 

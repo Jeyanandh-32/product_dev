@@ -3,7 +3,7 @@ import 'package:merchant/signals/stores_signal.dart';
 import 'package:models/models.dart';
 import 'package:signals/signals.dart';
 
-final dashboardRangeSignal = signal<String>('7d');
+final dashboardRangeSignal = signal<DashboardRange>(.days7);
 
 final dashboardSummarySignal =
     signal<
@@ -124,27 +124,13 @@ Future<void> refreshDashboardSignal() async {
   });
 
   try {
-    String? fromDateStr;
     final now = DateTime.now();
-
-    switch (dashboardRangeSignal.value) {
-      case '1d':
-        final startOfToday = DateTime(now.year, now.month, now.day);
-        fromDateStr = startOfToday.toIso8601String();
-        break;
-      case '7d':
-        final start7d = now.subtract(const Duration(days: 7));
-        fromDateStr = start7d.toIso8601String();
-        break;
-      case '30d':
-        final start30d = now.subtract(const Duration(days: 30));
-        fromDateStr = start30d.toIso8601String();
-        break;
-      case '1y':
-        final startYear = DateTime(now.year, 1, 1);
-        fromDateStr = startYear.toIso8601String();
-        break;
-    }
+    final fromDateStr = switch (dashboardRangeSignal.value) {
+      .today => DateTime(now.year, now.month, now.day).toIso8601String(),
+      .days7 => now.subtract(const Duration(days: 7)).toIso8601String(),
+      .days30 => now.subtract(const Duration(days: 30)).toIso8601String(),
+      .year1 => DateTime(now.year, 1, 1).toIso8601String(),
+    };
 
     // 1. Fetch store products to build category breakdown and top products
     try {

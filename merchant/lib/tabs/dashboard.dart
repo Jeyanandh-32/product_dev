@@ -18,7 +18,7 @@ class Dashboard extends SignalComponent {
 }
 
 class _DashboardState extends SignalState<Dashboard> {
-  String _selectedRange = '7d';
+  DashboardRange _selectedRange = .days7;
   String? _loadedStoreId;
 
   @override
@@ -371,10 +371,10 @@ class _DashboardState extends SignalState<Dashboard> {
                 classes:
                     'inline-flex p-1 bg-gray-100/80 rounded-lg border border-gray-200/60 text-xs font-semibold',
                 [
-                  _rangeTab('Today', '1d'),
-                  _rangeTab('7 Days', '7d'),
-                  _rangeTab('30 Days', '30d'),
-                  _rangeTab('This Year', '1y'),
+                  _rangeTab('Today', .today),
+                  _rangeTab('7 Days', .days7),
+                  _rangeTab('30 Days', .days30),
+                  _rangeTab('This Year', .year1),
                 ],
               ),
               button(
@@ -850,8 +850,8 @@ class _DashboardState extends SignalState<Dashboard> {
     );
   }
 
-  Component _rangeTab(String label, String value) {
-    final isSelected = _selectedRange == value;
+  Component _rangeTab(String label, DashboardRange range) {
+    final isSelected = _selectedRange == range;
     return button(
       type: .button,
       classes:
@@ -859,9 +859,9 @@ class _DashboardState extends SignalState<Dashboard> {
       events: {
         'click': (e) async {
           setState(() {
-            _selectedRange = value;
+            _selectedRange = range;
           });
-          dashboardRangeSignal.value = value;
+          dashboardRangeSignal.value = range;
           await refreshDashboardSignal();
           _initCharts();
         },

@@ -241,81 +241,6 @@
   }
 }
 @layer utilities {
-  .diff {
-    @layer daisyui.l1.l2 {
-      position: relative;
-      display: grid;
-      width: 100%;
-      overflow: hidden;
-      webkit-user-select: none;
-      user-select: none;
-      align-items: normal;
-      grid-template-rows: 1fr 1.8rem 1fr;
-      direction: ltr;
-      container-type: inline-size;
-      grid-template-columns: auto 1fr;
-    }
-    &:focus-visible {
-      @layer daisyui.l1.l2 {
-        outline-style: var(--tw-outline-style);
-        outline-width: 2px;
-        outline-offset: 1px;
-        outline-color: var(--color-base-content);
-      }
-    }
-    &:has(.diff-item-1:focus-visible) {
-      @layer daisyui.l1.l2 {
-        outline-style: var(--tw-outline-style);
-        outline-width: 2px;
-        outline-offset: 1px;
-        outline-color: var(--color-base-content);
-      }
-    }
-    &:focus-visible {
-      @layer daisyui.l1.l2 {
-        outline-style: var(--tw-outline-style);
-        outline-width: 2px;
-        outline-offset: 1px;
-        outline-color: var(--color-base-content);
-        .diff-resizer {
-          min-width: 95cqi;
-          max-width: 95cqi;
-        }
-      }
-    }
-    &:has(.diff-item-1:focus-visible) {
-      @layer daisyui.l1.l2 {
-        outline-style: var(--tw-outline-style);
-        outline-width: 2px;
-        outline-offset: 1px;
-        .diff-resizer {
-          min-width: 5cqi;
-          max-width: 5cqi;
-        }
-      }
-    }
-    &:hover .diff-item-2::after {
-      @layer daisyui.l1.l2 {
-        height: 2.4rem;
-      }
-    }
-    &:focus .diff-resizer {
-      @layer daisyui.l1.l2 {
-        @supports (-webkit-overflow-scrolling: touch) and (overflow: -webkit-paged-x) {
-          min-width: 5cqi;
-          max-width: 5cqi;
-        }
-      }
-    }
-    &:has(.diff-item-1:focus) .diff-resizer {
-      @layer daisyui.l1.l2 {
-        @supports (-webkit-overflow-scrolling: touch) and (overflow: -webkit-paged-x) {
-          min-width: 95cqi;
-          max-width: 95cqi;
-        }
-      }
-    }
-  }
   .tooltip {
     @layer daisyui.l1.l2.l3 {
       position: relative;
@@ -3264,6 +3189,9 @@
   .h-\[1em\] {
     height: 1em;
   }
+  .h-\[60px\] {
+    height: 60px;
+  }
   .h-\[500px\] {
     height: 500px;
   }
@@ -3284,6 +3212,9 @@
   }
   .min-h-0 {
     min-height: calc(var(--spacing) * 0);
+  }
+  .min-h-\[60px\] {
+    min-height: 60px;
   }
   .min-h-screen {
     min-height: 100vh;
@@ -3317,6 +3248,9 @@
   }
   .w-12 {
     width: calc(var(--spacing) * 12);
+  }
+  .w-28 {
+    width: calc(var(--spacing) * 28);
   }
   .w-40 {
     width: calc(var(--spacing) * 40);
@@ -3394,9 +3328,6 @@
   }
   .animate-pulse {
     animation: var(--animate-pulse);
-  }
-  .animate-spin {
-    animation: var(--animate-spin);
   }
   .link {
     @layer daisyui.l1.l2.l3 {
@@ -3597,10 +3528,6 @@
     border-style: var(--tw-border-style);
     border-width: 2px;
   }
-  .border-3 {
-    border-style: var(--tw-border-style);
-    border-width: 3px;
-  }
   .border-t {
     border-top-style: var(--tw-border-style);
     border-top-width: 1px;
@@ -3656,9 +3583,6 @@
   .border-gray-100 {
     border-color: var(--color-gray-100);
   }
-  .border-gray-200 {
-    border-color: var(--color-gray-200);
-  }
   .border-gray-200\/60 {
     border-color: color-mix(in srgb, oklch(92.8% 0.006 264.531) 60%, transparent);
     @supports (color: color-mix(in lab, red, red)) {
@@ -3671,17 +3595,11 @@
       border-color: color-mix(in oklab, var(--color-gray-200) 90%, transparent);
     }
   }
-  .border-primary {
-    border-color: var(--color-primary);
-  }
   .border-purple-100 {
     border-color: var(--color-purple-100);
   }
   .border-rose-200 {
     border-color: var(--color-rose-200);
-  }
-  .border-t-transparent {
-    border-top-color: transparent;
   }
   .table-zebra {
     & tbody tr:where(:nth-child(even)) {
@@ -3785,14 +3703,14 @@
       background-color: color-mix(in oklab, var(--color-neutral) 40%, transparent);
     }
   }
+  .bg-neutral\/60 {
+    background-color: var(--color-neutral);
+    @supports (color: color-mix(in lab, red, red)) {
+      background-color: color-mix(in oklab, var(--color-neutral) 60%, transparent);
+    }
+  }
   .bg-primary {
     background-color: var(--color-primary);
-  }
-  .bg-primary\/10 {
-    background-color: var(--color-primary);
-    @supports (color: color-mix(in lab, red, red)) {
-      background-color: color-mix(in oklab, var(--color-primary) 10%, transparent);
-    }
   }
   .bg-purple-50 {
     background-color: var(--color-purple-50);
@@ -4505,6 +4423,11 @@
   .sm\:w-4 {
     @media (width >= 40rem) {
       width: calc(var(--spacing) * 4);
+    }
+  }
+  .sm\:w-36 {
+    @media (width >= 40rem) {
+      width: calc(var(--spacing) * 36);
     }
   }
   .sm\:w-64 {

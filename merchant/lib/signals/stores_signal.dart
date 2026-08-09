@@ -29,7 +29,10 @@ Future<void> refreshStoresSignal() async {
 }
 
 abstract final class StoresActions {
-  static Future<void> create({required String name, String? storeType}) async {
+  static Future<void> create({
+    required String name,
+    StoreType? storeType,
+  }) async {
     final currentStores = storesSignal.value.value ?? [];
     untracked(() {
       storesSignal.value = const AsyncLoading();
@@ -56,7 +59,7 @@ abstract final class StoresActions {
   static Future<void> updateStore({
     required String id,
     String? name,
-    String? storeType,
+    StoreType? storeType,
     bool? isActive,
   }) async {
     final currentStores = storesSignal.value.value ?? [];

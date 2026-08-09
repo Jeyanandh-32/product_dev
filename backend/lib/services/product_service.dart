@@ -7,10 +7,9 @@ import 'package:models/models.dart';
 
 class ProductService {
   const ProductService({
-    required ProductRepository productRepo,
-    required StockRepository stockRepo,
-  }) : _productRepo = productRepo,
-       _stockRepo = stockRepo;
+    required this._productRepo,
+    required this._stockRepo,
+  });
 
   final ProductRepository _productRepo;
   final StockRepository _stockRepo;

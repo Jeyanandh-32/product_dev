@@ -3,6 +3,7 @@ import 'package:jaspr/dom.dart';
 import 'package:jaspr_lucide/jaspr_lucide.dart' hide Router;
 import 'package:jaspr_router/jaspr_router.dart';
 import 'package:merchant/components/signal_component.dart';
+import 'package:merchant/models/nav_tab.dart';
 import 'package:merchant/signals/auth_signal.dart';
 import 'package:merchant/signals/navigation_signal.dart';
 
@@ -24,14 +25,31 @@ class _DrawerState extends SignalState<Drawer> {
   @override
   Component buildSignal(BuildContext context) {
     final location = Router.of(context).matchList.uri.toString();
+    final activeTab = NavTab.values.firstWhere(
+      (t) => location.startsWith(t.path),
+      orElse: () => .dashboard,
+    );
     final isNavOpen = navOpenSignal.value;
 
-    final isDashboard = location == '/';
-    final isInventory = location.startsWith('/inventory');
-    final isReports = location.startsWith('/reports');
-    final isStores = location == '/stores';
-    final isAccount = location == '/account';
-    final isSettings = location == '/settings';
+    final isDashboard = activeTab == .dashboard;
+    final isInventory = activeTab == .inventory;
+    final isReports = activeTab == .reports;
+    final isStores = activeTab == .stores;
+    final isAccount = activeTab == .account;
+    final isSettings = activeTab == .settings;
+
+    final activeInventorySub = isInventory
+        ? SubTab.values.firstWhere(
+            (sub) => location.contains(sub.name),
+            orElse: () => .products,
+          )
+        : null;
+    final activeReportsSub = isReports
+        ? SubTab.values.firstWhere(
+            (sub) => location.contains(sub.name) || location.contains(sub.slug),
+            orElse: () => .orders,
+          )
+        : null;
 
     return div(
       classes:
@@ -67,17 +85,17 @@ class _DrawerState extends SignalState<Drawer> {
               [
                 navSubButton(
                   name: 'Products',
-                  isSelected: location == '/inventory/products',
+                  isSelected: activeInventorySub == .products,
                   onClick: () => _navigateTo(context, '/inventory/products'),
                 ),
                 navSubButton(
                   name: 'Category',
-                  isSelected: location == '/inventory/categories',
+                  isSelected: activeInventorySub == .categories,
                   onClick: () => _navigateTo(context, '/inventory/categories'),
                 ),
                 navSubButton(
                   name: 'Counters',
-                  isSelected: location == '/inventory/counters',
+                  isSelected: activeInventorySub == .counters,
                   onClick: () => _navigateTo(context, '/inventory/counters'),
                 ),
               ],
@@ -97,26 +115,27 @@ class _DrawerState extends SignalState<Drawer> {
               [
                 navSubButton(
                   name: 'Orders',
-                  isSelected: location == '/reports/orders',
+                  isSelected: activeReportsSub == .orders,
                   onClick: () => _navigateTo(context, '/reports/orders'),
                 ),
                 navSubButton(
                   name: 'Payments',
-                  isSelected: location == '/reports/payments',
+                  isSelected: activeReportsSub == .payments,
                   onClick: () => _navigateTo(context, '/reports/payments'),
                 ),
                 navSubButton(
                   name: 'Profit & Loss',
-                  isSelected: location == '/reports/profit-loss',
+                  isSelected: activeReportsSub == .profitLoss,
                   onClick: () => _navigateTo(context, '/reports/profit-loss'),
                 ),
                 navSubButton(
                   name: 'Stock Summary',
-                  isSelected: location == '/reports/stock-summary',
+                  isSelected: activeReportsSub == .stockSummary,
                   onClick: () => _navigateTo(context, '/reports/stock-summary'),
                 ),
               ],
             ),
+
           navButton(
             name: 'Stores',
             prefixIcon: Store(classes: 'w-4.5 h-4.5'),

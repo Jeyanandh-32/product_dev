@@ -19,4 +19,4 @@ enum ActiveModal {
   orderDetails,
 }
 
-final activeModalSignal = signal<ActiveModal>(ActiveModal.none);
+final activeModalSignal = signal<ActiveModal>(.none);

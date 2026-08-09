@@ -18,36 +18,41 @@ class AddEditStoreModal extends StatefulComponent {
 
 class _AddEditStoreModalState extends State<AddEditStoreModal> {
   late String _storeName;
-  late String _storeType;
+  StoreType? _storeType;
   late bool _isActive;
 
   @override
   void initState() {
     super.initState();
     _storeName = component.store?.name ?? '';
-    _storeType = component.store?.storeType ?? '';
+    _storeType = component.store?.storeType != null
+        ? StoreType.values.firstWhere(
+            (t) => t.name == component.store?.storeType?.toLowerCase(),
+            orElse: () => .other,
+          )
+        : null;
     _isActive = component.store?.isActive ?? true;
   }
 
   void _onSubmit(Event e) {
     e.preventDefault();
     final storeName = _storeName.trim();
-    final storeType = _storeType.trim();
+    final storeType = _storeType;
     final isActive = _isActive;
 
-    activeModalSignal.value = ActiveModal.none;
+    activeModalSignal.value = .none;
 
     if (component.store != null) {
       StoresActions.updateStore(
         id: component.store!.id,
         name: storeName,
-        storeType: storeType.isEmpty ? null : storeType,
+        storeType: storeType,
         isActive: isActive,
       );
     } else {
       StoresActions.create(
         name: storeName,
-        storeType: storeType.isEmpty ? null : storeType,
+        storeType: storeType,
       );
     }
   }
@@ -79,9 +84,15 @@ class _AddEditStoreModalState extends State<AddEditStoreModal> {
             type: InputType.text,
             attributes: {
               'placeholder': 'Cafe',
-              'value': _storeType,
+              'value': _storeType?.name ?? '',
             },
-            onChange: (value) => _storeType = value as String,
+            onChange: (value) =>
+                _storeType = value is String && value.isNotEmpty
+                ? StoreType.values.firstWhere(
+                    (t) => t.name == value.toLowerCase(),
+                    orElse: () => .other,
+                  )
+                : null,
           ),
 
           if (component.store != null)

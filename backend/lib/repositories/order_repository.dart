@@ -3,9 +3,10 @@ import 'package:models/models.dart';
 import 'package:typed_sql/typed_sql.dart' as ts;
 
 class OrderRepository {
-  OrderRepository({required ts.Database<DatabaseSchema> db}) : _db = db;
+  OrderRepository({required this._db});
 
   final ts.Database<DatabaseSchema> _db;
+
   Future<OrderRow> create({
     required String merchantId,
     required String storeId,
