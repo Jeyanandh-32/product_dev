@@ -27,11 +27,8 @@ class _DashboardState extends SignalState<Dashboard> {
     final store = storeSignal.value;
     if (store != null) {
       _loadedStoreId = store.id;
-      // Render charts instantly from in-memory cached signal state
-      Future.microtask(() {
-        _initCharts();
-      });
-      // Fetch updated analytics from backend in background
+      // Draw charts immediately from cached signal state, then refresh from backend
+      Future.microtask(() => _initCharts());
       refreshDashboardSignal().then((_) {
         _initCharts();
       });
@@ -341,7 +338,7 @@ class _DashboardState extends SignalState<Dashboard> {
         // Top Header & Control Bar
         div(
           classes:
-              'flex flex-col lg:flex-row lg:items-center justify-between gap-3 bg-white p-4 rounded-xl border border-border-medium shadow-2xs',
+              'flex flex-col lg:flex-row lg:items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-border-medium shadow-2xs',
           [
             div(classes: 'space-y-0.5', [
               div(classes: 'flex items-center gap-2', [
@@ -441,7 +438,7 @@ class _DashboardState extends SignalState<Dashboard> {
           // Doughnut Chart 1: Payment Methods (UPI vs Cash)
           div(
             classes:
-                'bg-white p-4.5 rounded-xl border border-border-medium shadow-2xs flex flex-col justify-between',
+                'bg-white p-4.5 rounded-2xl border border-border-medium shadow-2xs flex flex-col justify-between',
             [
               div([
                 h3(classes: 'text-base font-bold text-gray-900', [
@@ -504,7 +501,7 @@ class _DashboardState extends SignalState<Dashboard> {
           // Doughnut Chart 2: Order Payment Status (Paid vs Free)
           div(
             classes:
-                'bg-white p-4.5 rounded-xl border border-border-medium shadow-2xs flex flex-col justify-between',
+                'bg-white p-4.5 rounded-2xl border border-border-medium shadow-2xs flex flex-col justify-between',
             [
               div([
                 h3(classes: 'text-base font-bold text-gray-900', [
@@ -572,7 +569,7 @@ class _DashboardState extends SignalState<Dashboard> {
         // Main Full-Width Line Chart: Sales & Revenue Trends
         div(
           classes:
-              'bg-white p-4.5 rounded-xl border border-border-medium shadow-2xs flex flex-col justify-between',
+              'bg-white p-4.5 rounded-2xl border border-border-medium shadow-2xs flex flex-col justify-between',
           [
             div(
               classes:
@@ -666,7 +663,7 @@ class _DashboardState extends SignalState<Dashboard> {
           // Category Sales Distribution
           div(
             classes:
-                'lg:col-span-6 bg-white p-4.5 rounded-xl border border-border-medium shadow-2xs',
+                'lg:col-span-6 bg-white p-4.5 rounded-2xl border border-border-medium shadow-2xs',
             [
               h3(classes: 'text-base font-bold text-gray-900 mb-0.5', [
                 .text('Category Sales Breakdown'),
@@ -692,7 +689,7 @@ class _DashboardState extends SignalState<Dashboard> {
           // Hourly Order Distribution
           div(
             classes:
-                'lg:col-span-6 bg-white p-4.5 rounded-xl border border-border-medium shadow-2xs',
+                'lg:col-span-6 bg-white p-4.5 rounded-2xl border border-border-medium shadow-2xs',
             [
               h3(classes: 'text-base font-bold text-gray-900 mb-0.5', [
                 .text('Hourly Traffic & Orders'),
@@ -721,7 +718,7 @@ class _DashboardState extends SignalState<Dashboard> {
           // Top 5 Selling Products Card (6 Cols)
           div(
             classes:
-                'lg:col-span-6 bg-white p-4.5 rounded-xl border border-border-medium shadow-2xs flex flex-col justify-between',
+                'lg:col-span-6 bg-white p-4.5 rounded-2xl border border-border-medium shadow-2xs flex flex-col justify-between',
             [
               div(classes: 'flex items-center justify-between mb-3', [
                 div([
@@ -752,7 +749,7 @@ class _DashboardState extends SignalState<Dashboard> {
           // Low Stock Products Alert Feed (6 Cols)
           div(
             classes:
-                'lg:col-span-6 bg-white p-4.5 rounded-xl border border-border-medium shadow-2xs flex flex-col justify-between',
+                'lg:col-span-6 bg-white p-4.5 rounded-2xl border border-border-medium shadow-2xs flex flex-col justify-between',
             [
               div(classes: 'flex items-center justify-between mb-3', [
                 div([
@@ -890,7 +887,7 @@ class _DashboardState extends SignalState<Dashboard> {
   }) {
     return div(
       classes:
-          'bg-white p-4.5 rounded-xl border border-border-medium shadow-2xs flex flex-col justify-between hover:border-gray-300 transition-all',
+          'bg-white p-4.5 rounded-2xl border border-border-medium shadow-2xs flex flex-col justify-between hover:border-gray-300 transition-all',
       [
         div(classes: 'flex items-start justify-between mb-2.5', [
           div(

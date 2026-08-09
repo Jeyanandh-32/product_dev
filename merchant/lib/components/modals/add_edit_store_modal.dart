@@ -1,11 +1,12 @@
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
+import 'package:jaspr_lucide/generated_icons/chevron_down.dart';
 import 'package:merchant/components/fields/form_field.dart';
 import 'package:merchant/components/modals/modal.dart';
 import 'package:merchant/signals/stores_signal.dart';
 import 'package:merchant/signals/navigation_signal.dart';
 import 'package:models/models.dart';
-import 'package:web/web.dart';
+import 'package:web/web.dart' as web;
 
 class AddEditStoreModal extends StatefulComponent {
   const AddEditStoreModal({super.key, this.store});
@@ -34,7 +35,7 @@ class _AddEditStoreModalState extends State<AddEditStoreModal> {
     _isActive = component.store?.isActive ?? true;
   }
 
-  void _onSubmit(Event e) {
+  void _onSubmit(web.Event e) {
     e.preventDefault();
     final storeName = _storeName.trim();
     final storeType = _storeType;
@@ -78,22 +79,59 @@ class _AddEditStoreModalState extends State<AddEditStoreModal> {
             onChange: (value) => _storeName = value as String,
           ),
 
-          FormField(
-            id: 'storeType',
-            labelText: 'Store Type (optional)',
-            type: InputType.text,
-            attributes: {
-              'placeholder': 'Cafe',
-              'value': _storeType?.name ?? '',
-            },
-            onChange: (value) =>
-                _storeType = value is String && value.isNotEmpty
-                ? StoreType.values.firstWhere(
-                    (t) => t.name == value.toLowerCase(),
-                    orElse: () => .other,
-                  )
-                : null,
-          ),
+          fieldset(classes: 'fieldset w-full mb-4', [
+            label(
+              htmlFor: 'storeType',
+              classes: 'label text-[14px] font-semibold text-gray-500',
+              [.text('Store Type')],
+            ),
+            details(classes: 'dropdown w-full', [
+              summary(
+                classes:
+                    'btn border border-border-medium bg-white hover:bg-base-200 text-sm h-11 w-full justify-between font-normal px-3 rounded-lg list-none cursor-pointer ${_storeType == null ? 'text-gray-400' : 'text-base-content'}',
+                [
+                  span([
+                    .text(
+                      _storeType == null
+                          ? 'Select Store Type'
+                          : '${_storeType!.name[0].toUpperCase()}${_storeType!.name.substring(1)}',
+                    ),
+                  ]),
+                  ChevronDown(classes: 'w-4 h-4 opacity-50'),
+                ],
+              ),
+              ul(
+                classes:
+                    'dropdown-content menu bg-base-100 rounded-box z-50 mt-1 p-2 shadow-sm border border-border-light w-full max-h-48 overflow-y-auto',
+                [
+                  for (final type in StoreType.values)
+                    li([
+                      a(
+                        href: '#',
+                        classes:
+                            'rounded-md hover:bg-neutral py-2 px-3 block ${type == _storeType ? 'bg-neutral font-semibold' : ''}',
+                        onClick: () {
+                          setState(() {
+                            _storeType = type;
+                          });
+                          final activeElement = web.document.activeElement;
+                          if (activeElement != null) {
+                            (activeElement as web.HTMLElement).blur();
+                            final details = activeElement.closest('details');
+                            details?.removeAttribute('open');
+                          }
+                        },
+                        [
+                          .text(
+                            '${type.name[0].toUpperCase()}${type.name.substring(1)}',
+                          ),
+                        ],
+                      ),
+                    ]),
+                ],
+              ),
+            ]),
+          ]),
 
           if (component.store != null)
             div(classes: 'form-control mb-4 flex flex-row items-center gap-3', [
@@ -108,7 +146,7 @@ class _AddEditStoreModalState extends State<AddEditStoreModal> {
                 checked: _isActive,
                 events: {
                   'change': (e) {
-                    final target = e.target as HTMLInputElement;
+                    final target = e.target as web.HTMLInputElement;
                     setState(() {
                       _isActive = target.checked;
                     });

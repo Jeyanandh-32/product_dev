@@ -29,22 +29,16 @@
         <script>
             window._charts = window._charts || {};
             window.renderChart = function(canvasId, type, data, options, retries) {
-
                 const ctx = document.getElementById(canvasId);
                 if (!ctx) {
                     retries = retries || 0;
-                    if (retries < 10) {
+                    if (retries < 20) {
                         setTimeout(function() {
                             window.renderChart(canvasId, type, data, options, retries + 1);
-                        }, 30);
+                        }, 16);
                     }
                     return null;
                 }
-
-                if (window._charts[canvasId]) {
-                    window._charts[canvasId].destroy();
-                }
-
 
                 options = options || {};
 
@@ -71,14 +65,32 @@
                     };
                 }
 
-                const chart = new Chart(ctx, {
-                    type: type,
-                    data: data,
-                    options: options
+                const existingChart = window._charts[canvasId];
+                if (existingChart) {
+                    try { existingChart.destroy(); } catch(e) {}
+                    delete window._charts[canvasId];
+                }
+
+                options.animation = {
+                    duration: 250,
+                    easing: 'easeOutQuart'
+                };
+                options.responsiveAnimationDuration = 0;
+
+                ctx.style.opacity = '0';
+                ctx.style.transition = 'opacity 0.2s ease-in-out';
+
+                requestAnimationFrame(function() {
+                    const chart = new Chart(ctx, {
+                        type: type,
+                        data: data,
+                        options: options
+                    });
+                    window._charts[canvasId] = chart;
+                    ctx.style.opacity = '1';
                 });
 
-                window._charts[canvasId] = chart;
-                return chart;
+                return null;
             };
         </script>
 

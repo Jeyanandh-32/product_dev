@@ -172,13 +172,12 @@ class _AccountState extends SignalState<Account> {
     final initials = _getInitials(displayName);
 
     return div(
-      classes:
-          'flex-1 h-full overflow-y-auto bg-neutral/30 p-4 sm:p-5 space-y-4',
+      classes: 'flex-1 h-full overflow-y-auto bg-neutral/30 p-4 space-y-4',
       [
         // Top Profile Banner
         div(
           classes:
-              'w-full rounded-xl bg-white p-4.5 border border-border-medium shadow-2xs',
+              'w-full rounded-2xl bg-white p-4.5 border border-border-medium shadow-2xs',
           [
             div(
               classes:
