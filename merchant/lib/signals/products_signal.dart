@@ -90,6 +90,7 @@ abstract final class ProductsActions {
       );
 
       productsSignal.value = AsyncData([...currentProducts, product]);
+      showToast('Product created successfully.', type: ToastType.success);
     } catch (e) {
       final message = e is ApiException ? e.message : 'Something went wrong.';
       showToast(message);
@@ -134,6 +135,7 @@ abstract final class ProductsActions {
       productsSignal.value = AsyncData(
         currentProducts.map((p) => p.id == id ? updatedProduct : p).toList(),
       );
+      showToast('Product updated successfully.', type: ToastType.success);
     } catch (e) {
       final message = e is ApiException ? e.message : 'Something went wrong.';
       showToast(message);

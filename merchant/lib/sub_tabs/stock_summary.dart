@@ -7,12 +7,24 @@ import 'package:merchant/components/fields/date_picker.dart';
 import 'package:merchant/components/fields/searchbar.dart';
 import 'package:merchant/components/loading.dart';
 import 'package:merchant/components/signal_component.dart';
+import 'package:merchant/components/sortable_header.dart';
 import 'package:merchant/components/table_pagination.dart';
+import 'package:models/models.dart';
 import 'package:merchant/exceptions/api_exception.dart';
 import 'package:merchant/signals/navigation_signal.dart';
 import 'package:merchant/signals/stock_summary_signal.dart';
 import 'package:merchant/signals/stores_signal.dart';
 import 'package:web/web.dart' as web;
+
+enum StockSummarySortKey {
+  name,
+  openingStock,
+  inQty,
+  outQty,
+  wastageQty,
+  adjustmentQty,
+  closingStock,
+}
 
 class StockSummary extends SignalComponent {
   const StockSummary({super.key});
@@ -23,6 +35,14 @@ class StockSummary extends SignalComponent {
 
 class _StockSummaryState extends SignalState<StockSummary> {
   String? _loadedStoreId;
+  SortState<StockSummarySortKey> _sortState =
+      const SortState<StockSummarySortKey>();
+
+  void _onSort(StockSummarySortKey key) {
+    setState(() {
+      _sortState = _sortState.toggle(key);
+    });
+  }
 
   @override
   void initState() {
@@ -125,11 +145,10 @@ class _StockSummaryState extends SignalState<StockSummary> {
                         ],
                       ),
                     ]),
-                    .text(
-                      (reportState.value?.totalItems ?? 0) <= 0
-                          ? '0 of 0'
-                          : 'Showing ${((currentPage - 1) * entries) + 1}–${(currentPage * entries).clamp(0, reportState.value?.totalItems ?? 0)} of ${reportState.value?.totalItems ?? 0}',
-                    ),
+                    if ((reportState.value?.totalItems ?? 0) > 0)
+                      .text(
+                        'Showing ${((currentPage - 1) * entries) + 1}–${(currentPage * entries).clamp(0, reportState.value?.totalItems ?? 0)} of ${reportState.value?.totalItems ?? 0}',
+                      ),
                   ],
                 ),
                 DatePicker(
@@ -228,7 +247,23 @@ class _StockSummaryState extends SignalState<StockSummary> {
               [
                 tableHead(),
                 tbody([
-                  for (final item in reportState.value!.items)
+                  for (final item
+                      in sortItems<StockSummaryItem, StockSummarySortKey>(
+                        items: reportState.value?.items ?? [],
+                        sortState: _sortState,
+                        getSortValue: (item, k) => switch (k) {
+                          StockSummarySortKey.name =>
+                            item.productName.toLowerCase(),
+                          StockSummarySortKey.openingStock => item.openingStock,
+                          StockSummarySortKey.inQty => item.inQuantity,
+                          StockSummarySortKey.outQty => item.outQuantity,
+                          StockSummarySortKey.wastageQty =>
+                            item.wastageQuantity,
+                          StockSummarySortKey.adjustmentQty =>
+                            item.adjustmentQuantity,
+                          StockSummarySortKey.closingStock => item.closingStock,
+                        },
+                      ))
                     tableRow(
                       name: item.productName,
                       openingStock: item.openingStock,
@@ -274,13 +309,48 @@ class _StockSummaryState extends SignalState<StockSummary> {
     return thead([
       tr([
         th([]),
-        th([.text('Name')]),
-        td([.text('Opening Stock')]),
-        td([.text('In')]),
-        td([.text('Out')]),
-        td([.text('Wastage')]),
-        td([.text('Adjustment')]),
-        td([.text('Closing Stock')]),
+        SortableHeader<StockSummarySortKey>(
+          title: 'Name',
+          sortKey: StockSummarySortKey.name,
+          currentSort: _sortState,
+          onSort: _onSort,
+        ),
+        SortableHeader<StockSummarySortKey>(
+          title: 'Opening Stock',
+          sortKey: StockSummarySortKey.openingStock,
+          currentSort: _sortState,
+          onSort: _onSort,
+        ),
+        SortableHeader<StockSummarySortKey>(
+          title: 'In',
+          sortKey: StockSummarySortKey.inQty,
+          currentSort: _sortState,
+          onSort: _onSort,
+        ),
+        SortableHeader<StockSummarySortKey>(
+          title: 'Out',
+          sortKey: StockSummarySortKey.outQty,
+          currentSort: _sortState,
+          onSort: _onSort,
+        ),
+        SortableHeader<StockSummarySortKey>(
+          title: 'Wastage',
+          sortKey: StockSummarySortKey.wastageQty,
+          currentSort: _sortState,
+          onSort: _onSort,
+        ),
+        SortableHeader<StockSummarySortKey>(
+          title: 'Adjustment',
+          sortKey: StockSummarySortKey.adjustmentQty,
+          currentSort: _sortState,
+          onSort: _onSort,
+        ),
+        SortableHeader<StockSummarySortKey>(
+          title: 'Closing Stock',
+          sortKey: StockSummarySortKey.closingStock,
+          currentSort: _sortState,
+          onSort: _onSort,
+        ),
         th([]),
       ]),
     ]);

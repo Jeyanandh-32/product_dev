@@ -23,7 +23,7 @@ void resetCategoriesSignal() {
   categoriesSignal.value = const AsyncData([]);
 }
 
-Future<void> refreshCategoriesSignal() async {
+Future<void> refreshCategoriesSignal({int? customSize}) async {
   final selectedStore = storeSignal.value;
   if (selectedStore == null) {
     untracked(() {
@@ -36,8 +36,8 @@ Future<void> refreshCategoriesSignal() async {
     categoriesSignal.value = const AsyncLoading();
   });
 
-  final size = entriesSignal.value;
-  final page = categoriesPageSignal.value;
+  final size = customSize ?? entriesSignal.value;
+  final page = customSize != null ? 1 : categoriesPageSignal.value;
 
   try {
     final search = categorySearchSignal.value.trim();
@@ -80,6 +80,7 @@ abstract final class CategoriesActions {
       );
 
       categoriesSignal.value = AsyncData([...currentCategories, category]);
+      showToast('Category created successfully.', type: ToastType.success);
     } catch (e) {
       final message = e is ApiException ? e.message : 'Something went wrong.';
       showToast(message);
@@ -112,6 +113,7 @@ abstract final class CategoriesActions {
       categoriesSignal.value = AsyncData(
         currentCategories.map((s) => s.id == id ? updatedCategory : s).toList(),
       );
+      showToast('Category updated successfully.', type: ToastType.success);
     } catch (e) {
       final message = e is ApiException ? e.message : 'Something went wrong.';
       showToast(message);

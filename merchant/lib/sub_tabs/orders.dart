@@ -9,6 +9,7 @@ import 'package:merchant/components/fields/searchbar.dart';
 import 'package:merchant/components/loading.dart';
 import 'package:merchant/components/modals/order_details_modal.dart';
 import 'package:merchant/components/signal_component.dart';
+import 'package:merchant/components/sortable_header.dart';
 import 'package:merchant/components/table_pagination.dart';
 import 'package:merchant/exceptions/api_exception.dart';
 import 'package:merchant/signals/navigation_signal.dart';
@@ -18,6 +19,8 @@ import 'package:merchant/signals/stores_signal.dart';
 import 'package:models/models.dart';
 import 'package:web/web.dart' as web;
 
+enum OrderSortKey { billNo, date, totalAmount, paymentMode, status }
+
 class Orders extends SignalComponent {
   const Orders({super.key});
   @override
@@ -26,6 +29,13 @@ class Orders extends SignalComponent {
 
 class _OrdersState extends SignalState<Orders> {
   String? _loadedStoreId;
+  SortState<OrderSortKey> _sortState = const SortState<OrderSortKey>();
+
+  void _onSort(OrderSortKey key) {
+    setState(() {
+      _sortState = _sortState.toggle(key);
+    });
+  }
 
   @override
   void initState() {
@@ -332,11 +342,10 @@ class _OrdersState extends SignalState<Orders> {
                       ],
                     ),
                   ]),
-                  .text(
-                    ordersTotalSignal.value <= 0
-                        ? '0 of 0'
-                        : 'Showing ${((currentPage - 1) * entries) + 1}–${(currentPage * entries).clamp(0, ordersTotalSignal.value)} of ${ordersTotalSignal.value}',
-                  ),
+                  if (ordersTotalSignal.value > 0)
+                    .text(
+                      'Showing ${((currentPage - 1) * entries) + 1}–${(currentPage * entries).clamp(0, ordersTotalSignal.value)} of ${ordersTotalSignal.value}',
+                    ),
                 ],
               ),
               DateRangePicker(
@@ -396,7 +405,17 @@ class _OrdersState extends SignalState<Orders> {
               [
                 tableHead(),
                 tbody([
-                  for (final order in orders.value!)
+                  for (final order in sortItems<Order, OrderSortKey>(
+                    items: orders.value ?? [],
+                    sortState: _sortState,
+                    getSortValue: (item, k) => switch (k) {
+                      .billNo => item.billNo,
+                      .date => item.createdAt,
+                      .totalAmount => item.grandTotal,
+                      .paymentMode => item.paymentMethod.name.toLowerCase(),
+                      .status => item.status.name.toLowerCase(),
+                    },
+                  ))
                     tableRow(
                       orderId: '${order.billNo}',
                       date: _formatDate(order.createdAt),
@@ -426,9 +445,24 @@ class _OrdersState extends SignalState<Orders> {
     return thead([
       tr([
         th([]),
-        th([.text('Bill No')]),
-        td([.text('Date')]),
-        td([.text('Total Amount (₹)')]),
+        SortableHeader<OrderSortKey>(
+          title: 'Bill No',
+          sortKey: .billNo,
+          currentSort: _sortState,
+          onSort: _onSort,
+        ),
+        SortableHeader<OrderSortKey>(
+          title: 'Date',
+          sortKey: .date,
+          currentSort: _sortState,
+          onSort: _onSort,
+        ),
+        SortableHeader<OrderSortKey>(
+          title: 'Total Amount (₹)',
+          sortKey: .totalAmount,
+          currentSort: _sortState,
+          onSort: _onSort,
+        ),
         td([.text('Payment Mode')]),
         td([.text('Status')]),
         th([]),

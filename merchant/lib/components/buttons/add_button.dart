@@ -15,7 +15,7 @@ class AddButton extends StatelessComponent {
       onClick: onClick,
 
       classes:
-          'btn btn-primary shadow-none flex px-4 items-center font-semibold justify-center text-sm rounded-lg h-10 $classes',
+          'btn btn-primary shadow-none flex px-4 items-center font-semibold justify-center text-sm rounded-lg h-10 whitespace-nowrap shrink-0 $classes',
       [
         Plus(classes: 'w-4 h-4'),
         .text(name),

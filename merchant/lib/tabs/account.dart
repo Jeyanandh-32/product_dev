@@ -75,7 +75,7 @@ class _AccountState extends SignalState<Account> {
         _lowStockAlerts = updatedSettings.lowStockAlerts;
         _dailyReports = updatedSettings.dailyReports;
       });
-      showToast('Notification preferences saved.');
+      showToast('Notification preferences saved.', type: ToastType.success);
     } catch (err) {
       showToast(
         err is ApiException ? err.message : 'Failed to update preferences.',
@@ -104,7 +104,10 @@ class _AccountState extends SignalState<Account> {
       );
       authSignal.value = AsyncData(updatedMerchant);
       (e.target as HTMLFormElement?)?.reset();
-      showToast('Profile information updated successfully.');
+      showToast(
+        'Profile information updated successfully.',
+        type: ToastType.success,
+      );
     } catch (err) {
       showToast(
         err is ApiException ? err.message : 'Failed to update profile.',
@@ -140,7 +143,10 @@ class _AccountState extends SignalState<Account> {
       );
       authSignal.value = AsyncData(updatedMerchant);
       (e.target as HTMLFormElement?)?.reset();
-      showToast('Security password updated successfully.');
+      showToast(
+        'Security password updated successfully.',
+        type: ToastType.success,
+      );
       setState(() {
         _currentPassword = '';
         _newPassword = '';
@@ -423,7 +429,9 @@ class _AccountState extends SignalState<Account> {
                       labelText: 'Current Password',
                       type: .password,
                       icon: Lock(classes: 'w-4.5 h-4.5'),
-                      onChange: (val) => _currentPassword = val as String,
+                      onChange: (val) => setState(
+                        () => _currentPassword = val as String,
+                      ),
                       attributes: {
                         'placeholder': '••••••••',
                         'value': _currentPassword,
@@ -438,7 +446,8 @@ class _AccountState extends SignalState<Account> {
                           labelText: 'New Password',
                           type: .password,
                           icon: KeyRound(classes: 'w-4.5 h-4.5'),
-                          onChange: (val) => _newPassword = val as String,
+                          onChange: (val) =>
+                              setState(() => _newPassword = val as String),
                           attributes: {
                             'placeholder': '*********',
                             'value': _newPassword,
@@ -451,7 +460,9 @@ class _AccountState extends SignalState<Account> {
                           labelText: 'Confirm New Password',
                           type: .password,
                           icon: KeyRound(classes: 'w-4.5 h-4.5'),
-                          onChange: (val) => _confirmPassword = val as String,
+                          onChange: (val) => setState(
+                            () => _confirmPassword = val as String,
+                          ),
                           attributes: {
                             'placeholder': '*********',
                             'value': _confirmPassword,

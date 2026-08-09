@@ -8,6 +8,7 @@ import 'package:merchant/components/fields/date_range_picker.dart';
 import 'package:merchant/components/fields/searchbar.dart';
 import 'package:merchant/components/loading.dart';
 import 'package:merchant/components/signal_component.dart';
+import 'package:merchant/components/sortable_header.dart';
 import 'package:merchant/components/table_pagination.dart';
 import 'package:merchant/exceptions/api_exception.dart';
 import 'package:merchant/signals/navigation_signal.dart';
@@ -17,6 +18,17 @@ import 'package:merchant/signals/stores_signal.dart';
 import 'package:models/models.dart';
 import 'package:web/web.dart' as web;
 
+enum PaymentSortKey {
+  orderReference,
+  date,
+  orderId,
+  orderAmount,
+  discountAmount,
+  paidAmount,
+  paymentMode,
+  paymentStatus,
+}
+
 class Payments extends SignalComponent {
   const Payments({super.key});
   @override
@@ -25,6 +37,13 @@ class Payments extends SignalComponent {
 
 class _PaymentsState extends SignalState<Payments> {
   String? _loadedStoreId;
+  SortState<PaymentSortKey> _sortState = const SortState<PaymentSortKey>();
+
+  void _onSort(PaymentSortKey key) {
+    setState(() {
+      _sortState = _sortState.toggle(key);
+    });
+  }
 
   @override
   void initState() {
@@ -333,11 +352,10 @@ class _PaymentsState extends SignalState<Payments> {
                       ],
                     ),
                   ]),
-                  .text(
-                    paymentsTotalSignal.value <= 0
-                        ? '0 of 0'
-                        : 'Showing ${((currentPage - 1) * entries) + 1}–${(currentPage * entries).clamp(0, paymentsTotalSignal.value)} of ${paymentsTotalSignal.value}',
-                  ),
+                  if (paymentsTotalSignal.value > 0)
+                    .text(
+                      'Showing ${((currentPage - 1) * entries) + 1}–${(currentPage * entries).clamp(0, paymentsTotalSignal.value)} of ${paymentsTotalSignal.value}',
+                    ),
                 ],
               ),
               DateRangePicker(
@@ -397,7 +415,23 @@ class _PaymentsState extends SignalState<Payments> {
               [
                 tableHead(),
                 tbody([
-                  for (final payment in payments.value!)
+                  for (final payment in sortItems<Payment, PaymentSortKey>(
+                    items: payments.value ?? [],
+                    sortState: _sortState,
+                    getSortValue: (item, k) => switch (k) {
+                      PaymentSortKey.orderReference =>
+                        item.orderReference.toLowerCase(),
+                      PaymentSortKey.date => item.date,
+                      PaymentSortKey.orderId => item.orderId,
+                      PaymentSortKey.orderAmount => item.orderAmount,
+                      PaymentSortKey.discountAmount => item.discountAmount,
+                      PaymentSortKey.paidAmount => item.paidAmount,
+                      PaymentSortKey.paymentMode =>
+                        item.paymentMode.name.toLowerCase(),
+                      PaymentSortKey.paymentStatus =>
+                        item.paymentStatus.name.toLowerCase(),
+                    },
+                  ))
                     tableRow(
                       orderReference: payment.orderReference,
                       date: _formatDate(payment.date),
@@ -429,12 +463,42 @@ class _PaymentsState extends SignalState<Payments> {
     return thead([
       tr([
         th([]),
-        td([.text('Order Reference')]),
-        td([.text('Date')]),
-        th([.text('Order ID')]),
-        td([.text('Order Amount (₹)')]),
-        td([.text('Discount Amount (₹)')]),
-        td([.text('Paid Amount (₹)')]),
+        SortableHeader<PaymentSortKey>(
+          title: 'Order Reference',
+          sortKey: .orderReference,
+          currentSort: _sortState,
+          onSort: _onSort,
+        ),
+        SortableHeader<PaymentSortKey>(
+          title: 'Date',
+          sortKey: .date,
+          currentSort: _sortState,
+          onSort: _onSort,
+        ),
+        SortableHeader<PaymentSortKey>(
+          title: 'Order ID',
+          sortKey: .orderId,
+          currentSort: _sortState,
+          onSort: _onSort,
+        ),
+        SortableHeader<PaymentSortKey>(
+          title: 'Order Amount (₹)',
+          sortKey: .orderAmount,
+          currentSort: _sortState,
+          onSort: _onSort,
+        ),
+        SortableHeader<PaymentSortKey>(
+          title: 'Discount Amount (₹)',
+          sortKey: .discountAmount,
+          currentSort: _sortState,
+          onSort: _onSort,
+        ),
+        SortableHeader<PaymentSortKey>(
+          title: 'Paid Amount (₹)',
+          sortKey: .paidAmount,
+          currentSort: _sortState,
+          onSort: _onSort,
+        ),
         td([.text('Payment Mode')]),
         td([.text('Payment Status')]),
         th([]),

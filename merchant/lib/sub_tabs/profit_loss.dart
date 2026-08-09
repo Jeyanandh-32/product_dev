@@ -7,7 +7,9 @@ import 'package:merchant/components/fields/date_range_picker.dart';
 import 'package:merchant/components/fields/searchbar.dart';
 import 'package:merchant/components/loading.dart';
 import 'package:merchant/components/signal_component.dart';
+import 'package:merchant/components/sortable_header.dart';
 import 'package:merchant/components/table_pagination.dart';
+import 'package:models/models.dart';
 import 'package:merchant/exceptions/api_exception.dart';
 import 'package:merchant/signals/navigation_signal.dart';
 import 'package:merchant/signals/profit_loss_signal.dart';
@@ -15,14 +17,34 @@ import 'package:merchant/signals/reports_date_signal.dart';
 import 'package:merchant/signals/stores_signal.dart';
 import 'package:web/web.dart' as web;
 
+enum ProfitLossSortKey {
+  name,
+  category,
+  counter,
+  soldQuantity,
+  costPrice,
+  collectedPrice,
+  profit,
+  percentage,
+}
+
 class ProfitLoss extends SignalComponent {
   const ProfitLoss({super.key});
+
   @override
   SignalState<ProfitLoss> createState() => _ProfitLossState();
 }
 
 class _ProfitLossState extends SignalState<ProfitLoss> {
   String? _loadedStoreId;
+  SortState<ProfitLossSortKey> _sortState =
+      const SortState<ProfitLossSortKey>();
+
+  void _onSort(ProfitLossSortKey key) {
+    setState(() {
+      _sortState = _sortState.toggle(key);
+    });
+  }
 
   @override
   void initState() {
@@ -125,11 +147,10 @@ class _ProfitLossState extends SignalState<ProfitLoss> {
                         ],
                       ),
                     ]),
-                    .text(
-                      (reportState.value?.totalItems ?? 0) <= 0
-                          ? '0 of 0'
-                          : 'Showing ${((currentPage - 1) * entries) + 1}–${(currentPage * entries).clamp(0, reportState.value?.totalItems ?? 0)} of ${reportState.value?.totalItems ?? 0}',
-                    ),
+                    if ((reportState.value?.totalItems ?? 0) > 0)
+                      .text(
+                        'Showing ${((currentPage - 1) * entries) + 1}–${(currentPage * entries).clamp(0, reportState.value?.totalItems ?? 0)} of ${reportState.value?.totalItems ?? 0}',
+                      ),
                   ],
                 ),
                 DateRangePicker(
@@ -221,7 +242,26 @@ class _ProfitLossState extends SignalState<ProfitLoss> {
               [
                 tableHead(),
                 tbody([
-                  for (final item in reportState.value!.items)
+                  for (final item
+                      in sortItems<ProfitLossItem, ProfitLossSortKey>(
+                        items: reportState.value?.items ?? [],
+                        sortState: _sortState,
+                        getSortValue: (item, k) => switch (k) {
+                          ProfitLossSortKey.name =>
+                            item.productName.toLowerCase(),
+                          ProfitLossSortKey.category =>
+                            item.categoryName.toLowerCase(),
+                          ProfitLossSortKey.counter =>
+                            item.counterName.toLowerCase(),
+                          ProfitLossSortKey.soldQuantity => item.soldQuantity,
+                          ProfitLossSortKey.costPrice => item.costPrice,
+                          ProfitLossSortKey.collectedPrice =>
+                            item.collectedPrice,
+                          ProfitLossSortKey.profit => item.profit,
+                          ProfitLossSortKey.percentage =>
+                            item.profitLossPercentage,
+                        },
+                      ))
                     tableRow(
                       name: item.productName,
                       category: item.categoryName,
@@ -268,14 +308,54 @@ class _ProfitLossState extends SignalState<ProfitLoss> {
     return thead([
       tr([
         th([]),
-        th([.text('Name')]),
-        td([.text('Category')]),
-        td([.text('Counter')]),
-        td([.text('Sold Quantity')]),
-        td([.text('Cost Price(₹)')]),
-        td([.text('Collected Price(₹)')]),
-        td([.text('Profit(₹)')]),
-        td([.text('Profit/Loss(%)')]),
+        SortableHeader<ProfitLossSortKey>(
+          title: 'Name',
+          sortKey: ProfitLossSortKey.name,
+          currentSort: _sortState,
+          onSort: _onSort,
+        ),
+        SortableHeader<ProfitLossSortKey>(
+          title: 'Category',
+          sortKey: ProfitLossSortKey.category,
+          currentSort: _sortState,
+          onSort: _onSort,
+        ),
+        SortableHeader<ProfitLossSortKey>(
+          title: 'Counter',
+          sortKey: ProfitLossSortKey.counter,
+          currentSort: _sortState,
+          onSort: _onSort,
+        ),
+        SortableHeader<ProfitLossSortKey>(
+          title: 'Sold Quantity',
+          sortKey: ProfitLossSortKey.soldQuantity,
+          currentSort: _sortState,
+          onSort: _onSort,
+        ),
+        SortableHeader<ProfitLossSortKey>(
+          title: 'Cost Price(₹)',
+          sortKey: ProfitLossSortKey.costPrice,
+          currentSort: _sortState,
+          onSort: _onSort,
+        ),
+        SortableHeader<ProfitLossSortKey>(
+          title: 'Collected Price(₹)',
+          sortKey: ProfitLossSortKey.collectedPrice,
+          currentSort: _sortState,
+          onSort: _onSort,
+        ),
+        SortableHeader<ProfitLossSortKey>(
+          title: 'Profit(₹)',
+          sortKey: ProfitLossSortKey.profit,
+          currentSort: _sortState,
+          onSort: _onSort,
+        ),
+        SortableHeader<ProfitLossSortKey>(
+          title: 'Profit/Loss(%)',
+          sortKey: ProfitLossSortKey.percentage,
+          currentSort: _sortState,
+          onSort: _onSort,
+        ),
         th([]),
       ]),
     ]);

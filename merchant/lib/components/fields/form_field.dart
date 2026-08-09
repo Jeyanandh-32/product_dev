@@ -116,19 +116,16 @@ class _FormFieldState extends State<FormField> {
             type: .button,
             classes:
                 'absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 hover:cursor-pointer p-1 rounded-md transition-colors',
-            events: {
-              'click': (e) {
-                e.preventDefault();
-                setState(() {
-                  _obscureText = !_obscureText;
-                });
-              },
+            onClick: () {
+              setState(() {
+                _obscureText = !_obscureText;
+              });
             },
             [
               if (_obscureText)
-                Eye(classes: 'w-4.5 h-4.5')
+                EyeOff(classes: 'w-4.5 h-4.5')
               else
-                EyeOff(classes: 'w-4.5 h-4.5'),
+                Eye(classes: 'w-4.5 h-4.5'),
             ],
           ),
         ])

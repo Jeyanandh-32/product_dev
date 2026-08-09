@@ -13,15 +13,26 @@ class Toast extends SignalComponent {
 class _ToastState extends SignalState<Toast> {
   @override
   Component buildSignal(BuildContext context) {
-    final message = toastSignal.value;
-    if (message == null) return div([]);
+    final toast = toastSignal.value;
+    if (toast == null) return div([]);
 
-    return div(classes: 'toast toast-top toast-center z-[100]', [
-      div(classes: 'alert alert-error text-white', [
-        span([
-          .text(message),
-        ]),
-      ]),
+    final alertClass = switch (toast.type) {
+      ToastType.success => 'alert-success',
+      ToastType.error => 'alert-error',
+      ToastType.warning => 'alert-warning',
+      ToastType.info => 'alert-info',
+    };
+
+    return div(classes: 'toast toast-top toast-center z-100', [
+      div(
+        attributes: {'role': 'alert'},
+        classes: 'alert $alertClass text-white shadow-lg font-medium',
+        [
+          span([
+            .text(toast.message),
+          ]),
+        ],
+      ),
     ]);
   }
 }

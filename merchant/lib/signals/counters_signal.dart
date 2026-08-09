@@ -23,7 +23,7 @@ void resetCountersSignal() {
   countersSignal.value = const AsyncData([]);
 }
 
-Future<void> refreshCountersSignal() async {
+Future<void> refreshCountersSignal({int? customSize}) async {
   final selectedStore = storeSignal.value;
   if (selectedStore == null) {
     untracked(() {
@@ -36,8 +36,8 @@ Future<void> refreshCountersSignal() async {
     countersSignal.value = const AsyncLoading();
   });
 
-  final size = entriesSignal.value;
-  final page = countersPageSignal.value;
+  final size = customSize ?? entriesSignal.value;
+  final page = customSize != null ? 1 : countersPageSignal.value;
 
   try {
     final search = counterSearchSignal.value.trim();
@@ -80,6 +80,7 @@ abstract final class CountersActions {
       );
 
       countersSignal.value = AsyncData([...currentCounters, counter]);
+      showToast('Counter created successfully.', type: ToastType.success);
     } catch (e) {
       final message = e is ApiException ? e.message : 'Something went wrong.';
       showToast(message);
@@ -112,6 +113,7 @@ abstract final class CountersActions {
       countersSignal.value = AsyncData(
         currentCounters.map((s) => s.id == id ? updatedCounter : s).toList(),
       );
+      showToast('Counter updated successfully.', type: ToastType.success);
     } catch (e) {
       final message = e is ApiException ? e.message : 'Something went wrong.';
       showToast(message);

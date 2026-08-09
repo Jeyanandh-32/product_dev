@@ -9,18 +9,20 @@ import 'package:merchant/signals/products_signal.dart';
 import 'package:merchant/signals/toast_signal.dart';
 import 'package:merchant/signals/navigation_signal.dart';
 import 'package:models/models.dart';
-import 'package:web/web.dart';
+import 'package:web/web.dart' as web;
 
-class AddEditProductModal extends StatefulComponent {
+import 'package:merchant/components/signal_component.dart';
+
+class AddEditProductModal extends SignalComponent {
   const AddEditProductModal({super.key, this.product});
 
   final Product? product;
 
   @override
-  State<AddEditProductModal> createState() => _AddEditProductModalState();
+  SignalState<AddEditProductModal> createState() => _AddEditProductModalState();
 }
 
-class _AddEditProductModalState extends State<AddEditProductModal> {
+class _AddEditProductModalState extends SignalState<AddEditProductModal> {
   late String _name;
   late String _categoryId;
   late String _counterId;
@@ -46,9 +48,12 @@ class _AddEditProductModalState extends State<AddEditProductModal> {
     _barcode = p?.barcode ?? '';
     _imageUrl = p?.imageUrl ?? '';
     _isActive = p?.isActive ?? true;
+
+    refreshCategoriesSignal(customSize: 1000);
+    refreshCountersSignal(customSize: 1000);
   }
 
-  void _onSubmit(Event e) {
+  void _onSubmit(web.Event e) {
     e.preventDefault();
 
     if (_categoryId.isEmpty) {
@@ -96,7 +101,7 @@ class _AddEditProductModalState extends State<AddEditProductModal> {
   }
 
   @override
-  Component build(BuildContext context) {
+  Component buildSignal(BuildContext context) {
     final categories = categoriesSignal.value.value ?? [];
     final counters = countersSignal.value.value ?? [];
 
@@ -131,14 +136,10 @@ class _AddEditProductModalState extends State<AddEditProductModal> {
                   classes: 'label text-[14px] font-semibold text-gray-500',
                   [.text('Category')],
                 ),
-                div(classes: 'dropdown w-full', [
-                  div(
+                details(classes: 'dropdown w-full', [
+                  summary(
                     classes:
-                        'btn border border-border-medium bg-white hover:bg-base-200 text-sm h-11 w-full justify-between font-normal px-3 rounded-lg ${_categoryId.isEmpty ? 'text-gray-400' : 'text-base-content'}',
-                    attributes: {
-                      'tabindex': '0',
-                      'role': 'button',
-                    },
+                        'btn border border-border-medium bg-white hover:bg-base-200 text-sm h-11 w-full justify-between font-normal px-3 rounded-lg list-none cursor-pointer ${_categoryId.isEmpty ? 'text-gray-400' : 'text-base-content'}',
                     [
                       span([
                         .text(
@@ -157,28 +158,39 @@ class _AddEditProductModalState extends State<AddEditProductModal> {
                     ],
                   ),
                   ul(
-                    attributes: {'tabindex': '-1'},
                     classes:
                         'dropdown-content menu bg-base-100 rounded-box z-50 mt-1 p-2 shadow-sm border border-border-light w-full max-h-48 overflow-y-auto',
                     [
-                      for (final cat in categories)
+                      if (categories.isEmpty)
                         li([
-                          a(
-                            href: '#',
-                            classes:
-                                'rounded-md hover:bg-neutral py-2 px-3 block ${cat.id == _categoryId ? 'bg-neutral font-semibold' : ''}',
-                            onClick: () {
-                              setState(() {
-                                _categoryId = cat.id;
-                              });
-                              final activeElement = document.activeElement;
-                              if (activeElement != null) {
-                                (activeElement as HTMLElement).blur();
-                              }
-                            },
-                            [.text(cat.name)],
-                          ),
-                        ]),
+                          span(classes: 'text-gray-400 text-sm p-2', [
+                            .text('No categories available'),
+                          ]),
+                        ])
+                      else
+                        for (final cat in categories)
+                          li([
+                            a(
+                              href: '#',
+                              classes:
+                                  'rounded-md hover:bg-neutral py-2 px-3 block ${cat.id == _categoryId ? 'bg-neutral font-semibold' : ''}',
+                              onClick: () {
+                                setState(() {
+                                  _categoryId = cat.id;
+                                });
+                                final activeElement =
+                                    web.document.activeElement;
+                                if (activeElement != null) {
+                                  (activeElement as web.HTMLElement).blur();
+                                  final details = activeElement.closest(
+                                    'details',
+                                  );
+                                  details?.removeAttribute('open');
+                                }
+                              },
+                              [.text(cat.name)],
+                            ),
+                          ]),
                     ],
                   ),
                 ]),
@@ -191,14 +203,10 @@ class _AddEditProductModalState extends State<AddEditProductModal> {
                   classes: 'label text-[14px] font-semibold text-gray-500',
                   [.text('Counter')],
                 ),
-                div(classes: 'dropdown w-full', [
-                  div(
+                details(classes: 'dropdown w-full', [
+                  summary(
                     classes:
-                        'btn border border-border-medium bg-white hover:bg-base-200 text-sm h-11 w-full justify-between font-normal px-3 rounded-lg ${_counterId.isEmpty ? 'text-gray-400' : 'text-base-content'}',
-                    attributes: {
-                      'tabindex': '0',
-                      'role': 'button',
-                    },
+                        'btn border border-border-medium bg-white hover:bg-base-200 text-sm h-11 w-full justify-between font-normal px-3 rounded-lg list-none cursor-pointer ${_counterId.isEmpty ? 'text-gray-400' : 'text-base-content'}',
                     [
                       span([
                         .text(
@@ -215,28 +223,39 @@ class _AddEditProductModalState extends State<AddEditProductModal> {
                     ],
                   ),
                   ul(
-                    attributes: {'tabindex': '-1'},
                     classes:
                         'dropdown-content menu bg-base-100 rounded-box z-50 mt-1 p-2 shadow-sm border border-border-light w-full max-h-48 overflow-y-auto',
                     [
-                      for (final cnt in counters)
+                      if (counters.isEmpty)
                         li([
-                          a(
-                            href: '#',
-                            classes:
-                                'rounded-md hover:bg-neutral py-2 px-3 block ${cnt.id == _counterId ? 'bg-neutral font-semibold' : ''}',
-                            onClick: () {
-                              setState(() {
-                                _counterId = cnt.id;
-                              });
-                              final activeElement = document.activeElement;
-                              if (activeElement != null) {
-                                (activeElement as HTMLElement).blur();
-                              }
-                            },
-                            [.text(cnt.name)],
-                          ),
-                        ]),
+                          span(classes: 'text-gray-400 text-sm p-2', [
+                            .text('No counters available'),
+                          ]),
+                        ])
+                      else
+                        for (final cnt in counters)
+                          li([
+                            a(
+                              href: '#',
+                              classes:
+                                  'rounded-md hover:bg-neutral py-2 px-3 block ${cnt.id == _counterId ? 'bg-neutral font-semibold' : ''}',
+                              onClick: () {
+                                setState(() {
+                                  _counterId = cnt.id;
+                                });
+                                final activeElement =
+                                    web.document.activeElement;
+                                if (activeElement != null) {
+                                  (activeElement as web.HTMLElement).blur();
+                                  final details = activeElement.closest(
+                                    'details',
+                                  );
+                                  details?.removeAttribute('open');
+                                }
+                              },
+                              [.text(cnt.name)],
+                            ),
+                          ]),
                     ],
                   ),
                 ]),
@@ -337,7 +356,7 @@ class _AddEditProductModalState extends State<AddEditProductModal> {
                       checked: _isActive,
                       events: {
                         'change': (e) {
-                          final target = e.target as HTMLInputElement;
+                          final target = e.target as web.HTMLInputElement;
                           setState(() {
                             _isActive = target.checked;
                           });

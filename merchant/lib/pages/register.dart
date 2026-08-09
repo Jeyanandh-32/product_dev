@@ -117,7 +117,8 @@ class _RegisterState extends State<Register> {
             labelText: 'Password',
             icon: Lock(classes: 'w-4.5 h-4.5'),
             type: .password,
-            onChange: (value) => _password = value as String,
+            onChange: (value) => setState(() => _password = value as String),
+
             attributes: {
               'placeholder': '*********',
               'required': '',

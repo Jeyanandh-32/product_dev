@@ -55,6 +55,7 @@ abstract final class StoresActions {
       if (storeSignal.value == null) {
         storeSignal.value = store;
       }
+      showToast('Store created successfully.', type: ToastType.success);
     } catch (e) {
       final message = e is ApiException ? e.message : 'Something went wrong.';
       showToast(message);
@@ -95,6 +96,7 @@ abstract final class StoresActions {
       if (activeStore != null && activeStore.id == id) {
         storeSignal.value = updatedStore;
       }
+      showToast('Store updated successfully.', type: ToastType.success);
     } catch (e) {
       final message = e is ApiException ? e.message : 'Something went wrong.';
       showToast(message);

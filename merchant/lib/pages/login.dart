@@ -65,7 +65,8 @@ class _LoginState extends SignalState<Login> {
             icon: Lock(classes: 'w-4.5 h-4.5'),
             type: .password,
             enableForgotPassword: true,
-            onChange: (value) => _password = value as String,
+            onChange: (value) => setState(() => _password = value as String),
+
             attributes: {
               'placeholder': '*********',
               'required': '',

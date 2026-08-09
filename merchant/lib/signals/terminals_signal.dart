@@ -47,6 +47,7 @@ abstract final class TerminalsActions {
       );
 
       terminalsSignal.value = AsyncData([...currentTerminals, terminal]);
+      showToast('Terminal created successfully.', type: ToastType.success);
     } catch (e) {
       final message = e is ApiException ? e.message : 'Something went wrong.';
       showToast(message);
@@ -102,6 +103,7 @@ abstract final class TerminalsActions {
             .map((t) => t.code == code ? updatedTerminal : t)
             .toList(),
       );
+      showToast('Terminal updated successfully.', type: ToastType.success);
     } catch (e) {
       final message = e is ApiException ? e.message : 'Something went wrong.';
       showToast(message);
