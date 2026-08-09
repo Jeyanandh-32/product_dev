@@ -44,4 +44,36 @@ class MerchantRepository {
     final row = await _db.merchants.byKey(id).fetch();
     return row;
   }
+
+  Future<MerchantRow?> update({
+    required String id,
+    String? name,
+    String? businessName,
+    String? whatsappNumber,
+    String? email,
+    String? passwordHash,
+  }) async {
+    final row = await _db.merchants
+        .byKey(id)
+        .update(
+          (m, set) => set(
+            name: name != null ? ts.toExpr(name) : m.name,
+            businessName: businessName != null
+                ? ts.toExpr(businessName)
+                : m.businessName,
+            whatsappNumber: whatsappNumber != null
+                ? ts.toExpr(whatsappNumber)
+                : m.whatsappNumber,
+            email: email != null ? ts.toExpr(email) : m.email,
+            passwordHash: passwordHash != null
+                ? ts.toExpr(passwordHash)
+                : m.passwordHash,
+            updatedAt: ts.Expr.currentTimestamp,
+          ),
+        )
+        .returnUpdated()
+        .executeAndFetch();
+
+    return row;
+  }
 }

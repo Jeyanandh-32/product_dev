@@ -36,7 +36,6 @@ class _DrawerState extends SignalState<Drawer> {
     final isReports = activeTab == .reports;
     final isStores = activeTab == .stores;
     final isAccount = activeTab == .account;
-    final isSettings = activeTab == .settings;
 
     final activeInventorySub = isInventory
         ? SubTab.values.firstWhere(
@@ -148,13 +147,8 @@ class _DrawerState extends SignalState<Drawer> {
             isSelected: isAccount,
             onClick: () => _navigateTo(context, '/account'),
           ),
-          navButton(
-            name: 'Settings',
-            prefixIcon: Settings(classes: 'w-4.5 h-4.5'),
-            isSelected: isSettings,
-            onClick: () => _navigateTo(context, '/settings'),
-          ),
         ]),
+
         div(classes: 'w-full px-4 pb-4 mt-auto', [
           button(
             classes:

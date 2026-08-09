@@ -23,9 +23,15 @@ class Products extends SignalComponent {
 }
 
 class _ProductsState extends SignalState<Products> {
+  String? _loadedStoreId;
+
   @override
   void initState() {
     super.initState();
+    final store = storeSignal.value;
+    if (store != null) {
+      _loadedStoreId = store.id;
+    }
     refreshProductsSignal();
   }
 
@@ -43,7 +49,14 @@ class _ProductsState extends SignalState<Products> {
   @override
   Component buildSignal(BuildContext context) {
     final store = storeSignal.value;
+    if (store != null && _loadedStoreId != store.id) {
+      _loadedStoreId = store.id;
+      Future.microtask(() {
+        refreshProductsSignal();
+      });
+    }
     final entries = entriesSignal.value;
+
     final products = productsSignal.value;
     final currentPage = productsPageSignal.value;
     final totalPages = productsTotalPagesSignal.value;
@@ -219,7 +232,7 @@ class _ProductsState extends SignalState<Products> {
         div(classes: 'flex items-center gap-4', [
           button(
             classes:
-                'hover:cursor-pointer btn btn-ghost btn-xs h-8 w-8 p-0 rounded-full',
+                'hover:cursor-pointer btn btn-ghost btn-xs h-8 w-8 p-0 rounded-full text-gray-500 hover:text-accent transition-colors',
             events: {
               'click': (e) {
                 e.stopPropagation();
@@ -227,12 +240,12 @@ class _ProductsState extends SignalState<Products> {
               },
             },
             [
-              SquarePen(classes: 'w-5 h-5 text-gray-500 hover:text-accent'),
+              SquarePen(classes: 'w-5 h-5'),
             ],
           ),
           button(
             classes:
-                'hover:cursor-pointer btn btn-ghost btn-xs h-8 w-8 p-0 rounded-full',
+                'hover:cursor-pointer btn btn-ghost btn-xs h-8 w-8 p-0 rounded-full text-gray-500 hover:text-accent transition-colors',
             events: {
               'click': (e) {
                 e.stopPropagation();
@@ -240,7 +253,7 @@ class _ProductsState extends SignalState<Products> {
               },
             },
             [
-              Boxes(classes: 'w-5 h-5 text-gray-500 hover:text-accent'),
+              Boxes(classes: 'w-5 h-5'),
             ],
           ),
         ]),

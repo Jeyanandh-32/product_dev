@@ -9,6 +9,7 @@ import 'package:merchant/components/loading.dart';
 import 'package:merchant/components/signal_component.dart';
 import 'package:merchant/components/table_pagination.dart';
 import 'package:merchant/exceptions/api_exception.dart';
+import 'package:merchant/signals/navigation_signal.dart';
 import 'package:merchant/signals/profit_loss_signal.dart';
 import 'package:merchant/signals/reports_date_signal.dart';
 import 'package:merchant/signals/stores_signal.dart';
@@ -21,9 +22,15 @@ class ProfitLoss extends SignalComponent {
 }
 
 class _ProfitLossState extends SignalState<ProfitLoss> {
+  String? _loadedStoreId;
+
   @override
   void initState() {
     super.initState();
+    final store = storeSignal.value;
+    if (store != null) {
+      _loadedStoreId = store.id;
+    }
     refreshProfitLossSignal();
   }
 
@@ -48,11 +55,18 @@ class _ProfitLossState extends SignalState<ProfitLoss> {
 
   @override
   Component buildSignal(BuildContext context) {
+    final store = storeSignal.value;
+    if (store != null && _loadedStoreId != store.id) {
+      _loadedStoreId = store.id;
+      Future.microtask(() {
+        refreshProfitLossSignal();
+      });
+    }
     final entries = profitLossEntriesSignal.value;
+
     final reportState = profitLossSignal.value;
     final currentPage = reportState.value?.currentPage ?? 1;
     final totalPages = reportState.value?.totalPages ?? 1;
-    final store = storeSignal.value;
 
     return div(
       classes:
@@ -121,17 +135,15 @@ class _ProfitLossState extends SignalState<ProfitLoss> {
                 DateRangePicker(
                   fromDate: reportsFromDateSignal.value,
                   toDate: reportsToDateSignal.value,
-                  onFromDateChanged: (val) {
-                    reportsFromDateSignal.value = val;
-                    profitLossPageSignal.value = 1;
-                    refreshProfitLossSignal();
-                  },
-                  onToDateChanged: (val) {
-                    reportsToDateSignal.value = val;
+                  onChanged: (from, to) {
+                    reportsFromDateSignal.value = from;
+                    reportsToDateSignal.value = to;
                     profitLossPageSignal.value = 1;
                     refreshProfitLossSignal();
                   },
                 ),
+
+                _buildStatsToggleButton(),
               ],
             ),
             div(
@@ -152,10 +164,13 @@ class _ProfitLossState extends SignalState<ProfitLoss> {
           ],
         ),
 
-        if (reportState.hasValue && reportState.value!.items.isNotEmpty)
+        if (showReportsStatsSignal.value &&
+            reportState.hasValue &&
+            reportState.value!.items.isNotEmpty)
           div(
             classes:
-                'hidden md:grid grid-cols-2 lg:grid-cols-4 gap-3 p-4 border-b border-border-medium bg-neutral/20',
+                'grid grid-cols-2 lg:grid-cols-4 gap-3 p-4 border-b border-border-medium bg-neutral/20',
+
             [
               summaryCard(
                 title: 'Total Cost Price (COGS)',
@@ -300,6 +315,27 @@ class _ProfitLossState extends SignalState<ProfitLoss> {
       ]),
       th([]),
     ]);
+  }
+
+  Component _buildStatsToggleButton() {
+    final showStats = showReportsStatsSignal.value;
+    return button(
+      type: .button,
+      classes:
+          'btn btn-sm rounded-full border ${showStats ? 'border-primary bg-primary text-primary-content' : 'border-border-medium bg-white hover:bg-neutral text-gray-700'} text-xs font-semibold px-3 h-8 flex items-center gap-1.5 shadow-2xs cursor-pointer transition-all',
+      events: {
+        'click': (e) {
+          showReportsStatsSignal.value = !showStats;
+        },
+      },
+      [
+        if (showStats)
+          EyeOff(classes: 'w-3.5 h-3.5')
+        else
+          ChartColumn(classes: 'w-3.5 h-3.5'),
+        .text(showStats ? 'Hide Stats' : 'View Stats'),
+      ],
+    );
   }
 
   li dropdownButton({

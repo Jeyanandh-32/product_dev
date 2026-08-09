@@ -11,14 +11,16 @@ class DateRangePicker extends SignalComponent {
     super.key,
     required this.fromDate,
     required this.toDate,
-    required this.onFromDateChanged,
-    required this.onToDateChanged,
+    this.onChanged,
+    this.onFromDateChanged,
+    this.onToDateChanged,
   });
 
   final String? fromDate;
   final String? toDate;
-  final ValueChanged<String?> onFromDateChanged;
-  final ValueChanged<String?> onToDateChanged;
+  final void Function(String? fromDate, String? toDate)? onChanged;
+  final ValueChanged<String?>? onFromDateChanged;
+  final ValueChanged<String?>? onToDateChanged;
 
   @override
   SignalState<DateRangePicker> createState() => _DateRangePickerState();
@@ -98,8 +100,14 @@ class _DateRangePickerState extends SignalState<DateRangePicker> {
   void _applyRange(String? from, String? to) {
     final cleanedFrom = _cleanDate(from);
     final cleanedTo = _cleanDate(to);
-    component.onFromDateChanged(cleanedFrom.isEmpty ? null : cleanedFrom);
-    component.onToDateChanged(cleanedTo.isEmpty ? null : cleanedTo);
+    final f = cleanedFrom.isEmpty ? null : cleanedFrom;
+    final t = cleanedTo.isEmpty ? null : cleanedTo;
+    if (component.onChanged != null) {
+      component.onChanged!(f, t);
+    } else {
+      component.onFromDateChanged?.call(f);
+      component.onToDateChanged?.call(t);
+    }
     _closeDropdown();
   }
 

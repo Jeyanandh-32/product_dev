@@ -721,7 +721,7 @@ class _DashboardState extends SignalState<Dashboard> {
           // Top 5 Selling Products Card (6 Cols)
           div(
             classes:
-                'lg:col-span-6 bg-white p-4.5 rounded-xl border border-border-medium shadow-2xs',
+                'lg:col-span-6 bg-white p-4.5 rounded-xl border border-border-medium shadow-2xs flex flex-col justify-between',
             [
               div(classes: 'flex items-center justify-between mb-3', [
                 div([
@@ -752,7 +752,7 @@ class _DashboardState extends SignalState<Dashboard> {
           // Low Stock Products Alert Feed (6 Cols)
           div(
             classes:
-                'lg:col-span-6 bg-white p-4.5 rounded-xl border border-border-medium shadow-2xs',
+                'lg:col-span-6 bg-white p-4.5 rounded-xl border border-border-medium shadow-2xs flex flex-col justify-between',
             [
               div(classes: 'flex items-center justify-between mb-3', [
                 div([
@@ -806,21 +806,27 @@ class _DashboardState extends SignalState<Dashboard> {
     topProducts,
   ) {
     if (topProducts.isNotEmpty) {
-      return div(classes: 'divide-y divide-gray-100', [
-        for (final item in topProducts)
-          _topProductRow(
-            item.rank,
-            item.name,
-            item.category,
-            item.units,
-            item.revenue,
-          ),
-      ]);
+      return div(
+        classes:
+            'divide-y divide-gray-100 flex-1 flex flex-col justify-between',
+        [
+          for (final item in topProducts.take(5))
+            _topProductRow(
+              item.rank,
+              item.name,
+              item.category,
+              item.units,
+              item.revenue,
+            ),
+        ],
+      );
     }
 
     return div(
-      classes: 'py-10 text-center text-xs font-semibold text-gray-400',
+      classes:
+          'py-10 text-center text-xs font-semibold text-gray-400 flex-1 flex flex-col items-center justify-center space-y-1',
       [
+        Package(classes: 'w-6 h-6 text-gray-300 mb-1'),
         .text('No top products data found for this store.'),
       ],
     );
@@ -828,23 +834,26 @@ class _DashboardState extends SignalState<Dashboard> {
 
   Component _buildLowStockProductsList(List<Product> lowStockProducts) {
     if (lowStockProducts.isNotEmpty) {
-      return div(classes: 'divide-y divide-gray-100', [
-        for (final product in lowStockProducts.take(5))
-          _lowStockProductRow(
-            product.name,
-            product.category?.name ?? 'General',
-            '${product.stock?.quantity ?? 0} left',
-            'Threshold: ${product.stock?.lowStockThreshold ?? 5}',
-          ),
-      ]);
+      return div(
+        classes:
+            'divide-y divide-gray-100 flex-1 flex flex-col justify-between',
+        [
+          for (final product in lowStockProducts.take(5))
+            _lowStockProductRow(
+              product.name,
+              product.category?.name ?? 'General',
+              '${product.stock?.quantity ?? 0} left',
+              'Threshold: ${product.stock?.lowStockThreshold ?? 5}',
+            ),
+        ],
+      );
     }
 
     return div(
       classes:
-          'py-10 text-center text-xs font-semibold text-emerald-600 flex flex-col items-center justify-center space-y-1',
+          'py-10 text-center text-xs font-semibold text-emerald-600 flex-1 flex flex-col items-center justify-center space-y-1',
       [
         Check(classes: 'w-6 h-6 text-emerald-500 mb-1'),
-
         .text('All product stock levels are optimal.'),
       ],
     );
@@ -942,9 +951,10 @@ class _DashboardState extends SignalState<Dashboard> {
       div(classes: 'flex items-center gap-3', [
         span(
           classes:
-              'w-6 h-6 rounded-md bg-gray-100 text-gray-700 text-xs font-bold flex items-center justify-center',
+              'w-8 h-8 rounded-lg bg-gray-100 text-gray-700 text-xs font-bold flex items-center justify-center shrink-0 border border-gray-200/60',
           [.text(rank)],
         ),
+
         div([
           p(classes: 'text-sm font-semibold text-gray-900', [.text(name)]),
           p(classes: 'text-xs text-gray-400 font-medium', [.text(category)]),

@@ -3,7 +3,6 @@ enum NavTab {
   inventory('/inventory'),
   reports('/reports'),
   stores('/stores'),
-  settings('/settings'),
   account('/account');
 
   const NavTab(this.path);

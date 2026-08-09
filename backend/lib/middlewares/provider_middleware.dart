@@ -3,6 +3,8 @@ import 'package:backend/database/schema.dart';
 import 'package:backend/repositories/category_repository.dart';
 import 'package:backend/repositories/counter_repository.dart';
 import 'package:backend/repositories/merchant_repository.dart';
+import 'package:backend/repositories/merchant_settings_repository.dart';
+
 import 'package:backend/repositories/order_item_repository.dart';
 import 'package:backend/repositories/order_repository.dart';
 import 'package:backend/repositories/product_repository.dart';
@@ -87,6 +89,13 @@ Middleware providerMiddleware() {
         .use(
           provider<StoreRepository>(
             (context) => StoreRepository(
+              db: context.read<ts.Database<DatabaseSchema>>(),
+            ),
+          ),
+        )
+        .use(
+          provider<MerchantSettingsRepository>(
+            (context) => MerchantSettingsRepository(
               db: context.read<ts.Database<DatabaseSchema>>(),
             ),
           ),

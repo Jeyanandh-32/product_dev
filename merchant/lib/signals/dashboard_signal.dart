@@ -110,6 +110,52 @@ final dashboardRecentOrdersSignal = asyncSignal<List<Order>>(
   const AsyncLoading(),
 );
 
+void resetDashboardSignal() {
+  dashboardSummarySignal.value = (
+    totalRevenue: 0.0,
+    totalOrders: 0,
+    aov: 0.0,
+    lowStockCount: 0,
+    revenueGrowth: 0.0,
+    ordersGrowth: 0.0,
+    aovGrowth: 0.0,
+  );
+  dashboardTopProductsSignal.value = const [];
+  dashboardLowStockProductsSignal.value = const [];
+  dashboardCategorySalesSignal.value = (
+    labels: const ['Beverages', 'Bakery', 'Snacks', 'Desserts', 'Other'],
+    data: const [0.0, 0.0, 0.0, 0.0, 0.0],
+  );
+  dashboardHourlyOrdersSignal.value = (
+    labels: const [
+      '8 AM',
+      '10 AM',
+      '12 PM',
+      '2 PM',
+      '4 PM',
+      '6 PM',
+      '8 PM',
+      '10 PM',
+    ],
+    data: const [0, 0, 0, 0, 0, 0, 0, 0],
+  );
+  dashboardPaymentMethodsSignal.value = (
+    upiTotal: 0.0,
+    cashTotal: 0.0,
+    upiPercent: 0,
+    cashPercent: 0,
+  );
+  dashboardPaymentStatusSignal.value = (
+    paidTotal: 0.0,
+    freeTotal: 0.0,
+    paidCount: 0,
+    freeCount: 0,
+    paidPercent: 0,
+    freePercent: 0,
+  );
+  dashboardRecentOrdersSignal.value = const AsyncData([]);
+}
+
 Future<void> refreshDashboardSignal() async {
   final selectedStore = storeSignal.value;
   if (selectedStore == null) {
@@ -132,67 +178,7 @@ Future<void> refreshDashboardSignal() async {
       .year1 => DateTime(now.year, 1, 1).toIso8601String(),
     };
 
-    // 1. Fetch store products to build category breakdown and top products
-    try {
-      final productsResult = await ProductRepository.getAll(
-        storeId: selectedStore.id,
-        size: 100,
-      );
-      final products = productsResult.items;
-
-      final categoryMap = <String, double>{};
-      for (final p in products) {
-        final cat = p.category?.name ?? 'General';
-        categoryMap[cat] = (categoryMap[cat] ?? 0.0) + p.sellingPrice;
-      }
-
-      final catLabels = categoryMap.keys.take(5).toList();
-      final catData = catLabels.map((c) => categoryMap[c] ?? 0.0).toList();
-
-      final topProds = products.take(5).toList();
-      final topList =
-          <
-            ({
-              String rank,
-              String name,
-              String category,
-              String units,
-              String revenue,
-            })
-          >[];
-
-      for (var i = 0; i < topProds.length; i++) {
-        final p = topProds[i];
-        final catName = p.category?.name ?? 'General';
-        topList.add((
-          rank: '${i + 1}',
-          name: p.name,
-          category: catName,
-          units: '${(p.stock?.quantity ?? 0)} in stock',
-          revenue: '₹ ${p.sellingPrice.toStringAsFixed(2)}',
-        ));
-      }
-
-      final lowStockList = products
-          .where(
-            (p) =>
-                (p.stock?.quantity ?? 0) <= (p.stock?.lowStockThreshold ?? 5),
-          )
-          .toList();
-
-      untracked(() {
-        if (catLabels.isNotEmpty) {
-          dashboardCategorySalesSignal.value = (
-            labels: catLabels,
-            data: catData,
-          );
-        }
-        dashboardTopProductsSignal.value = topList;
-        dashboardLowStockProductsSignal.value = lowStockList;
-      });
-    } catch (_) {}
-
-    // 2. Fetch backend analytics
+    // 1. Fetch backend analytics
     try {
       final analytics = await OrderRepository.getDashboardAnalytics(
         storeId: selectedStore.id,
@@ -223,61 +209,93 @@ Future<void> refreshDashboardSignal() async {
       final paidPct = oSum > 0 ? ((paidCount / oSum) * 100).round() : 0;
       final freePct = oSum > 0 ? 100 - paidPct : 0;
 
-      final rawRecent = (analytics['recentOrders'] as List<dynamic>?) ?? [];
-      final recentOrders = rawRecent.map((json) {
+      final rawTop = (analytics['topProducts'] as List<dynamic>?) ?? [];
+      final topList =
+          <
+            ({
+              String rank,
+              String name,
+              String category,
+              String units,
+              String revenue,
+            })
+          >[];
+      for (var i = 0; i < rawTop.length; i++) {
+        final map = rawTop[i] as Map<String, dynamic>;
+        final price = (map['sellingPrice'] as num?)?.toDouble() ?? 0.0;
+        final qty = map['quantity'] as int? ?? 0;
+        topList.add((
+          rank: '${i + 1}',
+          name: map['name'] as String? ?? '',
+          category: map['category'] as String? ?? 'General',
+          units: '$qty in stock',
+          revenue: '₹ ${(price / 100.0).toStringAsFixed(2)}',
+        ));
+      }
+
+      final rawLow = (analytics['lowStockProducts'] as List<dynamic>?) ?? [];
+      final lowStockList = rawLow.map((json) {
         final map = json as Map<String, dynamic>;
-        final pMethod = map['paymentMethod'] as String? ?? 'upi';
-        return Order(
+        final pricePaise = (map['sellingPrice'] as num?)?.toDouble() ?? 0.0;
+        final qty = map['quantity'] as int? ?? 0;
+        final thresh = map['lowStockThreshold'] as int? ?? 5;
+        return Product(
           id: map['id'] as String? ?? '',
           merchantId: '',
-          storeId: selectedStore.id,
-          orderReference: map['orderReference'] as String? ?? '',
-          billNo: map['billNo'] as int? ?? 0,
-          source: OrderSource.terminal,
-          type: OrderType.dineIn,
-          status: OrderStatus.completed,
-          paymentStatus: PaymentStatus.paid,
-          paymentMethod: pMethod.toLowerCase() == 'cash'
-              ? PaymentMethod.cash
-              : PaymentMethod.upi,
-          subtotal: ((map['grandTotal'] as num?)?.toDouble() ?? 0.0) * 100,
-          discountTotal: 0,
-          taxTotal: 0,
-          grandTotal: (map['grandTotal'] as num?)?.toDouble() ?? 0.0,
-          items: const [],
-          createdAt:
-              DateTime.tryParse(map['createdAt'] as String? ?? '') ??
-              DateTime.now(),
+          name: map['name'] as String? ?? '',
+          basePrice: pricePaise / 100.0,
+          sellingPrice: pricePaise / 100.0,
+          taxRate: 0.0,
+          isActive: true,
+          category: Category(
+            id: '',
+            merchantId: '',
+            storeId: selectedStore.id,
+            name: map['category'] as String? ?? 'General',
+            isActive: true,
+            createdAt: DateTime.now(),
+            updatedAt: DateTime.now(),
+          ),
+          stock: Stock(
+            id: map['id'] as String? ?? '',
+            productId: map['id'] as String? ?? '',
+            storeId: selectedStore.id,
+            quantity: qty,
+            lowStockThreshold: thresh,
+            stockMonitor: true,
+            createdAt: DateTime.now(),
+            updatedAt: DateTime.now(),
+          ),
+          createdAt: DateTime.now(),
           updatedAt: DateTime.now(),
         );
       }).toList();
 
-      // Hourly distribution
-      final hourlyCounts = List<int>.filled(8, 0);
-      for (final order in recentOrders) {
-        final hour = order.createdAt.hour;
-        if (hour >= 8 && hour < 10) {
-          hourlyCounts[0]++;
-        } else if (hour >= 10 && hour < 12) {
-          hourlyCounts[1]++;
-        } else if (hour >= 12 && hour < 14) {
-          hourlyCounts[2]++;
-        } else if (hour >= 14 && hour < 16) {
-          hourlyCounts[3]++;
-        } else if (hour >= 16 && hour < 18) {
-          hourlyCounts[4]++;
-        } else if (hour >= 18 && hour < 20) {
-          hourlyCounts[5]++;
-        } else if (hour >= 20 && hour < 22) {
-          hourlyCounts[6]++;
-        } else if (hour >= 22) {
-          hourlyCounts[7]++;
-        }
-      }
+      final catSalesMap =
+          (analytics['categorySales'] as Map<String, dynamic>?) ?? {};
+      final catLabels =
+          (catSalesMap['labels'] as List<dynamic>?)
+              ?.map((e) => e.toString())
+              .toList() ??
+          [];
+      final catData =
+          (catSalesMap['data'] as List<dynamic>?)
+              ?.map((e) => (e as num).toDouble())
+              .toList() ??
+          [];
 
-      final revGrowth = (analytics['revenueGrowth'] as num?)?.toDouble() ?? 0.0;
-      final ordGrowth = (analytics['ordersGrowth'] as num?)?.toDouble() ?? 0.0;
-      final aovGrowth = (analytics['aovGrowth'] as num?)?.toDouble() ?? 0.0;
+      final hourlyMap =
+          (analytics['hourlyTraffic'] as Map<String, dynamic>?) ?? {};
+      final hourlyLabels =
+          (hourlyMap['labels'] as List<dynamic>?)
+              ?.map((e) => e.toString())
+              .toList() ??
+          [];
+      final hourlyData =
+          (hourlyMap['data'] as List<dynamic>?)
+              ?.map((e) => (e as num).toInt())
+              .toList() ??
+          [];
 
       untracked(() {
         dashboardSummarySignal.value = (
@@ -285,9 +303,10 @@ Future<void> refreshDashboardSignal() async {
           totalOrders: totalOrders,
           aov: aov,
           lowStockCount: lowStockCount,
-          revenueGrowth: revGrowth,
-          ordersGrowth: ordGrowth,
-          aovGrowth: aovGrowth,
+          revenueGrowth:
+              (analytics['revenueGrowth'] as num?)?.toDouble() ?? 0.0,
+          ordersGrowth: (analytics['ordersGrowth'] as num?)?.toDouble() ?? 0.0,
+          aovGrowth: (analytics['aovGrowth'] as num?)?.toDouble() ?? 0.0,
         );
         dashboardPaymentMethodsSignal.value = (
           upiTotal: upiTotal,
@@ -303,22 +322,22 @@ Future<void> refreshDashboardSignal() async {
           paidPercent: paidPct,
           freePercent: freePct,
         );
-
-        dashboardHourlyOrdersSignal.value = (
-          labels: const [
-            '8 AM',
-            '10 AM',
-            '12 PM',
-            '2 PM',
-            '4 PM',
-            '6 PM',
-            '8 PM',
-            '10 PM',
-          ],
-          data: hourlyCounts,
-        );
-        dashboardRecentOrdersSignal.value = AsyncData(recentOrders);
+        if (catLabels.isNotEmpty) {
+          dashboardCategorySalesSignal.value = (
+            labels: catLabels,
+            data: catData,
+          );
+        }
+        if (hourlyData.isNotEmpty) {
+          dashboardHourlyOrdersSignal.value = (
+            labels: hourlyLabels,
+            data: hourlyData,
+          );
+        }
+        dashboardTopProductsSignal.value = topList;
+        dashboardLowStockProductsSignal.value = lowStockList;
       });
+
       return;
     } catch (_) {}
 
@@ -330,21 +349,8 @@ Future<void> refreshDashboardSignal() async {
       size: 50,
     );
 
-    int lowStock = 0;
-    try {
-      final productsResult = await ProductRepository.getAll(
-        storeId: selectedStore.id,
-        size: 100,
-      );
-      lowStock = productsResult.items
-          .where(
-            (p) =>
-                (p.stock?.quantity ?? 0) <= (p.stock?.lowStockThreshold ?? 5),
-          )
-          .length;
-    } catch (_) {}
-
     final summary = result.summary;
+
     final totalOrders = summary.totalOrders;
     final totalRevenue = summary.netRevenue > 0
         ? summary.netRevenue
@@ -387,7 +393,8 @@ Future<void> refreshDashboardSignal() async {
         totalRevenue: totalRevenue,
         totalOrders: totalOrders,
         aov: aov,
-        lowStockCount: lowStock,
+        lowStockCount: 0,
+
         revenueGrowth: 0.0,
         ordersGrowth: 0.0,
         aovGrowth: 0.0,

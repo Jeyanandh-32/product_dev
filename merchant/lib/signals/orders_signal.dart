@@ -20,6 +20,21 @@ final ordersSummarySignal = signal<OrderSummary>((
 
 final ordersSignal = asyncSignal<List<Order>>(const AsyncLoading());
 
+void resetOrdersSignal() {
+  ordersPageSignal.value = 1;
+  ordersTotalSignal.value = 0;
+  ordersTotalPagesSignal.value = 1;
+  ordersSearchSignal.value = '';
+  selectedOrderSignal.value = const AsyncData(null);
+  ordersSummarySignal.value = (
+    totalOrders: 0,
+    grossSubtotal: 0.0,
+    totalDiscount: 0.0,
+    netRevenue: 0.0,
+  );
+  ordersSignal.value = const AsyncData([]);
+}
+
 Future<void> fetchOrderDetails(String orderId) async {
   final selectedStore = storeSignal.value;
   if (selectedStore == null) return;

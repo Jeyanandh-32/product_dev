@@ -1,12 +1,38 @@
 import 'package:client_repositories/client_repositories.dart';
 import 'package:merchant/exceptions/api_exception.dart';
 import 'package:merchant/repositories/auth_repository.dart';
+import 'package:merchant/signals/categories_signal.dart';
+import 'package:merchant/signals/counters_signal.dart';
+import 'package:merchant/signals/dashboard_signal.dart';
+import 'package:merchant/signals/navigation_signal.dart';
+import 'package:merchant/signals/orders_signal.dart';
+import 'package:merchant/signals/payments_signal.dart';
+import 'package:merchant/signals/products_signal.dart';
+import 'package:merchant/signals/profit_loss_signal.dart';
+import 'package:merchant/signals/reports_date_signal.dart';
+import 'package:merchant/signals/stock_summary_signal.dart';
 import 'package:merchant/signals/stores_signal.dart';
+import 'package:merchant/signals/terminals_signal.dart';
 import 'package:merchant/signals/toast_signal.dart';
 import 'package:models/models.dart';
 import 'package:signals/signals.dart';
 
 final authSignal = asyncSignal<Merchant?>(const AsyncLoading());
+
+void resetAllMerchantSignals() {
+  resetStoresSignal();
+  resetCategoriesSignal();
+  resetCountersSignal();
+  resetProductsSignal();
+  resetDashboardSignal();
+  resetOrdersSignal();
+  resetPaymentsSignal();
+  resetProfitLossSignal();
+  resetStockSummarySignal();
+  resetTerminalsSignal();
+  resetNavigationSignal();
+  resetReportsDateSignal();
+}
 
 Future<void> initAuthSignal() async {
   try {
@@ -14,6 +40,8 @@ Future<void> initAuthSignal() async {
     authSignal.value = AsyncData(merchant);
     if (merchant != null) {
       refreshStoresSignal();
+    } else {
+      resetAllMerchantSignals();
     }
   } catch (e, stack) {
     authSignal.value = AsyncError(e, stack);
@@ -27,6 +55,8 @@ Future<void> getMerchant() async {
     authSignal.value = AsyncData(merchant);
     if (merchant != null) {
       refreshStoresSignal();
+    } else {
+      resetAllMerchantSignals();
     }
   } catch (e, stack) {
     authSignal.value = AsyncError(e, stack);
@@ -38,6 +68,7 @@ Future<void> loginMerchant({
   required String password,
 }) async {
   authSignal.value = const AsyncLoading();
+  resetAllMerchantSignals();
   try {
     final merchant = await AuthRepository.login(
       email: email,
@@ -62,6 +93,7 @@ Future<void> registerMerchant({
   required String password,
 }) async {
   authSignal.value = const AsyncLoading();
+  resetAllMerchantSignals();
   try {
     final merchant = await AuthRepository.register(
       name: name,
@@ -89,8 +121,6 @@ Future<void> logoutMerchant() async {
     showToast(message);
   } finally {
     authSignal.value = const AsyncData(null);
-    storeSignal.value = null;
-    selectedTabStoreSignal.value = null;
-    storesSignal.value = const AsyncData([]);
+    resetAllMerchantSignals();
   }
 }

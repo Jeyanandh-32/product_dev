@@ -10,6 +10,7 @@ part of 'schema.dart';
 extension DatabaseSchemaSchema on Database<DatabaseSchema> {
   static final _$tables = [
     _$MerchantRow._$table,
+    _$MerchantSettingsRow._$table,
     _$StoreRow._$table,
     _$CategoryRow._$table,
     _$CounterRow._$table,
@@ -23,6 +24,9 @@ extension DatabaseSchemaSchema on Database<DatabaseSchema> {
 
   Table<MerchantRow> get merchants =>
       $ForGeneratedCode.declareTable(this, _$MerchantRow._$table);
+
+  Table<MerchantSettingsRow> get merchantSettings =>
+      $ForGeneratedCode.declareTable(this, _$MerchantSettingsRow._$table);
 
   Table<StoreRow> get stores =>
       $ForGeneratedCode.declareTable(this, _$StoreRow._$table);
@@ -845,6 +849,676 @@ extension InsertOnConflictSingleMerchantRowExt
         whatsappNumber,
         email,
         passwordHash,
+        createdAt,
+        updatedAt,
+      ]),
+    ),
+  );
+}
+
+final class _$MerchantSettingsRow extends MerchantSettingsRow {
+  _$MerchantSettingsRow._(
+    this.merchantId,
+    this.waNotifications,
+    this.lowStockAlerts,
+    this.dailyReports,
+    this.createdAt,
+    this.updatedAt,
+  );
+
+  @override
+  final String merchantId;
+
+  @override
+  final bool waNotifications;
+
+  @override
+  final bool lowStockAlerts;
+
+  @override
+  final bool dailyReports;
+
+  @override
+  final DateTime createdAt;
+
+  @override
+  final DateTime updatedAt;
+
+  static final _$table = $ForGeneratedCode.tableDefinition(
+    tableName: 'merchant_settings',
+    columns: <String>[
+      'merchant_id',
+      'wa_notifications',
+      'low_stock_alerts',
+      'daily_reports',
+      'created_at',
+      'updated_at',
+    ],
+    columnInfo: [
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: true,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.boolean,
+        isNotNull: true,
+        defaultValue: (kind: 'raw', value: true),
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.boolean,
+        isNotNull: true,
+        defaultValue: (kind: 'raw', value: true),
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.boolean,
+        isNotNull: true,
+        defaultValue: (kind: 'raw', value: false),
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.dateTime,
+        isNotNull: true,
+        defaultValue: (kind: 'datetime', value: 'now'),
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.dateTime,
+        isNotNull: true,
+        defaultValue: (kind: 'datetime', value: 'now'),
+        autoIncrement: false,
+        overrides: [],
+      ),
+    ],
+    primaryKey: <String>['merchant_id'],
+    unique: <List<String>>[],
+    foreignKeys: [
+      $ForGeneratedCode.foreignKeyDefinition(
+        name: 'null',
+        columns: ['merchant_id'],
+        referencedTable: 'merchants',
+        referencedColumns: ['id'],
+        onDelete: .cascade,
+        onUpdate: .noAction,
+      ),
+    ],
+    readRow: _$MerchantSettingsRow._$fromDatabase,
+  );
+
+  static MerchantSettingsRow? _$fromDatabase(RowReader row) {
+    final merchantId = row.readString();
+    final waNotifications = row.readBool();
+    final lowStockAlerts = row.readBool();
+    final dailyReports = row.readBool();
+    final createdAt = row.readDateTime();
+    final updatedAt = row.readDateTime();
+    if (merchantId == null &&
+        waNotifications == null &&
+        lowStockAlerts == null &&
+        dailyReports == null &&
+        createdAt == null &&
+        updatedAt == null) {
+      return null;
+    }
+    return _$MerchantSettingsRow._(
+      merchantId!,
+      waNotifications!,
+      lowStockAlerts!,
+      dailyReports!,
+      createdAt!,
+      updatedAt!,
+    );
+  }
+
+  @override
+  String toString() =>
+      'MerchantSettingsRow(merchantId: "$merchantId", waNotifications: "$waNotifications", lowStockAlerts: "$lowStockAlerts", dailyReports: "$dailyReports", createdAt: "$createdAt", updatedAt: "$updatedAt")';
+}
+
+/// Extension methods for table defined in [MerchantSettingsRow].
+extension TableMerchantSettingsRowExt on Table<MerchantSettingsRow> {
+  /// Insert row into the `merchantSettings` table.
+  ///
+  /// Returns a [InsertSingle] statement on which `.execute` must be
+  /// called for the row to be inserted.
+  InsertSingle<MerchantSettingsRow> insert({
+    required Expr<String> merchantId,
+    Expr<bool>? waNotifications,
+    Expr<bool>? lowStockAlerts,
+    Expr<bool>? dailyReports,
+    Expr<DateTime>? createdAt,
+    Expr<DateTime>? updatedAt,
+  }) => $ForGeneratedCode.insertInto(
+    table: this,
+    values: [
+      merchantId,
+      waNotifications,
+      lowStockAlerts,
+      dailyReports,
+      createdAt,
+      updatedAt,
+    ],
+  );
+
+  /// Insert row into the `merchantSettings` table.
+  ///
+  /// Returns a [InsertSingle] statement on which `.execute` must be
+  /// called for the row to be inserted.
+  InsertSingle<MerchantSettingsRow> insertValue({
+    required String merchantId,
+    bool? waNotifications,
+    bool? lowStockAlerts,
+    bool? dailyReports,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) => $ForGeneratedCode.insertInto(
+    table: this,
+    values: [
+      merchantId.asExpr,
+      waNotifications?.asExpr,
+      lowStockAlerts?.asExpr,
+      dailyReports?.asExpr,
+      createdAt?.asExpr,
+      updatedAt?.asExpr,
+    ],
+  );
+
+  /// Bulk insert rows into the `merchantSettings` table.
+  ///
+  /// This method takes an `Iterable<T>` and requires that you provide
+  /// a _mapping function_ from `T` to each column to be inserted.
+  ///
+  /// If a mapping function is omitted, the _default value_ will be
+  /// inserted, or `NULL` if column is nullable and as no default value.
+  /// To explicitely insert `NULL`, use a _mapping function_ that maps
+  /// `T` to `null`.
+  ///
+  /// > [!NOTE]
+  /// > This method aims utilize database specific bulk insertion logic
+  /// > to ensure good performance. Database adapters may pipeline bulk
+  /// > insertions through multiple statements inside a transaction.
+  ///
+  /// Returns a [Insert] statement on which `.execute` must be
+  /// called for the rows to be inserted.
+  Insert<MerchantSettingsRow> insertValuesMapped<T>(
+    Iterable<T> rows, {
+    required String Function(T row) merchantId,
+    bool Function(T row)? waNotifications,
+    bool Function(T row)? lowStockAlerts,
+    bool Function(T row)? dailyReports,
+    DateTime Function(T row)? createdAt,
+    DateTime Function(T row)? updatedAt,
+  }) => $ForGeneratedCode.insertValuesMapped(
+    table: this,
+    rows: rows,
+    mappings: [
+      merchantId,
+      waNotifications,
+      lowStockAlerts,
+      dailyReports,
+      createdAt,
+      updatedAt,
+    ],
+  );
+
+  /// Delete a single row from the `merchantSettings` table, specified by
+  /// _primary key_.
+  ///
+  /// Returns a [DeleteSingle] statement on which `.execute()` must be
+  /// called for the row to be deleted.
+  ///
+  /// To delete multiple rows, using `.where()` to filter which rows
+  /// should be deleted. If you wish to delete all rows, use
+  /// `.where((_) => toExpr(true)).delete()`.
+  DeleteSingle<MerchantSettingsRow> delete(String merchantId) =>
+      $ForGeneratedCode.deleteSingle(
+        byKey(merchantId),
+        _$MerchantSettingsRow._$table,
+      );
+}
+
+/// Extension methods for building queries against the `merchantSettings` table.
+extension QueryMerchantSettingsRowExt on Query<(Expr<MerchantSettingsRow>,)> {
+  /// Lookup a single row in `merchantSettings` table using the _primary key_.
+  ///
+  /// Returns a [QuerySingle] object, which returns at-most one row,
+  /// when `.fetch()` is called.
+  QuerySingle<(Expr<MerchantSettingsRow>,)> byKey(String merchantId) => where(
+    (merchantSettingsRow) =>
+        merchantSettingsRow.merchantId.equalsValue(merchantId),
+  ).first;
+
+  /// Update all rows in the `merchantSettings` table matching this [Query].
+  ///
+  /// The changes to be applied to each row matching this [Query] are
+  /// defined using the [updateBuilder], which is given an [Expr]
+  /// representation of the row being updated and a `set` function to
+  /// specify which fields should be updated. The result of the `set`
+  /// function should always be returned from the `updateBuilder`.
+  ///
+  /// Returns an [Update] statement on which `.execute()` must be called
+  /// for the rows to be updated.
+  ///
+  /// **Example:** decrementing `1` from the `value` field for each row
+  /// where `value > 0`.
+  /// ```dart
+  /// await db.mytable
+  ///   .where((row) => row.value > toExpr(0))
+  ///   .update((row, set) => set(
+  ///     value: row.value - toExpr(1),
+  ///   ))
+  ///   .execute();
+  /// ```
+  ///
+  /// > [!WARNING]
+  /// > The `updateBuilder` callback does not make the update, it builds
+  /// > the expressions for updating the rows. You should **never** invoke
+  /// > the `set` function more than once, and the result should always
+  /// > be returned immediately.
+  Update<MerchantSettingsRow> update(
+    UpdateSet<MerchantSettingsRow> Function(
+      Expr<MerchantSettingsRow> merchantSettingsRow,
+      UpdateSet<MerchantSettingsRow> Function({
+        Expr<String> merchantId,
+        Expr<bool> waNotifications,
+        Expr<bool> lowStockAlerts,
+        Expr<bool> dailyReports,
+        Expr<DateTime> createdAt,
+        Expr<DateTime> updatedAt,
+      })
+      set,
+    )
+    updateBuilder,
+  ) => $ForGeneratedCode.update<MerchantSettingsRow>(
+    this,
+    _$MerchantSettingsRow._$table,
+    (merchantSettingsRow) => updateBuilder(
+      merchantSettingsRow,
+      ({
+        Expr<String>? merchantId,
+        Expr<bool>? waNotifications,
+        Expr<bool>? lowStockAlerts,
+        Expr<bool>? dailyReports,
+        Expr<DateTime>? createdAt,
+        Expr<DateTime>? updatedAt,
+      }) => $ForGeneratedCode.buildUpdate<MerchantSettingsRow>([
+        merchantId,
+        waNotifications,
+        lowStockAlerts,
+        dailyReports,
+        createdAt,
+        updatedAt,
+      ]),
+    ),
+  );
+
+  /// Delete all rows in the `merchantSettings` table matching this [Query].
+  ///
+  /// Returns a [Delete] statement on which `.execute()` must be called
+  /// for the rows to be deleted.
+  Delete<MerchantSettingsRow> delete() =>
+      $ForGeneratedCode.delete(this, _$MerchantSettingsRow._$table);
+}
+
+/// Extension methods for building point queries against the `merchantSettings` table.
+extension QuerySingleMerchantSettingsRowExt
+    on QuerySingle<(Expr<MerchantSettingsRow>,)> {
+  /// Update the row (if any) in the `merchantSettings` table matching this
+  /// [QuerySingle].
+  ///
+  /// The changes to be applied to the row matching this [QuerySingle] are
+  /// defined using the [updateBuilder], which is given an [Expr]
+  /// representation of the row being updated and a `set` function to
+  /// specify which fields should be updated. The result of the `set`
+  /// function should always be returned from the `updateBuilder`.
+  ///
+  /// Returns an [UpdateSingle] statement on which `.execute()` must be
+  /// called for the row to be updated. The resulting statement will
+  /// **not** fail, if there are no rows matching this query exists.
+  ///
+  /// **Example:** decrementing `1` from the `value` field the row with
+  /// `id = 1`.
+  /// ```dart
+  /// await db.mytable
+  ///   .byKey(1)
+  ///   .update((row, set) => set(
+  ///     value: row.value - toExpr(1),
+  ///   ))
+  ///   .execute();
+  /// ```
+  ///
+  /// > [!WARNING]
+  /// > The `updateBuilder` callback does not make the update, it builds
+  /// > the expressions for updating the rows. You should **never** invoke
+  /// > the `set` function more than once, and the result should always
+  /// > be returned immediately.
+  UpdateSingle<MerchantSettingsRow> update(
+    UpdateSet<MerchantSettingsRow> Function(
+      Expr<MerchantSettingsRow> merchantSettingsRow,
+      UpdateSet<MerchantSettingsRow> Function({
+        Expr<String> merchantId,
+        Expr<bool> waNotifications,
+        Expr<bool> lowStockAlerts,
+        Expr<bool> dailyReports,
+        Expr<DateTime> createdAt,
+        Expr<DateTime> updatedAt,
+      })
+      set,
+    )
+    updateBuilder,
+  ) => $ForGeneratedCode.updateSingle<MerchantSettingsRow>(
+    this,
+    _$MerchantSettingsRow._$table,
+    (merchantSettingsRow) => updateBuilder(
+      merchantSettingsRow,
+      ({
+        Expr<String>? merchantId,
+        Expr<bool>? waNotifications,
+        Expr<bool>? lowStockAlerts,
+        Expr<bool>? dailyReports,
+        Expr<DateTime>? createdAt,
+        Expr<DateTime>? updatedAt,
+      }) => $ForGeneratedCode.buildUpdate<MerchantSettingsRow>([
+        merchantId,
+        waNotifications,
+        lowStockAlerts,
+        dailyReports,
+        createdAt,
+        updatedAt,
+      ]),
+    ),
+  );
+
+  /// Delete the row (if any) in the `merchantSettings` table matching this [QuerySingle].
+  ///
+  /// Returns a [DeleteSingle] statement on which `.execute()` must be called
+  /// for the row to be deleted. The resulting statement will **not**
+  /// fail, if there are no rows matching this query exists.
+  DeleteSingle<MerchantSettingsRow> delete() =>
+      $ForGeneratedCode.deleteSingle(this, _$MerchantSettingsRow._$table);
+}
+
+/// Extension methods for expressions on a row in the `merchantSettings` table.
+extension ExpressionMerchantSettingsRowExt on Expr<MerchantSettingsRow> {
+  Expr<String> get merchantId =>
+      $ForGeneratedCode.field(this, 0, $ForGeneratedCode.text);
+
+  Expr<bool> get waNotifications =>
+      $ForGeneratedCode.field(this, 1, $ForGeneratedCode.boolean);
+
+  Expr<bool> get lowStockAlerts =>
+      $ForGeneratedCode.field(this, 2, $ForGeneratedCode.boolean);
+
+  Expr<bool> get dailyReports =>
+      $ForGeneratedCode.field(this, 3, $ForGeneratedCode.boolean);
+
+  Expr<DateTime> get createdAt =>
+      $ForGeneratedCode.field(this, 4, $ForGeneratedCode.dateTime);
+
+  Expr<DateTime> get updatedAt =>
+      $ForGeneratedCode.field(this, 5, $ForGeneratedCode.dateTime);
+}
+
+extension ExpressionNullableMerchantSettingsRowExt
+    on Expr<MerchantSettingsRow?> {
+  Expr<String?> get merchantId =>
+      $ForGeneratedCode.field(this, 0, $ForGeneratedCode.text);
+
+  Expr<bool?> get waNotifications =>
+      $ForGeneratedCode.field(this, 1, $ForGeneratedCode.boolean);
+
+  Expr<bool?> get lowStockAlerts =>
+      $ForGeneratedCode.field(this, 2, $ForGeneratedCode.boolean);
+
+  Expr<bool?> get dailyReports =>
+      $ForGeneratedCode.field(this, 3, $ForGeneratedCode.boolean);
+
+  Expr<DateTime?> get createdAt =>
+      $ForGeneratedCode.field(this, 4, $ForGeneratedCode.dateTime);
+
+  Expr<DateTime?> get updatedAt =>
+      $ForGeneratedCode.field(this, 5, $ForGeneratedCode.dateTime);
+
+  /// Check if the row is not `NULL`.
+  ///
+  /// This will check if _primary key_ fields in this row are `NULL`.
+  ///
+  /// If this is a reference lookup by subquery it might be more efficient
+  /// to check if the referencing field is `NULL`.
+  Expr<bool> isNotNull() => merchantId.isNotNull();
+
+  /// Check if the row is `NULL`.
+  ///
+  /// This will check if _primary key_ fields in this row are `NULL`.
+  ///
+  /// If this is a reference lookup by subquery it might be more efficient
+  /// to check if the referencing field is `NULL`.
+  Expr<bool> isNull() => isNotNull().not();
+}
+
+/// `Table<MerchantSettingsRow>` conflict targets for use with `.onConflict`.
+enum MerchantSettingsRowConflict {
+  /// Conflict with an existing row that has a matching primary key.
+  ///
+  /// Thus, the other row has matching values for:
+  /// `merchantId`.
+  primaryKey(['merchant_id']);
+
+  const MerchantSettingsRowConflict(this._fields);
+
+  final List<String> _fields;
+}
+
+extension InsertMerchantSettingsRowExt on Insert<MerchantSettingsRow> {
+  /// Build an `INSERT` statement with an `ON CONFLICT` clause.
+  ///
+  /// The [target] argument specifies the _conflict target_ to be
+  /// handled. The _conflict target_ is always a `UNIQUE` constraint or
+  /// `PRIMARY KEY` constraint.
+  ///
+  /// If a row to be inserted violates the _conflict target_ constraint,
+  /// then the conflict action is triggered:
+  /// * `.doNothing()` to skip insertion of the new row, and,
+  /// * `.update((merchantSettingsRow, excluded, set) => set(...))` to
+  ///   update the conflicting row.
+  ///
+  /// If a row to be inserted violates a constraint other than the one
+  /// specified in _conflict target_ then the entire `INSERT` statement
+  /// will fail.
+  ///
+  /// This is equivalent to `INSERT ... ON CONFLICT (...)` in SQL.
+  InsertOnConflict<MerchantSettingsRow> onConflict(
+    MerchantSettingsRowConflict target,
+  ) => $ForGeneratedCode.insertOnConflict(this, target._fields);
+}
+
+extension InsertOnConflictMerchantSettingsRowExt
+    on InsertOnConflict<MerchantSettingsRow> {
+  /// Build an `INSERT` statement an [upsert-clause][1].
+  ///
+  /// When a row to be inserted violates the `UNIQUE` or `PRIMARY KEY`
+  /// constraint previously specified as _conflict target_, the existing
+  /// row is updated using the expressions defined with the
+  /// [updateBuilder]. The [updateBuilder] is given 3 parameters:
+  ///   * `merchantSettingsRow` an [Expr] representing the existing row in
+  ///     the database,
+  ///   * `excluded` an [Expr] representing the row to be inserted in the
+  ///     database, and,
+  ///   * `set` a function to specify which fields should be updated and
+  ///     build the [UpdateSet].
+  ///
+  /// The result of the `set` function should always be immediately
+  /// returned from the [updateBuilder].
+  ///
+  /// **Example:** Insert a counter with `count = 2` or increment the
+  /// existing row, if a `PRIMARY KEY` conflict occurs.
+  /// ```dart
+  /// await db.counters.insertValue(
+  ///     name: 'my-counter', // primary key
+  ///     count: 2,
+  ///   )
+  ///   .onConflict(.primaryKey)
+  ///   .update((counter, excluded, set) => set(
+  ///     count: counter.count + excluded.count,
+  ///   ))
+  ///   .execute();
+  /// ```
+  ///
+  /// This is equivalent to
+  /// `INSERT ... ON CONFLICT (...) UPDATE SET ...` in SQL.
+  ///
+  /// > [!WARNING]
+  /// > The `updateBuilder` callback does not make the update, it builds
+  /// > the expressions for updating the rows. You should **never** invoke
+  /// > the `set` function more than once, and the result should always
+  /// > be returned immediately.
+  ///
+  /// [1]: https://www.sqlite.org/lang_upsert.html
+  Upsert<MerchantSettingsRow> update(
+    UpdateSet<MerchantSettingsRow> Function(
+      Expr<MerchantSettingsRow> merchantSettingsRow,
+      Expr<MerchantSettingsRow> excluded,
+      UpdateSet<MerchantSettingsRow> Function({
+        Expr<String> merchantId,
+        Expr<bool> waNotifications,
+        Expr<bool> lowStockAlerts,
+        Expr<bool> dailyReports,
+        Expr<DateTime> createdAt,
+        Expr<DateTime> updatedAt,
+      })
+      set,
+    )
+    updateBuilder,
+  ) => $ForGeneratedCode.updateOnConflict<MerchantSettingsRow>(
+    this,
+    (merchantSettingsRow, excluded) => updateBuilder(
+      merchantSettingsRow,
+      excluded,
+      ({
+        Expr<String>? merchantId,
+        Expr<bool>? waNotifications,
+        Expr<bool>? lowStockAlerts,
+        Expr<bool>? dailyReports,
+        Expr<DateTime>? createdAt,
+        Expr<DateTime>? updatedAt,
+      }) => $ForGeneratedCode.buildUpdate<MerchantSettingsRow>([
+        merchantId,
+        waNotifications,
+        lowStockAlerts,
+        dailyReports,
+        createdAt,
+        updatedAt,
+      ]),
+    ),
+  );
+}
+
+extension InsertSingleMerchantSettingsRowExt
+    on InsertSingle<MerchantSettingsRow> {
+  /// Build an `INSERT` statement with an `ON CONFLICT` clause.
+  ///
+  /// The [target] argument specifies the _conflict target_ to be
+  /// handled. The _conflict target_ is always a `UNIQUE` constraint or
+  /// `PRIMARY KEY` constraint.
+  ///
+  /// If a row to be inserted violates the _conflict target_ constraint,
+  /// then the conflict action is triggered:
+  /// * `.doNothing()` to skip insertion of the new row, and,
+  /// * `.update((merchantSettingsRow, excluded, set) => set(...))` to
+  ///   update the conflicting row.
+  ///
+  /// If a row to be inserted violates a constraint other than the one
+  /// specified in _conflict target_ then the entire `INSERT` statement
+  /// will fail.
+  ///
+  /// This is equivalent to `INSERT ... ON CONFLICT (...)` in SQL.
+  InsertOnConflictSingle<MerchantSettingsRow> onConflict(
+    MerchantSettingsRowConflict target,
+  ) => $ForGeneratedCode.insertOnConflictSingle(this, target._fields);
+}
+
+extension InsertOnConflictSingleMerchantSettingsRowExt
+    on InsertOnConflictSingle<MerchantSettingsRow> {
+  /// Build an `INSERT` statement an [upsert-clause][1].
+  ///
+  /// When a row to be inserted violates the `UNIQUE` or `PRIMARY KEY`
+  /// constraint previously specified as _conflict target_, the existing
+  /// row is updated using the expressions defined with the
+  /// [updateBuilder]. The [updateBuilder] is given 3 parameters:
+  ///   * `merchantSettingsRow` an [Expr] representing the existing row in
+  ///     the database,
+  ///   * `excluded` an [Expr] representing the row to be inserted in the
+  ///     database, and,
+  ///   * `set` a function to specify which fields should be updated and
+  ///     build the [UpdateSet].
+  ///
+  /// The result of the `set` function should always be immediately
+  /// returned from the [updateBuilder].
+  ///
+  /// **Example:** Insert a counter with `count = 2` or increment the
+  /// existing row, if a `PRIMARY KEY` conflict occurs.
+  /// ```dart
+  /// await db.counters.insertValue(
+  ///     name: 'my-counter', // primary key
+  ///     count: 2,
+  ///   )
+  ///   .onConflict(.primaryKey)
+  ///   .update((counter, excluded, set) => set(
+  ///     count: counter.count + excluded.count,
+  ///   ))
+  ///   .execute();
+  /// ```
+  ///
+  /// This is equivalent to
+  /// `INSERT ... ON CONFLICT (...) UPDATE SET ...` in SQL.
+  ///
+  /// > [!WARNING]
+  /// > The `updateBuilder` callback does not make the update, it builds
+  /// > the expressions for updating the rows. You should **never** invoke
+  /// > the `set` function more than once, and the result should always
+  /// > be returned immediately.
+  ///
+  /// [1]: https://www.sqlite.org/lang_upsert.html
+  UpsertSingle<MerchantSettingsRow> update(
+    UpdateSet<MerchantSettingsRow> Function(
+      Expr<MerchantSettingsRow> merchantSettingsRow,
+      Expr<MerchantSettingsRow> excluded,
+      UpdateSet<MerchantSettingsRow> Function({
+        Expr<String> merchantId,
+        Expr<bool> waNotifications,
+        Expr<bool> lowStockAlerts,
+        Expr<bool> dailyReports,
+        Expr<DateTime> createdAt,
+        Expr<DateTime> updatedAt,
+      })
+      set,
+    )
+    updateBuilder,
+  ) => $ForGeneratedCode.updateOnConflictSingle<MerchantSettingsRow>(
+    this,
+    (merchantSettingsRow, excluded) => updateBuilder(
+      merchantSettingsRow,
+      excluded,
+      ({
+        Expr<String>? merchantId,
+        Expr<bool>? waNotifications,
+        Expr<bool>? lowStockAlerts,
+        Expr<bool>? dailyReports,
+        Expr<DateTime>? createdAt,
+        Expr<DateTime>? updatedAt,
+      }) => $ForGeneratedCode.buildUpdate<MerchantSettingsRow>([
+        merchantId,
+        waNotifications,
+        lowStockAlerts,
+        dailyReports,
         createdAt,
         updatedAt,
       ]),
@@ -8508,6 +9182,310 @@ extension InsertOnConflictSingleOrderItemRowExt
 }
 
 /// Extension methods for building queries projected to a named record.
+extension QueryGrossSubtotalNetRevenueTotalDiscountTotalOrdersNamed<A, B, C, D>
+    on
+        Query<
+          ({
+            Expr<A> grossSubtotal,
+            Expr<B> netRevenue,
+            Expr<C> totalDiscount,
+            Expr<D> totalOrders,
+          })
+        > {
+  Query<(Expr<A>, Expr<B>, Expr<C>, Expr<D>)> get _asPositionalQuery =>
+      $ForGeneratedCode.renamedRecord(
+        this,
+        (e) => (e.grossSubtotal, e.netRevenue, e.totalDiscount, e.totalOrders),
+      );
+
+  static Query<
+    ({
+      Expr<A> grossSubtotal,
+      Expr<B> netRevenue,
+      Expr<C> totalDiscount,
+      Expr<D> totalOrders,
+    })
+  >
+  _fromPositionalQuery<A, B, C, D>(
+    Query<(Expr<A>, Expr<B>, Expr<C>, Expr<D>)> query,
+  ) => $ForGeneratedCode.renamedRecord(
+    query,
+    (e) => (
+      grossSubtotal: e.$1,
+      netRevenue: e.$2,
+      totalDiscount: e.$3,
+      totalOrders: e.$4,
+    ),
+  );
+
+  static T Function(Expr<A> a, Expr<B> b, Expr<C> c, Expr<D> d)
+  _wrapBuilder<T, A, B, C, D>(
+    T Function(
+      ({
+        Expr<A> grossSubtotal,
+        Expr<B> netRevenue,
+        Expr<C> totalDiscount,
+        Expr<D> totalOrders,
+      })
+      e,
+    )
+    builder,
+  ) =>
+      (a, b, c, d) => builder((
+        grossSubtotal: a,
+        netRevenue: b,
+        totalDiscount: c,
+        totalOrders: d,
+      ));
+
+  /// Query the database for rows in this [Query] as a [Stream].
+  Stream<({A grossSubtotal, B netRevenue, C totalDiscount, D totalOrders})>
+  stream() async* {
+    yield* _asPositionalQuery.stream().map(
+      (e) => (
+        grossSubtotal: e.$1,
+        netRevenue: e.$2,
+        totalDiscount: e.$3,
+        totalOrders: e.$4,
+      ),
+    );
+  }
+
+  /// Query the database for rows in this [Query] as a [List].
+  Future<
+    List<({A grossSubtotal, B netRevenue, C totalDiscount, D totalOrders})>
+  >
+  fetch() async => await stream().toList();
+
+  /// Offset [Query] using `OFFSET` clause.
+  ///
+  /// The resulting [Query] will skip the first [offset] rows.
+  Query<
+    ({
+      Expr<A> grossSubtotal,
+      Expr<B> netRevenue,
+      Expr<C> totalDiscount,
+      Expr<D> totalOrders,
+    })
+  >
+  offset(int offset) => _fromPositionalQuery(_asPositionalQuery.offset(offset));
+
+  /// Limit [Query] using `LIMIT` clause.
+  ///
+  /// The resulting [Query] will only return the first [limit] rows.
+  Query<
+    ({
+      Expr<A> grossSubtotal,
+      Expr<B> netRevenue,
+      Expr<C> totalDiscount,
+      Expr<D> totalOrders,
+    })
+  >
+  limit(int limit) => _fromPositionalQuery(_asPositionalQuery.limit(limit));
+
+  /// Create a projection of this [Query] using `SELECT` clause.
+  ///
+  /// The [projectionBuilder] **must** return a [Record] where all the
+  /// values are [Expr] objects. If something else is returned you will
+  /// get a [Query] object which doesn't have any methods!
+  ///
+  /// All methods and properties on [Query<T>] are extension methods and
+  /// they are only defined for records `T` where all the values are
+  /// [Expr] objects.
+  Query<T> select<T extends Record>(
+    T Function(
+      ({
+        Expr<A> grossSubtotal,
+        Expr<B> netRevenue,
+        Expr<C> totalDiscount,
+        Expr<D> totalOrders,
+      })
+      expr,
+    )
+    projectionBuilder,
+  ) => _asPositionalQuery.select(_wrapBuilder(projectionBuilder));
+
+  /// Filter [Query] using `WHERE` clause.
+  ///
+  /// Returns a [Query] retaining rows from this [Query] where the expression
+  /// returned by [conditionBuilder] evaluates to `true`.
+  Query<
+    ({
+      Expr<A> grossSubtotal,
+      Expr<B> netRevenue,
+      Expr<C> totalDiscount,
+      Expr<D> totalOrders,
+    })
+  >
+  where(
+    Expr<bool?> Function(
+      ({
+        Expr<A> grossSubtotal,
+        Expr<B> netRevenue,
+        Expr<C> totalDiscount,
+        Expr<D> totalOrders,
+      })
+      expr,
+    )
+    conditionBuilder,
+  ) => _fromPositionalQuery(
+    _asPositionalQuery.where(_wrapBuilder(conditionBuilder)),
+  );
+}
+
+/// Extension methods for building queries projected to a named record.
+extension QueryCashCollectedFreeTotalTotalCollectedUpiCollectedNamed<A, B, C, D>
+    on
+        Query<
+          ({
+            Expr<A> cashCollected,
+            Expr<B> freeTotal,
+            Expr<C> totalCollected,
+            Expr<D> upiCollected,
+          })
+        > {
+  Query<(Expr<A>, Expr<B>, Expr<C>, Expr<D>)> get _asPositionalQuery =>
+      $ForGeneratedCode.renamedRecord(
+        this,
+        (e) => (e.cashCollected, e.freeTotal, e.totalCollected, e.upiCollected),
+      );
+
+  static Query<
+    ({
+      Expr<A> cashCollected,
+      Expr<B> freeTotal,
+      Expr<C> totalCollected,
+      Expr<D> upiCollected,
+    })
+  >
+  _fromPositionalQuery<A, B, C, D>(
+    Query<(Expr<A>, Expr<B>, Expr<C>, Expr<D>)> query,
+  ) => $ForGeneratedCode.renamedRecord(
+    query,
+    (e) => (
+      cashCollected: e.$1,
+      freeTotal: e.$2,
+      totalCollected: e.$3,
+      upiCollected: e.$4,
+    ),
+  );
+
+  static T Function(Expr<A> a, Expr<B> b, Expr<C> c, Expr<D> d)
+  _wrapBuilder<T, A, B, C, D>(
+    T Function(
+      ({
+        Expr<A> cashCollected,
+        Expr<B> freeTotal,
+        Expr<C> totalCollected,
+        Expr<D> upiCollected,
+      })
+      e,
+    )
+    builder,
+  ) =>
+      (a, b, c, d) => builder((
+        cashCollected: a,
+        freeTotal: b,
+        totalCollected: c,
+        upiCollected: d,
+      ));
+
+  /// Query the database for rows in this [Query] as a [Stream].
+  Stream<({A cashCollected, B freeTotal, C totalCollected, D upiCollected})>
+  stream() async* {
+    yield* _asPositionalQuery.stream().map(
+      (e) => (
+        cashCollected: e.$1,
+        freeTotal: e.$2,
+        totalCollected: e.$3,
+        upiCollected: e.$4,
+      ),
+    );
+  }
+
+  /// Query the database for rows in this [Query] as a [List].
+  Future<
+    List<({A cashCollected, B freeTotal, C totalCollected, D upiCollected})>
+  >
+  fetch() async => await stream().toList();
+
+  /// Offset [Query] using `OFFSET` clause.
+  ///
+  /// The resulting [Query] will skip the first [offset] rows.
+  Query<
+    ({
+      Expr<A> cashCollected,
+      Expr<B> freeTotal,
+      Expr<C> totalCollected,
+      Expr<D> upiCollected,
+    })
+  >
+  offset(int offset) => _fromPositionalQuery(_asPositionalQuery.offset(offset));
+
+  /// Limit [Query] using `LIMIT` clause.
+  ///
+  /// The resulting [Query] will only return the first [limit] rows.
+  Query<
+    ({
+      Expr<A> cashCollected,
+      Expr<B> freeTotal,
+      Expr<C> totalCollected,
+      Expr<D> upiCollected,
+    })
+  >
+  limit(int limit) => _fromPositionalQuery(_asPositionalQuery.limit(limit));
+
+  /// Create a projection of this [Query] using `SELECT` clause.
+  ///
+  /// The [projectionBuilder] **must** return a [Record] where all the
+  /// values are [Expr] objects. If something else is returned you will
+  /// get a [Query] object which doesn't have any methods!
+  ///
+  /// All methods and properties on [Query<T>] are extension methods and
+  /// they are only defined for records `T` where all the values are
+  /// [Expr] objects.
+  Query<T> select<T extends Record>(
+    T Function(
+      ({
+        Expr<A> cashCollected,
+        Expr<B> freeTotal,
+        Expr<C> totalCollected,
+        Expr<D> upiCollected,
+      })
+      expr,
+    )
+    projectionBuilder,
+  ) => _asPositionalQuery.select(_wrapBuilder(projectionBuilder));
+
+  /// Filter [Query] using `WHERE` clause.
+  ///
+  /// Returns a [Query] retaining rows from this [Query] where the expression
+  /// returned by [conditionBuilder] evaluates to `true`.
+  Query<
+    ({
+      Expr<A> cashCollected,
+      Expr<B> freeTotal,
+      Expr<C> totalCollected,
+      Expr<D> upiCollected,
+    })
+  >
+  where(
+    Expr<bool?> Function(
+      ({
+        Expr<A> cashCollected,
+        Expr<B> freeTotal,
+        Expr<C> totalCollected,
+        Expr<D> upiCollected,
+      })
+      expr,
+    )
+    conditionBuilder,
+  ) => _fromPositionalQuery(
+    _asPositionalQuery.where(_wrapBuilder(conditionBuilder)),
+  );
+}
+
+/// Extension methods for building queries projected to a named record.
 extension QueryItemsTotalTotalCollectedPriceTotalCostPriceTotalMarginPercentageTotalProfitNamed<
   A,
   B,
@@ -8711,6 +9689,256 @@ extension QueryItemsTotalTotalCollectedPriceTotalCostPriceTotalMarginPercentageT
         Expr<D> totalCostPrice,
         Expr<E> totalMarginPercentage,
         Expr<F> totalProfit,
+      })
+      expr,
+    )
+    conditionBuilder,
+  ) => _fromPositionalQuery(
+    _asPositionalQuery.where(_wrapBuilder(conditionBuilder)),
+  );
+}
+
+/// Extension methods for building queries projected to a named record.
+extension QueryItemsTotalTotalAdjustmentTotalClosingStockTotalInTotalOpeningStockTotalOutTotalWastageNamed<
+  A,
+  B,
+  C,
+  D,
+  E,
+  F,
+  G,
+  H
+>
+    on
+        Query<
+          ({
+            Expr<A> items,
+            Expr<B> total,
+            Expr<C> totalAdjustment,
+            Expr<D> totalClosingStock,
+            Expr<E> totalIn,
+            Expr<F> totalOpeningStock,
+            Expr<G> totalOut,
+            Expr<H> totalWastage,
+          })
+        > {
+  Query<
+    (Expr<A>, Expr<B>, Expr<C>, Expr<D>, Expr<E>, Expr<F>, Expr<G>, Expr<H>)
+  >
+  get _asPositionalQuery => $ForGeneratedCode.renamedRecord(
+    this,
+    (e) => (
+      e.items,
+      e.total,
+      e.totalAdjustment,
+      e.totalClosingStock,
+      e.totalIn,
+      e.totalOpeningStock,
+      e.totalOut,
+      e.totalWastage,
+    ),
+  );
+
+  static Query<
+    ({
+      Expr<A> items,
+      Expr<B> total,
+      Expr<C> totalAdjustment,
+      Expr<D> totalClosingStock,
+      Expr<E> totalIn,
+      Expr<F> totalOpeningStock,
+      Expr<G> totalOut,
+      Expr<H> totalWastage,
+    })
+  >
+  _fromPositionalQuery<A, B, C, D, E, F, G, H>(
+    Query<
+      (Expr<A>, Expr<B>, Expr<C>, Expr<D>, Expr<E>, Expr<F>, Expr<G>, Expr<H>)
+    >
+    query,
+  ) => $ForGeneratedCode.renamedRecord(
+    query,
+    (e) => (
+      items: e.$1,
+      total: e.$2,
+      totalAdjustment: e.$3,
+      totalClosingStock: e.$4,
+      totalIn: e.$5,
+      totalOpeningStock: e.$6,
+      totalOut: e.$7,
+      totalWastage: e.$8,
+    ),
+  );
+
+  static T Function(
+    Expr<A> a,
+    Expr<B> b,
+    Expr<C> c,
+    Expr<D> d,
+    Expr<E> e,
+    Expr<F> f,
+    Expr<G> g,
+    Expr<H> h,
+  )
+  _wrapBuilder<T, A, B, C, D, E, F, G, H>(
+    T Function(
+      ({
+        Expr<A> items,
+        Expr<B> total,
+        Expr<C> totalAdjustment,
+        Expr<D> totalClosingStock,
+        Expr<E> totalIn,
+        Expr<F> totalOpeningStock,
+        Expr<G> totalOut,
+        Expr<H> totalWastage,
+      })
+      e,
+    )
+    builder,
+  ) =>
+      (a, b, c, d, e, f, g, h) => builder((
+        items: a,
+        total: b,
+        totalAdjustment: c,
+        totalClosingStock: d,
+        totalIn: e,
+        totalOpeningStock: f,
+        totalOut: g,
+        totalWastage: h,
+      ));
+
+  /// Query the database for rows in this [Query] as a [Stream].
+  Stream<
+    ({
+      A items,
+      B total,
+      C totalAdjustment,
+      D totalClosingStock,
+      E totalIn,
+      F totalOpeningStock,
+      G totalOut,
+      H totalWastage,
+    })
+  >
+  stream() async* {
+    yield* _asPositionalQuery.stream().map(
+      (e) => (
+        items: e.$1,
+        total: e.$2,
+        totalAdjustment: e.$3,
+        totalClosingStock: e.$4,
+        totalIn: e.$5,
+        totalOpeningStock: e.$6,
+        totalOut: e.$7,
+        totalWastage: e.$8,
+      ),
+    );
+  }
+
+  /// Query the database for rows in this [Query] as a [List].
+  Future<
+    List<
+      ({
+        A items,
+        B total,
+        C totalAdjustment,
+        D totalClosingStock,
+        E totalIn,
+        F totalOpeningStock,
+        G totalOut,
+        H totalWastage,
+      })
+    >
+  >
+  fetch() async => await stream().toList();
+
+  /// Offset [Query] using `OFFSET` clause.
+  ///
+  /// The resulting [Query] will skip the first [offset] rows.
+  Query<
+    ({
+      Expr<A> items,
+      Expr<B> total,
+      Expr<C> totalAdjustment,
+      Expr<D> totalClosingStock,
+      Expr<E> totalIn,
+      Expr<F> totalOpeningStock,
+      Expr<G> totalOut,
+      Expr<H> totalWastage,
+    })
+  >
+  offset(int offset) => _fromPositionalQuery(_asPositionalQuery.offset(offset));
+
+  /// Limit [Query] using `LIMIT` clause.
+  ///
+  /// The resulting [Query] will only return the first [limit] rows.
+  Query<
+    ({
+      Expr<A> items,
+      Expr<B> total,
+      Expr<C> totalAdjustment,
+      Expr<D> totalClosingStock,
+      Expr<E> totalIn,
+      Expr<F> totalOpeningStock,
+      Expr<G> totalOut,
+      Expr<H> totalWastage,
+    })
+  >
+  limit(int limit) => _fromPositionalQuery(_asPositionalQuery.limit(limit));
+
+  /// Create a projection of this [Query] using `SELECT` clause.
+  ///
+  /// The [projectionBuilder] **must** return a [Record] where all the
+  /// values are [Expr] objects. If something else is returned you will
+  /// get a [Query] object which doesn't have any methods!
+  ///
+  /// All methods and properties on [Query<T>] are extension methods and
+  /// they are only defined for records `T` where all the values are
+  /// [Expr] objects.
+  Query<T> select<T extends Record>(
+    T Function(
+      ({
+        Expr<A> items,
+        Expr<B> total,
+        Expr<C> totalAdjustment,
+        Expr<D> totalClosingStock,
+        Expr<E> totalIn,
+        Expr<F> totalOpeningStock,
+        Expr<G> totalOut,
+        Expr<H> totalWastage,
+      })
+      expr,
+    )
+    projectionBuilder,
+  ) => _asPositionalQuery.select(_wrapBuilder(projectionBuilder));
+
+  /// Filter [Query] using `WHERE` clause.
+  ///
+  /// Returns a [Query] retaining rows from this [Query] where the expression
+  /// returned by [conditionBuilder] evaluates to `true`.
+  Query<
+    ({
+      Expr<A> items,
+      Expr<B> total,
+      Expr<C> totalAdjustment,
+      Expr<D> totalClosingStock,
+      Expr<E> totalIn,
+      Expr<F> totalOpeningStock,
+      Expr<G> totalOut,
+      Expr<H> totalWastage,
+    })
+  >
+  where(
+    Expr<bool?> Function(
+      ({
+        Expr<A> items,
+        Expr<B> total,
+        Expr<C> totalAdjustment,
+        Expr<D> totalClosingStock,
+        Expr<E> totalIn,
+        Expr<F> totalOpeningStock,
+        Expr<G> totalOut,
+        Expr<H> totalWastage,
       })
       expr,
     )

@@ -551,7 +551,28 @@ class OrderRepository {
     var paidCount = 0;
     var freeCount = 0;
 
+    final hourlyCounts = List<int>.filled(8, 0);
+
     for (final o in orderRows) {
+      final hour = o.createdAt.toLocal().hour;
+      if (hour >= 8 && hour < 10) {
+        hourlyCounts[0]++;
+      } else if (hour >= 10 && hour < 12) {
+        hourlyCounts[1]++;
+      } else if (hour >= 12 && hour < 14) {
+        hourlyCounts[2]++;
+      } else if (hour >= 14 && hour < 16) {
+        hourlyCounts[3]++;
+      } else if (hour >= 16 && hour < 18) {
+        hourlyCounts[4]++;
+      } else if (hour >= 18 && hour < 20) {
+        hourlyCounts[5]++;
+      } else if (hour >= 20 && hour < 22) {
+        hourlyCounts[6]++;
+      } else {
+        hourlyCounts[7]++;
+      }
+
       final isComplimentary =
           o.paymentMethod.toLowerCase() == PaymentMethod.complimentary.name ||
           o.paymentStatus.toLowerCase() == PaymentStatus.refunded.name;
@@ -632,16 +653,60 @@ class OrderRepository {
       }
     }
 
-    final recentOrders = orderRows.take(5).map((o) {
+    final productRows = await _db.products
+        .leftJoin(_db.stocks)
+        .on((p, s) => p.id.equals(s.productId))
+        .leftJoin(_db.categories)
+        .on((p, s, c) => p.categoryId.equals(c.id))
+        .where((p, s, c) => p.storeId.equals(ts.toExpr(storeId)))
+        .fetch();
+
+    final categoryMap = <String, double>{};
+    for (final tuple in productRows) {
+      final p = tuple.$1;
+      final c = tuple.$3;
+      final catName = c?.name ?? 'General';
+      categoryMap[catName] =
+          (categoryMap[catName] ?? 0.0) + (p.sellingPrice / 100.0);
+    }
+    final categoryLabels = categoryMap.keys.take(5).toList();
+    final categoryData = categoryLabels
+        .map((cat) => categoryMap[cat] ?? 0.0)
+        .toList();
+
+    final topProducts = productRows.take(5).map((tuple) {
+      final p = tuple.$1;
+      final s = tuple.$2;
+      final c = tuple.$3;
       return {
-        'id': o.id,
-        'billNo': o.billNo,
-        'orderReference': o.orderReference,
-        'paymentMethod': o.paymentMethod,
-        'grandTotal': o.grandTotal / 100.0,
-        'createdAt': o.createdAt.toIso8601String(),
+        'id': p.id,
+        'name': p.name,
+        'category': c?.name ?? 'General',
+        'quantity': s?.quantity ?? 0,
+        'sellingPrice': p.sellingPrice,
       };
     }).toList();
+
+    final lowStockProducts = productRows
+        .where((tuple) {
+          final s = tuple.$2;
+          return s != null && s.quantity <= s.lowStockThreshold;
+        })
+        .take(5)
+        .map((tuple) {
+          final p = tuple.$1;
+          final s = tuple.$2;
+          final c = tuple.$3;
+          return {
+            'id': p.id,
+            'name': p.name,
+            'category': c?.name ?? 'General',
+            'quantity': s?.quantity ?? 0,
+            'lowStockThreshold': s?.lowStockThreshold ?? 5,
+            'sellingPrice': p.sellingPrice,
+          };
+        })
+        .toList();
 
     return {
       'totalRevenue': totalRevenue,
@@ -661,7 +726,25 @@ class OrderRepository {
         'paidCount': paidCount,
         'freeCount': freeCount,
       },
-      'recentOrders': recentOrders,
+      'categorySales': {
+        'labels': categoryLabels,
+        'data': categoryData,
+      },
+      'hourlyTraffic': {
+        'labels': [
+          '8 AM',
+          '10 AM',
+          '12 PM',
+          '2 PM',
+          '4 PM',
+          '6 PM',
+          '8 PM',
+          '10 PM',
+        ],
+        'data': hourlyCounts,
+      },
+      'topProducts': topProducts,
+      'lowStockProducts': lowStockProducts,
     };
   }
 }

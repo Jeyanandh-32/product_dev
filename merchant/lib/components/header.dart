@@ -3,14 +3,7 @@ import 'package:jaspr/dom.dart';
 import 'package:jaspr_lucide/jaspr_lucide.dart' hide Store, Router;
 import 'package:jaspr_router/jaspr_router.dart';
 import 'package:merchant/components/signal_component.dart';
-import 'package:merchant/signals/categories_signal.dart';
-import 'package:merchant/signals/counters_signal.dart';
 import 'package:merchant/signals/navigation_signal.dart';
-import 'package:merchant/signals/orders_signal.dart';
-import 'package:merchant/signals/payments_signal.dart';
-import 'package:merchant/signals/products_signal.dart';
-import 'package:merchant/signals/profit_loss_signal.dart';
-import 'package:merchant/signals/stock_summary_signal.dart';
 import 'package:merchant/signals/stores_signal.dart';
 
 import 'package:models/models.dart';
@@ -26,13 +19,6 @@ class Header extends SignalComponent {
 class _HeaderState extends SignalState<Header> {
   void _changeStore(Store store) {
     storeSignal.value = store;
-    refreshProductsSignal();
-    refreshCategoriesSignal();
-    refreshCountersSignal();
-    refreshOrdersSignal();
-    refreshPaymentsSignal();
-    refreshProfitLossSignal();
-    refreshStockSummarySignal();
 
     final activeElement = document.activeElement;
     if (activeElement != null) {
@@ -68,9 +54,6 @@ class _HeaderState extends SignalState<Header> {
     if (location == '/account') {
       return ('Account', null);
     }
-    if (location == '/settings') {
-      return ('Settings', null);
-    }
     return ('Dashboard', null);
   }
 
@@ -81,31 +64,24 @@ class _HeaderState extends SignalState<Header> {
     final stores = storesSignal.value.value;
     final location = Router.of(context).matchList.uri.toString();
     final (headerTitle, headerSubTitle) = _getHeaderTitles(location);
-    final isStoresPage = location == '/stores';
+    final hideStoreSelector = location == '/stores' || location == '/account';
 
     if (stores != null && stores.isNotEmpty) {
       if (store == null || !stores.any((st) => st.id == store.id)) {
         Future.microtask(() {
           storeSignal.value = stores.first;
-          refreshProductsSignal();
-          refreshCategoriesSignal();
-          refreshCountersSignal();
-          refreshOrdersSignal();
-          refreshPaymentsSignal();
-          refreshProfitLossSignal();
-          refreshStockSummarySignal();
         });
       }
     }
 
     return div(
       classes:
-          'w-full h-[60px] min-h-[60px] px-3 sm:px-4 lg:px-8 flex justify-between items-center gap-2 bg-white border-b border-border-medium flex-shrink-0',
+          'w-full h-15 min-h-15 px-3 sm:px-4 lg:px-8 flex justify-between items-center gap-2 bg-white border-b border-border-medium shrink-0',
       [
         div(classes: 'flex items-center gap-2.5 lg:gap-0 min-w-0 flex-1 mr-1', [
           button(
             classes:
-                'block lg:hidden hover:cursor-pointer transition-all duration-300 flex-shrink-0',
+                'block lg:hidden hover:cursor-pointer transition-all duration-300 shrink-0',
             onClick: () => navOpenSignal.value = !isNavOpen,
             [
               Menu(classes: 'w-5 h-5 text-gray-700'),
@@ -120,7 +96,7 @@ class _HeaderState extends SignalState<Header> {
               if (headerSubTitle != null) ...[
                 span(
                   classes:
-                      'text-gray-300 text-xs sm:text-sm font-normal flex-shrink-0',
+                      'text-gray-300 text-xs sm:text-sm font-normal shrink-0',
                   [
                     .text('/'),
                   ],
@@ -137,20 +113,20 @@ class _HeaderState extends SignalState<Header> {
           ),
         ]),
 
-        if (store != null && !isStoresPage)
-          div(classes: 'dropdown dropdown-bottom dropdown-end flex-shrink-0', [
+        if (store != null && !hideStoreSelector)
+          div(classes: 'dropdown dropdown-bottom dropdown-end shrink-0', [
             div(
               classes:
-                  'btn rounded-full border border-border-medium px-2.5 sm:px-4 bg-white hover:bg-base-200 text-xs sm:text-sm h-8 min-h-0 flex items-center gap-1 max-w-[130px] sm:max-w-none',
+                  'btn rounded-full border border-border-medium px-2.5 sm:px-4 bg-white hover:bg-base-200 text-xs sm:text-sm h-8 min-h-0 flex items-center gap-1 max-w-32.5 sm:max-w-none',
               attributes: {
                 'tabindex': '0',
                 'role': 'button',
               },
               [
-                span(classes: 'truncate max-w-[85px] sm:max-w-[160px]', [
+                span(classes: 'truncate max-w-21.25 sm:max-w-40', [
                   .text(store.name),
                 ]),
-                ChevronDown(classes: 'w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0'),
+                ChevronDown(classes: 'w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0'),
               ],
             ),
 
@@ -168,10 +144,10 @@ class _HeaderState extends SignalState<Header> {
               ],
             ),
           ])
-        else if (!isStoresPage)
+        else if (!hideStoreSelector)
           div(
             classes:
-                'h-8 w-28 sm:w-36 rounded-full bg-neutral/60 border border-border-light animate-pulse flex-shrink-0',
+                'h-8 w-28 sm:w-36 rounded-full bg-neutral/60 border border-border-light animate-pulse shrink-0',
             [],
           ),
       ],

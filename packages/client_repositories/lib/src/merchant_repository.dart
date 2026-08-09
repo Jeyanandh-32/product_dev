@@ -20,4 +20,33 @@ abstract final class MerchantRepository {
       return null;
     }
   }
+
+  static Future<Merchant> updateMerchant({
+    String? name,
+    String? businessName,
+    String? whatsappNumber,
+    String? email,
+    String? currentPassword,
+    String? newPassword,
+  }) async {
+    try {
+      final result = await dio.patch(
+        ApiEndpoints.merchants,
+        data: {
+          'name': ?name,
+          'businessName': ?businessName,
+          'whatsappNumber': ?whatsappNumber,
+          'email': ?email,
+          'currentPassword': ?currentPassword,
+          'newPassword': ?newPassword,
+        },
+      );
+
+      return Merchant.fromJson(
+        result.data['data']['merchant'] as Map<String, Object?>,
+      );
+    } on DioException catch (e) {
+      handleDioError(e, 'Failed to update profile.');
+    }
+  }
 }

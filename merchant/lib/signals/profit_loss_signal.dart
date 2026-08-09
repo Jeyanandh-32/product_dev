@@ -11,6 +11,22 @@ final profitLossSignal = asyncSignal<ProfitLossReportResponse>(
   const AsyncLoading(),
 );
 
+void resetProfitLossSignal() {
+  profitLossPageSignal.value = 1;
+  profitLossSearchSignal.value = '';
+  profitLossSignal.value = const AsyncData((
+    items: [],
+    currentPage: 1,
+    pageSize: 10,
+    totalItems: 0,
+    totalPages: 1,
+    totalCostPrice: 0.0,
+    totalCollectedPrice: 0.0,
+    totalProfit: 0.0,
+    totalMarginPercentage: 0.0,
+  ));
+}
+
 Future<void> refreshProfitLossSignal() async {
   final currentStore = storeSignal.value;
   if (currentStore == null) {

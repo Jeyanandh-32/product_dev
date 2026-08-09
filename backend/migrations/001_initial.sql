@@ -13,6 +13,17 @@ CREATE TABLE IF NOT EXISTS merchants (
 
 CREATE INDEX IF NOT EXISTS idx_merchants_email ON merchants (email);
 
+CREATE TABLE IF NOT EXISTS merchant_settings (
+    merchant_id UUID PRIMARY KEY REFERENCES merchants (id) ON DELETE CASCADE,
+    wa_notifications BOOLEAN NOT NULL DEFAULT TRUE,
+    low_stock_alerts BOOLEAN NOT NULL DEFAULT TRUE,
+    daily_reports BOOLEAN NOT NULL DEFAULT FALSE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+
+
 CREATE TABLE IF NOT EXISTS subscription_plans (
     code VARCHAR(50) PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
@@ -164,4 +175,3 @@ CREATE INDEX IF NOT EXISTS idx_orders_order_reference ON orders(order_reference)
 CREATE INDEX IF NOT EXISTS idx_orders_store_created_at ON orders(store_id, created_at);
 CREATE INDEX IF NOT EXISTS idx_stock_transactions_store_id ON stock_transactions(store_id);
 
-UPDATE orders SET payment_status = 'paid' WHERE payment_status = 'complimentary';

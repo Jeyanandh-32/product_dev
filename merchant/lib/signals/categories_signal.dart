@@ -14,6 +14,15 @@ final editingCategorySignal = signal<Category?>(null);
 
 final categoriesSignal = asyncSignal<List<Category>>(const AsyncLoading());
 
+void resetCategoriesSignal() {
+  categoriesPageSignal.value = 1;
+  categoriesTotalSignal.value = 0;
+  categoriesTotalPagesSignal.value = 1;
+  categorySearchSignal.value = '';
+  editingCategorySignal.value = null;
+  categoriesSignal.value = const AsyncData([]);
+}
+
 Future<void> refreshCategoriesSignal() async {
   final selectedStore = storeSignal.value;
   if (selectedStore == null) {

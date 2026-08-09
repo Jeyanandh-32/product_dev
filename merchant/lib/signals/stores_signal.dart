@@ -10,6 +10,13 @@ final editingStoreSignal = signal<Store?>(null);
 
 final storesSignal = asyncSignal<List<Store>>(const AsyncLoading());
 
+void resetStoresSignal() {
+  storeSignal.value = null;
+  selectedTabStoreSignal.value = null;
+  editingStoreSignal.value = null;
+  storesSignal.value = const AsyncData([]);
+}
+
 Future<void> refreshStoresSignal() async {
   untracked(() {
     storesSignal.value = const AsyncLoading();

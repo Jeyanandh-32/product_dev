@@ -1,8 +1,7 @@
+import 'dart:io';
+
 import 'package:backend/config/env.dart';
 import 'package:backend/database/schema.dart';
-import 'package:backend/src/migrations.dart';
-import 'package:migrant/migrant.dart' as migrant;
-import 'package:migrant_db_postgresql/migrant_db_postgresql.dart';
 import 'package:postgres/postgres.dart';
 import 'package:typed_sql/typed_sql.dart' as ts;
 
@@ -55,15 +54,36 @@ class Database {
       settings: const ConnectionSettings(sslMode: SslMode.disable),
     );
 
-    final gateway = PostgreSQLGateway(connection);
-
-    await migrant.Database(gateway).upgrade(migrations);
-    try {
-      await connection.execute(
-        "UPDATE orders SET payment_status = 'paid' WHERE payment_status = 'complimentary';",
-      );
-    } catch (_) {}
+    await _executeSqlFiles(connection);
 
     await connection.close();
+  }
+
+  static Future<void> _executeSqlFiles(Connection connection) async {
+    final dir = Directory('migrations');
+    if (!dir.existsSync()) return;
+
+    final files =
+        dir
+            .listSync()
+            .whereType<File>()
+            .where((f) => f.path.endsWith('.sql'))
+            .toList()
+          ..sort((a, b) => a.path.compareTo(b.path));
+
+    for (final file in files) {
+      final content = await file.readAsString();
+      final statements = content
+          .split(';')
+          .map((s) => s.trim())
+          .where((s) => s.isNotEmpty);
+
+      for (final statement in statements) {
+        if (statement.startsWith('--') && !statement.contains('\n')) continue;
+        try {
+          await connection.execute(statement);
+        } catch (_) {}
+      }
+    }
   }
 }

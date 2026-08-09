@@ -24,9 +24,15 @@ class Counters extends SignalComponent {
 }
 
 class _CountersState extends SignalState<Counters> {
+  String? _loadedStoreId;
+
   @override
   void initState() {
     super.initState();
+    final store = storeSignal.value;
+    if (store != null) {
+      _loadedStoreId = store.id;
+    }
     refreshCountersSignal();
   }
 
@@ -47,13 +53,20 @@ class _CountersState extends SignalState<Counters> {
 
   @override
   Component buildSignal(BuildContext context) {
+    final store = storeSignal.value;
+    if (store != null && _loadedStoreId != store.id) {
+      _loadedStoreId = store.id;
+      Future.microtask(() {
+        refreshCountersSignal();
+      });
+    }
     final entries = entriesSignal.value;
+
     final counters = countersSignal.value;
     final currentPage = countersPageSignal.value;
     final totalPages = countersTotalPagesSignal.value;
     final activeModal = activeModalSignal.value;
     final editingCounter = editingCounterSignal.value;
-    final store = storeSignal.value;
 
     return div(
       classes:
@@ -215,7 +228,7 @@ class _CountersState extends SignalState<Counters> {
         div(classes: 'flex items-center gap-4', [
           button(
             classes:
-                'hover:cursor-pointer btn btn-ghost btn-xs h-8 w-8 p-0 rounded-full',
+                'hover:cursor-pointer btn btn-ghost btn-xs h-8 w-8 p-0 rounded-full text-gray-500 hover:text-accent transition-colors',
             events: {
               'click': (e) {
                 e.stopPropagation();
@@ -223,7 +236,7 @@ class _CountersState extends SignalState<Counters> {
               },
             },
             [
-              SquarePen(classes: 'w-5 h-5 text-gray-500 hover:text-accent'),
+              SquarePen(classes: 'w-5 h-5'),
             ],
           ),
         ]),

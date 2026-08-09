@@ -19,6 +19,20 @@ final paymentsSummarySignal = signal<PaymentSummary>((
 
 final paymentsSignal = asyncSignal<List<Payment>>(const AsyncLoading());
 
+void resetPaymentsSignal() {
+  paymentsPageSignal.value = 1;
+  paymentsTotalSignal.value = 0;
+  paymentsTotalPagesSignal.value = 1;
+  paymentsSearchSignal.value = '';
+  paymentsSummarySignal.value = (
+    cashCollected: 0.0,
+    upiCollected: 0.0,
+    freeTotal: 0.0,
+    totalCollected: 0.0,
+  );
+  paymentsSignal.value = const AsyncData([]);
+}
+
 Future<void> refreshPaymentsSignal() async {
   final selectedStore = storeSignal.value;
   if (selectedStore == null) {

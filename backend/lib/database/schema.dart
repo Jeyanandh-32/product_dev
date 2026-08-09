@@ -5,6 +5,7 @@ part 'schema.g.dart';
 @SqlOverride.schema(naming: Naming.snake_case)
 abstract final class DatabaseSchema extends Schema {
   Table<MerchantRow> get merchants;
+  Table<MerchantSettingsRow> get merchantSettings;
   Table<StoreRow> get stores;
   Table<CategoryRow> get categories;
   Table<CounterRow> get counters;
@@ -31,6 +32,27 @@ abstract final class MerchantRow extends Row {
   String get email;
 
   String get passwordHash;
+
+  @DefaultValue.now
+  DateTime get createdAt;
+
+  @DefaultValue.now
+  DateTime get updatedAt;
+}
+
+@PrimaryKey(['merchantId'])
+abstract final class MerchantSettingsRow extends Row {
+  @References(table: 'merchants', field: 'id', onDelete: .cascade)
+  String get merchantId;
+
+  @DefaultValue(true)
+  bool get waNotifications;
+
+  @DefaultValue(true)
+  bool get lowStockAlerts;
+
+  @DefaultValue(false)
+  bool get dailyReports;
 
   @DefaultValue.now
   DateTime get createdAt;

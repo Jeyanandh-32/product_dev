@@ -18,7 +18,6 @@ import 'package:merchant/sub_tabs/profit_loss.dart';
 import 'package:merchant/sub_tabs/stock_summary.dart';
 import 'package:merchant/tabs/account.dart';
 import 'package:merchant/tabs/dashboard.dart';
-import 'package:merchant/tabs/settings.dart';
 import 'package:merchant/tabs/stores.dart';
 
 class App extends SignalComponent {
@@ -99,10 +98,6 @@ class _AppState extends SignalState<App> {
                 Route(
                   path: '/account',
                   builder: (context, state) => const Account(),
-                ),
-                Route(
-                  path: '/settings',
-                  builder: (context, state) => const Settings(),
                 ),
               ],
             ),

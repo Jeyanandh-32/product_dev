@@ -24,9 +24,15 @@ class Payments extends SignalComponent {
 }
 
 class _PaymentsState extends SignalState<Payments> {
+  String? _loadedStoreId;
+
   @override
   void initState() {
     super.initState();
+    final store = storeSignal.value;
+    if (store != null) {
+      _loadedStoreId = store.id;
+    }
     refreshPaymentsSignal();
   }
 
@@ -259,11 +265,18 @@ class _PaymentsState extends SignalState<Payments> {
 
   @override
   Component buildSignal(BuildContext context) {
+    final store = storeSignal.value;
+    if (store != null && _loadedStoreId != store.id) {
+      _loadedStoreId = store.id;
+      Future.microtask(() {
+        refreshPaymentsSignal();
+      });
+    }
     final entries = entriesSignal.value;
+
     final payments = paymentsSignal.value;
     final currentPage = paymentsPageSignal.value;
     final totalPages = paymentsTotalPagesSignal.value;
-    final store = storeSignal.value;
 
     return div(
       classes:
@@ -330,19 +343,17 @@ class _PaymentsState extends SignalState<Payments> {
               DateRangePicker(
                 fromDate: reportsFromDateSignal.value,
                 toDate: reportsToDateSignal.value,
-                onFromDateChanged: (val) {
-                  reportsFromDateSignal.value = val;
-                  paymentsPageSignal.value = 1;
-                  refreshPaymentsSignal();
-                },
-                onToDateChanged: (val) {
-                  reportsToDateSignal.value = val;
+                onChanged: (from, to) {
+                  reportsFromDateSignal.value = from;
+                  reportsToDateSignal.value = to;
                   paymentsPageSignal.value = 1;
                   refreshPaymentsSignal();
                 },
               ),
+
               _buildPaymentModeFilter(),
               _buildPaymentStatusFilter(),
+              _buildStatsToggleButton(),
             ]),
             div(
               classes:
@@ -362,7 +373,9 @@ class _PaymentsState extends SignalState<Payments> {
           ],
         ),
 
-        if (payments.hasValue && payments.value!.isNotEmpty)
+        if (showReportsStatsSignal.value &&
+            payments.hasValue &&
+            payments.value!.isNotEmpty)
           _buildSummaryCards(),
 
         if (storesSignal.value.isLoading || payments.isLoading)
@@ -478,12 +491,33 @@ class _PaymentsState extends SignalState<Payments> {
     ]);
   }
 
+  Component _buildStatsToggleButton() {
+    final showStats = showReportsStatsSignal.value;
+    return button(
+      type: .button,
+      classes:
+          'btn btn-sm rounded-full border ${showStats ? 'border-primary bg-primary text-primary-content' : 'border-border-medium bg-white hover:bg-neutral text-gray-700'} text-xs font-semibold px-3 h-8 flex items-center gap-1.5 shadow-2xs cursor-pointer transition-all',
+      events: {
+        'click': (e) {
+          showReportsStatsSignal.value = !showStats;
+        },
+      },
+      [
+        if (showStats)
+          EyeOff(classes: 'w-3.5 h-3.5')
+        else
+          ChartColumn(classes: 'w-3.5 h-3.5'),
+        .text(showStats ? 'Hide Stats' : 'View Stats'),
+      ],
+    );
+  }
+
   Component _buildSummaryCards() {
     final summary = paymentsSummarySignal.value;
 
     return div(
       classes:
-          'hidden md:grid grid-cols-2 lg:grid-cols-4 gap-3 p-4 border-b border-border-medium bg-neutral/20',
+          'grid grid-cols-2 lg:grid-cols-4 gap-3 p-4 border-b border-border-medium bg-neutral/20',
       [
         summaryCard(
           title: 'Cash Collected',

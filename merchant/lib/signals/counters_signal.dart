@@ -14,6 +14,15 @@ final editingCounterSignal = signal<Counter?>(null);
 
 final countersSignal = asyncSignal<List<Counter>>(const AsyncLoading());
 
+void resetCountersSignal() {
+  countersPageSignal.value = 1;
+  countersTotalSignal.value = 0;
+  countersTotalPagesSignal.value = 1;
+  counterSearchSignal.value = '';
+  editingCounterSignal.value = null;
+  countersSignal.value = const AsyncData([]);
+}
+
 Future<void> refreshCountersSignal() async {
   final selectedStore = storeSignal.value;
   if (selectedStore == null) {

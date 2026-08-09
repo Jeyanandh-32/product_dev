@@ -21,6 +21,25 @@ final stockSummarySignal = asyncSignal<StockSummaryReportResponse>(
   const AsyncLoading(),
 );
 
+void resetStockSummarySignal() {
+  stockSummaryPageSignal.value = 1;
+  stockSummarySearchSignal.value = '';
+  stockSummaryDateSignal.value = getTodayDateString();
+  stockSummarySignal.value = const AsyncData((
+    items: [],
+    currentPage: 1,
+    pageSize: 10,
+    totalItems: 0,
+    totalPages: 1,
+    totalOpeningStock: 0,
+    totalIn: 0,
+    totalOut: 0,
+    totalWastage: 0,
+    totalAdjustment: 0,
+    totalClosingStock: 0,
+  ));
+}
+
 Future<void> refreshStockSummarySignal() async {
   final currentStore = storeSignal.value;
   if (currentStore == null) {

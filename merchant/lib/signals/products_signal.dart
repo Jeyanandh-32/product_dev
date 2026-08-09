@@ -16,6 +16,15 @@ final editingProductSignal = signal<Product?>(null);
 
 final productsSignal = asyncSignal<List<Product>>(const AsyncLoading());
 
+void resetProductsSignal() {
+  productsPageSignal.value = 1;
+  productsTotalSignal.value = 0;
+  productsTotalPagesSignal.value = 1;
+  productSearchSignal.value = '';
+  editingProductSignal.value = null;
+  productsSignal.value = const AsyncData([]);
+}
+
 Future<void> refreshProductsSignal() async {
   final selectedStore = storeSignal.value;
   if (selectedStore == null) {

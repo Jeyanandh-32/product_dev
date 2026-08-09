@@ -9,6 +9,7 @@ import 'package:merchant/components/loading.dart';
 import 'package:merchant/components/signal_component.dart';
 import 'package:merchant/components/table_pagination.dart';
 import 'package:merchant/exceptions/api_exception.dart';
+import 'package:merchant/signals/navigation_signal.dart';
 import 'package:merchant/signals/stock_summary_signal.dart';
 import 'package:merchant/signals/stores_signal.dart';
 import 'package:web/web.dart' as web;
@@ -21,9 +22,15 @@ class StockSummary extends SignalComponent {
 }
 
 class _StockSummaryState extends SignalState<StockSummary> {
+  String? _loadedStoreId;
+
   @override
   void initState() {
     super.initState();
+    final store = storeSignal.value;
+    if (store != null) {
+      _loadedStoreId = store.id;
+    }
     refreshStockSummarySignal();
   }
 
@@ -48,11 +55,18 @@ class _StockSummaryState extends SignalState<StockSummary> {
 
   @override
   Component buildSignal(BuildContext context) {
+    final store = storeSignal.value;
+    if (store != null && _loadedStoreId != store.id) {
+      _loadedStoreId = store.id;
+      Future.microtask(() {
+        refreshStockSummarySignal();
+      });
+    }
     final entries = stockSummaryEntriesSignal.value;
+
     final reportState = stockSummarySignal.value;
     final currentPage = reportState.value?.currentPage ?? 1;
     final totalPages = reportState.value?.totalPages ?? 1;
-    final store = storeSignal.value;
 
     return div(
       classes:
@@ -127,6 +141,7 @@ class _StockSummaryState extends SignalState<StockSummary> {
                     refreshStockSummarySignal();
                   },
                 ),
+                _buildStatsToggleButton(),
               ],
             ),
             div(
@@ -147,10 +162,13 @@ class _StockSummaryState extends SignalState<StockSummary> {
           ],
         ),
 
-        if (reportState.hasValue && reportState.value!.items.isNotEmpty)
+        if (showReportsStatsSignal.value &&
+            reportState.hasValue &&
+            reportState.value!.items.isNotEmpty)
           div(
             classes:
-                'hidden md:grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 p-4 border-b border-border-medium bg-neutral/20',
+                'grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 p-4 border-b border-border-medium bg-neutral/20',
+
             [
               summaryCard(
                 title: 'Opening Stock',
@@ -321,6 +339,27 @@ class _StockSummaryState extends SignalState<StockSummary> {
       td(classes: 'font-semibold text-gray-900', [.text('$closingStock')]),
       th([]),
     ]);
+  }
+
+  Component _buildStatsToggleButton() {
+    final showStats = showReportsStatsSignal.value;
+    return button(
+      type: .button,
+      classes:
+          'btn btn-sm rounded-full border ${showStats ? 'border-primary bg-primary text-primary-content' : 'border-border-medium bg-white hover:bg-neutral text-gray-700'} text-xs font-semibold px-3 h-8 flex items-center gap-1.5 shadow-2xs cursor-pointer transition-all',
+      events: {
+        'click': (e) {
+          showReportsStatsSignal.value = !showStats;
+        },
+      },
+      [
+        if (showStats)
+          EyeOff(classes: 'w-3.5 h-3.5')
+        else
+          ChartColumn(classes: 'w-3.5 h-3.5'),
+        .text(showStats ? 'Hide Stats' : 'View Stats'),
+      ],
+    );
   }
 
   li dropdownButton({

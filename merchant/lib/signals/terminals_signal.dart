@@ -9,6 +9,11 @@ final editingTerminalSignal = signal<Terminal?>(null);
 
 final terminalsSignal = asyncSignal<List<Terminal>>(const AsyncLoading());
 
+void resetTerminalsSignal() {
+  editingTerminalSignal.value = null;
+  terminalsSignal.value = const AsyncData([]);
+}
+
 Future<void> refreshTerminalsSignal() async {
   untracked(() {
     terminalsSignal.value = const AsyncLoading();

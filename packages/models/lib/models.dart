@@ -3,6 +3,8 @@ library;
 export 'src/category/category.dart';
 export 'src/counter/counter.dart';
 export 'src/merchant/merchant.dart';
+export 'src/merchant/merchant_settings.dart';
+
 export 'src/order/order.dart';
 export 'src/order_item/order_item.dart';
 export 'src/order_source.dart';
