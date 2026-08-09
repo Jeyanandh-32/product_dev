@@ -1,7 +1,6 @@
 import 'package:jaspr/client.dart';
 import 'package:jaspr/dom.dart';
 import 'package:jaspr_lucide/jaspr_lucide.dart';
-
 import 'package:merchant/components/centered_message.dart';
 import 'package:merchant/components/fields/date_picker.dart';
 import 'package:merchant/components/fields/searchbar.dart';
@@ -9,11 +8,11 @@ import 'package:merchant/components/loading.dart';
 import 'package:merchant/components/signal_component.dart';
 import 'package:merchant/components/sortable_header.dart';
 import 'package:merchant/components/table_pagination.dart';
-import 'package:models/models.dart';
 import 'package:merchant/exceptions/api_exception.dart';
 import 'package:merchant/signals/navigation_signal.dart';
 import 'package:merchant/signals/stock_summary_signal.dart';
 import 'package:merchant/signals/stores_signal.dart';
+import 'package:models/models.dart';
 import 'package:web/web.dart' as web;
 
 enum StockSummarySortKey {
@@ -406,7 +405,7 @@ class _StockSummaryState extends SignalState<StockSummary> {
             : 'text-gray-500',
         [.text(adjText)],
       ),
-      td(classes: 'font-semibold text-gray-900', [.text('$closingStock')]),
+      td(classes: 'text-gray-900', [.text('$closingStock')]),
       th([]),
     ]);
   }
