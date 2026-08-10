@@ -66,26 +66,10 @@
                 }
 
                 const existingChart = window._charts[canvasId];
-                if (existingChart && existingChart.canvas && document.body.contains(existingChart.canvas) && existingChart.config.type === type) {
-                    existingChart.data.labels = data.labels;
-                    existingChart.data.datasets = data.datasets;
-                    if (options) {
-                        existingChart.options = Object.assign({}, existingChart.options, options);
-                    }
-                    existingChart.update();
-                    return existingChart;
-                }
-
                 if (existingChart) {
                     try { existingChart.destroy(); } catch(e) {}
                     delete window._charts[canvasId];
                 }
-
-                options.animation = {
-                    duration: 350,
-                    easing: 'easeOutQuart'
-                };
-                options.responsiveAnimationDuration = 0;
 
                 const chart = new Chart(ctx, {
                     type: type,
@@ -97,6 +81,8 @@
                 return chart;
             };
         </script>
+
+
 
 
 
