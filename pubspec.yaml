@@ -14,6 +14,7 @@ workspace:
   - backend
   - merchant
   - terminal
+  - customer
 
 dev_dependencies:
   melos: ^7.5.1

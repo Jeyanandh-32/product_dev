@@ -79,6 +79,7 @@ abstract final class CategoriesActions {
         imageUrl: imageUrl,
       );
 
+      categoriesTotalSignal.value = categoriesTotalSignal.value + 1;
       categoriesSignal.value = AsyncData([...currentCategories, category]);
       showToast('Category created successfully.', type: ToastType.success);
     } catch (e) {

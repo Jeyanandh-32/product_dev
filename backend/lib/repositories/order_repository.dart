@@ -661,29 +661,94 @@ class OrderRepository {
         .where((p, s, c) => p.storeId.equals(ts.toExpr(storeId)))
         .fetch();
 
+    final orderItemTuples = await _db.orderItems
+        .leftJoin(_db.orders)
+        .on((item, o) => item.orderId.equals(o.id))
+        .leftJoin(_db.products)
+        .on((item, o, p) => item.productId.equals(p.id))
+        .leftJoin(_db.categories)
+        .on((item, o, p, c) => p.categoryId.equals(c.id))
+        .where((item, o, p, c) => item.storeId.equals(ts.toExpr(storeId)))
+        .fetch();
+
     final categoryMap = <String, double>{};
-    for (final tuple in productRows) {
-      final p = tuple.$1;
-      final c = tuple.$3;
+    for (final tuple in orderItemTuples) {
+      final item = tuple.$1;
+      final o = tuple.$2;
+      final c = tuple.$4;
+
+      if (o != null) {
+        if (fromDate != null && o.createdAt.isBefore(fromDate)) continue;
+        if (toDate != null && o.createdAt.isAfter(toDate)) continue;
+      }
+
       final catName = c?.name ?? 'General';
-      categoryMap[catName] =
-          (categoryMap[catName] ?? 0.0) + (p.sellingPrice / 100.0);
+      final itemTotal = (item.quantity * item.unitPrice) / 100.0;
+      categoryMap[catName] = (categoryMap[catName] ?? 0.0) + itemTotal;
     }
-    final categoryLabels = categoryMap.keys.take(5).toList();
+
+    final categoryLabels = categoryMap.isEmpty
+        ? <String>[]
+        : categoryMap.keys.take(5).toList();
     final categoryData = categoryLabels
         .map((cat) => categoryMap[cat] ?? 0.0)
         .toList();
 
-    final topProducts = productRows.take(5).map((tuple) {
-      final p = tuple.$1;
-      final s = tuple.$2;
-      final c = tuple.$3;
+    final productSalesMap =
+        <
+          String,
+          ({
+            String name,
+            String category,
+            int totalQuantitySold,
+            int totalRevenuePaise,
+          })
+        >{};
+    for (final tuple in orderItemTuples) {
+      final item = tuple.$1;
+      final o = tuple.$2;
+      final p = tuple.$3;
+      final c = tuple.$4;
+
+      if (o != null) {
+        if (fromDate != null && o.createdAt.isBefore(fromDate)) continue;
+        if (toDate != null && o.createdAt.isAfter(toDate)) continue;
+      }
+
+      final pId = item.productId;
+      final name = p?.name ?? 'Unknown Product';
+      final categoryName = c?.name ?? 'General';
+      final current = productSalesMap[pId];
+
+      final qty = item.quantity;
+      final rev = item.quantity * item.unitPrice;
+
+      if (current == null) {
+        productSalesMap[pId] = (
+          name: name,
+          category: categoryName,
+          totalQuantitySold: qty,
+          totalRevenuePaise: rev,
+        );
+      } else {
+        productSalesMap[pId] = (
+          name: name,
+          category: categoryName,
+          totalQuantitySold: current.totalQuantitySold + qty,
+          totalRevenuePaise: current.totalRevenuePaise + rev,
+        );
+      }
+    }
+
+    final sortedTopSales = productSalesMap.values.toList()
+      ..sort((a, b) => b.totalQuantitySold.compareTo(a.totalQuantitySold));
+
+    final topProducts = sortedTopSales.take(5).map((p) {
       return {
-        'id': p.id,
         'name': p.name,
-        'category': c?.name ?? 'General',
-        'quantity': s?.quantity ?? 0,
-        'sellingPrice': p.sellingPrice,
+        'category': p.category,
+        'quantitySold': p.totalQuantitySold,
+        'totalRevenue': p.totalRevenuePaise,
       };
     }).toList();
 

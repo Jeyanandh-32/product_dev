@@ -89,6 +89,7 @@ abstract final class ProductsActions {
         imageUrl: imageUrl,
       );
 
+      productsTotalSignal.value = productsTotalSignal.value + 1;
       productsSignal.value = AsyncData([...currentProducts, product]);
       showToast('Product created successfully.', type: ToastType.success);
     } catch (e) {

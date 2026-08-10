@@ -79,6 +79,7 @@ abstract final class CountersActions {
         imageUrl: imageUrl,
       );
 
+      countersTotalSignal.value = countersTotalSignal.value + 1;
       countersSignal.value = AsyncData([...currentCounters, counter]);
       showToast('Counter created successfully.', type: ToastType.success);
     } catch (e) {

@@ -222,14 +222,14 @@ Future<void> refreshDashboardSignal() async {
           >[];
       for (var i = 0; i < rawTop.length; i++) {
         final map = rawTop[i] as Map<String, dynamic>;
-        final price = (map['sellingPrice'] as num?)?.toDouble() ?? 0.0;
-        final qty = map['quantity'] as int? ?? 0;
+        final totalRevPaise = (map['totalRevenue'] as num?)?.toDouble() ?? 0.0;
+        final qtySold = map['quantitySold'] as int? ?? 0;
         topList.add((
           rank: '${i + 1}',
           name: map['name'] as String? ?? '',
           category: map['category'] as String? ?? 'General',
-          units: '$qty in stock',
-          revenue: '₹ ${(price / 100.0).toStringAsFixed(2)}',
+          units: '$qtySold sold',
+          revenue: '₹ ${(totalRevPaise / 100.0).toStringAsFixed(2)}',
         ));
       }
 
@@ -322,12 +322,10 @@ Future<void> refreshDashboardSignal() async {
           paidPercent: paidPct,
           freePercent: freePct,
         );
-        if (catLabels.isNotEmpty) {
-          dashboardCategorySalesSignal.value = (
-            labels: catLabels,
-            data: catData,
-          );
-        }
+        dashboardCategorySalesSignal.value = (
+          labels: catLabels,
+          data: catData,
+        );
         if (hourlyData.isNotEmpty) {
           dashboardHourlyOrdersSignal.value = (
             labels: hourlyLabels,
