@@ -102,7 +102,7 @@ abstract class $ProductCreate {
   String get categoryId;
 
   @StringField(minLength: 1, description: 'Counter ID')
-  String get counterId;
+  String? get counterId;
 
   @DoubleField(minimum: 0, description: 'Base price')
   double get basePrice;

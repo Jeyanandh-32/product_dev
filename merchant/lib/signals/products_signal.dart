@@ -59,7 +59,7 @@ abstract final class ProductsActions {
   static Future<void> create({
     required String name,
     required String categoryId,
-    required String counterId,
+    String? counterId,
     required double basePrice,
     required double sellingPrice,
     double? taxRate,

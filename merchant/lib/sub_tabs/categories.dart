@@ -13,6 +13,7 @@ import 'package:merchant/components/table_pagination.dart';
 import 'package:merchant/exceptions/api_exception.dart';
 import 'package:merchant/signals/categories_signal.dart';
 import 'package:merchant/signals/navigation_signal.dart';
+import 'package:merchant/signals/products_signal.dart';
 import 'package:merchant/signals/stores_signal.dart';
 import 'package:models/models.dart';
 import 'package:web/web.dart' as web;
@@ -67,7 +68,8 @@ class _CategoriesState extends SignalState<Categories> {
   }
 
   int _getAssociatedCount(Category category) {
-    return (category.name.hashCode.abs() % 900) + 100;
+    final products = productsSignal.value.value ?? [];
+    return products.where((prod) => prod.category?.id == category.id).length;
   }
 
   @override
@@ -172,13 +174,14 @@ class _CategoriesState extends SignalState<Categories> {
                         refreshCategoriesSignal();
                       },
                     ),
-                    AddButton(
-                      name: 'Add Category',
-                      onClick: () {
-                        editingCategorySignal.value = null;
-                        activeModalSignal.value = ActiveModal.addCategory;
-                      },
-                    ),
+                    if (store != null)
+                      AddButton(
+                        name: 'Add Category',
+                        onClick: () {
+                          editingCategorySignal.value = null;
+                          activeModalSignal.value = ActiveModal.addCategory;
+                        },
+                      ),
                   ],
                 ),
               ],

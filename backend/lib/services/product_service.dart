@@ -1,5 +1,7 @@
 import 'package:backend/config/database.dart';
 import 'package:backend/extensions/product_row_extension.dart';
+import 'package:backend/repositories/category_repository.dart';
+import 'package:backend/repositories/counter_repository.dart';
 import 'package:backend/repositories/product_repository.dart';
 import 'package:backend/repositories/stock_repository.dart';
 import 'package:backend/utils/request_body.dart';
@@ -9,10 +11,14 @@ class ProductService {
   const ProductService({
     required this._productRepo,
     required this._stockRepo,
+    required this._categoryRepo,
+    required this._counterRepo,
   });
 
   final ProductRepository _productRepo;
   final StockRepository _stockRepo;
+  final CategoryRepository _categoryRepo;
+  final CounterRepository _counterRepo;
 
   Future<Product> create({
     required String merchantId,
@@ -21,7 +27,7 @@ class ProductService {
   }) async {
     final name = body['name'] as String;
     final categoryId = body['categoryId'] as String;
-    final counterId = body['counterId'] as String;
+    final counterId = readOptionalString(body, 'counterId');
     final basePrice = ((body['basePrice'] as num).toDouble() * 100).round();
     final sellingPrice = ((body['sellingPrice'] as num).toDouble() * 100)
         .round();
@@ -52,7 +58,16 @@ class ProductService {
         storeId: storeId,
       );
 
-      return productRow.toProduct(stockRow: stockRow);
+      final categoryRow = await _categoryRepo.getById(categoryId);
+      final counterRow = counterId != null
+          ? await _counterRepo.getById(counterId)
+          : null;
+
+      return productRow.toProduct(
+        stockRow: stockRow,
+        categoryRow: categoryRow,
+        counterRow: counterRow,
+      );
     });
   }
 }

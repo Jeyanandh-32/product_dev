@@ -179,13 +179,14 @@ class _ProductsState extends SignalState<Products> {
                         refreshProductsSignal();
                       },
                     ),
-                    AddButton(
-                      name: 'Add Product',
-                      onClick: () {
-                        editingProductSignal.value = null;
-                        activeModalSignal.value = ActiveModal.addProduct;
-                      },
-                    ),
+                    if (store != null)
+                      AddButton(
+                        name: 'Add Product',
+                        onClick: () {
+                          editingProductSignal.value = null;
+                          activeModalSignal.value = ActiveModal.addProduct;
+                        },
+                      ),
                   ],
                 ),
               ],

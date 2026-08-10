@@ -60,23 +60,20 @@ class _AddEditProductModalState extends SignalState<AddEditProductModal> {
       showToast('Category is required.');
       return;
     }
-    if (_counterId.isEmpty) {
-      showToast('Counter is required.');
-      return;
-    }
 
     activeModalSignal.value = ActiveModal.none;
 
     final basePrice = double.tryParse(_basePrice.trim()) ?? 0.0;
     final sellingPrice = double.tryParse(_sellingPrice.trim()) ?? 0.0;
     final taxRate = double.tryParse(_taxRate.trim()) ?? 0.0;
+    final counterIdParam = _counterId.trim().isEmpty ? null : _counterId;
 
     if (component.product != null) {
       ProductsActions.updateProduct(
         id: component.product!.id,
         name: _name.trim(),
         categoryId: _categoryId,
-        counterId: _counterId,
+        counterId: counterIdParam,
         basePrice: basePrice,
         sellingPrice: sellingPrice,
         taxRate: taxRate,
@@ -89,7 +86,7 @@ class _AddEditProductModalState extends SignalState<AddEditProductModal> {
       ProductsActions.create(
         name: _name.trim(),
         categoryId: _categoryId,
-        counterId: _counterId,
+        counterId: counterIdParam,
         basePrice: basePrice,
         sellingPrice: sellingPrice,
         taxRate: taxRate,
@@ -196,12 +193,18 @@ class _AddEditProductModalState extends SignalState<AddEditProductModal> {
                 ]),
               ]),
 
-              // Counter dropdown
+              // Counter dropdown (Optional)
               fieldset(classes: 'fieldset w-full mb-4', [
                 label(
                   htmlFor: 'counterId',
-                  classes: 'label text-[14px] font-semibold text-gray-500',
-                  [.text('Counter')],
+                  classes:
+                      'label text-[14px] font-semibold text-gray-500 flex justify-between',
+                  [
+                    .text('Counter'),
+                    span(classes: 'text-xs text-gray-400 font-normal', [
+                      .text('(Optional)'),
+                    ]),
+                  ],
                 ),
                 details(classes: 'dropdown w-full', [
                   summary(
@@ -211,12 +214,12 @@ class _AddEditProductModalState extends SignalState<AddEditProductModal> {
                       span([
                         .text(
                           _counterId.isEmpty
-                              ? 'Select Counter'
+                              ? 'Select Counter (Optional)'
                               : (counters.any((c) => c.id == _counterId)
                                     ? counters
                                           .firstWhere((c) => c.id == _counterId)
                                           .name
-                                    : 'Select Counter'),
+                                    : 'Select Counter (Optional)'),
                         ),
                       ]),
                       ChevronDown(classes: 'w-4 h-4 opacity-50'),
@@ -226,13 +229,26 @@ class _AddEditProductModalState extends SignalState<AddEditProductModal> {
                     classes:
                         'dropdown-content menu bg-base-100 rounded-box z-50 mt-1 p-2 shadow-sm border border-border-light w-full max-h-48 overflow-y-auto',
                     [
-                      if (counters.isEmpty)
-                        li([
-                          span(classes: 'text-gray-400 text-sm p-2', [
-                            .text('No counters available'),
-                          ]),
-                        ])
-                      else
+                      li([
+                        a(
+                          href: '#',
+                          classes:
+                              'rounded-md hover:bg-neutral py-2 px-3 block text-gray-400 ${_counterId.isEmpty ? 'bg-neutral font-semibold' : ''}',
+                          onClick: () {
+                            setState(() {
+                              _counterId = '';
+                            });
+                            final activeElement = web.document.activeElement;
+                            if (activeElement != null) {
+                              (activeElement as web.HTMLElement).blur();
+                              final details = activeElement.closest('details');
+                              details?.removeAttribute('open');
+                            }
+                          },
+                          [.text('None (No Counter)')],
+                        ),
+                      ]),
+                      if (counters.isNotEmpty)
                         for (final cnt in counters)
                           li([
                             a(

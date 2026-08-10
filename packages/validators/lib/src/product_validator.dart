@@ -18,9 +18,6 @@ class ProductValidator {
           if (details.contains('"categoryId"')) {
             return 'Category ID is required.';
           }
-          if (details.contains('"counterId"')) {
-            return 'Counter ID is required.';
-          }
           if (details.contains('"basePrice"')) {
             return 'Base price is required.';
           }

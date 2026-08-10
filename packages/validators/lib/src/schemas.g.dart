@@ -552,7 +552,7 @@ base class _MerchantRegisterTypeFactory
             ),
             'password': $Schema.string(
               description: 'Password',
-              pattern: r'(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}',
+              pattern: r'^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}$',
             ),
           },
           required: [
@@ -632,7 +632,7 @@ base class _MerchantLoginTypeFactory extends SchemanticType<MerchantLogin> {
             ),
             'password': $Schema.string(
               description: 'Password',
-              pattern: r'(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}',
+              pattern: r'^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}$',
             ),
           },
           required: ['email', 'password'],
@@ -652,7 +652,7 @@ base class ProductCreate {
   ProductCreate({
     required String name,
     required String categoryId,
-    required String counterId,
+    String? counterId,
     required double basePrice,
     required double sellingPrice,
     String? sku,
@@ -664,7 +664,7 @@ base class ProductCreate {
     _json = {
       'name': name,
       'categoryId': categoryId,
-      'counterId': counterId,
+      'counterId': ?counterId,
       'basePrice': basePrice,
       'sellingPrice': sellingPrice,
       'sku': ?sku,
@@ -697,12 +697,16 @@ base class ProductCreate {
     _json['categoryId'] = value;
   }
 
-  String get counterId {
-    return _json['counterId'] as String;
+  String? get counterId {
+    return _json['counterId'] as String?;
   }
 
-  set counterId(String value) {
-    _json['counterId'] = value;
+  set counterId(String? value) {
+    if (value == null) {
+      _json.remove('counterId');
+    } else {
+      _json['counterId'] = value;
+    }
   }
 
   double get basePrice {
@@ -836,13 +840,7 @@ base class _ProductCreateTypeFactory extends SchemanticType<ProductCreate> {
             ),
             'taxRate': $Schema.number(description: 'Tax rate', minimum: 0),
           },
-          required: [
-            'name',
-            'categoryId',
-            'counterId',
-            'basePrice',
-            'sellingPrice',
-          ],
+          required: ['name', 'categoryId', 'basePrice', 'sellingPrice'],
         )
         .value,
     dependencies: [],
@@ -1737,7 +1735,7 @@ base class _TerminalCreateTypeFactory extends SchemanticType<TerminalCreate> {
             'password': $Schema.string(
               description: 'Terminal password',
               minLength: 6,
-              pattern: r'(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}',
+              pattern: r'^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}$',
             ),
           },
           required: ['name', 'password'],
@@ -1813,7 +1811,7 @@ base class _TerminalLoginTypeFactory extends SchemanticType<TerminalLogin> {
             'password': $Schema.string(
               description: 'Terminal password',
               minLength: 6,
-              pattern: r'(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}',
+              pattern: r'^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}$',
             ),
           },
           required: ['code', 'password'],
@@ -1905,7 +1903,7 @@ base class _TerminalUpdateTypeFactory extends SchemanticType<TerminalUpdate> {
             'password': $Schema.string(
               description: 'Terminal password',
               minLength: 6,
-              pattern: r'(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}',
+              pattern: r'^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}$',
             ),
             'isActive': $Schema.boolean(description: 'Is active status'),
           },

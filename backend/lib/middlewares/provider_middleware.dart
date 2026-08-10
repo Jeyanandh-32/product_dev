@@ -24,6 +24,8 @@ Middleware providerMiddleware() {
             (context) => ProductService(
               productRepo: context.read<ProductRepository>(),
               stockRepo: context.read<StockRepository>(),
+              categoryRepo: context.read<CategoryRepository>(),
+              counterRepo: context.read<CounterRepository>(),
             ),
           ),
         )

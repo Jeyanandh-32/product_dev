@@ -98,7 +98,7 @@ CREATE TABLE IF NOT EXISTS products (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
     store_id UUID NOT NULL REFERENCES stores (id) ON DELETE CASCADE,
     category_id UUID NOT NULL REFERENCES categories (id) ON DELETE RESTRICT,
-    counter_id UUID NOT NULL REFERENCES counters (id) ON DELETE RESTRICT,
+    counter_id UUID REFERENCES counters (id) ON DELETE SET NULL,
     name VARCHAR(255) NOT NULL,
     base_price INT NOT NULL,
     tax_rate NUMERIC(5, 2) NOT NULL DEFAULT 0.00,

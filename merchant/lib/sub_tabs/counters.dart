@@ -13,6 +13,7 @@ import 'package:merchant/components/table_pagination.dart';
 import 'package:merchant/exceptions/api_exception.dart';
 import 'package:merchant/signals/counters_signal.dart';
 import 'package:merchant/signals/navigation_signal.dart';
+import 'package:merchant/signals/products_signal.dart';
 import 'package:merchant/signals/stores_signal.dart';
 import 'package:models/models.dart';
 import 'package:web/web.dart' as web;
@@ -67,7 +68,8 @@ class _CountersState extends SignalState<Counters> {
   }
 
   int _getAssociatedCount(Counter counter) {
-    return (counter.name.hashCode.abs() % 900) + 100;
+    final products = productsSignal.value.value ?? [];
+    return products.where((prod) => prod.counter?.id == counter.id).length;
   }
 
   @override
@@ -168,13 +170,14 @@ class _CountersState extends SignalState<Counters> {
                         refreshCountersSignal();
                       },
                     ),
-                    AddButton(
-                      name: 'Add Counter',
-                      onClick: () {
-                        editingCounterSignal.value = null;
-                        activeModalSignal.value = ActiveModal.addCounter;
-                      },
-                    ),
+                    if (store != null)
+                      AddButton(
+                        name: 'Add Counter',
+                        onClick: () {
+                          editingCounterSignal.value = null;
+                          activeModalSignal.value = ActiveModal.addCounter;
+                        },
+                      ),
                   ],
                 ),
               ],

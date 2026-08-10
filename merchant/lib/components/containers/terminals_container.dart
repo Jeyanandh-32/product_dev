@@ -63,13 +63,14 @@ class _TerminalsContainerState extends SignalState<TerminalsContainer> {
               Searchbar(
                 placeholder: 'Search Terminal...',
               ),
-              AddButton(
-                name: 'Add Terminal',
-                onClick: () {
-                  editingTerminalSignal.value = null;
-                  activeModalSignal.value = ActiveModal.addTerminal;
-                },
-              ),
+              if (selectedStore != null)
+                AddButton(
+                  name: 'Add Terminal',
+                  onClick: () {
+                    editingTerminalSignal.value = null;
+                    activeModalSignal.value = ActiveModal.addTerminal;
+                  },
+                ),
             ]),
           ],
         ),

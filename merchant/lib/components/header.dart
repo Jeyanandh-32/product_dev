@@ -143,13 +143,7 @@ class _HeaderState extends SignalState<Header> {
                     ),
               ],
             ),
-          ])
-        else if (!hideStoreSelector)
-          div(
-            classes:
-                'h-8 w-28 sm:w-36 rounded-full bg-neutral/60 border border-border-light animate-pulse shrink-0',
-            [],
-          ),
+          ]),
       ],
     );
   }

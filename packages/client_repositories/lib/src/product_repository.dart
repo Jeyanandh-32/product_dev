@@ -7,7 +7,7 @@ abstract final class ProductRepository {
     required String storeId,
     required String name,
     required String categoryId,
-    required String counterId,
+    String? counterId,
     required double basePrice,
     required double sellingPrice,
     double? taxRate,
@@ -23,7 +23,7 @@ abstract final class ProductRepository {
         data: {
           'name': name,
           'categoryId': categoryId,
-          'counterId': counterId,
+          'counterId': ?counterId,
           'basePrice': basePrice,
           'sellingPrice': sellingPrice,
           'taxRate': ?taxRate,

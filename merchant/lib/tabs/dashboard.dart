@@ -289,12 +289,12 @@ class _DashboardState extends SignalState<Dashboard> {
     final storesState = storesSignal.value;
     final selectedStore = storeSignal.value;
 
-    // 1. Guard: If stores are loading or no store is selected yet, show store loading state
-    if (storesState.isLoading || selectedStore == null) {
+    // 1. Guard: If stores are actively loading
+    if (storesState.isLoading) {
       return Loading(text: 'Loading Analytics...', fullScreen: false);
     }
 
-    // 2. Guard: If stores list is empty (no stores created yet)
+    // 2. Guard: If stores list is empty (new merchant with no stores created yet)
     final storeList = storesState.value ?? [];
     if (storeList.isEmpty) {
       return div(
@@ -302,7 +302,6 @@ class _DashboardState extends SignalState<Dashboard> {
             'flex-1 flex flex-col items-center justify-center bg-neutral/30 p-8 space-y-3',
         [
           ShoppingBag(classes: 'w-12 h-12 text-gray-400 mb-2'),
-
           h3(classes: 'text-lg font-bold text-gray-800', [
             .text('No Stores Found'),
           ]),
@@ -313,6 +312,11 @@ class _DashboardState extends SignalState<Dashboard> {
           ]),
         ],
       );
+    }
+
+    // 3. Guard: If stores exist but no store selected yet
+    if (selectedStore == null) {
+      return Loading(text: 'Loading Analytics...', fullScreen: false);
     }
 
     // 3. Trigger analytics load if selected store changed
