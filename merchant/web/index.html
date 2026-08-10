@@ -66,31 +66,35 @@
                 }
 
                 const existingChart = window._charts[canvasId];
+                if (existingChart && existingChart.canvas && document.body.contains(existingChart.canvas) && existingChart.config.type === type) {
+                    existingChart.data.labels = data.labels;
+                    existingChart.data.datasets = data.datasets;
+                    if (options) {
+                        existingChart.options = Object.assign({}, existingChart.options, options);
+                    }
+                    existingChart.update();
+                    return existingChart;
+                }
+
                 if (existingChart) {
                     try { existingChart.destroy(); } catch(e) {}
                     delete window._charts[canvasId];
                 }
 
                 options.animation = {
-                    duration: 250,
+                    duration: 350,
                     easing: 'easeOutQuart'
                 };
                 options.responsiveAnimationDuration = 0;
 
-                ctx.style.opacity = '0';
-                ctx.style.transition = 'opacity 0.2s ease-in-out';
-
-                requestAnimationFrame(function() {
-                    const chart = new Chart(ctx, {
-                        type: type,
-                        data: data,
-                        options: options
-                    });
-                    window._charts[canvasId] = chart;
-                    ctx.style.opacity = '1';
+                const chart = new Chart(ctx, {
+                    type: type,
+                    data: data,
+                    options: options
                 });
 
-                return null;
+                window._charts[canvasId] = chart;
+                return chart;
             };
         </script>
 
