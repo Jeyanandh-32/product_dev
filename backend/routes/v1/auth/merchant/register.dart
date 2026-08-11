@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:backend/extensions/merchant_row_extension.dart';
+import 'package:backend/extensions/request_context_extension.dart';
 import 'package:backend/repositories/merchant_repository.dart';
 import 'package:backend/services/auth_service.dart';
 import 'package:backend/utils/constraint_errors.dart';
@@ -18,46 +19,17 @@ Future<Response> onRequest(RequestContext context) async {
 Future<Response> _onPost(RequestContext context) async {
   final repo = context.read<MerchantRepository>();
 
-  final jsonBody = await context.request.json();
-
-  if (jsonBody is! Map<String, Object?>) return invalidBody();
-
-  final body = jsonBody;
-
-  final name = body['name'] as String?;
-  final businessName = body['businessName'] as String?;
-  final whatsappNumber = body['whatsappNumber'] as String?;
-  final email = (body['email'] as String?)?.trim().toLowerCase();
-  final password = (body['password'] as String?)?.trim();
-
-  final errorMessage = await MerchantValidator.register({
-    'name': name,
-    'businessName': businessName,
-    'whatsappNumber': whatsappNumber,
-    'email': email,
-    'password': password,
-  });
-
-  if (errorMessage != null) {
-    return badRequest(message: errorMessage);
-  }
-
-  final input = MerchantRegister.fromJson({
-    'name': name,
-    'businessName': businessName,
-    'whatsappNumber': whatsappNumber,
-    'email': email,
-    'password': password,
-  });
-
-  final passwordHash = await PasswordService.hash(input.password);
-
   try {
+    final body = await context.validateBody(MerchantValidator.register);
+    final input = MerchantRegister.fromJson(body);
+
+    final passwordHash = await PasswordService.hash(input.password);
+
     final merchantRow = await repo.create(
       name: input.name.trim(),
       businessName: input.businessName.trim(),
       whatsappNumber: input.whatsappNumber.trim(),
-      email: input.email,
+      email: input.email.trim().toLowerCase(),
       passwordHash: passwordHash,
     );
 
@@ -84,6 +56,8 @@ Future<Response> _onPost(RequestContext context) async {
         'merchant': merchantRow.toMerchant(),
       },
     );
+  } on ResponseException catch (e) {
+    return e.response;
   } catch (e) {
     return tryConstraintError(e) ?? error(message: e.toString());
   }

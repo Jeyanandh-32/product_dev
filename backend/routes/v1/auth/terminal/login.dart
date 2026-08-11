@@ -1,3 +1,4 @@
+import 'package:backend/extensions/request_context_extension.dart';
 import 'package:backend/extensions/terminal_row_extension.dart';
 import 'package:backend/repositories/terminal_repository.dart';
 import 'package:backend/services/auth_service.dart';
@@ -15,24 +16,11 @@ Future<Response> onRequest(RequestContext context) async {
 Future<Response> _onPost(RequestContext context) async {
   final repo = context.read<TerminalRepository>();
 
-  final jsonBody = await context.request.json();
-
-  if (jsonBody is! Map<String, Object?>) return invalidBody();
-
-  final body = jsonBody;
-
-  final code = (body['code'] as String?)?.trim().toUpperCase();
-  final password = (body['password'] as String?)?.trim();
-
-  final errorMessage = await TerminalValidator.login({
-    'code': code,
-    'password': password,
-  });
-
-  if (errorMessage != null) return badRequest(message: errorMessage);
-
   try {
-    final terminalRow = await repo.getByCode(code!);
+    final body = await context.validateBody(TerminalValidator.login);
+    final input = TerminalLogin.fromJson(body);
+
+    final terminalRow = await repo.getByCode(input.code.trim().toUpperCase());
 
     if (terminalRow == null) {
       return badRequest(message: 'Invalid Terminal code or password.');
@@ -43,7 +31,7 @@ Future<Response> _onPost(RequestContext context) async {
     }
 
     final isValid = await PasswordService.verify(
-      password!,
+      input.password.trim(),
       terminalRow.passwordHash,
     );
 
@@ -63,6 +51,8 @@ Future<Response> _onPost(RequestContext context) async {
         'accessToken': accessToken,
       },
     );
+  } on ResponseException catch (e) {
+    return e.response;
   } catch (e) {
     return error(message: e.toString());
   }
