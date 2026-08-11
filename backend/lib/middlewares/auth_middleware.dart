@@ -80,3 +80,6 @@ Middleware merchantTerminalAuthMiddleware({
   allowedRoles: [.merchant, .terminal],
   roleRestrictedMethods: roleRestrictedMethods,
 );
+
+Middleware customerAuthMiddleware() =>
+    authMiddleware(allowedRoles: [.customer]);

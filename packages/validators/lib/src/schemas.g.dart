@@ -1912,3 +1912,97 @@ base class _TerminalUpdateTypeFactory extends SchemanticType<TerminalUpdate> {
     dependencies: [],
   );
 }
+
+base class CustomerRegister {
+  /// Creates a [CustomerRegister] from a JSON map.
+  factory CustomerRegister.fromJson(Map<String, dynamic> json) =>
+      $schema.parse(json);
+
+  CustomerRegister._(this._json);
+
+  CustomerRegister({
+    required String name,
+    required String mobileNumber,
+    required String pin,
+  }) {
+    _json = {'name': name, 'mobileNumber': mobileNumber, 'pin': pin};
+  }
+
+  late final Map<String, dynamic> _json;
+
+  /// The JSON schema and type descriptor for [CustomerRegister].
+  static const SchemanticType<CustomerRegister> $schema =
+      _CustomerRegisterTypeFactory();
+
+  String get name {
+    return _json['name'] as String;
+  }
+
+  set name(String value) {
+    _json['name'] = value;
+  }
+
+  String get mobileNumber {
+    return _json['mobileNumber'] as String;
+  }
+
+  set mobileNumber(String value) {
+    _json['mobileNumber'] = value;
+  }
+
+  String get pin {
+    return _json['pin'] as String;
+  }
+
+  set pin(String value) {
+    _json['pin'] = value;
+  }
+
+  @override
+  String toString() {
+    return _json.toString();
+  }
+
+  /// Serializes this [CustomerRegister] to a JSON map.
+  Map<String, dynamic> toJson() {
+    return _json;
+  }
+}
+
+base class _CustomerRegisterTypeFactory
+    extends SchemanticType<CustomerRegister> {
+  const _CustomerRegisterTypeFactory();
+
+  @override
+  CustomerRegister parse(Object? json) {
+    return CustomerRegister._(json as Map<String, dynamic>);
+  }
+
+  @override
+  JsonSchemaMetadata get schemaMetadata => JsonSchemaMetadata(
+    name: 'CustomerRegister',
+    definition: $Schema
+        .object(
+          properties: {
+            'name': $Schema.string(
+              description: 'Full Name',
+              minLength: 1,
+              maxLength: 255,
+            ),
+            'mobileNumber': $Schema.string(
+              description: '10-Digit Mobile Number',
+              pattern: r'^[0-9]{10}$',
+            ),
+            'pin': $Schema.string(
+              description: '6-Digit Security PIN',
+              minLength: 6,
+              maxLength: 6,
+              pattern: r'^[0-9]{6}$',
+            ),
+          },
+          required: ['name', 'mobileNumber', 'pin'],
+        )
+        .value,
+    dependencies: [],
+  );
+}

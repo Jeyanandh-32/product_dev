@@ -108,8 +108,7 @@ class _FormFieldState extends State<FormField> {
             onInput: _handleInput,
             onChange: _handleInput,
             events: {'keydown': _handleKeyDown},
-            classes:
-                'input validator h-11 border border-border-medium w-full rounded-lg pr-10',
+            classes: 'input validator h-11 border border-border-medium w-full rounded-lg pr-10',
             attributes: component.attributes,
           ),
           button(
@@ -122,10 +121,7 @@ class _FormFieldState extends State<FormField> {
               });
             },
             [
-              if (_obscureText)
-                EyeOff(classes: 'w-4.5 h-4.5')
-              else
-                Eye(classes: 'w-4.5 h-4.5'),
+              if (_obscureText) EyeOff(classes: 'w-4.5 h-4.5') else Eye(classes: 'w-4.5 h-4.5'),
             ],
           ),
         ])
@@ -137,8 +133,7 @@ class _FormFieldState extends State<FormField> {
           onInput: _handleInput,
           onChange: _handleInput,
           events: {'keydown': _handleKeyDown},
-          classes:
-              'input validator h-11 border border-border-medium w-full rounded-lg',
+          classes: 'input validator h-11 border border-border-medium w-full rounded-lg',
           attributes: component.attributes,
         ),
       p(classes: 'validator-hint hidden', [

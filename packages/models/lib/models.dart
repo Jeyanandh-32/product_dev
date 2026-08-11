@@ -2,6 +2,7 @@ library;
 
 export 'src/category/category.dart';
 export 'src/counter/counter.dart';
+export 'src/customer/customer.dart';
 export 'src/merchant/merchant.dart';
 export 'src/merchant/merchant_settings.dart';
 

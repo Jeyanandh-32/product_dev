@@ -18,6 +18,7 @@ extension DatabaseSchemaSchema on Database<DatabaseSchema> {
     _$StockRow._$table,
     _$StockTransactionRow._$table,
     _$TerminalRow._$table,
+    _$CustomerRow._$table,
     _$OrderRow._$table,
     _$OrderItemRow._$table,
   ];
@@ -48,6 +49,9 @@ extension DatabaseSchemaSchema on Database<DatabaseSchema> {
 
   Table<TerminalRow> get terminals =>
       $ForGeneratedCode.declareTable(this, _$TerminalRow._$table);
+
+  Table<CustomerRow> get customers =>
+      $ForGeneratedCode.declareTable(this, _$CustomerRow._$table);
 
   Table<OrderRow> get orders =>
       $ForGeneratedCode.declareTable(this, _$OrderRow._$table);
@@ -7293,6 +7297,665 @@ extension InsertOnConflictSingleTerminalRowExt
   );
 }
 
+final class _$CustomerRow extends CustomerRow {
+  _$CustomerRow._(
+    this.id,
+    this.name,
+    this.mobileNumber,
+    this.pinHash,
+    this.createdAt,
+    this.updatedAt,
+  );
+
+  @override
+  final String id;
+
+  @override
+  final String name;
+
+  @override
+  final String mobileNumber;
+
+  @override
+  final String pinHash;
+
+  @override
+  final DateTime createdAt;
+
+  @override
+  final DateTime updatedAt;
+
+  static final _$table = $ForGeneratedCode.tableDefinition(
+    tableName: 'customers',
+    columns: <String>[
+      'id',
+      'name',
+      'mobile_number',
+      'pin_hash',
+      'created_at',
+      'updated_at',
+    ],
+    columnInfo: [
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: true,
+        defaultValue: (kind: 'raw', value: 'gen_random_uuid()'),
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: true,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: true,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: true,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.dateTime,
+        isNotNull: true,
+        defaultValue: (kind: 'datetime', value: 'now'),
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.dateTime,
+        isNotNull: true,
+        defaultValue: (kind: 'datetime', value: 'now'),
+        autoIncrement: false,
+        overrides: [],
+      ),
+    ],
+    primaryKey: <String>['id'],
+    unique: <List<String>>[
+      ['mobile_number'],
+    ],
+    foreignKeys: [],
+    readRow: _$CustomerRow._$fromDatabase,
+  );
+
+  static CustomerRow? _$fromDatabase(RowReader row) {
+    final id = row.readString();
+    final name = row.readString();
+    final mobileNumber = row.readString();
+    final pinHash = row.readString();
+    final createdAt = row.readDateTime();
+    final updatedAt = row.readDateTime();
+    if (id == null &&
+        name == null &&
+        mobileNumber == null &&
+        pinHash == null &&
+        createdAt == null &&
+        updatedAt == null) {
+      return null;
+    }
+    return _$CustomerRow._(
+      id!,
+      name!,
+      mobileNumber!,
+      pinHash!,
+      createdAt!,
+      updatedAt!,
+    );
+  }
+
+  @override
+  String toString() =>
+      'CustomerRow(id: "$id", name: "$name", mobileNumber: "$mobileNumber", pinHash: "$pinHash", createdAt: "$createdAt", updatedAt: "$updatedAt")';
+}
+
+/// Extension methods for table defined in [CustomerRow].
+extension TableCustomerRowExt on Table<CustomerRow> {
+  /// Insert row into the `customers` table.
+  ///
+  /// Returns a [InsertSingle] statement on which `.execute` must be
+  /// called for the row to be inserted.
+  InsertSingle<CustomerRow> insert({
+    Expr<String>? id,
+    required Expr<String> name,
+    required Expr<String> mobileNumber,
+    required Expr<String> pinHash,
+    Expr<DateTime>? createdAt,
+    Expr<DateTime>? updatedAt,
+  }) => $ForGeneratedCode.insertInto(
+    table: this,
+    values: [id, name, mobileNumber, pinHash, createdAt, updatedAt],
+  );
+
+  /// Insert row into the `customers` table.
+  ///
+  /// Returns a [InsertSingle] statement on which `.execute` must be
+  /// called for the row to be inserted.
+  InsertSingle<CustomerRow> insertValue({
+    String? id,
+    required String name,
+    required String mobileNumber,
+    required String pinHash,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) => $ForGeneratedCode.insertInto(
+    table: this,
+    values: [
+      id?.asExpr,
+      name.asExpr,
+      mobileNumber.asExpr,
+      pinHash.asExpr,
+      createdAt?.asExpr,
+      updatedAt?.asExpr,
+    ],
+  );
+
+  /// Bulk insert rows into the `customers` table.
+  ///
+  /// This method takes an `Iterable<T>` and requires that you provide
+  /// a _mapping function_ from `T` to each column to be inserted.
+  ///
+  /// If a mapping function is omitted, the _default value_ will be
+  /// inserted, or `NULL` if column is nullable and as no default value.
+  /// To explicitely insert `NULL`, use a _mapping function_ that maps
+  /// `T` to `null`.
+  ///
+  /// > [!NOTE]
+  /// > This method aims utilize database specific bulk insertion logic
+  /// > to ensure good performance. Database adapters may pipeline bulk
+  /// > insertions through multiple statements inside a transaction.
+  ///
+  /// Returns a [Insert] statement on which `.execute` must be
+  /// called for the rows to be inserted.
+  Insert<CustomerRow> insertValuesMapped<T>(
+    Iterable<T> rows, {
+    String Function(T row)? id,
+    required String Function(T row) name,
+    required String Function(T row) mobileNumber,
+    required String Function(T row) pinHash,
+    DateTime Function(T row)? createdAt,
+    DateTime Function(T row)? updatedAt,
+  }) => $ForGeneratedCode.insertValuesMapped(
+    table: this,
+    rows: rows,
+    mappings: [id, name, mobileNumber, pinHash, createdAt, updatedAt],
+  );
+
+  /// Delete a single row from the `customers` table, specified by
+  /// _primary key_.
+  ///
+  /// Returns a [DeleteSingle] statement on which `.execute()` must be
+  /// called for the row to be deleted.
+  ///
+  /// To delete multiple rows, using `.where()` to filter which rows
+  /// should be deleted. If you wish to delete all rows, use
+  /// `.where((_) => toExpr(true)).delete()`.
+  DeleteSingle<CustomerRow> delete(String id) =>
+      $ForGeneratedCode.deleteSingle(byKey(id), _$CustomerRow._$table);
+}
+
+/// Extension methods for building queries against the `customers` table.
+extension QueryCustomerRowExt on Query<(Expr<CustomerRow>,)> {
+  /// Lookup a single row in `customers` table using the _primary key_.
+  ///
+  /// Returns a [QuerySingle] object, which returns at-most one row,
+  /// when `.fetch()` is called.
+  QuerySingle<(Expr<CustomerRow>,)> byKey(String id) =>
+      where((customerRow) => customerRow.id.equalsValue(id)).first;
+
+  /// Update all rows in the `customers` table matching this [Query].
+  ///
+  /// The changes to be applied to each row matching this [Query] are
+  /// defined using the [updateBuilder], which is given an [Expr]
+  /// representation of the row being updated and a `set` function to
+  /// specify which fields should be updated. The result of the `set`
+  /// function should always be returned from the `updateBuilder`.
+  ///
+  /// Returns an [Update] statement on which `.execute()` must be called
+  /// for the rows to be updated.
+  ///
+  /// **Example:** decrementing `1` from the `value` field for each row
+  /// where `value > 0`.
+  /// ```dart
+  /// await db.mytable
+  ///   .where((row) => row.value > toExpr(0))
+  ///   .update((row, set) => set(
+  ///     value: row.value - toExpr(1),
+  ///   ))
+  ///   .execute();
+  /// ```
+  ///
+  /// > [!WARNING]
+  /// > The `updateBuilder` callback does not make the update, it builds
+  /// > the expressions for updating the rows. You should **never** invoke
+  /// > the `set` function more than once, and the result should always
+  /// > be returned immediately.
+  Update<CustomerRow> update(
+    UpdateSet<CustomerRow> Function(
+      Expr<CustomerRow> customerRow,
+      UpdateSet<CustomerRow> Function({
+        Expr<String> id,
+        Expr<String> name,
+        Expr<String> mobileNumber,
+        Expr<String> pinHash,
+        Expr<DateTime> createdAt,
+        Expr<DateTime> updatedAt,
+      })
+      set,
+    )
+    updateBuilder,
+  ) => $ForGeneratedCode.update<CustomerRow>(
+    this,
+    _$CustomerRow._$table,
+    (customerRow) => updateBuilder(
+      customerRow,
+      ({
+        Expr<String>? id,
+        Expr<String>? name,
+        Expr<String>? mobileNumber,
+        Expr<String>? pinHash,
+        Expr<DateTime>? createdAt,
+        Expr<DateTime>? updatedAt,
+      }) => $ForGeneratedCode.buildUpdate<CustomerRow>([
+        id,
+        name,
+        mobileNumber,
+        pinHash,
+        createdAt,
+        updatedAt,
+      ]),
+    ),
+  );
+
+  /// Lookup a single row in `customers` table using the
+  /// `mobileNumber` field
+  ///
+  /// We know that lookup by the `mobileNumber` field returns
+  /// at-most one row because the [Unique] annotation in [CustomerRow].
+  ///
+  /// Returns a [QuerySingle] object, which returns at-most one row,
+  /// when `.fetch()` is called.
+  QuerySingle<(Expr<CustomerRow>,)> byMobileNumber(String mobileNumber) =>
+      where(
+        (customerRow) => customerRow.mobileNumber.equalsValue(mobileNumber),
+      ).first;
+
+  /// Delete all rows in the `customers` table matching this [Query].
+  ///
+  /// Returns a [Delete] statement on which `.execute()` must be called
+  /// for the rows to be deleted.
+  Delete<CustomerRow> delete() =>
+      $ForGeneratedCode.delete(this, _$CustomerRow._$table);
+}
+
+/// Extension methods for building point queries against the `customers` table.
+extension QuerySingleCustomerRowExt on QuerySingle<(Expr<CustomerRow>,)> {
+  /// Update the row (if any) in the `customers` table matching this
+  /// [QuerySingle].
+  ///
+  /// The changes to be applied to the row matching this [QuerySingle] are
+  /// defined using the [updateBuilder], which is given an [Expr]
+  /// representation of the row being updated and a `set` function to
+  /// specify which fields should be updated. The result of the `set`
+  /// function should always be returned from the `updateBuilder`.
+  ///
+  /// Returns an [UpdateSingle] statement on which `.execute()` must be
+  /// called for the row to be updated. The resulting statement will
+  /// **not** fail, if there are no rows matching this query exists.
+  ///
+  /// **Example:** decrementing `1` from the `value` field the row with
+  /// `id = 1`.
+  /// ```dart
+  /// await db.mytable
+  ///   .byKey(1)
+  ///   .update((row, set) => set(
+  ///     value: row.value - toExpr(1),
+  ///   ))
+  ///   .execute();
+  /// ```
+  ///
+  /// > [!WARNING]
+  /// > The `updateBuilder` callback does not make the update, it builds
+  /// > the expressions for updating the rows. You should **never** invoke
+  /// > the `set` function more than once, and the result should always
+  /// > be returned immediately.
+  UpdateSingle<CustomerRow> update(
+    UpdateSet<CustomerRow> Function(
+      Expr<CustomerRow> customerRow,
+      UpdateSet<CustomerRow> Function({
+        Expr<String> id,
+        Expr<String> name,
+        Expr<String> mobileNumber,
+        Expr<String> pinHash,
+        Expr<DateTime> createdAt,
+        Expr<DateTime> updatedAt,
+      })
+      set,
+    )
+    updateBuilder,
+  ) => $ForGeneratedCode.updateSingle<CustomerRow>(
+    this,
+    _$CustomerRow._$table,
+    (customerRow) => updateBuilder(
+      customerRow,
+      ({
+        Expr<String>? id,
+        Expr<String>? name,
+        Expr<String>? mobileNumber,
+        Expr<String>? pinHash,
+        Expr<DateTime>? createdAt,
+        Expr<DateTime>? updatedAt,
+      }) => $ForGeneratedCode.buildUpdate<CustomerRow>([
+        id,
+        name,
+        mobileNumber,
+        pinHash,
+        createdAt,
+        updatedAt,
+      ]),
+    ),
+  );
+
+  /// Delete the row (if any) in the `customers` table matching this [QuerySingle].
+  ///
+  /// Returns a [DeleteSingle] statement on which `.execute()` must be called
+  /// for the row to be deleted. The resulting statement will **not**
+  /// fail, if there are no rows matching this query exists.
+  DeleteSingle<CustomerRow> delete() =>
+      $ForGeneratedCode.deleteSingle(this, _$CustomerRow._$table);
+}
+
+/// Extension methods for expressions on a row in the `customers` table.
+extension ExpressionCustomerRowExt on Expr<CustomerRow> {
+  Expr<String> get id =>
+      $ForGeneratedCode.field(this, 0, $ForGeneratedCode.text);
+
+  Expr<String> get name =>
+      $ForGeneratedCode.field(this, 1, $ForGeneratedCode.text);
+
+  Expr<String> get mobileNumber =>
+      $ForGeneratedCode.field(this, 2, $ForGeneratedCode.text);
+
+  Expr<String> get pinHash =>
+      $ForGeneratedCode.field(this, 3, $ForGeneratedCode.text);
+
+  Expr<DateTime> get createdAt =>
+      $ForGeneratedCode.field(this, 4, $ForGeneratedCode.dateTime);
+
+  Expr<DateTime> get updatedAt =>
+      $ForGeneratedCode.field(this, 5, $ForGeneratedCode.dateTime);
+}
+
+extension ExpressionNullableCustomerRowExt on Expr<CustomerRow?> {
+  Expr<String?> get id =>
+      $ForGeneratedCode.field(this, 0, $ForGeneratedCode.text);
+
+  Expr<String?> get name =>
+      $ForGeneratedCode.field(this, 1, $ForGeneratedCode.text);
+
+  Expr<String?> get mobileNumber =>
+      $ForGeneratedCode.field(this, 2, $ForGeneratedCode.text);
+
+  Expr<String?> get pinHash =>
+      $ForGeneratedCode.field(this, 3, $ForGeneratedCode.text);
+
+  Expr<DateTime?> get createdAt =>
+      $ForGeneratedCode.field(this, 4, $ForGeneratedCode.dateTime);
+
+  Expr<DateTime?> get updatedAt =>
+      $ForGeneratedCode.field(this, 5, $ForGeneratedCode.dateTime);
+
+  /// Check if the row is not `NULL`.
+  ///
+  /// This will check if _primary key_ fields in this row are `NULL`.
+  ///
+  /// If this is a reference lookup by subquery it might be more efficient
+  /// to check if the referencing field is `NULL`.
+  Expr<bool> isNotNull() => id.isNotNull();
+
+  /// Check if the row is `NULL`.
+  ///
+  /// This will check if _primary key_ fields in this row are `NULL`.
+  ///
+  /// If this is a reference lookup by subquery it might be more efficient
+  /// to check if the referencing field is `NULL`.
+  Expr<bool> isNull() => isNotNull().not();
+}
+
+/// `Table<CustomerRow>` conflict targets for use with `.onConflict`.
+enum CustomerRowConflict {
+  /// Conflict with an existing row that has a matching primary key.
+  ///
+  /// Thus, the other row has matching values for:
+  /// `id`.
+  primaryKey(['id']),
+
+  /// `mobileNumber` conflict.
+  ///
+  /// Due to violation of the `UNIQUE` constraint on
+  /// `mobileNumber`.
+  ///
+  /// Thus, the conflicting row has matching values for these fields.
+  mobileNumber(['mobile_number']);
+
+  const CustomerRowConflict(this._fields);
+
+  final List<String> _fields;
+}
+
+extension InsertCustomerRowExt on Insert<CustomerRow> {
+  /// Build an `INSERT` statement with an `ON CONFLICT` clause.
+  ///
+  /// The [target] argument specifies the _conflict target_ to be
+  /// handled. The _conflict target_ is always a `UNIQUE` constraint or
+  /// `PRIMARY KEY` constraint.
+  ///
+  /// If a row to be inserted violates the _conflict target_ constraint,
+  /// then the conflict action is triggered:
+  /// * `.doNothing()` to skip insertion of the new row, and,
+  /// * `.update((customerRow, excluded, set) => set(...))` to
+  ///   update the conflicting row.
+  ///
+  /// If a row to be inserted violates a constraint other than the one
+  /// specified in _conflict target_ then the entire `INSERT` statement
+  /// will fail.
+  ///
+  /// This is equivalent to `INSERT ... ON CONFLICT (...)` in SQL.
+  InsertOnConflict<CustomerRow> onConflict(CustomerRowConflict target) =>
+      $ForGeneratedCode.insertOnConflict(this, target._fields);
+}
+
+extension InsertOnConflictCustomerRowExt on InsertOnConflict<CustomerRow> {
+  /// Build an `INSERT` statement an [upsert-clause][1].
+  ///
+  /// When a row to be inserted violates the `UNIQUE` or `PRIMARY KEY`
+  /// constraint previously specified as _conflict target_, the existing
+  /// row is updated using the expressions defined with the
+  /// [updateBuilder]. The [updateBuilder] is given 3 parameters:
+  ///   * `customerRow` an [Expr] representing the existing row in
+  ///     the database,
+  ///   * `excluded` an [Expr] representing the row to be inserted in the
+  ///     database, and,
+  ///   * `set` a function to specify which fields should be updated and
+  ///     build the [UpdateSet].
+  ///
+  /// The result of the `set` function should always be immediately
+  /// returned from the [updateBuilder].
+  ///
+  /// **Example:** Insert a counter with `count = 2` or increment the
+  /// existing row, if a `PRIMARY KEY` conflict occurs.
+  /// ```dart
+  /// await db.counters.insertValue(
+  ///     name: 'my-counter', // primary key
+  ///     count: 2,
+  ///   )
+  ///   .onConflict(.primaryKey)
+  ///   .update((counter, excluded, set) => set(
+  ///     count: counter.count + excluded.count,
+  ///   ))
+  ///   .execute();
+  /// ```
+  ///
+  /// This is equivalent to
+  /// `INSERT ... ON CONFLICT (...) UPDATE SET ...` in SQL.
+  ///
+  /// > [!WARNING]
+  /// > The `updateBuilder` callback does not make the update, it builds
+  /// > the expressions for updating the rows. You should **never** invoke
+  /// > the `set` function more than once, and the result should always
+  /// > be returned immediately.
+  ///
+  /// [1]: https://www.sqlite.org/lang_upsert.html
+  Upsert<CustomerRow> update(
+    UpdateSet<CustomerRow> Function(
+      Expr<CustomerRow> customerRow,
+      Expr<CustomerRow> excluded,
+      UpdateSet<CustomerRow> Function({
+        Expr<String> id,
+        Expr<String> name,
+        Expr<String> mobileNumber,
+        Expr<String> pinHash,
+        Expr<DateTime> createdAt,
+        Expr<DateTime> updatedAt,
+      })
+      set,
+    )
+    updateBuilder,
+  ) => $ForGeneratedCode.updateOnConflict<CustomerRow>(
+    this,
+    (customerRow, excluded) => updateBuilder(
+      customerRow,
+      excluded,
+      ({
+        Expr<String>? id,
+        Expr<String>? name,
+        Expr<String>? mobileNumber,
+        Expr<String>? pinHash,
+        Expr<DateTime>? createdAt,
+        Expr<DateTime>? updatedAt,
+      }) => $ForGeneratedCode.buildUpdate<CustomerRow>([
+        id,
+        name,
+        mobileNumber,
+        pinHash,
+        createdAt,
+        updatedAt,
+      ]),
+    ),
+  );
+}
+
+extension InsertSingleCustomerRowExt on InsertSingle<CustomerRow> {
+  /// Build an `INSERT` statement with an `ON CONFLICT` clause.
+  ///
+  /// The [target] argument specifies the _conflict target_ to be
+  /// handled. The _conflict target_ is always a `UNIQUE` constraint or
+  /// `PRIMARY KEY` constraint.
+  ///
+  /// If a row to be inserted violates the _conflict target_ constraint,
+  /// then the conflict action is triggered:
+  /// * `.doNothing()` to skip insertion of the new row, and,
+  /// * `.update((customerRow, excluded, set) => set(...))` to
+  ///   update the conflicting row.
+  ///
+  /// If a row to be inserted violates a constraint other than the one
+  /// specified in _conflict target_ then the entire `INSERT` statement
+  /// will fail.
+  ///
+  /// This is equivalent to `INSERT ... ON CONFLICT (...)` in SQL.
+  InsertOnConflictSingle<CustomerRow> onConflict(CustomerRowConflict target) =>
+      $ForGeneratedCode.insertOnConflictSingle(this, target._fields);
+}
+
+extension InsertOnConflictSingleCustomerRowExt
+    on InsertOnConflictSingle<CustomerRow> {
+  /// Build an `INSERT` statement an [upsert-clause][1].
+  ///
+  /// When a row to be inserted violates the `UNIQUE` or `PRIMARY KEY`
+  /// constraint previously specified as _conflict target_, the existing
+  /// row is updated using the expressions defined with the
+  /// [updateBuilder]. The [updateBuilder] is given 3 parameters:
+  ///   * `customerRow` an [Expr] representing the existing row in
+  ///     the database,
+  ///   * `excluded` an [Expr] representing the row to be inserted in the
+  ///     database, and,
+  ///   * `set` a function to specify which fields should be updated and
+  ///     build the [UpdateSet].
+  ///
+  /// The result of the `set` function should always be immediately
+  /// returned from the [updateBuilder].
+  ///
+  /// **Example:** Insert a counter with `count = 2` or increment the
+  /// existing row, if a `PRIMARY KEY` conflict occurs.
+  /// ```dart
+  /// await db.counters.insertValue(
+  ///     name: 'my-counter', // primary key
+  ///     count: 2,
+  ///   )
+  ///   .onConflict(.primaryKey)
+  ///   .update((counter, excluded, set) => set(
+  ///     count: counter.count + excluded.count,
+  ///   ))
+  ///   .execute();
+  /// ```
+  ///
+  /// This is equivalent to
+  /// `INSERT ... ON CONFLICT (...) UPDATE SET ...` in SQL.
+  ///
+  /// > [!WARNING]
+  /// > The `updateBuilder` callback does not make the update, it builds
+  /// > the expressions for updating the rows. You should **never** invoke
+  /// > the `set` function more than once, and the result should always
+  /// > be returned immediately.
+  ///
+  /// [1]: https://www.sqlite.org/lang_upsert.html
+  UpsertSingle<CustomerRow> update(
+    UpdateSet<CustomerRow> Function(
+      Expr<CustomerRow> customerRow,
+      Expr<CustomerRow> excluded,
+      UpdateSet<CustomerRow> Function({
+        Expr<String> id,
+        Expr<String> name,
+        Expr<String> mobileNumber,
+        Expr<String> pinHash,
+        Expr<DateTime> createdAt,
+        Expr<DateTime> updatedAt,
+      })
+      set,
+    )
+    updateBuilder,
+  ) => $ForGeneratedCode.updateOnConflictSingle<CustomerRow>(
+    this,
+    (customerRow, excluded) => updateBuilder(
+      customerRow,
+      excluded,
+      ({
+        Expr<String>? id,
+        Expr<String>? name,
+        Expr<String>? mobileNumber,
+        Expr<String>? pinHash,
+        Expr<DateTime>? createdAt,
+        Expr<DateTime>? updatedAt,
+      }) => $ForGeneratedCode.buildUpdate<CustomerRow>([
+        id,
+        name,
+        mobileNumber,
+        pinHash,
+        createdAt,
+        updatedAt,
+      ]),
+    ),
+  );
+}
+
 final class _$OrderRow extends OrderRow {
   _$OrderRow._(
     this.id,
@@ -9689,6 +10352,156 @@ extension QueryItemsTotalTotalCollectedPriceTotalCostPriceTotalMarginPercentageT
         Expr<D> totalCostPrice,
         Expr<E> totalMarginPercentage,
         Expr<F> totalProfit,
+      })
+      expr,
+    )
+    conditionBuilder,
+  ) => _fromPositionalQuery(
+    _asPositionalQuery.where(_wrapBuilder(conditionBuilder)),
+  );
+}
+
+/// Extension methods for building queries projected to a named record.
+extension QueryCategoryNameTotalQuantitySoldTotalRevenuePaiseNamed<A, B, C, D>
+    on
+        Query<
+          ({
+            Expr<A> category,
+            Expr<B> name,
+            Expr<C> totalQuantitySold,
+            Expr<D> totalRevenuePaise,
+          })
+        > {
+  Query<(Expr<A>, Expr<B>, Expr<C>, Expr<D>)> get _asPositionalQuery =>
+      $ForGeneratedCode.renamedRecord(
+        this,
+        (e) => (e.category, e.name, e.totalQuantitySold, e.totalRevenuePaise),
+      );
+
+  static Query<
+    ({
+      Expr<A> category,
+      Expr<B> name,
+      Expr<C> totalQuantitySold,
+      Expr<D> totalRevenuePaise,
+    })
+  >
+  _fromPositionalQuery<A, B, C, D>(
+    Query<(Expr<A>, Expr<B>, Expr<C>, Expr<D>)> query,
+  ) => $ForGeneratedCode.renamedRecord(
+    query,
+    (e) => (
+      category: e.$1,
+      name: e.$2,
+      totalQuantitySold: e.$3,
+      totalRevenuePaise: e.$4,
+    ),
+  );
+
+  static T Function(Expr<A> a, Expr<B> b, Expr<C> c, Expr<D> d)
+  _wrapBuilder<T, A, B, C, D>(
+    T Function(
+      ({
+        Expr<A> category,
+        Expr<B> name,
+        Expr<C> totalQuantitySold,
+        Expr<D> totalRevenuePaise,
+      })
+      e,
+    )
+    builder,
+  ) =>
+      (a, b, c, d) => builder((
+        category: a,
+        name: b,
+        totalQuantitySold: c,
+        totalRevenuePaise: d,
+      ));
+
+  /// Query the database for rows in this [Query] as a [Stream].
+  Stream<({A category, B name, C totalQuantitySold, D totalRevenuePaise})>
+  stream() async* {
+    yield* _asPositionalQuery.stream().map(
+      (e) => (
+        category: e.$1,
+        name: e.$2,
+        totalQuantitySold: e.$3,
+        totalRevenuePaise: e.$4,
+      ),
+    );
+  }
+
+  /// Query the database for rows in this [Query] as a [List].
+  Future<List<({A category, B name, C totalQuantitySold, D totalRevenuePaise})>>
+  fetch() async => await stream().toList();
+
+  /// Offset [Query] using `OFFSET` clause.
+  ///
+  /// The resulting [Query] will skip the first [offset] rows.
+  Query<
+    ({
+      Expr<A> category,
+      Expr<B> name,
+      Expr<C> totalQuantitySold,
+      Expr<D> totalRevenuePaise,
+    })
+  >
+  offset(int offset) => _fromPositionalQuery(_asPositionalQuery.offset(offset));
+
+  /// Limit [Query] using `LIMIT` clause.
+  ///
+  /// The resulting [Query] will only return the first [limit] rows.
+  Query<
+    ({
+      Expr<A> category,
+      Expr<B> name,
+      Expr<C> totalQuantitySold,
+      Expr<D> totalRevenuePaise,
+    })
+  >
+  limit(int limit) => _fromPositionalQuery(_asPositionalQuery.limit(limit));
+
+  /// Create a projection of this [Query] using `SELECT` clause.
+  ///
+  /// The [projectionBuilder] **must** return a [Record] where all the
+  /// values are [Expr] objects. If something else is returned you will
+  /// get a [Query] object which doesn't have any methods!
+  ///
+  /// All methods and properties on [Query<T>] are extension methods and
+  /// they are only defined for records `T` where all the values are
+  /// [Expr] objects.
+  Query<T> select<T extends Record>(
+    T Function(
+      ({
+        Expr<A> category,
+        Expr<B> name,
+        Expr<C> totalQuantitySold,
+        Expr<D> totalRevenuePaise,
+      })
+      expr,
+    )
+    projectionBuilder,
+  ) => _asPositionalQuery.select(_wrapBuilder(projectionBuilder));
+
+  /// Filter [Query] using `WHERE` clause.
+  ///
+  /// Returns a [Query] retaining rows from this [Query] where the expression
+  /// returned by [conditionBuilder] evaluates to `true`.
+  Query<
+    ({
+      Expr<A> category,
+      Expr<B> name,
+      Expr<C> totalQuantitySold,
+      Expr<D> totalRevenuePaise,
+    })
+  >
+  where(
+    Expr<bool?> Function(
+      ({
+        Expr<A> category,
+        Expr<B> name,
+        Expr<C> totalQuantitySold,
+        Expr<D> totalRevenuePaise,
       })
       expr,
     )

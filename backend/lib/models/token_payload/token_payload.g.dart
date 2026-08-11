@@ -22,4 +22,5 @@ Map<String, dynamic> _$TokenPayloadToJson(TokenPayload instance) =>
 const _$UserRoleEnumMap = {
   UserRole.merchant: 'merchant',
   UserRole.terminal: 'terminal',
+  UserRole.customer: 'customer',
 };

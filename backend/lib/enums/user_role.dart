@@ -1,1 +1,1 @@
-enum UserRole { merchant, terminal }
+enum UserRole { merchant, terminal, customer }

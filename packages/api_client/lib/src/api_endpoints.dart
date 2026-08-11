@@ -4,11 +4,13 @@ abstract final class ApiEndpoints {
   // Auth
   static const String merchantLogin = '/$version/auth/merchant/login';
   static const String merchantRegister = '/$version/auth/merchant/register';
+  static const String customerRegister = '/$version/auth/customer/register';
   static const String terminalLogin = '/$version/auth/terminal/login';
   static const String logout = '/$version/auth/logout';
 
   // Resources
   static const String merchants = '/$version/merchants';
+  static const String customers = '/$version/customers';
   static const String stores = '/$version/stores';
   static const String terminals = '/$version/terminals';
   static const String counters = '/$version/counters';

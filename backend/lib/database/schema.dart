@@ -13,6 +13,7 @@ abstract final class DatabaseSchema extends Schema {
   Table<StockRow> get stocks;
   Table<StockTransactionRow> get stockTransactions;
   Table<TerminalRow> get terminals;
+  Table<CustomerRow> get customers;
   Table<OrderRow> get orders;
   Table<OrderItemRow> get orderItems;
 }
@@ -53,6 +54,25 @@ abstract final class MerchantSettingsRow extends Row {
 
   @DefaultValue(false)
   bool get dailyReports;
+
+  @DefaultValue.now
+  DateTime get createdAt;
+
+  @DefaultValue.now
+  DateTime get updatedAt;
+}
+
+@PrimaryKey(['id'])
+abstract final class CustomerRow extends Row {
+  @DefaultValue('gen_random_uuid()')
+  String get id;
+
+  String get name;
+
+  @Unique.field()
+  String get mobileNumber;
+
+  String get pinHash;
 
   @DefaultValue.now
   DateTime get createdAt;

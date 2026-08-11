@@ -22,6 +22,17 @@ CREATE TABLE IF NOT EXISTS merchant_settings (
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+CREATE TABLE IF NOT EXISTS customers (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
+    name VARCHAR(255) NOT NULL,
+    mobile_number VARCHAR(15) UNIQUE NOT NULL,
+    pin_hash VARCHAR(255) NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_customers_mobile ON customers (mobile_number);
+
 
 
 CREATE TABLE IF NOT EXISTS subscription_plans (

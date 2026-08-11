@@ -11,6 +11,9 @@ const _constraintMessages = <String, String>{
   'merchants_email_key': 'Email already exists.',
   'merchants_whatsapp_number_key': 'Whatsapp Number already exists.',
 
+  // Customers
+  'customers_mobile_number_key': 'Mobile number is already registered.',
+
   // Stores
   'unique_merchant_store_name': 'You already have a store with this name.',
 

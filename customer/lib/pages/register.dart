@@ -1,6 +1,7 @@
 import 'package:customer/components/fields/form_field.dart';
 import 'package:customer/components/layouts/auth_layout.dart';
 import 'package:customer/components/signal_component.dart';
+import 'package:customer/signals/customer_auth_signal.dart';
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_lucide/jaspr_lucide.dart' hide Map;
@@ -22,10 +23,22 @@ class _RegisterPageState extends SignalState<RegisterPage> {
 
   void _onSubmit(Event e) {
     e.preventDefault();
+    final fullName = _fullName.trim();
+    final whatsappNumber = _whatsappNumber.trim();
+    final password = _password.trim();
+
+    registerCustomer(
+      name: fullName,
+      mobileNumber: whatsappNumber,
+      pin: password,
+    );
   }
 
   @override
   Component buildSignal(BuildContext context) {
+    final authState = customerAuthSignal.value;
+    final isSubmitting = authState.isLoading;
+
     return AuthLayout(
       title: 'Create Your Account',
       descriptionLine1: 'Register to start ordering',
@@ -89,18 +102,13 @@ class _RegisterPageState extends SignalState<RegisterPage> {
 
           button(
             classes:
-                'btn btn-primary mt-3 rounded-lg h-12 w-full flex items-center justify-center font-semibold text-base cursor-pointer',
+                'btn btn-primary mt-3 rounded-lg h-12 w-full flex items-center justify-center font-semibold text-base cursor-pointer disabled:opacity-50',
             type: .submit,
+            disabled: isSubmitting,
             [
-              .text('Register'),
+              if (isSubmitting) span(classes: 'loading loading-spinner loading-sm', []) else .text('Register'),
             ],
           ),
-
-          span(classes: 'text-gray-500 text-center px-8 md:px-16 mt-6', [
-            .text(
-              'By clicking "Register", you agree to our Terms of Service and Privacy Policy.',
-            ),
-          ]),
         ],
       ),
       footerContent: button(
