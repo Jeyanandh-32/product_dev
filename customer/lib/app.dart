@@ -1,8 +1,11 @@
+import 'package:customer/components/layouts/app_layout.dart';
 import 'package:customer/components/signal_component.dart';
 import 'package:customer/components/toast.dart';
+import 'package:customer/pages/cart.dart';
 import 'package:customer/pages/login.dart';
 import 'package:customer/pages/register.dart';
-import 'package:customer/pages/store_catalog.dart';
+import 'package:customer/pages/store_detail.dart';
+import 'package:customer/pages/store_search.dart';
 import 'package:customer/signals/customer_auth_signal.dart';
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
@@ -18,7 +21,14 @@ class App extends SignalComponent {
 class _AppState extends SignalState<App> {
   String? _guestOnlyRedirect(BuildContext context, RouteState state) {
     final customer = customerAuthSignal.value.value;
-    if (customer != null) return '/';
+    if (customer != null) {
+      final savedRedirect = redirectPathSignal.value;
+      if (savedRedirect != null && savedRedirect.isNotEmpty) {
+        redirectPathSignal.value = null;
+        return savedRedirect;
+      }
+      return '/';
+    }
     return null;
   }
 
@@ -35,14 +45,28 @@ class _AppState extends SignalState<App> {
               builder: (context, state, child) {
                 final customer = customerAuthSignal.value.value;
                 if (customer == null) {
+                  final currentPath = state.subloc;
+                  if (currentPath.startsWith('/store/')) {
+                    redirectPathSignal.value = currentPath;
+                  }
                   return const LoginPage();
                 }
-                return child;
+                return AppLayout(child: child);
               },
               routes: [
                 Route(
                   path: '/',
-                  builder: (context, state) => const StoreCatalogPage(),
+                  builder: (context, state) => const StoreSearchPage(),
+                ),
+                Route(
+                  path: '/store/:slug',
+                  builder: (context, state) => StoreDetailPage(
+                    slug: state.params['slug'] ?? '',
+                  ),
+                ),
+                Route(
+                  path: '/cart',
+                  builder: (context, state) => const CartPage(),
                 ),
               ],
             ),

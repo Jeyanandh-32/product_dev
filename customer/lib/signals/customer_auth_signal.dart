@@ -4,6 +4,7 @@ import 'package:models/models.dart';
 import 'package:signals/signals.dart';
 
 final customerAuthSignal = asyncSignal<Customer?>(const AsyncLoading());
+final redirectPathSignal = signal<String?>(null);
 
 Future<void> initCustomerAuthSignal() async {
   try {

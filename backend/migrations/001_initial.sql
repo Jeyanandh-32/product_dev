@@ -33,6 +33,15 @@ CREATE TABLE IF NOT EXISTS customers (
 
 CREATE INDEX IF NOT EXISTS idx_customers_mobile ON customers (mobile_number);
 
+CREATE TABLE IF NOT EXISTS customer_recent_stores (
+    customer_id UUID NOT NULL REFERENCES customers (id) ON DELETE CASCADE,
+    store_id UUID NOT NULL REFERENCES stores (id) ON DELETE CASCADE,
+    last_visited_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    PRIMARY KEY (customer_id, store_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_customer_recent_stores ON customer_recent_stores (customer_id, last_visited_at DESC);
+
 
 
 CREATE TABLE IF NOT EXISTS subscription_plans (

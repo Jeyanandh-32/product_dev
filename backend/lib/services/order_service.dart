@@ -59,6 +59,19 @@ class OrderService {
       }
       final (productRow, _, _, _) = result;
 
+      final stockRow = await _stockRepo.getByProductAndStore(
+        storeId: storeId,
+        productId: productId,
+      );
+
+      if (stockRow != null) {
+        if (stockRow.quantity < quantity) {
+          throw Exception(
+            'Insufficient stock for product "${productRow.name}". Available: ${stockRow.quantity}, Requested: $quantity.',
+          );
+        }
+      }
+
       final sellingPricePaise = productRow.sellingPrice;
       final itemSubtotalPaise = sellingPricePaise * quantity;
 
@@ -136,7 +149,7 @@ class OrderService {
           productId: productId,
         );
 
-        if (stockRow != null && stockRow.stockMonitor) {
+        if (stockRow != null) {
           final newQty = max(0, stockRow.quantity - quantity);
           await _stockRepo.update(
             id: stockRow.id,

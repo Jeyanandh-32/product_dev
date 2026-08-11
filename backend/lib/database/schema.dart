@@ -14,6 +14,7 @@ abstract final class DatabaseSchema extends Schema {
   Table<StockTransactionRow> get stockTransactions;
   Table<TerminalRow> get terminals;
   Table<CustomerRow> get customers;
+  Table<CustomerRecentStoresRow> get customerRecentStores;
   Table<OrderRow> get orders;
   Table<OrderItemRow> get orderItems;
 }
@@ -79,6 +80,26 @@ abstract final class CustomerRow extends Row {
 
   @DefaultValue.now
   DateTime get updatedAt;
+}
+
+@PrimaryKey(['customerId', 'storeId'])
+abstract final class CustomerRecentStoresRow extends Row {
+  @References(
+    table: 'customers',
+    field: 'id',
+    onDelete: .cascade,
+  )
+  String get customerId;
+
+  @References(
+    table: 'stores',
+    field: 'id',
+    onDelete: .cascade,
+  )
+  String get storeId;
+
+  @DefaultValue.now
+  DateTime get lastVisitedAt;
 }
 
 @PrimaryKey(['id'])

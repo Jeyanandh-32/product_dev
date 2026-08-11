@@ -90,7 +90,7 @@ class ProductRepository {
   }
 
   Future<List<(ProductRow, StockRow?, CategoryRow?, CounterRow?)>> getAll({
-    required String merchantId,
+    String? merchantId,
     String? storeId,
     String? searchQuery,
     int? limit,
@@ -104,16 +104,21 @@ class ProductRepository {
         .leftJoin(_db.counters)
         .on((p, s, c, cnt) => p.counterId.equals(cnt.id))
         .where((p, s, c, cnt) {
-          var expr = p.merchantId.equalsValue(merchantId);
+          ts.Expr<bool?>? expr;
+          if (merchantId != null) {
+            expr = p.merchantId.equalsValue(merchantId);
+          }
           if (storeId != null) {
-            expr = expr.and(p.storeId.equalsValue(storeId));
+            final storeExpr = p.storeId.equalsValue(storeId);
+            expr = expr == null ? storeExpr : expr.and(storeExpr);
           }
           if (searchQuery != null && searchQuery.trim().isNotEmpty) {
             final term = '%${searchQuery.trim().toLowerCase()}%';
-            expr = expr.and(p.name.toLowerCase().like(term));
+            final searchExpr = p.name.toLowerCase().like(term);
+            expr = expr == null ? searchExpr : expr.and(searchExpr);
           }
 
-          return expr;
+          return expr ?? ts.toExpr(true);
         });
 
     var finalQuery = q
@@ -164,21 +169,26 @@ class ProductRepository {
   }
 
   Future<int> count({
-    required String merchantId,
+    String? merchantId,
     String? storeId,
     String? searchQuery,
   }) async {
     final q = _db.products.where((p) {
-      var expr = p.merchantId.equalsValue(merchantId);
+      ts.Expr<bool?>? expr;
+      if (merchantId != null) {
+        expr = p.merchantId.equalsValue(merchantId);
+      }
       if (storeId != null) {
-        expr = expr.and(p.storeId.equalsValue(storeId));
+        final storeExpr = p.storeId.equalsValue(storeId);
+        expr = expr == null ? storeExpr : expr.and(storeExpr);
       }
       if (searchQuery != null && searchQuery.trim().isNotEmpty) {
         final term = '%${searchQuery.trim().toLowerCase()}%';
-        expr = expr.and(p.name.toLowerCase().like(term));
+        final searchExpr = p.name.toLowerCase().like(term);
+        expr = expr == null ? searchExpr : expr.and(searchExpr);
       }
 
-      return expr;
+      return expr ?? ts.toExpr(true);
     });
 
     final count = await q.count().fetch();

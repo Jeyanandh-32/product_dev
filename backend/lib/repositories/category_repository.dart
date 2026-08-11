@@ -28,22 +28,27 @@ class CategoryRepository {
   }
 
   Future<List<CategoryRow>> getAll({
-    required String merchantId,
+    String? merchantId,
     String? storeId,
     String? searchQuery,
     int? limit,
     int? offset,
   }) async {
     var query = _db.categories.where((c) {
-      var expr = c.merchantId.equalsValue(merchantId);
+      ts.Expr<bool?>? expr;
+      if (merchantId != null) {
+        expr = c.merchantId.equalsValue(merchantId);
+      }
       if (storeId != null) {
-        expr = expr.and(c.storeId.equalsValue(storeId));
+        final storeExpr = c.storeId.equalsValue(storeId);
+        expr = expr == null ? storeExpr : expr.and(storeExpr);
       }
       if (searchQuery != null && searchQuery.trim().isNotEmpty) {
         final term = '%${searchQuery.trim().toLowerCase()}%';
-        expr = expr.and(c.name.toLowerCase().like(term));
+        final searchExpr = c.name.toLowerCase().like(term);
+        expr = expr == null ? searchExpr : expr.and(searchExpr);
       }
-      return expr;
+      return expr ?? ts.toExpr(true);
     });
 
     if (offset != null) {
@@ -59,20 +64,25 @@ class CategoryRepository {
   }
 
   Future<int> count({
-    required String merchantId,
+    String? merchantId,
     String? storeId,
     String? searchQuery,
   }) async {
     final query = _db.categories.where((c) {
-      var expr = c.merchantId.equalsValue(merchantId);
+      ts.Expr<bool?>? expr;
+      if (merchantId != null) {
+        expr = c.merchantId.equalsValue(merchantId);
+      }
       if (storeId != null) {
-        expr = expr.and(c.storeId.equalsValue(storeId));
+        final storeExpr = c.storeId.equalsValue(storeId);
+        expr = expr == null ? storeExpr : expr.and(storeExpr);
       }
       if (searchQuery != null && searchQuery.trim().isNotEmpty) {
         final term = '%${searchQuery.trim().toLowerCase()}%';
-        expr = expr.and(c.name.toLowerCase().like(term));
+        final searchExpr = c.name.toLowerCase().like(term);
+        expr = expr == null ? searchExpr : expr.and(searchExpr);
       }
-      return expr;
+      return expr ?? ts.toExpr(true);
     });
 
     final total = await query.count().fetch();

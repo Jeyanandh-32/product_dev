@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:backend/enums/user_role.dart';
 import 'package:backend/extensions/product_row_extension.dart';
 import 'package:backend/extensions/request_context_extension.dart';
 import 'package:backend/repositories/product_repository.dart';
@@ -33,16 +34,20 @@ Future<Response> _onGet(RequestContext context) async {
   try {
     final searchQuery = context.request.uri.queryParameters['search'];
 
+    final merchantId = tokenPayload.role == UserRole.customer
+        ? null
+        : tokenPayload.sub;
+
     final total = await repo.count(
       storeId: context.storeId,
-      merchantId: tokenPayload.sub,
+      merchantId: merchantId,
       searchQuery: searchQuery,
     );
 
     final offset = (page - 1) * size;
     final productRows = await repo.getAll(
       storeId: context.storeId,
-      merchantId: tokenPayload.sub,
+      merchantId: merchantId,
       searchQuery: searchQuery,
       limit: size,
       offset: offset,
