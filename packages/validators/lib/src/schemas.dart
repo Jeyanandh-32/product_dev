@@ -301,3 +301,20 @@ abstract class $CustomerRegister {
   )
   String get pin;
 }
+
+@Schema()
+abstract class $CustomerLogin {
+  @StringField(
+    pattern: ValidationPatterns.whatsapp,
+    description: '10-Digit Mobile Number',
+  )
+  String get mobileNumber;
+
+  @StringField(
+    minLength: 6,
+    maxLength: 6,
+    pattern: r'^[0-9]{6}$',
+    description: '6-Digit Security PIN',
+  )
+  String get pin;
+}

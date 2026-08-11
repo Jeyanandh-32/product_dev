@@ -1,5 +1,6 @@
 import 'package:customer/components/signal_component.dart';
 import 'package:customer/components/toast.dart';
+import 'package:customer/pages/login.dart';
 import 'package:customer/pages/register.dart';
 import 'package:customer/signals/customer_auth_signal.dart';
 import 'package:jaspr/dom.dart';
@@ -33,7 +34,7 @@ class _AppState extends SignalState<App> {
               builder: (context, state, child) {
                 final customer = customerAuthSignal.value.value;
                 if (customer == null) {
-                  return const RegisterPage();
+                  return const LoginPage();
                 }
                 return child;
               },
@@ -55,6 +56,11 @@ class _AppState extends SignalState<App> {
               ],
             ),
             Route(
+              path: '/login',
+              builder: (context, state) => const LoginPage(),
+              redirect: _guestOnlyRedirect,
+            ),
+            Route(
               path: '/register',
               builder: (context, state) => const RegisterPage(),
               redirect: _guestOnlyRedirect,
@@ -70,7 +76,7 @@ class _AppState extends SignalState<App> {
         routes: [
           Route(
             path: '/',
-            builder: (context, state) => const RegisterPage(),
+            builder: (context, state) => const LoginPage(),
           ),
         ],
       ),

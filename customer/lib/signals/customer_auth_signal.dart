@@ -14,6 +14,28 @@ Future<void> initCustomerAuthSignal() async {
   }
 }
 
+Future<void> loginCustomer({
+  required String mobileNumber,
+  required String pin,
+}) async {
+  customerAuthSignal.value = const AsyncLoading();
+
+  try {
+    final customer = await CustomerAuthRepository.login(
+      mobileNumber: mobileNumber,
+      pin: pin,
+    );
+
+    customerAuthSignal.value = AsyncData(customer);
+  } catch (e) {
+    customerAuthSignal.value = const AsyncData(null);
+    showCustomerToast(
+      e.toString(),
+      type: ToastType.error,
+    );
+  }
+}
+
 Future<void> registerCustomer({
   required String name,
   required String mobileNumber,

@@ -5,6 +5,23 @@ import 'package:models/models.dart';
 class CustomerAuthRepository {
   const CustomerAuthRepository._();
 
+  static Future<Customer> login({
+    required String mobileNumber,
+    required String pin,
+  }) async {
+    try {
+      final result = await dio.post(
+        ApiEndpoints.customerLogin,
+        data: {'mobileNumber': mobileNumber, 'pin': pin},
+      );
+
+      final data = result.data['data'] as Map<String, dynamic>;
+      return Customer.fromJson(data['customer'] as Map<String, Object?>);
+    } on DioException catch (e) {
+      handleDioError(e, 'Customer login failed.');
+    }
+  }
+
   static Future<Customer> register({
     required String name,
     required String mobileNumber,

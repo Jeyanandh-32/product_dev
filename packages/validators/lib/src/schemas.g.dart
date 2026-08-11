@@ -2006,3 +2006,79 @@ base class _CustomerRegisterTypeFactory
     dependencies: [],
   );
 }
+
+base class CustomerLogin {
+  /// Creates a [CustomerLogin] from a JSON map.
+  factory CustomerLogin.fromJson(Map<String, dynamic> json) =>
+      $schema.parse(json);
+
+  CustomerLogin._(this._json);
+
+  CustomerLogin({required String mobileNumber, required String pin}) {
+    _json = {'mobileNumber': mobileNumber, 'pin': pin};
+  }
+
+  late final Map<String, dynamic> _json;
+
+  /// The JSON schema and type descriptor for [CustomerLogin].
+  static const SchemanticType<CustomerLogin> $schema =
+      _CustomerLoginTypeFactory();
+
+  String get mobileNumber {
+    return _json['mobileNumber'] as String;
+  }
+
+  set mobileNumber(String value) {
+    _json['mobileNumber'] = value;
+  }
+
+  String get pin {
+    return _json['pin'] as String;
+  }
+
+  set pin(String value) {
+    _json['pin'] = value;
+  }
+
+  @override
+  String toString() {
+    return _json.toString();
+  }
+
+  /// Serializes this [CustomerLogin] to a JSON map.
+  Map<String, dynamic> toJson() {
+    return _json;
+  }
+}
+
+base class _CustomerLoginTypeFactory extends SchemanticType<CustomerLogin> {
+  const _CustomerLoginTypeFactory();
+
+  @override
+  CustomerLogin parse(Object? json) {
+    return CustomerLogin._(json as Map<String, dynamic>);
+  }
+
+  @override
+  JsonSchemaMetadata get schemaMetadata => JsonSchemaMetadata(
+    name: 'CustomerLogin',
+    definition: $Schema
+        .object(
+          properties: {
+            'mobileNumber': $Schema.string(
+              description: '10-Digit Mobile Number',
+              pattern: r'^[0-9]{10}$',
+            ),
+            'pin': $Schema.string(
+              description: '6-Digit Security PIN',
+              minLength: 6,
+              maxLength: 6,
+              pattern: r'^[0-9]{6}$',
+            ),
+          },
+          required: ['mobileNumber', 'pin'],
+        )
+        .value,
+    dependencies: [],
+  );
+}
