@@ -16,6 +16,7 @@ const _constraintMessages = <String, String>{
 
   // Stores
   'unique_merchant_store_name': 'You already have a store with this name.',
+  'stores_slug_key': 'Store URL slug is already taken.',
 
   // Categories
   'unique_store_category_name':

@@ -101,6 +101,12 @@ abstract final class StoreRow extends Row {
   @DefaultValue(true)
   bool get isActive;
 
+  @DefaultValue(false)
+  bool get isOnlineEnabled;
+
+  @Unique.field()
+  String? get slug;
+
   @DefaultValue.now
   DateTime get createdAt;
 

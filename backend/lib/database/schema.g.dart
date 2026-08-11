@@ -1537,6 +1537,8 @@ final class _$StoreRow extends StoreRow {
     this.name,
     this.storeType,
     this.isActive,
+    this.isOnlineEnabled,
+    this.slug,
     this.createdAt,
     this.updatedAt,
   );
@@ -1557,6 +1559,12 @@ final class _$StoreRow extends StoreRow {
   final bool isActive;
 
   @override
+  final bool isOnlineEnabled;
+
+  @override
+  final String? slug;
+
+  @override
   final DateTime createdAt;
 
   @override
@@ -1570,6 +1578,8 @@ final class _$StoreRow extends StoreRow {
       'name',
       'store_type',
       'is_active',
+      'is_online_enabled',
+      'slug',
       'created_at',
       'updated_at',
     ],
@@ -1610,6 +1620,20 @@ final class _$StoreRow extends StoreRow {
         overrides: [],
       ),
       $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.boolean,
+        isNotNull: true,
+        defaultValue: (kind: 'raw', value: false),
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: false,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
         type: $ForGeneratedCode.dateTime,
         isNotNull: true,
         defaultValue: (kind: 'datetime', value: 'now'),
@@ -1626,6 +1650,7 @@ final class _$StoreRow extends StoreRow {
     ],
     primaryKey: <String>['id'],
     unique: <List<String>>[
+      ['slug'],
       ['merchant_id', 'name'],
     ],
     foreignKeys: [
@@ -1647,6 +1672,8 @@ final class _$StoreRow extends StoreRow {
     final name = row.readString();
     final storeType = row.readString();
     final isActive = row.readBool();
+    final isOnlineEnabled = row.readBool();
+    final slug = row.readString();
     final createdAt = row.readDateTime();
     final updatedAt = row.readDateTime();
     if (id == null &&
@@ -1654,6 +1681,8 @@ final class _$StoreRow extends StoreRow {
         name == null &&
         storeType == null &&
         isActive == null &&
+        isOnlineEnabled == null &&
+        slug == null &&
         createdAt == null &&
         updatedAt == null) {
       return null;
@@ -1664,6 +1693,8 @@ final class _$StoreRow extends StoreRow {
       name!,
       storeType,
       isActive!,
+      isOnlineEnabled!,
+      slug,
       createdAt!,
       updatedAt!,
     );
@@ -1671,7 +1702,7 @@ final class _$StoreRow extends StoreRow {
 
   @override
   String toString() =>
-      'StoreRow(id: "$id", merchantId: "$merchantId", name: "$name", storeType: "$storeType", isActive: "$isActive", createdAt: "$createdAt", updatedAt: "$updatedAt")';
+      'StoreRow(id: "$id", merchantId: "$merchantId", name: "$name", storeType: "$storeType", isActive: "$isActive", isOnlineEnabled: "$isOnlineEnabled", slug: "$slug", createdAt: "$createdAt", updatedAt: "$updatedAt")';
 }
 
 /// Extension methods for table defined in [StoreRow].
@@ -1686,11 +1717,23 @@ extension TableStoreRowExt on Table<StoreRow> {
     required Expr<String> name,
     Expr<String?>? storeType,
     Expr<bool>? isActive,
+    Expr<bool>? isOnlineEnabled,
+    Expr<String?>? slug,
     Expr<DateTime>? createdAt,
     Expr<DateTime>? updatedAt,
   }) => $ForGeneratedCode.insertInto(
     table: this,
-    values: [id, merchantId, name, storeType, isActive, createdAt, updatedAt],
+    values: [
+      id,
+      merchantId,
+      name,
+      storeType,
+      isActive,
+      isOnlineEnabled,
+      slug,
+      createdAt,
+      updatedAt,
+    ],
   );
 
   /// Insert row into the `stores` table.
@@ -1703,6 +1746,8 @@ extension TableStoreRowExt on Table<StoreRow> {
     required String name,
     String? storeType,
     bool? isActive,
+    bool? isOnlineEnabled,
+    String? slug,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) => $ForGeneratedCode.insertInto(
@@ -1713,6 +1758,8 @@ extension TableStoreRowExt on Table<StoreRow> {
       name.asExpr,
       storeType.asExpr,
       isActive?.asExpr,
+      isOnlineEnabled?.asExpr,
+      slug.asExpr,
       createdAt?.asExpr,
       updatedAt?.asExpr,
     ],
@@ -1742,12 +1789,24 @@ extension TableStoreRowExt on Table<StoreRow> {
     required String Function(T row) name,
     String? Function(T row)? storeType,
     bool Function(T row)? isActive,
+    bool Function(T row)? isOnlineEnabled,
+    String? Function(T row)? slug,
     DateTime Function(T row)? createdAt,
     DateTime Function(T row)? updatedAt,
   }) => $ForGeneratedCode.insertValuesMapped(
     table: this,
     rows: rows,
-    mappings: [id, merchantId, name, storeType, isActive, createdAt, updatedAt],
+    mappings: [
+      id,
+      merchantId,
+      name,
+      storeType,
+      isActive,
+      isOnlineEnabled,
+      slug,
+      createdAt,
+      updatedAt,
+    ],
   );
 
   /// Delete a single row from the `stores` table, specified by
@@ -1808,6 +1867,8 @@ extension QueryStoreRowExt on Query<(Expr<StoreRow>,)> {
         Expr<String> name,
         Expr<String?> storeType,
         Expr<bool> isActive,
+        Expr<bool> isOnlineEnabled,
+        Expr<String?> slug,
         Expr<DateTime> createdAt,
         Expr<DateTime> updatedAt,
       })
@@ -1825,6 +1886,8 @@ extension QueryStoreRowExt on Query<(Expr<StoreRow>,)> {
         Expr<String>? name,
         Expr<String?>? storeType,
         Expr<bool>? isActive,
+        Expr<bool>? isOnlineEnabled,
+        Expr<String?>? slug,
         Expr<DateTime>? createdAt,
         Expr<DateTime>? updatedAt,
       }) => $ForGeneratedCode.buildUpdate<StoreRow>([
@@ -1833,11 +1896,24 @@ extension QueryStoreRowExt on Query<(Expr<StoreRow>,)> {
         name,
         storeType,
         isActive,
+        isOnlineEnabled,
+        slug,
         createdAt,
         updatedAt,
       ]),
     ),
   );
+
+  /// Lookup a single row in `stores` table using the
+  /// `slug` field
+  ///
+  /// We know that lookup by the `slug` field returns
+  /// at-most one row because the [Unique] annotation in [StoreRow].
+  ///
+  /// Returns a [QuerySingle] object, which returns at-most one row,
+  /// when `.fetch()` is called.
+  QuerySingle<(Expr<StoreRow>,)> bySlug(String slug) =>
+      where((storeRow) => storeRow.slug.equalsValue(slug)).first;
 
   /// Lookup a single row in `stores` table using the
   /// `merchantId`, `name` fields
@@ -1904,6 +1980,8 @@ extension QuerySingleStoreRowExt on QuerySingle<(Expr<StoreRow>,)> {
         Expr<String> name,
         Expr<String?> storeType,
         Expr<bool> isActive,
+        Expr<bool> isOnlineEnabled,
+        Expr<String?> slug,
         Expr<DateTime> createdAt,
         Expr<DateTime> updatedAt,
       })
@@ -1921,6 +1999,8 @@ extension QuerySingleStoreRowExt on QuerySingle<(Expr<StoreRow>,)> {
         Expr<String>? name,
         Expr<String?>? storeType,
         Expr<bool>? isActive,
+        Expr<bool>? isOnlineEnabled,
+        Expr<String?>? slug,
         Expr<DateTime>? createdAt,
         Expr<DateTime>? updatedAt,
       }) => $ForGeneratedCode.buildUpdate<StoreRow>([
@@ -1929,6 +2009,8 @@ extension QuerySingleStoreRowExt on QuerySingle<(Expr<StoreRow>,)> {
         name,
         storeType,
         isActive,
+        isOnlineEnabled,
+        slug,
         createdAt,
         updatedAt,
       ]),
@@ -1961,11 +2043,17 @@ extension ExpressionStoreRowExt on Expr<StoreRow> {
   Expr<bool> get isActive =>
       $ForGeneratedCode.field(this, 4, $ForGeneratedCode.boolean);
 
+  Expr<bool> get isOnlineEnabled =>
+      $ForGeneratedCode.field(this, 5, $ForGeneratedCode.boolean);
+
+  Expr<String?> get slug =>
+      $ForGeneratedCode.field(this, 6, $ForGeneratedCode.text);
+
   Expr<DateTime> get createdAt =>
-      $ForGeneratedCode.field(this, 5, $ForGeneratedCode.dateTime);
+      $ForGeneratedCode.field(this, 7, $ForGeneratedCode.dateTime);
 
   Expr<DateTime> get updatedAt =>
-      $ForGeneratedCode.field(this, 6, $ForGeneratedCode.dateTime);
+      $ForGeneratedCode.field(this, 8, $ForGeneratedCode.dateTime);
 }
 
 extension ExpressionNullableStoreRowExt on Expr<StoreRow?> {
@@ -1984,11 +2072,17 @@ extension ExpressionNullableStoreRowExt on Expr<StoreRow?> {
   Expr<bool?> get isActive =>
       $ForGeneratedCode.field(this, 4, $ForGeneratedCode.boolean);
 
+  Expr<bool?> get isOnlineEnabled =>
+      $ForGeneratedCode.field(this, 5, $ForGeneratedCode.boolean);
+
+  Expr<String?> get slug =>
+      $ForGeneratedCode.field(this, 6, $ForGeneratedCode.text);
+
   Expr<DateTime?> get createdAt =>
-      $ForGeneratedCode.field(this, 5, $ForGeneratedCode.dateTime);
+      $ForGeneratedCode.field(this, 7, $ForGeneratedCode.dateTime);
 
   Expr<DateTime?> get updatedAt =>
-      $ForGeneratedCode.field(this, 6, $ForGeneratedCode.dateTime);
+      $ForGeneratedCode.field(this, 8, $ForGeneratedCode.dateTime);
 
   /// Check if the row is not `NULL`.
   ///
@@ -2014,6 +2108,14 @@ enum StoreRowConflict {
   /// Thus, the other row has matching values for:
   /// `id`.
   primaryKey(['id']),
+
+  /// `slug` conflict.
+  ///
+  /// Due to violation of the `UNIQUE` constraint on
+  /// `slug`.
+  ///
+  /// Thus, the conflicting row has matching values for these fields.
+  slug(['slug']),
 
   /// `merchantId`, `name` conflict.
   ///
@@ -2101,6 +2203,8 @@ extension InsertOnConflictStoreRowExt on InsertOnConflict<StoreRow> {
         Expr<String> name,
         Expr<String?> storeType,
         Expr<bool> isActive,
+        Expr<bool> isOnlineEnabled,
+        Expr<String?> slug,
         Expr<DateTime> createdAt,
         Expr<DateTime> updatedAt,
       })
@@ -2118,6 +2222,8 @@ extension InsertOnConflictStoreRowExt on InsertOnConflict<StoreRow> {
         Expr<String>? name,
         Expr<String?>? storeType,
         Expr<bool>? isActive,
+        Expr<bool>? isOnlineEnabled,
+        Expr<String?>? slug,
         Expr<DateTime>? createdAt,
         Expr<DateTime>? updatedAt,
       }) => $ForGeneratedCode.buildUpdate<StoreRow>([
@@ -2126,6 +2232,8 @@ extension InsertOnConflictStoreRowExt on InsertOnConflict<StoreRow> {
         name,
         storeType,
         isActive,
+        isOnlineEnabled,
+        slug,
         createdAt,
         updatedAt,
       ]),
@@ -2207,6 +2315,8 @@ extension InsertOnConflictSingleStoreRowExt
         Expr<String> name,
         Expr<String?> storeType,
         Expr<bool> isActive,
+        Expr<bool> isOnlineEnabled,
+        Expr<String?> slug,
         Expr<DateTime> createdAt,
         Expr<DateTime> updatedAt,
       })
@@ -2224,6 +2334,8 @@ extension InsertOnConflictSingleStoreRowExt
         Expr<String>? name,
         Expr<String?>? storeType,
         Expr<bool>? isActive,
+        Expr<bool>? isOnlineEnabled,
+        Expr<String?>? slug,
         Expr<DateTime>? createdAt,
         Expr<DateTime>? updatedAt,
       }) => $ForGeneratedCode.buildUpdate<StoreRow>([
@@ -2232,6 +2344,8 @@ extension InsertOnConflictSingleStoreRowExt
         name,
         storeType,
         isActive,
+        isOnlineEnabled,
+        slug,
         createdAt,
         updatedAt,
       ]),

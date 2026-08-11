@@ -2,6 +2,7 @@ import 'package:customer/components/signal_component.dart';
 import 'package:customer/components/toast.dart';
 import 'package:customer/pages/login.dart';
 import 'package:customer/pages/register.dart';
+import 'package:customer/pages/store_catalog.dart';
 import 'package:customer/signals/customer_auth_signal.dart';
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
@@ -41,17 +42,7 @@ class _AppState extends SignalState<App> {
               routes: [
                 Route(
                   path: '/',
-                  builder: (context, state) {
-                    final customer = customerAuthSignal.value.value;
-                    return div(
-                      classes: 'min-h-screen flex items-center justify-center p-6',
-                      [
-                        h1(classes: 'text-2xl font-bold text-primary', [
-                          .text('Welcome back, ${customer?.name ?? ''}!'),
-                        ]),
-                      ],
-                    );
-                  },
+                  builder: (context, state) => const StoreCatalogPage(),
                 ),
               ],
             ),

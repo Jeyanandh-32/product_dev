@@ -8,6 +8,8 @@ extension StoreRowExtension on StoreRow {
     name: name,
     storeType: storeType,
     isActive: isActive,
+    isOnlineEnabled: isOnlineEnabled,
+    slug: slug,
     createdAt: createdAt,
     updatedAt: updatedAt,
   );

@@ -53,10 +53,17 @@ CREATE TABLE IF NOT EXISTS stores (
     name VARCHAR(255) NOT NULL,
     store_type VARCHAR(255),
     is_active BOOLEAN NOT NULL DEFAULT TRUE,
+    is_online_enabled BOOLEAN NOT NULL DEFAULT FALSE,
+    slug VARCHAR(255) UNIQUE,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    CONSTRAINT unique_merchant_store_name UNIQUE (merchant_id, name)
+    CONSTRAINT unique_merchant_store_name UNIQUE (merchant_id, name),
+    CONSTRAINT check_online_slug CHECK (
+        (is_online_enabled = FALSE) OR (is_online_enabled = TRUE AND slug IS NOT NULL AND slug != '')
+    )
 );
+
+CREATE INDEX IF NOT EXISTS idx_stores_online_slug ON stores (is_online_enabled, slug);
 
 CREATE TABLE IF NOT EXISTS store_subscriptions (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid (),

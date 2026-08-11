@@ -3,8 +3,8 @@ import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_lucide/generated_icons/chevron_down.dart';
 import 'package:merchant/components/fields/form_field.dart';
 import 'package:merchant/components/modals/modal.dart';
-import 'package:merchant/signals/stores_signal.dart';
 import 'package:merchant/signals/navigation_signal.dart';
+import 'package:merchant/signals/stores_signal.dart';
 import 'package:models/models.dart';
 import 'package:web/web.dart' as web;
 
@@ -21,6 +21,8 @@ class _AddEditStoreModalState extends State<AddEditStoreModal> {
   late String _storeName;
   StoreType? _storeType;
   late bool _isActive;
+  late bool _isOnlineEnabled;
+  late String _slug;
 
   @override
   void initState() {
@@ -29,10 +31,29 @@ class _AddEditStoreModalState extends State<AddEditStoreModal> {
     _storeType = component.store?.storeType != null
         ? StoreType.values.firstWhere(
             (t) => t.name == component.store?.storeType?.toLowerCase(),
-            orElse: () => .other,
+            orElse: () => StoreType.other,
           )
         : null;
     _isActive = component.store?.isActive ?? true;
+    _isOnlineEnabled = component.store?.isOnlineEnabled ?? false;
+    _slug = component.store?.slug ?? '';
+  }
+
+  String _toSlug(String input) {
+    return input
+        .toLowerCase()
+        .replaceAll(RegExp(r'[^a-z0-9\s-]'), '')
+        .replaceAll(RegExp(r'\s+'), '-')
+        .replaceAll(RegExp(r'-+'), '-');
+  }
+
+  void _onStoreNameChange(String name) {
+    _storeName = name;
+    if (_isOnlineEnabled && (_slug.isEmpty || component.store == null)) {
+      setState(() {
+        _slug = _toSlug(name);
+      });
+    }
   }
 
   void _onSubmit(web.Event e) {
@@ -40,8 +61,10 @@ class _AddEditStoreModalState extends State<AddEditStoreModal> {
     final storeName = _storeName.trim();
     final storeType = _storeType;
     final isActive = _isActive;
+    final isOnlineEnabled = _isOnlineEnabled;
+    final slug = isOnlineEnabled ? _slug.trim().toLowerCase() : null;
 
-    activeModalSignal.value = .none;
+    activeModalSignal.value = ActiveModal.none;
 
     if (component.store != null) {
       StoresActions.updateStore(
@@ -49,11 +72,15 @@ class _AddEditStoreModalState extends State<AddEditStoreModal> {
         name: storeName,
         storeType: storeType,
         isActive: isActive,
+        isOnlineEnabled: isOnlineEnabled,
+        slug: slug,
       );
     } else {
       StoresActions.create(
         name: storeName,
         storeType: storeType,
+        isOnlineEnabled: isOnlineEnabled,
+        slug: slug,
       );
     }
   }
@@ -71,12 +98,12 @@ class _AddEditStoreModalState extends State<AddEditStoreModal> {
             labelText: 'Store Name',
             type: InputType.text,
             attributes: {
-              'placeholder': 'Jack Dev\'s Cafe',
+              'placeholder': "Jack Dev's Cafe",
               'required': '',
               'value': _storeName,
             },
             hintText: 'Store name is required.',
-            onChange: (value) => _storeName = value as String,
+            onChange: (value) => _onStoreNameChange(value as String),
           ),
 
           fieldset(classes: 'fieldset w-full mb-4', [
@@ -132,6 +159,48 @@ class _AddEditStoreModalState extends State<AddEditStoreModal> {
               ),
             ]),
           ]),
+
+          div(classes: 'form-control mb-4 flex flex-row items-center gap-3', [
+            p(
+              classes: 'text-[14px] font-semibold text-gray-500',
+              [.text('Enable Online Ordering')],
+            ),
+            input(
+              type: InputType.checkbox,
+              classes:
+                  'toggle ${_isOnlineEnabled ? 'toggle-success' : ''} hover:cursor-pointer',
+              checked: _isOnlineEnabled,
+              events: {
+                'change': (e) {
+                  final target = e.target as web.HTMLInputElement;
+                  setState(() {
+                    _isOnlineEnabled = target.checked;
+                    if (_isOnlineEnabled && _slug.isEmpty) {
+                      _slug = _toSlug(_storeName);
+                    }
+                  });
+                },
+              },
+            ),
+          ]),
+
+          if (_isOnlineEnabled)
+            FormField(
+              id: 'slug',
+              labelText: 'Store URL Slug',
+              type: InputType.text,
+              attributes: {
+                'placeholder': 'jack-devs-cafe',
+                'required': '',
+                'pattern': r'^[a-z0-9]+(?:-[a-z0-9]+)*$',
+                'title':
+                    'Lowercase letters, numbers, and hyphens only (e.g. baker-street)',
+                'value': _slug,
+              },
+              hintText: 'Must be lowercase letters, numbers, and hyphens.',
+              onChange: (value) =>
+                  setState(() => _slug = (value as String).trim()),
+            ),
 
           if (component.store != null)
             div(classes: 'form-control mb-4 flex flex-row items-center gap-3', [

@@ -14,6 +14,8 @@ _Store _$StoreFromJson(Map<String, dynamic> json) => _Store(
   updatedAt: DateTime.parse(json['updatedAt'] as String),
   storeType: json['storeType'] as String?,
   isActive: json['isActive'] as bool,
+  isOnlineEnabled: json['isOnlineEnabled'] as bool? ?? false,
+  slug: json['slug'] as String?,
 );
 
 Map<String, dynamic> _$StoreToJson(_Store instance) => <String, dynamic>{
@@ -24,4 +26,6 @@ Map<String, dynamic> _$StoreToJson(_Store instance) => <String, dynamic>{
   'updatedAt': instance.updatedAt.toIso8601String(),
   'storeType': instance.storeType,
   'isActive': instance.isActive,
+  'isOnlineEnabled': instance.isOnlineEnabled,
+  'slug': instance.slug,
 };

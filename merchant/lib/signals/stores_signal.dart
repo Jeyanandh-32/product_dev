@@ -39,6 +39,8 @@ abstract final class StoresActions {
   static Future<void> create({
     required String name,
     StoreType? storeType,
+    bool? isOnlineEnabled,
+    String? slug,
   }) async {
     final currentStores = storesSignal.value.value ?? [];
     untracked(() {
@@ -49,6 +51,8 @@ abstract final class StoresActions {
       final store = await StoreRepository.create(
         name: name,
         storeType: storeType,
+        isOnlineEnabled: isOnlineEnabled,
+        slug: slug,
       );
 
       storesSignal.value = AsyncData([...currentStores, store]);
@@ -69,6 +73,8 @@ abstract final class StoresActions {
     String? name,
     StoreType? storeType,
     bool? isActive,
+    bool? isOnlineEnabled,
+    String? slug,
   }) async {
     final currentStores = storesSignal.value.value ?? [];
     untracked(() {
@@ -81,6 +87,8 @@ abstract final class StoresActions {
         name: name,
         storeType: storeType,
         isActive: isActive,
+        isOnlineEnabled: isOnlineEnabled,
+        slug: slug,
       );
 
       storesSignal.value = AsyncData(

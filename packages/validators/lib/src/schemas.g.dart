@@ -1522,8 +1522,18 @@ base class StoreCreate {
 
   StoreCreate._(this._json);
 
-  StoreCreate({required String name, String? storeType}) {
-    _json = {'name': name, 'storeType': ?storeType};
+  StoreCreate({
+    required String name,
+    String? storeType,
+    bool? isOnlineEnabled,
+    String? slug,
+  }) {
+    _json = {
+      'name': name,
+      'storeType': ?storeType,
+      'isOnlineEnabled': ?isOnlineEnabled,
+      'slug': ?slug,
+    };
   }
 
   late final Map<String, dynamic> _json;
@@ -1548,6 +1558,30 @@ base class StoreCreate {
       _json.remove('storeType');
     } else {
       _json['storeType'] = value;
+    }
+  }
+
+  bool? get isOnlineEnabled {
+    return _json['isOnlineEnabled'] as bool?;
+  }
+
+  set isOnlineEnabled(bool? value) {
+    if (value == null) {
+      _json.remove('isOnlineEnabled');
+    } else {
+      _json['isOnlineEnabled'] = value;
+    }
+  }
+
+  String? get slug {
+    return _json['slug'] as String?;
+  }
+
+  set slug(String? value) {
+    if (value == null) {
+      _json.remove('slug');
+    } else {
+      _json['slug'] = value;
     }
   }
 
@@ -1578,6 +1612,14 @@ base class _StoreCreateTypeFactory extends SchemanticType<StoreCreate> {
           properties: {
             'name': $Schema.string(description: 'Store name', minLength: 1),
             'storeType': $Schema.string(description: 'Store type'),
+            'isOnlineEnabled': $Schema.boolean(
+              description: 'Is online ordering enabled',
+            ),
+            'slug': $Schema.string(
+              description: 'Store URL slug',
+              maxLength: 255,
+              pattern: r'^[a-z0-9]+(?:-[a-z0-9]+)*$',
+            ),
           },
           required: ['name'],
         )
@@ -1593,8 +1635,20 @@ base class StoreUpdate {
 
   StoreUpdate._(this._json);
 
-  StoreUpdate({String? name, String? storeType, bool? isActive}) {
-    _json = {'name': ?name, 'storeType': ?storeType, 'isActive': ?isActive};
+  StoreUpdate({
+    String? name,
+    String? storeType,
+    bool? isActive,
+    bool? isOnlineEnabled,
+    String? slug,
+  }) {
+    _json = {
+      'name': ?name,
+      'storeType': ?storeType,
+      'isActive': ?isActive,
+      'isOnlineEnabled': ?isOnlineEnabled,
+      'slug': ?slug,
+    };
   }
 
   late final Map<String, dynamic> _json;
@@ -1638,6 +1692,30 @@ base class StoreUpdate {
     }
   }
 
+  bool? get isOnlineEnabled {
+    return _json['isOnlineEnabled'] as bool?;
+  }
+
+  set isOnlineEnabled(bool? value) {
+    if (value == null) {
+      _json.remove('isOnlineEnabled');
+    } else {
+      _json['isOnlineEnabled'] = value;
+    }
+  }
+
+  String? get slug {
+    return _json['slug'] as String?;
+  }
+
+  set slug(String? value) {
+    if (value == null) {
+      _json.remove('slug');
+    } else {
+      _json['slug'] = value;
+    }
+  }
+
   @override
   String toString() {
     return _json.toString();
@@ -1666,6 +1744,14 @@ base class _StoreUpdateTypeFactory extends SchemanticType<StoreUpdate> {
             'name': $Schema.string(description: 'Store name', minLength: 1),
             'storeType': $Schema.string(description: 'Store type'),
             'isActive': $Schema.boolean(description: 'Is active status'),
+            'isOnlineEnabled': $Schema.boolean(
+              description: 'Is online ordering enabled',
+            ),
+            'slug': $Schema.string(
+              description: 'Store URL slug',
+              maxLength: 255,
+              pattern: r'^[a-z0-9]+(?:-[a-z0-9]+)*$',
+            ),
           },
         )
         .value,

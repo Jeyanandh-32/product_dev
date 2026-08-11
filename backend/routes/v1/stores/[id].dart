@@ -49,7 +49,10 @@ Future<Response> _onPutOrPatch(RequestContext context, String id) async {
       name: input.name?.trim(),
       storeType: input.storeType?.trim(),
       isActive: input.isActive,
+      isOnlineEnabled: input.isOnlineEnabled,
+      slug: input.slug?.trim().toLowerCase(),
       updateStoreType: body.containsKey('storeType'),
+      updateSlug: body.containsKey('slug'),
     );
 
     return success(

@@ -56,7 +56,7 @@ Future<Response> _onPost(RequestContext context) async {
 
     return success(
       headers: {
-        HttpHeaders.setCookieHeader: cookies.join(', '),
+        HttpHeaders.setCookieHeader: cookies,
       },
       data: {
         'customer': customerRow.toCustomer().toJson(),

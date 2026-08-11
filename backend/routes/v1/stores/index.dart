@@ -67,6 +67,8 @@ Future<Response> _onPost(RequestContext context) async {
       merchantId: tokenPayload.sub,
       name: input.name.trim(),
       storeType: input.storeType?.trim(),
+      isOnlineEnabled: input.isOnlineEnabled ?? false,
+      slug: input.slug?.trim().toLowerCase(),
     );
 
     return success(

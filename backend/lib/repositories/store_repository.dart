@@ -10,12 +10,16 @@ class StoreRepository {
     required String merchantId,
     required String name,
     String? storeType,
+    bool isOnlineEnabled = false,
+    String? slug,
   }) async {
     final row = await _db.stores
         .insertValue(
           merchantId: merchantId,
           name: name,
           storeType: storeType,
+          isOnlineEnabled: isOnlineEnabled,
+          slug: slug,
         )
         .returnInserted()
         .executeAndFetch();
@@ -42,6 +46,47 @@ class StoreRepository {
     return rows;
   }
 
+  Future<List<StoreRow>> getOnlineStores({
+    int? limit,
+    int? offset,
+  }) async {
+    var query = _db.stores.where(
+      (s) => s.isActive.equalsValue(true) & s.isOnlineEnabled.equalsValue(true),
+    );
+
+    if (offset != null) {
+      query = query.offset(offset);
+    }
+
+    if (limit != null) {
+      query = query.limit(limit);
+    }
+
+    final rows = await query.fetch();
+    return rows;
+  }
+
+  Future<int> countOnlineStores() async {
+    final query = _db.stores.where(
+      (s) => s.isActive.equalsValue(true) & s.isOnlineEnabled.equalsValue(true),
+    );
+    final total = await query.count().fetch();
+    return total ?? 0;
+  }
+
+  Future<StoreRow?> getBySlug(String slug) async {
+    final row = await _db.stores
+        .where(
+          (s) =>
+              s.slug.equalsValue(slug) &
+              s.isActive.equalsValue(true) &
+              s.isOnlineEnabled.equalsValue(true),
+        )
+        .first
+        .fetch();
+    return row;
+  }
+
   Future<int> count({required String merchantId}) async {
     final query = _db.stores.where((s) => s.merchantId.equalsValue(merchantId));
     final total = await query.count().fetch();
@@ -58,7 +103,10 @@ class StoreRepository {
     String? name,
     String? storeType,
     bool? isActive,
+    bool? isOnlineEnabled,
+    String? slug,
     bool updateStoreType = false,
+    bool updateSlug = false,
   }) async {
     final row = await _db.stores
         .byKey(id)
@@ -67,6 +115,10 @@ class StoreRepository {
             name: name != null ? ts.toExpr(name) : s.name,
             storeType: updateStoreType ? ts.toExpr(storeType) : s.storeType,
             isActive: isActive != null ? ts.toExpr(isActive) : s.isActive,
+            isOnlineEnabled: isOnlineEnabled != null
+                ? ts.toExpr(isOnlineEnabled)
+                : s.isOnlineEnabled,
+            slug: updateSlug ? ts.toExpr(slug) : s.slug,
             updatedAt: ts.Expr.currentTimestamp,
           ),
         )

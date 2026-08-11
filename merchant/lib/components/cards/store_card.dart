@@ -58,7 +58,7 @@ class StoreCard extends StatelessComponent {
         ]),
 
         div(
-          classes: 'flex gap-2 mt-2',
+          classes: 'flex flex-wrap gap-2 mt-1 items-center',
           [
             div(
               classes:
@@ -73,6 +73,23 @@ class StoreCard extends StatelessComponent {
                 .text(store.isActive ? 'ACTIVE' : 'INACTIVE'),
               ],
             ),
+            if (store.isOnlineEnabled) ...[
+              div(
+                classes:
+                    'bg-soft-purple text-soft-purple-content rounded-full px-3 py-1 text-xs font-semibold',
+                [
+                  .text('Online ordering'),
+                ],
+              ),
+              if (store.slug != null && store.slug!.isNotEmpty)
+                div(
+                  classes:
+                      'bg-soft-yellow text-soft-yellow-content rounded-full px-3 py-1 text-xs font-mono font-medium',
+                  [
+                    .text('/${store.slug!}'),
+                  ],
+                ),
+            ],
           ],
         ),
       ],

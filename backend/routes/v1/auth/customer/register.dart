@@ -60,7 +60,7 @@ Future<Response> _onPost(RequestContext context) async {
         },
       },
       headers: {
-        HttpHeaders.setCookieHeader: cookies.join(', '),
+        HttpHeaders.setCookieHeader: cookies,
       },
     );
   } on ResponseException catch (e) {
