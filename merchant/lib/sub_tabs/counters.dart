@@ -46,6 +46,7 @@ class _CountersState extends SignalState<Counters> {
       _loadedStoreId = store.id;
     }
     refreshCountersSignal();
+    refreshProductsSignal(customSize: 1000);
   }
 
   void _closeDropdowns() {
@@ -79,6 +80,7 @@ class _CountersState extends SignalState<Counters> {
       _loadedStoreId = store.id;
       Future.microtask(() {
         refreshCountersSignal();
+        refreshProductsSignal(customSize: 1000);
       });
     }
     final entries = entriesSignal.value;

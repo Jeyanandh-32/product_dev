@@ -78,7 +78,7 @@ class StoreCard extends StatelessComponent {
                 classes:
                     'bg-soft-purple text-soft-purple-content rounded-full px-3 py-1 text-xs font-semibold',
                 [
-                  .text('Online ordering'),
+                  .text('Online Ordering'),
                 ],
               ),
               if (store.slug != null && store.slug!.isNotEmpty)

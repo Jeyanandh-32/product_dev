@@ -808,8 +808,7 @@ class _DashboardState extends SignalState<Dashboard> {
   ) {
     if (topProducts.isNotEmpty) {
       return div(
-        classes:
-            'divide-y divide-gray-100 flex-1 flex flex-col justify-between',
+        classes: 'divide-y divide-gray-100 flex-1 flex flex-col justify-start',
         [
           for (final item in topProducts.take(5))
             _topProductRow(

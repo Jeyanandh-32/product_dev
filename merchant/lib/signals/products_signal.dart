@@ -25,7 +25,7 @@ void resetProductsSignal() {
   productsSignal.value = const AsyncData([]);
 }
 
-Future<void> refreshProductsSignal() async {
+Future<void> refreshProductsSignal({int? customSize}) async {
   final selectedStore = storeSignal.value;
   if (selectedStore == null) {
     productsSignal.value = const AsyncData([]);
@@ -34,8 +34,8 @@ Future<void> refreshProductsSignal() async {
 
   productsSignal.value = const AsyncLoading();
 
-  final size = entriesSignal.value;
-  final page = productsPageSignal.value;
+  final size = customSize ?? entriesSignal.value;
+  final page = customSize != null ? 1 : productsPageSignal.value;
 
   try {
     final search = productSearchSignal.value.trim();

@@ -12,6 +12,8 @@ abstract final class ApiEndpoints {
   // Resources
   static const String merchants = '/$version/merchants';
   static const String customers = '/$version/customers';
+  static const String customerRecentStores =
+      '/$version/customers/recent_stores';
   static const String stores = '/$version/stores';
   static const String terminals = '/$version/terminals';
   static const String counters = '/$version/counters';

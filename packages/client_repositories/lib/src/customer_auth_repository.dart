@@ -56,4 +56,34 @@ class CustomerAuthRepository {
       return null;
     }
   }
+
+  static Future<List<Store>> getRecentStores() async {
+    try {
+      final result = await dio.get(ApiEndpoints.customerRecentStores);
+      if (result.statusCode == 401 ||
+          result.data == null ||
+          result.data['data'] == null ||
+          result.data['data']['stores'] == null) {
+        return [];
+      }
+
+      final list = result.data['data']['stores'] as List<dynamic>;
+      return list
+          .map((s) => Store.fromJson(s as Map<String, Object?>))
+          .toList();
+    } on DioException catch (e) {
+      handleDioError(e, 'Failed to fetch recent stores.');
+    }
+  }
+
+  static Future<void> recordStoreVisit(String storeId) async {
+    try {
+      await dio.post(
+        ApiEndpoints.customerRecentStores,
+        data: {'storeId': storeId},
+      );
+    } on DioException catch (e) {
+      handleDioError(e, 'Failed to record store visit.');
+    }
+  }
 }
