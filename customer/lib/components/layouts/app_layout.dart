@@ -1,5 +1,4 @@
 import 'package:customer/components/signal_component.dart';
-import 'package:customer/signals/cart_signal.dart';
 import 'package:customer/signals/customer_auth_signal.dart';
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
@@ -19,8 +18,6 @@ class _AppLayoutState extends SignalState<AppLayout> {
   @override
   Component buildSignal(BuildContext context) {
     final customer = customerAuthSignal.value.value;
-    final cartItems = cartItemsSignal.value.values.toList();
-    final totalCartCount = cartItems.fold<int>(0, (sum, item) => sum + item.quantity);
 
     return div(
       classes: 'min-h-screen bg-white text-gray-900 flex flex-col font-sans selection:bg-gray-900 selection:text-white',
@@ -46,37 +43,28 @@ class _AppLayoutState extends SignalState<AppLayout> {
                   ],
                 ),
 
-                // Right Actions: Cart Pill & Customer Avatar
-                div(classes: 'flex items-center gap-4', [
-                  // Minimalist Cart Trigger Pill
-                  button(
-                    classes:
-                        'px-4 py-2 rounded-full bg-neutral hover:bg-gray-200 text-black font-semibold text-xs flex items-center gap-2.5 cursor-pointer border border-gray-200/60 transition-all shadow-2xs active:scale-98',
-                    onClick: () => Router.of(context).push('/cart'),
-                    [
-                      ShoppingBag(classes: 'w-4 h-4 text-black'),
-                      span(classes: 'font-bold', [
-                        .text('Cart'),
-                      ]),
-                      if (totalCartCount > 0)
-                        span(
-                          classes: 'bg-black text-white px-2 py-0.5 rounded-full text-[10px] font-extrabold',
-                          [
-                            .text('$totalCartCount'),
-                          ],
-                        ),
-                    ],
-                  ),
-
+                // Right Actions: Customer Avatar & Logout Button
+                div(classes: 'flex items-center gap-2.5', [
                   // Customer Initials Pill
                   if (customer != null)
                     div(
                       classes:
-                          'w-8 h-8 rounded-full bg-gray-100 text-black font-bold text-xs flex items-center justify-center border border-gray-200/80',
+                          'w-8 h-8 rounded-full bg-gray-100 text-black font-bold text-xs flex items-center justify-center border border-gray-200/80 select-none',
                       [
                         .text(customer.name.isNotEmpty ? customer.name[0].toUpperCase() : 'C'),
                       ],
                     ),
+
+                  // Logout Button Icon
+                  button(
+                    classes:
+                        'w-8 h-8 rounded-full bg-gray-100 hover:bg-red-50 text-gray-600 hover:text-red-600 transition-all flex items-center justify-center cursor-pointer border border-gray-200/80 active:scale-95',
+                    attributes: {'title': 'Logout'},
+                    onClick: logoutCustomer,
+                    [
+                      LogOut(classes: 'w-4 h-4'),
+                    ],
+                  ),
                 ]),
               ],
             ),

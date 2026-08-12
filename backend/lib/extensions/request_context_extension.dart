@@ -57,13 +57,13 @@ extension RequestContextExtension on RequestContext {
   }
 
   /// Parses and validates the query parameter 'size'.
-  /// Returns a Response if invalid, otherwise the parsed integer (defaults to 50).
+  /// Returns a Response if invalid, otherwise the parsed integer (defaults to 500).
   (Response?, int) parseSize() {
     final sizeStr = request.uri.queryParameters['size'];
-    if (sizeStr == null || sizeStr.isEmpty) return (null, 50);
+    if (sizeStr == null || sizeStr.isEmpty) return (null, 500);
     final size = int.tryParse(sizeStr);
     if (size == null || size <= 0) {
-      return (badRequest(message: 'size must be a positive integer > 0.'), 50);
+      return (badRequest(message: 'size must be a positive integer > 0.'), 500);
     }
     return (null, size);
   }

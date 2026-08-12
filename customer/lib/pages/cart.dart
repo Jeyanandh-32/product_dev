@@ -8,7 +8,6 @@ import 'package:jaspr_lucide/generated_icons/store.dart' as icon;
 import 'package:jaspr_lucide/jaspr_lucide.dart' hide List, Map, Router, Store;
 import 'package:jaspr_router/jaspr_router.dart';
 import 'package:models/models.dart';
-import 'package:signals/signals.dart';
 
 class CartPage extends SignalComponent {
   const CartPage({super.key});
@@ -18,30 +17,7 @@ class CartPage extends SignalComponent {
 }
 
 class _CartPageState extends SignalState<CartPage> {
-  late final storeSignal = asyncSignal<Store?>(const AsyncLoading());
   bool _isSubmitting = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _fetchCartStore();
-  }
-
-  Future<void> _fetchCartStore() async {
-    final storeId = currentCartStoreIdSignal.value;
-    if (storeId == null) {
-      storeSignal.value = const AsyncData(null);
-      return;
-    }
-
-    try {
-      final stores = await StoreRepository.getOnlineStores();
-      final store = stores.where((st) => st.id == storeId).firstOrNull;
-      storeSignal.value = AsyncData(store);
-    } catch (e, stack) {
-      storeSignal.value = AsyncError(e, stack);
-    }
-  }
 
   Future<void> _checkoutOrder() async {
     final storeId = currentCartStoreIdSignal.value;
@@ -66,7 +42,7 @@ class _CartPageState extends SignalState<CartPage> {
         products: productsPayload,
         source: OrderSource.web,
         type: OrderType.takeaway,
-        paymentMethod: PaymentMethod.cash,
+        paymentMethod: PaymentMethod.upi,
       );
 
       showCustomerToast('Order placed successfully!', type: ToastType.success);
@@ -81,13 +57,21 @@ class _CartPageState extends SignalState<CartPage> {
   @override
   Component buildSignal(BuildContext context) {
     final items = cartItemsSignal.value.values.toList();
-    final storeState = storeSignal.value;
-    final currentStore = storeState.value;
+    final currentStore = currentCartStoreSignal.value;
 
     final subtotal = items.fold<double>(
       0.0,
       (sum, item) => sum + item.product.sellingPrice * item.quantity,
     );
+    final totalTax = items.fold<double>(
+      0.0,
+      (sum, item) {
+        final taxRate = item.product.taxRate;
+        final itemPrice = item.product.sellingPrice * item.quantity;
+        return sum + (itemPrice * (taxRate / 100));
+      },
+    );
+    final grandTotal = subtotal + totalTax;
 
     return div(classes: 'max-w-4xl mx-auto w-full flex flex-col gap-8', [
       // Top Navigation Header Row
@@ -120,9 +104,11 @@ class _CartPageState extends SignalState<CartPage> {
 
         if (items.isNotEmpty)
           button(
-            classes: 'text-xs font-bold text-red-600 hover:text-red-800 cursor-pointer border-0 bg-transparent',
+            classes:
+                'px-3.5 py-1.5 rounded-full bg-red-50 hover:bg-red-600 text-red-600 hover:text-white font-extrabold text-xs flex items-center gap-1.5 transition-all cursor-pointer border border-red-200/80 shadow-2xs active:scale-95 shrink-0',
             onClick: clearCart,
             [
+              Trash2(classes: 'w-3.5 h-3.5'),
               .text('Clear Cart'),
             ],
           ),
@@ -149,9 +135,15 @@ class _CartPageState extends SignalState<CartPage> {
             button(
               classes:
                   'mt-2 px-6 py-3 rounded-full bg-black text-white font-bold text-xs hover:bg-gray-800 transition-all cursor-pointer border-0',
-              onClick: () => Router.of(context).push('/'),
+              onClick: () {
+                if (currentStore?.slug != null) {
+                  Router.of(context).push('/store/${currentStore!.slug!}');
+                } else {
+                  Router.of(context).push('/');
+                }
+              },
               [
-                .text('Explore Stores'),
+                .text(currentStore != null ? 'Back to ${currentStore.name}' : 'Explore Stores'),
               ],
             ),
           ],
@@ -179,7 +171,7 @@ class _CartPageState extends SignalState<CartPage> {
                           icon.Store(classes: 'w-6 h-6 text-gray-400'),
                       ],
                     ),
-                    div(classes: 'flex flex-col min-w-0', [
+                    div(classes: 'flex flex-col min-w-0 gap-0.5', [
                       h3(
                         classes: 'text-sm sm:text-base font-extrabold text-black truncate group-hover:opacity-80',
                         [
@@ -187,12 +179,15 @@ class _CartPageState extends SignalState<CartPage> {
                         ],
                       ),
                       span(classes: 'text-xs text-gray-400 font-medium', [
-                        .text('₹${item.product.sellingPrice.toStringAsFixed(2)}'),
+                        .text('₹${item.product.sellingPrice.toStringAsFixed(2)} × ${item.quantity}'),
+                      ]),
+                      span(classes: 'text-xs sm:text-sm font-extrabold text-black mt-0.5', [
+                        .text('₹${(item.product.sellingPrice * item.quantity).toStringAsFixed(2)}'),
                       ]),
                     ]),
                   ]),
 
-                  // Terminal Stepper Pill (+ qty -) & Trash Removal Button
+                  // Terminal Stepper Pill (- qty +) & Trash Removal Button
                   div(classes: 'flex items-center gap-2.5 shrink-0', [
                     div(
                       classes: 'bg-gray-100 p-1 rounded-full flex items-center gap-1 border border-gray-200 shadow-2xs',
@@ -200,12 +195,9 @@ class _CartPageState extends SignalState<CartPage> {
                         button(
                           classes:
                               'w-7 h-7 rounded-full bg-white hover:bg-black hover:text-white text-black font-bold flex items-center justify-center cursor-pointer border-0 transition-colors shadow-2xs active:scale-95',
-                          onClick: () => addToCart(
-                            currentCartStoreIdSignal.value ?? '',
-                            item.product,
-                          ),
+                          onClick: () => removeFromCart(item.product),
                           [
-                            Plus(classes: 'w-3.5 h-3.5'),
+                            Minus(classes: 'w-3.5 h-3.5'),
                           ],
                         ),
                         span(
@@ -217,9 +209,12 @@ class _CartPageState extends SignalState<CartPage> {
                         button(
                           classes:
                               'w-7 h-7 rounded-full bg-white hover:bg-black hover:text-white text-black font-bold flex items-center justify-center cursor-pointer border-0 transition-colors shadow-2xs active:scale-95',
-                          onClick: () => removeFromCart(item.product),
+                          onClick: () => addToCart(
+                            currentCartStoreIdSignal.value ?? '',
+                            item.product,
+                          ),
                           [
-                            Minus(classes: 'w-3.5 h-3.5'),
+                            Plus(classes: 'w-3.5 h-3.5'),
                           ],
                         ),
                       ],
@@ -248,29 +243,41 @@ class _CartPageState extends SignalState<CartPage> {
 
               div(classes: 'flex flex-col gap-3 text-sm', [
                 div(classes: 'flex justify-between items-center text-gray-500', [
-                  span([.text('Item Subtotal')]),
+                  span([.text('Total No of Items')]),
+                  span(classes: 'font-semibold text-black', [
+                    .text('${items.length}'),
+                  ]),
+                ]),
+                div(classes: 'flex justify-between items-center text-gray-500', [
+                  span([.text('Total Order Quantity')]),
+                  span(classes: 'font-semibold text-black', [
+                    .text('${items.fold<int>(0, (sum, item) => sum + item.quantity)}'),
+                  ]),
+                ]),
+                div(classes: 'flex justify-between items-center text-gray-500', [
+                  span([.text('Order Summary')]),
                   span(classes: 'font-semibold text-black', [
                     .text('₹${subtotal.toStringAsFixed(2)}'),
                   ]),
                 ]),
                 div(classes: 'flex justify-between items-center text-gray-500', [
-                  span([.text('Order Type')]),
-                  span(classes: 'font-semibold text-black', [
-                    .text('Takeaway Pickup'),
+                  span([.text('Gateway Charges')]),
+                  span(classes: 'font-semibold text-emerald-600', [
+                    .text('₹0.00 (Free)'),
                   ]),
                 ]),
                 div(classes: 'flex justify-between items-center text-gray-500', [
-                  span([.text('Payment')]),
+                  span([.text('Total Tax')]),
                   span(classes: 'font-semibold text-black', [
-                    .text('Pay at Store (Cash)'),
+                    .text('₹${totalTax.toStringAsFixed(2)}'),
                   ]),
                 ]),
                 div(
                   classes:
-                      'border-t border-gray-100 pt-3 flex justify-between items-center text-base font-extrabold text-black',
+                      'border-t border-dashed border-gray-200 pt-3 mt-1 flex justify-between items-center text-base font-extrabold text-black',
                   [
-                    span([.text('Total')]),
-                    span([.text('₹${subtotal.toStringAsFixed(2)}')]),
+                    span([.text('Total Amount')]),
+                    span([.text('₹${grandTotal.toStringAsFixed(2)}')]),
                   ],
                 ),
               ]),

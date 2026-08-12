@@ -22,6 +22,7 @@ class CartItem {
 /// Global Reactive Cart State
 final cartItemsSignal = signal<Map<String, CartItem>>({});
 final currentCartStoreIdSignal = signal<String?>(null);
+final currentCartStoreSignal = signal<Store?>(null);
 final isCartDrawerOpenSignal = signal<bool>(false);
 final isCartSubmittingSignal = signal<bool>(false);
 
@@ -37,15 +38,19 @@ void closeCartDrawer() {
   isCartDrawerOpenSignal.value = false;
 }
 
-void addToCart(String storeId, Product product) {
+void addToCart(String storeId, Product product, {Store? store}) {
   final currentStoreId = currentCartStoreIdSignal.value;
 
   // If adding from a different store, reset cart
   if (currentStoreId != null && currentStoreId != storeId && cartItemsSignal.value.isNotEmpty) {
     cartItemsSignal.value = {};
+    currentCartStoreSignal.value = null;
   }
 
   currentCartStoreIdSignal.value = storeId;
+  if (store != null) {
+    currentCartStoreSignal.value = store;
+  }
 
   final items = Map<String, CartItem>.from(cartItemsSignal.value);
   final existing = items[product.id];
@@ -72,25 +77,16 @@ void removeFromCart(Product product) {
   }
 
   cartItemsSignal.value = items;
-
-  if (items.isEmpty) {
-    currentCartStoreIdSignal.value = null;
-  }
 }
 
 void removeProductCompletely(String productId) {
   final items = Map<String, CartItem>.from(cartItemsSignal.value);
   items.remove(productId);
   cartItemsSignal.value = items;
-
-  if (items.isEmpty) {
-    currentCartStoreIdSignal.value = null;
-  }
 }
 
 void clearCart() {
   cartItemsSignal.value = {};
-  currentCartStoreIdSignal.value = null;
 }
 
 Future<void> checkoutCurrentCart() async {
@@ -116,7 +112,7 @@ Future<void> checkoutCurrentCart() async {
       products: productsPayload,
       source: OrderSource.web,
       type: OrderType.takeaway,
-      paymentMethod: PaymentMethod.cash,
+      paymentMethod: PaymentMethod.upi,
     );
 
     showCustomerToast('Order placed successfully!', type: ToastType.success);

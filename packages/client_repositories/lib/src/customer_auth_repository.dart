@@ -76,6 +76,14 @@ class CustomerAuthRepository {
     }
   }
 
+  static Future<void> logout() async {
+    try {
+      await dio.get(ApiEndpoints.logout);
+    } on DioException catch (e) {
+      handleDioError(e, 'Logout failed.');
+    }
+  }
+
   static Future<void> recordStoreVisit(String storeId) async {
     try {
       await dio.post(

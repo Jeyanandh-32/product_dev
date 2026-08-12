@@ -44,7 +44,7 @@ class _RegisterPageState extends SignalState<RegisterPage> {
       descriptionLine1: 'Register to start ordering',
       descriptionLine2: '',
       formContent: form(
-        classes: 'card-body items-start',
+        classes: 'w-full flex flex-col items-start',
         method: .post,
         events: {
           'submit': (e) => _onSubmit(e),
@@ -54,7 +54,7 @@ class _RegisterPageState extends SignalState<RegisterPage> {
             onChange: (value) => _fullName = value as String,
             id: 'fullname',
             labelText: 'Full Name',
-            icon: User(classes: 'w-4.5 h-4.5'),
+            icon: User(classes: 'w-4 h-4 text-gray-500'),
             type: .text,
             attributes: {
               'placeholder': 'Jack Dev',
@@ -67,7 +67,7 @@ class _RegisterPageState extends SignalState<RegisterPage> {
           FormField(
             id: 'whatsappNumber',
             labelText: 'Whatsapp Number',
-            icon: Phone(classes: 'w-4.5 h-4.5'),
+            icon: Phone(classes: 'w-4 h-4 text-gray-500'),
             type: .tel,
             onChange: (value) => _whatsappNumber = value as String,
             attributes: {
@@ -85,7 +85,7 @@ class _RegisterPageState extends SignalState<RegisterPage> {
           FormField(
             id: 'password',
             labelText: '6-Digit Security PIN',
-            icon: Lock(classes: 'w-4.5 h-4.5'),
+            icon: Lock(classes: 'w-4 h-4 text-gray-500'),
             type: .password,
             onChange: (value) => setState(() => _password = value as String),
             attributes: {
@@ -102,22 +102,25 @@ class _RegisterPageState extends SignalState<RegisterPage> {
 
           button(
             classes:
-                'btn btn-primary mt-3 rounded-lg h-12 w-full flex items-center justify-center font-semibold text-base cursor-pointer disabled:opacity-50',
+                'w-full h-12 mt-2 rounded-xl bg-black hover:bg-gray-800 text-white font-extrabold text-sm flex items-center justify-center transition-all cursor-pointer shadow-2xs active:scale-98 disabled:opacity-50 border-0',
             type: .submit,
             disabled: isSubmitting,
             [
-              if (isSubmitting) span(classes: 'loading loading-spinner loading-sm', []) else .text('Register'),
+              if (isSubmitting)
+                span(classes: 'loading loading-spinner loading-sm text-white', [])
+              else
+                .text('Register'),
             ],
           ),
         ],
       ),
       footerContent: button(
-        classes: 'text-sm hover:cursor-pointer',
+        classes: 'text-xs font-semibold text-gray-500 hover:text-black cursor-pointer border-0 bg-transparent p-0',
         onClick: () => context.push('/login'),
         [
           span([.text('Already have an account?')]),
-          span(classes: 'text-accent font-semibold ml-1', [
-            .text('Sign in to Brand'),
+          span(classes: 'text-black font-extrabold underline ml-1', [
+            .text('Sign in'),
           ]),
         ],
       ),

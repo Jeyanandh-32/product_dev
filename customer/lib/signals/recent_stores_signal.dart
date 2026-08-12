@@ -16,6 +16,5 @@ Future<void> refreshRecentStoresSignal() async {
 Future<void> recordStoreVisitSignal(String storeId) async {
   try {
     await CustomerAuthRepository.recordStoreVisit(storeId);
-    await refreshRecentStoresSignal();
   } catch (_) {}
 }

@@ -20,31 +20,40 @@ class AuthLayout extends StatelessComponent {
   @override
   Component build(BuildContext context) {
     return div(
-      classes: 'bg-neutral w-full min-h-screen flex flex-col justify-center py-10',
+      classes:
+          'min-h-screen bg-white text-gray-900 flex flex-col items-center justify-center py-8 px-4 font-sans selection:bg-gray-900 selection:text-white',
       [
         div(
-          classes: 'max-w-120 w-full mx-auto flex flex-col justify-center items-center px-6 md:px-0',
+          classes: 'max-w-md w-full mx-auto flex flex-col items-center',
           [
-            h1(classes: 'font-script text-primary text-[40px] font-normal', [
+            // Script Branding Logo
+            h1(classes: 'font-script text-primary text-4xl font-normal mb-1', [
               .text('Branding'),
             ]),
 
-            h1(classes: 'text-center text-3xl font-bold mt-4 mb-2', [
-              .text(title),
-            ]),
+            // Page Title
+            h1(
+              classes: 'text-center text-2xl md:text-3xl font-extrabold text-black tracking-tight mt-2 mb-1.5',
+              [
+                .text(title),
+              ],
+            ),
 
-            h4(classes: 'text-gray-500 text-center mb-8', [
+            // Subtitle Description
+            p(classes: 'text-xs text-gray-500 font-medium text-center mb-6 max-w-xs', [
               .text(descriptionLine1),
               if (descriptionLine2.isNotEmpty) ...[
-                br(),
+                .text(' '),
                 .text(descriptionLine2),
               ],
             ]),
 
-            div(classes: 'card bg-white shadow-sm w-full mb-8', [
+            // Form Body Container
+            div(classes: 'w-full mb-6', [
               formContent,
             ]),
 
+            // Footer Link
             footerContent,
           ],
         ),

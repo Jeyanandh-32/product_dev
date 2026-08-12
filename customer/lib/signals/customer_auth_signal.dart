@@ -60,3 +60,10 @@ Future<void> registerCustomer({
     );
   }
 }
+
+Future<void> logoutCustomer() async {
+  try {
+    await CustomerAuthRepository.logout();
+  } catch (_) {}
+  customerAuthSignal.value = const AsyncData(null);
+}

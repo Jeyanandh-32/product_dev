@@ -28,7 +28,7 @@ PaginatedResponse<T> parsePaginatedResponse<T>({
   return (
     items: list.map((e) => fromJson(e as Map<String, Object?>)).toList(),
     currentPage: currentPage ?? 1,
-    pageSize: pageSize ?? 50,
+    pageSize: pageSize ?? 500,
     totalItems: totalItems ?? list.length,
     totalPages: totalPages ?? 1,
   );

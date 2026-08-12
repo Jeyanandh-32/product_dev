@@ -82,17 +82,21 @@ class _FormFieldState extends State<FormField> {
   Component build(BuildContext context) {
     final isPassword = component.type == InputType.password;
 
-    return fieldset(classes: 'fieldset w-full mb-4', [
+    return fieldset(classes: 'w-full flex flex-col gap-1.5 mb-4', [
       div(classes: 'flex items-center justify-between', [
         label(
           htmlFor: component.id,
-          classes: 'label text-[14px] font-semibold text-gray-500',
-          [?component.icon, .text(component.labelText)],
+          classes: 'text-xs font-extrabold text-black uppercase tracking-wider flex items-center gap-1.5',
+          [
+            if (component.icon != null) component.icon!,
+            .text(component.labelText),
+          ],
         ),
         if (component.enableForgotPassword)
           button(
             type: .button,
-            classes: 'text-sm font-semibold text-accent hover:cursor-pointer',
+            classes:
+                'text-xs font-extrabold text-black underline hover:text-gray-700 cursor-pointer border-0 bg-transparent p-0',
             onClick: () => context.push('/forgotPassword'),
             [
               .text('Forgot Password?'),
@@ -108,20 +112,21 @@ class _FormFieldState extends State<FormField> {
             onInput: _handleInput,
             onChange: _handleInput,
             events: {'keydown': _handleKeyDown},
-            classes: 'input validator h-11 border border-border-medium w-full rounded-lg pr-10',
+            classes:
+                'h-12 w-full px-4 bg-gray-50 hover:bg-gray-100/80 focus:bg-white border border-gray-200 focus:border-black rounded-xl text-sm font-medium text-black transition-all focus:outline-none focus:ring-1 focus:ring-black pr-10',
             attributes: component.attributes,
           ),
           button(
             type: .button,
             classes:
-                'absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 hover:cursor-pointer p-1 rounded-md transition-colors',
+                'absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black cursor-pointer p-1 rounded-md transition-colors border-0 bg-transparent',
             onClick: () {
               setState(() {
                 _obscureText = !_obscureText;
               });
             },
             [
-              if (_obscureText) EyeOff(classes: 'w-4.5 h-4.5') else Eye(classes: 'w-4.5 h-4.5'),
+              if (_obscureText) EyeOff(classes: 'w-4 h-4') else Eye(classes: 'w-4 h-4'),
             ],
           ),
         ])
@@ -133,12 +138,14 @@ class _FormFieldState extends State<FormField> {
           onInput: _handleInput,
           onChange: _handleInput,
           events: {'keydown': _handleKeyDown},
-          classes: 'input validator h-11 border border-border-medium w-full rounded-lg',
+          classes:
+              'h-12 w-full px-4 bg-gray-50 hover:bg-gray-100/80 focus:bg-white border border-gray-200 focus:border-black rounded-xl text-sm font-medium text-black transition-all focus:outline-none focus:ring-1 focus:ring-black',
           attributes: component.attributes,
         ),
-      p(classes: 'validator-hint hidden', [
-        if (component.hintText != null) .text(component.hintText!),
-      ]),
+      if (component.hintText != null)
+        p(classes: 'text-[11px] font-medium text-gray-400 px-1', [
+          .text(component.hintText!),
+        ]),
     ]);
   }
 }

@@ -41,7 +41,7 @@ class _LoginPageState extends SignalState<LoginPage> {
       descriptionLine1: 'Enter your 10-digit mobile number and',
       descriptionLine2: '6-digit security PIN to access your orders.',
       formContent: form(
-        classes: 'card-body items-start',
+        classes: 'w-full flex flex-col items-start',
         method: .post,
         events: {
           'submit': (e) => _onSubmit(e),
@@ -50,7 +50,7 @@ class _LoginPageState extends SignalState<LoginPage> {
           FormField(
             id: 'mobileNumber',
             labelText: 'Mobile Number',
-            icon: Phone(classes: 'w-4.5 h-4.5'),
+            icon: Phone(classes: 'w-4 h-4 text-gray-500'),
             type: .tel,
             onChange: (value) => _mobileNumber = value as String,
             attributes: {
@@ -68,7 +68,7 @@ class _LoginPageState extends SignalState<LoginPage> {
           FormField(
             id: 'pin',
             labelText: '6-Digit Security PIN',
-            icon: Lock(classes: 'w-4.5 h-4.5'),
+            icon: Lock(classes: 'w-4 h-4 text-gray-500'),
             type: .password,
             onChange: (value) => setState(() => _pin = value as String),
             attributes: {
@@ -85,21 +85,24 @@ class _LoginPageState extends SignalState<LoginPage> {
 
           button(
             classes:
-                'btn btn-primary mt-3 rounded-lg h-12 w-full flex items-center justify-center font-semibold text-base cursor-pointer disabled:opacity-50',
+                'w-full h-12 mt-2 rounded-xl bg-black hover:bg-gray-800 text-white font-extrabold text-sm flex items-center justify-center transition-all cursor-pointer shadow-2xs active:scale-98 disabled:opacity-50 border-0',
             type: .submit,
             disabled: isSubmitting,
             [
-              if (isSubmitting) span(classes: 'loading loading-spinner loading-sm', []) else .text('Sign In'),
+              if (isSubmitting)
+                span(classes: 'loading loading-spinner loading-sm text-white', [])
+              else
+                .text('Sign In'),
             ],
           ),
         ],
       ),
       footerContent: button(
-        classes: 'text-sm hover:cursor-pointer',
+        classes: 'text-xs font-semibold text-gray-500 hover:text-black cursor-pointer border-0 bg-transparent p-0',
         onClick: () => context.push('/register'),
         [
           span([.text("Don't have an account?")]),
-          span(classes: 'text-accent font-semibold ml-1', [
+          span(classes: 'text-black font-extrabold underline ml-1', [
             .text('Register now'),
           ]),
         ],
