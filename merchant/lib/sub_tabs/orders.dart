@@ -268,6 +268,94 @@ class _OrdersState extends SignalState<Orders> {
     );
   }
 
+  Component _buildPaymentStatusFilter() {
+    final currentStatus = reportsPaymentStatusSignal.value;
+    final label = switch (currentStatus) {
+      'completed' => 'Payment Status: Completed',
+      'pending' => 'Payment Status: Pending',
+      'failed' => 'Payment Status: Failed',
+      _ => 'Payment Status: All',
+    };
+
+    return details(
+      classes: 'dropdown dropdown-bottom dropdown-start inline-block',
+      [
+        summary(
+          classes:
+              'btn btn-sm rounded-full border border-border-medium bg-base-100 hover:bg-base-200 text-xs px-3 font-medium flex items-center gap-1.5 shadow-2xs cursor-pointer list-none select-none',
+          [
+            span(classes: 'text-xs text-base-content font-medium', [
+              .text(label),
+            ]),
+            ChevronDown(classes: 'w-3.5 h-3.5 opacity-60'),
+          ],
+        ),
+        ul(
+          classes:
+              'dropdown-content menu bg-base-100 rounded-2xl z-30 mt-2 p-2 shadow-xl border border-border-medium w-48 flex flex-col gap-1',
+          [
+            li([
+              a(
+                href: '#',
+                classes:
+                    'rounded-md text-xs hover:bg-neutral ${currentStatus == null ? 'bg-neutral font-bold text-primary' : ''}',
+                onClick: () {
+                  reportsPaymentStatusSignal.value = null;
+                  ordersPageSignal.value = 1;
+                  refreshOrdersSignal();
+                  _closeDropdowns();
+                },
+                [.text('All Payment Statuses')],
+              ),
+            ]),
+            li([
+              a(
+                href: '#',
+                classes:
+                    'rounded-md text-xs hover:bg-neutral ${currentStatus == 'completed' ? 'bg-neutral font-bold text-primary' : ''}',
+                onClick: () {
+                  reportsPaymentStatusSignal.value = 'completed';
+                  ordersPageSignal.value = 1;
+                  refreshOrdersSignal();
+                  _closeDropdowns();
+                },
+                [.text('Completed')],
+              ),
+            ]),
+            li([
+              a(
+                href: '#',
+                classes:
+                    'rounded-md text-xs hover:bg-neutral ${currentStatus == 'pending' ? 'bg-neutral font-bold text-primary' : ''}',
+                onClick: () {
+                  reportsPaymentStatusSignal.value = 'pending';
+                  ordersPageSignal.value = 1;
+                  refreshOrdersSignal();
+                  _closeDropdowns();
+                },
+                [.text('Pending')],
+              ),
+            ]),
+            li([
+              a(
+                href: '#',
+                classes:
+                    'rounded-md text-xs hover:bg-neutral ${currentStatus == 'failed' ? 'bg-neutral font-bold text-primary' : ''}',
+                onClick: () {
+                  reportsPaymentStatusSignal.value = 'failed';
+                  ordersPageSignal.value = 1;
+                  refreshOrdersSignal();
+                  _closeDropdowns();
+                },
+                [.text('Failed')],
+              ),
+            ]),
+          ],
+        ),
+      ],
+    );
+  }
+
   @override
   Component buildSignal(BuildContext context) {
     final store = storeSignal.value;
@@ -360,6 +448,7 @@ class _OrdersState extends SignalState<Orders> {
               ),
 
               _buildPaymentModeFilter(),
+              _buildPaymentStatusFilter(),
               _buildStatusFilter(),
               _buildStatsToggleButton(),
             ]),

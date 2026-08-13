@@ -6,6 +6,8 @@ import 'package:jaspr_lucide/jaspr_lucide.dart' hide List, Map, Router, Store;
 import 'package:jaspr_router/jaspr_router.dart';
 import 'package:models/models.dart';
 
+import 'package:customer/utils/phonepe_interop.dart';
+
 class OrderStatusPage extends SignalComponent {
   const OrderStatusPage({required this.reference, super.key});
 
@@ -175,7 +177,16 @@ class _OrderStatusPageState extends SignalState<OrderStatusPage> {
               button(
                 classes:
                     'w-full mt-2 py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm flex items-center justify-center gap-2 cursor-pointer transition-all border-0 shadow-sm active:scale-98',
-                onClick: () => setState(() => _showQrModal = true),
+                onClick: () {
+                  setState(() => _showQrModal = true);
+                  Future.microtask(() {
+                    renderQrCodeCanvas(
+                      elementId: 'order-status-qr-canvas',
+                      text: order.orderReference,
+                      size: 190,
+                    );
+                  });
+                },
                 [
                   QrCode(classes: 'w-4 h-4 text-white'),
                   .text('Display Order Pickup QR'),
@@ -236,16 +247,15 @@ class _OrderStatusPageState extends SignalState<OrderStatusPage> {
                     ),
                   ]),
 
-                  // QR Code Image (via api.qrserver.com)
+                  // QR Code Display (Instant Client-Side rendering)
                   div(
                     classes:
-                        'p-4 bg-white rounded-2xl border-2 border-gray-100 shadow-inner flex items-center justify-center',
+                        'p-4 bg-white rounded-2xl border-2 border-gray-100 shadow-inner flex items-center justify-center min-w-[216px] min-h-[216px]',
                     [
-                      img(
-                        src:
-                            'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${Uri.encodeComponent(order.orderReference)}',
-                        classes: 'w-48 h-48 rounded-lg object-contain',
-                        attributes: {'alt': 'Order QR Code'},
+                      div(
+                        id: 'order-status-qr-canvas',
+                        classes: 'w-48 h-48 flex items-center justify-center',
+                        [],
                       ),
                     ],
                   ),

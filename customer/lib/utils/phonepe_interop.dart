@@ -18,3 +18,14 @@ void openPhonePeCheckoutModal({
 
   _phonePeTransact(tokenUrl, 'IFRAME', jsCallback);
 }
+
+@JS('window.renderQrCode')
+external void _renderQrCode(String elementId, String text, int size);
+
+void renderQrCodeCanvas({
+  required String elementId,
+  required String text,
+  int size = 200,
+}) {
+  _renderQrCode(elementId, text, size);
+}

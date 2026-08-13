@@ -193,9 +193,9 @@ class _PaymentsState extends SignalState<Payments> {
   Component _buildPaymentStatusFilter() {
     final currentStatus = reportsPaymentStatusSignal.value;
     final label = switch (currentStatus) {
-      'paid' => 'Status: Completed',
-      'unpaid' => 'Status: Pending',
-      'cancelled' => 'Status: Cancelled',
+      'completed' => 'Status: Completed',
+      'pending' => 'Status: Pending',
+      'failed' => 'Status: Failed',
       _ => 'Status: All',
     };
 
@@ -234,9 +234,9 @@ class _PaymentsState extends SignalState<Payments> {
               a(
                 href: '#',
                 classes:
-                    'rounded-md text-xs hover:bg-neutral ${currentStatus == 'paid' ? 'bg-neutral font-bold text-primary' : ''}',
+                    'rounded-md text-xs hover:bg-neutral ${currentStatus == 'completed' ? 'bg-neutral font-bold text-primary' : ''}',
                 onClick: () {
-                  reportsPaymentStatusSignal.value = 'paid';
+                  reportsPaymentStatusSignal.value = 'completed';
                   paymentsPageSignal.value = 1;
                   refreshPaymentsSignal();
                   _closeDropdowns();
@@ -248,9 +248,9 @@ class _PaymentsState extends SignalState<Payments> {
               a(
                 href: '#',
                 classes:
-                    'rounded-md text-xs hover:bg-neutral ${currentStatus == 'unpaid' ? 'bg-neutral font-bold text-primary' : ''}',
+                    'rounded-md text-xs hover:bg-neutral ${currentStatus == 'pending' ? 'bg-neutral font-bold text-primary' : ''}',
                 onClick: () {
-                  reportsPaymentStatusSignal.value = 'unpaid';
+                  reportsPaymentStatusSignal.value = 'pending';
                   paymentsPageSignal.value = 1;
                   refreshPaymentsSignal();
                   _closeDropdowns();
@@ -262,14 +262,14 @@ class _PaymentsState extends SignalState<Payments> {
               a(
                 href: '#',
                 classes:
-                    'rounded-md text-xs hover:bg-neutral ${currentStatus == 'cancelled' ? 'bg-neutral font-bold text-primary' : ''}',
+                    'rounded-md text-xs hover:bg-neutral ${currentStatus == 'failed' ? 'bg-neutral font-bold text-primary' : ''}',
                 onClick: () {
-                  reportsPaymentStatusSignal.value = 'cancelled';
+                  reportsPaymentStatusSignal.value = 'failed';
                   paymentsPageSignal.value = 1;
                   refreshPaymentsSignal();
                   _closeDropdowns();
                 },
-                [.text('Cancelled')],
+                [.text('Failed')],
               ),
             ]),
           ],

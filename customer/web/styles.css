@@ -1986,6 +1986,9 @@
   .min-h-\[60vh\] {
     min-height: 60vh;
   }
+  .min-h-\[216px\] {
+    min-height: 216px;
+  }
   .min-h-screen {
     min-height: 100vh;
   }
@@ -2091,6 +2094,9 @@
   }
   .min-w-\[200px\] {
     min-width: 200px;
+  }
+  .min-w-\[216px\] {
+    min-width: 216px;
   }
   .flex-1 {
     flex: 1;

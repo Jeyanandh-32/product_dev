@@ -10,6 +10,7 @@ import 'package:jaspr_router/jaspr_router.dart';
 import 'package:models/models.dart';
 import 'package:signals/signals.dart';
 
+import 'package:customer/utils/phonepe_interop.dart';
 import 'package:web/web.dart' as web;
 
 class CustomerOrdersPage extends SignalComponent {
@@ -261,16 +262,15 @@ class _CustomerOrdersPageState extends SignalState<CustomerOrdersPage> {
                   ),
                 ]),
 
-                // QR Code Image
+                // QR Code Display (Instant Client-Side rendering + fast fallback)
                 div(
                   classes:
-                      'p-4 bg-white rounded-2xl border-2 border-gray-100 shadow-inner flex items-center justify-center',
+                      'p-4 bg-white rounded-2xl border-2 border-gray-100 shadow-inner flex items-center justify-center min-w-[216px] min-h-[216px]',
                   [
-                    img(
-                      src:
-                          'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${Uri.encodeComponent(_qrModalOrder!.orderReference)}',
-                      classes: 'w-48 h-48 rounded-lg object-contain',
-                      attributes: {'alt': 'Order QR Code'},
+                    div(
+                      id: 'customer-qr-canvas',
+                      classes: 'w-48 h-48 flex items-center justify-center',
+                      [],
                     ),
                   ],
                 ),
@@ -361,7 +361,16 @@ class _CustomerOrdersPageState extends SignalState<CustomerOrdersPage> {
               button(
                 classes:
                     'flex-1 sm:flex-none sm:w-32 justify-center flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition-all cursor-pointer border-0 active:scale-95 shadow-2xs',
-                onClick: () => setState(() => _qrModalOrder = order),
+                onClick: () {
+                  setState(() => _qrModalOrder = order);
+                  Future.microtask(() {
+                    renderQrCodeCanvas(
+                      elementId: 'customer-qr-canvas',
+                      text: order.orderReference,
+                      size: 190,
+                    );
+                  });
+                },
                 [
                   QrCode(classes: 'w-3.5 h-3.5 text-white'),
                   .text('View QR'),

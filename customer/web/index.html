@@ -14,12 +14,21 @@
 
         <!-- PhonePe Checkout JS Bundle -->
         <script src="https://mercury.phonepe.com/web/bundle/checkout.js" defer></script>
+        <!-- QRCode.js bundle for instant 0ms client-side QR generation -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
         <script>
             window.phonePeTransact = function(tokenUrl, type, callback) {
                 if (window.PhonePeCheckout && window.PhonePeCheckout.transact) {
                     window.PhonePeCheckout.transact({ tokenUrl: tokenUrl, callback: callback, type: type || 'IFRAME' });
                 } else {
                     console.error('PhonePeCheckout SDK is not loaded yet');
+                }
+            };
+            window.renderQrCode = function(elementId, text, size) {
+                const el = document.getElementById(elementId);
+                if (el) {
+                    el.innerHTML = '';
+                    new QRCode(el, { text: text, width: size || 200, height: size || 200, correctLevel: QRCode.CorrectLevel.H });
                 }
             };
         </script>
