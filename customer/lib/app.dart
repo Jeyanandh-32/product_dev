@@ -3,6 +3,8 @@ import 'package:customer/components/signal_component.dart';
 import 'package:customer/components/toast.dart';
 import 'package:customer/pages/cart.dart';
 import 'package:customer/pages/login.dart';
+import 'package:customer/pages/order_status.dart';
+import 'package:customer/pages/orders.dart';
 import 'package:customer/pages/register.dart';
 import 'package:customer/pages/store_detail.dart';
 import 'package:customer/pages/store_search.dart';
@@ -67,6 +69,16 @@ class _AppState extends SignalState<App> {
                 Route(
                   path: '/cart',
                   builder: (context, state) => const CartPage(),
+                ),
+                Route(
+                  path: '/order/status',
+                  builder: (context, state) => OrderStatusPage(
+                    reference: state.queryParams['reference'] ?? '',
+                  ),
+                ),
+                Route(
+                  path: '/orders',
+                  builder: (context, state) => const CustomerOrdersPage(),
                 ),
               ],
             ),

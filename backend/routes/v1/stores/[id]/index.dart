@@ -1,9 +1,13 @@
+import 'package:backend/config/database.dart';
+import 'package:backend/database/schema.dart';
 import 'package:backend/extensions/request_context_extension.dart';
 import 'package:backend/extensions/store_row_extension.dart';
 import 'package:backend/repositories/store_repository.dart';
 import 'package:backend/utils/constraint_errors.dart';
 import 'package:backend/utils/responses.dart';
 import 'package:dart_frog/dart_frog.dart';
+import 'package:models/models.dart';
+import 'package:typed_sql/typed_sql.dart' hide Database;
 import 'package:validators/validators.dart';
 
 Future<Response> onRequest(
@@ -44,10 +48,36 @@ Future<Response> _onPutOrPatch(RequestContext context, String id) async {
     final body = await context.validateBody(StoreValidator.update);
     final input = StoreUpdate.fromJson(body);
 
+    if (input.isOnlineEnabled ?? false) {
+      final configRow = await Database.db.storePhonepeConfigs
+          .where((c) => c.storeId.equals(toExpr(id)) & c.isEnabled.equals(toExpr(true)))
+          .first
+          .fetch();
+
+      if (configRow == null ||
+          configRow.clientId == null ||
+          configRow.clientId!.trim().isEmpty ||
+          configRow.clientSecret == null ||
+          configRow.clientSecret!.trim().isEmpty) {
+        return badRequest(
+          message:
+              'Cannot enable online ordering for this store. Please contact system administrator.',
+        );
+      }
+    }
+
+    final rawStoreType = input.storeType?.trim();
+    final storeTypeEnum = rawStoreType != null && rawStoreType.isNotEmpty
+        ? StoreType.values.firstWhere(
+            (t) => t.name == rawStoreType,
+            orElse: () => StoreType.other,
+          )
+        : null;
+
     final storeRow = await repo.update(
       id: id,
       name: input.name?.trim(),
-      storeType: input.storeType?.trim(),
+      storeType: storeTypeEnum,
       isActive: input.isActive,
       isOnlineEnabled: input.isOnlineEnabled,
       slug: input.slug?.trim().toLowerCase(),

@@ -39,9 +39,12 @@ class OrderService {
     required OrderType type,
     required PaymentMethod paymentMethod,
     double discountTotalInput = 0.0,
+    OrderStatus status = OrderStatus.completed,
+    PaymentStatus paymentStatus = PaymentStatus.completed,
     String? terminalCode,
+    String? customerId,
   }) async {
-    final isComplimentary = paymentMethod == .complimentary;
+    final isComplimentary = paymentMethod == PaymentMethod.complimentary;
 
     var calculatedSubtotal = 0;
     var calculatedTaxTotal = 0;
@@ -102,9 +105,30 @@ class OrderService {
       calculatedSubtotal + calculatedTaxTotal - calculatedDiscountTotal,
     );
 
-    const paymentStatus = PaymentStatus.paid;
-
     return Database.db.transact(() async {
+      // 1. Re-validate stock inside atomic transaction to prevent race conditions
+      for (final p in productsInput) {
+        final productId = p['productId'] as String;
+        final quantity = p['quantity'] as int;
+
+        final result = await _productRepo.getById(productId);
+        if (result == null) {
+          throw Exception('Product with id "$productId" not found');
+        }
+        final productRow = result.$1;
+
+        final stockRow = await _stockRepo.getByProductAndStore(
+          storeId: storeId,
+          productId: productId,
+        );
+
+        if (stockRow != null && stockRow.quantity < quantity) {
+          throw Exception(
+            'Insufficient stock for product "${productRow.name}". Available: ${stockRow.quantity}, Requested: $quantity.',
+          );
+        }
+      }
+
       final billNo = await _orderRepo.getNextBillNo(storeId);
       final orderReference = _generateOrderReference();
 
@@ -115,7 +139,7 @@ class OrderService {
         billNo: billNo,
         source: source,
         type: type,
-        status: .completed,
+        status: status,
         paymentStatus: paymentStatus,
         paymentMethod: paymentMethod,
         subtotal: calculatedSubtotal,
@@ -123,6 +147,7 @@ class OrderService {
         taxTotal: calculatedTaxTotal,
         grandTotal: calculatedGrandTotal,
         terminalCode: terminalCode,
+        customerId: customerId,
       );
 
       final createdItems = <OrderItemRow>[];
@@ -149,7 +174,12 @@ class OrderService {
           productId: productId,
         );
 
-        if (stockRow != null) {
+        if (stockRow != null && paymentStatus == PaymentStatus.completed) {
+          if (stockRow.quantity < quantity) {
+            throw Exception(
+              'Stock decreased during checkout. Requested: $quantity, Available: ${stockRow.quantity}.',
+            );
+          }
           final newQty = max(0, stockRow.quantity - quantity);
           await _stockRepo.update(
             id: stockRow.id,
@@ -163,6 +193,56 @@ class OrderService {
       }
 
       return orderRow.toOrder(createdItems);
+    });
+  }
+
+  /// Deducts inventory when an online payment completes successfully
+  Future<void> completeOrderPayment({
+    required OrderRow orderRow,
+    required List<OrderItemRow> orderItems,
+  }) async {
+    if (orderRow.paymentStatus == PaymentStatus.completed.name) return;
+
+    await Database.db.transact(() async {
+      await _orderRepo.update(
+        id: orderRow.id,
+        paymentStatus: PaymentStatus.completed,
+        status: OrderStatus.pending,
+      );
+
+      for (final item in orderItems) {
+        final stockRow = await _stockRepo.getByProductAndStore(
+          storeId: orderRow.storeId,
+          productId: item.productId,
+        );
+
+        if (stockRow != null) {
+          final newQty = max(0, stockRow.quantity - item.quantity);
+          await _stockRepo.update(
+            id: stockRow.id,
+            quantity: newQty,
+            transactionType: StockTransactionType.reduce.name,
+            amount: item.quantity,
+            reason: StockTransactionReason.sale.name,
+            customReason: 'Order #${orderRow.billNo}',
+          );
+        }
+      }
+    });
+  }
+
+  /// Marks an order as cancelled when payment fails or is abandoned
+  Future<void> cancelOrder({
+    required OrderRow orderRow,
+  }) async {
+    if (orderRow.status == OrderStatus.cancelled.name) return;
+
+    await Database.db.transact(() async {
+      await _orderRepo.update(
+        id: orderRow.id,
+        paymentStatus: PaymentStatus.failed,
+        status: OrderStatus.cancelled,
+      );
     });
   }
 }

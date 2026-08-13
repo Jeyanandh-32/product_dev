@@ -48,6 +48,32 @@ abstract final class OrderRepository {
     }
   }
 
+  static Future<({Order order, String tokenUrl, String merchantOrderId})> initiateOnlinePayment({
+    required String storeId,
+    required List<Map<String, dynamic>> products,
+    double? discountTotal,
+  }) async {
+    try {
+      final result = await dio.post(
+        '/v1/orders/initiate-online-payment',
+        queryParameters: {'storeId': storeId},
+        data: {
+          'products': products,
+          'discountTotal': ?discountTotal,
+        },
+      );
+
+      final data = result.data['data'] as Map<String, dynamic>;
+      final order = Order.fromJson(data['order'] as Map<String, Object?>);
+      final tokenUrl = data['tokenUrl'] as String;
+      final merchantOrderId = data['merchantOrderId'] as String;
+
+      return (order: order, tokenUrl: tokenUrl, merchantOrderId: merchantOrderId);
+    } on DioException catch (e) {
+      handleDioError(e, 'Failed to initiate online payment.');
+    }
+  }
+
   static Future<Order> getById({
     required String storeId,
     required String id,
@@ -78,7 +104,7 @@ abstract final class OrderRepository {
   }) async {
     try {
       final result = await dio.get(
-        ApiEndpoints.orders,
+        ApiEndpoints.reportsOrders,
         queryParameters: {
           'storeId': storeId,
           'page': ?page,
@@ -140,6 +166,45 @@ abstract final class OrderRepository {
       return result.data['data'] as Map<String, dynamic>;
     } on DioException catch (e) {
       handleDioError(e, 'Failed to fetch dashboard analytics.');
+    }
+  }
+
+  static Future<Order> verifyStatus({required String reference}) async {
+    try {
+      final result = await dio.get(
+        '/v1/orders/verify-status',
+        queryParameters: {'reference': reference},
+      );
+      final data = result.data['data'] as Map<String, dynamic>;
+      return Order.fromJson(data['order'] as Map<String, Object?>);
+    } on DioException catch (e) {
+      handleDioError(e, 'Failed to verify order status.');
+    }
+  }
+
+  static Future<PaginatedResponse<Order>> getCustomerOrders({
+    String? date,
+    int? page,
+    int? size,
+  }) async {
+    try {
+      final result = await dio.get(
+        ApiEndpoints.customerOrders,
+        queryParameters: {
+          'date': ?date,
+          'page': ?page,
+          'size': ?size,
+        },
+      );
+
+      final data = result.data['data'] as Map<String, dynamic>;
+      return parsePaginatedResponse(
+        data: data,
+        key: 'orders',
+        fromJson: Order.fromJson,
+      );
+    } on DioException catch (e) {
+      handleDioError(e, 'Failed to fetch customer orders.');
     }
   }
 }

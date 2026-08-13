@@ -75,7 +75,7 @@ Future<Response> _onGet(RequestContext context) async {
 
     final payments = orderRows.map((row) {
       final order = row.toOrder(const <OrderItemRow>[]);
-      final isPaid = order.paymentStatus == .paid;
+      final isPaid = order.paymentStatus == PaymentStatus.completed;
       final originalOrderAmount = order.subtotal + order.taxTotal;
 
       return Payment(

@@ -421,6 +421,7 @@ class _OrdersState extends SignalState<Orders> {
                       date: _formatDate(order.createdAt),
                       totalAmount: order.grandTotal,
                       paymentType: _formatPaymentType(order.paymentMethod),
+                      paymentStatus: order.paymentStatus,
                       status: order.status.name.toUpperCase(),
                       onClick: () => fetchOrderDetails(order.id),
                     ),
@@ -464,7 +465,8 @@ class _OrdersState extends SignalState<Orders> {
           onSort: _onSort,
         ),
         td([.text('Payment Mode')]),
-        td([.text('Status')]),
+        td([.text('Payment Status')]),
+        td([.text('Order Status')]),
         th([]),
       ]),
     ]);
@@ -475,10 +477,10 @@ class _OrdersState extends SignalState<Orders> {
     required String date,
     required double totalAmount,
     required String paymentType,
+    required PaymentStatus paymentStatus,
     required String status,
     VoidCallback? onClick,
   }) {
-    final isCompleted = status == 'COMPLETED';
     final isCash = paymentType == 'CASH';
 
     return tr(
@@ -504,8 +506,29 @@ class _OrdersState extends SignalState<Orders> {
         ]),
         td([
           div(
-            classes:
-                '${isCompleted ? 'bg-soft-green text-soft-green-content' : 'bg-soft-yellow text-soft-yellow-content'} rounded-full px-3 py-1 text-center text-xs font-semibold inline-block',
+            classes: switch (paymentStatus) {
+              PaymentStatus.completed =>
+                'bg-soft-green text-soft-green-content rounded-full px-3 py-1 text-center text-xs font-semibold inline-block',
+              PaymentStatus.pending =>
+                'bg-soft-yellow text-soft-yellow-content rounded-full px-3 py-1 text-center text-xs font-semibold inline-block',
+              PaymentStatus.failed =>
+                'bg-soft-red text-soft-red-content rounded-full px-3 py-1 text-center text-xs font-semibold inline-block',
+            },
+            [
+              .text(paymentStatus.name.toUpperCase()),
+            ],
+          ),
+        ]),
+        td([
+          div(
+            classes: switch (status) {
+              'COMPLETED' =>
+                'bg-soft-green text-soft-green-content rounded-full px-3 py-1 text-center text-xs font-semibold inline-block',
+              'CANCELLED' =>
+                'bg-soft-red text-soft-red-content rounded-full px-3 py-1 text-center text-xs font-semibold inline-block',
+              _ =>
+                'bg-soft-yellow text-soft-yellow-content rounded-full px-3 py-1 text-center text-xs font-semibold inline-block',
+            },
             [
               .text(status),
             ],

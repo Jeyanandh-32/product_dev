@@ -1,4 +1,7 @@
 import 'package:backend/database/schema.dart';
+import 'package:backend/extensions/order_row_extension.dart';
+import 'package:backend/repositories/order_item_repository.dart';
+import 'package:backend/repositories/product_repository.dart';
 import 'package:models/models.dart';
 import 'package:typed_sql/typed_sql.dart' as ts;
 
@@ -22,6 +25,7 @@ class OrderRepository {
     required int taxTotal,
     required int grandTotal,
     String? terminalCode,
+    String? customerId,
   }) async {
     final row = await _db.orders
         .insertValue(
@@ -39,6 +43,7 @@ class OrderRepository {
           taxTotal: taxTotal,
           grandTotal: grandTotal,
           terminalCode: terminalCode,
+          customerId: customerId,
         )
         .returnInserted()
         .executeAndFetch();
@@ -178,18 +183,32 @@ class OrderRepository {
 
     final rows = await query.fetch();
 
+    var validOrderCount = 0;
     var grossSubtotalPaise = 0;
     var totalDiscountPaise = 0;
     var netRevenuePaise = 0;
 
     for (final row in rows) {
-      grossSubtotalPaise += row.subtotal;
-      totalDiscountPaise += row.discountTotal;
-      netRevenuePaise += row.grandTotal;
+      final pStatus = row.paymentStatus.toLowerCase();
+      final status = row.status.toLowerCase();
+
+      final isPaidOrCompleted =
+          pStatus == PaymentStatus.completed.name ||
+          pStatus == 'paid' ||
+          row.paymentMethod.toLowerCase() == PaymentMethod.complimentary.name;
+
+      final isCancelled = status == OrderStatus.cancelled.name;
+
+      if (isPaidOrCompleted && !isCancelled) {
+        validOrderCount++;
+        grossSubtotalPaise += row.subtotal;
+        totalDiscountPaise += row.discountTotal;
+        netRevenuePaise += row.grandTotal;
+      }
     }
 
     return (
-      totalOrders: rows.length,
+      totalOrders: validOrderCount,
       grossSubtotal: grossSubtotalPaise / 100.0,
       totalDiscount: totalDiscountPaise / 100.0,
       netRevenue: netRevenuePaise / 100.0,
@@ -232,7 +251,8 @@ class OrderRepository {
     var totalPaise = 0;
 
     for (final row in rows) {
-      final isPaid = row.paymentStatus.toLowerCase() == 'paid';
+      final statusLower = row.paymentStatus.toLowerCase();
+      final isPaid = statusLower == 'completed' || statusLower == 'paid';
       final method = row.paymentMethod.toLowerCase();
 
       if (method == 'cash') {
@@ -573,27 +593,28 @@ class OrderRepository {
         hourlyCounts[7]++;
       }
 
-      final isComplimentary =
-          o.paymentMethod.toLowerCase() == PaymentMethod.complimentary.name ||
-          o.paymentStatus.toLowerCase() == PaymentStatus.refunded.name;
+      final method = o.paymentMethod.toLowerCase();
+      final pStatus = o.paymentStatus.toLowerCase();
+      final isPaid = pStatus == PaymentStatus.completed.name || pStatus == 'paid';
+      final isComplimentary = method == PaymentMethod.complimentary.name;
 
-      if (!isComplimentary) {
+      if (isComplimentary) {
+        freePaise += o.subtotal > 0 ? o.subtotal : 100;
+        freeCount++;
+      } else if (isPaid) {
         totalRevenuePaise += o.grandTotal;
         paidPaise += o.grandTotal;
         paidCount++;
-      } else {
-        freePaise += o.subtotal > 0 ? o.subtotal : 100;
-        freeCount++;
-      }
 
-      if (o.paymentMethod.toLowerCase() == PaymentMethod.upi.name) {
-        upiPaise += o.grandTotal;
-      } else if (o.paymentMethod.toLowerCase() == PaymentMethod.cash.name) {
-        cashPaise += o.grandTotal;
+        if (method == PaymentMethod.upi.name) {
+          upiPaise += o.grandTotal;
+        } else if (method == PaymentMethod.cash.name) {
+          cashPaise += o.grandTotal;
+        }
       }
     }
 
-    final totalOrders = orderRows.length;
+    final totalOrders = paidCount + freeCount;
     final totalRevenue = totalRevenuePaise / 100.0;
     final aov = totalOrders > 0 ? (totalRevenue / totalOrders) : 0.0;
 
@@ -623,15 +644,18 @@ class OrderRepository {
           .fetch();
 
       var prevRevenuePaise = 0;
+      var prevCount = 0;
       for (final p in prevRows) {
-        final isComp =
-            p.paymentMethod.toLowerCase() == PaymentMethod.complimentary.name ||
-            p.paymentStatus.toLowerCase() == PaymentStatus.refunded.name;
-        if (!isComp) prevRevenuePaise += p.grandTotal;
+        final pStatus = p.paymentStatus.toLowerCase();
+        final isPaid = pStatus == PaymentStatus.completed.name || pStatus == 'paid';
+        if (isPaid) {
+          prevRevenuePaise += p.grandTotal;
+          prevCount++;
+        }
       }
 
       final prevRevenue = prevRevenuePaise / 100.0;
-      final prevOrders = prevRows.length;
+      final prevOrders = prevCount;
       final prevAov = prevOrders > 0 ? (prevRevenue / prevOrders) : 0.0;
 
       if (prevRevenue > 0) {
@@ -811,5 +835,53 @@ class OrderRepository {
       'topProducts': topProducts,
       'lowStockProducts': lowStockProducts,
     };
+  }
+
+  Future<({List<Order> items, int total})> getCustomerOrders({
+    required String customerId,
+    String? date,
+    int limit = 10,
+    int offset = 0,
+  }) async {
+    var query = _db.orders
+        .where((o) => o.customerId.equals(ts.toExpr(customerId)))
+        .where((o) => o.paymentStatus.equals(ts.toExpr('completed')));
+
+    if (date != null && date.trim().isNotEmpty) {
+      final parsed = DateTime.tryParse(date);
+      if (parsed != null) {
+        final startOfDay = DateTime(parsed.year, parsed.month, parsed.day);
+        final endOfDay = DateTime(parsed.year, parsed.month, parsed.day, 23, 59, 59, 999);
+        query = query
+            .where((o) => o.createdAt.isAfterValue(startOfDay.subtract(const Duration(milliseconds: 1))))
+            .where((o) => o.createdAt.isBeforeValue(endOfDay.add(const Duration(milliseconds: 1))));
+      }
+    }
+
+    final rows = await query.fetch();
+
+    rows.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    final total = rows.length;
+    final paginatedRows = rows.skip(offset).take(limit).toList();
+
+    final itemRepo = OrderItemRepository(db: _db);
+    final productRepo = ProductRepository(db: _db);
+
+    final orders = <Order>[];
+    for (final orderRow in paginatedRows) {
+      final itemRows = await itemRepo.getAllForOrder(orderRow.id);
+      final productRowsMap = <String, ProductRow>{};
+      for (final item in itemRows) {
+        if (!productRowsMap.containsKey(item.productId)) {
+          final res = await productRepo.getById(item.productId);
+          if (res != null) {
+            productRowsMap[item.productId] = res.$1;
+          }
+        }
+      }
+      orders.add(orderRow.toOrder(itemRows, productRows: productRowsMap));
+    }
+
+    return (items: orders, total: total);
   }
 }

@@ -1,4 +1,5 @@
 import 'package:backend/database/schema.dart';
+import 'package:models/models.dart';
 import 'package:typed_sql/typed_sql.dart' as ts;
 
 class StoreRepository {
@@ -9,16 +10,18 @@ class StoreRepository {
   Future<StoreRow> create({
     required String merchantId,
     required String name,
-    String? storeType,
+    StoreType? storeType,
     bool isOnlineEnabled = false,
+    PaymentProvider activePaymentProvider = PaymentProvider.phonepe,
     String? slug,
   }) async {
     final row = await _db.stores
         .insertValue(
           merchantId: merchantId,
           name: name,
-          storeType: storeType,
+          storeType: storeType?.name,
           isOnlineEnabled: isOnlineEnabled,
+          activePaymentProvider: activePaymentProvider.name,
           slug: slug,
         )
         .returnInserted()
@@ -101,7 +104,7 @@ class StoreRepository {
   Future<StoreRow?> update({
     required String id,
     String? name,
-    String? storeType,
+    StoreType? storeType,
     bool? isActive,
     bool? isOnlineEnabled,
     String? slug,
@@ -113,7 +116,7 @@ class StoreRepository {
         .update(
           (s, set) => set(
             name: name != null ? ts.toExpr(name) : s.name,
-            storeType: updateStoreType ? ts.toExpr(storeType) : s.storeType,
+            storeType: updateStoreType ? ts.toExpr(storeType?.name) : s.storeType,
             isActive: isActive != null ? ts.toExpr(isActive) : s.isActive,
             isOnlineEnabled: isOnlineEnabled != null
                 ? ts.toExpr(isOnlineEnabled)

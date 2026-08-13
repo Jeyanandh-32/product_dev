@@ -181,7 +181,7 @@ class _StoreSearchPageState extends SignalState<StoreSearchPage> {
           }
 
           return div(
-            classes: 'flex flex-col gap-3 w-full',
+            classes: 'grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-4 w-full',
             [
               for (final store in filtered) _buildStoreRow(store),
             ],

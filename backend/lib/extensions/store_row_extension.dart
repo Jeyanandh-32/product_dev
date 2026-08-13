@@ -9,6 +9,12 @@ extension StoreRowExtension on StoreRow {
     storeType: storeType,
     isActive: isActive,
     isOnlineEnabled: isOnlineEnabled,
+    activePaymentProvider: activePaymentProvider != null
+        ? PaymentProvider.values.firstWhere(
+            (p) => p.name == activePaymentProvider,
+            orElse: () => PaymentProvider.phonepe,
+          )
+        : PaymentProvider.phonepe,
     slug: slug,
     createdAt: createdAt,
     updatedAt: updatedAt,

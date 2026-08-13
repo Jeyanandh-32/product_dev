@@ -35,7 +35,12 @@ Future<Response> _onPatch(RequestContext context) async {
   final tokenPayload = context.tokenPayload;
 
   try {
-    final body = (await context.request.json()) as Map<String, dynamic>;
+    Map<String, dynamic> body;
+    try {
+      body = (await context.request.json()) as Map<String, dynamic>;
+    } catch (_) {
+      return invalidBody();
+    }
     final name = body['name'] as String?;
     final businessName = body['businessName'] as String?;
     final whatsappNumber = body['whatsappNumber'] as String?;

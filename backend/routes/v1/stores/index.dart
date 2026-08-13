@@ -6,6 +6,7 @@ import 'package:backend/repositories/store_repository.dart';
 import 'package:backend/utils/constraint_errors.dart';
 import 'package:backend/utils/responses.dart';
 import 'package:dart_frog/dart_frog.dart';
+import 'package:models/models.dart';
 import 'package:validators/validators.dart';
 
 Future<Response> onRequest(RequestContext context) async {
@@ -63,11 +64,25 @@ Future<Response> _onPost(RequestContext context) async {
     final body = await context.validateBody(StoreValidator.create);
     final input = StoreCreate.fromJson(body);
 
+    if (input.isOnlineEnabled ?? false) {
+      return badRequest(
+        message:
+            'Cannot create a store with online ordering enabled. Please contact system administrator.',
+      );
+    }
+
+    final rawStoreType = input.storeType?.trim();
+    final storeTypeEnum = rawStoreType != null && rawStoreType.isNotEmpty
+        ? StoreType.values.firstWhere(
+            (t) => t.name == rawStoreType,
+            orElse: () => StoreType.other,
+          )
+        : null;
+
     final storeRow = await repo.create(
       merchantId: tokenPayload.sub,
       name: input.name.trim(),
-      storeType: input.storeType?.trim(),
-      isOnlineEnabled: input.isOnlineEnabled ?? false,
+      storeType: storeTypeEnum,
       slug: input.slug?.trim().toLowerCase(),
     );
 

@@ -30,7 +30,7 @@ abstract final class PaymentRepository {
   }) async {
     try {
       final result = await dio.get(
-        ApiEndpoints.payments,
+        ApiEndpoints.reportsPayments,
         queryParameters: {
           'storeId': storeId,
           'page': ?page,

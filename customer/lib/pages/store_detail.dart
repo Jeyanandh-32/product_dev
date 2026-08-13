@@ -142,6 +142,20 @@ class _StoreDetailPageState extends SignalState<StoreDetailPage> {
           ]),
         ]),
 
+        if (storeState.value != null && !storeState.value!.isOnlineEnabled)
+          div(
+            classes:
+                'w-full bg-amber-50 border border-amber-200 text-amber-900 rounded-2xl p-4 flex items-center gap-3 text-sm font-semibold shadow-2xs',
+            [
+              span(classes: 'text-amber-600 text-lg font-bold shrink-0', [.text('⚠️')]),
+              span([
+                .text(
+                  'Online ordering is currently paused for this store. You can browse the menu, but online checkout is unavailable.',
+                ),
+              ]),
+            ],
+          ),
+
         // Search Capsule & Horizontal Category Filter Chips
         div(classes: 'flex flex-col gap-3', [
           // Minimalist Search Capsule (h-12 / 48px height)
@@ -263,7 +277,7 @@ class _StoreDetailPageState extends SignalState<StoreDetailPage> {
             }
 
             return div(
-              classes: 'grid grid-cols-2 gap-4 sm:gap-6',
+              classes: 'grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6',
               [
                 for (final product in filtered)
                   if (currentStore != null)

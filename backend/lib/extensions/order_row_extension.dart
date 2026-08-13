@@ -26,7 +26,7 @@ extension OrderRowExtension on OrderRow {
     ),
     paymentStatus: PaymentStatus.values.firstWhere(
       (e) => e.name == paymentStatus,
-      orElse: () => PaymentStatus.paid,
+      orElse: () => PaymentStatus.pending,
     ),
     paymentMethod: PaymentMethod.values.firstWhere(
       (e) => e.name == paymentMethod,

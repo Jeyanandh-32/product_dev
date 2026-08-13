@@ -37,7 +37,12 @@ Future<Response> _onPost(RequestContext context) async {
   final tokenPayload = context.tokenPayload;
 
   try {
-    final json = await context.request.json() as Map<String, dynamic>;
+    Map<String, dynamic> json;
+    try {
+      json = await context.request.json() as Map<String, dynamic>;
+    } catch (_) {
+      return invalidBody();
+    }
     final storeId = json['storeId'] as String?;
 
     if (storeId == null || !storeId.isUUID()) {

@@ -30,7 +30,12 @@ extension RequestContextExtension on RequestContext {
   Future<Map<String, dynamic>> validateBody(
     Future<String?> Function(Map<String, dynamic>) validator,
   ) async {
-    final json = await request.json();
+    final dynamic json;
+    try {
+      json = await request.json();
+    } catch (_) {
+      throw ResponseException(invalidBody());
+    }
     if (json is! Map<String, dynamic>) {
       throw ResponseException(invalidBody());
     }

@@ -185,14 +185,9 @@ class _StockSummaryState extends SignalState<StockSummary> {
             reportState.value!.items.isNotEmpty)
           div(
             classes:
-                'grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 p-4 border-b border-border-medium bg-neutral/20',
+                'grid grid-cols-2 lg:grid-cols-4 gap-3 p-4 border-b border-border-medium bg-neutral/20',
 
             [
-              summaryCard(
-                title: 'Opening Stock',
-                value: '${reportState.value!.totalOpeningStock}',
-                textColor: 'text-gray-700',
-              ),
               summaryCard(
                 title: 'Restocked (In)',
                 value: '+${reportState.value!.totalIn}',
@@ -218,11 +213,6 @@ class _StockSummaryState extends SignalState<StockSummary> {
                           ? 'text-emerald-600'
                           : 'text-rose-600')
                     : 'text-gray-700',
-              ),
-              summaryCard(
-                title: 'Closing Stock',
-                value: '${reportState.value!.totalClosingStock}',
-                textColor: 'text-primary font-bold',
               ),
             ],
           ),

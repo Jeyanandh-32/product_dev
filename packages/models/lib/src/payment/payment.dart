@@ -14,7 +14,7 @@ abstract class Payment with _$Payment {
     required double discountAmount,
     required double paidAmount,
     required PaymentMethod paymentMode,
-    @JsonKey(unknownEnumValue: PaymentStatus.paid)
+    @JsonKey(unknownEnumValue: PaymentStatus.pending)
     required PaymentStatus paymentStatus,
     required DateTime date,
   }) = _Payment;

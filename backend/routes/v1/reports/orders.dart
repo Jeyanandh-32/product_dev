@@ -1,5 +1,6 @@
+import 'package:backend/extensions/order_row_extension.dart';
 import 'package:backend/extensions/request_context_extension.dart';
-import 'package:backend/repositories/stock_repository.dart';
+import 'package:backend/repositories/order_repository.dart';
 import 'package:backend/utils/responses.dart';
 import 'package:dart_frog/dart_frog.dart';
 
@@ -23,7 +24,9 @@ Future<Response> _onGet(RequestContext context) async {
   final queryParams = context.request.uri.queryParameters;
   final fromDateStr = queryParams['fromDate'];
   final toDateStr = queryParams['toDate'];
-  final searchQuery = queryParams['search'];
+  final paymentMethodStr = queryParams['paymentMethod'];
+  final statusStr = queryParams['status'];
+  final paymentStatusStr = queryParams['paymentStatus'];
 
   final fromDate = fromDateStr != null && fromDateStr.isNotEmpty
       ? DateTime.tryParse(fromDateStr)?.toUtc()
@@ -44,38 +47,58 @@ Future<Response> _onGet(RequestContext context) async {
     }
   }
 
-  final stockRepo = context.read<StockRepository>();
+  final orderRepo = context.read<OrderRepository>();
   final tokenPayload = context.tokenPayload;
 
   try {
-    final offset = (page - 1) * size;
-    final result = await stockRepo.getStockSummaryReport(
+    final total = await orderRepo.count(
       merchantId: tokenPayload.sub,
       storeId: context.storeId,
       fromDate: fromDate,
       toDate: toDate,
-      searchQuery: searchQuery,
+      paymentMethod: paymentMethodStr,
+      status: statusStr,
+      paymentStatus: paymentStatusStr,
+    );
+
+    final offset = (page - 1) * size;
+    final orderRows = await orderRepo.getAll(
+      merchantId: tokenPayload.sub,
+      storeId: context.storeId,
+      fromDate: fromDate,
+      toDate: toDate,
+      paymentMethod: paymentMethodStr,
+      status: statusStr,
+      paymentStatus: paymentStatusStr,
       limit: size,
       offset: offset,
     );
 
-    final totalPages = (result.total / size).ceil();
+    final orderSummary = await orderRepo.getOrderSummary(
+      merchantId: tokenPayload.sub,
+      storeId: context.storeId,
+      fromDate: fromDate,
+      toDate: toDate,
+    );
+
+    final orders = orderRows
+        .map((orderRow) => orderRow.toOrder(const []).toJson())
+        .toList();
+    final totalPages = (total / size).ceil();
 
     return success(
       data: {
         'currentPage': page,
         'pageSize': size,
-        'totalItems': result.total,
-        'totalPages': totalPages == 0 ? 1 : totalPages,
+        'totalItems': total,
+        'totalPages': totalPages,
         'summary': {
-          'totalOpeningStock': result.totalOpeningStock,
-          'totalIn': result.totalIn,
-          'totalOut': result.totalOut,
-          'totalWastage': result.totalWastage,
-          'totalAdjustment': result.totalAdjustment,
-          'totalClosingStock': result.totalClosingStock,
+          'totalOrders': orderSummary.totalOrders,
+          'grossSubtotal': orderSummary.grossSubtotal,
+          'totalDiscount': orderSummary.totalDiscount,
+          'netRevenue': orderSummary.netRevenue,
         },
-        'items': result.items.map((i) => i.toJson()).toList(),
+        'orders': orders,
       },
     );
   } catch (e) {

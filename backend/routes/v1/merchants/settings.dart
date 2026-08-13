@@ -31,7 +31,12 @@ Future<Response> _onPatch(RequestContext context) async {
   final tokenPayload = context.tokenPayload;
 
   try {
-    final body = (await context.request.json()) as Map<String, dynamic>;
+    Map<String, dynamic> body;
+    try {
+      body = (await context.request.json()) as Map<String, dynamic>;
+    } catch (_) {
+      return invalidBody();
+    }
     final waNotifications = body['waNotifications'] as bool?;
     final lowStockAlerts = body['lowStockAlerts'] as bool?;
     final dailyReports = body['dailyReports'] as bool?;

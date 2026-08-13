@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Order {
 
- String get id; String get merchantId; String get storeId; String get orderReference; int get billNo; OrderSource get source; OrderType get type; OrderStatus get status;@JsonKey(unknownEnumValue: PaymentStatus.paid) PaymentStatus get paymentStatus; PaymentMethod get paymentMethod; double get subtotal; double get discountTotal; double get taxTotal; double get grandTotal; String? get terminalCode; List<OrderItem> get items; DateTime get createdAt; DateTime get updatedAt;
+ String get id; String get merchantId; String get storeId; String get orderReference; int get billNo; OrderSource get source; OrderType get type; OrderStatus get status;@JsonKey(unknownEnumValue: PaymentStatus.pending) PaymentStatus get paymentStatus; PaymentMethod get paymentMethod; double get subtotal; double get discountTotal; double get taxTotal; double get grandTotal; String? get terminalCode; List<OrderItem> get items; DateTime get createdAt; DateTime get updatedAt;
 /// Create a copy of Order
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -48,7 +48,7 @@ abstract mixin class $OrderCopyWith<$Res>  {
   factory $OrderCopyWith(Order value, $Res Function(Order) _then) = _$OrderCopyWithImpl;
 @useResult
 $Res call({
- String id, String merchantId, String storeId, String orderReference, int billNo, OrderSource source, OrderType type, OrderStatus status,@JsonKey(unknownEnumValue: PaymentStatus.paid) PaymentStatus paymentStatus, PaymentMethod paymentMethod, double subtotal, double discountTotal, double taxTotal, double grandTotal, String? terminalCode, List<OrderItem> items, DateTime createdAt, DateTime updatedAt
+ String id, String merchantId, String storeId, String orderReference, int billNo, OrderSource source, OrderType type, OrderStatus status,@JsonKey(unknownEnumValue: PaymentStatus.pending) PaymentStatus paymentStatus, PaymentMethod paymentMethod, double subtotal, double discountTotal, double taxTotal, double grandTotal, String? terminalCode, List<OrderItem> items, DateTime createdAt, DateTime updatedAt
 });
 
 
@@ -170,7 +170,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String merchantId,  String storeId,  String orderReference,  int billNo,  OrderSource source,  OrderType type,  OrderStatus status, @JsonKey(unknownEnumValue: PaymentStatus.paid)  PaymentStatus paymentStatus,  PaymentMethod paymentMethod,  double subtotal,  double discountTotal,  double taxTotal,  double grandTotal,  String? terminalCode,  List<OrderItem> items,  DateTime createdAt,  DateTime updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String merchantId,  String storeId,  String orderReference,  int billNo,  OrderSource source,  OrderType type,  OrderStatus status, @JsonKey(unknownEnumValue: PaymentStatus.pending)  PaymentStatus paymentStatus,  PaymentMethod paymentMethod,  double subtotal,  double discountTotal,  double taxTotal,  double grandTotal,  String? terminalCode,  List<OrderItem> items,  DateTime createdAt,  DateTime updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Order() when $default != null:
 return $default(_that.id,_that.merchantId,_that.storeId,_that.orderReference,_that.billNo,_that.source,_that.type,_that.status,_that.paymentStatus,_that.paymentMethod,_that.subtotal,_that.discountTotal,_that.taxTotal,_that.grandTotal,_that.terminalCode,_that.items,_that.createdAt,_that.updatedAt);case _:
@@ -191,7 +191,7 @@ return $default(_that.id,_that.merchantId,_that.storeId,_that.orderReference,_th
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String merchantId,  String storeId,  String orderReference,  int billNo,  OrderSource source,  OrderType type,  OrderStatus status, @JsonKey(unknownEnumValue: PaymentStatus.paid)  PaymentStatus paymentStatus,  PaymentMethod paymentMethod,  double subtotal,  double discountTotal,  double taxTotal,  double grandTotal,  String? terminalCode,  List<OrderItem> items,  DateTime createdAt,  DateTime updatedAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String merchantId,  String storeId,  String orderReference,  int billNo,  OrderSource source,  OrderType type,  OrderStatus status, @JsonKey(unknownEnumValue: PaymentStatus.pending)  PaymentStatus paymentStatus,  PaymentMethod paymentMethod,  double subtotal,  double discountTotal,  double taxTotal,  double grandTotal,  String? terminalCode,  List<OrderItem> items,  DateTime createdAt,  DateTime updatedAt)  $default,) {final _that = this;
 switch (_that) {
 case _Order():
 return $default(_that.id,_that.merchantId,_that.storeId,_that.orderReference,_that.billNo,_that.source,_that.type,_that.status,_that.paymentStatus,_that.paymentMethod,_that.subtotal,_that.discountTotal,_that.taxTotal,_that.grandTotal,_that.terminalCode,_that.items,_that.createdAt,_that.updatedAt);case _:
@@ -211,7 +211,7 @@ return $default(_that.id,_that.merchantId,_that.storeId,_that.orderReference,_th
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String merchantId,  String storeId,  String orderReference,  int billNo,  OrderSource source,  OrderType type,  OrderStatus status, @JsonKey(unknownEnumValue: PaymentStatus.paid)  PaymentStatus paymentStatus,  PaymentMethod paymentMethod,  double subtotal,  double discountTotal,  double taxTotal,  double grandTotal,  String? terminalCode,  List<OrderItem> items,  DateTime createdAt,  DateTime updatedAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String merchantId,  String storeId,  String orderReference,  int billNo,  OrderSource source,  OrderType type,  OrderStatus status, @JsonKey(unknownEnumValue: PaymentStatus.pending)  PaymentStatus paymentStatus,  PaymentMethod paymentMethod,  double subtotal,  double discountTotal,  double taxTotal,  double grandTotal,  String? terminalCode,  List<OrderItem> items,  DateTime createdAt,  DateTime updatedAt)?  $default,) {final _that = this;
 switch (_that) {
 case _Order() when $default != null:
 return $default(_that.id,_that.merchantId,_that.storeId,_that.orderReference,_that.billNo,_that.source,_that.type,_that.status,_that.paymentStatus,_that.paymentMethod,_that.subtotal,_that.discountTotal,_that.taxTotal,_that.grandTotal,_that.terminalCode,_that.items,_that.createdAt,_that.updatedAt);case _:
@@ -226,7 +226,7 @@ return $default(_that.id,_that.merchantId,_that.storeId,_that.orderReference,_th
 @JsonSerializable()
 
 class _Order implements Order {
-  const _Order({required this.id, required this.merchantId, required this.storeId, required this.orderReference, required this.billNo, required this.source, required this.type, required this.status, @JsonKey(unknownEnumValue: PaymentStatus.paid) required this.paymentStatus, required this.paymentMethod, required this.subtotal, this.discountTotal = 0.0, required this.taxTotal, required this.grandTotal, this.terminalCode, required final  List<OrderItem> items, required this.createdAt, required this.updatedAt}): _items = items;
+  const _Order({required this.id, required this.merchantId, required this.storeId, required this.orderReference, required this.billNo, required this.source, required this.type, required this.status, @JsonKey(unknownEnumValue: PaymentStatus.pending) required this.paymentStatus, required this.paymentMethod, required this.subtotal, this.discountTotal = 0.0, required this.taxTotal, required this.grandTotal, this.terminalCode, required final  List<OrderItem> items, required this.createdAt, required this.updatedAt}): _items = items;
   factory _Order.fromJson(Map<String, dynamic> json) => _$OrderFromJson(json);
 
 @override final  String id;
@@ -237,7 +237,7 @@ class _Order implements Order {
 @override final  OrderSource source;
 @override final  OrderType type;
 @override final  OrderStatus status;
-@override@JsonKey(unknownEnumValue: PaymentStatus.paid) final  PaymentStatus paymentStatus;
+@override@JsonKey(unknownEnumValue: PaymentStatus.pending) final  PaymentStatus paymentStatus;
 @override final  PaymentMethod paymentMethod;
 @override final  double subtotal;
 @override@JsonKey() final  double discountTotal;
@@ -287,7 +287,7 @@ abstract mixin class _$OrderCopyWith<$Res> implements $OrderCopyWith<$Res> {
   factory _$OrderCopyWith(_Order value, $Res Function(_Order) _then) = __$OrderCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String merchantId, String storeId, String orderReference, int billNo, OrderSource source, OrderType type, OrderStatus status,@JsonKey(unknownEnumValue: PaymentStatus.paid) PaymentStatus paymentStatus, PaymentMethod paymentMethod, double subtotal, double discountTotal, double taxTotal, double grandTotal, String? terminalCode, List<OrderItem> items, DateTime createdAt, DateTime updatedAt
+ String id, String merchantId, String storeId, String orderReference, int billNo, OrderSource source, OrderType type, OrderStatus status,@JsonKey(unknownEnumValue: PaymentStatus.pending) PaymentStatus paymentStatus, PaymentMethod paymentMethod, double subtotal, double discountTotal, double taxTotal, double grandTotal, String? terminalCode, List<OrderItem> items, DateTime createdAt, DateTime updatedAt
 });
 
 

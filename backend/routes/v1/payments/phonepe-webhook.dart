@@ -1,0 +1,97 @@
+import 'dart:convert';
+import 'package:backend/config/database.dart';
+import 'package:backend/database/schema.dart';
+import 'package:backend/repositories/order_item_repository.dart';
+import 'package:backend/repositories/order_repository.dart';
+import 'package:backend/repositories/product_repository.dart';
+import 'package:backend/repositories/stock_repository.dart';
+import 'package:backend/services/order_service.dart';
+import 'package:backend/services/phonepe_service.dart';
+import 'package:backend/utils/responses.dart';
+import 'package:dart_frog/dart_frog.dart';
+import 'package:typed_sql/typed_sql.dart' hide Database;
+
+Future<Response> onRequest(RequestContext context) async {
+  if (context.request.method != HttpMethod.post) {
+    return methodNotAllowed();
+  }
+
+  try {
+    final rawBody = await context.request.body();
+    final json = jsonDecode(rawBody) as Map<String, dynamic>;
+    final event = json['event'] as String?;
+    final payload = json['payload'] as Map<String, dynamic>?;
+
+    if (event == null || payload == null) {
+      return error(message: 'Invalid webhook payload structure', statusCode: 400);
+    }
+
+    final merchantOrderId = payload['merchantOrderId'] as String?;
+    final state = payload['state'] as String?;
+    final metaInfo = payload['metaInfo'] as Map<String, dynamic>?;
+    final storeId = metaInfo?['udf1'] as String?;
+
+    if (merchantOrderId == null || state == null) {
+      return error(message: 'Missing required webhook payload fields', statusCode: 400);
+    }
+
+    final db = Database.db;
+    final phonePeService = PhonePeService();
+
+    // Verify HMAC signature if secret key is present
+    if (storeId != null && storeId.isNotEmpty) {
+      final configRow = await db.storePhonepeConfigs
+          .where((c) => c.storeId.equals(toExpr(storeId)))
+          .first
+          .fetch();
+
+      if (configRow != null &&
+          configRow.webhookSecretKey != null &&
+          configRow.webhookSecretKey!.isNotEmpty) {
+        final signatureHeader =
+            context.request.headers['x-phonepe-checksum-signature'] ?? '';
+        final isValid = phonePeService.verifyWebhookHmac(
+          rawRequestBody: rawBody,
+          signatureHeader: signatureHeader,
+          secretKey: configRow.webhookSecretKey!,
+        );
+        if (!isValid) {
+          return error(message: 'Invalid webhook signature', statusCode: 401);
+        }
+      }
+    }
+
+    // Process order update based on event & state
+    final orderRow = await Database.db.orders
+        .where((o) => o.orderReference.equals(toExpr(merchantOrderId)))
+        .first
+        .fetch();
+
+    if (orderRow != null) {
+      final db = Database.db;
+      final orderRepo = OrderRepository(db: db);
+      final itemRows = await OrderItemRepository(db: db).getAllForOrder(orderRow.id);
+      final orderService = OrderService(
+        orderRepo: orderRepo,
+        orderItemRepo: OrderItemRepository(db: db),
+        productRepo: ProductRepository(db: db),
+        stockRepo: StockRepository(db: db),
+      );
+
+      if (state.toUpperCase() == 'COMPLETED' || event == 'checkout.order.completed') {
+        await orderService.completeOrderPayment(
+          orderRow: orderRow,
+          orderItems: itemRows,
+        );
+      } else if (state.toUpperCase() == 'FAILED' || event == 'checkout.order.failed') {
+        await orderService.cancelOrder(
+          orderRow: orderRow,
+        );
+      }
+    }
+
+    return success(data: {'received': true});
+  } catch (e) {
+    return error(message: e.toString());
+  }
+}

@@ -12,9 +12,11 @@ resolution: workspace
 
 dependencies:
   bcrypt: ^1.2.0
+  crypto: ^3.0.6
   dart_frog: ^1.1.0
   dart_frog_cors: ^2.0.0
   dart_jsonwebtoken: ^3.4.1
+  dio: ^5.9.2
   dotenv: ^4.2.0
   freezed_annotation: ^3.1.0
   json_annotation: ^4.12.0

@@ -13,7 +13,8 @@ abstract final class ApiEndpoints {
   static const String merchants = '/$version/merchants';
   static const String customers = '/$version/customers';
   static const String customerRecentStores =
-      '/$version/customers/recent_stores';
+      '/$version/customers/recent-stores';
+  static const String customerOrders = '/$version/customers/orders';
   static const String stores = '/$version/stores';
   static const String terminals = '/$version/terminals';
   static const String counters = '/$version/counters';
@@ -21,8 +22,12 @@ abstract final class ApiEndpoints {
   static const String products = '/$version/products';
   static const String stocks = '/$version/stocks';
   static const String orders = '/$version/orders';
+  static String storePhonePeConfig(String storeId) =>
+      '/$version/stores/$storeId/phonepe-config';
   static const String payments = '/$version/payments';
-  static const String profitLoss = '/$version/reports/profit_loss';
-  static const String stockSummary = '/$version/reports/stock_summary';
+  static const String reportsOrders = '/$version/reports/orders';
+  static const String reportsPayments = '/$version/reports/payments';
+  static const String profitLoss = '/$version/reports/profit-loss';
+  static const String stockSummary = '/$version/reports/stock-summary';
   static const String dashboardReport = '/$version/reports/dashboard';
 }

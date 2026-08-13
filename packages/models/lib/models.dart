@@ -24,4 +24,6 @@ export 'src/dashboard_range.dart';
 export 'src/stock_transaction_type.dart';
 export 'src/store/store.dart';
 export 'src/store_type.dart';
+export 'src/payment_gateway/payment_gateway_enums.dart';
+export 'src/payment_gateway/store_phonepe_config.dart';
 export 'src/terminal/terminal.dart';

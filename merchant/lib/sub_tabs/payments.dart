@@ -87,21 +87,17 @@ class _PaymentsState extends SignalState<Payments> {
 
   (String label, String badgeClass) _formatPaymentStatus(PaymentStatus status) {
     return switch (status) {
-      .paid => (
+      .completed => (
         'COMPLETED',
-        'bg-emerald-50 text-emerald-700 border border-emerald-200',
+        'bg-soft-green text-soft-green-content',
       ),
-      .unpaid => (
+      .pending => (
         'PENDING',
-        'bg-amber-50 text-amber-700 border border-amber-200',
+        'bg-soft-yellow text-soft-yellow-content',
       ),
-      .refunded => (
-        'CANCELLED',
-        'bg-rose-50 text-rose-700 border border-rose-200',
-      ),
-      .cancelled => (
-        'CANCELLED',
-        'bg-rose-50 text-rose-700 border border-rose-200',
+      .failed => (
+        'FAILED',
+        'bg-soft-red text-soft-red-content',
       ),
     };
   }

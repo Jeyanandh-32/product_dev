@@ -241,6 +241,11 @@ class StockRepository {
       final closingStock = currentStock - netAfterToDate;
       final openingStock = closingStock - inQty + outQty + wastageQty - adjQty;
 
+      final hasActivity = inQty != 0 || outQty != 0 || wastageQty != 0 || adjQty != 0;
+      if (fromDate != null && !hasActivity) {
+        continue;
+      }
+
       final categoryName = p.categoryId != null
           ? (categoryMap[p.categoryId!] ?? 'Unassigned')
           : 'Unassigned';

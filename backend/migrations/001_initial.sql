@@ -63,6 +63,7 @@ CREATE TABLE IF NOT EXISTS stores (
     store_type VARCHAR(255),
     is_active BOOLEAN NOT NULL DEFAULT TRUE,
     is_online_enabled BOOLEAN NOT NULL DEFAULT FALSE,
+    active_payment_provider VARCHAR(50) DEFAULT 'phonepe',
     slug VARCHAR(255) UNIQUE,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -73,6 +74,28 @@ CREATE TABLE IF NOT EXISTS stores (
 );
 
 CREATE INDEX IF NOT EXISTS idx_stores_online_slug ON stores (is_online_enabled, slug);
+
+CREATE TABLE IF NOT EXISTS store_phonepe_configs (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
+    store_id UUID NOT NULL UNIQUE REFERENCES stores (id) ON DELETE CASCADE,
+    is_enabled BOOLEAN NOT NULL DEFAULT TRUE,
+    env VARCHAR(20) NOT NULL DEFAULT 'UAT',
+    client_id VARCHAR(100),
+    client_version VARCHAR(50),
+    client_secret TEXT,
+    salt_key TEXT,
+    salt_index INT NOT NULL DEFAULT 1,
+    enable_upi BOOLEAN NOT NULL DEFAULT TRUE,
+    enable_cards BOOLEAN NOT NULL DEFAULT FALSE,
+    enable_net_banking BOOLEAN NOT NULL DEFAULT FALSE,
+    enable_emi BOOLEAN NOT NULL DEFAULT FALSE,
+    enable_wallets BOOLEAN NOT NULL DEFAULT FALSE,
+    allowed_upi_apps TEXT,
+    webhook_auth_type VARCHAR(20) NOT NULL DEFAULT 'HMAC',
+    webhook_secret_key TEXT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
 
 CREATE TABLE IF NOT EXISTS store_subscriptions (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid (),

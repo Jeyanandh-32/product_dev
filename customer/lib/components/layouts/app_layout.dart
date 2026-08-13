@@ -43,8 +43,18 @@ class _AppLayoutState extends SignalState<AppLayout> {
                   ],
                 ),
 
-                // Right Actions: Customer Avatar & Logout Button
+                // Right Actions: My Orders, Customer Avatar & Logout Button
                 div(classes: 'flex items-center gap-2.5', [
+                  button(
+                    classes:
+                        'flex items-center gap-2 px-3 py-1.5 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold text-xs transition-all cursor-pointer border border-gray-200/80 active:scale-95',
+                    onClick: () => Router.of(context).push('/orders'),
+                    [
+                      Package(classes: 'w-3.5 h-3.5 text-gray-600'),
+                      .text('My Orders'),
+                    ],
+                  ),
+
                   // Customer Initials Pill
                   if (customer != null)
                     div(

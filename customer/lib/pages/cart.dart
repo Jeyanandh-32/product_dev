@@ -2,12 +2,12 @@ import 'package:client_repositories/client_repositories.dart';
 import 'package:customer/components/signal_component.dart';
 import 'package:customer/signals/cart_signal.dart';
 import 'package:customer/signals/toast_signal.dart';
+import 'package:customer/utils/phonepe_interop.dart';
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_lucide/generated_icons/store.dart' as icon;
 import 'package:jaspr_lucide/jaspr_lucide.dart' hide List, Map, Router, Store;
 import 'package:jaspr_router/jaspr_router.dart';
-import 'package:models/models.dart';
 
 class CartPage extends SignalComponent {
   const CartPage({super.key});
@@ -37,17 +37,29 @@ class _CartPageState extends SignalState<CartPage> {
           )
           .toList();
 
-      await OrderRepository.create(
+      final result = await OrderRepository.initiateOnlinePayment(
         storeId: storeId,
         products: productsPayload,
-        source: OrderSource.web,
-        type: OrderType.takeaway,
-        paymentMethod: PaymentMethod.upi,
       );
 
-      showCustomerToast('Order placed successfully!', type: ToastType.success);
-      clearCart();
-      Router.of(context).push('/');
+      openPhonePeCheckoutModal(
+        tokenUrl: result.tokenUrl,
+        merchantOrderId: result.merchantOrderId,
+        onComplete: (status) async {
+          if (status == 'CONCLUDED') {
+            clearCart();
+            Router.of(context).push('/order/status?reference=${result.merchantOrderId}');
+          } else {
+            setState(() => _isSubmitting = false);
+            showCustomerToast('Payment was cancelled.', type: ToastType.warning);
+            // Sync server and display status receipt screen
+            try {
+              await OrderRepository.verifyStatus(reference: result.merchantOrderId);
+            } catch (_) {}
+            Router.of(context).push('/order/status?reference=${result.merchantOrderId}');
+          }
+        },
+      );
     } catch (e) {
       setState(() => _isSubmitting = false);
       showCustomerToast(e.toString(), type: ToastType.error);
