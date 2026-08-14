@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:backend/config/database.dart';
 import 'package:backend/database/schema.dart';
 import 'package:backend/extensions/order_row_extension.dart';
+import 'package:backend/repositories/customer_repository.dart';
 import 'package:backend/repositories/order_item_repository.dart';
 import 'package:backend/repositories/order_repository.dart';
 import 'package:backend/repositories/product_repository.dart';
@@ -31,6 +32,79 @@ class OrderService {
     return 'ORD-${DateTime.now().millisecondsSinceEpoch}-$suffix';
   }
 
+  Future<({int subtotal, int taxTotal, int grandTotal, int discountTotal, List<Map<String, dynamic>> items})>
+  calculateOrderTotals({
+    required String storeId,
+    required List<Map<String, dynamic>> productsInput,
+    double discountTotalInput = 0.0,
+    bool isComplimentary = false,
+  }) async {
+    var calculatedSubtotal = 0;
+    var calculatedTaxTotal = 0;
+    final calculatedItems = <Map<String, dynamic>>[];
+
+    for (final p in productsInput) {
+      final productId = p['productId'] as String;
+      final quantity = p['quantity'] as int;
+      final itemDiscountDouble = (p['discount'] as num?)?.toDouble() ?? 0.0;
+      final itemDiscountPaise = (itemDiscountDouble * 100).round();
+
+      final result = await _productRepo.getById(productId);
+      if (result == null) {
+        throw Exception('Product with id "$productId" not found');
+      }
+      final (productRow, _, _, _) = result;
+
+      final stockRow = await _stockRepo.getByProductAndStore(
+        storeId: storeId,
+        productId: productId,
+      );
+
+      if (stockRow != null && stockRow.quantity < quantity) {
+        throw Exception(
+          'Insufficient stock for product "${productRow.name}". Available: ${stockRow.quantity}, Requested: $quantity.',
+        );
+      }
+
+      final sellingPricePaise = productRow.sellingPrice;
+      final itemSubtotalPaise = sellingPricePaise * quantity;
+
+      final taxRateDouble = productRow.taxRate;
+      final taxRateDecimal = taxRateDouble / 100.0;
+      final taxableAmountPaise = max(0, itemSubtotalPaise - itemDiscountPaise);
+      final itemTaxPaise = (taxableAmountPaise * taxRateDecimal).round();
+
+      calculatedSubtotal += itemSubtotalPaise;
+      calculatedTaxTotal += itemTaxPaise;
+
+      calculatedItems.add({
+        'productId': productId,
+        'quantity': quantity,
+        'unitPrice': sellingPricePaise,
+        'discount': itemDiscountPaise,
+        'taxRate': taxRateDouble,
+      });
+    }
+
+    final overallDiscountPaise = (discountTotalInput * 100).round();
+    final calculatedDiscountTotal = isComplimentary
+        ? (calculatedSubtotal + calculatedTaxTotal)
+        : overallDiscountPaise;
+
+    final calculatedGrandTotal = max(
+      0,
+      calculatedSubtotal + calculatedTaxTotal - calculatedDiscountTotal,
+    );
+
+    return (
+      subtotal: calculatedSubtotal,
+      taxTotal: calculatedTaxTotal,
+      grandTotal: calculatedGrandTotal,
+      discountTotal: calculatedDiscountTotal,
+      items: calculatedItems,
+    );
+  }
+
   Future<Order> checkout({
     required String merchantId,
     required String storeId,
@@ -39,6 +113,7 @@ class OrderService {
     required OrderType type,
     required PaymentMethod paymentMethod,
     double discountTotalInput = 0.0,
+    double walletDeductionInput = 0.0,
     OrderStatus status = OrderStatus.completed,
     PaymentStatus paymentStatus = PaymentStatus.completed,
     String? terminalCode,
@@ -146,6 +221,7 @@ class OrderService {
         discountTotal: calculatedDiscountTotal,
         taxTotal: calculatedTaxTotal,
         grandTotal: calculatedGrandTotal,
+        walletDeduction: (walletDeductionInput * 100).round(),
         terminalCode: terminalCode,
         customerId: customerId,
       );
@@ -231,7 +307,7 @@ class OrderService {
     });
   }
 
-  /// Marks an order as cancelled when payment fails or is abandoned
+  /// Marks an order as cancelled when payment fails or is abandoned, and refunds wallet deduction if applied
   Future<void> cancelOrder({
     required OrderRow orderRow,
   }) async {
@@ -243,6 +319,25 @@ class OrderService {
         paymentStatus: PaymentStatus.failed,
         status: OrderStatus.cancelled,
       );
+
+      // If a wallet deduction was applied and there is an associated customer, refund it back to their store wallet
+      if (orderRow.walletDeduction > 0 && orderRow.customerId != null) {
+        final customerRepo = CustomerRepository(db: Database.db);
+
+        await customerRepo.updateStoreWalletBalance(
+          customerId: orderRow.customerId!,
+          storeId: orderRow.storeId,
+          amountDeltaPaise: orderRow.walletDeduction,
+        );
+
+        await customerRepo.createWalletTransaction(
+          customerId: orderRow.customerId!,
+          storeId: orderRow.storeId,
+          amount: orderRow.walletDeduction,
+          type: WalletTransactionType.refundCredit.name,
+          reference: '${orderRow.orderReference}-REFUND',
+        );
+      }
     });
   }
 }

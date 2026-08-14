@@ -1,9 +1,16 @@
+import 'package:client_repositories/client_repositories.dart';
+import 'package:customer/components/modals/modal.dart';
 import 'package:customer/components/signal_component.dart';
+import 'package:customer/signals/cart_signal.dart';
 import 'package:customer/signals/customer_auth_signal.dart';
+import 'package:customer/signals/toast_signal.dart';
+import 'package:customer/utils/phonepe_interop.dart';
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
-import 'package:jaspr_lucide/jaspr_lucide.dart' hide List, Map, Router;
+import 'package:jaspr_lucide/jaspr_lucide.dart' hide List, Map, Router, Store;
 import 'package:jaspr_router/jaspr_router.dart';
+import 'package:models/models.dart';
+import 'package:signals/signals.dart';
 import 'package:web/web.dart' as web;
 
 class CustomerProfilePage extends SignalComponent {
@@ -34,6 +41,14 @@ class _CustomerProfilePageState extends SignalState<CustomerProfilePage> {
   String? _mobileError;
   String? _pinError;
 
+  // Wallet State
+  bool _isTopUpModalOpen = false;
+  bool _isTransactionsModalOpen = false;
+  double _topUpAmount = 500.0;
+  bool _isTopUpLoading = false;
+  double _storeWalletBalance = 0.0;
+  List<CustomerWalletTransaction> _transactions = [];
+
   @override
   void initState() {
     super.initState();
@@ -41,6 +56,82 @@ class _CustomerProfilePageState extends SignalState<CustomerProfilePage> {
     if (customer != null) {
       _name = customer.name;
       _mobileNumber = customer.mobileNumber;
+    }
+    _loadWalletHistory();
+  }
+
+  Future<void> _loadWalletHistory() async {
+    final storeId = currentCartStoreIdSignal.value;
+    if (storeId == null) return;
+    try {
+      final res = await CustomerWalletRepository.getWalletInfo(storeId: storeId);
+      if (mounted) {
+        setState(() {
+          _transactions = res.transactions;
+          _storeWalletBalance = res.balance;
+        });
+
+        // Sync customer wallet balance directly into customerAuthSignal
+        final currentCustomer = customerAuthSignal.value.value;
+        if (currentCustomer != null && currentCustomer.walletBalance != res.balance) {
+          customerAuthSignal.value = AsyncData(
+            currentCustomer.copyWith(walletBalance: res.balance),
+          );
+        }
+      }
+    } catch (_) {}
+  }
+
+  Future<void> _handleTopUp() async {
+    final storeId = currentCartStoreIdSignal.value;
+    if (_topUpAmount <= 0 || storeId == null) return;
+    setState(() => _isTopUpLoading = true);
+    try {
+      final res = await CustomerWalletRepository.topUp(_topUpAmount, storeId: storeId);
+
+      if (res.tokenUrl != null && res.merchantOrderId != null) {
+        setState(() => _isTopUpModalOpen = false);
+
+        openPhonePeCheckoutModal(
+          tokenUrl: res.tokenUrl!,
+          merchantOrderId: res.merchantOrderId!,
+          onComplete: (status) async {
+            setState(() => _isTopUpLoading = false);
+            final initialBalance = _storeWalletBalance;
+            await _loadWalletHistory();
+            final updatedBalance = _storeWalletBalance;
+
+            if (status == 'CONCLUDED' && updatedBalance > initialBalance) {
+              showCustomerToast('Wallet topped up successfully!', type: ToastType.success);
+            } else if (status == 'CONCLUDED') {
+              showCustomerToast('Top-up payment processing or failed.', type: ToastType.warning);
+            } else {
+              showCustomerToast('Top-up payment was cancelled.', type: ToastType.warning);
+            }
+          },
+        );
+        return;
+      }
+
+      if (res.balance != null) {
+        setState(() => _storeWalletBalance = res.balance!);
+        final currentCustomer = customerAuthSignal.value.value;
+        if (currentCustomer != null) {
+          customerAuthSignal.value = AsyncData(
+            currentCustomer.copyWith(walletBalance: res.balance!),
+          );
+        }
+      }
+
+      setState(() {
+        _isTopUpLoading = false;
+        _isTopUpModalOpen = false;
+      });
+      showCustomerToast('Wallet topped up successfully!', type: ToastType.success);
+      _loadWalletHistory();
+    } catch (e) {
+      setState(() => _isTopUpLoading = false);
+      showCustomerToast(e.toString(), type: ToastType.error);
     }
   }
 
@@ -163,7 +254,15 @@ class _CustomerProfilePageState extends SignalState<CustomerProfilePage> {
         button(
           classes:
               'w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 flex items-center justify-center cursor-pointer border-0 transition-all active:scale-95 shrink-0',
-          onClick: () => Router.of(context).push('/'),
+          onClick: () {
+            if (web.window.history.length > 1) {
+              web.window.history.back();
+            } else if (currentCartStoreSignal.value?.slug != null) {
+              Router.of(context).push('/store/${currentCartStoreSignal.value!.slug!}');
+            } else {
+              Router.of(context).push('/?all=true');
+            }
+          },
           [
             ArrowLeft(classes: 'w-5 h-5'),
           ],
@@ -212,6 +311,235 @@ class _CustomerProfilePageState extends SignalState<CustomerProfilePage> {
           ]),
         ],
       ),
+
+      // Customer Store Wallet Card
+      div(
+        classes:
+            'bg-white rounded-3xl border border-gray-200/90 p-6 sm:p-8 shadow-xs flex flex-col gap-6',
+        [
+          div(classes: 'flex items-center justify-between border-b border-gray-100 pb-4', [
+            div(classes: 'flex items-center gap-2.5', [
+              Wallet(classes: 'w-5 h-5 text-gray-700'),
+              h3(classes: 'text-base font-extrabold text-black', [
+                .text('Store Wallet'),
+              ]),
+            ]),
+            if (currentCartStoreSignal.value != null)
+              span(
+                classes:
+                    'text-xs font-bold px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200',
+                [.text(currentCartStoreSignal.value!.name)],
+              ),
+          ]),
+
+          if (currentCartStoreIdSignal.value != null)
+            div(
+              classes:
+                  'flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-1',
+              [
+                div(classes: 'flex items-baseline gap-1', [
+                  span(classes: 'text-lg font-bold text-emerald-600', [.text('₹')]),
+                  span(classes: 'text-2xl sm:text-3xl font-extrabold text-black tracking-tight', [
+                    .text(_storeWalletBalance.toStringAsFixed(2)),
+                  ]),
+                ]),
+
+                div(classes: 'flex items-center gap-2.5', [
+                  button(
+                    classes:
+                        'flex-1 sm:flex-none justify-center flex items-center gap-1.5 px-4 py-2.5 rounded-2xl bg-black hover:bg-gray-800 text-white font-bold text-xs transition-all border-0 cursor-pointer shadow-xs active:scale-95',
+                    onClick: () => setState(() => _isTopUpModalOpen = true),
+                    [
+                      Plus(classes: 'w-4 h-4 text-white'),
+                      .text('Add Money'),
+                    ],
+                  ),
+                  button(
+                    classes:
+                        'flex-1 sm:flex-none justify-center flex items-center gap-1.5 px-4 py-2.5 rounded-2xl bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs transition-all border-0 cursor-pointer active:scale-95',
+                    onClick: () => setState(() => _isTransactionsModalOpen = true),
+                    [
+                      History(classes: 'w-4 h-4 text-gray-600'),
+                      .text('Transactions'),
+                    ],
+                  ),
+                ]),
+              ],
+            )
+          else
+            div(
+              classes:
+                  'flex flex-col items-center justify-center py-6 text-center gap-3',
+              [
+                div(
+                  classes: 'w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center text-gray-400',
+                  [Building2(classes: 'w-6 h-6')],
+                ),
+                div(classes: 'flex flex-col gap-1', [
+                  p(classes: 'text-sm font-extrabold text-black', [.text('No Store Selected')]),
+                  p(classes: 'text-xs text-gray-500 max-w-sm', [
+                    .text('Each store maintains an independent wallet. Visit a store menu or scan a table QR to access and top up that store\'s wallet.'),
+                  ]),
+                ]),
+                a(
+                  href: '/',
+                  classes:
+                      'mt-2 inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-black text-white font-bold text-xs hover:bg-gray-800 transition-all no-underline',
+                  [
+                    ShoppingBag(classes: 'w-3.5 h-3.5 text-white'),
+                    .text('Explore Stores'),
+                  ],
+                ),
+              ],
+            ),
+        ],
+      ),
+
+      // Top Up Modal
+      if (_isTopUpModalOpen)
+        Modal(
+          title: 'Top Up Wallet',
+          onClose: () => setState(() => _isTopUpModalOpen = false),
+          child: div(classes: 'flex flex-col gap-6', [
+            div(classes: 'flex flex-col gap-4', [
+              label(classes: 'text-xs font-bold text-gray-700 uppercase tracking-wider', [
+                .text('Select Amount (₹)'),
+              ]),
+              div(classes: 'grid grid-cols-3 gap-2.5', [
+                for (final amt in [100.0, 500.0, 1000.0])
+                  button(
+                    classes:
+                        'py-3 rounded-2xl font-bold text-sm border cursor-pointer transition-all ${amt == _topUpAmount ? 'bg-black text-white border-black shadow-xs' : 'bg-gray-50 text-gray-800 border-gray-200 hover:bg-gray-100'}',
+                    onClick: () => setState(() => _topUpAmount = amt),
+                    [.text('₹${amt.toInt()}')],
+                  ),
+              ]),
+
+              div(classes: 'flex flex-col gap-1.5 pt-2', [
+                label(classes: 'text-xs font-bold text-gray-700 uppercase tracking-wider', [
+                  .text('Custom Amount (₹)'),
+                ]),
+                input(
+                  type: InputType.number,
+                  classes:
+                      'w-full px-4 py-3 rounded-2xl border border-gray-300 focus:border-black focus:outline-hidden text-base font-bold text-black bg-gray-50/50 font-mono',
+                  value: _topUpAmount.toInt().toString(),
+                  events: {
+                    'input': (e) {
+                      final input = e.target as web.HTMLInputElement;
+                      final parsed = double.tryParse(input.value);
+                      if (parsed != null && parsed > 0) {
+                        setState(() => _topUpAmount = parsed);
+                      }
+                    },
+                  },
+                ),
+              ]),
+            ]),
+
+            div(classes: 'flex items-center justify-end gap-2 pt-2 border-t border-gray-100', [
+              button(
+                classes:
+                    'px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs transition-all border-0 cursor-pointer',
+                onClick: () => setState(() => _isTopUpModalOpen = false),
+                [.text('Cancel')],
+              ),
+              button(
+                classes:
+                    'px-6 py-2.5 rounded-xl bg-emerald-600 text-white hover:bg-emerald-500 font-bold text-xs transition-all border-0 cursor-pointer shadow-xs flex items-center gap-2',
+                onClick: _isTopUpLoading ? null : _handleTopUp,
+                [
+                  if (_isTopUpLoading)
+                    span(classes: 'loading loading-spinner loading-xs text-white', [])
+                  else
+                    Check(classes: 'w-4 h-4 text-white'),
+                  .text(_isTopUpLoading ? 'Processing...' : 'Confirm Top Up'),
+                ],
+              ),
+            ]),
+          ]),
+        ),
+
+      // Wallet Transactions Modal
+      if (_isTransactionsModalOpen)
+        Modal(
+          title: 'Wallet Transactions History',
+          onClose: () => setState(() => _isTransactionsModalOpen = false),
+          child: div(classes: 'flex flex-col gap-4 max-h-[60vh] overflow-y-auto pr-1', [
+            if (_transactions.isEmpty)
+              div(
+                classes: 'py-8 flex flex-col items-center justify-center gap-2 text-center text-gray-400',
+                [
+                  History(classes: 'w-8 h-8 text-gray-300'),
+                  span(classes: 'text-sm font-semibold', [.text('No wallet activity yet.')]),
+                ],
+              )
+            else
+              div(classes: 'flex flex-col divide-y divide-gray-100', [
+                for (final tx in _transactions)
+                  () {
+                    final isCredit = tx.type == WalletTransactionType.topUp ||
+                        tx.type == WalletTransactionType.refundCredit;
+                    final title = switch (tx.type) {
+                      WalletTransactionType.topUp => 'Wallet Top Up',
+                      WalletTransactionType.refundCredit => 'Order Refund',
+                      WalletTransactionType.orderDebit => 'Order Payment',
+                    };
+
+                    return div(classes: 'flex items-center justify-between py-3 text-xs', [
+                      div(classes: 'flex items-center gap-3', [
+                        div(
+                          classes:
+                              'w-8 h-8 rounded-full flex items-center justify-center ${isCredit ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'}',
+                          [
+                            if (tx.type == WalletTransactionType.topUp)
+                              Plus(classes: 'w-4 h-4')
+                            else if (tx.type == WalletTransactionType.refundCredit)
+                              RotateCcw(classes: 'w-3.5 h-3.5')
+                            else
+                              ArrowUpRight(classes: 'w-4 h-4'),
+                          ],
+                        ),
+                        div(classes: 'flex flex-col gap-0.5', [
+                          span(classes: 'font-bold text-gray-900 text-xs', [
+                            .text(title),
+                          ]),
+                          if (tx.reference != null)
+                            span(classes: 'font-mono text-[10px] text-gray-400', [
+                              .text(tx.reference!),
+                            ]),
+                        ]),
+                      ]),
+                      div(classes: 'flex flex-col items-end gap-0.5', [
+                        span(
+                          classes:
+                              'font-mono font-bold text-xs ${isCredit ? 'text-emerald-600' : 'text-rose-600'}',
+                          [
+                            .text(
+                              '${isCredit ? '+' : '-'}₹${tx.amount.toStringAsFixed(2)}',
+                            ),
+                          ],
+                        ),
+                        span(classes: 'text-[10px] text-gray-400 font-semibold', [
+                          .text(
+                            '${tx.createdAt.day}/${tx.createdAt.month}/${tx.createdAt.year}',
+                          ),
+                        ]),
+                      ]),
+                    ]);
+                  }(),
+              ]),
+
+            div(classes: 'flex justify-end pt-3 border-t border-gray-100', [
+              button(
+                classes:
+                    'px-4 py-2 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs transition-all border-0 cursor-pointer',
+                onClick: () => setState(() => _isTransactionsModalOpen = false),
+                [.text('Close')],
+              ),
+            ]),
+          ]),
+        ),
 
       // Personal Details Edit Card
       div(
@@ -533,17 +861,12 @@ class _CustomerProfilePageState extends SignalState<CustomerProfilePage> {
               ]),
             ])
           else
-            div(classes: 'flex items-center justify-between', [
-              div(classes: 'flex flex-col gap-1', [
-                span(classes: 'text-xs font-bold text-gray-400 uppercase tracking-wider', [
-                  .text('Security PIN Status'),
-                ]),
-                span(classes: 'text-sm font-extrabold text-black font-mono tracking-widest', [
-                  .text('••••••'),
-                ]),
+            div(classes: 'flex flex-col gap-1', [
+              span(classes: 'text-xs font-bold text-gray-400 uppercase tracking-wider', [
+                .text('Security PIN Status'),
               ]),
-              span(classes: 'text-xs text-gray-500 font-medium', [
-                .text('Protected'),
+              span(classes: 'text-sm font-extrabold text-black font-mono tracking-widest', [
+                .text('••••••'),
               ]),
             ]),
         ],

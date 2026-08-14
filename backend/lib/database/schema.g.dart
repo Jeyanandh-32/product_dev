@@ -21,6 +21,8 @@ extension DatabaseSchemaSchema on Database<DatabaseSchema> {
     _$TerminalRow._$table,
     _$CustomerRow._$table,
     _$CustomerRecentStoresRow._$table,
+    _$CustomerStoreWalletRow._$table,
+    _$CustomerWalletTransactionRow._$table,
     _$OrderRow._$table,
     _$OrderItemRow._$table,
   ];
@@ -60,6 +62,15 @@ extension DatabaseSchemaSchema on Database<DatabaseSchema> {
 
   Table<CustomerRecentStoresRow> get customerRecentStores =>
       $ForGeneratedCode.declareTable(this, _$CustomerRecentStoresRow._$table);
+
+  Table<CustomerStoreWalletRow> get customerStoreWallets =>
+      $ForGeneratedCode.declareTable(this, _$CustomerStoreWalletRow._$table);
+
+  Table<CustomerWalletTransactionRow> get customerWalletTransactions =>
+      $ForGeneratedCode.declareTable(
+        this,
+        _$CustomerWalletTransactionRow._$table,
+      );
 
   Table<OrderRow> get orders =>
       $ForGeneratedCode.declareTable(this, _$OrderRow._$table);
@@ -9867,6 +9878,1401 @@ extension InsertOnConflictSingleCustomerRecentStoresRowExt
   );
 }
 
+final class _$CustomerStoreWalletRow extends CustomerStoreWalletRow {
+  _$CustomerStoreWalletRow._(
+    this.customerId,
+    this.storeId,
+    this.walletBalance,
+    this.createdAt,
+    this.updatedAt,
+  );
+
+  @override
+  final String customerId;
+
+  @override
+  final String storeId;
+
+  @override
+  final int walletBalance;
+
+  @override
+  final DateTime createdAt;
+
+  @override
+  final DateTime updatedAt;
+
+  static final _$table = $ForGeneratedCode.tableDefinition(
+    tableName: 'customer_store_wallets',
+    columns: <String>[
+      'customer_id',
+      'store_id',
+      'wallet_balance',
+      'created_at',
+      'updated_at',
+    ],
+    columnInfo: [
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: true,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: true,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.integer,
+        isNotNull: true,
+        defaultValue: (kind: 'raw', value: 0),
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.dateTime,
+        isNotNull: true,
+        defaultValue: (kind: 'datetime', value: 'now'),
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.dateTime,
+        isNotNull: true,
+        defaultValue: (kind: 'datetime', value: 'now'),
+        autoIncrement: false,
+        overrides: [],
+      ),
+    ],
+    primaryKey: <String>['customer_id', 'store_id'],
+    unique: <List<String>>[],
+    foreignKeys: [
+      $ForGeneratedCode.foreignKeyDefinition(
+        name: 'null',
+        columns: ['customer_id'],
+        referencedTable: 'customers',
+        referencedColumns: ['id'],
+        onDelete: .cascade,
+        onUpdate: .noAction,
+      ),
+      $ForGeneratedCode.foreignKeyDefinition(
+        name: 'null',
+        columns: ['store_id'],
+        referencedTable: 'stores',
+        referencedColumns: ['id'],
+        onDelete: .cascade,
+        onUpdate: .noAction,
+      ),
+    ],
+    readRow: _$CustomerStoreWalletRow._$fromDatabase,
+  );
+
+  static CustomerStoreWalletRow? _$fromDatabase(RowReader row) {
+    final customerId = row.readString();
+    final storeId = row.readString();
+    final walletBalance = row.readInt();
+    final createdAt = row.readDateTime();
+    final updatedAt = row.readDateTime();
+    if (customerId == null &&
+        storeId == null &&
+        walletBalance == null &&
+        createdAt == null &&
+        updatedAt == null) {
+      return null;
+    }
+    return _$CustomerStoreWalletRow._(
+      customerId!,
+      storeId!,
+      walletBalance!,
+      createdAt!,
+      updatedAt!,
+    );
+  }
+
+  @override
+  String toString() =>
+      'CustomerStoreWalletRow(customerId: "$customerId", storeId: "$storeId", walletBalance: "$walletBalance", createdAt: "$createdAt", updatedAt: "$updatedAt")';
+}
+
+/// Extension methods for table defined in [CustomerStoreWalletRow].
+extension TableCustomerStoreWalletRowExt on Table<CustomerStoreWalletRow> {
+  /// Insert row into the `customerStoreWallets` table.
+  ///
+  /// Returns a [InsertSingle] statement on which `.execute` must be
+  /// called for the row to be inserted.
+  InsertSingle<CustomerStoreWalletRow> insert({
+    required Expr<String> customerId,
+    required Expr<String> storeId,
+    Expr<int>? walletBalance,
+    Expr<DateTime>? createdAt,
+    Expr<DateTime>? updatedAt,
+  }) => $ForGeneratedCode.insertInto(
+    table: this,
+    values: [customerId, storeId, walletBalance, createdAt, updatedAt],
+  );
+
+  /// Insert row into the `customerStoreWallets` table.
+  ///
+  /// Returns a [InsertSingle] statement on which `.execute` must be
+  /// called for the row to be inserted.
+  InsertSingle<CustomerStoreWalletRow> insertValue({
+    required String customerId,
+    required String storeId,
+    int? walletBalance,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) => $ForGeneratedCode.insertInto(
+    table: this,
+    values: [
+      customerId.asExpr,
+      storeId.asExpr,
+      walletBalance?.asExpr,
+      createdAt?.asExpr,
+      updatedAt?.asExpr,
+    ],
+  );
+
+  /// Bulk insert rows into the `customerStoreWallets` table.
+  ///
+  /// This method takes an `Iterable<T>` and requires that you provide
+  /// a _mapping function_ from `T` to each column to be inserted.
+  ///
+  /// If a mapping function is omitted, the _default value_ will be
+  /// inserted, or `NULL` if column is nullable and as no default value.
+  /// To explicitely insert `NULL`, use a _mapping function_ that maps
+  /// `T` to `null`.
+  ///
+  /// > [!NOTE]
+  /// > This method aims utilize database specific bulk insertion logic
+  /// > to ensure good performance. Database adapters may pipeline bulk
+  /// > insertions through multiple statements inside a transaction.
+  ///
+  /// Returns a [Insert] statement on which `.execute` must be
+  /// called for the rows to be inserted.
+  Insert<CustomerStoreWalletRow> insertValuesMapped<T>(
+    Iterable<T> rows, {
+    required String Function(T row) customerId,
+    required String Function(T row) storeId,
+    int Function(T row)? walletBalance,
+    DateTime Function(T row)? createdAt,
+    DateTime Function(T row)? updatedAt,
+  }) => $ForGeneratedCode.insertValuesMapped(
+    table: this,
+    rows: rows,
+    mappings: [customerId, storeId, walletBalance, createdAt, updatedAt],
+  );
+
+  /// Delete a single row from the `customerStoreWallets` table, specified by
+  /// _primary key_.
+  ///
+  /// Returns a [DeleteSingle] statement on which `.execute()` must be
+  /// called for the row to be deleted.
+  ///
+  /// To delete multiple rows, using `.where()` to filter which rows
+  /// should be deleted. If you wish to delete all rows, use
+  /// `.where((_) => toExpr(true)).delete()`.
+  DeleteSingle<CustomerStoreWalletRow> delete(
+    String customerId,
+    String storeId,
+  ) => $ForGeneratedCode.deleteSingle(
+    byKey(customerId, storeId),
+    _$CustomerStoreWalletRow._$table,
+  );
+}
+
+/// Extension methods for building queries against the `customerStoreWallets` table.
+extension QueryCustomerStoreWalletRowExt
+    on Query<(Expr<CustomerStoreWalletRow>,)> {
+  /// Lookup a single row in `customerStoreWallets` table using the _primary key_.
+  ///
+  /// Returns a [QuerySingle] object, which returns at-most one row,
+  /// when `.fetch()` is called.
+  QuerySingle<(Expr<CustomerStoreWalletRow>,)> byKey(
+    String customerId,
+    String storeId,
+  ) => where(
+    (customerStoreWalletRow) =>
+        customerStoreWalletRow.customerId.equalsValue(customerId) &
+        customerStoreWalletRow.storeId.equalsValue(storeId),
+  ).first;
+
+  /// Update all rows in the `customerStoreWallets` table matching this [Query].
+  ///
+  /// The changes to be applied to each row matching this [Query] are
+  /// defined using the [updateBuilder], which is given an [Expr]
+  /// representation of the row being updated and a `set` function to
+  /// specify which fields should be updated. The result of the `set`
+  /// function should always be returned from the `updateBuilder`.
+  ///
+  /// Returns an [Update] statement on which `.execute()` must be called
+  /// for the rows to be updated.
+  ///
+  /// **Example:** decrementing `1` from the `value` field for each row
+  /// where `value > 0`.
+  /// ```dart
+  /// await db.mytable
+  ///   .where((row) => row.value > toExpr(0))
+  ///   .update((row, set) => set(
+  ///     value: row.value - toExpr(1),
+  ///   ))
+  ///   .execute();
+  /// ```
+  ///
+  /// > [!WARNING]
+  /// > The `updateBuilder` callback does not make the update, it builds
+  /// > the expressions for updating the rows. You should **never** invoke
+  /// > the `set` function more than once, and the result should always
+  /// > be returned immediately.
+  Update<CustomerStoreWalletRow> update(
+    UpdateSet<CustomerStoreWalletRow> Function(
+      Expr<CustomerStoreWalletRow> customerStoreWalletRow,
+      UpdateSet<CustomerStoreWalletRow> Function({
+        Expr<String> customerId,
+        Expr<String> storeId,
+        Expr<int> walletBalance,
+        Expr<DateTime> createdAt,
+        Expr<DateTime> updatedAt,
+      })
+      set,
+    )
+    updateBuilder,
+  ) => $ForGeneratedCode.update<CustomerStoreWalletRow>(
+    this,
+    _$CustomerStoreWalletRow._$table,
+    (customerStoreWalletRow) => updateBuilder(
+      customerStoreWalletRow,
+      ({
+        Expr<String>? customerId,
+        Expr<String>? storeId,
+        Expr<int>? walletBalance,
+        Expr<DateTime>? createdAt,
+        Expr<DateTime>? updatedAt,
+      }) => $ForGeneratedCode.buildUpdate<CustomerStoreWalletRow>([
+        customerId,
+        storeId,
+        walletBalance,
+        createdAt,
+        updatedAt,
+      ]),
+    ),
+  );
+
+  /// Delete all rows in the `customerStoreWallets` table matching this [Query].
+  ///
+  /// Returns a [Delete] statement on which `.execute()` must be called
+  /// for the rows to be deleted.
+  Delete<CustomerStoreWalletRow> delete() =>
+      $ForGeneratedCode.delete(this, _$CustomerStoreWalletRow._$table);
+}
+
+/// Extension methods for building point queries against the `customerStoreWallets` table.
+extension QuerySingleCustomerStoreWalletRowExt
+    on QuerySingle<(Expr<CustomerStoreWalletRow>,)> {
+  /// Update the row (if any) in the `customerStoreWallets` table matching this
+  /// [QuerySingle].
+  ///
+  /// The changes to be applied to the row matching this [QuerySingle] are
+  /// defined using the [updateBuilder], which is given an [Expr]
+  /// representation of the row being updated and a `set` function to
+  /// specify which fields should be updated. The result of the `set`
+  /// function should always be returned from the `updateBuilder`.
+  ///
+  /// Returns an [UpdateSingle] statement on which `.execute()` must be
+  /// called for the row to be updated. The resulting statement will
+  /// **not** fail, if there are no rows matching this query exists.
+  ///
+  /// **Example:** decrementing `1` from the `value` field the row with
+  /// `id = 1`.
+  /// ```dart
+  /// await db.mytable
+  ///   .byKey(1)
+  ///   .update((row, set) => set(
+  ///     value: row.value - toExpr(1),
+  ///   ))
+  ///   .execute();
+  /// ```
+  ///
+  /// > [!WARNING]
+  /// > The `updateBuilder` callback does not make the update, it builds
+  /// > the expressions for updating the rows. You should **never** invoke
+  /// > the `set` function more than once, and the result should always
+  /// > be returned immediately.
+  UpdateSingle<CustomerStoreWalletRow> update(
+    UpdateSet<CustomerStoreWalletRow> Function(
+      Expr<CustomerStoreWalletRow> customerStoreWalletRow,
+      UpdateSet<CustomerStoreWalletRow> Function({
+        Expr<String> customerId,
+        Expr<String> storeId,
+        Expr<int> walletBalance,
+        Expr<DateTime> createdAt,
+        Expr<DateTime> updatedAt,
+      })
+      set,
+    )
+    updateBuilder,
+  ) => $ForGeneratedCode.updateSingle<CustomerStoreWalletRow>(
+    this,
+    _$CustomerStoreWalletRow._$table,
+    (customerStoreWalletRow) => updateBuilder(
+      customerStoreWalletRow,
+      ({
+        Expr<String>? customerId,
+        Expr<String>? storeId,
+        Expr<int>? walletBalance,
+        Expr<DateTime>? createdAt,
+        Expr<DateTime>? updatedAt,
+      }) => $ForGeneratedCode.buildUpdate<CustomerStoreWalletRow>([
+        customerId,
+        storeId,
+        walletBalance,
+        createdAt,
+        updatedAt,
+      ]),
+    ),
+  );
+
+  /// Delete the row (if any) in the `customerStoreWallets` table matching this [QuerySingle].
+  ///
+  /// Returns a [DeleteSingle] statement on which `.execute()` must be called
+  /// for the row to be deleted. The resulting statement will **not**
+  /// fail, if there are no rows matching this query exists.
+  DeleteSingle<CustomerStoreWalletRow> delete() =>
+      $ForGeneratedCode.deleteSingle(this, _$CustomerStoreWalletRow._$table);
+}
+
+/// Extension methods for expressions on a row in the `customerStoreWallets` table.
+extension ExpressionCustomerStoreWalletRowExt on Expr<CustomerStoreWalletRow> {
+  Expr<String> get customerId =>
+      $ForGeneratedCode.field(this, 0, $ForGeneratedCode.text);
+
+  Expr<String> get storeId =>
+      $ForGeneratedCode.field(this, 1, $ForGeneratedCode.text);
+
+  Expr<int> get walletBalance =>
+      $ForGeneratedCode.field(this, 2, $ForGeneratedCode.integer);
+
+  Expr<DateTime> get createdAt =>
+      $ForGeneratedCode.field(this, 3, $ForGeneratedCode.dateTime);
+
+  Expr<DateTime> get updatedAt =>
+      $ForGeneratedCode.field(this, 4, $ForGeneratedCode.dateTime);
+}
+
+extension ExpressionNullableCustomerStoreWalletRowExt
+    on Expr<CustomerStoreWalletRow?> {
+  Expr<String?> get customerId =>
+      $ForGeneratedCode.field(this, 0, $ForGeneratedCode.text);
+
+  Expr<String?> get storeId =>
+      $ForGeneratedCode.field(this, 1, $ForGeneratedCode.text);
+
+  Expr<int?> get walletBalance =>
+      $ForGeneratedCode.field(this, 2, $ForGeneratedCode.integer);
+
+  Expr<DateTime?> get createdAt =>
+      $ForGeneratedCode.field(this, 3, $ForGeneratedCode.dateTime);
+
+  Expr<DateTime?> get updatedAt =>
+      $ForGeneratedCode.field(this, 4, $ForGeneratedCode.dateTime);
+
+  /// Check if the row is not `NULL`.
+  ///
+  /// This will check if _primary key_ fields in this row are `NULL`.
+  ///
+  /// If this is a reference lookup by subquery it might be more efficient
+  /// to check if the referencing field is `NULL`.
+  Expr<bool> isNotNull() => customerId.isNotNull() & storeId.isNotNull();
+
+  /// Check if the row is `NULL`.
+  ///
+  /// This will check if _primary key_ fields in this row are `NULL`.
+  ///
+  /// If this is a reference lookup by subquery it might be more efficient
+  /// to check if the referencing field is `NULL`.
+  Expr<bool> isNull() => isNotNull().not();
+}
+
+/// `Table<CustomerStoreWalletRow>` conflict targets for use with `.onConflict`.
+enum CustomerStoreWalletRowConflict {
+  /// Conflict with an existing row that has a matching primary key.
+  ///
+  /// Thus, the other row has matching values for:
+  /// `customerId`, `storeId`.
+  primaryKey(['customer_id', 'store_id']);
+
+  const CustomerStoreWalletRowConflict(this._fields);
+
+  final List<String> _fields;
+}
+
+extension InsertCustomerStoreWalletRowExt on Insert<CustomerStoreWalletRow> {
+  /// Build an `INSERT` statement with an `ON CONFLICT` clause.
+  ///
+  /// The [target] argument specifies the _conflict target_ to be
+  /// handled. The _conflict target_ is always a `UNIQUE` constraint or
+  /// `PRIMARY KEY` constraint.
+  ///
+  /// If a row to be inserted violates the _conflict target_ constraint,
+  /// then the conflict action is triggered:
+  /// * `.doNothing()` to skip insertion of the new row, and,
+  /// * `.update((customerStoreWalletRow, excluded, set) => set(...))` to
+  ///   update the conflicting row.
+  ///
+  /// If a row to be inserted violates a constraint other than the one
+  /// specified in _conflict target_ then the entire `INSERT` statement
+  /// will fail.
+  ///
+  /// This is equivalent to `INSERT ... ON CONFLICT (...)` in SQL.
+  InsertOnConflict<CustomerStoreWalletRow> onConflict(
+    CustomerStoreWalletRowConflict target,
+  ) => $ForGeneratedCode.insertOnConflict(this, target._fields);
+}
+
+extension InsertOnConflictCustomerStoreWalletRowExt
+    on InsertOnConflict<CustomerStoreWalletRow> {
+  /// Build an `INSERT` statement an [upsert-clause][1].
+  ///
+  /// When a row to be inserted violates the `UNIQUE` or `PRIMARY KEY`
+  /// constraint previously specified as _conflict target_, the existing
+  /// row is updated using the expressions defined with the
+  /// [updateBuilder]. The [updateBuilder] is given 3 parameters:
+  ///   * `customerStoreWalletRow` an [Expr] representing the existing row in
+  ///     the database,
+  ///   * `excluded` an [Expr] representing the row to be inserted in the
+  ///     database, and,
+  ///   * `set` a function to specify which fields should be updated and
+  ///     build the [UpdateSet].
+  ///
+  /// The result of the `set` function should always be immediately
+  /// returned from the [updateBuilder].
+  ///
+  /// **Example:** Insert a counter with `count = 2` or increment the
+  /// existing row, if a `PRIMARY KEY` conflict occurs.
+  /// ```dart
+  /// await db.counters.insertValue(
+  ///     name: 'my-counter', // primary key
+  ///     count: 2,
+  ///   )
+  ///   .onConflict(.primaryKey)
+  ///   .update((counter, excluded, set) => set(
+  ///     count: counter.count + excluded.count,
+  ///   ))
+  ///   .execute();
+  /// ```
+  ///
+  /// This is equivalent to
+  /// `INSERT ... ON CONFLICT (...) UPDATE SET ...` in SQL.
+  ///
+  /// > [!WARNING]
+  /// > The `updateBuilder` callback does not make the update, it builds
+  /// > the expressions for updating the rows. You should **never** invoke
+  /// > the `set` function more than once, and the result should always
+  /// > be returned immediately.
+  ///
+  /// [1]: https://www.sqlite.org/lang_upsert.html
+  Upsert<CustomerStoreWalletRow> update(
+    UpdateSet<CustomerStoreWalletRow> Function(
+      Expr<CustomerStoreWalletRow> customerStoreWalletRow,
+      Expr<CustomerStoreWalletRow> excluded,
+      UpdateSet<CustomerStoreWalletRow> Function({
+        Expr<String> customerId,
+        Expr<String> storeId,
+        Expr<int> walletBalance,
+        Expr<DateTime> createdAt,
+        Expr<DateTime> updatedAt,
+      })
+      set,
+    )
+    updateBuilder,
+  ) => $ForGeneratedCode.updateOnConflict<CustomerStoreWalletRow>(
+    this,
+    (customerStoreWalletRow, excluded) => updateBuilder(
+      customerStoreWalletRow,
+      excluded,
+      ({
+        Expr<String>? customerId,
+        Expr<String>? storeId,
+        Expr<int>? walletBalance,
+        Expr<DateTime>? createdAt,
+        Expr<DateTime>? updatedAt,
+      }) => $ForGeneratedCode.buildUpdate<CustomerStoreWalletRow>([
+        customerId,
+        storeId,
+        walletBalance,
+        createdAt,
+        updatedAt,
+      ]),
+    ),
+  );
+}
+
+extension InsertSingleCustomerStoreWalletRowExt
+    on InsertSingle<CustomerStoreWalletRow> {
+  /// Build an `INSERT` statement with an `ON CONFLICT` clause.
+  ///
+  /// The [target] argument specifies the _conflict target_ to be
+  /// handled. The _conflict target_ is always a `UNIQUE` constraint or
+  /// `PRIMARY KEY` constraint.
+  ///
+  /// If a row to be inserted violates the _conflict target_ constraint,
+  /// then the conflict action is triggered:
+  /// * `.doNothing()` to skip insertion of the new row, and,
+  /// * `.update((customerStoreWalletRow, excluded, set) => set(...))` to
+  ///   update the conflicting row.
+  ///
+  /// If a row to be inserted violates a constraint other than the one
+  /// specified in _conflict target_ then the entire `INSERT` statement
+  /// will fail.
+  ///
+  /// This is equivalent to `INSERT ... ON CONFLICT (...)` in SQL.
+  InsertOnConflictSingle<CustomerStoreWalletRow> onConflict(
+    CustomerStoreWalletRowConflict target,
+  ) => $ForGeneratedCode.insertOnConflictSingle(this, target._fields);
+}
+
+extension InsertOnConflictSingleCustomerStoreWalletRowExt
+    on InsertOnConflictSingle<CustomerStoreWalletRow> {
+  /// Build an `INSERT` statement an [upsert-clause][1].
+  ///
+  /// When a row to be inserted violates the `UNIQUE` or `PRIMARY KEY`
+  /// constraint previously specified as _conflict target_, the existing
+  /// row is updated using the expressions defined with the
+  /// [updateBuilder]. The [updateBuilder] is given 3 parameters:
+  ///   * `customerStoreWalletRow` an [Expr] representing the existing row in
+  ///     the database,
+  ///   * `excluded` an [Expr] representing the row to be inserted in the
+  ///     database, and,
+  ///   * `set` a function to specify which fields should be updated and
+  ///     build the [UpdateSet].
+  ///
+  /// The result of the `set` function should always be immediately
+  /// returned from the [updateBuilder].
+  ///
+  /// **Example:** Insert a counter with `count = 2` or increment the
+  /// existing row, if a `PRIMARY KEY` conflict occurs.
+  /// ```dart
+  /// await db.counters.insertValue(
+  ///     name: 'my-counter', // primary key
+  ///     count: 2,
+  ///   )
+  ///   .onConflict(.primaryKey)
+  ///   .update((counter, excluded, set) => set(
+  ///     count: counter.count + excluded.count,
+  ///   ))
+  ///   .execute();
+  /// ```
+  ///
+  /// This is equivalent to
+  /// `INSERT ... ON CONFLICT (...) UPDATE SET ...` in SQL.
+  ///
+  /// > [!WARNING]
+  /// > The `updateBuilder` callback does not make the update, it builds
+  /// > the expressions for updating the rows. You should **never** invoke
+  /// > the `set` function more than once, and the result should always
+  /// > be returned immediately.
+  ///
+  /// [1]: https://www.sqlite.org/lang_upsert.html
+  UpsertSingle<CustomerStoreWalletRow> update(
+    UpdateSet<CustomerStoreWalletRow> Function(
+      Expr<CustomerStoreWalletRow> customerStoreWalletRow,
+      Expr<CustomerStoreWalletRow> excluded,
+      UpdateSet<CustomerStoreWalletRow> Function({
+        Expr<String> customerId,
+        Expr<String> storeId,
+        Expr<int> walletBalance,
+        Expr<DateTime> createdAt,
+        Expr<DateTime> updatedAt,
+      })
+      set,
+    )
+    updateBuilder,
+  ) => $ForGeneratedCode.updateOnConflictSingle<CustomerStoreWalletRow>(
+    this,
+    (customerStoreWalletRow, excluded) => updateBuilder(
+      customerStoreWalletRow,
+      excluded,
+      ({
+        Expr<String>? customerId,
+        Expr<String>? storeId,
+        Expr<int>? walletBalance,
+        Expr<DateTime>? createdAt,
+        Expr<DateTime>? updatedAt,
+      }) => $ForGeneratedCode.buildUpdate<CustomerStoreWalletRow>([
+        customerId,
+        storeId,
+        walletBalance,
+        createdAt,
+        updatedAt,
+      ]),
+    ),
+  );
+}
+
+final class _$CustomerWalletTransactionRow
+    extends CustomerWalletTransactionRow {
+  _$CustomerWalletTransactionRow._(
+    this.id,
+    this.customerId,
+    this.storeId,
+    this.amount,
+    this.type,
+    this.reference,
+    this.status,
+    this.createdAt,
+  );
+
+  @override
+  final String id;
+
+  @override
+  final String customerId;
+
+  @override
+  final String storeId;
+
+  @override
+  final int amount;
+
+  @override
+  final String type;
+
+  @override
+  final String? reference;
+
+  @override
+  final String status;
+
+  @override
+  final DateTime createdAt;
+
+  static final _$table = $ForGeneratedCode.tableDefinition(
+    tableName: 'customer_wallet_transactions',
+    columns: <String>[
+      'id',
+      'customer_id',
+      'store_id',
+      'amount',
+      'type',
+      'reference',
+      'status',
+      'created_at',
+    ],
+    columnInfo: [
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: true,
+        defaultValue: (kind: 'raw', value: 'gen_random_uuid()'),
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: true,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: true,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.integer,
+        isNotNull: true,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: true,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: false,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: true,
+        defaultValue: (kind: 'raw', value: 'completed'),
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.dateTime,
+        isNotNull: true,
+        defaultValue: (kind: 'datetime', value: 'now'),
+        autoIncrement: false,
+        overrides: [],
+      ),
+    ],
+    primaryKey: <String>['id'],
+    unique: <List<String>>[],
+    foreignKeys: [
+      $ForGeneratedCode.foreignKeyDefinition(
+        name: 'null',
+        columns: ['customer_id'],
+        referencedTable: 'customers',
+        referencedColumns: ['id'],
+        onDelete: .cascade,
+        onUpdate: .noAction,
+      ),
+      $ForGeneratedCode.foreignKeyDefinition(
+        name: 'null',
+        columns: ['store_id'],
+        referencedTable: 'stores',
+        referencedColumns: ['id'],
+        onDelete: .cascade,
+        onUpdate: .noAction,
+      ),
+    ],
+    readRow: _$CustomerWalletTransactionRow._$fromDatabase,
+  );
+
+  static CustomerWalletTransactionRow? _$fromDatabase(RowReader row) {
+    final id = row.readString();
+    final customerId = row.readString();
+    final storeId = row.readString();
+    final amount = row.readInt();
+    final type = row.readString();
+    final reference = row.readString();
+    final status = row.readString();
+    final createdAt = row.readDateTime();
+    if (id == null &&
+        customerId == null &&
+        storeId == null &&
+        amount == null &&
+        type == null &&
+        reference == null &&
+        status == null &&
+        createdAt == null) {
+      return null;
+    }
+    return _$CustomerWalletTransactionRow._(
+      id!,
+      customerId!,
+      storeId!,
+      amount!,
+      type!,
+      reference,
+      status!,
+      createdAt!,
+    );
+  }
+
+  @override
+  String toString() =>
+      'CustomerWalletTransactionRow(id: "$id", customerId: "$customerId", storeId: "$storeId", amount: "$amount", type: "$type", reference: "$reference", status: "$status", createdAt: "$createdAt")';
+}
+
+/// Extension methods for table defined in [CustomerWalletTransactionRow].
+extension TableCustomerWalletTransactionRowExt
+    on Table<CustomerWalletTransactionRow> {
+  /// Insert row into the `customerWalletTransactions` table.
+  ///
+  /// Returns a [InsertSingle] statement on which `.execute` must be
+  /// called for the row to be inserted.
+  InsertSingle<CustomerWalletTransactionRow> insert({
+    Expr<String>? id,
+    required Expr<String> customerId,
+    required Expr<String> storeId,
+    required Expr<int> amount,
+    required Expr<String> type,
+    Expr<String?>? reference,
+    Expr<String>? status,
+    Expr<DateTime>? createdAt,
+  }) => $ForGeneratedCode.insertInto(
+    table: this,
+    values: [
+      id,
+      customerId,
+      storeId,
+      amount,
+      type,
+      reference,
+      status,
+      createdAt,
+    ],
+  );
+
+  /// Insert row into the `customerWalletTransactions` table.
+  ///
+  /// Returns a [InsertSingle] statement on which `.execute` must be
+  /// called for the row to be inserted.
+  InsertSingle<CustomerWalletTransactionRow> insertValue({
+    String? id,
+    required String customerId,
+    required String storeId,
+    required int amount,
+    required String type,
+    String? reference,
+    String? status,
+    DateTime? createdAt,
+  }) => $ForGeneratedCode.insertInto(
+    table: this,
+    values: [
+      id?.asExpr,
+      customerId.asExpr,
+      storeId.asExpr,
+      amount.asExpr,
+      type.asExpr,
+      reference.asExpr,
+      status?.asExpr,
+      createdAt?.asExpr,
+    ],
+  );
+
+  /// Bulk insert rows into the `customerWalletTransactions` table.
+  ///
+  /// This method takes an `Iterable<T>` and requires that you provide
+  /// a _mapping function_ from `T` to each column to be inserted.
+  ///
+  /// If a mapping function is omitted, the _default value_ will be
+  /// inserted, or `NULL` if column is nullable and as no default value.
+  /// To explicitely insert `NULL`, use a _mapping function_ that maps
+  /// `T` to `null`.
+  ///
+  /// > [!NOTE]
+  /// > This method aims utilize database specific bulk insertion logic
+  /// > to ensure good performance. Database adapters may pipeline bulk
+  /// > insertions through multiple statements inside a transaction.
+  ///
+  /// Returns a [Insert] statement on which `.execute` must be
+  /// called for the rows to be inserted.
+  Insert<CustomerWalletTransactionRow> insertValuesMapped<T>(
+    Iterable<T> rows, {
+    String Function(T row)? id,
+    required String Function(T row) customerId,
+    required String Function(T row) storeId,
+    required int Function(T row) amount,
+    required String Function(T row) type,
+    String? Function(T row)? reference,
+    String Function(T row)? status,
+    DateTime Function(T row)? createdAt,
+  }) => $ForGeneratedCode.insertValuesMapped(
+    table: this,
+    rows: rows,
+    mappings: [
+      id,
+      customerId,
+      storeId,
+      amount,
+      type,
+      reference,
+      status,
+      createdAt,
+    ],
+  );
+
+  /// Delete a single row from the `customerWalletTransactions` table, specified by
+  /// _primary key_.
+  ///
+  /// Returns a [DeleteSingle] statement on which `.execute()` must be
+  /// called for the row to be deleted.
+  ///
+  /// To delete multiple rows, using `.where()` to filter which rows
+  /// should be deleted. If you wish to delete all rows, use
+  /// `.where((_) => toExpr(true)).delete()`.
+  DeleteSingle<CustomerWalletTransactionRow> delete(String id) =>
+      $ForGeneratedCode.deleteSingle(
+        byKey(id),
+        _$CustomerWalletTransactionRow._$table,
+      );
+}
+
+/// Extension methods for building queries against the `customerWalletTransactions` table.
+extension QueryCustomerWalletTransactionRowExt
+    on Query<(Expr<CustomerWalletTransactionRow>,)> {
+  /// Lookup a single row in `customerWalletTransactions` table using the _primary key_.
+  ///
+  /// Returns a [QuerySingle] object, which returns at-most one row,
+  /// when `.fetch()` is called.
+  QuerySingle<(Expr<CustomerWalletTransactionRow>,)> byKey(String id) => where(
+    (customerWalletTransactionRow) =>
+        customerWalletTransactionRow.id.equalsValue(id),
+  ).first;
+
+  /// Update all rows in the `customerWalletTransactions` table matching this [Query].
+  ///
+  /// The changes to be applied to each row matching this [Query] are
+  /// defined using the [updateBuilder], which is given an [Expr]
+  /// representation of the row being updated and a `set` function to
+  /// specify which fields should be updated. The result of the `set`
+  /// function should always be returned from the `updateBuilder`.
+  ///
+  /// Returns an [Update] statement on which `.execute()` must be called
+  /// for the rows to be updated.
+  ///
+  /// **Example:** decrementing `1` from the `value` field for each row
+  /// where `value > 0`.
+  /// ```dart
+  /// await db.mytable
+  ///   .where((row) => row.value > toExpr(0))
+  ///   .update((row, set) => set(
+  ///     value: row.value - toExpr(1),
+  ///   ))
+  ///   .execute();
+  /// ```
+  ///
+  /// > [!WARNING]
+  /// > The `updateBuilder` callback does not make the update, it builds
+  /// > the expressions for updating the rows. You should **never** invoke
+  /// > the `set` function more than once, and the result should always
+  /// > be returned immediately.
+  Update<CustomerWalletTransactionRow> update(
+    UpdateSet<CustomerWalletTransactionRow> Function(
+      Expr<CustomerWalletTransactionRow> customerWalletTransactionRow,
+      UpdateSet<CustomerWalletTransactionRow> Function({
+        Expr<String> id,
+        Expr<String> customerId,
+        Expr<String> storeId,
+        Expr<int> amount,
+        Expr<String> type,
+        Expr<String?> reference,
+        Expr<String> status,
+        Expr<DateTime> createdAt,
+      })
+      set,
+    )
+    updateBuilder,
+  ) => $ForGeneratedCode.update<CustomerWalletTransactionRow>(
+    this,
+    _$CustomerWalletTransactionRow._$table,
+    (customerWalletTransactionRow) => updateBuilder(
+      customerWalletTransactionRow,
+      ({
+        Expr<String>? id,
+        Expr<String>? customerId,
+        Expr<String>? storeId,
+        Expr<int>? amount,
+        Expr<String>? type,
+        Expr<String?>? reference,
+        Expr<String>? status,
+        Expr<DateTime>? createdAt,
+      }) => $ForGeneratedCode.buildUpdate<CustomerWalletTransactionRow>([
+        id,
+        customerId,
+        storeId,
+        amount,
+        type,
+        reference,
+        status,
+        createdAt,
+      ]),
+    ),
+  );
+
+  /// Delete all rows in the `customerWalletTransactions` table matching this [Query].
+  ///
+  /// Returns a [Delete] statement on which `.execute()` must be called
+  /// for the rows to be deleted.
+  Delete<CustomerWalletTransactionRow> delete() =>
+      $ForGeneratedCode.delete(this, _$CustomerWalletTransactionRow._$table);
+}
+
+/// Extension methods for building point queries against the `customerWalletTransactions` table.
+extension QuerySingleCustomerWalletTransactionRowExt
+    on QuerySingle<(Expr<CustomerWalletTransactionRow>,)> {
+  /// Update the row (if any) in the `customerWalletTransactions` table matching this
+  /// [QuerySingle].
+  ///
+  /// The changes to be applied to the row matching this [QuerySingle] are
+  /// defined using the [updateBuilder], which is given an [Expr]
+  /// representation of the row being updated and a `set` function to
+  /// specify which fields should be updated. The result of the `set`
+  /// function should always be returned from the `updateBuilder`.
+  ///
+  /// Returns an [UpdateSingle] statement on which `.execute()` must be
+  /// called for the row to be updated. The resulting statement will
+  /// **not** fail, if there are no rows matching this query exists.
+  ///
+  /// **Example:** decrementing `1` from the `value` field the row with
+  /// `id = 1`.
+  /// ```dart
+  /// await db.mytable
+  ///   .byKey(1)
+  ///   .update((row, set) => set(
+  ///     value: row.value - toExpr(1),
+  ///   ))
+  ///   .execute();
+  /// ```
+  ///
+  /// > [!WARNING]
+  /// > The `updateBuilder` callback does not make the update, it builds
+  /// > the expressions for updating the rows. You should **never** invoke
+  /// > the `set` function more than once, and the result should always
+  /// > be returned immediately.
+  UpdateSingle<CustomerWalletTransactionRow> update(
+    UpdateSet<CustomerWalletTransactionRow> Function(
+      Expr<CustomerWalletTransactionRow> customerWalletTransactionRow,
+      UpdateSet<CustomerWalletTransactionRow> Function({
+        Expr<String> id,
+        Expr<String> customerId,
+        Expr<String> storeId,
+        Expr<int> amount,
+        Expr<String> type,
+        Expr<String?> reference,
+        Expr<String> status,
+        Expr<DateTime> createdAt,
+      })
+      set,
+    )
+    updateBuilder,
+  ) => $ForGeneratedCode.updateSingle<CustomerWalletTransactionRow>(
+    this,
+    _$CustomerWalletTransactionRow._$table,
+    (customerWalletTransactionRow) => updateBuilder(
+      customerWalletTransactionRow,
+      ({
+        Expr<String>? id,
+        Expr<String>? customerId,
+        Expr<String>? storeId,
+        Expr<int>? amount,
+        Expr<String>? type,
+        Expr<String?>? reference,
+        Expr<String>? status,
+        Expr<DateTime>? createdAt,
+      }) => $ForGeneratedCode.buildUpdate<CustomerWalletTransactionRow>([
+        id,
+        customerId,
+        storeId,
+        amount,
+        type,
+        reference,
+        status,
+        createdAt,
+      ]),
+    ),
+  );
+
+  /// Delete the row (if any) in the `customerWalletTransactions` table matching this [QuerySingle].
+  ///
+  /// Returns a [DeleteSingle] statement on which `.execute()` must be called
+  /// for the row to be deleted. The resulting statement will **not**
+  /// fail, if there are no rows matching this query exists.
+  DeleteSingle<CustomerWalletTransactionRow> delete() => $ForGeneratedCode
+      .deleteSingle(this, _$CustomerWalletTransactionRow._$table);
+}
+
+/// Extension methods for expressions on a row in the `customerWalletTransactions` table.
+extension ExpressionCustomerWalletTransactionRowExt
+    on Expr<CustomerWalletTransactionRow> {
+  Expr<String> get id =>
+      $ForGeneratedCode.field(this, 0, $ForGeneratedCode.text);
+
+  Expr<String> get customerId =>
+      $ForGeneratedCode.field(this, 1, $ForGeneratedCode.text);
+
+  Expr<String> get storeId =>
+      $ForGeneratedCode.field(this, 2, $ForGeneratedCode.text);
+
+  Expr<int> get amount =>
+      $ForGeneratedCode.field(this, 3, $ForGeneratedCode.integer);
+
+  Expr<String> get type =>
+      $ForGeneratedCode.field(this, 4, $ForGeneratedCode.text);
+
+  Expr<String?> get reference =>
+      $ForGeneratedCode.field(this, 5, $ForGeneratedCode.text);
+
+  Expr<String> get status =>
+      $ForGeneratedCode.field(this, 6, $ForGeneratedCode.text);
+
+  Expr<DateTime> get createdAt =>
+      $ForGeneratedCode.field(this, 7, $ForGeneratedCode.dateTime);
+}
+
+extension ExpressionNullableCustomerWalletTransactionRowExt
+    on Expr<CustomerWalletTransactionRow?> {
+  Expr<String?> get id =>
+      $ForGeneratedCode.field(this, 0, $ForGeneratedCode.text);
+
+  Expr<String?> get customerId =>
+      $ForGeneratedCode.field(this, 1, $ForGeneratedCode.text);
+
+  Expr<String?> get storeId =>
+      $ForGeneratedCode.field(this, 2, $ForGeneratedCode.text);
+
+  Expr<int?> get amount =>
+      $ForGeneratedCode.field(this, 3, $ForGeneratedCode.integer);
+
+  Expr<String?> get type =>
+      $ForGeneratedCode.field(this, 4, $ForGeneratedCode.text);
+
+  Expr<String?> get reference =>
+      $ForGeneratedCode.field(this, 5, $ForGeneratedCode.text);
+
+  Expr<String?> get status =>
+      $ForGeneratedCode.field(this, 6, $ForGeneratedCode.text);
+
+  Expr<DateTime?> get createdAt =>
+      $ForGeneratedCode.field(this, 7, $ForGeneratedCode.dateTime);
+
+  /// Check if the row is not `NULL`.
+  ///
+  /// This will check if _primary key_ fields in this row are `NULL`.
+  ///
+  /// If this is a reference lookup by subquery it might be more efficient
+  /// to check if the referencing field is `NULL`.
+  Expr<bool> isNotNull() => id.isNotNull();
+
+  /// Check if the row is `NULL`.
+  ///
+  /// This will check if _primary key_ fields in this row are `NULL`.
+  ///
+  /// If this is a reference lookup by subquery it might be more efficient
+  /// to check if the referencing field is `NULL`.
+  Expr<bool> isNull() => isNotNull().not();
+}
+
+/// `Table<CustomerWalletTransactionRow>` conflict targets for use with `.onConflict`.
+enum CustomerWalletTransactionRowConflict {
+  /// Conflict with an existing row that has a matching primary key.
+  ///
+  /// Thus, the other row has matching values for:
+  /// `id`.
+  primaryKey(['id']);
+
+  const CustomerWalletTransactionRowConflict(this._fields);
+
+  final List<String> _fields;
+}
+
+extension InsertCustomerWalletTransactionRowExt
+    on Insert<CustomerWalletTransactionRow> {
+  /// Build an `INSERT` statement with an `ON CONFLICT` clause.
+  ///
+  /// The [target] argument specifies the _conflict target_ to be
+  /// handled. The _conflict target_ is always a `UNIQUE` constraint or
+  /// `PRIMARY KEY` constraint.
+  ///
+  /// If a row to be inserted violates the _conflict target_ constraint,
+  /// then the conflict action is triggered:
+  /// * `.doNothing()` to skip insertion of the new row, and,
+  /// * `.update((customerWalletTransactionRow, excluded, set) => set(...))` to
+  ///   update the conflicting row.
+  ///
+  /// If a row to be inserted violates a constraint other than the one
+  /// specified in _conflict target_ then the entire `INSERT` statement
+  /// will fail.
+  ///
+  /// This is equivalent to `INSERT ... ON CONFLICT (...)` in SQL.
+  InsertOnConflict<CustomerWalletTransactionRow> onConflict(
+    CustomerWalletTransactionRowConflict target,
+  ) => $ForGeneratedCode.insertOnConflict(this, target._fields);
+}
+
+extension InsertOnConflictCustomerWalletTransactionRowExt
+    on InsertOnConflict<CustomerWalletTransactionRow> {
+  /// Build an `INSERT` statement an [upsert-clause][1].
+  ///
+  /// When a row to be inserted violates the `UNIQUE` or `PRIMARY KEY`
+  /// constraint previously specified as _conflict target_, the existing
+  /// row is updated using the expressions defined with the
+  /// [updateBuilder]. The [updateBuilder] is given 3 parameters:
+  ///   * `customerWalletTransactionRow` an [Expr] representing the existing row in
+  ///     the database,
+  ///   * `excluded` an [Expr] representing the row to be inserted in the
+  ///     database, and,
+  ///   * `set` a function to specify which fields should be updated and
+  ///     build the [UpdateSet].
+  ///
+  /// The result of the `set` function should always be immediately
+  /// returned from the [updateBuilder].
+  ///
+  /// **Example:** Insert a counter with `count = 2` or increment the
+  /// existing row, if a `PRIMARY KEY` conflict occurs.
+  /// ```dart
+  /// await db.counters.insertValue(
+  ///     name: 'my-counter', // primary key
+  ///     count: 2,
+  ///   )
+  ///   .onConflict(.primaryKey)
+  ///   .update((counter, excluded, set) => set(
+  ///     count: counter.count + excluded.count,
+  ///   ))
+  ///   .execute();
+  /// ```
+  ///
+  /// This is equivalent to
+  /// `INSERT ... ON CONFLICT (...) UPDATE SET ...` in SQL.
+  ///
+  /// > [!WARNING]
+  /// > The `updateBuilder` callback does not make the update, it builds
+  /// > the expressions for updating the rows. You should **never** invoke
+  /// > the `set` function more than once, and the result should always
+  /// > be returned immediately.
+  ///
+  /// [1]: https://www.sqlite.org/lang_upsert.html
+  Upsert<CustomerWalletTransactionRow> update(
+    UpdateSet<CustomerWalletTransactionRow> Function(
+      Expr<CustomerWalletTransactionRow> customerWalletTransactionRow,
+      Expr<CustomerWalletTransactionRow> excluded,
+      UpdateSet<CustomerWalletTransactionRow> Function({
+        Expr<String> id,
+        Expr<String> customerId,
+        Expr<String> storeId,
+        Expr<int> amount,
+        Expr<String> type,
+        Expr<String?> reference,
+        Expr<String> status,
+        Expr<DateTime> createdAt,
+      })
+      set,
+    )
+    updateBuilder,
+  ) => $ForGeneratedCode.updateOnConflict<CustomerWalletTransactionRow>(
+    this,
+    (customerWalletTransactionRow, excluded) => updateBuilder(
+      customerWalletTransactionRow,
+      excluded,
+      ({
+        Expr<String>? id,
+        Expr<String>? customerId,
+        Expr<String>? storeId,
+        Expr<int>? amount,
+        Expr<String>? type,
+        Expr<String?>? reference,
+        Expr<String>? status,
+        Expr<DateTime>? createdAt,
+      }) => $ForGeneratedCode.buildUpdate<CustomerWalletTransactionRow>([
+        id,
+        customerId,
+        storeId,
+        amount,
+        type,
+        reference,
+        status,
+        createdAt,
+      ]),
+    ),
+  );
+}
+
+extension InsertSingleCustomerWalletTransactionRowExt
+    on InsertSingle<CustomerWalletTransactionRow> {
+  /// Build an `INSERT` statement with an `ON CONFLICT` clause.
+  ///
+  /// The [target] argument specifies the _conflict target_ to be
+  /// handled. The _conflict target_ is always a `UNIQUE` constraint or
+  /// `PRIMARY KEY` constraint.
+  ///
+  /// If a row to be inserted violates the _conflict target_ constraint,
+  /// then the conflict action is triggered:
+  /// * `.doNothing()` to skip insertion of the new row, and,
+  /// * `.update((customerWalletTransactionRow, excluded, set) => set(...))` to
+  ///   update the conflicting row.
+  ///
+  /// If a row to be inserted violates a constraint other than the one
+  /// specified in _conflict target_ then the entire `INSERT` statement
+  /// will fail.
+  ///
+  /// This is equivalent to `INSERT ... ON CONFLICT (...)` in SQL.
+  InsertOnConflictSingle<CustomerWalletTransactionRow> onConflict(
+    CustomerWalletTransactionRowConflict target,
+  ) => $ForGeneratedCode.insertOnConflictSingle(this, target._fields);
+}
+
+extension InsertOnConflictSingleCustomerWalletTransactionRowExt
+    on InsertOnConflictSingle<CustomerWalletTransactionRow> {
+  /// Build an `INSERT` statement an [upsert-clause][1].
+  ///
+  /// When a row to be inserted violates the `UNIQUE` or `PRIMARY KEY`
+  /// constraint previously specified as _conflict target_, the existing
+  /// row is updated using the expressions defined with the
+  /// [updateBuilder]. The [updateBuilder] is given 3 parameters:
+  ///   * `customerWalletTransactionRow` an [Expr] representing the existing row in
+  ///     the database,
+  ///   * `excluded` an [Expr] representing the row to be inserted in the
+  ///     database, and,
+  ///   * `set` a function to specify which fields should be updated and
+  ///     build the [UpdateSet].
+  ///
+  /// The result of the `set` function should always be immediately
+  /// returned from the [updateBuilder].
+  ///
+  /// **Example:** Insert a counter with `count = 2` or increment the
+  /// existing row, if a `PRIMARY KEY` conflict occurs.
+  /// ```dart
+  /// await db.counters.insertValue(
+  ///     name: 'my-counter', // primary key
+  ///     count: 2,
+  ///   )
+  ///   .onConflict(.primaryKey)
+  ///   .update((counter, excluded, set) => set(
+  ///     count: counter.count + excluded.count,
+  ///   ))
+  ///   .execute();
+  /// ```
+  ///
+  /// This is equivalent to
+  /// `INSERT ... ON CONFLICT (...) UPDATE SET ...` in SQL.
+  ///
+  /// > [!WARNING]
+  /// > The `updateBuilder` callback does not make the update, it builds
+  /// > the expressions for updating the rows. You should **never** invoke
+  /// > the `set` function more than once, and the result should always
+  /// > be returned immediately.
+  ///
+  /// [1]: https://www.sqlite.org/lang_upsert.html
+  UpsertSingle<CustomerWalletTransactionRow> update(
+    UpdateSet<CustomerWalletTransactionRow> Function(
+      Expr<CustomerWalletTransactionRow> customerWalletTransactionRow,
+      Expr<CustomerWalletTransactionRow> excluded,
+      UpdateSet<CustomerWalletTransactionRow> Function({
+        Expr<String> id,
+        Expr<String> customerId,
+        Expr<String> storeId,
+        Expr<int> amount,
+        Expr<String> type,
+        Expr<String?> reference,
+        Expr<String> status,
+        Expr<DateTime> createdAt,
+      })
+      set,
+    )
+    updateBuilder,
+  ) => $ForGeneratedCode.updateOnConflictSingle<CustomerWalletTransactionRow>(
+    this,
+    (customerWalletTransactionRow, excluded) => updateBuilder(
+      customerWalletTransactionRow,
+      excluded,
+      ({
+        Expr<String>? id,
+        Expr<String>? customerId,
+        Expr<String>? storeId,
+        Expr<int>? amount,
+        Expr<String>? type,
+        Expr<String?>? reference,
+        Expr<String>? status,
+        Expr<DateTime>? createdAt,
+      }) => $ForGeneratedCode.buildUpdate<CustomerWalletTransactionRow>([
+        id,
+        customerId,
+        storeId,
+        amount,
+        type,
+        reference,
+        status,
+        createdAt,
+      ]),
+    ),
+  );
+}
+
 final class _$OrderRow extends OrderRow {
   _$OrderRow._(
     this.id,
@@ -9886,6 +11292,7 @@ final class _$OrderRow extends OrderRow {
     this.createdAt,
     this.updatedAt,
     this.discountTotal,
+    this.walletDeduction,
     this.customerId,
   );
 
@@ -9941,6 +11348,9 @@ final class _$OrderRow extends OrderRow {
   final int discountTotal;
 
   @override
+  final int walletDeduction;
+
+  @override
   final String? customerId;
 
   static final _$table = $ForGeneratedCode.tableDefinition(
@@ -9963,6 +11373,7 @@ final class _$OrderRow extends OrderRow {
       'created_at',
       'updated_at',
       'discount_total',
+      'wallet_deduction',
       'customer_id',
     ],
     columnInfo: [
@@ -10086,6 +11497,13 @@ final class _$OrderRow extends OrderRow {
         overrides: [],
       ),
       $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.integer,
+        isNotNull: true,
+        defaultValue: (kind: 'raw', value: 0),
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
         type: $ForGeneratedCode.text,
         isNotNull: false,
         defaultValue: null,
@@ -10152,6 +11570,7 @@ final class _$OrderRow extends OrderRow {
     final createdAt = row.readDateTime();
     final updatedAt = row.readDateTime();
     final discountTotal = row.readInt();
+    final walletDeduction = row.readInt();
     final customerId = row.readString();
     if (id == null &&
         merchantId == null &&
@@ -10170,6 +11589,7 @@ final class _$OrderRow extends OrderRow {
         createdAt == null &&
         updatedAt == null &&
         discountTotal == null &&
+        walletDeduction == null &&
         customerId == null) {
       return null;
     }
@@ -10191,13 +11611,14 @@ final class _$OrderRow extends OrderRow {
       createdAt!,
       updatedAt!,
       discountTotal!,
+      walletDeduction!,
       customerId,
     );
   }
 
   @override
   String toString() =>
-      'OrderRow(id: "$id", merchantId: "$merchantId", storeId: "$storeId", orderReference: "$orderReference", billNo: "$billNo", source: "$source", type: "$type", status: "$status", paymentStatus: "$paymentStatus", paymentMethod: "$paymentMethod", subtotal: "$subtotal", taxTotal: "$taxTotal", grandTotal: "$grandTotal", terminalCode: "$terminalCode", createdAt: "$createdAt", updatedAt: "$updatedAt", discountTotal: "$discountTotal", customerId: "$customerId")';
+      'OrderRow(id: "$id", merchantId: "$merchantId", storeId: "$storeId", orderReference: "$orderReference", billNo: "$billNo", source: "$source", type: "$type", status: "$status", paymentStatus: "$paymentStatus", paymentMethod: "$paymentMethod", subtotal: "$subtotal", taxTotal: "$taxTotal", grandTotal: "$grandTotal", terminalCode: "$terminalCode", createdAt: "$createdAt", updatedAt: "$updatedAt", discountTotal: "$discountTotal", walletDeduction: "$walletDeduction", customerId: "$customerId")';
 }
 
 /// Extension methods for table defined in [OrderRow].
@@ -10224,6 +11645,7 @@ extension TableOrderRowExt on Table<OrderRow> {
     Expr<DateTime>? createdAt,
     Expr<DateTime>? updatedAt,
     Expr<int>? discountTotal,
+    Expr<int>? walletDeduction,
     Expr<String?>? customerId,
   }) => $ForGeneratedCode.insertInto(
     table: this,
@@ -10245,6 +11667,7 @@ extension TableOrderRowExt on Table<OrderRow> {
       createdAt,
       updatedAt,
       discountTotal,
+      walletDeduction,
       customerId,
     ],
   );
@@ -10271,6 +11694,7 @@ extension TableOrderRowExt on Table<OrderRow> {
     DateTime? createdAt,
     DateTime? updatedAt,
     int? discountTotal,
+    int? walletDeduction,
     String? customerId,
   }) => $ForGeneratedCode.insertInto(
     table: this,
@@ -10292,6 +11716,7 @@ extension TableOrderRowExt on Table<OrderRow> {
       createdAt?.asExpr,
       updatedAt?.asExpr,
       discountTotal?.asExpr,
+      walletDeduction?.asExpr,
       customerId.asExpr,
     ],
   );
@@ -10332,6 +11757,7 @@ extension TableOrderRowExt on Table<OrderRow> {
     DateTime Function(T row)? createdAt,
     DateTime Function(T row)? updatedAt,
     int Function(T row)? discountTotal,
+    int Function(T row)? walletDeduction,
     String? Function(T row)? customerId,
   }) => $ForGeneratedCode.insertValuesMapped(
     table: this,
@@ -10354,6 +11780,7 @@ extension TableOrderRowExt on Table<OrderRow> {
       createdAt,
       updatedAt,
       discountTotal,
+      walletDeduction,
       customerId,
     ],
   );
@@ -10428,6 +11855,7 @@ extension QueryOrderRowExt on Query<(Expr<OrderRow>,)> {
         Expr<DateTime> createdAt,
         Expr<DateTime> updatedAt,
         Expr<int> discountTotal,
+        Expr<int> walletDeduction,
         Expr<String?> customerId,
       })
       set,
@@ -10456,6 +11884,7 @@ extension QueryOrderRowExt on Query<(Expr<OrderRow>,)> {
         Expr<DateTime>? createdAt,
         Expr<DateTime>? updatedAt,
         Expr<int>? discountTotal,
+        Expr<int>? walletDeduction,
         Expr<String?>? customerId,
       }) => $ForGeneratedCode.buildUpdate<OrderRow>([
         id,
@@ -10475,6 +11904,7 @@ extension QueryOrderRowExt on Query<(Expr<OrderRow>,)> {
         createdAt,
         updatedAt,
         discountTotal,
+        walletDeduction,
         customerId,
       ]),
     ),
@@ -10553,6 +11983,7 @@ extension QuerySingleOrderRowExt on QuerySingle<(Expr<OrderRow>,)> {
         Expr<DateTime> createdAt,
         Expr<DateTime> updatedAt,
         Expr<int> discountTotal,
+        Expr<int> walletDeduction,
         Expr<String?> customerId,
       })
       set,
@@ -10581,6 +12012,7 @@ extension QuerySingleOrderRowExt on QuerySingle<(Expr<OrderRow>,)> {
         Expr<DateTime>? createdAt,
         Expr<DateTime>? updatedAt,
         Expr<int>? discountTotal,
+        Expr<int>? walletDeduction,
         Expr<String?>? customerId,
       }) => $ForGeneratedCode.buildUpdate<OrderRow>([
         id,
@@ -10600,6 +12032,7 @@ extension QuerySingleOrderRowExt on QuerySingle<(Expr<OrderRow>,)> {
         createdAt,
         updatedAt,
         discountTotal,
+        walletDeduction,
         customerId,
       ]),
     ),
@@ -10667,8 +12100,11 @@ extension ExpressionOrderRowExt on Expr<OrderRow> {
   Expr<int> get discountTotal =>
       $ForGeneratedCode.field(this, 16, $ForGeneratedCode.integer);
 
+  Expr<int> get walletDeduction =>
+      $ForGeneratedCode.field(this, 17, $ForGeneratedCode.integer);
+
   Expr<String?> get customerId =>
-      $ForGeneratedCode.field(this, 17, $ForGeneratedCode.text);
+      $ForGeneratedCode.field(this, 18, $ForGeneratedCode.text);
 }
 
 extension ExpressionNullableOrderRowExt on Expr<OrderRow?> {
@@ -10723,8 +12159,11 @@ extension ExpressionNullableOrderRowExt on Expr<OrderRow?> {
   Expr<int?> get discountTotal =>
       $ForGeneratedCode.field(this, 16, $ForGeneratedCode.integer);
 
+  Expr<int?> get walletDeduction =>
+      $ForGeneratedCode.field(this, 17, $ForGeneratedCode.integer);
+
   Expr<String?> get customerId =>
-      $ForGeneratedCode.field(this, 17, $ForGeneratedCode.text);
+      $ForGeneratedCode.field(this, 18, $ForGeneratedCode.text);
 
   /// Check if the row is not `NULL`.
   ///
@@ -10849,6 +12288,7 @@ extension InsertOnConflictOrderRowExt on InsertOnConflict<OrderRow> {
         Expr<DateTime> createdAt,
         Expr<DateTime> updatedAt,
         Expr<int> discountTotal,
+        Expr<int> walletDeduction,
         Expr<String?> customerId,
       })
       set,
@@ -10877,6 +12317,7 @@ extension InsertOnConflictOrderRowExt on InsertOnConflict<OrderRow> {
         Expr<DateTime>? createdAt,
         Expr<DateTime>? updatedAt,
         Expr<int>? discountTotal,
+        Expr<int>? walletDeduction,
         Expr<String?>? customerId,
       }) => $ForGeneratedCode.buildUpdate<OrderRow>([
         id,
@@ -10896,6 +12337,7 @@ extension InsertOnConflictOrderRowExt on InsertOnConflict<OrderRow> {
         createdAt,
         updatedAt,
         discountTotal,
+        walletDeduction,
         customerId,
       ]),
     ),
@@ -10988,6 +12430,7 @@ extension InsertOnConflictSingleOrderRowExt
         Expr<DateTime> createdAt,
         Expr<DateTime> updatedAt,
         Expr<int> discountTotal,
+        Expr<int> walletDeduction,
         Expr<String?> customerId,
       })
       set,
@@ -11016,6 +12459,7 @@ extension InsertOnConflictSingleOrderRowExt
         Expr<DateTime>? createdAt,
         Expr<DateTime>? updatedAt,
         Expr<int>? discountTotal,
+        Expr<int>? walletDeduction,
         Expr<String?>? customerId,
       }) => $ForGeneratedCode.buildUpdate<OrderRow>([
         id,
@@ -11035,6 +12479,7 @@ extension InsertOnConflictSingleOrderRowExt
         createdAt,
         updatedAt,
         discountTotal,
+        walletDeduction,
         customerId,
       ]),
     ),

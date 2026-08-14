@@ -34,6 +34,7 @@ extension OrderRowExtension on OrderRow {
     ),
     subtotal: subtotal / 100,
     discountTotal: discountTotal / 100,
+    walletDeduction: walletDeduction / 100,
     taxTotal: taxTotal / 100,
     grandTotal: grandTotal / 100,
     terminalCode: terminalCode,

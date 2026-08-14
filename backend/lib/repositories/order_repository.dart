@@ -24,6 +24,7 @@ class OrderRepository {
     required int discountTotal,
     required int taxTotal,
     required int grandTotal,
+    int walletDeduction = 0,
     String? terminalCode,
     String? customerId,
   }) async {
@@ -42,6 +43,7 @@ class OrderRepository {
           discountTotal: discountTotal,
           taxTotal: taxTotal,
           grandTotal: grandTotal,
+          walletDeduction: walletDeduction,
           terminalCode: terminalCode,
           customerId: customerId,
         )
@@ -392,7 +394,16 @@ class OrderRepository {
       orderQuery = orderQuery.where((o) => o.createdAt.isBeforeValue(toDate));
     }
 
-    final orders = await orderQuery.fetch();
+    final rawOrders = await orderQuery.fetch();
+    final orders = rawOrders.where((o) {
+      final pStatus = o.paymentStatus.toLowerCase();
+      final status = o.status.toLowerCase();
+      final isPaidOrCompleted = pStatus == PaymentStatus.completed.name ||
+          o.paymentMethod.toLowerCase() == PaymentMethod.complimentary.name;
+      final isCancelled = status == OrderStatus.cancelled.name;
+      return isPaidOrCompleted && !isCancelled;
+    }).toList();
+
     final orderIds = orders.map((o) => o.id).toSet();
 
     final products = await _db.products
@@ -702,8 +713,17 @@ class OrderRepository {
       final c = tuple.$4;
 
       if (o != null) {
+        final pStatus = o.paymentStatus.toLowerCase();
+        final status = o.status.toLowerCase();
+        final isPaidOrCompleted = pStatus == PaymentStatus.completed.name ||
+            o.paymentMethod.toLowerCase() == PaymentMethod.complimentary.name;
+        final isCancelled = status == OrderStatus.cancelled.name;
+        if (!isPaidOrCompleted || isCancelled) continue;
+
         if (fromDate != null && o.createdAt.isBefore(fromDate)) continue;
         if (toDate != null && o.createdAt.isAfter(toDate)) continue;
+      } else {
+        continue;
       }
 
       final catName = c?.name ?? 'General';
@@ -735,8 +755,17 @@ class OrderRepository {
       final c = tuple.$4;
 
       if (o != null) {
+        final pStatus = o.paymentStatus.toLowerCase();
+        final status = o.status.toLowerCase();
+        final isPaidOrCompleted = pStatus == PaymentStatus.completed.name ||
+            o.paymentMethod.toLowerCase() == PaymentMethod.complimentary.name;
+        final isCancelled = status == OrderStatus.cancelled.name;
+        if (!isPaidOrCompleted || isCancelled) continue;
+
         if (fromDate != null && o.createdAt.isBefore(fromDate)) continue;
         if (toDate != null && o.createdAt.isAfter(toDate)) continue;
+      } else {
+        continue;
       }
 
       final pId = item.productId;
@@ -839,13 +868,18 @@ class OrderRepository {
 
   Future<({List<Order> items, int total})> getCustomerOrders({
     required String customerId,
+    String? storeId,
     String? date,
     int limit = 10,
     int offset = 0,
   }) async {
     var query = _db.orders
         .where((o) => o.customerId.equals(ts.toExpr(customerId)))
-        .where((o) => o.paymentStatus.equals(ts.toExpr('completed')));
+        .where((o) => o.paymentStatus.equals(ts.toExpr(PaymentStatus.completed.name)));
+
+    if (storeId != null && storeId.trim().isNotEmpty) {
+      query = query.where((o) => o.storeId.equals(ts.toExpr(storeId)));
+    }
 
     if (date != null && date.trim().isNotEmpty) {
       final parsed = DateTime.tryParse(date);

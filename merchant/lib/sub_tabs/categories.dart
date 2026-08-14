@@ -137,18 +137,22 @@ class _CategoriesState extends SignalState<Categories> {
                               [
                                 dropdownButton(
                                   name: '10',
+                                  isSelected: entries == 10,
                                   onClick: () => _changeEntry(10),
                                 ),
                                 dropdownButton(
                                   name: '25',
+                                  isSelected: entries == 25,
                                   onClick: () => _changeEntry(25),
                                 ),
                                 dropdownButton(
                                   name: '50',
+                                  isSelected: entries == 50,
                                   onClick: () => _changeEntry(50),
                                 ),
                                 dropdownButton(
                                   name: '100',
+                                  isSelected: entries == 100,
                                   onClick: () => _changeEntry(100),
                                 ),
                               ],
@@ -372,6 +376,7 @@ class _CategoriesState extends SignalState<Categories> {
           [
             dropdownButton(
               name: 'All Statuses',
+              isSelected: _statusFilter == null,
               onClick: () {
                 setState(() => _statusFilter = null);
                 _closeDropdowns();
@@ -379,6 +384,7 @@ class _CategoriesState extends SignalState<Categories> {
             ),
             dropdownButton(
               name: 'Active',
+              isSelected: _statusFilter == true,
               onClick: () {
                 setState(() => _statusFilter = true);
                 _closeDropdowns();
@@ -386,6 +392,7 @@ class _CategoriesState extends SignalState<Categories> {
             ),
             dropdownButton(
               name: 'Inactive',
+              isSelected: _statusFilter == false,
               onClick: () {
                 setState(() => _statusFilter = false);
                 _closeDropdowns();
@@ -399,12 +406,14 @@ class _CategoriesState extends SignalState<Categories> {
 
   li dropdownButton({
     required String name,
+    bool isSelected = false,
     VoidCallback? onClick,
   }) {
     return li([
       a(
         href: '#',
-        classes: 'rounded-md hover:bg-neutral text-xs',
+        classes:
+            'rounded-md text-xs hover:bg-neutral ${isSelected ? 'bg-neutral font-bold text-primary' : ''}',
         onClick: onClick,
         [
           .text(name),

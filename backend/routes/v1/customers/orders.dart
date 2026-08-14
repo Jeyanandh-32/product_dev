@@ -20,12 +20,14 @@ Future<Response> _onGet(RequestContext context) async {
   if (sizeError != null) return sizeError;
 
   final date = context.request.uri.queryParameters['date'];
+  final storeId = context.request.uri.queryParameters['storeId'];
   final db = context.read<OrderRepository>();
   final offset = (page - 1) * size;
 
   try {
     final result = await db.getCustomerOrders(
       customerId: tokenPayload.sub,
+      storeId: storeId,
       date: date,
       limit: size,
       offset: offset,

@@ -460,6 +460,13 @@ class _PaymentsState extends SignalState<Payments> {
       tr([
         th([]),
         SortableHeader<PaymentSortKey>(
+          title: 'Order ID',
+          sortKey: .orderId,
+          currentSort: _sortState,
+          onSort: _onSort,
+          isTh: true,
+        ),
+        SortableHeader<PaymentSortKey>(
           title: 'Order Reference',
           sortKey: .orderReference,
           currentSort: _sortState,
@@ -470,13 +477,6 @@ class _PaymentsState extends SignalState<Payments> {
           sortKey: .date,
           currentSort: _sortState,
           onSort: _onSort,
-        ),
-        SortableHeader<PaymentSortKey>(
-          title: 'Order ID',
-          sortKey: .orderId,
-          currentSort: _sortState,
-          onSort: _onSort,
-          isTh: true,
         ),
         SortableHeader<PaymentSortKey>(
           title: 'Order Amount (₹)',
@@ -518,11 +518,11 @@ class _PaymentsState extends SignalState<Payments> {
 
     return tr([
       th([]),
-      td(classes: 'whitespace-nowrap', [.text(orderReference)]),
-      td(classes: 'whitespace-nowrap', [.text(date)]),
       th(classes: 'whitespace-nowrap font-semibold text-black no-underline', [
         .text('#$orderId'),
       ]),
+      td(classes: 'whitespace-nowrap', [.text(orderReference)]),
+      td(classes: 'whitespace-nowrap', [.text(date)]),
       td([.text(orderAmount.toStringAsFixed(2))]),
       td([.text(discountAmount.toStringAsFixed(2))]),
       td([.text(paidAmount.toStringAsFixed(2))]),

@@ -10,6 +10,7 @@ import 'package:backend/services/order_service.dart';
 import 'package:backend/services/phonepe_service.dart';
 import 'package:backend/utils/responses.dart';
 import 'package:dart_frog/dart_frog.dart';
+import 'package:models/models.dart';
 import 'package:typed_sql/typed_sql.dart' hide Database;
 
 Future<Response> onRequest(RequestContext context) async {
@@ -36,7 +37,8 @@ Future<Response> onRequest(RequestContext context) async {
     }
 
     // If order is still pending or failed, verify live payment status from PhonePe Status API
-    if (orderRow.paymentStatus == 'pending' || orderRow.paymentStatus == 'failed' || orderRow.paymentStatus == 'unpaid') {
+    if (orderRow.paymentStatus == PaymentStatus.pending.name ||
+        orderRow.paymentStatus == PaymentStatus.failed.name) {
       final phonePeConfigRow = await db.storePhonepeConfigs
           .where((c) => c.storeId.equals(toExpr(orderRow.storeId)))
           .first

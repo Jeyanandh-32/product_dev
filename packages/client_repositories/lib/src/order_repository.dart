@@ -48,10 +48,11 @@ abstract final class OrderRepository {
     }
   }
 
-  static Future<({Order order, String tokenUrl, String merchantOrderId})> initiateOnlinePayment({
+  static Future<({Order order, String? tokenUrl, String merchantOrderId, bool isFullyPaidByWallet})> initiateOnlinePayment({
     required String storeId,
     required List<Map<String, dynamic>> products,
     double? discountTotal,
+    bool? useWallet,
   }) async {
     try {
       final result = await dio.post(
@@ -60,15 +61,22 @@ abstract final class OrderRepository {
         data: {
           'products': products,
           'discountTotal': ?discountTotal,
+          'useWallet': ?useWallet,
         },
       );
 
       final data = result.data['data'] as Map<String, dynamic>;
       final order = Order.fromJson(data['order'] as Map<String, Object?>);
-      final tokenUrl = data['tokenUrl'] as String;
+      final tokenUrl = data['tokenUrl'] as String?;
       final merchantOrderId = data['merchantOrderId'] as String;
+      final isFullyPaidByWallet = data['isFullyPaidByWallet'] as bool? ?? false;
 
-      return (order: order, tokenUrl: tokenUrl, merchantOrderId: merchantOrderId);
+      return (
+        order: order,
+        tokenUrl: tokenUrl,
+        merchantOrderId: merchantOrderId,
+        isFullyPaidByWallet: isFullyPaidByWallet,
+      );
     } on DioException catch (e) {
       handleDioError(e, 'Failed to initiate online payment.');
     }
@@ -183,6 +191,7 @@ abstract final class OrderRepository {
   }
 
   static Future<PaginatedResponse<Order>> getCustomerOrders({
+    String? storeId,
     String? date,
     int? page,
     int? size,
@@ -191,6 +200,7 @@ abstract final class OrderRepository {
       final result = await dio.get(
         ApiEndpoints.customerOrders,
         queryParameters: {
+          'storeId': ?storeId,
           'date': ?date,
           'page': ?page,
           'size': ?size,

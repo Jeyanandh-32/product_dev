@@ -46,12 +46,7 @@ class _StoreDetailPageState extends SignalState<StoreDetailPage> {
       storeSignal.value = AsyncData(store);
 
       if (store != null) {
-        // If navigating to a different store, reset cart state
-        final currentCartStoreId = currentCartStoreIdSignal.value;
-        if (currentCartStoreId != null && currentCartStoreId != store.id) {
-          clearCart();
-        }
-
+        setActiveStore(store);
         _fetchCategoriesAndProducts(store.id);
       } else {
         productsSignal.value = const AsyncData([]);
@@ -117,7 +112,7 @@ class _StoreDetailPageState extends SignalState<StoreDetailPage> {
             button(
               classes:
                   'w-10 h-10 rounded-full bg-gray-100 hover:bg-black hover:text-white text-black transition-all flex items-center justify-center cursor-pointer border-0',
-              onClick: () => Router.of(context).push('/'),
+              onClick: () => Router.of(context).push('/?all=true'),
               [
                 ArrowLeft(classes: 'w-5 h-5'),
               ],
@@ -166,9 +161,9 @@ class _StoreDetailPageState extends SignalState<StoreDetailPage> {
               [
                 Search(classes: 'w-4 h-4 text-gray-500 shrink-0'),
                 input(
-                  type: .search,
+                  type: InputType.text,
                   classes:
-                      'grow w-full bg-transparent text-sm text-black font-medium focus:outline-none placeholder:text-gray-400',
+                      'grow w-full bg-transparent text-sm text-black font-medium focus:outline-none placeholder:text-gray-400 [&::-webkit-search-cancel-button]:hidden [&::-webkit-search-decoration]:hidden',
                   attributes: {
                     'placeholder': 'Search menu products...',
                     'value': _searchQuery,

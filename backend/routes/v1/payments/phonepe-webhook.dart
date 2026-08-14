@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:backend/config/database.dart';
 import 'package:backend/database/schema.dart';
+import 'package:backend/repositories/customer_repository.dart';
 import 'package:backend/repositories/order_item_repository.dart';
 import 'package:backend/repositories/order_repository.dart';
 import 'package:backend/repositories/product_repository.dart';
@@ -61,32 +62,59 @@ Future<Response> onRequest(RequestContext context) async {
       }
     }
 
-    // Process order update based on event & state
-    final orderRow = await Database.db.orders
-        .where((o) => o.orderReference.equals(toExpr(merchantOrderId)))
-        .first
-        .fetch();
+    // Process order or wallet top-up update based on event & state
+    if (merchantOrderId.startsWith('TOPUP_')) {
+      final customerRepo = CustomerRepository(db: Database.db);
+      final txRow = await Database.db.customerWalletTransactions
+          .where((t) => t.reference.equals(toExpr(merchantOrderId)))
+          .first
+          .fetch();
 
-    if (orderRow != null) {
-      final db = Database.db;
-      final orderRepo = OrderRepository(db: db);
-      final itemRows = await OrderItemRepository(db: db).getAllForOrder(orderRow.id);
-      final orderService = OrderService(
-        orderRepo: orderRepo,
-        orderItemRepo: OrderItemRepository(db: db),
-        productRepo: ProductRepository(db: db),
-        stockRepo: StockRepository(db: db),
-      );
+      if (txRow != null && txRow.status == 'pending') {
+        if (state.toUpperCase() == 'COMPLETED' || event == 'checkout.order.completed') {
+          await customerRepo.updateStoreWalletBalance(
+            customerId: txRow.customerId,
+            storeId: txRow.storeId,
+            amountDeltaPaise: txRow.amount,
+          );
+          await customerRepo.updateWalletTransactionStatus(
+            id: txRow.id,
+            status: 'completed',
+          );
+        } else if (state.toUpperCase() == 'FAILED' || event == 'checkout.order.failed') {
+          await customerRepo.updateWalletTransactionStatus(
+            id: txRow.id,
+            status: 'failed',
+          );
+        }
+      }
+    } else {
+      final orderRow = await Database.db.orders
+          .where((o) => o.orderReference.equals(toExpr(merchantOrderId)))
+          .first
+          .fetch();
 
-      if (state.toUpperCase() == 'COMPLETED' || event == 'checkout.order.completed') {
-        await orderService.completeOrderPayment(
-          orderRow: orderRow,
-          orderItems: itemRows,
+      if (orderRow != null) {
+        final db = Database.db;
+        final orderRepo = OrderRepository(db: db);
+        final itemRows = await OrderItemRepository(db: db).getAllForOrder(orderRow.id);
+        final orderService = OrderService(
+          orderRepo: orderRepo,
+          orderItemRepo: OrderItemRepository(db: db),
+          productRepo: ProductRepository(db: db),
+          stockRepo: StockRepository(db: db),
         );
-      } else if (state.toUpperCase() == 'FAILED' || event == 'checkout.order.failed') {
-        await orderService.cancelOrder(
-          orderRow: orderRow,
-        );
+
+        if (state.toUpperCase() == 'COMPLETED' || event == 'checkout.order.completed') {
+          await orderService.completeOrderPayment(
+            orderRow: orderRow,
+            orderItems: itemRows,
+          );
+        } else if (state.toUpperCase() == 'FAILED' || event == 'checkout.order.failed') {
+          await orderService.cancelOrder(
+            orderRow: orderRow,
+          );
+        }
       }
     }
 

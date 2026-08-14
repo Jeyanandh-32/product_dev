@@ -188,6 +188,12 @@ abstract class $OrderCreate {
   @DoubleField(minimum: 0, description: 'Discount total')
   double? get discountTotal;
 
+  @Field(description: 'Whether to apply customer wallet balance')
+  bool? get useWallet;
+
+  @DoubleField(minimum: 0, description: 'Wallet deduction amount in rupees')
+  double? get walletDeduction;
+
   @Field(description: 'Products list')
   List<$OrderProduct> get products;
 }

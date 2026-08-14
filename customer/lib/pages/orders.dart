@@ -3,6 +3,7 @@ import 'dart:js_interop';
 import 'package:api_client/api_client.dart';
 import 'package:client_repositories/client_repositories.dart';
 import 'package:customer/components/signal_component.dart';
+import 'package:customer/signals/cart_signal.dart';
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_lucide/jaspr_lucide.dart' hide List, Map, Router;
@@ -50,7 +51,9 @@ class _CustomerOrdersPageState extends SignalState<CustomerOrdersPage> {
   Future<void> _fetchOrders() async {
     _ordersSignal.value = const AsyncLoading();
     try {
+      final activeStoreId = currentCartStoreIdSignal.value;
       final res = await OrderRepository.getCustomerOrders(
+        storeId: activeStoreId,
         date: _selectedDate,
         page: 1,
         size: 50,
@@ -65,24 +68,42 @@ class _CustomerOrdersPageState extends SignalState<CustomerOrdersPage> {
   Component buildSignal(BuildContext context) {
     final state = _ordersSignal.value;
 
-    return div(classes: 'flex flex-col gap-5 max-w-4xl mx-auto w-full min-h-[60vh]', [
+    return div(classes: 'flex flex-col gap-5 max-w-4xl mx-auto w-full flex-1 min-h-[60vh]', [
       // Top Header & Date Picker Bar
       div(classes: 'flex flex-col sm:flex-row sm:items-center justify-between gap-4', [
         div(classes: 'flex items-center gap-3', [
           button(
             classes:
                 'w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 flex items-center justify-center cursor-pointer border-0 transition-all active:scale-95 shrink-0',
-            onClick: () => Router.of(context).push('/'),
+            onClick: () {
+              if (web.window.history.length > 1) {
+                web.window.history.back();
+              } else if (currentCartStoreSignal.value?.slug != null) {
+                Router.of(context).push('/store/${currentCartStoreSignal.value!.slug!}');
+              } else {
+                Router.of(context).push('/?all=true');
+              }
+            },
             [
               ArrowLeft(classes: 'w-5 h-5'),
             ],
           ),
-          h1(
-            classes: 'text-2xl sm:text-3xl font-extrabold text-black tracking-tight',
-            [
-              .text('My Orders'),
-            ],
-          ),
+          div(classes: 'flex flex-col', [
+            h1(
+              classes: 'text-2xl sm:text-3xl font-extrabold text-black tracking-tight',
+              [
+                .text('My Orders'),
+              ],
+            ),
+            if (currentCartStoreSignal.value != null)
+              span(classes: 'text-xs font-bold text-emerald-700', [
+                .text('Showing orders for: ${currentCartStoreSignal.value!.name}'),
+              ])
+            else
+              span(classes: 'text-xs font-semibold text-gray-400', [
+                .text('Showing all orders across stores'),
+              ]),
+          ]),
         ]),
 
         // Mobile-responsive Date Picker Control
@@ -125,7 +146,7 @@ class _CustomerOrdersPageState extends SignalState<CustomerOrdersPage> {
       ]),
 
       // Status Tabs Bar (Pending [Default] / Completed)
-      div(classes: 'flex items-center p-1 bg-gray-100 rounded-2xl max-w-sm w-full gap-1 border border-gray-200/80', [
+      div(classes: 'flex items-center p-1 bg-gray-100 rounded-2xl max-w-sm w-full gap-1 border border-gray-200/80 mx-auto', [
         button(
           classes: _selectedTab == 'pending'
               ? 'flex-1 py-2 px-4 rounded-xl bg-white text-black font-extrabold text-xs shadow-2xs transition-all border-0 cursor-pointer text-center'
@@ -191,7 +212,7 @@ class _CustomerOrdersPageState extends SignalState<CustomerOrdersPage> {
               );
             }
 
-            return div(classes: 'flex flex-col gap-3', [
+            return div(classes: 'grid grid-cols-1 lg:grid-cols-2 gap-4', [
               for (final order in filteredOrders) _buildOrderTile(context, order),
             ]);
           }(),
@@ -208,7 +229,7 @@ class _CustomerOrdersPageState extends SignalState<CustomerOrdersPage> {
             ],
           ),
         _ => div(
-            classes: 'flex-1 min-h-[50vh] flex flex-col items-center justify-center gap-3 text-center',
+            classes: 'flex-1 min-h-[40vh] flex flex-col items-center justify-center gap-3 text-center my-auto',
             [
               span(
                 classes: 'loading loading-spinner loading-lg text-black',
@@ -225,13 +246,15 @@ class _CustomerOrdersPageState extends SignalState<CustomerOrdersPage> {
       if (_qrModalOrder != null)
         div(
           classes:
-              'fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-200',
-          events: {'click': (_) => setState(() => _qrModalOrder = null)},
+              'fixed inset-0 bg-black/40 z-50 flex items-center justify-center px-4',
+          events: {
+            'click': (e) => setState(() => _qrModalOrder = null),
+          },
           [
             div(
               classes:
-                  'bg-white rounded-3xl p-6 sm:p-8 max-w-sm w-full flex flex-col items-center text-center gap-4 shadow-2xl relative animate-in zoom-in-95 duration-200',
-              attributes: {'onclick': 'event.stopPropagation()'},
+                  'bg-white w-full max-w-sm rounded-3xl shadow-xl p-6 sm:p-8 flex flex-col items-center text-center gap-4 relative max-h-[90vh] overflow-y-auto',
+              events: {'click': (e) => e.stopPropagation()},
               [
                 // Close X Button
                 button(
@@ -265,7 +288,7 @@ class _CustomerOrdersPageState extends SignalState<CustomerOrdersPage> {
                 // QR Code Display (Instant Client-Side rendering + fast fallback)
                 div(
                   classes:
-                      'p-4 bg-white rounded-2xl border-2 border-gray-100 shadow-inner flex items-center justify-center min-w-[216px] min-h-[216px]',
+                      'p-4 bg-white rounded-2xl border-2 border-gray-100 shadow-inner flex items-center justify-center min-w-54 min-h-54',
                   [
                     div(
                       id: 'customer-qr-canvas',

@@ -19,6 +19,7 @@ class OrderStatusPage extends SignalComponent {
 
 class _OrderStatusPageState extends SignalState<OrderStatusPage> {
   Order? _order;
+  String? _storeSlug;
   bool _isLoading = true;
   String? _errorMessage;
   bool _showQrModal = false;
@@ -35,8 +36,16 @@ class _OrderStatusPageState extends SignalState<OrderStatusPage> {
         reference: component.reference,
       );
 
+      String? slug;
+      try {
+        final stores = await StoreRepository.getOnlineStores();
+        final matchedStore = stores.where((store) => store.id == order.storeId).firstOrNull;
+        slug = matchedStore?.slug;
+      } catch (_) {}
+
       setState(() {
         _order = order;
+        _storeSlug = slug;
         _isLoading = false;
       });
     } catch (e) {
@@ -51,7 +60,8 @@ class _OrderStatusPageState extends SignalState<OrderStatusPage> {
   Component buildSignal(BuildContext context) {
     if (_isLoading) {
       return div(
-        classes: 'min-h-[60vh] flex flex-col items-center justify-center gap-4',
+        classes:
+            'flex-1 min-h-[50vh] flex flex-col items-center justify-center gap-4 text-center my-auto w-full',
         [
           span(classes: 'loading loading-spinner loading-lg text-black', []),
           p(classes: 'text-sm font-semibold text-gray-500', [
@@ -197,7 +207,13 @@ class _OrderStatusPageState extends SignalState<OrderStatusPage> {
             button(
               classes:
                   'w-full mt-2 py-3.5 rounded-2xl bg-gray-100 hover:bg-gray-200 text-gray-900 font-bold text-sm flex items-center justify-center gap-2 cursor-pointer transition-all border-0 active:scale-98',
-              onClick: () => Router.of(context).push('/'),
+              onClick: () {
+                if (_storeSlug != null && _storeSlug!.isNotEmpty) {
+                  Router.of(context).push('/store/$_storeSlug');
+                } else {
+                  Router.of(context).push('/');
+                }
+              },
               [
                 .text('Back to Store Menu'),
                 ArrowRight(classes: 'w-4 h-4'),
@@ -210,13 +226,15 @@ class _OrderStatusPageState extends SignalState<OrderStatusPage> {
         if (_showQrModal)
           div(
             classes:
-                'fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-200',
-            events: {'click': (_) => setState(() => _showQrModal = false)},
+                'fixed inset-0 bg-black/40 z-50 flex items-center justify-center px-4',
+            events: {
+              'click': (e) => setState(() => _showQrModal = false),
+            },
             [
               div(
                 classes:
-                    'bg-white rounded-3xl p-6 sm:p-8 max-w-sm w-full flex flex-col items-center text-center gap-4 shadow-2xl relative animate-in zoom-in-95 duration-200',
-                attributes: {'onclick': 'event.stopPropagation()'},
+                    'bg-white w-full max-w-sm rounded-3xl shadow-xl p-6 sm:p-8 flex flex-col items-center text-center gap-4 relative max-h-[90vh] overflow-y-auto',
+                events: {'click': (e) => e.stopPropagation()},
                 [
                   // Close X Button
                   button(

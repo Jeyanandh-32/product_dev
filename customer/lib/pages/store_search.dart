@@ -1,4 +1,6 @@
+import 'package:client_repositories/client_repositories.dart';
 import 'package:customer/components/signal_component.dart';
+import 'package:customer/signals/cart_signal.dart';
 import 'package:customer/signals/customer_auth_signal.dart';
 import 'package:customer/signals/online_stores_signal.dart';
 import 'package:customer/signals/recent_stores_signal.dart';
@@ -9,6 +11,7 @@ import 'package:jaspr_lucide/jaspr_lucide.dart' hide List, Map, Router, Store;
 import 'package:jaspr_router/jaspr_router.dart';
 import 'package:models/models.dart';
 import 'package:signals/signals.dart';
+import 'package:web/web.dart' as web;
 
 class StoreSearchPage extends SignalComponent {
   const StoreSearchPage({super.key});
@@ -19,11 +22,37 @@ class StoreSearchPage extends SignalComponent {
 
 class _StoreSearchPageState extends SignalState<StoreSearchPage> {
   String _searchQuery = '';
+  bool _isCheckingRedirect = true;
 
   @override
   void initState() {
     super.initState();
+    clearActiveStore();
     refreshOnlineStoresSignal();
+    _checkLastVisitedStore();
+  }
+
+  Future<void> _checkLastVisitedStore() async {
+    // If the user explicitly exited the store (e.g. /?all=true or /?switch=true), do not auto-redirect
+    final isExplicitDiscovery = web.window.location.search.contains('all=true') ||
+        web.window.location.search.contains('switch=true');
+
+    if (!isExplicitDiscovery) {
+      try {
+        final recentStores = await CustomerAuthRepository.getRecentStores();
+        if (recentStores.isNotEmpty && mounted) {
+          final lastStore = recentStores.first;
+          if (lastStore.slug != null && lastStore.slug!.isNotEmpty && lastStore.isOnlineEnabled) {
+            Router.of(context).replace('/store/${lastStore.slug!}');
+            return;
+          }
+        }
+      } catch (_) {}
+    }
+
+    if (mounted) {
+      setState(() => _isCheckingRedirect = false);
+    }
     refreshRecentStoresSignal();
   }
 
@@ -36,6 +65,15 @@ class _StoreSearchPageState extends SignalState<StoreSearchPage> {
 
   @override
   Component buildSignal(BuildContext context) {
+    if (_isCheckingRedirect) {
+      return div(
+        classes: 'flex-1 min-h-[60vh] flex flex-col items-center justify-center gap-3 text-center my-auto',
+        [
+          span(classes: 'loading loading-spinner loading-lg text-black', []),
+        ],
+      );
+    }
+
     final storesState = onlineStoresSignal.value;
     final recentStoresState = recentStoresSignal.value;
     final customer = customerAuthSignal.value.value;
@@ -66,9 +104,9 @@ class _StoreSearchPageState extends SignalState<StoreSearchPage> {
           [
             Search(classes: 'w-4 h-4 text-gray-500 shrink-0'),
             input(
-              type: .search,
+              type: InputType.text,
               classes:
-                  'grow w-full bg-transparent text-xs sm:text-sm text-black font-medium focus:outline-none placeholder:text-gray-400',
+                  'grow w-full bg-transparent text-xs sm:text-sm text-black font-medium focus:outline-none placeholder:text-gray-400 [&::-webkit-search-cancel-button]:hidden [&::-webkit-search-decoration]:hidden',
               attributes: {
                 'placeholder': 'Search store by name or slug...',
                 'value': _searchQuery,

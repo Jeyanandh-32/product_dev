@@ -9,6 +9,7 @@ abstract class Customer with _$Customer {
     required String id,
     required String name,
     required String mobileNumber,
+    @Default(0.0) double walletBalance,
     required DateTime createdAt,
     required DateTime updatedAt,
   }) = _Customer;

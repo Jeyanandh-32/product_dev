@@ -38,6 +38,20 @@ void closeCartDrawer() {
   isCartDrawerOpenSignal.value = false;
 }
 
+void setActiveStore(Store store) {
+  final currentStoreId = currentCartStoreIdSignal.value;
+  if (currentStoreId != null && currentStoreId != store.id && cartItemsSignal.value.isNotEmpty) {
+    cartItemsSignal.value = {};
+  }
+  currentCartStoreIdSignal.value = store.id;
+  currentCartStoreSignal.value = store;
+}
+
+void clearActiveStore() {
+  currentCartStoreIdSignal.value = null;
+  currentCartStoreSignal.value = null;
+}
+
 void addToCart(String storeId, Product product, {Store? store}) {
   final currentStoreId = currentCartStoreIdSignal.value;
 

@@ -1186,6 +1186,8 @@ base class OrderCreate {
     String? type,
     String? paymentMethod,
     double? discountTotal,
+    bool? useWallet,
+    double? walletDeduction,
     required List<OrderProduct> products,
   }) {
     _json = {
@@ -1193,6 +1195,8 @@ base class OrderCreate {
       'type': ?type,
       'paymentMethod': ?paymentMethod,
       'discountTotal': ?discountTotal,
+      'useWallet': ?useWallet,
+      'walletDeduction': ?walletDeduction,
       'products': products.map((e) => e.toJson()).toList(),
     };
   }
@@ -1250,6 +1254,30 @@ base class OrderCreate {
     }
   }
 
+  bool? get useWallet {
+    return _json['useWallet'] as bool?;
+  }
+
+  set useWallet(bool? value) {
+    if (value == null) {
+      _json.remove('useWallet');
+    } else {
+      _json['useWallet'] = value;
+    }
+  }
+
+  double? get walletDeduction {
+    return (_json['walletDeduction'] as num?)?.toDouble();
+  }
+
+  set walletDeduction(double? value) {
+    if (value == null) {
+      _json.remove('walletDeduction');
+    } else {
+      _json['walletDeduction'] = value;
+    }
+  }
+
   List<OrderProduct> get products {
     return (_json['products'] as List)
         .map((e) => OrderProduct.fromJson(e as Map<String, dynamic>))
@@ -1292,6 +1320,13 @@ base class _OrderCreateTypeFactory extends SchemanticType<OrderCreate> {
             ),
             'discountTotal': $Schema.number(
               description: 'Discount total',
+              minimum: 0,
+            ),
+            'useWallet': $Schema.boolean(
+              description: 'Whether to apply customer wallet balance',
+            ),
+            'walletDeduction': $Schema.number(
+              description: 'Wallet deduction amount in rupees',
               minimum: 0,
             ),
             'products': $Schema.list(

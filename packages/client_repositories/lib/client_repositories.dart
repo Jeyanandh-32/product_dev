@@ -3,6 +3,7 @@ library;
 export 'src/category_repository.dart';
 export 'src/counter_repository.dart';
 export 'src/customer_auth_repository.dart';
+export 'src/customer_wallet_repository.dart';
 export 'src/merchant_settings_repository.dart';
 
 export 'src/merchant_repository.dart';

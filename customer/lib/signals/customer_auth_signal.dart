@@ -96,3 +96,10 @@ Future<bool> updateCustomerProfile({
     return false;
   }
 }
+
+Future<void> refreshCustomerAuthSignal() async {
+  try {
+    final customer = await CustomerAuthRepository.getCustomer();
+    customerAuthSignal.value = AsyncData(customer);
+  } catch (_) {}
+}

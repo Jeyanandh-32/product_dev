@@ -16,6 +16,8 @@ abstract final class DatabaseSchema extends Schema {
   Table<TerminalRow> get terminals;
   Table<CustomerRow> get customers;
   Table<CustomerRecentStoresRow> get customerRecentStores;
+  Table<CustomerStoreWalletRow> get customerStoreWallets;
+  Table<CustomerWalletTransactionRow> get customerWalletTransactions;
   Table<OrderRow> get orders;
   Table<OrderItemRow> get orderItems;
 }
@@ -101,6 +103,64 @@ abstract final class CustomerRecentStoresRow extends Row {
 
   @DefaultValue.now
   DateTime get lastVisitedAt;
+}
+
+@PrimaryKey(['customerId', 'storeId'])
+abstract final class CustomerStoreWalletRow extends Row {
+  @References(
+    table: 'customers',
+    field: 'id',
+    onDelete: .cascade,
+  )
+  String get customerId;
+
+  @References(
+    table: 'stores',
+    field: 'id',
+    onDelete: .cascade,
+  )
+  String get storeId;
+
+  @DefaultValue(0)
+  int get walletBalance;
+
+  @DefaultValue.now
+  DateTime get createdAt;
+
+  @DefaultValue.now
+  DateTime get updatedAt;
+}
+
+@PrimaryKey(['id'])
+abstract final class CustomerWalletTransactionRow extends Row {
+  @DefaultValue('gen_random_uuid()')
+  String get id;
+
+  @References(
+    table: 'customers',
+    field: 'id',
+    onDelete: .cascade,
+  )
+  String get customerId;
+
+  @References(
+    table: 'stores',
+    field: 'id',
+    onDelete: .cascade,
+  )
+  String get storeId;
+
+  int get amount;
+
+  String get type; // 'top_up', 'order_debit', 'refund_credit'
+
+  String? get reference;
+
+  @DefaultValue('completed')
+  String get status;
+
+  @DefaultValue.now
+  DateTime get createdAt;
 }
 
 @PrimaryKey(['id'])
@@ -448,6 +508,9 @@ abstract final class OrderRow extends Row {
 
   @DefaultValue(0)
   int get discountTotal;
+
+  @DefaultValue(0)
+  int get walletDeduction;
 
   @References(table: 'customers', field: 'id', onDelete: .setNull)
   String? get customerId;

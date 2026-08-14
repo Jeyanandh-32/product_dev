@@ -1,6 +1,7 @@
 import 'package:client_repositories/client_repositories.dart';
 import 'package:customer/components/signal_component.dart';
 import 'package:customer/signals/cart_signal.dart';
+import 'package:customer/signals/customer_auth_signal.dart';
 import 'package:customer/signals/toast_signal.dart';
 import 'package:customer/utils/phonepe_interop.dart';
 import 'package:jaspr/dom.dart';
@@ -18,6 +19,25 @@ class CartPage extends SignalComponent {
 
 class _CartPageState extends SignalState<CartPage> {
   bool _isSubmitting = false;
+  bool _useWallet = true;
+  double _storeWalletBalance = 0.0;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchStoreWalletBalance();
+  }
+
+  Future<void> _fetchStoreWalletBalance() async {
+    final storeId = currentCartStoreIdSignal.value;
+    if (storeId == null) return;
+    try {
+      final info = await CustomerWalletRepository.getWalletInfo(storeId: storeId);
+      if (mounted) {
+        setState(() => _storeWalletBalance = info.balance);
+      }
+    } catch (_) {}
+  }
 
   Future<void> _checkoutOrder() async {
     final storeId = currentCartStoreIdSignal.value;
@@ -40,10 +60,21 @@ class _CartPageState extends SignalState<CartPage> {
       final result = await OrderRepository.initiateOnlinePayment(
         storeId: storeId,
         products: productsPayload,
+        useWallet: _useWallet,
       );
 
+      // Refresh customer auth signal so updated wallet balance is immediately synced
+      refreshCustomerAuthSignal();
+
+      if (result.isFullyPaidByWallet || result.tokenUrl == null) {
+        clearCart();
+        showCustomerToast('Order paid using Customer Wallet!', type: ToastType.success);
+        Router.of(context).push('/order/status?reference=${result.merchantOrderId}');
+        return;
+      }
+
       openPhonePeCheckoutModal(
-        tokenUrl: result.tokenUrl,
+        tokenUrl: result.tokenUrl!,
         merchantOrderId: result.merchantOrderId,
         onComplete: (status) async {
           if (status == 'CONCLUDED') {
@@ -284,14 +315,75 @@ class _CartPageState extends SignalState<CartPage> {
                     .text('₹${totalTax.toStringAsFixed(2)}'),
                   ]),
                 ]),
-                div(
-                  classes:
-                      'border-t border-dashed border-gray-200 pt-3 mt-1 flex justify-between items-center text-base font-extrabold text-black',
-                  [
-                    span([.text('Total Amount')]),
-                    span([.text('₹${grandTotal.toStringAsFixed(2)}')]),
-                  ],
-                ),
+
+                // Customer Wallet Payment Toggle & Deduction Line
+                if (customerAuthSignal.value.value != null) ...[
+                  () {
+                    final walletBalance = _storeWalletBalance;
+                    final walletDeduction = _useWallet && walletBalance > 0
+                        ? (walletBalance >= grandTotal ? grandTotal : walletBalance)
+                        : 0.0;
+                    final finalPayable = grandTotal - walletDeduction;
+
+                    return div(classes: 'flex flex-col gap-2.5 pt-2 border-t border-gray-100', [
+                      div(
+                        classes:
+                            'flex items-center justify-between p-3 rounded-2xl bg-gray-50 border border-gray-200/80 cursor-pointer hover:bg-gray-100/80 transition-all active:scale-99 select-none',
+                        events: {
+                          'click': (_) => setState(() => _useWallet = !_useWallet),
+                        },
+                        [
+                          div(classes: 'flex items-center gap-2.5', [
+                            Wallet(classes: 'w-4 h-4 text-emerald-600'),
+                            div(classes: 'flex flex-col', [
+                              span(classes: 'text-xs font-bold text-black', [.text('Customer Wallet')]),
+                              span(classes: 'text-[11px] font-semibold text-gray-400', [
+                                .text('Available: ₹${walletBalance.toStringAsFixed(2)}'),
+                              ]),
+                            ]),
+                          ]),
+                          div(
+                            classes:
+                                'w-4 h-4 rounded-full border flex items-center justify-center transition-all ${
+                              _useWallet
+                                  ? 'border-emerald-600 bg-emerald-600'
+                                  : 'border-gray-300 bg-white'
+                            }',
+                            [
+                              if (_useWallet)
+                                div(classes: 'w-1.5 h-1.5 rounded-full bg-white', []),
+                            ],
+                          ),
+                        ],
+                      ),
+                      if (walletDeduction > 0)
+                        div(classes: 'flex justify-between items-center text-gray-500 text-xs px-1', [
+                          span([.text('Wallet Deduction')]),
+                          span(classes: 'font-extrabold text-emerald-600', [
+                            .text('-₹${walletDeduction.toStringAsFixed(2)}'),
+                          ]),
+                        ]),
+                      div(
+                        classes:
+                            'border-t border-dashed border-gray-200 pt-3 mt-1 flex justify-between items-center text-base font-extrabold text-black',
+                        [
+                          span([.text('To Pay')]),
+                          span(classes: 'text-emerald-700', [
+                            .text('₹${finalPayable.toStringAsFixed(2)}'),
+                          ]),
+                        ],
+                      ),
+                    ]);
+                  }(),
+                ] else
+                  div(
+                    classes:
+                        'border-t border-dashed border-gray-200 pt-3 mt-1 flex justify-between items-center text-base font-extrabold text-black',
+                    [
+                      span([.text('Total Amount')]),
+                      span([.text('₹${grandTotal.toStringAsFixed(2)}')]),
+                    ],
+                  ),
               ]),
 
               button(

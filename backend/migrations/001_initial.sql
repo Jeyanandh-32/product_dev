@@ -33,6 +33,28 @@ CREATE TABLE IF NOT EXISTS customers (
 
 CREATE INDEX IF NOT EXISTS idx_customers_mobile ON customers (mobile_number);
 
+CREATE TABLE IF NOT EXISTS customer_store_wallets (
+    customer_id UUID NOT NULL REFERENCES customers (id) ON DELETE CASCADE,
+    store_id UUID NOT NULL REFERENCES stores (id) ON DELETE CASCADE,
+    wallet_balance INT NOT NULL DEFAULT 0,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    PRIMARY KEY (customer_id, store_id)
+);
+
+CREATE TABLE IF NOT EXISTS customer_wallet_transactions (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
+    customer_id UUID NOT NULL REFERENCES customers (id) ON DELETE CASCADE,
+    store_id UUID NOT NULL REFERENCES stores (id) ON DELETE CASCADE,
+    amount INT NOT NULL,
+    type VARCHAR(50) NOT NULL,
+    reference VARCHAR(255),
+    status VARCHAR(50) NOT NULL DEFAULT 'completed',
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_customer_wallet_tx_customer_store ON customer_wallet_transactions (customer_id, store_id, created_at DESC);
+
 CREATE TABLE IF NOT EXISTS customer_recent_stores (
     customer_id UUID NOT NULL REFERENCES customers (id) ON DELETE CASCADE,
     store_id UUID NOT NULL REFERENCES stores (id) ON DELETE CASCADE,
@@ -194,7 +216,9 @@ CREATE TABLE IF NOT EXISTS orders (
 
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    discount_total INT NOT NULL DEFAULT 0
+    discount_total INT NOT NULL DEFAULT 0,
+    wallet_deduction INT NOT NULL DEFAULT 0,
+    customer_id UUID REFERENCES customers(id) ON DELETE SET NULL
 );
 
 CREATE TABLE IF NOT EXISTS order_items (
