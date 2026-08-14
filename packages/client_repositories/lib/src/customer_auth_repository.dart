@@ -57,6 +57,30 @@ class CustomerAuthRepository {
     }
   }
 
+  static Future<Customer> updateProfile({
+    String? name,
+    String? mobileNumber,
+    String? pin,
+    String? currentPin,
+  }) async {
+    try {
+      final result = await dio.patch(
+        ApiEndpoints.customers,
+        data: {
+          if (name != null) 'name': name,
+          if (mobileNumber != null) 'mobileNumber': mobileNumber,
+          if (pin != null) 'pin': pin,
+          if (currentPin != null) 'currentPin': currentPin,
+        },
+      );
+
+      final data = result.data['data'] as Map<String, dynamic>;
+      return Customer.fromJson(data['customer'] as Map<String, Object?>);
+    } on DioException catch (e) {
+      handleDioError(e, 'Failed to update profile.');
+    }
+  }
+
   static Future<List<Store>> getRecentStores() async {
     try {
       final result = await dio.get(ApiEndpoints.customerRecentStores);

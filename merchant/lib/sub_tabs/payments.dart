@@ -476,6 +476,7 @@ class _PaymentsState extends SignalState<Payments> {
           sortKey: .orderId,
           currentSort: _sortState,
           onSort: _onSort,
+          isTh: true,
         ),
         SortableHeader<PaymentSortKey>(
           title: 'Order Amount (₹)',

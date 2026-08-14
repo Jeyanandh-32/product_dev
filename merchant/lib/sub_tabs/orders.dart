@@ -540,6 +540,7 @@ class _OrdersState extends SignalState<Orders> {
           sortKey: .billNo,
           currentSort: _sortState,
           onSort: _onSort,
+          isTh: true,
         ),
         SortableHeader<OrderSortKey>(
           title: 'Date',

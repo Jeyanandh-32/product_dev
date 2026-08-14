@@ -5,6 +5,7 @@ import 'package:customer/pages/cart.dart';
 import 'package:customer/pages/login.dart';
 import 'package:customer/pages/order_status.dart';
 import 'package:customer/pages/orders.dart';
+import 'package:customer/pages/profile.dart';
 import 'package:customer/pages/register.dart';
 import 'package:customer/pages/store_detail.dart';
 import 'package:customer/pages/store_search.dart';
@@ -79,6 +80,10 @@ class _AppState extends SignalState<App> {
                 Route(
                   path: '/orders',
                   builder: (context, state) => const CustomerOrdersPage(),
+                ),
+                Route(
+                  path: '/profile',
+                  builder: (context, state) => const CustomerProfilePage(),
                 ),
               ],
             ),

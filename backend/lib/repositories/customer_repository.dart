@@ -97,4 +97,27 @@ class CustomerRepository {
 
     return ordered;
   }
+
+  Future<CustomerRow?> update({
+    required String id,
+    String? name,
+    String? mobileNumber,
+    String? pinHash,
+  }) async {
+    final row = await db.customers
+        .byKey(id)
+        .update(
+          (c, set) => set(
+            name: name != null ? ts.toExpr(name) : c.name,
+            mobileNumber:
+                mobileNumber != null ? ts.toExpr(mobileNumber) : c.mobileNumber,
+            pinHash: pinHash != null ? ts.toExpr(pinHash) : c.pinHash,
+            updatedAt: ts.Expr.currentTimestamp,
+          ),
+        )
+        .returnUpdated()
+        .executeAndFetch();
+
+    return row;
+  }
 }

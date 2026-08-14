@@ -303,6 +303,7 @@ class _StockSummaryState extends SignalState<StockSummary> {
           sortKey: StockSummarySortKey.name,
           currentSort: _sortState,
           onSort: _onSort,
+          isTh: true,
         ),
         SortableHeader<StockSummarySortKey>(
           title: 'Opening Stock',
@@ -369,7 +370,7 @@ class _StockSummaryState extends SignalState<StockSummary> {
 
     return tr([
       th([]),
-      th(classes: 'whitespace-nowrap font-medium text-primary', [
+      th(classes: 'whitespace-nowrap font-semibold text-black no-underline', [
         .text(name),
       ]),
       td([.text('$openingStock')]),

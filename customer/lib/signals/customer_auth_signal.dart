@@ -67,3 +67,32 @@ Future<void> logoutCustomer() async {
   } catch (_) {}
   customerAuthSignal.value = const AsyncData(null);
 }
+
+Future<bool> updateCustomerProfile({
+  String? name,
+  String? mobileNumber,
+  String? pin,
+  String? currentPin,
+}) async {
+  try {
+    final updated = await CustomerAuthRepository.updateProfile(
+      name: name,
+      mobileNumber: mobileNumber,
+      pin: pin,
+      currentPin: currentPin,
+    );
+
+    customerAuthSignal.value = AsyncData(updated);
+    showCustomerToast(
+      'Profile updated successfully!',
+      type: ToastType.success,
+    );
+    return true;
+  } catch (e) {
+    showCustomerToast(
+      e.toString(),
+      type: ToastType.error,
+    );
+    return false;
+  }
+}

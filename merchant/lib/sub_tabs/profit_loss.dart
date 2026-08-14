@@ -375,7 +375,7 @@ class _ProfitLossState extends SignalState<ProfitLoss> {
 
     return tr([
       th([]),
-      th(classes: 'whitespace-nowrap font-medium text-primary', [
+      th(classes: 'whitespace-nowrap font-semibold text-black no-underline', [
         .text(name),
       ]),
       td(classes: 'whitespace-nowrap', [.text(category)]),

@@ -55,26 +55,17 @@ class _AppLayoutState extends SignalState<AppLayout> {
                     ],
                   ),
 
-                  // Customer Initials Pill
+                  // Customer Initials Pill (Clickable -> Account Profile)
                   if (customer != null)
-                    div(
+                    button(
                       classes:
-                          'w-8 h-8 rounded-full bg-gray-100 text-black font-bold text-xs flex items-center justify-center border border-gray-200/80 select-none',
+                          'w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-900 hover:text-white text-black font-bold text-xs flex items-center justify-center border border-gray-200/80 transition-all cursor-pointer active:scale-95 select-none p-0',
+                      attributes: {'title': 'Profile'},
+                      onClick: () => Router.of(context).push('/profile'),
                       [
                         .text(customer.name.isNotEmpty ? customer.name[0].toUpperCase() : 'C'),
                       ],
                     ),
-
-                  // Logout Button Icon
-                  button(
-                    classes:
-                        'w-8 h-8 rounded-full bg-gray-100 hover:bg-red-50 text-gray-600 hover:text-red-600 transition-all flex items-center justify-center cursor-pointer border border-gray-200/80 active:scale-95',
-                    attributes: {'title': 'Logout'},
-                    onClick: logoutCustomer,
-                    [
-                      LogOut(classes: 'w-4 h-4'),
-                    ],
-                  ),
                 ]),
               ],
             ),
