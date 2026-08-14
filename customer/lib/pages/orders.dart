@@ -132,7 +132,7 @@ class _CustomerOrdersPageState extends SignalState<CustomerOrdersPage> {
               : 'flex-1 py-2 px-4 rounded-xl text-gray-500 hover:text-black font-bold text-xs transition-all border-0 cursor-pointer text-center',
           onClick: () => setState(() => _selectedTab = 'pending'),
           [
-            .text('Pending Pickup'),
+            .text('Pending'),
           ],
         ),
         button(
@@ -253,7 +253,7 @@ class _CustomerOrdersPageState extends SignalState<CustomerOrdersPage> {
                 ),
 
                 h2(classes: 'text-xl font-black text-black tracking-tight', [
-                  .text('Order Pickup QR'),
+                  .text('Order QR'),
                 ]),
 
                 p(classes: 'text-xs text-gray-500 font-medium -mt-2', [

@@ -536,7 +536,7 @@ class _OrdersState extends SignalState<Orders> {
       tr([
         th([]),
         SortableHeader<OrderSortKey>(
-          title: 'Bill No',
+          title: 'Order ID',
           sortKey: .billNo,
           currentSort: _sortState,
           onSort: _onSort,
@@ -579,8 +579,8 @@ class _OrdersState extends SignalState<Orders> {
       },
       [
         th([]),
-        th(classes: 'whitespace-nowrap font-medium text-primary', [
-          .text(orderId),
+        th(classes: 'whitespace-nowrap font-semibold text-black no-underline', [
+          .text('#$orderId'),
         ]),
         td(classes: 'whitespace-nowrap', [.text(date)]),
         td([.text(totalAmount.toStringAsFixed(2))]),
@@ -630,10 +630,14 @@ class _OrdersState extends SignalState<Orders> {
 
   Component _buildStatsToggleButton() {
     final showStats = showReportsStatsSignal.value;
+    final activeClass = showStats
+        ? 'border-primary bg-primary text-primary-content'
+        : 'border-border-medium bg-white hover:bg-neutral text-gray-700';
+
     return button(
       type: .button,
       classes:
-          'btn btn-sm rounded-full border ${showStats ? 'border-primary bg-primary text-primary-content' : 'border-border-medium bg-white hover:bg-neutral text-gray-700'} text-xs font-semibold px-3 h-8 flex items-center gap-1.5 shadow-2xs cursor-pointer transition-all',
+          'btn btn-sm rounded-full border text-xs font-semibold px-3 h-8 flex items-center gap-1.5 shadow-2xs cursor-pointer transition-all $activeClass',
       events: {
         'click': (e) {
           showReportsStatsSignal.value = !showStats;

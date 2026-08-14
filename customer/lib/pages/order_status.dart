@@ -189,7 +189,7 @@ class _OrderStatusPageState extends SignalState<OrderStatusPage> {
                 },
                 [
                   QrCode(classes: 'w-4 h-4 text-white'),
-                  .text('Display Order Pickup QR'),
+                  .text('Display Order QR'),
                 ],
               ),
             ],
@@ -206,7 +206,7 @@ class _OrderStatusPageState extends SignalState<OrderStatusPage> {
           ],
         ),
 
-        // QR Code Modal Dialog Overlay for Order Pickup Verification
+        // QR Code Modal Dialog Overlay for Order Verification
         if (_showQrModal)
           div(
             classes:
@@ -243,7 +243,7 @@ class _OrderStatusPageState extends SignalState<OrderStatusPage> {
 
                   p(classes: 'text-xs text-gray-500 font-medium -mt-2', [
                     .text(
-                      'Show this QR code at the counter for pickup verification & fulfillment.',
+                      'Show this QR code at the counter for verification & fulfillment.',
                     ),
                   ]),
 

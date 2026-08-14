@@ -53,7 +53,7 @@ class _StoreSearchPageState extends SignalState<StoreSearchPage> {
         ),
         p(classes: 'text-xs text-gray-500 font-medium', [
           .text(
-            'Order directly from registered stores for takeaway pickup.',
+            'Order directly from registered stores.',
           ),
         ]),
       ]),

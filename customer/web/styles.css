@@ -20,9 +20,6 @@
     --color-emerald-200: oklch(90.5% 0.093 164.15);
     --color-emerald-600: oklch(59.6% 0.145 163.225);
     --color-emerald-700: oklch(50.8% 0.118 165.612);
-    --color-rose-50: oklch(96.9% 0.015 12.422);
-    --color-rose-200: oklch(89.2% 0.058 10.001);
-    --color-rose-700: oklch(51.4% 0.222 16.935);
     --color-gray-50: oklch(98.5% 0.002 247.839);
     --color-gray-100: oklch(96.7% 0.003 264.542);
     --color-gray-200: oklch(92.8% 0.006 264.531);
@@ -40,7 +37,6 @@
     --container-sm: 24rem;
     --container-md: 28rem;
     --container-xl: 36rem;
-    --container-2xl: 42rem;
     --container-3xl: 48rem;
     --container-4xl: 56rem;
     --container-5xl: 64rem;
@@ -77,7 +73,6 @@
     --radius-xl: 0.75rem;
     --radius-2xl: 1rem;
     --radius-3xl: 1.5rem;
-    --ease-out: cubic-bezier(0, 0, 0.2, 1);
     --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
     --blur-xs: 4px;
     --blur-md: 12px;
@@ -2026,9 +2021,6 @@
   .w-10 {
     width: calc(var(--spacing) * 10);
   }
-  .w-11 {
-    width: calc(var(--spacing) * 11);
-  }
   .w-12 {
     width: calc(var(--spacing) * 12);
   }
@@ -2049,9 +2041,6 @@
   }
   .w-screen {
     width: 100vw;
-  }
-  .max-w-2xl {
-    max-width: var(--container-2xl);
   }
   .max-w-3xl {
     max-width: var(--container-3xl);
@@ -2177,9 +2166,6 @@
   .gap-8 {
     gap: calc(var(--spacing) * 8);
   }
-  .self-end {
-    align-self: flex-end;
-  }
   .truncate {
     overflow: hidden;
     text-overflow: ellipsis;
@@ -2239,12 +2225,6 @@
   .border-amber-200 {
     border-color: var(--color-amber-200);
   }
-  .border-amber-200\/80 {
-    border-color: color-mix(in srgb, oklch(92.4% 0.12 95.746) 80%, transparent);
-    @supports (color: color-mix(in lab, red, red)) {
-      border-color: color-mix(in oklab, var(--color-amber-200) 80%, transparent);
-    }
-  }
   .border-black\/10 {
     border-color: color-mix(in srgb, #000 10%, transparent);
     @supports (color: color-mix(in lab, red, red)) {
@@ -2253,12 +2233,6 @@
   }
   .border-emerald-200 {
     border-color: var(--color-emerald-200);
-  }
-  .border-emerald-200\/80 {
-    border-color: color-mix(in srgb, oklch(90.5% 0.093 164.15) 80%, transparent);
-    @supports (color: color-mix(in lab, red, red)) {
-      border-color: color-mix(in oklab, var(--color-emerald-200) 80%, transparent);
-    }
   }
   .border-gray-100 {
     border-color: var(--color-gray-100);
@@ -2288,12 +2262,6 @@
     border-color: color-mix(in srgb, oklch(88.5% 0.062 18.334) 80%, transparent);
     @supports (color: color-mix(in lab, red, red)) {
       border-color: color-mix(in oklab, var(--color-red-200) 80%, transparent);
-    }
-  }
-  .border-rose-200\/80 {
-    border-color: color-mix(in srgb, oklch(89.2% 0.058 10.001) 80%, transparent);
-    @supports (color: color-mix(in lab, red, red)) {
-      border-color: color-mix(in oklab, var(--color-rose-200) 80%, transparent);
     }
   }
   .bg-amber-50 {
@@ -2332,12 +2300,6 @@
       background-color: color-mix(in oklab, var(--color-gray-50) 50%, transparent);
     }
   }
-  .bg-gray-50\/60 {
-    background-color: color-mix(in srgb, oklch(98.5% 0.002 247.839) 60%, transparent);
-    @supports (color: color-mix(in lab, red, red)) {
-      background-color: color-mix(in oklab, var(--color-gray-50) 60%, transparent);
-    }
-  }
   .bg-gray-100 {
     background-color: var(--color-gray-100);
   }
@@ -2364,9 +2326,6 @@
   }
   .bg-red-600 {
     background-color: var(--color-red-600);
-  }
-  .bg-rose-50 {
-    background-color: var(--color-rose-50);
   }
   .bg-soft-green {
     background-color: var(--color-soft-green);
@@ -2409,9 +2368,6 @@
       }
     }
   }
-  .object-contain {
-    object-fit: contain;
-  }
   .object-cover {
     object-fit: cover;
   }
@@ -2429,9 +2385,6 @@
   }
   .p-4 {
     padding: calc(var(--spacing) * 4);
-  }
-  .p-5 {
-    padding: calc(var(--spacing) * 5);
   }
   .p-6 {
     padding: calc(var(--spacing) * 6);
@@ -2496,9 +2449,6 @@
   .py-8 {
     padding-block: calc(var(--spacing) * 8);
   }
-  .py-24 {
-    padding-block: calc(var(--spacing) * 24);
-  }
   .pt-1 {
     padding-top: calc(var(--spacing) * 1);
   }
@@ -2525,9 +2475,6 @@
   }
   .pb-2 {
     padding-bottom: calc(var(--spacing) * 2);
-  }
-  .pb-3 {
-    padding-bottom: calc(var(--spacing) * 3);
   }
   .pb-4 {
     padding-bottom: calc(var(--spacing) * 4);
@@ -2596,9 +2543,6 @@
   }
   .text-\[9px\] {
     font-size: 9px;
-  }
-  .text-\[10px\] {
-    font-size: 10px;
   }
   .text-\[11px\] {
     font-size: 11px;
@@ -2726,9 +2670,6 @@
   .text-red-600 {
     color: var(--color-red-600);
   }
-  .text-rose-700 {
-    color: var(--color-rose-700);
-  }
   .text-soft-green-content {
     color: var(--color-soft-green-content);
   }
@@ -2819,13 +2760,6 @@
   .ease-in-out {
     --tw-ease: var(--ease-in-out);
     transition-timing-function: var(--ease-in-out);
-  }
-  .btn-sm {
-    @layer daisyui.l1.l2 {
-      --fontsize: 0.75rem;
-      --btn-p: 0.75rem;
-      --size: calc(var(--size-field, 0.25rem) * 8);
-    }
   }
   .btn-xs {
     @layer daisyui.l1.l2 {
@@ -3193,11 +3127,6 @@
       gap: calc(var(--spacing) * 6);
     }
   }
-  .sm\:self-center {
-    @media (width >= 40rem) {
-      align-self: center;
-    }
-  }
   .sm\:p-4 {
     @media (width >= 40rem) {
       padding: calc(var(--spacing) * 4);
@@ -3211,11 +3140,6 @@
   .sm\:p-8 {
     @media (width >= 40rem) {
       padding: calc(var(--spacing) * 8);
-    }
-  }
-  .sm\:p-10 {
-    @media (width >= 40rem) {
-      padding: calc(var(--spacing) * 10);
     }
   }
   .sm\:p-16 {
@@ -3271,11 +3195,6 @@
   .md\:grid-cols-1 {
     @media (width >= 48rem) {
       grid-template-columns: repeat(1, minmax(0, 1fr));
-    }
-  }
-  .md\:grid-cols-2 {
-    @media (width >= 48rem) {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
   .md\:grid-cols-3 {

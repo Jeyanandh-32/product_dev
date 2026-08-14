@@ -3417,6 +3417,9 @@
   .justify-end {
     justify-content: flex-end;
   }
+  .justify-start {
+    justify-content: flex-start;
+  }
   .gap-0 {
     gap: calc(var(--spacing) * 0);
   }
@@ -3595,9 +3598,6 @@
   .border-amber-100 {
     border-color: var(--color-amber-100);
   }
-  .border-amber-200 {
-    border-color: var(--color-amber-200);
-  }
   .border-amber-200\/60 {
     border-color: color-mix(in srgb, oklch(92.4% 0.12 95.746) 60%, transparent);
     @supports (color: color-mix(in lab, red, red)) {
@@ -3645,9 +3645,6 @@
   }
   .border-purple-100 {
     border-color: var(--color-purple-100);
-  }
-  .border-rose-200 {
-    border-color: var(--color-rose-200);
   }
   .border-white {
     border-color: var(--color-white);
@@ -3762,9 +3759,6 @@
   }
   .bg-purple-600 {
     background-color: var(--color-purple-600);
-  }
-  .bg-rose-50 {
-    background-color: var(--color-rose-50);
   }
   .bg-rose-600 {
     background-color: var(--color-rose-600);
@@ -3939,6 +3933,9 @@
   .text-right {
     text-align: right;
   }
+  .font-mono {
+    font-family: var(--font-mono);
+  }
   .font-script {
     font-family: var(--font-script);
   }
@@ -4107,9 +4104,6 @@
   .text-rose-600 {
     color: var(--color-rose-600);
   }
-  .text-rose-700 {
-    color: var(--color-rose-700);
-  }
   .text-soft-blue-content {
     color: var(--color-soft-blue-content);
   }
@@ -4133,6 +4127,9 @@
   }
   .uppercase {
     text-transform: uppercase;
+  }
+  .no-underline {
+    text-decoration-line: none;
   }
   .opacity-0 {
     opacity: 0%;
@@ -4594,11 +4591,6 @@
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
-  .sm\:grid-cols-3 {
-    @media (width >= 40rem) {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-  }
   .sm\:flex-row {
     @media (width >= 40rem) {
       flex-direction: row;
@@ -4746,11 +4738,6 @@
   .lg\:grid-cols-4 {
     @media (width >= 64rem) {
       grid-template-columns: repeat(4, minmax(0, 1fr));
-    }
-  }
-  .lg\:grid-cols-6 {
-    @media (width >= 64rem) {
-      grid-template-columns: repeat(6, minmax(0, 1fr));
     }
   }
   .lg\:grid-cols-12 {

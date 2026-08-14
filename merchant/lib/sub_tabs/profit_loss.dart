@@ -1,7 +1,6 @@
 import 'package:jaspr/client.dart';
 import 'package:jaspr/dom.dart';
 import 'package:jaspr_lucide/jaspr_lucide.dart';
-
 import 'package:merchant/components/centered_message.dart';
 import 'package:merchant/components/fields/date_range_picker.dart';
 import 'package:merchant/components/fields/searchbar.dart';
@@ -9,12 +8,12 @@ import 'package:merchant/components/loading.dart';
 import 'package:merchant/components/signal_component.dart';
 import 'package:merchant/components/sortable_header.dart';
 import 'package:merchant/components/table_pagination.dart';
-import 'package:models/models.dart';
 import 'package:merchant/exceptions/api_exception.dart';
 import 'package:merchant/signals/navigation_signal.dart';
 import 'package:merchant/signals/profit_loss_signal.dart';
 import 'package:merchant/signals/reports_date_signal.dart';
 import 'package:merchant/signals/stores_signal.dart';
+import 'package:models/models.dart';
 import 'package:web/web.dart' as web;
 
 enum ProfitLossSortKey {
@@ -313,6 +312,7 @@ class _ProfitLossState extends SignalState<ProfitLoss> {
           sortKey: ProfitLossSortKey.name,
           currentSort: _sortState,
           onSort: _onSort,
+          isTh: true,
         ),
         SortableHeader<ProfitLossSortKey>(
           title: 'Category',
@@ -399,10 +399,14 @@ class _ProfitLossState extends SignalState<ProfitLoss> {
 
   Component _buildStatsToggleButton() {
     final showStats = showReportsStatsSignal.value;
+    final activeClass = showStats
+        ? 'border-primary bg-primary text-primary-content'
+        : 'border-border-medium bg-white hover:bg-neutral text-gray-700';
+
     return button(
       type: .button,
       classes:
-          'btn btn-sm rounded-full border ${showStats ? 'border-primary bg-primary text-primary-content' : 'border-border-medium bg-white hover:bg-neutral text-gray-700'} text-xs font-semibold px-3 h-8 flex items-center gap-1.5 shadow-2xs cursor-pointer transition-all',
+          'btn btn-sm rounded-full border text-xs font-semibold px-3 h-8 flex items-center gap-1.5 shadow-2xs cursor-pointer transition-all $activeClass',
       events: {
         'click': (e) {
           showReportsStatsSignal.value = !showStats;

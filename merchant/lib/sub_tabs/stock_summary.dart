@@ -402,10 +402,14 @@ class _StockSummaryState extends SignalState<StockSummary> {
 
   Component _buildStatsToggleButton() {
     final showStats = showReportsStatsSignal.value;
+    final activeClass = showStats
+        ? 'border-primary bg-primary text-primary-content'
+        : 'border-border-medium bg-white hover:bg-neutral text-gray-700';
+
     return button(
       type: .button,
       classes:
-          'btn btn-sm rounded-full border ${showStats ? 'border-primary bg-primary text-primary-content' : 'border-border-medium bg-white hover:bg-neutral text-gray-700'} text-xs font-semibold px-3 h-8 flex items-center gap-1.5 shadow-2xs cursor-pointer transition-all',
+          'btn btn-sm rounded-full border text-xs font-semibold px-3 h-8 flex items-center gap-1.5 shadow-2xs cursor-pointer transition-all $activeClass',
       events: {
         'click': (e) {
           showReportsStatsSignal.value = !showStats;
