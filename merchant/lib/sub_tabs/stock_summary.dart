@@ -5,6 +5,10 @@ import 'package:merchant/components/centered_message.dart';
 import 'package:merchant/components/fields/date_picker.dart';
 import 'package:merchant/components/fields/searchbar.dart';
 import 'package:merchant/components/loading.dart';
+import 'package:merchant/components/reports/stats_toggle_button.dart';
+import 'package:merchant/components/reports/stock_summary_cards.dart';
+import 'package:merchant/components/reports/stock_summary_table_header.dart';
+import 'package:merchant/components/reports/stock_summary_table_view.dart';
 import 'package:merchant/components/signal_component.dart';
 import 'package:merchant/components/sortable_header.dart';
 import 'package:merchant/components/table_pagination.dart';
@@ -12,19 +16,9 @@ import 'package:merchant/exceptions/api_exception.dart';
 import 'package:merchant/signals/navigation_signal.dart';
 import 'package:merchant/signals/stock_summary_signal.dart';
 import 'package:merchant/signals/stores_signal.dart';
-import 'package:models/models.dart';
 import 'package:web/web.dart' as web;
 
-enum StockSummarySortKey {
-  name,
-  openingStock,
-  inQty,
-  outQty,
-  wastageQty,
-  adjustmentQty,
-  closingStock,
-}
-
+/// Stock summary sub-tab displaying daily movement, restock, wastage, adjustments, and closing balance.
 class StockSummary extends SignalComponent {
   const StockSummary({super.key});
 
@@ -66,7 +60,7 @@ class _StockSummaryState extends SignalState<StockSummary> {
   }
 
   void _changeEntry(int entry) {
-    stockSummaryEntriesSignal.value = entry;
+    entriesSignal.value = entry;
     stockSummaryPageSignal.value = 1;
     refreshStockSummarySignal();
     _closeDropdowns();
@@ -81,11 +75,11 @@ class _StockSummaryState extends SignalState<StockSummary> {
         refreshStockSummarySignal();
       });
     }
-    final entries = stockSummaryEntriesSignal.value;
-
+    final entries = entriesSignal.value;
     final reportState = stockSummarySignal.value;
-    final currentPage = reportState.value?.currentPage ?? 1;
+    final currentPage = stockSummaryPageSignal.value;
     final totalPages = reportState.value?.totalPages ?? 1;
+    final totalItems = reportState.value?.totalItems ?? 0;
 
     return div(
       classes:
@@ -144,22 +138,26 @@ class _StockSummaryState extends SignalState<StockSummary> {
                         ],
                       ),
                     ]),
-                    if ((reportState.value?.totalItems ?? 0) > 0)
+                    if (totalItems > 0)
                       .text(
-                        'Showing ${((currentPage - 1) * entries) + 1}–${(currentPage * entries).clamp(0, reportState.value?.totalItems ?? 0)} of ${reportState.value?.totalItems ?? 0}',
+                        'Showing ${((currentPage - 1) * entries) + 1}–${(currentPage * entries).clamp(0, totalItems)} of $totalItems',
                       ),
                   ],
                 ),
                 DatePicker(
                   date: stockSummaryDateSignal.value,
-
-                  onDateChanged: (val) {
-                    stockSummaryDateSignal.value = val;
+                  onDateChanged: (selectedDate) {
+                    stockSummaryDateSignal.value = selectedDate;
                     stockSummaryPageSignal.value = 1;
                     refreshStockSummarySignal();
                   },
                 ),
-                _buildStatsToggleButton(),
+                StatsToggleButton(
+                  showStats: showReportsStatsSignal.value,
+                  onToggle: () {
+                    showReportsStatsSignal.value = !showReportsStatsSignal.value;
+                  },
+                ),
               ],
             ),
             div(
@@ -167,7 +165,7 @@ class _StockSummaryState extends SignalState<StockSummary> {
                   'flex justify-between gap-2 items-center w-full sm:w-auto',
               [
                 Searchbar(
-                  placeholder: 'Search Product...',
+                  placeholder: 'Search Products...',
                   classes: 'flex-1 sm:flex-none sm:w-64',
                   onInput: (val) {
                     stockSummarySearchSignal.value = val;
@@ -182,39 +180,12 @@ class _StockSummaryState extends SignalState<StockSummary> {
 
         if (showReportsStatsSignal.value &&
             reportState.hasValue &&
-            reportState.value!.items.isNotEmpty)
-          div(
-            classes:
-                'grid grid-cols-2 lg:grid-cols-4 gap-3 p-4 border-b border-border-medium bg-neutral/20',
-
-            [
-              summaryCard(
-                title: 'Restocked (In)',
-                value: '+${reportState.value!.totalIn}',
-                textColor: 'text-emerald-600',
-              ),
-              summaryCard(
-                title: 'Sold (Out)',
-                value: '-${reportState.value!.totalOut}',
-                textColor: 'text-rose-600',
-              ),
-              summaryCard(
-                title: 'Wastage',
-                value: '-${reportState.value!.totalWastage}',
-                textColor: 'text-amber-600',
-              ),
-              summaryCard(
-                title: 'Adjustment',
-                value: reportState.value!.totalAdjustment > 0
-                    ? '+${reportState.value!.totalAdjustment}'
-                    : '${reportState.value!.totalAdjustment}',
-                textColor: reportState.value!.totalAdjustment != 0
-                    ? (reportState.value!.totalAdjustment > 0
-                          ? 'text-emerald-600'
-                          : 'text-rose-600')
-                    : 'text-gray-700',
-              ),
-            ],
+            reportState.value != null)
+          StockSummaryCards(
+            totalIn: reportState.value!.totalIn,
+            totalOut: reportState.value!.totalOut,
+            totalWastage: reportState.value!.totalWastage,
+            totalAdjustment: reportState.value!.totalAdjustment,
           ),
 
         if (storesSignal.value.isLoading || reportState.isLoading)
@@ -230,42 +201,11 @@ class _StockSummaryState extends SignalState<StockSummary> {
         else if (reportState.hasValue && reportState.value!.items.isEmpty)
           CenteredMessage(message: 'No Stock Summary data found.')
         else
-          div(classes: 'flex-1 min-h-0 overflow-auto', [
-            table(
-              classes: 'table table-zebra table-pin-rows table-pin-cols',
-              [
-                tableHead(),
-                tbody([
-                  for (final item
-                      in sortItems<StockSummaryItem, StockSummarySortKey>(
-                        items: reportState.value?.items ?? [],
-                        sortState: _sortState,
-                        getSortValue: (item, k) => switch (k) {
-                          StockSummarySortKey.name =>
-                            item.productName.toLowerCase(),
-                          StockSummarySortKey.openingStock => item.openingStock,
-                          StockSummarySortKey.inQty => item.inQuantity,
-                          StockSummarySortKey.outQty => item.outQuantity,
-                          StockSummarySortKey.wastageQty =>
-                            item.wastageQuantity,
-                          StockSummarySortKey.adjustmentQty =>
-                            item.adjustmentQuantity,
-                          StockSummarySortKey.closingStock => item.closingStock,
-                        },
-                      ))
-                    tableRow(
-                      name: item.productName,
-                      openingStock: item.openingStock,
-                      inQty: item.inQuantity,
-                      outQty: item.outQuantity,
-                      wastageQty: item.wastageQuantity,
-                      adjustmentQty: item.adjustmentQuantity,
-                      closingStock: item.closingStock,
-                    ),
-                ]),
-              ],
-            ),
-          ]),
+          StockSummaryTableView(
+            items: reportState.value?.items ?? [],
+            sortState: _sortState,
+            onSort: _onSort,
+          ),
 
         TablePagination(
           currentPage: currentPage,
@@ -275,153 +215,6 @@ class _StockSummaryState extends SignalState<StockSummary> {
             refreshStockSummarySignal();
           },
         ),
-      ],
-    );
-  }
-
-  div summaryCard({
-    required String title,
-    required String value,
-    required String textColor,
-  }) {
-    return div(
-      classes:
-          'flex flex-col gap-1 p-3.5 bg-white rounded-xl border border-border-medium shadow-2xs',
-      [
-        span(classes: 'text-xs text-gray-500 font-medium', [.text(title)]),
-        span(classes: 'text-lg font-bold $textColor', [.text(value)]),
-      ],
-    );
-  }
-
-  thead tableHead() {
-    return thead([
-      tr([
-        th([]),
-        SortableHeader<StockSummarySortKey>(
-          title: 'Name',
-          sortKey: StockSummarySortKey.name,
-          currentSort: _sortState,
-          onSort: _onSort,
-          isTh: true,
-        ),
-        SortableHeader<StockSummarySortKey>(
-          title: 'Opening Stock',
-          sortKey: StockSummarySortKey.openingStock,
-          currentSort: _sortState,
-          onSort: _onSort,
-        ),
-        SortableHeader<StockSummarySortKey>(
-          title: 'In',
-          sortKey: StockSummarySortKey.inQty,
-          currentSort: _sortState,
-          onSort: _onSort,
-        ),
-        SortableHeader<StockSummarySortKey>(
-          title: 'Out',
-          sortKey: StockSummarySortKey.outQty,
-          currentSort: _sortState,
-          onSort: _onSort,
-        ),
-        SortableHeader<StockSummarySortKey>(
-          title: 'Wastage',
-          sortKey: StockSummarySortKey.wastageQty,
-          currentSort: _sortState,
-          onSort: _onSort,
-        ),
-        SortableHeader<StockSummarySortKey>(
-          title: 'Adjustment',
-          sortKey: StockSummarySortKey.adjustmentQty,
-          currentSort: _sortState,
-          onSort: _onSort,
-        ),
-        SortableHeader<StockSummarySortKey>(
-          title: 'Closing Stock',
-          sortKey: StockSummarySortKey.closingStock,
-          currentSort: _sortState,
-          onSort: _onSort,
-        ),
-        th([]),
-      ]),
-    ]);
-  }
-
-  tr tableRow({
-    required String name,
-    required int openingStock,
-    required int inQty,
-    required int outQty,
-    required int wastageQty,
-    required int adjustmentQty,
-    required int closingStock,
-  }) {
-    final inText = inQty > 0 ? '+$inQty' : '0';
-    final outText = outQty > 0 ? '-$outQty' : '0';
-    final wastageText = wastageQty > 0 ? '-$wastageQty' : '0';
-
-    String adjText;
-    if (adjustmentQty > 0) {
-      adjText = '+$adjustmentQty';
-    } else if (adjustmentQty < 0) {
-      adjText = '$adjustmentQty';
-    } else {
-      adjText = '0';
-    }
-
-    return tr([
-      th([]),
-      th(classes: 'whitespace-nowrap font-semibold text-black no-underline', [
-        .text(name),
-      ]),
-      td([.text('$openingStock')]),
-      td(
-        classes: inQty > 0 ? 'font-semibold text-emerald-600' : 'text-gray-500',
-        [.text(inText)],
-      ),
-      td(
-        classes: outQty > 0 ? 'font-semibold text-rose-600' : 'text-gray-500',
-        [.text(outText)],
-      ),
-      td(
-        classes: wastageQty > 0
-            ? 'font-semibold text-rose-600'
-            : 'text-gray-500',
-        [.text(wastageText)],
-      ),
-      td(
-        classes: adjustmentQty != 0
-            ? (adjustmentQty > 0
-                  ? 'font-semibold text-emerald-600'
-                  : 'font-semibold text-rose-600')
-            : 'text-gray-500',
-        [.text(adjText)],
-      ),
-      td(classes: 'text-gray-900', [.text('$closingStock')]),
-      th([]),
-    ]);
-  }
-
-  Component _buildStatsToggleButton() {
-    final showStats = showReportsStatsSignal.value;
-    final activeClass = showStats
-        ? 'border-primary bg-primary text-primary-content'
-        : 'border-border-medium bg-white hover:bg-neutral text-gray-700';
-
-    return button(
-      type: .button,
-      classes:
-          'btn btn-sm rounded-full border text-xs font-semibold px-3 h-8 flex items-center gap-1.5 shadow-2xs cursor-pointer transition-all $activeClass',
-      events: {
-        'click': (e) {
-          showReportsStatsSignal.value = !showStats;
-        },
-      },
-      [
-        if (showStats)
-          EyeOff(classes: 'w-3.5 h-3.5')
-        else
-          ChartColumn(classes: 'w-3.5 h-3.5'),
-        .text(showStats ? 'Hide Stats' : 'View Stats'),
       ],
     );
   }

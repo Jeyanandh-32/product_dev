@@ -1,0 +1,101 @@
+import 'package:customer/components/modals/modal.dart';
+import 'package:jaspr/dom.dart';
+import 'package:jaspr/jaspr.dart';
+import 'package:jaspr_lucide/jaspr_lucide.dart' hide List, Map, Router;
+import 'package:web/web.dart' as web;
+
+class TopUpModal extends StatelessComponent {
+  final double topUpAmount;
+  final bool isLoading;
+  final ValueChanged<double> onAmountChanged;
+  final VoidCallback onConfirm;
+  final VoidCallback onClose;
+
+  const TopUpModal({
+    super.key,
+    required this.topUpAmount,
+    required this.isLoading,
+    required this.onAmountChanged,
+    required this.onConfirm,
+    required this.onClose,
+  });
+
+  @override
+  Component build(BuildContext context) {
+    return Modal(
+      title: 'Top Up Wallet',
+      onClose: onClose,
+      child: div(classes: 'flex flex-col gap-6', [
+        div(classes: 'flex flex-col gap-4', [
+          label(
+            classes: 'text-xs font-bold text-gray-700 uppercase tracking-wider',
+            [
+              .text('Select Amount (₹)'),
+            ],
+          ),
+          div(classes: 'grid grid-cols-3 gap-2.5', [
+            for (final amt in [100.0, 500.0, 1000.0])
+              button(
+                classes:
+                    'py-3 rounded-2xl font-bold text-sm border cursor-pointer transition-all ${amt == topUpAmount ? 'bg-black text-white border-black shadow-xs' : 'bg-gray-50 text-gray-800 border-gray-200 hover:bg-gray-100'}',
+                onClick: () => onAmountChanged(amt),
+                [.text('₹${amt.toInt()}')],
+              ),
+          ]),
+
+          div(classes: 'flex flex-col gap-1.5 pt-2', [
+            label(
+              classes: 'text-xs font-bold text-gray-700 uppercase tracking-wider',
+              [
+                .text('Custom Amount (₹)'),
+              ],
+            ),
+            input(
+              type: InputType.number,
+              classes:
+                  'w-full px-4 py-3 rounded-2xl border border-gray-300 focus:border-black focus:outline-hidden text-base font-bold text-black bg-gray-50/50 font-mono',
+              value: topUpAmount.toInt().toString(),
+              events: {
+                'input': (e) {
+                  final input = e.target as web.HTMLInputElement;
+                  final parsed = double.tryParse(input.value);
+                  if (parsed != null && parsed > 0) {
+                    onAmountChanged(parsed);
+                  }
+                },
+              },
+            ),
+          ]),
+        ]),
+
+        div(
+          classes:
+              'flex items-center justify-end gap-2 pt-2 border-t border-gray-100',
+          [
+            button(
+              classes:
+                  'px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs transition-all border-0 cursor-pointer',
+              onClick: onClose,
+              [.text('Cancel')],
+            ),
+            button(
+              classes:
+                  'px-6 py-2.5 rounded-xl bg-emerald-600 text-white hover:bg-emerald-500 font-bold text-xs transition-all border-0 cursor-pointer shadow-xs flex items-center gap-2',
+              onClick: isLoading ? null : onConfirm,
+              [
+                if (isLoading)
+                  span(
+                    classes: 'loading loading-spinner loading-xs text-white',
+                    [],
+                  )
+                else
+                  Check(classes: 'w-4 h-4 text-white'),
+                .text(isLoading ? 'Processing...' : 'Confirm Top Up'),
+              ],
+            ),
+          ],
+        ),
+      ]),
+    );
+  }
+}

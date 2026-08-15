@@ -30,12 +30,12 @@ Future<Response> _onGet(RequestContext context) async {
   if (sizeError != null) return sizeError;
 
   final repo = context.read<CategoryRepository>();
-  final tokenPayload = context.tokenPayload;
+  final tokenPayload = context.optionalTokenPayload;
 
   try {
     final searchQuery = context.request.uri.queryParameters['search'];
 
-    final merchantId = tokenPayload.role == UserRole.customer
+    final merchantId = (tokenPayload == null || tokenPayload.role == UserRole.customer)
         ? null
         : tokenPayload.sub;
 

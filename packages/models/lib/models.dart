@@ -17,9 +17,9 @@ export 'src/payment/payment.dart';
 export 'src/payment_method.dart';
 export 'src/payment_status.dart';
 export 'src/product/product.dart';
-export 'src/profit_loss_item.dart';
+export 'src/profit_loss/profit_loss_item.dart';
 export 'src/stock/stock.dart';
-export 'src/stock_summary_item.dart';
+export 'src/stock_summary/stock_summary_item.dart';
 export 'src/stock_transaction_reason.dart';
 
 export 'src/dashboard_range.dart';

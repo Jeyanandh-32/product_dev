@@ -1,13 +1,15 @@
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
-import 'package:jaspr_lucide/generated_icons/chevron_down.dart';
 import 'package:merchant/components/fields/form_field.dart';
+import 'package:merchant/components/fields/store_type_selector_field.dart';
 import 'package:merchant/components/modals/modal.dart';
+import 'package:merchant/components/modals/store_online_settings_section.dart';
 import 'package:merchant/signals/navigation_signal.dart';
 import 'package:merchant/signals/stores_signal.dart';
 import 'package:models/models.dart';
 import 'package:web/web.dart' as web;
 
+/// Modal dialog for creating and updating stores and their online ordering settings.
 class AddEditStoreModal extends StatefulComponent {
   const AddEditStoreModal({super.key, this.store});
 
@@ -58,31 +60,24 @@ class _AddEditStoreModalState extends State<AddEditStoreModal> {
 
   void _onSubmit(web.Event e) {
     e.preventDefault();
-    final storeName = _storeName.trim();
-    final storeType = _storeType;
-    final isActive = _isActive;
-    final isOnlineEnabled = _isOnlineEnabled;
-    final slug = isOnlineEnabled ? _slug.trim().toLowerCase() : null;
-
-    activeModalSignal.value = ActiveModal.none;
-
     if (component.store != null) {
       StoresActions.updateStore(
         id: component.store!.id,
-        name: storeName,
-        storeType: storeType,
-        isActive: isActive,
-        isOnlineEnabled: isOnlineEnabled,
-        slug: slug,
+        name: _storeName,
+        storeType: _storeType,
+        isActive: _isActive,
+        isOnlineEnabled: _isOnlineEnabled,
+        slug: _slug.isNotEmpty ? _slug : null,
       );
     } else {
       StoresActions.create(
-        name: storeName,
-        storeType: storeType,
-        isOnlineEnabled: isOnlineEnabled,
-        slug: slug,
+        name: _storeName,
+        storeType: _storeType,
+        isOnlineEnabled: _isOnlineEnabled,
+        slug: _slug.isNotEmpty ? _slug : null,
       );
     }
+    activeModalSignal.value = ActiveModal.none;
   }
 
   @override
@@ -90,11 +85,10 @@ class _AddEditStoreModalState extends State<AddEditStoreModal> {
     return Modal(
       title: component.store != null ? 'Edit Store' : 'Add Store',
       child: form(
-        method: FormMethod.post,
-        events: {'submit': (e) => _onSubmit(e)},
+        events: {'submit': _onSubmit},
         [
           FormField(
-            id: 'storeName',
+            id: 'name',
             labelText: 'Store Name',
             type: InputType.text,
             attributes: {
@@ -106,101 +100,24 @@ class _AddEditStoreModalState extends State<AddEditStoreModal> {
             onChange: (value) => _onStoreNameChange(value as String),
           ),
 
-          fieldset(classes: 'fieldset w-full mb-4', [
-            label(
-              htmlFor: 'storeType',
-              classes: 'label text-[14px] font-semibold text-gray-500',
-              [.text('Store Type')],
-            ),
-            details(classes: 'dropdown w-full', [
-              summary(
-                classes:
-                    'btn border border-border-medium bg-white hover:bg-base-200 text-sm h-11 w-full justify-between font-normal px-3 rounded-lg list-none cursor-pointer ${_storeType == null ? 'text-gray-400' : 'text-base-content'}',
-                [
-                  span([
-                    .text(
-                      _storeType == null
-                          ? 'Select Store Type'
-                          : '${_storeType!.name[0].toUpperCase()}${_storeType!.name.substring(1)}',
-                    ),
-                  ]),
-                  ChevronDown(classes: 'w-4 h-4 opacity-50'),
-                ],
-              ),
-              ul(
-                classes:
-                    'dropdown-content menu bg-base-100 rounded-box z-50 mt-1 p-2 shadow-sm border border-border-light w-full max-h-48 overflow-y-auto',
-                [
-                  for (final type in StoreType.values)
-                    li([
-                      a(
-                        href: '#',
-                        classes:
-                            'rounded-md hover:bg-neutral py-2 px-3 block ${type == _storeType ? 'bg-neutral font-semibold' : ''}',
-                        onClick: () {
-                          setState(() {
-                            _storeType = type;
-                          });
-                          final activeElement = web.document.activeElement;
-                          if (activeElement != null) {
-                            (activeElement as web.HTMLElement).blur();
-                            final details = activeElement.closest('details');
-                            details?.removeAttribute('open');
-                          }
-                        },
-                        [
-                          .text(
-                            '${type.name[0].toUpperCase()}${type.name.substring(1)}',
-                          ),
-                        ],
-                      ),
-                    ]),
-                ],
-              ),
-            ]),
-          ]),
+          StoreTypeSelectorField(
+            selectedType: _storeType,
+            onTypeSelected: (type) => setState(() => _storeType = type),
+          ),
 
-          div(classes: 'form-control mb-4 flex flex-row items-center gap-3', [
-            p(
-              classes: 'text-[14px] font-semibold text-gray-500',
-              [.text('Enable Online Ordering')],
-            ),
-            input(
-              type: InputType.checkbox,
-              classes:
-                  'toggle ${_isOnlineEnabled ? 'toggle-success' : ''} hover:cursor-pointer',
-              checked: _isOnlineEnabled,
-              events: {
-                'change': (e) {
-                  final target = e.target as web.HTMLInputElement;
-                  setState(() {
-                    _isOnlineEnabled = target.checked;
-                    if (_isOnlineEnabled && _slug.isEmpty) {
-                      _slug = _toSlug(_storeName);
-                    }
-                  });
-                },
-              },
-            ),
-          ]),
-
-          if (_isOnlineEnabled)
-            FormField(
-              id: 'slug',
-              labelText: 'Store URL Slug',
-              type: InputType.text,
-              attributes: {
-                'placeholder': 'jack-devs-cafe',
-                'required': '',
-                'pattern': r'^[a-z0-9]+(?:-[a-z0-9]+)*$',
-                'title':
-                    'Lowercase letters, numbers, and hyphens only (e.g. baker-street)',
-                'value': _slug,
-              },
-              hintText: 'Must be lowercase letters, numbers, and hyphens.',
-              onChange: (value) =>
-                  setState(() => _slug = (value as String).trim()),
-            ),
+          StoreOnlineSettingsSection(
+            isOnlineEnabled: _isOnlineEnabled,
+            slug: _slug,
+            onToggleOnline: (enabled) {
+              setState(() {
+                _isOnlineEnabled = enabled;
+                if (_isOnlineEnabled && _slug.isEmpty) {
+                  _slug = _toSlug(_storeName);
+                }
+              });
+            },
+            onSlugChanged: (slugVal) => setState(() => _slug = slugVal),
+          ),
 
           if (component.store != null)
             div(classes: 'form-control mb-4 flex flex-row items-center gap-3', [

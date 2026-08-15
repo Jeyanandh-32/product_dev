@@ -1,12 +1,14 @@
 import 'package:jaspr/client.dart';
 import 'package:jaspr/dom.dart';
 import 'package:jaspr_lucide/generated_icons/chevron_down.dart';
-import 'package:jaspr_lucide/generated_icons/square_pen.dart';
 import 'package:merchant/components/buttons/add_button.dart';
 import 'package:merchant/components/centered_message.dart';
 import 'package:merchant/components/fields/searchbar.dart';
 import 'package:merchant/components/loading.dart';
 import 'package:merchant/components/modals/add_edit_category_modal.dart';
+import 'package:merchant/components/reports/categories_table_header.dart';
+import 'package:merchant/components/reports/categories_table_view.dart';
+import 'package:merchant/components/reports/report_status_filter.dart';
 import 'package:merchant/components/signal_component.dart';
 import 'package:merchant/components/sortable_header.dart';
 import 'package:merchant/components/table_pagination.dart';
@@ -18,8 +20,7 @@ import 'package:merchant/signals/stores_signal.dart';
 import 'package:models/models.dart';
 import 'package:web/web.dart' as web;
 
-enum CategorySortKey { name, status, productsCount, description }
-
+/// Categories management sub-tab displaying category listing, creation, edit modals, and pagination.
 class Categories extends SignalComponent {
   const Categories({super.key});
 
@@ -69,8 +70,9 @@ class _CategoriesState extends SignalState<Categories> {
   }
 
   int _getAssociatedCount(Category category) {
-    final products = productsSignal.value.value ?? [];
-    return products.where((prod) => prod.category?.id == category.id).length;
+    final prods = productsSignal.value.value;
+    if (prods == null) return 0;
+    return prods.where((prod) => prod.category?.id == category.id).length;
   }
 
   @override
@@ -84,102 +86,103 @@ class _CategoriesState extends SignalState<Categories> {
       });
     }
     final entries = entriesSignal.value;
-
     final categories = categoriesSignal.value;
     final currentPage = categoriesPageSignal.value;
     final totalPages = categoriesTotalPagesSignal.value;
-    final activeModal = activeModalSignal.value;
-    final editingCategory = editingCategorySignal.value;
 
     return div(
       classes:
           'flex flex-col flex-1 min-h-0 m-4 bg-white rounded-2xl border border-border-medium shadow-xs overflow-hidden',
       [
-        if (activeModal == ActiveModal.addCategory)
+        if (activeModalSignal.value == ActiveModal.addCategory ||
+            activeModalSignal.value == ActiveModal.editCategory)
           const AddEditCategoryModal(),
-        if (activeModal == ActiveModal.editCategory)
-          AddEditCategoryModal(category: editingCategory),
 
         div(
           classes:
               'flex flex-col md:items-center md:flex-row md:justify-between w-full border-b border-border-medium p-4 gap-4',
           [
             div(
-              classes:
-                  'flex flex-col sm:flex-row sm:items-center justify-between w-full gap-3',
+              classes: 'flex flex-wrap items-center gap-3 text-sm font-medium',
               [
-                div(
+                span(
                   classes:
-                      'flex flex-wrap items-center gap-2 text-sm font-medium',
+                      'flex gap-2 items-center text-sm font-medium whitespace-nowrap',
                   [
-                    span(
-                      classes:
-                          'flex gap-2 items-center text-sm font-medium whitespace-nowrap',
-                      [
-                        .text('Show'),
-                        details(
-                          classes: 'dropdown dropdown-bottom dropdown-center',
-                          [
-                            summary(
-                              classes:
-                                  'btn rounded-full border border-border-medium bg-white hover:bg-base-200 text-sm h-8 min-h-0 list-none',
-                              attributes: {
-                                'role': 'button',
-                              },
-                              [
-                                .text('$entries'),
-                                ChevronDown(classes: 'w-4 h-4'),
-                              ],
-                            ),
-                            ul(
-                              classes:
-                                  'dropdown-content menu bg-base-100 rounded-box z-10 mt-2.5 p-2 shadow-sm border border-border-light',
-                              [
-                                dropdownButton(
-                                  name: '10',
-                                  isSelected: entries == 10,
-                                  onClick: () => _changeEntry(10),
-                                ),
-                                dropdownButton(
-                                  name: '25',
-                                  isSelected: entries == 25,
-                                  onClick: () => _changeEntry(25),
-                                ),
-                                dropdownButton(
-                                  name: '50',
-                                  isSelected: entries == 50,
-                                  onClick: () => _changeEntry(50),
-                                ),
-                                dropdownButton(
-                                  name: '100',
-                                  isSelected: entries == 100,
-                                  onClick: () => _changeEntry(100),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        if (categoriesTotalSignal.value > 0)
-                          .text(
-                            'Showing ${((currentPage - 1) * entries) + 1}–${(currentPage * entries).clamp(0, categoriesTotalSignal.value)} of ${categoriesTotalSignal.value}',
+                    .text('Show'),
+                    div(classes: 'dropdown dropdown-bottom dropdown-center', [
+                      div(
+                        classes:
+                            'btn rounded-full border border-border-medium bg-white hover:bg-base-200 text-sm h-8 min-h-0',
+                        attributes: {
+                          'tabindex': '0',
+                          'role': 'button',
+                        },
+                        [
+                          .text('$entries'),
+                          ChevronDown(classes: 'w-4 h-4'),
+                        ],
+                      ),
+                      ul(
+                        attributes: {'tabindex': '-1'},
+                        classes:
+                            'dropdown-content menu bg-base-100 rounded-box z-10 mt-2.5 p-2 shadow-sm border border-border-light',
+                        [
+                          dropdownButton(
+                            name: '10',
+                            isSelected: entries == 10,
+                            onClick: () => _changeEntry(10),
                           ),
-                      ],
-                    ),
-                    _buildStatusFilter(),
+                          dropdownButton(
+                            name: '25',
+                            isSelected: entries == 25,
+                            onClick: () => _changeEntry(25),
+                          ),
+                          dropdownButton(
+                            name: '50',
+                            isSelected: entries == 50,
+                            onClick: () => _changeEntry(50),
+                          ),
+                          dropdownButton(
+                            name: '100',
+                            isSelected: entries == 100,
+                            onClick: () => _changeEntry(100),
+                          ),
+                        ],
+                      ),
+                    ]),
+                    if (categoriesTotalSignal.value > 0)
+                      .text(
+                        'Showing ${((currentPage - 1) * entries) + 1}–${(currentPage * entries).clamp(0, categoriesTotalSignal.value)} of ${categoriesTotalSignal.value}',
+                      ),
                   ],
                 ),
+                ReportStatusFilter(
+                  status: _statusFilter,
+                  onStatusChanged: (val) {
+                    setState(() {
+                      _statusFilter = val;
+                    });
+                  },
+                ),
+              ],
+            ),
+            div(
+              classes:
+                  'flex justify-between gap-2 items-center w-full sm:w-auto',
+              [
+                Searchbar(
+                  placeholder: 'Search Categories...',
+                  classes: 'flex-1 sm:flex-none sm:w-64',
+                  onInput: (val) {
+                    categorySearchSignal.value = val;
+                    categoriesPageSignal.value = 1;
+                    refreshCategoriesSignal();
+                  },
+                ),
                 div(
-                  classes: 'flex items-center gap-2 w-full sm:w-auto',
+                  classes: 'flex items-center gap-2',
                   [
-                    Searchbar(
-                      placeholder: 'Search Categories...',
-                      classes: 'flex-1 sm:w-64 min-w-0',
-                      onInput: (val) {
-                        categorySearchSignal.value = val;
-                        categoriesPageSignal.value = 1;
-                        refreshCategoriesSignal();
-                      },
-                    ),
                     if (store != null)
                       AddButton(
                         name: 'Add Category',
@@ -194,7 +197,6 @@ class _CategoriesState extends SignalState<Categories> {
             ),
           ],
         ),
-
         if (storesSignal.value.isLoading || categories.isLoading)
           Loading(text: 'Loading categories...', fullScreen: false)
         else if (store == null)
@@ -208,43 +210,13 @@ class _CategoriesState extends SignalState<Categories> {
         else if (categories.hasValue && categories.value!.isEmpty)
           CenteredMessage(message: 'No Categories were added.')
         else
-          div(classes: 'flex-1 min-h-0 overflow-auto', [
-            table(
-              classes: 'table table-zebra table-pin-rows table-pin-cols',
-              [
-                tableHead(),
-                tbody([
-                  for (final category in sortItems<Category, CategorySortKey>(
-                    items: (categories.value ?? []).where((c) {
-                      if (_statusFilter != null &&
-                          c.isActive != _statusFilter) {
-                        return false;
-                      }
-                      return true;
-                    }).toList(),
-                    sortState: _sortState,
-                    getSortValue: (item, k) => switch (k) {
-                      .name => item.name.toLowerCase(),
-                      .status => item.isActive ? 1 : 0,
-                      .productsCount => _getAssociatedCount(item),
-                      .description => (item.description ?? '').toLowerCase(),
-                    },
-                  ))
-                    tableRow(
-                      name: category.name,
-                      image: category.imageUrl,
-                      isActive: category.isActive,
-                      productsCount: _getAssociatedCount(category),
-                      description: category.description ?? 'N/A',
-                      onEdit: () {
-                        editingCategorySignal.value = category;
-                        activeModalSignal.value = ActiveModal.editCategory;
-                      },
-                    ),
-                ]),
-              ],
-            ),
-          ]),
+          CategoriesTableView(
+            categories: categories.value ?? [],
+            sortState: _sortState,
+            onSort: _onSort,
+            statusFilter: _statusFilter,
+            getAssociatedCount: _getAssociatedCount,
+          ),
 
         TablePagination(
           currentPage: currentPage,
@@ -258,155 +230,9 @@ class _CategoriesState extends SignalState<Categories> {
     );
   }
 
-  thead tableHead() {
-    return thead([
-      tr([
-        th([]),
-        td([.text('Action')]),
-        td([.text('Image')]),
-        SortableHeader<CategorySortKey>(
-          title: 'Category Name',
-          sortKey: .name,
-          currentSort: _sortState,
-          onSort: _onSort,
-          isTh: true,
-        ),
-        td([.text('Status')]),
-        SortableHeader<CategorySortKey>(
-          title: 'Products Associated',
-          sortKey: .productsCount,
-          currentSort: _sortState,
-          onSort: _onSort,
-        ),
-        SortableHeader<CategorySortKey>(
-          title: 'Description',
-          sortKey: .description,
-          currentSort: _sortState,
-          onSort: _onSort,
-        ),
-        th([]),
-      ]),
-    ]);
-  }
-
-  tr tableRow({
-    required String name,
-    String? image,
-    required bool isActive,
-    required int productsCount,
-    required String description,
-    VoidCallback? onEdit,
-  }) {
-    return tr([
-      th([]),
-      td([
-        div(classes: 'flex items-center gap-4', [
-          button(
-            classes:
-                'hover:cursor-pointer btn btn-ghost btn-xs h-8 w-8 p-0 rounded-full text-gray-500 hover:text-accent transition-colors',
-            events: {
-              'click': (e) {
-                e.stopPropagation();
-                onEdit?.call();
-              },
-            },
-            [
-              SquarePen(classes: 'w-5 h-5'),
-            ],
-          ),
-        ]),
-      ]),
-      td([
-        if (image != null && image.isNotEmpty)
-          div(
-            classes:
-                'h-12 w-12 overflow-hidden rounded-2xl bg-gray-100 shrink-0',
-            [
-              img(
-                src: image,
-                alt: name,
-                classes: 'block h-full w-full object-cover',
-              ),
-            ],
-          )
-        else
-          .text('-'),
-      ]),
-      th(classes: 'whitespace-nowrap', [
-        .text(name),
-      ]),
-      td([
-        div(
-          classes:
-              '${isActive ? 'bg-soft-green text-soft-green-content' : 'bg-soft-red text-soft-red-content'} rounded-full px-3 py-1 text-center text-xs font-semibold inline-block',
-          [
-            .text(isActive ? 'ACTIVE' : 'INACTIVE'),
-          ],
-        ),
-      ]),
-      td([.text('$productsCount')]),
-      td([.text(description)]),
-      th([]),
-    ]);
-  }
-
-  Component _buildStatusFilter() {
-    final label = switch (_statusFilter) {
-      true => 'Status: Active',
-      false => 'Status: Inactive',
-      null => 'Status: All',
-    };
-
-    return details(
-      classes: 'dropdown dropdown-bottom dropdown-start inline-block',
-      [
-        summary(
-          classes:
-              'btn btn-sm rounded-full border border-border-medium bg-base-100 hover:bg-base-200 text-xs px-3 font-medium flex items-center gap-1.5 shadow-2xs cursor-pointer list-none select-none',
-          [
-            span(classes: 'text-xs text-base-content font-medium', [
-              .text(label),
-            ]),
-            ChevronDown(classes: 'w-3.5 h-3.5 opacity-60'),
-          ],
-        ),
-        ul(
-          classes:
-              'dropdown-content menu bg-base-100 rounded-2xl z-30 mt-2 p-2 shadow-xl border border-border-medium w-36 flex flex-col gap-1',
-          [
-            dropdownButton(
-              name: 'All Statuses',
-              isSelected: _statusFilter == null,
-              onClick: () {
-                setState(() => _statusFilter = null);
-                _closeDropdowns();
-              },
-            ),
-            dropdownButton(
-              name: 'Active',
-              isSelected: _statusFilter == true,
-              onClick: () {
-                setState(() => _statusFilter = true);
-                _closeDropdowns();
-              },
-            ),
-            dropdownButton(
-              name: 'Inactive',
-              isSelected: _statusFilter == false,
-              onClick: () {
-                setState(() => _statusFilter = false);
-                _closeDropdowns();
-              },
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
   li dropdownButton({
     required String name,
-    bool isSelected = false,
+    required bool isSelected,
     VoidCallback? onClick,
   }) {
     return li([

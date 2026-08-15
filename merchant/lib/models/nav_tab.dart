@@ -1,3 +1,4 @@
+/// Main sidebar navigation tabs.
 enum NavTab {
   dashboard('/dashboard'),
   inventory('/inventory'),
@@ -9,12 +10,12 @@ enum NavTab {
   final String path;
 }
 
+/// Secondary sub-tabs for nested inventory and reports sections.
 enum SubTab {
   products('products'),
   categories('categories'),
   counters('counters'),
   orders('orders'),
-  payments('payments'),
   profitLoss('profit-loss'),
   stockSummary('stock-summary');
 

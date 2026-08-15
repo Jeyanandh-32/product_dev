@@ -118,11 +118,6 @@ class _DrawerState extends SignalState<Drawer> {
                   onClick: () => _navigateTo(context, '/reports/orders'),
                 ),
                 navSubButton(
-                  name: 'Payments',
-                  isSelected: activeReportsSub == .payments,
-                  onClick: () => _navigateTo(context, '/reports/payments'),
-                ),
-                navSubButton(
                   name: 'Profit & Loss',
                   isSelected: activeReportsSub == .profitLoss,
                   onClick: () => _navigateTo(context, '/reports/profit-loss'),

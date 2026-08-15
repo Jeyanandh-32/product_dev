@@ -12,7 +12,6 @@ import 'package:merchant/signals/auth_signal.dart';
 import 'package:merchant/sub_tabs/categories.dart';
 import 'package:merchant/sub_tabs/counters.dart';
 import 'package:merchant/sub_tabs/orders.dart';
-import 'package:merchant/sub_tabs/payments.dart';
 import 'package:merchant/sub_tabs/products.dart';
 import 'package:merchant/sub_tabs/profit_loss.dart';
 import 'package:merchant/sub_tabs/stock_summary.dart';
@@ -81,7 +80,7 @@ class _AppState extends SignalState<App> {
                 ),
                 Route(
                   path: '/reports/payments',
-                  builder: (context, state) => const Payments(),
+                  redirect: (context, state) => '/reports/orders',
                 ),
                 Route(
                   path: '/reports/profit-loss',

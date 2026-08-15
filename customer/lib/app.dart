@@ -46,16 +46,82 @@ class _AppState extends SignalState<App> {
           routes: [
             ShellRoute(
               builder: (context, state, child) {
-                final customer = customerAuthSignal.value.value;
-                if (customer == null) {
-                  final currentPath = state.subloc;
-                  if (currentPath.startsWith('/store/')) {
-                    redirectPathSignal.value = currentPath;
-                  }
-                  return const LoginPage();
-                }
                 return AppLayout(child: child);
               },
+              routes: [
+                Route(
+                  path: '/',
+                  builder: (context, state) => const StoreSearchPage(),
+                ),
+                Route(
+                  path: '/stores',
+                  redirect: (context, state) => '/?all=true',
+                ),
+                Route(
+                  path: '/store/:slug',
+                  builder: (context, state) => StoreDetailPage(
+                    slug: state.params['slug'] ?? '',
+                  ),
+                ),
+                Route(
+                  path: '/cart',
+                  builder: (context, state) => const CartPage(),
+                ),
+                Route(
+                  path: '/order/status',
+                  builder: (context, state) => OrderStatusPage(
+                    reference: state.queryParams['reference'] ?? '',
+                  ),
+                ),
+                Route(
+                  path: '/orders',
+                  builder: (context, state) => const CustomerOrdersPage(),
+                  redirect: (context, state) {
+                    final customer = customerAuthSignal.value.value;
+                    if (customer == null) {
+                      redirectPathSignal.value = '/orders';
+                      return '/login';
+                    }
+                    return null;
+                  },
+                ),
+                Route(
+                  path: '/profile',
+                  builder: (context, state) => const CustomerProfilePage(),
+                  redirect: (context, state) {
+                    final customer = customerAuthSignal.value.value;
+                    if (customer == null) {
+                      redirectPathSignal.value = '/profile';
+                      return '/login';
+                    }
+                    return null;
+                  },
+                ),
+              ],
+            ),
+            Route(
+              path: '/login',
+              builder: (context, state) => const LoginPage(),
+              redirect: _guestOnlyRedirect,
+            ),
+            Route(
+              path: '/register',
+              builder: (context, state) => const RegisterPage(),
+              redirect: _guestOnlyRedirect,
+            ),
+            Route(
+              path: '/:path*',
+              redirect: (context, state) => '/',
+            ),
+          ],
+        ),
+      ]),
+      error: (error, stackTrace) => main_([
+        const Toast(),
+        Router(
+          routes: [
+            ShellRoute(
+              builder: (context, state, child) => AppLayout(child: child),
               routes: [
                 Route(
                   path: '/',
@@ -80,22 +146,22 @@ class _AppState extends SignalState<App> {
                 Route(
                   path: '/orders',
                   builder: (context, state) => const CustomerOrdersPage(),
+                  redirect: (context, state) => '/login',
                 ),
                 Route(
                   path: '/profile',
                   builder: (context, state) => const CustomerProfilePage(),
+                  redirect: (context, state) => '/login',
                 ),
               ],
             ),
             Route(
               path: '/login',
               builder: (context, state) => const LoginPage(),
-              redirect: _guestOnlyRedirect,
             ),
             Route(
               path: '/register',
               builder: (context, state) => const RegisterPage(),
-              redirect: _guestOnlyRedirect,
             ),
             Route(
               path: '/:path*',
@@ -104,14 +170,6 @@ class _AppState extends SignalState<App> {
           ],
         ),
       ]),
-      error: (error, stackTrace) => Router(
-        routes: [
-          Route(
-            path: '/',
-            builder: (context, state) => const LoginPage(),
-          ),
-        ],
-      ),
       loading: () => main_([
         div(
           classes: 'min-h-screen flex items-center justify-center bg-base-100',

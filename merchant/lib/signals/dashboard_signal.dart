@@ -1,7 +1,12 @@
 import 'package:client_repositories/client_repositories.dart';
+import 'package:merchant/signals/dashboard_data_parser.dart';
+import 'package:merchant/signals/dashboard_signals_updater.dart';
 import 'package:merchant/signals/stores_signal.dart';
 import 'package:models/models.dart';
 import 'package:signals/signals.dart';
+
+export 'package:merchant/signals/dashboard_data_parser.dart'
+    show DashboardTopProduct;
 
 final dashboardRangeSignal = signal<DashboardRange>(.days7);
 
@@ -91,18 +96,7 @@ final dashboardHourlyOrdersSignal =
       data: const [0, 0, 0, 0, 0, 0, 0, 0],
     ));
 
-final dashboardTopProductsSignal =
-    signal<
-      List<
-        ({
-          String rank,
-          String name,
-          String category,
-          String units,
-          String revenue,
-        })
-      >
-    >(const []);
+final dashboardTopProductsSignal = signal<List<DashboardTopProduct>>(const []);
 
 final dashboardLowStockProductsSignal = signal<List<Product>>(const []);
 
@@ -185,161 +179,14 @@ Future<void> refreshDashboardSignal() async {
         fromDate: fromDateStr,
       );
 
-      final totalRevenue =
-          (analytics['totalRevenue'] as num?)?.toDouble() ?? 0.0;
-      final totalOrders = analytics['totalOrders'] as int? ?? 0;
-      final aov = (analytics['aov'] as num?)?.toDouble() ?? 0.0;
-      final lowStockCount = analytics['lowStockCount'] as int? ?? 0;
-
-      final pMethods =
-          (analytics['paymentMethods'] as Map<String, dynamic>?) ?? {};
-      final upiTotal = (pMethods['upiTotal'] as num?)?.toDouble() ?? 0.0;
-      final cashTotal = (pMethods['cashTotal'] as num?)?.toDouble() ?? 0.0;
-      final pSum = upiTotal + cashTotal;
-      final upiPct = pSum > 0 ? ((upiTotal / pSum) * 100).round() : 0;
-      final cashPct = pSum > 0 ? 100 - upiPct : 0;
-
-      final pStatus =
-          (analytics['paymentStatus'] as Map<String, dynamic>?) ?? {};
-      final paidTotal = (pStatus['paidTotal'] as num?)?.toDouble() ?? 0.0;
-      final freeTotal = (pStatus['freeTotal'] as num?)?.toDouble() ?? 0.0;
-      final paidCount = pStatus['paidCount'] as int? ?? 0;
-      final freeCount = pStatus['freeCount'] as int? ?? 0;
-      final oSum = paidCount + freeCount;
-      final paidPct = oSum > 0 ? ((paidCount / oSum) * 100).round() : 0;
-      final freePct = oSum > 0 ? 100 - paidPct : 0;
-
-      final rawTop = (analytics['topProducts'] as List<dynamic>?) ?? [];
-      final topList =
-          <
-            ({
-              String rank,
-              String name,
-              String category,
-              String units,
-              String revenue,
-            })
-          >[];
-      for (var i = 0; i < rawTop.length; i++) {
-        final map = rawTop[i] as Map<String, dynamic>;
-        final totalRevPaise = (map['totalRevenue'] as num?)?.toDouble() ?? 0.0;
-        final qtySold = map['quantitySold'] as int? ?? 0;
-        topList.add((
-          rank: '${i + 1}',
-          name: map['name'] as String? ?? '',
-          category: map['category'] as String? ?? 'General',
-          units: '$qtySold sold',
-          revenue: '₹ ${(totalRevPaise / 100.0).toStringAsFixed(2)}',
-        ));
-      }
-
-      final rawLow = (analytics['lowStockProducts'] as List<dynamic>?) ?? [];
-      final lowStockList = rawLow.map((json) {
-        final map = json as Map<String, dynamic>;
-        final pricePaise = (map['sellingPrice'] as num?)?.toDouble() ?? 0.0;
-        final qty = map['quantity'] as int? ?? 0;
-        final thresh = map['lowStockThreshold'] as int? ?? 5;
-        return Product(
-          id: map['id'] as String? ?? '',
-          merchantId: '',
-          name: map['name'] as String? ?? '',
-          basePrice: pricePaise / 100.0,
-          sellingPrice: pricePaise / 100.0,
-          taxRate: 0.0,
-          isActive: true,
-          category: Category(
-            id: '',
-            merchantId: '',
-            storeId: selectedStore.id,
-            name: map['category'] as String? ?? 'General',
-            isActive: true,
-            createdAt: DateTime.now(),
-            updatedAt: DateTime.now(),
-          ),
-          stock: Stock(
-            id: map['id'] as String? ?? '',
-            productId: map['id'] as String? ?? '',
-            storeId: selectedStore.id,
-            quantity: qty,
-            lowStockThreshold: thresh,
-            stockMonitor: true,
-            createdAt: DateTime.now(),
-            updatedAt: DateTime.now(),
-          ),
-          createdAt: DateTime.now(),
-          updatedAt: DateTime.now(),
-        );
-      }).toList();
-
-      final catSalesMap =
-          (analytics['categorySales'] as Map<String, dynamic>?) ?? {};
-      final catLabels =
-          (catSalesMap['labels'] as List<dynamic>?)
-              ?.map((e) => e.toString())
-              .toList() ??
-          [];
-      final catData =
-          (catSalesMap['data'] as List<dynamic>?)
-              ?.map((e) => (e as num).toDouble())
-              .toList() ??
-          [];
-
-      final hourlyMap =
-          (analytics['hourlyTraffic'] as Map<String, dynamic>?) ?? {};
-      final hourlyLabels =
-          (hourlyMap['labels'] as List<dynamic>?)
-              ?.map((e) => e.toString())
-              .toList() ??
-          [];
-      final hourlyData =
-          (hourlyMap['data'] as List<dynamic>?)
-              ?.map((e) => (e as num).toInt())
-              .toList() ??
-          [];
-
-      untracked(() {
-        dashboardSummarySignal.value = (
-          totalRevenue: totalRevenue,
-          totalOrders: totalOrders,
-          aov: aov,
-          lowStockCount: lowStockCount,
-          revenueGrowth:
-              (analytics['revenueGrowth'] as num?)?.toDouble() ?? 0.0,
-          ordersGrowth: (analytics['ordersGrowth'] as num?)?.toDouble() ?? 0.0,
-          aovGrowth: (analytics['aovGrowth'] as num?)?.toDouble() ?? 0.0,
-        );
-        dashboardPaymentMethodsSignal.value = (
-          upiTotal: upiTotal,
-          cashTotal: cashTotal,
-          upiPercent: upiPct,
-          cashPercent: cashPct,
-        );
-        dashboardPaymentStatusSignal.value = (
-          paidTotal: paidTotal,
-          freeTotal: freeTotal,
-          paidCount: paidCount,
-          freeCount: freeCount,
-          paidPercent: paidPct,
-          freePercent: freePct,
-        );
-        dashboardCategorySalesSignal.value = (
-          labels: catLabels,
-          data: catData,
-        );
-        if (hourlyData.isNotEmpty) {
-          dashboardHourlyOrdersSignal.value = (
-            labels: hourlyLabels,
-            data: hourlyData,
-          );
-        }
-        dashboardTopProductsSignal.value = topList;
-        dashboardLowStockProductsSignal.value = lowStockList;
-      });
-
+      DashboardSignalsUpdater.applyAnalytics(
+        analytics: analytics,
+        storeId: selectedStore.id,
+      );
       return;
     } catch (_) {}
 
-    // Fallback to OrderRepository.getAll
+    // 2. Fallback to OrderRepository.getAll
     final result = await OrderRepository.getAll(
       storeId: selectedStore.id,
       fromDate: fromDateStr,
@@ -347,74 +194,7 @@ Future<void> refreshDashboardSignal() async {
       size: 50,
     );
 
-    final summary = result.summary;
-
-    final totalOrders = summary.totalOrders;
-    final totalRevenue = summary.netRevenue > 0
-        ? summary.netRevenue
-        : summary.grossSubtotal;
-    final aov = totalOrders > 0 ? (totalRevenue / totalOrders) : 0.0;
-
-    var upiTotal = 0.0;
-    var cashTotal = 0.0;
-    var paidTotal = 0.0;
-    var freeTotal = 0.0;
-    var paidCount = 0;
-    var freeCount = 0;
-
-    for (final o in result.items) {
-      if (o.paymentMethod == PaymentMethod.upi) {
-        upiTotal += o.grandTotal;
-      } else if (o.paymentMethod == PaymentMethod.cash) {
-        cashTotal += o.grandTotal;
-      }
-
-      if (o.paymentMethod == PaymentMethod.complimentary) {
-        freeTotal += o.subtotal > 0 ? o.subtotal : 1.0;
-        freeCount++;
-      } else {
-        paidTotal += o.grandTotal;
-        paidCount++;
-      }
-    }
-
-    final pSum = upiTotal + cashTotal;
-    final upiPct = pSum > 0 ? ((upiTotal / pSum) * 100).round() : 0;
-    final cashPct = pSum > 0 ? 100 - upiPct : 0;
-
-    final oSum = paidCount + freeCount;
-    final paidPct = oSum > 0 ? ((paidCount / oSum) * 100).round() : 0;
-    final freePct = oSum > 0 ? 100 - paidPct : 0;
-
-    untracked(() {
-      dashboardSummarySignal.value = (
-        totalRevenue: totalRevenue,
-        totalOrders: totalOrders,
-        aov: aov,
-        lowStockCount: 0,
-
-        revenueGrowth: 0.0,
-        ordersGrowth: 0.0,
-        aovGrowth: 0.0,
-      );
-
-      dashboardPaymentMethodsSignal.value = (
-        upiTotal: upiTotal,
-        cashTotal: cashTotal,
-        upiPercent: upiPct,
-        cashPercent: cashPct,
-      );
-      dashboardPaymentStatusSignal.value = (
-        paidTotal: paidTotal,
-        freeTotal: freeTotal,
-        paidCount: paidCount,
-        freeCount: freeCount,
-        paidPercent: paidPct,
-        freePercent: freePct,
-      );
-
-      dashboardRecentOrdersSignal.value = AsyncData(result.items);
-    });
+    DashboardSignalsUpdater.applyOrdersFallback(result);
   } catch (e, stack) {
     dashboardRecentOrdersSignal.value = AsyncError(e, stack);
   }

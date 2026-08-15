@@ -16,6 +16,10 @@ final ordersSummarySignal = signal<OrderSummary>((
   grossSubtotal: 0.0,
   totalDiscount: 0.0,
   netRevenue: 0.0,
+  cashCollected: 0.0,
+  upiCollected: 0.0,
+  walletCollected: 0.0,
+  freeTotal: 0.0,
 ));
 
 final ordersSignal = asyncSignal<List<Order>>(const AsyncLoading());
@@ -31,6 +35,10 @@ void resetOrdersSignal() {
     grossSubtotal: 0.0,
     totalDiscount: 0.0,
     netRevenue: 0.0,
+    cashCollected: 0.0,
+    upiCollected: 0.0,
+    walletCollected: 0.0,
+    freeTotal: 0.0,
   );
   ordersSignal.value = const AsyncData([]);
 }
@@ -64,6 +72,10 @@ Future<void> refreshOrdersSignal() async {
         grossSubtotal: 0.0,
         totalDiscount: 0.0,
         netRevenue: 0.0,
+        cashCollected: 0.0,
+        upiCollected: 0.0,
+        walletCollected: 0.0,
+        freeTotal: 0.0,
       );
       ordersSignal.value = const AsyncData([]);
     });

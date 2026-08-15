@@ -10,8 +10,9 @@ Future<void> initCustomerAuthSignal() async {
   try {
     final customer = await CustomerAuthRepository.getCustomer();
     customerAuthSignal.value = AsyncData(customer);
-  } catch (e, stack) {
-    customerAuthSignal.value = AsyncError(e, stack);
+  } catch (_) {
+    // Unauthenticated guest user - proceed with null customer session
+    customerAuthSignal.value = const AsyncData(null);
   }
 }
 

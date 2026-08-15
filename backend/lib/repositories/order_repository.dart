@@ -1,15 +1,18 @@
 import 'package:backend/database/schema.dart';
-import 'package:backend/extensions/order_row_extension.dart';
-import 'package:backend/repositories/order_item_repository.dart';
-import 'package:backend/repositories/product_repository.dart';
+import 'package:backend/repositories/customer_orders_query.dart';
+import 'package:backend/repositories/dashboard_analytics_query.dart';
+import 'package:backend/repositories/order_summary_calculator.dart';
+import 'package:backend/repositories/profit_loss_report_query.dart';
 import 'package:models/models.dart';
 import 'package:typed_sql/typed_sql.dart' as ts;
 
+/// Repository for handling order queries, creation, and reports in the PostgreSQL database.
 class OrderRepository {
   OrderRepository({required this._db});
 
   final ts.Database<DatabaseSchema> _db;
 
+  /// Inserts a new order row into the orders table.
   Future<OrderRow> create({
     required String merchantId,
     required String storeId,
@@ -53,6 +56,7 @@ class OrderRepository {
     return row;
   }
 
+  /// Returns the next incremental daily bill number for a store.
   Future<int> getNextBillNo(String storeId) async {
     final today = DateTime.now().toUtc();
     final startOfToday = DateTime.utc(today.year, today.month, today.day);
@@ -67,6 +71,7 @@ class OrderRepository {
     return (lastOrder?.billNo ?? 0) + 1;
   }
 
+  /// Updates existing order state, payment status, or payment method.
   Future<OrderRow?> update({
     required String id,
     OrderStatus? status,
@@ -97,6 +102,7 @@ class OrderRepository {
     return row;
   }
 
+  /// Fetches orders filtered by merchant, store, date range, and pagination.
   Future<List<OrderRow>> getAll({
     required String merchantId,
     String? storeId,
@@ -115,35 +121,28 @@ class OrderRepository {
     if (storeId != null) {
       query = query.where((o) => o.storeId.equals(ts.toExpr(storeId)));
     }
-
     if (fromDate != null) {
       query = query.where((o) => o.createdAt.isAfterValue(fromDate));
     }
-
     if (toDate != null) {
       query = query.where((o) => o.createdAt.isBeforeValue(toDate));
     }
-
     if (paymentMethod != null && paymentMethod.isNotEmpty) {
       query = query.where(
         (o) => o.paymentMethod.equals(ts.toExpr(paymentMethod)),
       );
     }
-
     if (status != null && status.isNotEmpty) {
       query = query.where((o) => o.status.equals(ts.toExpr(status)));
     }
-
     if (paymentStatus != null && paymentStatus.isNotEmpty) {
       query = query.where(
         (o) => o.paymentStatus.equals(ts.toExpr(paymentStatus)),
       );
     }
-
     if (offset != null) {
       query = query.offset(offset);
     }
-
     if (limit != null) {
       query = query.limit(limit);
     }
@@ -155,12 +154,17 @@ class OrderRepository {
     return rows;
   }
 
+  /// Computes order summary totals (count, gross, discounts, net revenue, and payment channels).
   Future<
     ({
       int totalOrders,
       double grossSubtotal,
       double totalDiscount,
       double netRevenue,
+      double cashCollected,
+      double upiCollected,
+      double walletCollected,
+      double freeTotal,
     })
   >
   getOrderSummary({
@@ -168,55 +172,15 @@ class OrderRepository {
     String? storeId,
     DateTime? fromDate,
     DateTime? toDate,
-  }) async {
-    var query = _db.orders.where(
-      (o) => o.merchantId.equals(ts.toExpr(merchantId)),
-    );
+  }) => OrderSummaryCalculator.calculateOrderSummary(
+    db: _db,
+    merchantId: merchantId,
+    storeId: storeId,
+    fromDate: fromDate,
+    toDate: toDate,
+  );
 
-    if (storeId != null) {
-      query = query.where((o) => o.storeId.equals(ts.toExpr(storeId)));
-    }
-    if (fromDate != null) {
-      query = query.where((o) => o.createdAt.isAfterValue(fromDate));
-    }
-    if (toDate != null) {
-      query = query.where((o) => o.createdAt.isBeforeValue(toDate));
-    }
-
-    final rows = await query.fetch();
-
-    var validOrderCount = 0;
-    var grossSubtotalPaise = 0;
-    var totalDiscountPaise = 0;
-    var netRevenuePaise = 0;
-
-    for (final row in rows) {
-      final pStatus = row.paymentStatus.toLowerCase();
-      final status = row.status.toLowerCase();
-
-      final isPaidOrCompleted =
-          pStatus == PaymentStatus.completed.name ||
-          pStatus == 'paid' ||
-          row.paymentMethod.toLowerCase() == PaymentMethod.complimentary.name;
-
-      final isCancelled = status == OrderStatus.cancelled.name;
-
-      if (isPaidOrCompleted && !isCancelled) {
-        validOrderCount++;
-        grossSubtotalPaise += row.subtotal;
-        totalDiscountPaise += row.discountTotal;
-        netRevenuePaise += row.grandTotal;
-      }
-    }
-
-    return (
-      totalOrders: validOrderCount,
-      grossSubtotal: grossSubtotalPaise / 100.0,
-      totalDiscount: totalDiscountPaise / 100.0,
-      netRevenue: netRevenuePaise / 100.0,
-    );
-  }
-
+  /// Computes collected payments summary categorized by Cash, UPI, and Free.
   Future<
     ({
       double cashCollected,
@@ -230,54 +194,15 @@ class OrderRepository {
     String? storeId,
     DateTime? fromDate,
     DateTime? toDate,
-  }) async {
-    var query = _db.orders.where(
-      (o) => o.merchantId.equals(ts.toExpr(merchantId)),
-    );
+  }) => OrderSummaryCalculator.calculatePaymentSummary(
+    db: _db,
+    merchantId: merchantId,
+    storeId: storeId,
+    fromDate: fromDate,
+    toDate: toDate,
+  );
 
-    if (storeId != null) {
-      query = query.where((o) => o.storeId.equals(ts.toExpr(storeId)));
-    }
-    if (fromDate != null) {
-      query = query.where((o) => o.createdAt.isAfterValue(fromDate));
-    }
-    if (toDate != null) {
-      query = query.where((o) => o.createdAt.isBeforeValue(toDate));
-    }
-
-    final rows = await query.fetch();
-
-    var cashPaise = 0;
-    var upiPaise = 0;
-    var freePaise = 0;
-    var totalPaise = 0;
-
-    for (final row in rows) {
-      final statusLower = row.paymentStatus.toLowerCase();
-      final isPaid = statusLower == 'completed' || statusLower == 'paid';
-      final method = row.paymentMethod.toLowerCase();
-
-      if (method == 'cash') {
-        if (isPaid) cashPaise += row.grandTotal;
-      } else if (method == 'upi') {
-        if (isPaid) upiPaise += row.grandTotal;
-      } else if (method == 'complimentary') {
-        freePaise += row.subtotal + row.taxTotal;
-      }
-
-      if (isPaid) {
-        totalPaise += row.grandTotal;
-      }
-    }
-
-    return (
-      cashCollected: cashPaise / 100.0,
-      upiCollected: upiPaise / 100.0,
-      freeTotal: freePaise / 100.0,
-      totalCollected: totalPaise / 100.0,
-    );
-  }
-
+  /// Counts total orders matching filter parameters.
   Future<int> count({
     required String merchantId,
     String? storeId,
@@ -294,25 +219,20 @@ class OrderRepository {
     if (storeId != null) {
       query = query.where((o) => o.storeId.equals(ts.toExpr(storeId)));
     }
-
     if (fromDate != null) {
       query = query.where((o) => o.createdAt.isAfterValue(fromDate));
     }
-
     if (toDate != null) {
       query = query.where((o) => o.createdAt.isBeforeValue(toDate));
     }
-
     if (paymentMethod != null && paymentMethod.isNotEmpty) {
       query = query.where(
         (o) => o.paymentMethod.equals(ts.toExpr(paymentMethod)),
       );
     }
-
     if (status != null && status.isNotEmpty) {
       query = query.where((o) => o.status.equals(ts.toExpr(status)));
     }
-
     if (paymentStatus != null && paymentStatus.isNotEmpty) {
       query = query.where(
         (o) => o.paymentStatus.equals(ts.toExpr(paymentStatus)),
@@ -323,15 +243,12 @@ class OrderRepository {
     return total ?? 0;
   }
 
+  /// Fetches single order row by primary key UUID.
   Future<OrderRow?> getById(String id) async {
-    final row = _db.orders
-        .where((o) => o.id.equals(ts.toExpr(id)))
-        .first
-        .fetch();
-
-    return row;
+    return _db.orders.where((o) => o.id.equals(ts.toExpr(id))).first.fetch();
   }
 
+  /// Fetches single order row by either bill number, UUID, or reference code.
   Future<OrderRow?> getByIdOrBillNo(String idOrBillNo, String storeId) async {
     final billNo = int.tryParse(idOrBillNo);
     if (billNo != null) {
@@ -355,15 +272,15 @@ class OrderRepository {
         .fetch();
   }
 
+  /// Fetches single order row by human-readable reference code.
   Future<OrderRow?> getByReference(String reference) async {
-    final row = _db.orders
+    return _db.orders
         .where((o) => o.orderReference.equals(ts.toExpr(reference)))
         .first
         .fetch();
-
-    return row;
   }
 
+  /// Computes comprehensive Profit & Loss analytics using [ProfitLossReportQuery].
   Future<
     ({
       int total,
@@ -382,540 +299,46 @@ class OrderRepository {
     String? searchQuery,
     int limit = 10,
     int offset = 0,
-  }) async {
-    var orderQuery = _db.orders
-        .where((o) => o.merchantId.equals(ts.toExpr(merchantId)))
-        .where((o) => o.storeId.equals(ts.toExpr(storeId)));
-
-    if (fromDate != null) {
-      orderQuery = orderQuery.where((o) => o.createdAt.isAfterValue(fromDate));
-    }
-    if (toDate != null) {
-      orderQuery = orderQuery.where((o) => o.createdAt.isBeforeValue(toDate));
-    }
-
-    final rawOrders = await orderQuery.fetch();
-    final orders = rawOrders.where((o) {
-      final pStatus = o.paymentStatus.toLowerCase();
-      final status = o.status.toLowerCase();
-      final isPaidOrCompleted = pStatus == PaymentStatus.completed.name ||
-          o.paymentMethod.toLowerCase() == PaymentMethod.complimentary.name;
-      final isCancelled = status == OrderStatus.cancelled.name;
-      return isPaidOrCompleted && !isCancelled;
-    }).toList();
-
-    final orderIds = orders.map((o) => o.id).toSet();
-
-    final products = await _db.products
-        .where((p) => p.storeId.equals(ts.toExpr(storeId)))
-        .fetch();
-
-    final categories = await _db.categories
-        .where((c) => c.storeId.equals(ts.toExpr(storeId)))
-        .fetch();
-
-    final counters = await _db.counters
-        .where((c) => c.storeId.equals(ts.toExpr(storeId)))
-        .fetch();
-
-    final categoryMap = {for (final c in categories) c.id: c.name};
-    final counterMap = {for (final c in counters) c.id: c.name};
-
-    final orderMap = {for (final o in orders) o.id: o};
-
-    final soldQuantityMap = <String, int>{};
-    final collectedPriceMap = <String, double>{};
-
-    if (orderIds.isNotEmpty) {
-      final items = await _db.orderItems
-          .where((i) => i.storeId.equals(ts.toExpr(storeId)))
-          .fetch();
-
-      for (final item in items) {
-        final order = orderMap[item.orderId];
-        if (order == null) continue;
-
-        soldQuantityMap[item.productId] =
-            (soldQuantityMap[item.productId] ?? 0) + item.quantity;
-
-        final isComplimentary =
-            order.paymentMethod.toLowerCase() ==
-            PaymentMethod.complimentary.name;
-        final itemGrossPaise = (item.unitPrice * item.quantity) - item.discount;
-
-        double itemCollected;
-        if (isComplimentary || order.grandTotal <= 0) {
-          itemCollected = 0.0;
-        } else {
-          final orderSubtotal = order.subtotal > 0 ? order.subtotal : 1;
-          final discountRatio = (order.discountTotal / orderSubtotal).clamp(
-            0.0,
-            1.0,
-          );
-          final effectiveItemPaise = itemGrossPaise * (1.0 - discountRatio);
-          itemCollected = effectiveItemPaise / 100.0;
-        }
-
-        collectedPriceMap[item.productId] =
-            (collectedPriceMap[item.productId] ?? 0.0) + itemCollected;
-      }
-    }
-
-    final stockAdjustments = await _db.stockTransactions
-        .where((a) => a.storeId.equals(ts.toExpr(storeId)))
-        .where(
-          (a) => a.reason.equals(
-            ts.toExpr(StockTransactionReason.wastage.name),
-          ),
-        )
-        .fetch();
-
-    final wastageLossMap = <String, double>{};
-    final productBasePriceMap = {for (final p in products) p.id: p.basePrice};
-
-    for (final a in stockAdjustments) {
-      if (fromDate != null && a.createdAt.isBefore(fromDate)) continue;
-      if (toDate != null && a.createdAt.isAfter(toDate)) continue;
-      final basePricePaise = productBasePriceMap[a.productId] ?? 0;
-      final loss = (basePricePaise * a.quantity) / 100.0;
-      wastageLossMap[a.productId] = (wastageLossMap[a.productId] ?? 0.0) + loss;
-    }
-
-    var reportItems = <ProfitLossItem>[];
-
-    for (final p in products) {
-      final soldQty = soldQuantityMap[p.id] ?? 0;
-      final wastageLoss = wastageLossMap[p.id] ?? 0.0;
-
-      if (soldQty <= 0 && wastageLoss <= 0) continue;
-
-      final collectedPrice = collectedPriceMap[p.id] ?? 0.0;
-
-      final costPrice = (p.basePrice / 100.0) * soldQty;
-      final profit = collectedPrice - costPrice - wastageLoss;
-      final totalBase = costPrice + wastageLoss;
-      final percentage = totalBase > 0 ? (profit / totalBase) * 100.0 : 0.0;
-
-      final categoryName = p.categoryId != null
-          ? (categoryMap[p.categoryId!] ?? 'Unassigned')
-          : 'Unassigned';
-      final counterName = p.counterId != null
-          ? (counterMap[p.counterId!] ?? 'Unassigned')
-          : 'Unassigned';
-
-      reportItems.add(
-        ProfitLossItem(
-          productId: p.id,
-          productName: p.name,
-          categoryName: categoryName,
-          counterName: counterName,
-          soldQuantity: soldQty,
-          costPrice: costPrice,
-          collectedPrice: collectedPrice,
-          profit: profit,
-          profitLossPercentage: percentage,
-        ),
-      );
-    }
-
-    var totalCostPrice = 0.0;
-    var totalCollectedPrice = 0.0;
-
-    for (final item in reportItems) {
-      totalCostPrice += item.costPrice;
-      totalCollectedPrice += item.collectedPrice;
-    }
-
-    final totalProfit = totalCollectedPrice - totalCostPrice;
-    final totalMarginPercentage = totalCostPrice > 0
-        ? (totalProfit / totalCostPrice) * 100.0
-        : 0.0;
-
-    if (searchQuery != null && searchQuery.trim().isNotEmpty) {
-      final query = searchQuery.trim().toLowerCase();
-      reportItems = reportItems.where((item) {
-        return item.productName.toLowerCase().contains(query) ||
-            item.categoryName.toLowerCase().contains(query) ||
-            item.counterName.toLowerCase().contains(query);
-      }).toList();
-    }
-
-    final total = reportItems.length;
-    final paginatedItems = reportItems.skip(offset).take(limit).toList();
-
-    return (
-      total: total,
-      items: paginatedItems,
-      totalCostPrice: totalCostPrice,
-      totalCollectedPrice: totalCollectedPrice,
-      totalProfit: totalProfit,
-      totalMarginPercentage: totalMarginPercentage,
+  }) {
+    return ProfitLossReportQuery(db: _db).execute(
+      merchantId: merchantId,
+      storeId: storeId,
+      fromDate: fromDate,
+      toDate: toDate,
+      searchQuery: searchQuery,
+      limit: limit,
+      offset: offset,
     );
   }
 
+  /// Computes aggregated live dashboard metrics using [DashboardAnalyticsQuery].
   Future<Map<String, dynamic>> getDashboardAnalytics({
     required String merchantId,
     required String storeId,
     DateTime? fromDate,
     DateTime? toDate,
-  }) async {
-    var query = _db.orders
-        .where((o) => o.merchantId.equals(ts.toExpr(merchantId)))
-        .where((o) => o.storeId.equals(ts.toExpr(storeId)));
-
-    if (fromDate != null) {
-      query = query.where((o) => o.createdAt.isAfterValue(fromDate));
-    }
-    if (toDate != null) {
-      query = query.where((o) => o.createdAt.isBeforeValue(toDate));
-    }
-
-    final orderRows = await query
-        .orderBy((o) => [(o.createdAt, ts.Order.descending)])
-        .fetch();
-
-    var totalRevenuePaise = 0;
-    var upiPaise = 0;
-    var cashPaise = 0;
-    var paidPaise = 0;
-    var freePaise = 0;
-    var paidCount = 0;
-    var freeCount = 0;
-
-    final hourlyCounts = List<int>.filled(8, 0);
-
-    for (final o in orderRows) {
-      final hour = o.createdAt.toLocal().hour;
-      if (hour >= 8 && hour < 10) {
-        hourlyCounts[0]++;
-      } else if (hour >= 10 && hour < 12) {
-        hourlyCounts[1]++;
-      } else if (hour >= 12 && hour < 14) {
-        hourlyCounts[2]++;
-      } else if (hour >= 14 && hour < 16) {
-        hourlyCounts[3]++;
-      } else if (hour >= 16 && hour < 18) {
-        hourlyCounts[4]++;
-      } else if (hour >= 18 && hour < 20) {
-        hourlyCounts[5]++;
-      } else if (hour >= 20 && hour < 22) {
-        hourlyCounts[6]++;
-      } else {
-        hourlyCounts[7]++;
-      }
-
-      final method = o.paymentMethod.toLowerCase();
-      final pStatus = o.paymentStatus.toLowerCase();
-      final isPaid = pStatus == PaymentStatus.completed.name || pStatus == 'paid';
-      final isComplimentary = method == PaymentMethod.complimentary.name;
-
-      if (isComplimentary) {
-        freePaise += o.subtotal > 0 ? o.subtotal : 100;
-        freeCount++;
-      } else if (isPaid) {
-        totalRevenuePaise += o.grandTotal;
-        paidPaise += o.grandTotal;
-        paidCount++;
-
-        if (method == PaymentMethod.upi.name) {
-          upiPaise += o.grandTotal;
-        } else if (method == PaymentMethod.cash.name) {
-          cashPaise += o.grandTotal;
-        }
-      }
-    }
-
-    final totalOrders = paidCount + freeCount;
-    final totalRevenue = totalRevenuePaise / 100.0;
-    final aov = totalOrders > 0 ? (totalRevenue / totalOrders) : 0.0;
-
-    final stocks = await _db.stocks
-        .where((s) => s.storeId.equals(ts.toExpr(storeId)))
-        .fetch();
-    final lowStockCount = stocks
-        .where((s) => s.quantity <= s.lowStockThreshold)
-        .length;
-
-    // Previous period comparison for growth percentage
-    var revenueGrowth = 0.0;
-    var ordersGrowth = 0.0;
-    var aovGrowth = 0.0;
-
-    if (fromDate != null) {
-      final now = toDate ?? DateTime.now().toUtc();
-      final duration = now.difference(fromDate);
-      final prevFromDate = fromDate.subtract(duration);
-      final prevToDate = fromDate;
-
-      final prevRows = await _db.orders
-          .where((o) => o.merchantId.equals(ts.toExpr(merchantId)))
-          .where((o) => o.storeId.equals(ts.toExpr(storeId)))
-          .where((o) => o.createdAt.isAfterValue(prevFromDate))
-          .where((o) => o.createdAt.isBeforeValue(prevToDate))
-          .fetch();
-
-      var prevRevenuePaise = 0;
-      var prevCount = 0;
-      for (final p in prevRows) {
-        final pStatus = p.paymentStatus.toLowerCase();
-        final isPaid = pStatus == PaymentStatus.completed.name || pStatus == 'paid';
-        if (isPaid) {
-          prevRevenuePaise += p.grandTotal;
-          prevCount++;
-        }
-      }
-
-      final prevRevenue = prevRevenuePaise / 100.0;
-      final prevOrders = prevCount;
-      final prevAov = prevOrders > 0 ? (prevRevenue / prevOrders) : 0.0;
-
-      if (prevRevenue > 0) {
-        revenueGrowth = ((totalRevenue - prevRevenue) / prevRevenue) * 100.0;
-      } else if (totalRevenue > 0) {
-        revenueGrowth = 100.0;
-      }
-
-      if (prevOrders > 0) {
-        ordersGrowth = ((totalOrders - prevOrders) / prevOrders) * 100.0;
-      } else if (totalOrders > 0) {
-        ordersGrowth = 100.0;
-      }
-
-      if (prevAov > 0) {
-        aovGrowth = ((aov - prevAov) / prevAov) * 100.0;
-      } else if (aov > 0) {
-        aovGrowth = 100.0;
-      }
-    }
-
-    final productRows = await _db.products
-        .leftJoin(_db.stocks)
-        .on((p, s) => p.id.equals(s.productId))
-        .leftJoin(_db.categories)
-        .on((p, s, c) => p.categoryId.equals(c.id))
-        .where((p, s, c) => p.storeId.equals(ts.toExpr(storeId)))
-        .fetch();
-
-    final orderItemTuples = await _db.orderItems
-        .leftJoin(_db.orders)
-        .on((item, o) => item.orderId.equals(o.id))
-        .leftJoin(_db.products)
-        .on((item, o, p) => item.productId.equals(p.id))
-        .leftJoin(_db.categories)
-        .on((item, o, p, c) => p.categoryId.equals(c.id))
-        .where((item, o, p, c) => item.storeId.equals(ts.toExpr(storeId)))
-        .fetch();
-
-    final categoryMap = <String, double>{};
-    for (final tuple in orderItemTuples) {
-      final item = tuple.$1;
-      final o = tuple.$2;
-      final c = tuple.$4;
-
-      if (o != null) {
-        final pStatus = o.paymentStatus.toLowerCase();
-        final status = o.status.toLowerCase();
-        final isPaidOrCompleted = pStatus == PaymentStatus.completed.name ||
-            o.paymentMethod.toLowerCase() == PaymentMethod.complimentary.name;
-        final isCancelled = status == OrderStatus.cancelled.name;
-        if (!isPaidOrCompleted || isCancelled) continue;
-
-        if (fromDate != null && o.createdAt.isBefore(fromDate)) continue;
-        if (toDate != null && o.createdAt.isAfter(toDate)) continue;
-      } else {
-        continue;
-      }
-
-      final catName = c?.name ?? 'General';
-      final itemTotal = (item.quantity * item.unitPrice) / 100.0;
-      categoryMap[catName] = (categoryMap[catName] ?? 0.0) + itemTotal;
-    }
-
-    final categoryLabels = categoryMap.isEmpty
-        ? <String>[]
-        : categoryMap.keys.take(5).toList();
-    final categoryData = categoryLabels
-        .map((cat) => categoryMap[cat] ?? 0.0)
-        .toList();
-
-    final productSalesMap =
-        <
-          String,
-          ({
-            String name,
-            String category,
-            int totalQuantitySold,
-            int totalRevenuePaise,
-          })
-        >{};
-    for (final tuple in orderItemTuples) {
-      final item = tuple.$1;
-      final o = tuple.$2;
-      final p = tuple.$3;
-      final c = tuple.$4;
-
-      if (o != null) {
-        final pStatus = o.paymentStatus.toLowerCase();
-        final status = o.status.toLowerCase();
-        final isPaidOrCompleted = pStatus == PaymentStatus.completed.name ||
-            o.paymentMethod.toLowerCase() == PaymentMethod.complimentary.name;
-        final isCancelled = status == OrderStatus.cancelled.name;
-        if (!isPaidOrCompleted || isCancelled) continue;
-
-        if (fromDate != null && o.createdAt.isBefore(fromDate)) continue;
-        if (toDate != null && o.createdAt.isAfter(toDate)) continue;
-      } else {
-        continue;
-      }
-
-      final pId = item.productId;
-      final name = p?.name ?? 'Unknown Product';
-      final categoryName = c?.name ?? 'General';
-      final current = productSalesMap[pId];
-
-      final qty = item.quantity;
-      final rev = item.quantity * item.unitPrice;
-
-      if (current == null) {
-        productSalesMap[pId] = (
-          name: name,
-          category: categoryName,
-          totalQuantitySold: qty,
-          totalRevenuePaise: rev,
-        );
-      } else {
-        productSalesMap[pId] = (
-          name: name,
-          category: categoryName,
-          totalQuantitySold: current.totalQuantitySold + qty,
-          totalRevenuePaise: current.totalRevenuePaise + rev,
-        );
-      }
-    }
-
-    final sortedTopSales = productSalesMap.values.toList()
-      ..sort((a, b) => b.totalQuantitySold.compareTo(a.totalQuantitySold));
-
-    final topProducts = sortedTopSales.take(5).map((p) {
-      return {
-        'name': p.name,
-        'category': p.category,
-        'quantitySold': p.totalQuantitySold,
-        'totalRevenue': p.totalRevenuePaise,
-      };
-    }).toList();
-
-    final lowStockProducts = productRows
-        .where((tuple) {
-          final s = tuple.$2;
-          return s != null && s.quantity <= s.lowStockThreshold;
-        })
-        .take(5)
-        .map((tuple) {
-          final p = tuple.$1;
-          final s = tuple.$2;
-          final c = tuple.$3;
-          return {
-            'id': p.id,
-            'name': p.name,
-            'category': c?.name ?? 'General',
-            'quantity': s?.quantity ?? 0,
-            'lowStockThreshold': s?.lowStockThreshold ?? 5,
-            'sellingPrice': p.sellingPrice,
-          };
-        })
-        .toList();
-
-    return {
-      'totalRevenue': totalRevenue,
-      'totalOrders': totalOrders,
-      'aov': aov,
-      'lowStockCount': lowStockCount,
-      'revenueGrowth': revenueGrowth,
-      'ordersGrowth': ordersGrowth,
-      'aovGrowth': aovGrowth,
-      'paymentMethods': {
-        'upiTotal': upiPaise / 100.0,
-        'cashTotal': cashPaise / 100.0,
-      },
-      'paymentStatus': {
-        'paidTotal': paidPaise / 100.0,
-        'freeTotal': freePaise / 100.0,
-        'paidCount': paidCount,
-        'freeCount': freeCount,
-      },
-      'categorySales': {
-        'labels': categoryLabels,
-        'data': categoryData,
-      },
-      'hourlyTraffic': {
-        'labels': [
-          '8 AM',
-          '10 AM',
-          '12 PM',
-          '2 PM',
-          '4 PM',
-          '6 PM',
-          '8 PM',
-          '10 PM',
-        ],
-        'data': hourlyCounts,
-      },
-      'topProducts': topProducts,
-      'lowStockProducts': lowStockProducts,
-    };
+  }) {
+    return DashboardAnalyticsQuery(db: _db).execute(
+      merchantId: merchantId,
+      storeId: storeId,
+      fromDate: fromDate,
+      toDate: toDate,
+    );
   }
 
+  /// Fetches customer order history including item details and products.
   Future<({List<Order> items, int total})> getCustomerOrders({
     required String customerId,
     String? storeId,
     String? date,
     int limit = 10,
     int offset = 0,
-  }) async {
-    var query = _db.orders
-        .where((o) => o.customerId.equals(ts.toExpr(customerId)))
-        .where((o) => o.paymentStatus.equals(ts.toExpr(PaymentStatus.completed.name)));
-
-    if (storeId != null && storeId.trim().isNotEmpty) {
-      query = query.where((o) => o.storeId.equals(ts.toExpr(storeId)));
-    }
-
-    if (date != null && date.trim().isNotEmpty) {
-      final parsed = DateTime.tryParse(date);
-      if (parsed != null) {
-        final startOfDay = DateTime(parsed.year, parsed.month, parsed.day);
-        final endOfDay = DateTime(parsed.year, parsed.month, parsed.day, 23, 59, 59, 999);
-        query = query
-            .where((o) => o.createdAt.isAfterValue(startOfDay.subtract(const Duration(milliseconds: 1))))
-            .where((o) => o.createdAt.isBeforeValue(endOfDay.add(const Duration(milliseconds: 1))));
-      }
-    }
-
-    final rows = await query.fetch();
-
-    rows.sort((a, b) => b.createdAt.compareTo(a.createdAt));
-    final total = rows.length;
-    final paginatedRows = rows.skip(offset).take(limit).toList();
-
-    final itemRepo = OrderItemRepository(db: _db);
-    final productRepo = ProductRepository(db: _db);
-
-    final orders = <Order>[];
-    for (final orderRow in paginatedRows) {
-      final itemRows = await itemRepo.getAllForOrder(orderRow.id);
-      final productRowsMap = <String, ProductRow>{};
-      for (final item in itemRows) {
-        if (!productRowsMap.containsKey(item.productId)) {
-          final res = await productRepo.getById(item.productId);
-          if (res != null) {
-            productRowsMap[item.productId] = res.$1;
-          }
-        }
-      }
-      orders.add(orderRow.toOrder(itemRows, productRows: productRowsMap));
-    }
-
-    return (items: orders, total: total);
-  }
+  }) => CustomerOrdersQuery.fetchCustomerOrders(
+    db: _db,
+    customerId: customerId,
+    storeId: storeId,
+    date: date,
+    limit: limit,
+    offset: offset,
+  );
 }

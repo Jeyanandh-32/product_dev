@@ -5,6 +5,10 @@ import 'package:merchant/components/centered_message.dart';
 import 'package:merchant/components/fields/date_range_picker.dart';
 import 'package:merchant/components/fields/searchbar.dart';
 import 'package:merchant/components/loading.dart';
+import 'package:merchant/components/reports/profit_loss_summary_cards.dart';
+import 'package:merchant/components/reports/profit_loss_table_header.dart';
+import 'package:merchant/components/reports/profit_loss_table_view.dart';
+import 'package:merchant/components/reports/stats_toggle_button.dart';
 import 'package:merchant/components/signal_component.dart';
 import 'package:merchant/components/sortable_header.dart';
 import 'package:merchant/components/table_pagination.dart';
@@ -13,20 +17,9 @@ import 'package:merchant/signals/navigation_signal.dart';
 import 'package:merchant/signals/profit_loss_signal.dart';
 import 'package:merchant/signals/reports_date_signal.dart';
 import 'package:merchant/signals/stores_signal.dart';
-import 'package:models/models.dart';
 import 'package:web/web.dart' as web;
 
-enum ProfitLossSortKey {
-  name,
-  category,
-  counter,
-  soldQuantity,
-  costPrice,
-  collectedPrice,
-  profit,
-  percentage,
-}
-
+/// Profit & Loss report sub-tab displaying cost prices, collected totals, margins, and wastage loss.
 class ProfitLoss extends SignalComponent {
   const ProfitLoss({super.key});
 
@@ -84,10 +77,10 @@ class _ProfitLossState extends SignalState<ProfitLoss> {
       });
     }
     final entries = profitLossEntriesSignal.value;
-
     final reportState = profitLossSignal.value;
-    final currentPage = reportState.value?.currentPage ?? 1;
+    final currentPage = profitLossPageSignal.value;
     final totalPages = reportState.value?.totalPages ?? 1;
+    final totalItems = reportState.value?.totalItems ?? 0;
 
     return div(
       classes:
@@ -146,9 +139,9 @@ class _ProfitLossState extends SignalState<ProfitLoss> {
                         ],
                       ),
                     ]),
-                    if ((reportState.value?.totalItems ?? 0) > 0)
+                    if (totalItems > 0)
                       .text(
-                        'Showing ${((currentPage - 1) * entries) + 1}–${(currentPage * entries).clamp(0, reportState.value?.totalItems ?? 0)} of ${reportState.value?.totalItems ?? 0}',
+                        'Showing ${((currentPage - 1) * entries) + 1}–${(currentPage * entries).clamp(0, totalItems)} of $totalItems',
                       ),
                   ],
                 ),
@@ -162,8 +155,12 @@ class _ProfitLossState extends SignalState<ProfitLoss> {
                     refreshProfitLossSignal();
                   },
                 ),
-
-                _buildStatsToggleButton(),
+                StatsToggleButton(
+                  showStats: showReportsStatsSignal.value,
+                  onToggle: () {
+                    showReportsStatsSignal.value = !showReportsStatsSignal.value;
+                  },
+                ),
               ],
             ),
             div(
@@ -171,7 +168,7 @@ class _ProfitLossState extends SignalState<ProfitLoss> {
                   'flex justify-between gap-2 items-center w-full sm:w-auto',
               [
                 Searchbar(
-                  placeholder: 'Search Product...',
+                  placeholder: 'Search Products...',
                   classes: 'flex-1 sm:flex-none sm:w-64',
                   onInput: (val) {
                     profitLossSearchSignal.value = val;
@@ -187,39 +184,11 @@ class _ProfitLossState extends SignalState<ProfitLoss> {
         if (showReportsStatsSignal.value &&
             reportState.hasValue &&
             reportState.value!.items.isNotEmpty)
-          div(
-            classes:
-                'grid grid-cols-2 lg:grid-cols-4 gap-3 p-4 border-b border-border-medium bg-neutral/20',
-
-            [
-              summaryCard(
-                title: 'Total Cost Price (COGS)',
-                value:
-                    '₹${reportState.value!.totalCostPrice.toStringAsFixed(2)}',
-                textColor: 'text-gray-900',
-              ),
-              summaryCard(
-                title: 'Total Net Revenue',
-                value:
-                    '₹${reportState.value!.totalCollectedPrice.toStringAsFixed(2)}',
-                textColor: 'text-gray-900',
-              ),
-              summaryCard(
-                title: 'Net Profit / Loss',
-                value: '₹${reportState.value!.totalProfit.toStringAsFixed(2)}',
-                textColor: reportState.value!.totalProfit >= 0
-                    ? 'text-emerald-600'
-                    : 'text-rose-600',
-              ),
-              summaryCard(
-                title: 'Overall Margin',
-                value:
-                    '${reportState.value!.totalMarginPercentage.toStringAsFixed(2)}%',
-                textColor: reportState.value!.totalMarginPercentage >= 0
-                    ? 'text-emerald-600'
-                    : 'text-rose-600',
-              ),
-            ],
+          ProfitLossSummaryCards(
+            totalCostPrice: reportState.value!.totalCostPrice,
+            totalCollectedPrice: reportState.value!.totalCollectedPrice,
+            totalProfit: reportState.value!.totalProfit,
+            totalMarginPercentage: reportState.value!.totalMarginPercentage,
           ),
 
         if (storesSignal.value.isLoading || reportState.isLoading)
@@ -235,46 +204,11 @@ class _ProfitLossState extends SignalState<ProfitLoss> {
         else if (reportState.hasValue && reportState.value!.items.isEmpty)
           CenteredMessage(message: 'No Profit & Loss data found.')
         else
-          div(classes: 'flex-1 min-h-0 overflow-auto', [
-            table(
-              classes: 'table table-zebra table-pin-rows table-pin-cols',
-              [
-                tableHead(),
-                tbody([
-                  for (final item
-                      in sortItems<ProfitLossItem, ProfitLossSortKey>(
-                        items: reportState.value?.items ?? [],
-                        sortState: _sortState,
-                        getSortValue: (item, k) => switch (k) {
-                          ProfitLossSortKey.name =>
-                            item.productName.toLowerCase(),
-                          ProfitLossSortKey.category =>
-                            item.categoryName.toLowerCase(),
-                          ProfitLossSortKey.counter =>
-                            item.counterName.toLowerCase(),
-                          ProfitLossSortKey.soldQuantity => item.soldQuantity,
-                          ProfitLossSortKey.costPrice => item.costPrice,
-                          ProfitLossSortKey.collectedPrice =>
-                            item.collectedPrice,
-                          ProfitLossSortKey.profit => item.profit,
-                          ProfitLossSortKey.percentage =>
-                            item.profitLossPercentage,
-                        },
-                      ))
-                    tableRow(
-                      name: item.productName,
-                      category: item.categoryName,
-                      counter: item.counterName,
-                      soldQuantity: item.soldQuantity,
-                      costPrice: item.costPrice,
-                      collectedPrice: item.collectedPrice,
-                      profit: item.profit,
-                      percentage: item.profitLossPercentage,
-                    ),
-                ]),
-              ],
-            ),
-          ]),
+          ProfitLossTableView(
+            items: reportState.value?.items ?? [],
+            sortState: _sortState,
+            onSort: _onSort,
+          ),
 
         TablePagination(
           currentPage: currentPage,
@@ -284,140 +218,6 @@ class _ProfitLossState extends SignalState<ProfitLoss> {
             refreshProfitLossSignal();
           },
         ),
-      ],
-    );
-  }
-
-  div summaryCard({
-    required String title,
-    required String value,
-    required String textColor,
-  }) {
-    return div(
-      classes:
-          'flex flex-col gap-1 p-3.5 bg-white rounded-xl border border-border-medium shadow-2xs',
-      [
-        span(classes: 'text-xs text-gray-500 font-medium', [.text(title)]),
-        span(classes: 'text-lg font-bold $textColor', [.text(value)]),
-      ],
-    );
-  }
-
-  thead tableHead() {
-    return thead([
-      tr([
-        th([]),
-        SortableHeader<ProfitLossSortKey>(
-          title: 'Name',
-          sortKey: ProfitLossSortKey.name,
-          currentSort: _sortState,
-          onSort: _onSort,
-          isTh: true,
-        ),
-        SortableHeader<ProfitLossSortKey>(
-          title: 'Category',
-          sortKey: ProfitLossSortKey.category,
-          currentSort: _sortState,
-          onSort: _onSort,
-        ),
-        SortableHeader<ProfitLossSortKey>(
-          title: 'Counter',
-          sortKey: ProfitLossSortKey.counter,
-          currentSort: _sortState,
-          onSort: _onSort,
-        ),
-        SortableHeader<ProfitLossSortKey>(
-          title: 'Sold Quantity',
-          sortKey: ProfitLossSortKey.soldQuantity,
-          currentSort: _sortState,
-          onSort: _onSort,
-        ),
-        SortableHeader<ProfitLossSortKey>(
-          title: 'Cost Price(₹)',
-          sortKey: ProfitLossSortKey.costPrice,
-          currentSort: _sortState,
-          onSort: _onSort,
-        ),
-        SortableHeader<ProfitLossSortKey>(
-          title: 'Collected Price(₹)',
-          sortKey: ProfitLossSortKey.collectedPrice,
-          currentSort: _sortState,
-          onSort: _onSort,
-        ),
-        SortableHeader<ProfitLossSortKey>(
-          title: 'Profit(₹)',
-          sortKey: ProfitLossSortKey.profit,
-          currentSort: _sortState,
-          onSort: _onSort,
-        ),
-        SortableHeader<ProfitLossSortKey>(
-          title: 'Profit/Loss(%)',
-          sortKey: ProfitLossSortKey.percentage,
-          currentSort: _sortState,
-          onSort: _onSort,
-        ),
-        th([]),
-      ]),
-    ]);
-  }
-
-  tr tableRow({
-    required String name,
-    required String category,
-    required String counter,
-    required int soldQuantity,
-    required double costPrice,
-    required double collectedPrice,
-    required double profit,
-    required double percentage,
-  }) {
-    final isProfit = profit >= 0;
-
-    return tr([
-      th([]),
-      th(classes: 'whitespace-nowrap font-semibold text-black no-underline', [
-        .text(name),
-      ]),
-      td(classes: 'whitespace-nowrap', [.text(category)]),
-      td(classes: 'whitespace-nowrap', [.text(counter)]),
-      td([.text('$soldQuantity')]),
-      td([.text(costPrice.toStringAsFixed(2))]),
-      td([.text(collectedPrice.toStringAsFixed(2))]),
-      td([.text(profit.toStringAsFixed(2))]),
-      td([
-        div(
-          classes:
-              '${isProfit ? 'bg-soft-green text-soft-green-content' : 'bg-soft-red text-soft-red-content'} rounded-full px-3 py-1 text-center text-xs font-semibold inline-block',
-          [
-            .text('${percentage.toStringAsFixed(2)}%'),
-          ],
-        ),
-      ]),
-      th([]),
-    ]);
-  }
-
-  Component _buildStatsToggleButton() {
-    final showStats = showReportsStatsSignal.value;
-    final activeClass = showStats
-        ? 'border-primary bg-primary text-primary-content'
-        : 'border-border-medium bg-white hover:bg-neutral text-gray-700';
-
-    return button(
-      type: .button,
-      classes:
-          'btn btn-sm rounded-full border text-xs font-semibold px-3 h-8 flex items-center gap-1.5 shadow-2xs cursor-pointer transition-all $activeClass',
-      events: {
-        'click': (e) {
-          showReportsStatsSignal.value = !showStats;
-        },
-      },
-      [
-        if (showStats)
-          EyeOff(classes: 'w-3.5 h-3.5')
-        else
-          ChartColumn(classes: 'w-3.5 h-3.5'),
-        .text(showStats ? 'Hide Stats' : 'View Stats'),
       ],
     );
   }

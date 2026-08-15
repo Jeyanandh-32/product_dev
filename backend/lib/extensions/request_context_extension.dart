@@ -46,6 +46,15 @@ extension RequestContextExtension on RequestContext {
     return json;
   }
 
+  /// Returns the authenticated token payload from the context if present, otherwise null.
+  TokenPayload? get optionalTokenPayload {
+    try {
+      return read<TokenPayload>();
+    } catch (_) {
+      return null;
+    }
+  }
+
   /// Returns the authenticated token payload from the context.
   TokenPayload get tokenPayload => read<TokenPayload>();
 
@@ -62,13 +71,13 @@ extension RequestContextExtension on RequestContext {
   }
 
   /// Parses and validates the query parameter 'size'.
-  /// Returns a Response if invalid, otherwise the parsed integer (defaults to 500).
-  (Response?, int) parseSize() {
+  /// Returns a Response if invalid, otherwise the parsed integer (defaults to 50).
+  (Response?, int) parseSize({int defaultSize = 50}) {
     final sizeStr = request.uri.queryParameters['size'];
-    if (sizeStr == null || sizeStr.isEmpty) return (null, 500);
+    if (sizeStr == null || sizeStr.isEmpty) return (null, defaultSize);
     final size = int.tryParse(sizeStr);
     if (size == null || size <= 0) {
-      return (badRequest(message: 'size must be a positive integer > 0.'), 500);
+      return (badRequest(message: 'size must be a positive integer >= 1.'), defaultSize);
     }
     return (null, size);
   }

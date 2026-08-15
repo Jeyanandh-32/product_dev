@@ -1,8 +1,10 @@
 import 'dart:convert';
+import 'package:backend/services/phonepe_payment_mode_builder.dart';
 import 'package:crypto/crypto.dart';
 import 'package:dio/dio.dart';
 import 'package:models/models.dart';
 
+/// Integration service for PhonePe Payment Gateway (OAuth 2.0 & PG V2 Standard Checkout).
 class PhonePeService {
   PhonePeService({Dio? dio})
       : _dio = dio ??
@@ -19,12 +21,14 @@ class PhonePeService {
 
   final Dio _dio;
 
+  /// Returns the base URL for standard PG checkout API.
   String getBaseUrl(PaymentGatewayEnv env) {
     return env == PaymentGatewayEnv.prod
         ? 'https://api.phonepe.com/apis/pg'
         : 'https://api-preprod.phonepe.com/apis/pg-sandbox';
   }
 
+  /// Returns the base URL for OAuth 2.0 client credential authorization.
   String getAuthBaseUrl(PaymentGatewayEnv env) {
     return env == PaymentGatewayEnv.prod
         ? 'https://api.phonepe.com/apis/identity-manager'
@@ -59,75 +63,12 @@ class PhonePeService {
         return data['access_token'] as String?;
       }
     } catch (_) {
-      // Fallback to legacy checksum header if OAuth token is not configured
+      // Fallback if OAuth token request encounters transient errors
     }
     return null;
   }
 
-  /// Step 2: Build Payment Mode Config (V2 Schema)
-  Map<String, dynamic>? _buildPaymentModeConfig(StorePhonePeConfig config) {
-    final enabledModes = <Map<String, dynamic>>[];
-    final disabledModes = <Map<String, dynamic>>[];
-
-    // UPI
-    if (config.enableUpi) {
-      final upiObj = <String, dynamic>{'type': 'UPI'};
-      if (config.allowedUpiApps != null &&
-          config.allowedUpiApps!.trim().isNotEmpty) {
-        final apps = config.allowedUpiApps!
-            .split(',')
-            .map((e) => e.trim().toLowerCase())
-            .where((e) => e.isNotEmpty)
-            .toList();
-        if (apps.isNotEmpty) {
-          upiObj['apps'] = apps;
-        }
-      }
-      enabledModes.add(upiObj);
-    } else {
-      disabledModes.add({'type': 'UPI'});
-    }
-
-    // Cards
-    if (config.enableCards) {
-      enabledModes.add({'type': 'CARD'});
-    } else {
-      disabledModes.add({'type': 'CARD'});
-    }
-
-    // Net Banking
-    if (config.enableNetBanking) {
-      enabledModes.add({'type': 'NET_BANKING'});
-    } else {
-      disabledModes.add({'type': 'NET_BANKING'});
-    }
-
-    // EMI
-    if (config.enableEmi) {
-      enabledModes.add({'type': 'EMI'});
-    } else {
-      disabledModes.add({'type': 'EMI'});
-    }
-
-    // Wallet
-    if (config.enableWallets) {
-      enabledModes.add({'type': 'WALLET'});
-    } else {
-      disabledModes.add({'type': 'WALLET'});
-    }
-
-    if (enabledModes.isEmpty && disabledModes.isEmpty) return null;
-
-    final result = <String, dynamic>{'version': 'V2'};
-    if (enabledModes.isNotEmpty) {
-      result['enabledPaymentModes'] = enabledModes;
-    } else if (disabledModes.isNotEmpty) {
-      result['disabledPaymentModes'] = disabledModes;
-    }
-    return result;
-  }
-
-  /// Step 3: Initiate Payment (/checkout/v2/pay)
+  /// Step 2: Initiate Payment Session (/checkout/v2/pay)
   Future<({String tokenUrl, String orderId})> initiatePayment({
     required StorePhonePeConfig config,
     required String merchantOrderId,
@@ -142,7 +83,7 @@ class PhonePeService {
     final url = '${getBaseUrl(config.env)}/checkout/v2/pay';
     final token = await getAuthToken(config);
 
-    final paymentModeConfig = _buildPaymentModeConfig(config);
+    final paymentModeConfig = PhonePePaymentModeBuilder.build(config);
 
     final payload = <String, dynamic>{
       'merchantOrderId': merchantOrderId,
@@ -200,7 +141,7 @@ class PhonePeService {
     throw Exception('Failed to initiate PhonePe payment session: ${response.data}');
   }
 
-  /// Step 4: Check Order Status (/checkout/v2/order/{merchantOrderId}/status)
+  /// Step 3: Check Order Status (/checkout/v2/order/{merchantOrderId}/status)
   Future<Map<String, dynamic>> checkOrderStatus({
     required StorePhonePeConfig config,
     required String merchantOrderId,
@@ -220,7 +161,7 @@ class PhonePeService {
     return response.data ?? {};
   }
 
-  /// Step 5: Verify Webhook HMAC Signature
+  /// Step 4: Verify Webhook HMAC Signature
   bool verifyWebhookHmac({
     required String rawRequestBody,
     required String signatureHeader,

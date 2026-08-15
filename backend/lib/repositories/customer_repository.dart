@@ -1,11 +1,16 @@
 import 'package:backend/database/schema.dart';
+import 'package:backend/repositories/customer_wallet_database_repository.dart';
 import 'package:typed_sql/typed_sql.dart' as ts;
 
+/// Repository for handling customer identity, profiles, and recently visited stores.
 class CustomerRepository {
-  CustomerRepository({required this.db});
+  CustomerRepository({required this.db})
+      : _walletRepo = CustomerWalletDatabaseRepository(db: db);
 
   final ts.Database<DatabaseSchema> db;
+  final CustomerWalletDatabaseRepository _walletRepo;
 
+  /// Registers a new customer account.
   Future<CustomerRow> create({
     required String name,
     required String mobileNumber,
@@ -23,6 +28,7 @@ class CustomerRepository {
     return row;
   }
 
+  /// Retrieves customer record by mobile number.
   Future<CustomerRow?> getByMobileNumber(String mobileNumber) async {
     final row = await db.customers
         .where((c) => c.mobileNumber.equalsValue(mobileNumber))
@@ -31,11 +37,13 @@ class CustomerRepository {
     return row;
   }
 
+  /// Retrieves customer record by primary UUID.
   Future<CustomerRow?> getById(String id) async {
     final row = await db.customers.byKey(id).fetch();
     return row;
   }
 
+  /// Records or updates the timestamp of a store visit for quick re-ordering.
   Future<void> recordStoreVisit({
     required String customerId,
     required String storeId,
@@ -63,6 +71,7 @@ class CustomerRepository {
     }
   }
 
+  /// Fetches recently visited stores for a customer.
   Future<List<StoreRow>> getRecentStores({
     required String customerId,
     int limit = 5,
@@ -98,6 +107,7 @@ class CustomerRepository {
     return ordered;
   }
 
+  /// Updates profile information (name, mobile, security PIN).
   Future<CustomerRow?> update({
     required String id,
     String? name,
@@ -121,67 +131,29 @@ class CustomerRepository {
     return row;
   }
 
+  /// Updates or initializes the customer wallet balance for a specific store.
   Future<CustomerStoreWalletRow?> updateStoreWalletBalance({
     required String customerId,
     required String storeId,
     required int amountDeltaPaise,
-  }) async {
-    final existing = await db.customerStoreWallets
-        .where(
-          (w) =>
-              w.customerId.equalsValue(customerId) &
-              w.storeId.equalsValue(storeId),
-        )
-        .first
-        .fetch();
+  }) =>
+      _walletRepo.updateStoreWalletBalance(
+        customerId: customerId,
+        storeId: storeId,
+        amountDeltaPaise: amountDeltaPaise,
+      );
 
-    final currentBalance = existing?.walletBalance ?? 0;
-    final newBalance = currentBalance + amountDeltaPaise;
-    if (newBalance < 0) return null;
-
-    if (existing == null) {
-      return db.customerStoreWallets
-          .insertValue(
-            customerId: customerId,
-            storeId: storeId,
-            walletBalance: newBalance,
-          )
-          .returnInserted()
-          .executeAndFetch();
-    } else {
-      final updatedList = await db.customerStoreWallets
-          .where(
-            (w) =>
-                w.customerId.equalsValue(customerId) &
-                w.storeId.equalsValue(storeId),
-          )
-          .update(
-            (w, set) => set(
-              walletBalance: ts.toExpr(newBalance),
-              updatedAt: ts.Expr.currentTimestamp,
-            ),
-          )
-          .returnUpdated()
-          .executeAndFetch();
-      return updatedList.isNotEmpty ? updatedList.first : null;
-    }
-  }
-
+  /// Fetches the store wallet balance in paise for a customer.
   Future<int> getStoreWalletBalance({
     required String customerId,
     required String storeId,
-  }) async {
-    final row = await db.customerStoreWallets
-        .where(
-          (w) =>
-              w.customerId.equalsValue(customerId) &
-              w.storeId.equalsValue(storeId),
-        )
-        .first
-        .fetch();
-    return row?.walletBalance ?? 0;
-  }
+  }) =>
+      _walletRepo.getStoreWalletBalance(
+        customerId: customerId,
+        storeId: storeId,
+      );
 
+  /// Inserts a new customer wallet transaction log entry.
   Future<CustomerWalletTransactionRow> createWalletTransaction({
     required String customerId,
     required String storeId,
@@ -189,45 +161,33 @@ class CustomerRepository {
     required String type,
     String? reference,
     String status = 'completed',
-  }) async {
-    return db.customerWalletTransactions
-        .insertValue(
-          customerId: customerId,
-          storeId: storeId,
-          amount: amount,
-          type: type,
-          reference: reference,
-          status: status,
-        )
-        .returnInserted()
-        .executeAndFetch();
-  }
+  }) =>
+      _walletRepo.createWalletTransaction(
+        customerId: customerId,
+        storeId: storeId,
+        amount: amount,
+        type: type,
+        reference: reference,
+        status: status,
+      );
 
+  /// Updates status for an asynchronous wallet transaction.
   Future<CustomerWalletTransactionRow?> updateWalletTransactionStatus({
     required String id,
     required String status,
-  }) async {
-    return db.customerWalletTransactions
-        .byKey(id)
-        .update(
-          (t, set) => set(
-            status: ts.toExpr(status),
-          ),
-        )
-        .returnUpdated()
-        .executeAndFetch();
-  }
+  }) =>
+      _walletRepo.updateWalletTransactionStatus(
+        id: id,
+        status: status,
+      );
 
+  /// Fetches all transaction records for a customer within a store.
   Future<List<CustomerWalletTransactionRow>> getWalletTransactions({
     required String customerId,
     required String storeId,
-  }) async {
-    return db.customerWalletTransactions
-        .where(
-          (t) =>
-              t.customerId.equalsValue(customerId) &
-              t.storeId.equalsValue(storeId),
-        )
-        .fetch();
-  }
+  }) =>
+      _walletRepo.getWalletTransactions(
+        customerId: customerId,
+        storeId: storeId,
+      );
 }

@@ -2,12 +2,16 @@ import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:merchant/components/fields/form_field.dart';
 import 'package:merchant/components/modals/modal.dart';
+import 'package:merchant/components/modals/stock_action_selector.dart';
+import 'package:merchant/components/modals/stock_monitor_settings_section.dart';
+import 'package:merchant/components/modals/stock_reason_section.dart';
 import 'package:merchant/signals/navigation_signal.dart';
 import 'package:merchant/signals/products_signal.dart';
 import 'package:merchant/signals/toast_signal.dart';
 import 'package:models/models.dart';
-import 'package:web/web.dart';
+import 'package:web/web.dart' as web;
 
+/// Modal dialog for managing and adjusting product inventory levels.
 class UpdateStockModal extends StatefulComponent {
   const UpdateStockModal({super.key, required this.product});
 
@@ -28,22 +32,16 @@ class _UpdateStockModalState extends State<UpdateStockModal> {
   @override
   void initState() {
     super.initState();
-    _resetForm();
+    final s = component.product.stock;
+    _transactionType = .add;
+    _amount = '1';
+    _reason = .adjustment;
+    _customReason = '';
+    _lowStockThreshold = s != null ? '${s.lowStockThreshold}' : '5';
+    _stockMonitor = s?.stockMonitor ?? true;
   }
 
-  void _resetForm() {
-    setState(() {
-      final s = component.product.stock;
-      _transactionType = .add;
-      _amount = '1';
-      _reason = .adjustment;
-      _customReason = '';
-      _lowStockThreshold = s != null ? '${s.lowStockThreshold}' : '5';
-      _stockMonitor = s?.stockMonitor ?? true;
-    });
-  }
-
-  void _onSubmit(Event e) {
+  void _onSubmit(web.Event e) {
     e.preventDefault();
 
     final inputAmount = int.tryParse(_amount.trim());
@@ -70,106 +68,68 @@ class _UpdateStockModalState extends State<UpdateStockModal> {
 
     final showReasonSection =
         _transactionType == StockTransactionType.reduce ||
-        (_transactionType == StockTransactionType.set &&
-            inputAmount < currentQty);
+        _transactionType == StockTransactionType.set;
 
-    final effectiveReason = showReasonSection
-        ? _reason
-        : StockTransactionReason.restock;
-
-    activeModalSignal.value = .none;
-
-    if (component.product.stock != null) {
+    final stockId = component.product.stock?.id;
+    if (stockId != null) {
       ProductsActions.updateStock(
-        stockId: component.product.stock!.id,
+        stockId: stockId,
         productId: component.product.id,
         quantity: computedFinalQuantity,
-        lowStockThreshold: lowStockThreshold,
+        lowStockThreshold: _stockMonitor ? lowStockThreshold : null,
         stockMonitor: _stockMonitor,
         transactionType: _transactionType,
-        amount: _transactionType == .set
-            ? (inputAmount - currentQty).abs()
-            : inputAmount,
-        reason: effectiveReason,
+        amount: inputAmount,
+        reason: showReasonSection ? _reason : null,
         customReason: showReasonSection && _customReason.trim().isNotEmpty
             ? _customReason.trim()
             : null,
       );
+      activeModalSignal.value = ActiveModal.none;
+    } else {
+      showToast('Stock record not found for this product.');
     }
   }
 
   @override
   Component build(BuildContext context) {
     final currentQty = component.product.stock?.quantity ?? 0;
-    final parsedAmount =
-        int.tryParse(_amount.trim()) ??
-        (_transactionType == .set ? currentQty : 1);
-    final isReduction =
-        _transactionType == .reduce ||
-        (_transactionType == .set && parsedAmount < currentQty);
+    final isReduction = _transactionType == StockTransactionType.reduce ||
+        _transactionType == StockTransactionType.set;
 
     return Modal(
       title: 'Update Stock - ${component.product.name}',
       child: form(
-        method: .post,
-        events: {'submit': (e) => _onSubmit(e)},
+        events: {'submit': _onSubmit},
         [
-          // Current Stock Info Banner
           div(
             classes:
-                'flex items-center justify-between p-3 mb-4 rounded-xl bg-neutral/40 border border-border-medium',
+                'mb-4 p-3 rounded-xl bg-neutral/20 border border-border-medium flex justify-between items-center',
             [
-              span(classes: 'text-xs text-gray-500 font-medium', [
-                .text('Current Inventory'),
+              span(classes: 'text-sm font-medium text-gray-600', [
+                .text('Current Inventory:'),
               ]),
-              span(classes: 'text-sm font-bold text-primary', [
+              span(classes: 'text-lg font-bold text-gray-900', [
                 .text('$currentQty units'),
               ]),
             ],
           ),
 
-          // Stock Operation Radio Selector
-          div(classes: 'flex flex-col gap-1.5 mb-4', [
-            label(classes: 'text-[14px] font-semibold text-gray-700', [
-              .text('Stock Action'),
-            ]),
-            div(classes: 'grid grid-cols-3 gap-2', [
-              operationButton(
-                label: 'Add Stock (+)',
-                value: .add,
-                colorClass: _transactionType == .add
-                    ? 'bg-emerald-600 text-white font-bold'
-                    : 'bg-white border border-border-medium hover:bg-neutral text-gray-700',
-              ),
-              operationButton(
-                label: 'Reduce (-)',
-                value: .reduce,
-                colorClass: _transactionType == .reduce
-                    ? 'bg-rose-600 text-white font-bold'
-                    : 'bg-white border border-border-medium hover:bg-neutral text-gray-700',
-              ),
-              operationButton(
-                label: 'Set Exact (=)',
-                value: .set,
-                colorClass: _transactionType == .set
-                    ? 'bg-primary text-white font-bold'
-                    : 'bg-white border border-border-medium hover:bg-neutral text-gray-700',
-              ),
-            ]),
-          ]),
+          StockActionSelector(
+            selectedType: _transactionType,
+            onTypeChanged: (t) => setState(() => _transactionType = t),
+          ),
 
-          // Quantity Input
           FormField(
-            key: Key('amount_${_transactionType.name}'),
             id: 'amount',
             labelText: switch (_transactionType) {
               .add => 'Quantity to Add',
               .reduce => 'Quantity to Reduce',
-              .set => 'New Stock Count',
+              .set => 'Set Exact Total Quantity',
             },
-            type: .number,
+            type: InputType.number,
             attributes: {
-              'placeholder': _transactionType == .set ? '$currentQty' : '1',
+              'placeholder': '1',
               'required': '',
               'min': '0',
               'value': _amount,
@@ -178,173 +138,46 @@ class _UpdateStockModalState extends State<UpdateStockModal> {
             onChange: (value) => _amount = value.toString(),
           ),
 
-          // Reason Section (only for Stock Reductions)
-          if (isReduction) ...[
-            div(classes: 'flex flex-col gap-1.5 mb-4', [
-              label(classes: 'text-[14px] font-semibold text-gray-700', [
-                .text('Reason for Adjustment'),
-              ]),
-              select(
-                classes:
-                    'select select-bordered w-full rounded-xl text-sm border-border-medium focus:outline-hidden',
-                events: {
-                  'change': (e) {
-                    final target = e.target as HTMLSelectElement;
-                    setState(() {
-                      _reason = StockTransactionReason.values.byName(
-                        target.value,
-                      );
-                    });
-                  },
-                },
-                [
-                  option(
-                    value: StockTransactionReason.adjustment.name,
-                    selected: _reason == .adjustment,
-                    [.text('Inventory Adjustment / Audit')],
-                  ),
-                  option(
-                    value: StockTransactionReason.wastage.name,
-                    selected: _reason == .wastage,
-                    [.text('Wastage / Damaged Goods')],
-                  ),
-                ],
-              ),
-              if (_reason == .wastage)
-                p(classes: 'text-xs text-rose-500 font-medium mt-1', [
-                  .text(
-                    '⚠️ Wasted items will be recorded as inventory loss in Profit & Loss report.',
-                  ),
-                ]),
-            ]),
-
-            // Optional Reason Description Input Field
-            FormField(
-              id: 'customReason',
-              labelText: 'Reason Description',
-              type: .text,
-              attributes: {
-                'placeholder':
-                    'e.g. Expired on 04/08, Damaged in shipping (Optional)',
-                'value': _customReason,
-              },
-              hintText: 'Optional description or note.',
-              onChange: (value) => _customReason = value as String,
+          if (isReduction)
+            StockReasonSection(
+              reason: _reason,
+              customReason: _customReason,
+              onReasonChanged: (r) => setState(() => _reason = r),
+              onCustomReasonChanged: (val) => _customReason = val,
             ),
-          ],
 
-          // Stock Monitor Toggle
+          StockMonitorSettingsSection(
+            stockMonitor: _stockMonitor,
+            lowStockThreshold: _lowStockThreshold,
+            onToggleMonitor: (val) => setState(() => _stockMonitor = val),
+            onThresholdChanged: (val) => _lowStockThreshold = val,
+          ),
+
           div(
             classes:
-                'form-control mb-4 flex flex-row items-center justify-between p-3 rounded-xl bg-neutral/20 border border-border-medium',
+                'flex justify-end gap-3 pt-4 border-t border-border-light',
             [
-              div(classes: 'flex flex-col', [
-                span(classes: 'text-sm font-semibold text-gray-700', [
-                  .text('Stock Monitor'),
-                ]),
-                span(classes: 'text-xs text-gray-500', [
-                  .text('Receive low stock alerts'),
-                ]),
-              ]),
-              input(
-                type: .checkbox,
+              button(
+                type: ButtonType.button,
                 classes:
-                    'toggle ${_stockMonitor ? 'toggle-success' : ''} hover:cursor-pointer',
-                checked: _stockMonitor,
+                    'btn btn-ghost border border-border-medium px-5 rounded-xl hover:bg-neutral text-gray-700 font-medium',
                 events: {
-                  'change': (e) {
-                    final target = e.target as HTMLInputElement;
-                    setState(() {
-                      _stockMonitor = target.checked;
-                    });
+                  'click': (e) {
+                    activeModalSignal.value = ActiveModal.none;
                   },
                 },
+                [.text('Cancel')],
+              ),
+              button(
+                type: ButtonType.submit,
+                classes:
+                    'btn bg-primary hover:bg-primary/90 text-white font-bold px-6 rounded-xl shadow-xs border-0 cursor-pointer',
+                [.text('Update Stock')],
               ),
             ],
           ),
-
-          if (_stockMonitor)
-            FormField(
-              id: 'lowStockThreshold',
-              labelText: 'Low Stock Threshold',
-              type: .number,
-              attributes: {
-                'placeholder': '5',
-                'required': '',
-                'min': '0',
-                'value': _lowStockThreshold,
-              },
-              hintText: 'Low stock threshold is required.',
-              onChange: (value) => _lowStockThreshold = value as String,
-            ),
-
-          // Form Actions Footer (Reset + Cancel + Save)
-          div(classes: 'flex justify-between items-center pt-3 gap-2', [
-            button(
-              type: .button,
-              classes:
-                  'btn btn-sm rounded-lg border border-border-medium bg-white hover:bg-rose-50 hover:text-rose-600 hover:border-rose-300 text-xs font-medium text-gray-600 transition-all duration-200 hover:cursor-pointer',
-              events: {'click': (e) => _resetForm()},
-              [
-                .text('Reset'),
-              ],
-            ),
-            div(classes: 'flex items-center gap-2', [
-              button(
-                type: .button,
-                classes:
-                    'btn btn-sm rounded-lg border border-border-medium bg-white hover:bg-neutral text-xs font-medium text-gray-600 hover:cursor-pointer',
-                events: {
-                  'click': (e) => activeModalSignal.value = .none,
-                },
-                [
-                  .text('Cancel'),
-                ],
-              ),
-              button(
-                type: .submit,
-                classes:
-                    'bg-primary text-primary-content px-5 h-9 rounded-lg hover:cursor-pointer hover:bg-opacity-80 transition-all duration-300 text-xs font-semibold',
-                [
-                  .text('Save Changes'),
-                ],
-              ),
-            ]),
-          ]),
         ],
       ),
-    );
-  }
-
-  button operationButton({
-    required String label,
-    required StockTransactionType value,
-    required String colorClass,
-  }) {
-    return button(
-      type: .button,
-      classes:
-          'h-9 rounded-lg text-xs font-medium transition-all cursor-pointer $colorClass',
-      events: {
-        'click': (e) {
-          final currentQty = component.product.stock?.quantity ?? 0;
-          setState(() {
-            _transactionType = value;
-            if (value == .set) {
-              _amount = '$currentQty';
-            } else {
-              _amount = '1';
-            }
-            _reason = switch (value) {
-              .reduce => .wastage,
-              .add || .set => .adjustment,
-            };
-          });
-        },
-      },
-      [
-        .text(label),
-      ],
     );
   }
 }

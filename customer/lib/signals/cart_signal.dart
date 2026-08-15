@@ -3,7 +3,7 @@ import 'package:customer/signals/toast_signal.dart';
 import 'package:models/models.dart';
 import 'package:signals/signals.dart';
 
-/// Item stored in global cart
+/// Item stored in a store's cart
 class CartItem {
   const CartItem({
     required this.product,
@@ -19,12 +19,23 @@ class CartItem {
   );
 }
 
-/// Global Reactive Cart State
-final cartItemsSignal = signal<Map<String, CartItem>>({});
+/// Cart state per store: `Map<storeId, Map<productId, CartItem>>`
+final storeCartsSignal = signal<Map<String, Map<String, CartItem>>>({});
+
+/// Currently selected/active store for the cart view
 final currentCartStoreIdSignal = signal<String?>(null);
 final currentCartStoreSignal = signal<Store?>(null);
+
 final isCartDrawerOpenSignal = signal<bool>(false);
 final isCartSubmittingSignal = signal<bool>(false);
+
+/// Computed active cart items for the currently active store
+final cartItemsSignal = computed<Map<String, CartItem>>(() {
+  final storeId = currentCartStoreIdSignal.value;
+  if (storeId == null) return {};
+  final allCarts = storeCartsSignal.value;
+  return allCarts[storeId] ?? {};
+});
 
 void toggleCartDrawer() {
   isCartDrawerOpenSignal.value = !isCartDrawerOpenSignal.value;
@@ -38,11 +49,8 @@ void closeCartDrawer() {
   isCartDrawerOpenSignal.value = false;
 }
 
+/// Sets the active store context for the customer without wiping carts of other stores.
 void setActiveStore(Store store) {
-  final currentStoreId = currentCartStoreIdSignal.value;
-  if (currentStoreId != null && currentStoreId != store.id && cartItemsSignal.value.isNotEmpty) {
-    cartItemsSignal.value = {};
-  }
   currentCartStoreIdSignal.value = store.id;
   currentCartStoreSignal.value = store;
 }
@@ -52,57 +60,96 @@ void clearActiveStore() {
   currentCartStoreSignal.value = null;
 }
 
+/// Adds a product to a specific store's cart.
 void addToCart(String storeId, Product product, {Store? store}) {
-  final currentStoreId = currentCartStoreIdSignal.value;
-
-  // If adding from a different store, reset cart
-  if (currentStoreId != null && currentStoreId != storeId && cartItemsSignal.value.isNotEmpty) {
-    cartItemsSignal.value = {};
-    currentCartStoreSignal.value = null;
-  }
-
   currentCartStoreIdSignal.value = storeId;
   if (store != null) {
     currentCartStoreSignal.value = store;
   }
 
-  final items = Map<String, CartItem>.from(cartItemsSignal.value);
-  final existing = items[product.id];
+  final allCarts = Map<String, Map<String, CartItem>>.from(
+    storeCartsSignal.value.map((k, v) => MapEntry(k, Map<String, CartItem>.from(v))),
+  );
+
+  final storeCart = allCarts[storeId] ?? <String, CartItem>{};
+  final existing = storeCart[product.id];
 
   if (existing != null) {
-    items[product.id] = existing.copyWith(quantity: existing.quantity + 1);
+    storeCart[product.id] = existing.copyWith(quantity: existing.quantity + 1);
   } else {
-    items[product.id] = CartItem(product: product, quantity: 1);
+    storeCart[product.id] = CartItem(product: product, quantity: 1);
   }
 
-  cartItemsSignal.value = items;
+  allCarts[storeId] = storeCart;
+  storeCartsSignal.value = allCarts;
 }
 
-void removeFromCart(Product product) {
-  final items = Map<String, CartItem>.from(cartItemsSignal.value);
-  final existing = items[product.id];
+/// Removes a single unit of product from the specified store (or current active store).
+void removeFromCart(Product product, {String? storeId}) {
+  final targetStoreId = storeId ?? currentCartStoreIdSignal.value;
+  if (targetStoreId == null) return;
 
+  final allCarts = Map<String, Map<String, CartItem>>.from(
+    storeCartsSignal.value.map((k, v) => MapEntry(k, Map<String, CartItem>.from(v))),
+  );
+
+  final storeCart = allCarts[targetStoreId];
+  if (storeCart == null) return;
+
+  final existing = storeCart[product.id];
   if (existing != null) {
     if (existing.quantity > 1) {
-      items[product.id] = existing.copyWith(quantity: existing.quantity - 1);
+      storeCart[product.id] = existing.copyWith(quantity: existing.quantity - 1);
     } else {
-      items.remove(product.id);
+      storeCart.remove(product.id);
     }
   }
 
-  cartItemsSignal.value = items;
+  if (storeCart.isEmpty) {
+    allCarts.remove(targetStoreId);
+  } else {
+    allCarts[targetStoreId] = storeCart;
+  }
+
+  storeCartsSignal.value = allCarts;
 }
 
-void removeProductCompletely(String productId) {
-  final items = Map<String, CartItem>.from(cartItemsSignal.value);
-  items.remove(productId);
-  cartItemsSignal.value = items;
+/// Removes a product entirely from the specified store (or current active store).
+void removeProductCompletely(String productId, {String? storeId}) {
+  final targetStoreId = storeId ?? currentCartStoreIdSignal.value;
+  if (targetStoreId == null) return;
+
+  final allCarts = Map<String, Map<String, CartItem>>.from(
+    storeCartsSignal.value.map((k, v) => MapEntry(k, Map<String, CartItem>.from(v))),
+  );
+
+  final storeCart = allCarts[targetStoreId];
+  if (storeCart == null) return;
+
+  storeCart.remove(productId);
+  if (storeCart.isEmpty) {
+    allCarts.remove(targetStoreId);
+  } else {
+    allCarts[targetStoreId] = storeCart;
+  }
+
+  storeCartsSignal.value = allCarts;
 }
 
-void clearCart() {
-  cartItemsSignal.value = {};
+/// Clears cart items for the currently active store (or a specific storeId).
+void clearCart({String? storeId}) {
+  final targetStoreId = storeId ?? currentCartStoreIdSignal.value;
+  if (targetStoreId == null) return;
+
+  final allCarts = Map<String, Map<String, CartItem>>.from(
+    storeCartsSignal.value.map((k, v) => MapEntry(k, Map<String, CartItem>.from(v))),
+  );
+
+  allCarts.remove(targetStoreId);
+  storeCartsSignal.value = allCarts;
 }
 
+/// Submits the current active cart order.
 Future<void> checkoutCurrentCart() async {
   final storeId = currentCartStoreIdSignal.value;
   final items = cartItemsSignal.value.values.toList();
@@ -130,7 +177,7 @@ Future<void> checkoutCurrentCart() async {
     );
 
     showCustomerToast('Order placed successfully!', type: ToastType.success);
-    clearCart();
+    clearCart(storeId: storeId);
     closeCartDrawer();
   } catch (e) {
     showCustomerToast(e.toString(), type: ToastType.error);

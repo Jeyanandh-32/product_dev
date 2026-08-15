@@ -19,13 +19,15 @@ abstract class SignalState<T extends SignalComponent> extends State<T> {
     _disposer = effect(() {
       final prevBuilding = _isBuilding;
       _isBuilding = true;
-      _cachedBuild = buildSignal(context);
+      if (mounted) {
+        _cachedBuild = buildSignal(context);
+      }
       _isBuilding = prevBuilding;
       if (!_isBuilding && mounted) {
         setState(() {});
       }
     });
-    return _cachedBuild!;
+    return _cachedBuild ?? buildSignal(context);
   }
 
   Component buildSignal(BuildContext context);

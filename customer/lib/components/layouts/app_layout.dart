@@ -55,7 +55,7 @@ class _AppLayoutState extends SignalState<AppLayout> {
                     ],
                   ),
 
-                  // Customer Initials Pill (Clickable -> Account Profile)
+                  // Customer Initials Pill (Clickable -> Account Profile) OR Sign In Button
                   if (customer != null)
                     button(
                       classes:
@@ -64,6 +64,16 @@ class _AppLayoutState extends SignalState<AppLayout> {
                       onClick: () => Router.of(context).push('/profile'),
                       [
                         .text(customer.name.isNotEmpty ? customer.name[0].toUpperCase() : 'C'),
+                      ],
+                    )
+                  else
+                    button(
+                      classes:
+                          'flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black text-white hover:bg-gray-800 font-semibold text-xs transition-all cursor-pointer border-0 active:scale-95',
+                      onClick: () => Router.of(context).push('/login'),
+                      [
+                        User(classes: 'w-3.5 h-3.5 text-white'),
+                        .text('Sign In'),
                       ],
                     ),
                 ]),

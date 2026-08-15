@@ -174,9 +174,40 @@ class OrderDetailsModal extends StatelessComponent {
                 .text('Rs. ${_formatAmount(order.taxTotal)}'),
               ]),
             ]),
+            div(classes: 'flex justify-between items-center', [
+              span(classes: 'font-normal text-gray-800', [.text('Ordering Channel')]),
+              span(classes: 'font-semibold text-gray-900 uppercase', [
+                .text(order.source.name == 'web' ? 'Online (Customer App)' : 'POS Terminal'),
+              ]),
+            ]),
+            div(classes: 'flex justify-between items-center', [
+              span(classes: 'font-normal text-gray-800', [.text('Order Type')]),
+              span(classes: 'font-semibold text-gray-900 uppercase', [
+                .text(order.type.name),
+              ]),
+            ]),
+            div(classes: 'flex justify-between items-center', [
+              span(classes: 'font-normal text-gray-800', [.text('Payment Mode')]),
+              span(classes: 'font-semibold text-gray-900 uppercase', [
+                .text(order.paymentMethod.name),
+              ]),
+            ]),
+            div(classes: 'flex justify-between items-center', [
+              span(classes: 'font-normal text-gray-800', [.text('Payment Status')]),
+              span(classes: 'font-semibold text-emerald-600 uppercase', [
+                .text(order.paymentStatus.name),
+              ]),
+            ]),
+            if (order.walletDeduction > 0)
+              div(classes: 'flex justify-between items-center text-amber-700', [
+                span(classes: 'font-normal', [.text('Customer Wallet Paid')]),
+                span(classes: 'font-medium', [
+                  .text('Rs. ${_formatAmount(order.walletDeduction.toDouble())}'),
+                ]),
+              ]),
             div(
               classes:
-                  'flex justify-between items-center text-base font-bold text-gray-900 pt-1',
+                  'flex justify-between items-center text-base font-bold text-gray-900 pt-2 border-t border-gray-100',
               [
                 span([.text('Grand Total')]),
                 span([.text('Rs. ${_formatAmount(order.grandTotal)}')]),

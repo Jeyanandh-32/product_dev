@@ -1,24 +1,13 @@
 import 'package:api_client/api_client.dart';
+import 'package:client_repositories/src/order_response_types.dart';
 import 'package:dio/dio.dart';
 import 'package:models/models.dart';
 
-typedef OrderSummary = ({
-  int totalOrders,
-  double grossSubtotal,
-  double totalDiscount,
-  double netRevenue,
-});
+export 'package:client_repositories/src/order_response_types.dart';
 
-typedef OrderPaginatedResponse = ({
-  List<Order> items,
-  int currentPage,
-  int pageSize,
-  int totalItems,
-  int totalPages,
-  OrderSummary summary,
-});
-
+/// Client repository for creating, retrieving, and paying orders via backend API.
 abstract final class OrderRepository {
+  /// Places an in-store terminal order.
   static Future<Order> create({
     required String storeId,
     required List<Map<String, dynamic>> products,
@@ -48,7 +37,8 @@ abstract final class OrderRepository {
     }
   }
 
-  static Future<({Order order, String? tokenUrl, String merchantOrderId, bool isFullyPaidByWallet})> initiateOnlinePayment({
+  /// Initiates an online checkout session via PhonePe payment gateway or store wallet.
+  static Future<OnlinePaymentInitiationResult> initiateOnlinePayment({
     required String storeId,
     required List<Map<String, dynamic>> products,
     double? discountTotal,
@@ -82,6 +72,7 @@ abstract final class OrderRepository {
     }
   }
 
+  /// Retrieves order details by primary UUID.
   static Future<Order> getById({
     required String storeId,
     required String id,
@@ -100,6 +91,7 @@ abstract final class OrderRepository {
     }
   }
 
+  /// Retrieves paginated orders report with summary totals for merchant management.
   static Future<OrderPaginatedResponse> getAll({
     required String storeId,
     int? page,
@@ -141,6 +133,12 @@ abstract final class OrderRepository {
         totalDiscount:
             (summaryData['totalDiscount'] as num?)?.toDouble() ?? 0.0,
         netRevenue: (summaryData['netRevenue'] as num?)?.toDouble() ?? 0.0,
+        cashCollected:
+            (summaryData['cashCollected'] as num?)?.toDouble() ?? 0.0,
+        upiCollected: (summaryData['upiCollected'] as num?)?.toDouble() ?? 0.0,
+        walletCollected:
+            (summaryData['walletCollected'] as num?)?.toDouble() ?? 0.0,
+        freeTotal: (summaryData['freeTotal'] as num?)?.toDouble() ?? 0.0,
       );
 
       return (
@@ -156,6 +154,7 @@ abstract final class OrderRepository {
     }
   }
 
+  /// Retrieves dashboard analytics metrics.
   static Future<Map<String, dynamic>> getDashboardAnalytics({
     required String storeId,
     String? fromDate,
@@ -177,6 +176,7 @@ abstract final class OrderRepository {
     }
   }
 
+  /// Verifies status of a pending order payment.
   static Future<Order> verifyStatus({required String reference}) async {
     try {
       final result = await dio.get(
@@ -190,6 +190,7 @@ abstract final class OrderRepository {
     }
   }
 
+  /// Retrieves customer order history.
   static Future<PaginatedResponse<Order>> getCustomerOrders({
     String? storeId,
     String? date,

@@ -1,18 +1,20 @@
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
-import 'package:jaspr_lucide/generated_icons/chevron_down.dart';
+import 'package:merchant/components/fields/category_selector_field.dart';
+import 'package:merchant/components/fields/counter_selector_field.dart';
 import 'package:merchant/components/fields/form_field.dart';
+import 'package:merchant/components/fields/product_pricing_fields.dart';
 import 'package:merchant/components/modals/modal.dart';
+import 'package:merchant/components/signal_component.dart';
 import 'package:merchant/signals/categories_signal.dart';
 import 'package:merchant/signals/counters_signal.dart';
+import 'package:merchant/signals/navigation_signal.dart';
 import 'package:merchant/signals/products_signal.dart';
 import 'package:merchant/signals/toast_signal.dart';
-import 'package:merchant/signals/navigation_signal.dart';
 import 'package:models/models.dart';
 import 'package:web/web.dart' as web;
 
-import 'package:merchant/components/signal_component.dart';
-
+/// Modal dialog for adding new products and editing existing product specifications.
 class AddEditProductModal extends SignalComponent {
   const AddEditProductModal({super.key, this.product});
 
@@ -112,7 +114,6 @@ class _AddEditProductModalState extends SignalState<AddEditProductModal> {
             classes:
                 'max-h-[60vh] overflow-y-auto overflow-x-hidden flex flex-col gap-0 px-3',
             [
-              // Name
               FormField(
                 id: 'productName',
                 labelText: 'Product Name',
@@ -126,203 +127,27 @@ class _AddEditProductModalState extends SignalState<AddEditProductModal> {
                 onChange: (value) => _name = value as String,
               ),
 
-              // Category dropdown
-              fieldset(classes: 'fieldset w-full mb-4', [
-                label(
-                  htmlFor: 'categoryId',
-                  classes: 'label text-[14px] font-semibold text-gray-500',
-                  [.text('Category')],
-                ),
-                details(classes: 'dropdown w-full', [
-                  summary(
-                    classes:
-                        'btn border border-border-medium bg-white hover:bg-base-200 text-sm h-11 w-full justify-between font-normal px-3 rounded-lg list-none cursor-pointer ${_categoryId.isEmpty ? 'text-gray-400' : 'text-base-content'}',
-                    [
-                      span([
-                        .text(
-                          _categoryId.isEmpty
-                              ? 'Select Category'
-                              : (categories.any((c) => c.id == _categoryId)
-                                    ? categories
-                                          .firstWhere(
-                                            (c) => c.id == _categoryId,
-                                          )
-                                          .name
-                                    : 'Select Category'),
-                        ),
-                      ]),
-                      ChevronDown(classes: 'w-4 h-4 opacity-50'),
-                    ],
-                  ),
-                  ul(
-                    classes:
-                        'dropdown-content menu bg-base-100 rounded-box z-50 mt-1 p-2 shadow-sm border border-border-light w-full max-h-48 overflow-y-auto',
-                    [
-                      if (categories.isEmpty)
-                        li([
-                          span(classes: 'text-gray-400 text-sm p-2', [
-                            .text('No categories available'),
-                          ]),
-                        ])
-                      else
-                        for (final cat in categories)
-                          li([
-                            a(
-                              href: '#',
-                              classes:
-                                  'rounded-md hover:bg-neutral py-2 px-3 block ${cat.id == _categoryId ? 'bg-neutral font-semibold' : ''}',
-                              onClick: () {
-                                setState(() {
-                                  _categoryId = cat.id;
-                                });
-                                final activeElement =
-                                    web.document.activeElement;
-                                if (activeElement != null) {
-                                  (activeElement as web.HTMLElement).blur();
-                                  final details = activeElement.closest(
-                                    'details',
-                                  );
-                                  details?.removeAttribute('open');
-                                }
-                              },
-                              [.text(cat.name)],
-                            ),
-                          ]),
-                    ],
-                  ),
-                ]),
-              ]),
-
-              // Counter dropdown (Optional)
-              fieldset(classes: 'fieldset w-full mb-4', [
-                label(
-                  htmlFor: 'counterId',
-                  classes:
-                      'label text-[14px] font-semibold text-gray-500 flex justify-between',
-                  [
-                    .text('Counter'),
-                    span(classes: 'text-xs text-gray-400 font-normal', [
-                      .text('(Optional)'),
-                    ]),
-                  ],
-                ),
-                details(classes: 'dropdown w-full', [
-                  summary(
-                    classes:
-                        'btn border border-border-medium bg-white hover:bg-base-200 text-sm h-11 w-full justify-between font-normal px-3 rounded-lg list-none cursor-pointer ${_counterId.isEmpty ? 'text-gray-400' : 'text-base-content'}',
-                    [
-                      span([
-                        .text(
-                          _counterId.isEmpty
-                              ? 'Select Counter (Optional)'
-                              : (counters.any((c) => c.id == _counterId)
-                                    ? counters
-                                          .firstWhere((c) => c.id == _counterId)
-                                          .name
-                                    : 'Select Counter (Optional)'),
-                        ),
-                      ]),
-                      ChevronDown(classes: 'w-4 h-4 opacity-50'),
-                    ],
-                  ),
-                  ul(
-                    classes:
-                        'dropdown-content menu bg-base-100 rounded-box z-50 mt-1 p-2 shadow-sm border border-border-light w-full max-h-48 overflow-y-auto',
-                    [
-                      li([
-                        a(
-                          href: '#',
-                          classes:
-                              'rounded-md hover:bg-neutral py-2 px-3 block text-gray-400 ${_counterId.isEmpty ? 'bg-neutral font-semibold' : ''}',
-                          onClick: () {
-                            setState(() {
-                              _counterId = '';
-                            });
-                            final activeElement = web.document.activeElement;
-                            if (activeElement != null) {
-                              (activeElement as web.HTMLElement).blur();
-                              final details = activeElement.closest('details');
-                              details?.removeAttribute('open');
-                            }
-                          },
-                          [.text('None (No Counter)')],
-                        ),
-                      ]),
-                      if (counters.isNotEmpty)
-                        for (final cnt in counters)
-                          li([
-                            a(
-                              href: '#',
-                              classes:
-                                  'rounded-md hover:bg-neutral py-2 px-3 block ${cnt.id == _counterId ? 'bg-neutral font-semibold' : ''}',
-                              onClick: () {
-                                setState(() {
-                                  _counterId = cnt.id;
-                                });
-                                final activeElement =
-                                    web.document.activeElement;
-                                if (activeElement != null) {
-                                  (activeElement as web.HTMLElement).blur();
-                                  final details = activeElement.closest(
-                                    'details',
-                                  );
-                                  details?.removeAttribute('open');
-                                }
-                              },
-                              [.text(cnt.name)],
-                            ),
-                          ]),
-                    ],
-                  ),
-                ]),
-              ]),
-
-              // Base Price & Selling Price side by side
-              div(classes: 'flex gap-4', [
-                FormField(
-                  id: 'basePrice',
-                  labelText: 'Base Price (₹)',
-                  type: InputType.number,
-                  attributes: {
-                    'placeholder': '100',
-                    'required': '',
-                    'min': '0',
-                    'value': _basePrice,
-                  },
-                  hintText: 'Base price is required.',
-                  onChange: (value) => _basePrice = value as String,
-                ),
-                FormField(
-                  id: 'sellingPrice',
-                  labelText: 'Selling Price (₹)',
-                  type: InputType.number,
-                  attributes: {
-                    'placeholder': '120',
-                    'required': '',
-                    'min': '0',
-                    'value': _sellingPrice,
-                  },
-                  hintText: 'Selling price is required.',
-                  onChange: (value) => _sellingPrice = value as String,
-                ),
-              ]),
-
-              // Tax Rate
-              FormField(
-                id: 'taxRate',
-                labelText: 'Tax Rate (%)',
-                type: InputType.number,
-                attributes: {
-                  'placeholder': '0',
-                  'min': '0',
-                  'max': '100',
-                  'step': '0.01',
-                  'value': _taxRate,
-                },
-                onChange: (value) => _taxRate = value as String,
+              CategorySelectorField(
+                categoryId: _categoryId,
+                categories: categories,
+                onSelect: (id) => setState(() => _categoryId = id),
               ),
 
-              // SKU & Barcode stacked vertically
+              CounterSelectorField(
+                counterId: _counterId,
+                counters: counters,
+                onSelect: (id) => setState(() => _counterId = id),
+              ),
+
+              ProductPricingFields(
+                basePrice: _basePrice,
+                sellingPrice: _sellingPrice,
+                taxRate: _taxRate,
+                onBasePriceChanged: (val) => _basePrice = val,
+                onSellingPriceChanged: (val) => _sellingPrice = val,
+                onTaxRateChanged: (val) => _taxRate = val,
+              ),
+
               FormField(
                 id: 'sku',
                 labelText: 'SKU (optional)',
@@ -344,7 +169,6 @@ class _AddEditProductModalState extends SignalState<AddEditProductModal> {
                 onChange: (value) => _barcode = value as String,
               ),
 
-              // Image URL
               FormField(
                 id: 'imageUrl',
                 labelText: 'Image URL (optional)',
@@ -356,7 +180,6 @@ class _AddEditProductModalState extends SignalState<AddEditProductModal> {
                 onChange: (value) => _imageUrl = value as String,
               ),
 
-              // Active toggle (edit only)
               if (component.product != null)
                 div(
                   classes: 'form-control mb-4 flex flex-row items-center gap-3',
@@ -384,7 +207,6 @@ class _AddEditProductModalState extends SignalState<AddEditProductModal> {
             ],
           ),
 
-          // Submit button
           div(classes: 'flex justify-end items-center pt-2', [
             button(
               type: ButtonType.submit,

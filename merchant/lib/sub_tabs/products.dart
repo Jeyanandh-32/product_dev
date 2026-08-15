@@ -7,30 +7,19 @@ import 'package:merchant/components/fields/searchbar.dart';
 import 'package:merchant/components/loading.dart';
 import 'package:merchant/components/modals/add_edit_product_modal.dart';
 import 'package:merchant/components/modals/update_stock_modal.dart';
+import 'package:merchant/components/reports/products_filter_bar.dart';
+import 'package:merchant/components/reports/products_table_header.dart';
+import 'package:merchant/components/reports/products_table_view.dart';
 import 'package:merchant/components/signal_component.dart';
 import 'package:merchant/components/sortable_header.dart';
 import 'package:merchant/components/table_pagination.dart';
 import 'package:merchant/exceptions/api_exception.dart';
-import 'package:merchant/signals/products_signal.dart';
 import 'package:merchant/signals/navigation_signal.dart';
+import 'package:merchant/signals/products_signal.dart';
 import 'package:merchant/signals/stores_signal.dart';
-import 'package:models/models.dart';
 import 'package:web/web.dart' as web;
 
-enum ProductSortKey {
-  name,
-  sku,
-  barcode,
-  status,
-  stock,
-  lowStock,
-  basePrice,
-  sellingPrice,
-  taxRate,
-  category,
-  counter,
-}
-
+/// Products management sub-tab displaying product catalog, stock updates, edit modals, and pagination.
 class Products extends SignalComponent {
   const Products({super.key});
 
@@ -89,100 +78,112 @@ class _ProductsState extends SignalState<Products> {
       });
     }
     final entries = entriesSignal.value;
-
     final products = productsSignal.value;
     final currentPage = productsPageSignal.value;
     final totalPages = productsTotalPagesSignal.value;
-    final activeModal = activeModalSignal.value;
-    final editingProduct = editingProductSignal.value;
 
     return div(
       classes:
-          'min-h-0 flex-1 bg-white rounded-2xl flex flex-col m-4 shadow-xs border border-border-medium overflow-hidden',
+          'flex flex-col flex-1 min-h-0 m-4 bg-white rounded-2xl border border-border-medium shadow-xs overflow-hidden',
       [
-        if (activeModal == ActiveModal.addProduct) const AddEditProductModal(),
-        if (activeModal == ActiveModal.editProduct)
-          AddEditProductModal(product: editingProduct),
-        if (activeModal == ActiveModal.updateStock)
-          UpdateStockModal(product: editingProduct!),
+        if (activeModalSignal.value == ActiveModal.addProduct ||
+            activeModalSignal.value == ActiveModal.editProduct)
+          const AddEditProductModal(),
+        if (activeModalSignal.value == ActiveModal.updateStock &&
+            editingProductSignal.value != null)
+          UpdateStockModal(product: editingProductSignal.value!),
+
         div(
           classes:
               'flex flex-col md:items-center md:flex-row md:justify-between w-full border-b border-border-medium p-4 gap-4',
           [
             div(
-              classes:
-                  'flex flex-col sm:flex-row sm:items-center justify-between w-full gap-3',
+              classes: 'flex flex-wrap items-center gap-3 text-sm font-medium',
               [
-                div(
+                span(
                   classes:
-                      'flex flex-wrap items-center gap-2 text-sm font-medium',
+                      'flex gap-2 items-center text-sm font-medium whitespace-nowrap',
                   [
-                    span(
-                      classes:
-                          'flex gap-2 items-center text-sm font-medium whitespace-nowrap',
-                      [
-                        .text('Show'),
-                        details(
-                          classes: 'dropdown dropdown-bottom dropdown-center',
-                          [
-                            summary(
-                              classes:
-                                  'btn rounded-full border border-border-medium bg-white hover:bg-base-200 text-sm h-8 min-h-0 list-none',
-                              [
-                                .text('$entries'),
-                                ChevronDown(classes: 'w-4 h-4'),
-                              ],
-                            ),
-                            ul(
-                              classes:
-                                  'dropdown-content menu bg-base-100 rounded-box z-10 mt-2.5 p-2 shadow-sm border border-border-light',
-                              [
-                                dropdownButton(
-                                  name: '10',
-                                  isSelected: entries == 10,
-                                  onClick: () => _changeEntry(10),
-                                ),
-                                dropdownButton(
-                                  name: '25',
-                                  isSelected: entries == 25,
-                                  onClick: () => _changeEntry(25),
-                                ),
-                                dropdownButton(
-                                  name: '50',
-                                  isSelected: entries == 50,
-                                  onClick: () => _changeEntry(50),
-                                ),
-                                dropdownButton(
-                                  name: '100',
-                                  isSelected: entries == 100,
-                                  onClick: () => _changeEntry(100),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        if (productsTotalSignal.value > 0)
-                          .text(
-                            'Showing ${((currentPage - 1) * entries) + 1}–${(currentPage * entries).clamp(0, productsTotalSignal.value)} of ${productsTotalSignal.value}',
+                    .text('Show'),
+                    div(classes: 'dropdown dropdown-bottom dropdown-center', [
+                      div(
+                        classes:
+                            'btn rounded-full border border-border-medium bg-white hover:bg-base-200 text-sm h-8 min-h-0',
+                        attributes: {
+                          'tabindex': '0',
+                          'role': 'button',
+                        },
+                        [
+                          .text('$entries'),
+                          ChevronDown(classes: 'w-4 h-4'),
+                        ],
+                      ),
+                      ul(
+                        attributes: {'tabindex': '-1'},
+                        classes:
+                            'dropdown-content menu bg-base-100 rounded-box z-10 mt-2.5 p-2 shadow-sm border border-border-light',
+                        [
+                          dropdownButton(
+                            name: '10',
+                            isSelected: entries == 10,
+                            onClick: () => _changeEntry(10),
                           ),
-                      ],
-                    ),
-                    _buildStatusFilter(),
-                    _buildStockMonitorFilter(),
+                          dropdownButton(
+                            name: '25',
+                            isSelected: entries == 25,
+                            onClick: () => _changeEntry(25),
+                          ),
+                          dropdownButton(
+                            name: '50',
+                            isSelected: entries == 50,
+                            onClick: () => _changeEntry(50),
+                          ),
+                          dropdownButton(
+                            name: '100',
+                            isSelected: entries == 100,
+                            onClick: () => _changeEntry(100),
+                          ),
+                        ],
+                      ),
+                    ]),
+                    if (productsTotalSignal.value > 0)
+                      .text(
+                        'Showing ${((currentPage - 1) * entries) + 1}–${(currentPage * entries).clamp(0, productsTotalSignal.value)} of ${productsTotalSignal.value}',
+                      ),
                   ],
                 ),
+                ProductsFilterBar(
+                  statusFilter: _statusFilter,
+                  stockMonitorFilter: _stockMonitorFilter,
+                  onStatusFilterChanged: (val) {
+                    setState(() {
+                      _statusFilter = val;
+                    });
+                  },
+                  onStockMonitorFilterChanged: (val) {
+                    setState(() {
+                      _stockMonitorFilter = val;
+                    });
+                  },
+                ),
+              ],
+            ),
+            div(
+              classes:
+                  'flex justify-between gap-2 items-center w-full sm:w-auto',
+              [
+                Searchbar(
+                  placeholder: 'Search Products...',
+                  classes: 'flex-1 sm:flex-none sm:w-64',
+                  onInput: (val) {
+                    productSearchSignal.value = val;
+                    productsPageSignal.value = 1;
+                    refreshProductsSignal();
+                  },
+                ),
                 div(
-                  classes: 'flex items-center gap-2 w-full sm:w-auto',
+                  classes: 'flex items-center gap-2',
                   [
-                    Searchbar(
-                      placeholder: 'Search Products...',
-                      classes: 'flex-1 sm:w-64 min-w-0',
-                      onInput: (val) {
-                        productSearchSignal.value = val;
-                        productsPageSignal.value = 1;
-                        refreshProductsSignal();
-                      },
-                    ),
                     if (store != null)
                       AddButton(
                         name: 'Add Product',
@@ -210,67 +211,13 @@ class _ProductsState extends SignalState<Products> {
         else if (products.hasValue && products.value!.isEmpty)
           CenteredMessage(message: 'No Products were added.')
         else
-          div(classes: 'flex-1 min-h-0 overflow-auto', [
-            table(
-              classes: 'table table-zebra table-pin-rows table-pin-cols',
-              [
-                tableHead(),
-
-                tbody([
-                  for (final product in sortItems<Product, ProductSortKey>(
-                    items: (products.value ?? []).where((prod) {
-                      if (_statusFilter != null &&
-                          prod.isActive != _statusFilter) {
-                        return false;
-                      }
-                      if (_stockMonitorFilter != null &&
-                          prod.stock?.stockMonitor != _stockMonitorFilter) {
-                        return false;
-                      }
-                      return true;
-                    }).toList(),
-                    sortState: _sortState,
-                    getSortValue: (item, k) => switch (k) {
-                      .name => item.name.toLowerCase(),
-                      .sku => (item.sku ?? '').toLowerCase(),
-                      .barcode => (item.barcode ?? '').toLowerCase(),
-                      .status => item.isActive ? 1 : 0,
-                      .stock => item.stock?.quantity ?? 0,
-                      .lowStock => item.stock?.lowStockThreshold ?? 0,
-                      .basePrice => item.basePrice,
-                      .sellingPrice => item.sellingPrice,
-                      .taxRate => item.taxRate,
-                      .category => (item.category?.name ?? '').toLowerCase(),
-                      .counter => (item.counter?.name ?? '').toLowerCase(),
-                    },
-                  ))
-                    tableRow(
-                      name: product.name,
-                      image: product.imageUrl,
-                      isActive: product.isActive,
-                      stock: product.stock!.quantity,
-                      lowStock: product.stock!.lowStockThreshold,
-                      stockMonitor: product.stock!.stockMonitor,
-                      basePrice: product.basePrice,
-                      sellingPrice: product.sellingPrice,
-                      category: product.category?.name ?? '-',
-                      counter: product.counter?.name ?? '-',
-                      sku: product.sku,
-                      barcode: product.barcode,
-                      taxRate: product.taxRate,
-                      onEdit: () {
-                        editingProductSignal.value = product;
-                        activeModalSignal.value = ActiveModal.editProduct;
-                      },
-                      onUpdateStock: () {
-                        editingProductSignal.value = product;
-                        activeModalSignal.value = ActiveModal.updateStock;
-                      },
-                    ),
-                ]),
-              ],
-            ),
-          ]),
+          ProductsTableView(
+            products: products.value ?? [],
+            sortState: _sortState,
+            onSort: _onSort,
+            statusFilter: _statusFilter,
+            stockMonitorFilter: _stockMonitorFilter,
+          ),
 
         TablePagination(
           currentPage: currentPage,
@@ -284,290 +231,9 @@ class _ProductsState extends SignalState<Products> {
     );
   }
 
-  tr tableRow({
-    required String name,
-    String? image,
-    required bool isActive,
-    required int stock,
-    required int lowStock,
-    required bool stockMonitor,
-    required double basePrice,
-    required double sellingPrice,
-    required String category,
-    required String counter,
-    String? sku,
-    String? barcode,
-    required double taxRate,
-    VoidCallback? onEdit,
-    VoidCallback? onUpdateStock,
-  }) {
-    return tr([
-      th([]),
-      td([
-        div(classes: 'flex items-center gap-4', [
-          button(
-            classes:
-                'hover:cursor-pointer btn btn-ghost btn-xs h-8 w-8 p-0 rounded-full text-gray-500 hover:text-accent transition-colors',
-            events: {
-              'click': (e) {
-                e.stopPropagation();
-                onEdit?.call();
-              },
-            },
-            [
-              SquarePen(classes: 'w-5 h-5'),
-            ],
-          ),
-          button(
-            classes:
-                'hover:cursor-pointer btn btn-ghost btn-xs h-8 w-8 p-0 rounded-full text-gray-500 hover:text-accent transition-colors',
-            events: {
-              'click': (e) {
-                e.stopPropagation();
-                onUpdateStock?.call();
-              },
-            },
-            [
-              Boxes(classes: 'w-5 h-5'),
-            ],
-          ),
-        ]),
-      ]),
-      td([
-        if (image != null && image.isNotEmpty)
-          div(
-            classes:
-                'h-12 w-12 overflow-hidden rounded-2xl bg-gray-100 shrink-0',
-            [
-              img(
-                src: image,
-                alt: name,
-                classes: 'block h-full w-full object-cover',
-              ),
-            ],
-          )
-        else
-          .text('-'),
-      ]),
-      th(classes: 'whitespace-nowrap', [
-        .text(name),
-      ]),
-      td([.text(sku ?? '-')]),
-      td([.text(barcode ?? '-')]),
-      td([
-        div(
-          classes:
-              '${isActive ? 'bg-soft-green text-soft-green-content' : 'bg-soft-red text-soft-red-content'} rounded-full px-3 py-1 text-center text-xs font-semibold inline-block',
-          [
-            .text(isActive ? 'ACTIVE' : 'INACTIVE'),
-          ],
-        ),
-      ]),
-      td([.text('$stock')]),
-      td([.text('$lowStock')]),
-      td([
-        div(
-          classes:
-              '${stockMonitor ? 'bg-soft-green text-soft-green-content' : 'bg-soft-red text-soft-red-content'} rounded-full px-3 py-1 text-center text-xs font-semibold',
-          [
-            .text(stockMonitor ? 'ON' : 'OFF'),
-          ],
-        ),
-      ]),
-      td([.text(basePrice.toStringAsFixed(2))]),
-      td([.text(sellingPrice.toStringAsFixed(2))]),
-      td([.text('${taxRate.toStringAsFixed(2)}%')]),
-      td(classes: 'whitespace-nowrap', [.text(category)]),
-      td(classes: 'whitespace-nowrap', [.text(counter)]),
-      th([]),
-    ]);
-  }
-
-  thead tableHead() {
-    return thead([
-      tr([
-        th([]),
-        td([.text('Action')]),
-        td([.text('Image')]),
-        SortableHeader<ProductSortKey>(
-          title: 'Product Name',
-          sortKey: .name,
-          currentSort: _sortState,
-          onSort: _onSort,
-          isTh: true,
-        ),
-        SortableHeader<ProductSortKey>(
-          title: 'SKU',
-          sortKey: .sku,
-          currentSort: _sortState,
-          onSort: _onSort,
-        ),
-        SortableHeader<ProductSortKey>(
-          title: 'Barcode',
-          sortKey: .barcode,
-          currentSort: _sortState,
-          onSort: _onSort,
-        ),
-        td([.text('Status')]),
-        SortableHeader<ProductSortKey>(
-          title: 'Stock',
-          sortKey: .stock,
-          currentSort: _sortState,
-          onSort: _onSort,
-        ),
-        SortableHeader<ProductSortKey>(
-          title: 'Low Stock',
-          sortKey: .lowStock,
-          currentSort: _sortState,
-          onSort: _onSort,
-        ),
-        td([.text('Stock Monitor')]),
-        SortableHeader<ProductSortKey>(
-          title: 'Base Price (₹)',
-          sortKey: .basePrice,
-          currentSort: _sortState,
-          onSort: _onSort,
-        ),
-        SortableHeader<ProductSortKey>(
-          title: 'Selling Price (₹)',
-          sortKey: .sellingPrice,
-          currentSort: _sortState,
-          onSort: _onSort,
-        ),
-        SortableHeader<ProductSortKey>(
-          title: 'Tax Rate (%)',
-          sortKey: .taxRate,
-          currentSort: _sortState,
-          onSort: _onSort,
-        ),
-        SortableHeader<ProductSortKey>(
-          title: 'Category',
-          sortKey: .category,
-          currentSort: _sortState,
-          onSort: _onSort,
-        ),
-        SortableHeader<ProductSortKey>(
-          title: 'Counter',
-          sortKey: .counter,
-          currentSort: _sortState,
-          onSort: _onSort,
-        ),
-        th([]),
-      ]),
-    ]);
-  }
-
-  Component _buildStatusFilter() {
-    final label = switch (_statusFilter) {
-      true => 'Status: Active',
-      false => 'Status: Inactive',
-      null => 'Status: All',
-    };
-
-    return details(
-      classes: 'dropdown dropdown-bottom dropdown-start inline-block',
-      [
-        summary(
-          classes:
-              'btn btn-sm rounded-full border border-border-medium bg-base-100 hover:bg-base-200 text-xs px-3 font-medium flex items-center gap-1.5 shadow-2xs cursor-pointer list-none select-none',
-          [
-            span(classes: 'text-xs text-base-content font-medium', [
-              .text(label),
-            ]),
-            ChevronDown(classes: 'w-3.5 h-3.5 opacity-60'),
-          ],
-        ),
-        ul(
-          classes:
-              'dropdown-content menu bg-base-100 rounded-2xl z-30 mt-2 p-2 shadow-xl border border-border-medium w-36 flex flex-col gap-1',
-          [
-            dropdownButton(
-              name: 'All Statuses',
-              isSelected: _statusFilter == null,
-              onClick: () {
-                setState(() => _statusFilter = null);
-                _closeDropdowns();
-              },
-            ),
-            dropdownButton(
-              name: 'Active',
-              isSelected: _statusFilter == true,
-              onClick: () {
-                setState(() => _statusFilter = true);
-                _closeDropdowns();
-              },
-            ),
-            dropdownButton(
-              name: 'Inactive',
-              isSelected: _statusFilter == false,
-              onClick: () {
-                setState(() => _statusFilter = false);
-                _closeDropdowns();
-              },
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Component _buildStockMonitorFilter() {
-    final label = switch (_stockMonitorFilter) {
-      true => 'Stock Monitor: On',
-      false => 'Stock Monitor: Off',
-      null => 'Stock Monitor: All',
-    };
-
-    return details(
-      classes: 'dropdown dropdown-bottom dropdown-start inline-block',
-      [
-        summary(
-          classes:
-              'btn btn-sm rounded-full border border-border-medium bg-base-100 hover:bg-base-200 text-xs px-3 font-medium flex items-center gap-1.5 shadow-2xs cursor-pointer list-none select-none',
-          [
-            span(classes: 'text-xs text-base-content font-medium', [
-              .text(label),
-            ]),
-            ChevronDown(classes: 'w-3.5 h-3.5 opacity-60'),
-          ],
-        ),
-        ul(
-          classes:
-              'dropdown-content menu bg-base-100 rounded-2xl z-30 mt-2 p-2 shadow-xl border border-border-medium w-40 flex flex-col gap-1',
-          [
-            dropdownButton(
-              name: 'All Monitors',
-              isSelected: _stockMonitorFilter == null,
-              onClick: () {
-                setState(() => _stockMonitorFilter = null);
-                _closeDropdowns();
-              },
-            ),
-            dropdownButton(
-              name: 'Monitor On',
-              isSelected: _stockMonitorFilter == true,
-              onClick: () {
-                setState(() => _stockMonitorFilter = true);
-                _closeDropdowns();
-              },
-            ),
-            dropdownButton(
-              name: 'Monitor Off',
-              isSelected: _stockMonitorFilter == false,
-              onClick: () {
-                setState(() => _stockMonitorFilter = false);
-                _closeDropdowns();
-              },
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
   li dropdownButton({
     required String name,
-    bool isSelected = false,
+    required bool isSelected,
     VoidCallback? onClick,
   }) {
     return li([
