@@ -25,11 +25,11 @@ class DashboardChartsRenderer {
       canvasId: 'paymentMethodChart',
       type: 'doughnut',
       data: {
-        'labels': ['UPI', 'Cash'],
+        'labels': ['UPI / QR Code', 'Cash'],
         'datasets': [
           {
             'data': [pMethods.upiTotal, pMethods.cashTotal],
-            'backgroundColor': ['#8B5CF6', '#10B981'],
+            'backgroundColor': ['#191645', '#43c6ac'],
             'borderWidth': 0,
             'hoverOffset': 4,
           },
@@ -48,7 +48,7 @@ class DashboardChartsRenderer {
           'defaultLabel': 'TOTAL',
           'defaultValue': formattedTotal,
           'items': [
-            {'label': 'UPI', 'value': formattedUpi},
+            {'label': 'UPI / QR CODE', 'value': formattedUpi},
             {'label': 'CASH', 'value': formattedCash},
           ],
         },
@@ -65,7 +65,7 @@ class DashboardChartsRenderer {
         'datasets': [
           {
             'data': [pStatus.paidCount, pStatus.freeCount],
-            'backgroundColor': ['#10B981', '#3B82F6'],
+            'backgroundColor': ['#8B5CF6', '#F59E0B'],
             'borderWidth': 0,
             'hoverOffset': 4,
           },

@@ -1681,6 +1681,83 @@
       }
     }
   }
+  .card {
+    @layer daisyui.l1.l2.l3 {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      border-radius: var(--radius-box);
+      transition: outline 0.2s ease-in-out;
+      outline: 2px solid #0000;
+      outline-offset: 2px;
+    }
+    &:focus-visible {
+      @layer daisyui.l1.l2.l3 {
+        outline-color: currentColor;
+      }
+    }
+    &[aria-checked="true"] {
+      @layer daisyui.l1.l2.l3 {
+        outline-color: currentColor;
+      }
+    }
+    &:has( > :checked,  > :is([type="checkbox"], [type="radio"]):focus-visible) {
+      @layer daisyui.l1.l2.l3 {
+        outline-color: currentColor;
+      }
+    }
+    &:has( > :checked:focus-visible) {
+      @layer daisyui.l1.l2.l3 {
+        outline-width: 4px;
+      }
+    }
+    &[aria-checked="true"]:focus-visible {
+      @layer daisyui.l1.l2.l3 {
+        outline-width: 4px;
+      }
+    }
+    &[aria-checked="true"]:has( > :is([type="checkbox"], [type="radio"]):focus-visible) {
+      @layer daisyui.l1.l2.l3 {
+        outline-width: 4px;
+      }
+    }
+    &:has( > :is([type="checkbox"], [type="radio"])) {
+      @layer daisyui.l1.l2.l3 {
+        cursor: pointer;
+        user-select: none;
+      }
+    }
+    & > :is([type="checkbox"], [type="radio"]) {
+      @layer daisyui.l1.l2.l3 {
+        appearance: none;
+      }
+    }
+    & figure:first-child {
+      @layer daisyui.l1.l2.l3.l4 {
+        overflow: hidden;
+        border-start-start-radius: inherit;
+        border-start-end-radius: inherit;
+        border-end-start-radius: unset;
+        border-end-end-radius: unset;
+      }
+    }
+    & figure:last-child {
+      @layer daisyui.l1.l2.l3.l4 {
+        overflow: hidden;
+        border-start-start-radius: unset;
+        border-start-end-radius: unset;
+        border-end-start-radius: inherit;
+        border-end-end-radius: inherit;
+      }
+    }
+    & figure {
+      @layer daisyui.l1.l2.l3.l4 {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    }
+  }
   .absolute {
     position: absolute;
   }
@@ -1757,6 +1834,24 @@
   }
   .z-100 {
     z-index: 100;
+  }
+  .container {
+    width: 100%;
+    @media (width >= 40rem) {
+      max-width: 40rem;
+    }
+    @media (width >= 48rem) {
+      max-width: 48rem;
+    }
+    @media (width >= 64rem) {
+      max-width: 64rem;
+    }
+    @media (width >= 80rem) {
+      max-width: 80rem;
+    }
+    @media (width >= 96rem) {
+      max-width: 96rem;
+    }
   }
   .-mx-4 {
     margin-inline: calc(var(--spacing) * -4);
@@ -2908,14 +3003,6 @@
     --tw-ease: var(--ease-in-out);
     transition-timing-function: var(--ease-in-out);
   }
-  .btn-neutral {
-    @layer daisyui.l1.l2 {
-      --btn-color: var(--color-neutral);
-      --btn-fg: var(--color-neutral-content);
-      --btn-soft-bg: var(--color-neutral-content) 80%;
-      --btn-rest-fg: initial;
-    }
-  }
   .btn-xs {
     @layer daisyui.l1.l2 {
       --fontsize: 0.6875rem;
@@ -2938,6 +3025,13 @@
     .aura:has( > &,  > .input,  > .select) {
       @layer daisyui.l1.l2.l3 {
         --aura-radius: var(--radius-field);
+      }
+    }
+  }
+  .card {
+    .aura:has( > &,  > .alert) {
+      @layer daisyui.l1.l2.l3 {
+        --aura-radius: var(--radius-box);
       }
     }
   }
