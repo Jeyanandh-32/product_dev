@@ -2,6 +2,7 @@ import 'package:client_repositories/client_repositories.dart';
 import 'package:merchant/exceptions/api_exception.dart';
 import 'package:merchant/signals/auth_signal.dart';
 import 'package:merchant/signals/toast_signal.dart';
+import 'package:models/models.dart';
 import 'package:signals/signals.dart';
 import 'package:validators/validators.dart';
 
@@ -66,5 +67,37 @@ class MerchantAccountHandler {
       showToast(err is ApiException ? err.message : 'Failed to update password.');
       return false;
     }
+  }
+
+  /// Updates merchant notification preferences.
+  static Future<MerchantSettings?> updateNotifications({
+    bool? waNotifications,
+    bool? lowStockAlerts,
+    bool? dailyReports,
+  }) async {
+    try {
+      final updatedSettings = await MerchantSettingsRepository.updateSettings(
+        waNotifications: waNotifications,
+        lowStockAlerts: lowStockAlerts,
+        dailyReports: dailyReports,
+      );
+      showToast('Notification preferences saved.', type: ToastType.success);
+      return updatedSettings;
+    } catch (err) {
+      showToast(
+        err is ApiException ? err.message : 'Failed to update preferences.',
+      );
+      return null;
+    }
+  }
+
+  /// Calculates initials for display in merchant avatar banner.
+  static String getInitials(String name) {
+    if (name.trim().isEmpty) return 'M';
+    final parts = name.trim().split(RegExp(r'\s+'));
+    if (parts.length >= 2) {
+      return '${parts[0][0]}${parts[1][0]}'.toUpperCase();
+    }
+    return parts[0][0].toUpperCase();
   }
 }

@@ -3,40 +3,12 @@ import 'package:client_repositories/client_repositories.dart';
 import 'package:models/models.dart';
 import 'package:signals_flutter/signals_flutter.dart';
 import 'package:terminal/models/cart_item.dart';
+import 'package:terminal/models/cart_state.dart';
+
+export 'package:terminal/models/cart_state.dart';
 
 final paymentModeSignal = signal<PaymentMethod>(PaymentMethod.cash);
 final discountInputSignal = signal<double>(0.0);
-
-class CartState {
-  final List<CartItem> items;
-  final int noOfItems;
-  final int orderQuantity;
-  final double subtotal;
-  final double discountTotal;
-  final double taxTotal;
-  final double grandTotal;
-
-  CartState({
-    required this.items,
-    required this.noOfItems,
-    required this.orderQuantity,
-    required this.subtotal,
-    required this.discountTotal,
-    required this.taxTotal,
-    required this.grandTotal,
-  });
-
-  factory CartState.initial() => CartState(
-    items: [],
-    noOfItems: 0,
-    orderQuantity: 0,
-    subtotal: 0.0,
-    discountTotal: 0.0,
-    taxTotal: 0.0,
-    grandTotal: 0.0,
-  );
-}
-
 final cartSignal = signal<CartState>(CartState.initial());
 
 abstract final class CartController {
@@ -143,19 +115,15 @@ abstract final class CartController {
 
     final discountTotal = cartSignal.value.discountTotal;
 
-    try {
-      final order = await OrderRepository.create(
-        storeId: storeId,
-        products: products,
-        paymentMethod: paymentMethod,
-        discountTotal: discountTotal,
-        source: OrderSource.terminal,
-        type: OrderType.dineIn,
-      );
-      clear();
-      return order;
-    } catch (e) {
-      rethrow;
-    }
+    final order = await OrderRepository.create(
+      storeId: storeId,
+      products: products,
+      paymentMethod: paymentMethod,
+      discountTotal: discountTotal,
+      source: OrderSource.terminal,
+      type: OrderType.dineIn,
+    );
+    clear();
+    return order;
   }
 }

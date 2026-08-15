@@ -1,15 +1,13 @@
-import 'package:client_repositories/client_repositories.dart';
 import 'package:customer/components/signal_component.dart';
 import 'package:customer/components/store/floating_cart_bar.dart';
 import 'package:customer/components/store/store_category_filters.dart';
+import 'package:customer/components/store/store_detail_header.dart';
 import 'package:customer/components/store/store_product_search_bar.dart';
 import 'package:customer/components/store/store_products_grid.dart';
+import 'package:customer/services/store_detail_loader.dart';
 import 'package:customer/signals/cart_signal.dart';
-import 'package:customer/signals/recent_stores_signal.dart';
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
-import 'package:jaspr_lucide/jaspr_lucide.dart' hide List, Map, Router, Store;
-import 'package:jaspr_router/jaspr_router.dart';
 import 'package:models/models.dart';
 import 'package:signals/signals.dart';
 
@@ -26,9 +24,7 @@ class StoreDetailPage extends SignalComponent {
 class _StoreDetailPageState extends SignalState<StoreDetailPage> {
   late final storeSignal = asyncSignal<Store?>(const AsyncLoading());
   late final productsSignal = asyncSignal<List<Product>>(const AsyncLoading());
-  late final categoriesSignal = asyncSignal<List<Category>>(
-    const AsyncLoading(),
-  );
+  late final categoriesSignal = asyncSignal<List<Category>>(const AsyncLoading());
 
   String _searchQuery = '';
   String? _selectedCategoryId;
@@ -36,62 +32,24 @@ class _StoreDetailPageState extends SignalState<StoreDetailPage> {
   @override
   void initState() {
     super.initState();
-    _fetchStoreData();
+    _fetch();
   }
 
   @override
   void didUpdateComponent(StoreDetailPage oldComponent) {
     super.didUpdateComponent(oldComponent);
     if (oldComponent.slug != component.slug) {
-      _fetchStoreData();
+      _fetch();
     }
   }
 
-  Future<void> _fetchStoreData() async {
-    try {
-      final store = await StoreRepository.getBySlug(component.slug);
-      storeSignal.value = AsyncData(store);
-
-      if (store != null) {
-        setActiveStore(store);
-        recordStoreVisitSignal(store.id);
-        await Future.wait([
-          _fetchCategories(store.id),
-          _fetchProducts(store.id),
-        ]);
-      } else {
-        productsSignal.value = const AsyncData([]);
-        categoriesSignal.value = const AsyncData([]);
-      }
-    } catch (e, stack) {
-      storeSignal.value = AsyncError(e, stack);
-      productsSignal.value = AsyncError(e, stack);
-      categoriesSignal.value = AsyncError(e, stack);
-    }
-  }
-
-  Future<void> _fetchCategories(String storeId) async {
-    try {
-      final categoriesRes = await CategoryRepository.getAll(
-        storeId: storeId,
-        size: 100,
-      );
-      categoriesSignal.value = AsyncData(categoriesRes.items);
-    } catch (e, stack) {
-      categoriesSignal.value = AsyncError(e, stack);
-    }
-  }
-
-  Future<void> _fetchProducts(String storeId) async {
-    try {
-      final productsRes = await ProductRepository.getAll(
-        storeId: storeId,
-        size: 100,
-      );
-      productsSignal.value = AsyncData(productsRes.items);
-    } catch (e, stack) {
-      productsSignal.value = AsyncError(e, stack);
-    }
+  void _fetch() {
+    StoreDetailLoader.loadStoreData(
+      slug: component.slug,
+      storeSignal: storeSignal,
+      productsSignal: productsSignal,
+      categoriesSignal: categoriesSignal,
+    );
   }
 
   @override
@@ -100,39 +58,28 @@ class _StoreDetailPageState extends SignalState<StoreDetailPage> {
     final productsState = productsSignal.value;
     final categoriesState = categoriesSignal.value;
 
-    final isCatalogLoading = storeState.isLoading ||
-        productsState.isLoading ||
-        categoriesState.isLoading;
-
-    if (isCatalogLoading) {
+    if (storeState.isLoading || productsState.isLoading || categoriesState.isLoading) {
       return div(
         classes:
-            'flex-1 flex flex-col items-center justify-center min-h-[60vh] gap-3 text-center my-auto w-full',
+            'flex-1 min-h-[60vh] flex flex-col items-center justify-center gap-4 text-center my-auto w-full',
         [
           span(classes: 'loading loading-spinner loading-lg text-black', []),
-          p(classes: 'text-xs font-semibold text-gray-400', [
-            .text('Loading store & menu...'),
+          p(classes: 'text-sm font-semibold text-gray-500', [
+            .text('Loading store menu...'),
           ]),
         ],
       );
     }
 
-    if (storeState.hasError ||
-        !storeState.hasValue ||
-        storeState.value == null) {
+    if (storeState.hasError || storeState.value == null) {
       return div(
         classes:
-            'flex-1 flex flex-col items-center justify-center min-h-[60vh] gap-4 text-center p-6 my-auto w-full',
+            'min-h-[50vh] flex flex-col items-center justify-center gap-4 text-center px-4',
         [
-          h2(
-            classes: 'text-2xl font-bold text-black',
-            [.text('Store Not Found')],
-          ),
-          button(
-            classes: 'btn btn-neutral rounded-full px-6 font-bold cursor-pointer',
-            onClick: () => Router.of(context).push('/?all=true'),
-            [.text('Browse All Stores')],
-          ),
+          h1(classes: 'text-2xl font-bold text-black', [.text('Store Not Found')]),
+          p(classes: 'text-sm text-gray-500', [
+            .text('The requested store catalog does not exist or is inactive.'),
+          ]),
         ],
       );
     }
@@ -151,43 +98,7 @@ class _StoreDetailPageState extends SignalState<StoreDetailPage> {
     return div(
       classes: 'flex flex-col gap-6 max-w-4xl w-full mx-auto pb-28',
       [
-        div(classes: 'flex items-center gap-3', [
-          button(
-            classes:
-                'w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 flex items-center justify-center cursor-pointer border-0 transition-all active:scale-95 shrink-0',
-            onClick: () => Router.of(context).push('/?all=true'),
-            [ArrowLeft(classes: 'w-5 h-5')],
-          ),
-          div(classes: 'flex flex-col', [
-            h1(
-              classes:
-                  'text-2xl sm:text-3xl font-extrabold text-black tracking-tight leading-tight',
-              [.text(currentStore.name)],
-            ),
-            if (currentStore.storeType != null &&
-                currentStore.storeType!.isNotEmpty)
-              span(classes: 'text-xs text-gray-500 font-medium capitalize', [
-                .text(currentStore.storeType!),
-              ]),
-          ]),
-        ]),
-
-        if (!currentStore.isOnlineEnabled)
-          div(
-            classes:
-                'w-full bg-amber-50 border border-amber-200 text-amber-900 rounded-2xl p-4 flex items-center gap-3 text-sm font-semibold shadow-2xs',
-            [
-              span(
-                classes: 'text-amber-600 text-lg font-bold shrink-0',
-                [.text('⚠️')],
-              ),
-              span([
-                .text(
-                  'Online ordering is currently paused for this store. You can browse the menu, but online checkout is unavailable.',
-                ),
-              ]),
-            ],
-          ),
+        StoreDetailHeader(store: currentStore),
 
         div(classes: 'flex flex-col gap-3', [
           StoreProductSearchBar(

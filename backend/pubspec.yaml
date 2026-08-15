@@ -12,6 +12,7 @@ resolution: workspace
 
 dependencies:
   bcrypt: ^1.2.0
+  change_case: ^2.2.0
   crypto: ^3.0.6
   dart_frog: ^1.1.0
   dart_frog_cors: ^2.0.0

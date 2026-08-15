@@ -24,7 +24,7 @@ Future<Response> onRequest(RequestContext context) async {
     final payload = json['payload'] as Map<String, dynamic>?;
 
     if (event == null || payload == null) {
-      return error(message: 'Invalid webhook payload structure', statusCode: 400);
+      return badRequest(message: 'Invalid webhook payload structure');
     }
 
     final merchantOrderId = payload['merchantOrderId'] as String?;
@@ -33,7 +33,7 @@ Future<Response> onRequest(RequestContext context) async {
     final storeId = metaInfo?['udf1'] as String?;
 
     if (merchantOrderId == null || state == null) {
-      return error(message: 'Missing required webhook payload fields', statusCode: 400);
+      return badRequest(message: 'Missing required webhook payload fields');
     }
 
     final db = Database.db;

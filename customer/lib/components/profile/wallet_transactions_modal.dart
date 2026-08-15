@@ -1,3 +1,4 @@
+import 'package:change_case/change_case.dart';
 import 'package:customer/components/modals/modal.dart';
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
@@ -102,7 +103,7 @@ class WalletTransactionsModal extends StatelessComponent {
           span(
             classes:
                 'text-[10px] font-bold px-2 py-0.5 rounded-full ${tx.status == 'completed' ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'}',
-            [.text(tx.status.toUpperCase())],
+            [.text(tx.status.toTitleCase())],
           ),
         ]),
       ],

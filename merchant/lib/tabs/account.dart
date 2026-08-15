@@ -2,12 +2,10 @@ import 'package:client_repositories/client_repositories.dart';
 import 'package:jaspr/client.dart';
 import 'package:jaspr/dom.dart';
 import 'package:merchant/components/account/account_banner.dart';
-import 'package:merchant/components/account/merchant_info_card.dart';
+import 'package:merchant/components/account/merchant_profile_security_section.dart';
 import 'package:merchant/components/account/notification_settings_card.dart';
-import 'package:merchant/components/account/security_credentials_card.dart';
 import 'package:merchant/components/account/store_subscriptions_card.dart';
 import 'package:merchant/components/signal_component.dart';
-import 'package:merchant/exceptions/api_exception.dart';
 import 'package:merchant/signals/auth_signal.dart';
 import 'package:merchant/signals/stores_signal.dart';
 import 'package:merchant/signals/toast_signal.dart';
@@ -39,16 +37,12 @@ class _AccountState extends SignalState<Account> {
   @override
   void initState() {
     super.initState();
-    _initMerchantFields();
-    _fetchNotificationSettings();
-  }
-
-  void _initMerchantFields() {
     final merchant = authSignal.value.value;
     _name = merchant?.name ?? 'Merchant Owner';
     _businessName = merchant?.businessName ?? 'Retail & POS Enterprise';
     _whatsappNumber = merchant?.whatsappNumber ?? '+91 98765 43210';
     _email = merchant?.email ?? 'merchant@store.com';
+    _fetchNotificationSettings();
   }
 
   Future<void> _fetchNotificationSettings() async {
@@ -60,39 +54,6 @@ class _AccountState extends SignalState<Account> {
         _dailyReports = settings.dailyReports;
       });
     }
-  }
-
-  Future<void> _updateNotificationSettings({
-    bool? waNotifications,
-    bool? lowStockAlerts,
-    bool? dailyReports,
-  }) async {
-    try {
-      final updatedSettings = await MerchantSettingsRepository.updateSettings(
-        waNotifications: waNotifications,
-        lowStockAlerts: lowStockAlerts,
-        dailyReports: dailyReports,
-      );
-      setState(() {
-        _waNotifications = updatedSettings.waNotifications;
-        _lowStockAlerts = updatedSettings.lowStockAlerts;
-        _dailyReports = updatedSettings.dailyReports;
-      });
-      showToast('Notification preferences saved.', type: ToastType.success);
-    } catch (err) {
-      showToast(
-        err is ApiException ? err.message : 'Failed to update preferences.',
-      );
-    }
-  }
-
-  String _getInitials(String name) {
-    if (name.trim().isEmpty) return 'M';
-    final parts = name.trim().split(RegExp(r'\s+'));
-    if (parts.length >= 2) {
-      return '${parts[0][0]}${parts[1][0]}'.toUpperCase();
-    }
-    return parts[0][0].toUpperCase();
   }
 
   Future<void> _onSaveProfile(Event e) async {
@@ -123,6 +84,25 @@ class _AccountState extends SignalState<Account> {
     }
   }
 
+  Future<void> _onNotificationSettingChanged({
+    bool? waNotifications,
+    bool? lowStockAlerts,
+    bool? dailyReports,
+  }) async {
+    final updated = await MerchantAccountHandler.updateNotifications(
+      waNotifications: waNotifications,
+      lowStockAlerts: lowStockAlerts,
+      dailyReports: dailyReports,
+    );
+    if (updated != null) {
+      setState(() {
+        _waNotifications = updated.waNotifications;
+        _lowStockAlerts = updated.lowStockAlerts;
+        _dailyReports = updated.dailyReports;
+      });
+    }
+  }
+
   @override
   Component buildSignal(BuildContext context) {
     final merchant = authSignal.value.value;
@@ -133,7 +113,7 @@ class _AccountState extends SignalState<Account> {
     final displayBusiness = merchant?.businessName ?? _businessName;
     final displayEmail = merchant?.email ?? _email;
     final displayWhatsapp = merchant?.whatsappNumber ?? _whatsappNumber;
-    final initials = _getInitials(displayName);
+    final initials = MerchantAccountHandler.getInitials(displayName);
 
     return div(
       classes: 'flex-1 h-full overflow-y-auto bg-neutral/30 p-4 space-y-4',
@@ -148,30 +128,26 @@ class _AccountState extends SignalState<Account> {
         ),
 
         div(classes: 'grid grid-cols-1 lg:grid-cols-3 gap-4', [
-          div(classes: 'lg:col-span-2 space-y-4', [
-            MerchantInfoCard(
-              name: _name,
-              businessName: _businessName,
-              email: _email,
-              whatsappNumber: _whatsappNumber,
-              onNameChanged: (val) => _name = val,
-              onBusinessNameChanged: (val) => _businessName = val,
-              onEmailChanged: (val) => _email = val,
-              onWhatsappChanged: (val) => _whatsappNumber = val,
-              onSave: _onSaveProfile,
-            ),
-            SecurityCredentialsCard(
-              currentPassword: _currentPassword,
-              newPassword: _newPassword,
-              confirmPassword: _confirmPassword,
-              onCurrentPasswordChanged: (val) =>
-                  setState(() => _currentPassword = val),
-              onNewPasswordChanged: (val) => setState(() => _newPassword = val),
-              onConfirmPasswordChanged: (val) =>
-                  setState(() => _confirmPassword = val),
-              onUpdatePassword: _onUpdatePassword,
-            ),
-          ]),
+          MerchantProfileSecuritySection(
+            name: _name,
+            businessName: _businessName,
+            email: _email,
+            whatsappNumber: _whatsappNumber,
+            onNameChanged: (val) => _name = val,
+            onBusinessNameChanged: (val) => _businessName = val,
+            onEmailChanged: (val) => _email = val,
+            onWhatsappChanged: (val) => _whatsappNumber = val,
+            onSaveProfile: _onSaveProfile,
+            currentPassword: _currentPassword,
+            newPassword: _newPassword,
+            confirmPassword: _confirmPassword,
+            onCurrentPasswordChanged: (val) =>
+                setState(() => _currentPassword = val),
+            onNewPasswordChanged: (val) => setState(() => _newPassword = val),
+            onConfirmPasswordChanged: (val) =>
+                setState(() => _confirmPassword = val),
+            onUpdatePassword: _onUpdatePassword,
+          ),
 
           div(classes: 'space-y-4', [
             StoreSubscriptionsCard(
@@ -183,18 +159,12 @@ class _AccountState extends SignalState<Account> {
               waNotifications: _waNotifications,
               lowStockAlerts: _lowStockAlerts,
               dailyReports: _dailyReports,
-              onWaNotificationsChanged: (val) {
-                setState(() => _waNotifications = val);
-                _updateNotificationSettings(waNotifications: val);
-              },
-              onLowStockAlertsChanged: (val) {
-                setState(() => _lowStockAlerts = val);
-                _updateNotificationSettings(lowStockAlerts: val);
-              },
-              onDailyReportsChanged: (val) {
-                setState(() => _dailyReports = val);
-                _updateNotificationSettings(dailyReports: val);
-              },
+              onWaNotificationsChanged: (val) =>
+                  _onNotificationSettingChanged(waNotifications: val),
+              onLowStockAlertsChanged: (val) =>
+                  _onNotificationSettingChanged(lowStockAlerts: val),
+              onDailyReportsChanged: (val) =>
+                  _onNotificationSettingChanged(dailyReports: val),
             ),
           ]),
         ]),

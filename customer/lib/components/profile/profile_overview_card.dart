@@ -1,3 +1,4 @@
+import 'package:change_case/change_case.dart';
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_lucide/jaspr_lucide.dart' hide List, Map, Router;
@@ -14,7 +15,7 @@ class ProfileOverviewCard extends StatelessComponent {
   @override
   Component build(BuildContext context) {
     final initialChar = customer.name.isNotEmpty
-        ? customer.name[0].toUpperCase()
+        ? customer.name[0].toCapitalCase()
         : 'C';
 
     return div(

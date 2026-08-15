@@ -2,11 +2,13 @@ import 'package:jaspr/client.dart';
 import 'package:jaspr/dom.dart';
 import 'package:jaspr_lucide/jaspr_lucide.dart' hide Router;
 import 'package:jaspr_router/jaspr_router.dart';
+import 'package:merchant/components/navigation/drawer_nav_buttons.dart';
 import 'package:merchant/components/signal_component.dart';
 import 'package:merchant/models/nav_tab.dart';
 import 'package:merchant/signals/auth_signal.dart';
 import 'package:merchant/signals/navigation_signal.dart';
 
+/// Merchant main navigation sidebar drawer.
 class Drawer extends SignalComponent {
   const Drawer({super.key, this.classes});
 
@@ -63,13 +65,13 @@ class _DrawerState extends SignalState<Drawer> {
         ),
 
         ul(classes: 'mt-4 flex-1 w-full px-4 space-y-1', [
-          navButton(
+          DrawerNavButtons.navButton(
             name: 'Dashboard',
             prefixIcon: LayoutGrid(classes: 'w-4.5 h-4.5'),
             isSelected: isDashboard,
             onClick: () => _navigateTo(context, '/'),
           ),
-          navButton(
+          DrawerNavButtons.navButton(
             name: 'Inventory',
             prefixIcon: ShoppingCart(classes: 'w-4.5 h-4.5'),
             suffixIcon: isInventory
@@ -82,24 +84,24 @@ class _DrawerState extends SignalState<Drawer> {
             ul(
               classes: 'flex flex-col items-center w-full pr-4 pl-8 space-y-1',
               [
-                navSubButton(
+                DrawerNavButtons.navSubButton(
                   name: 'Products',
                   isSelected: activeInventorySub == .products,
                   onClick: () => _navigateTo(context, '/inventory/products'),
                 ),
-                navSubButton(
+                DrawerNavButtons.navSubButton(
                   name: 'Category',
                   isSelected: activeInventorySub == .categories,
                   onClick: () => _navigateTo(context, '/inventory/categories'),
                 ),
-                navSubButton(
+                DrawerNavButtons.navSubButton(
                   name: 'Counters',
                   isSelected: activeInventorySub == .counters,
                   onClick: () => _navigateTo(context, '/inventory/counters'),
                 ),
               ],
             ),
-          navButton(
+          DrawerNavButtons.navButton(
             name: 'Reports',
             prefixIcon: ChartNoAxesCombined(classes: 'w-4.5 h-4.5'),
             suffixIcon: isReports
@@ -112,17 +114,17 @@ class _DrawerState extends SignalState<Drawer> {
             ul(
               classes: 'flex flex-col items-center w-full pr-4 pl-8 space-y-1',
               [
-                navSubButton(
+                DrawerNavButtons.navSubButton(
                   name: 'Orders',
                   isSelected: activeReportsSub == .orders,
                   onClick: () => _navigateTo(context, '/reports/orders'),
                 ),
-                navSubButton(
+                DrawerNavButtons.navSubButton(
                   name: 'Profit & Loss',
                   isSelected: activeReportsSub == .profitLoss,
                   onClick: () => _navigateTo(context, '/reports/profit-loss'),
                 ),
-                navSubButton(
+                DrawerNavButtons.navSubButton(
                   name: 'Stock Summary',
                   isSelected: activeReportsSub == .stockSummary,
                   onClick: () => _navigateTo(context, '/reports/stock-summary'),
@@ -130,13 +132,13 @@ class _DrawerState extends SignalState<Drawer> {
               ],
             ),
 
-          navButton(
+          DrawerNavButtons.navButton(
             name: 'Stores',
             prefixIcon: Store(classes: 'w-4.5 h-4.5'),
             isSelected: isStores,
             onClick: () => _navigateTo(context, '/stores'),
           ),
-          navButton(
+          DrawerNavButtons.navButton(
             name: 'Account',
             prefixIcon: UserRound(classes: 'w-4.5 h-4.5'),
             isSelected: isAccount,
@@ -154,48 +156,5 @@ class _DrawerState extends SignalState<Drawer> {
         ]),
       ],
     );
-  }
-
-  li navSubButton({
-    required String name,
-    bool isSelected = false,
-    VoidCallback? onClick,
-  }) {
-    return li(classes: 'w-full', [
-      button(
-        onClick: isSelected ? null : onClick,
-        classes:
-            'text-sm ${isSelected ? 'text-accent' : 'text-gray-500'} font-semibold hover:cursor-pointer hover:bg-neutral rounded-lg h-8 w-full flex items-center',
-        [
-          Dot(classes: 'w-8 h-8'),
-          .text(name),
-        ],
-      ),
-    ]);
-  }
-
-  li navButton({
-    required String name,
-    required Component prefixIcon,
-    Component? suffixIcon,
-    bool isSelected = false,
-    VoidCallback? onClick,
-  }) {
-    final isSelectedClasses = isSelected
-        ? 'bg-primary text-primary-content cursor-default'
-        : 'text-gray-500 hover:bg-neutral hover:cursor-pointer';
-
-    return li([
-      button(
-        onClick: isSelected ? null : onClick,
-        classes:
-            'flex gap-2 h-10 w-full font-medium items-center rounded-lg pl-4 text-sm transition-all duration-300 $isSelectedClasses',
-        [
-          prefixIcon,
-          .text(name),
-          ?suffixIcon,
-        ],
-      ),
-    ]);
   }
 }

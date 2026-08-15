@@ -1,23 +1,18 @@
 import 'package:jaspr/client.dart';
 import 'package:jaspr/dom.dart';
-import 'package:jaspr_lucide/jaspr_lucide.dart';
 import 'package:merchant/components/centered_message.dart';
-import 'package:merchant/components/fields/date_range_picker.dart';
-import 'package:merchant/components/fields/searchbar.dart';
 import 'package:merchant/components/loading.dart';
 import 'package:merchant/components/modals/order_details_modal.dart';
 import 'package:merchant/components/reports/order_summary_cards.dart';
-import 'package:merchant/components/reports/orders_filter_bar.dart';
 import 'package:merchant/components/reports/orders_table_header.dart';
 import 'package:merchant/components/reports/orders_table_view.dart';
-import 'package:merchant/components/reports/stats_toggle_button.dart';
+import 'package:merchant/components/reports/orders_toolbar.dart';
 import 'package:merchant/components/signal_component.dart';
 import 'package:merchant/components/sortable_header.dart';
 import 'package:merchant/components/table_pagination.dart';
 import 'package:merchant/exceptions/api_exception.dart';
 import 'package:merchant/signals/navigation_signal.dart';
 import 'package:merchant/signals/orders_signal.dart';
-import 'package:merchant/signals/reports_date_signal.dart';
 import 'package:merchant/signals/stores_signal.dart';
 import 'package:web/web.dart' as web;
 
@@ -89,105 +84,16 @@ class _OrdersState extends SignalState<Orders> {
         if (activeModalSignal.value == ActiveModal.orderDetails)
           OrderDetailsModal(state: selectedOrderSignal.value),
 
-        div(
-          classes:
-              'flex flex-col md:items-center md:flex-row md:justify-between w-full border-b border-border-medium p-4 gap-4',
-          [
-            div(
-              classes: 'flex flex-wrap items-center gap-3 text-sm font-medium',
-              [
-                span(
-                  classes:
-                      'flex gap-2 items-center text-sm font-medium whitespace-nowrap',
-                  [
-                    .text('Show'),
-                    div(classes: 'dropdown dropdown-bottom dropdown-center', [
-                      div(
-                        classes:
-                            'btn rounded-full border border-border-medium bg-white hover:bg-base-200 text-sm h-8 min-h-0',
-                        attributes: {
-                          'tabindex': '0',
-                          'role': 'button',
-                        },
-                        [
-                          .text('$entries'),
-                          ChevronDown(classes: 'w-4 h-4'),
-                        ],
-                      ),
-                      ul(
-                        attributes: {'tabindex': '-1'},
-                        classes:
-                            'dropdown-content menu bg-base-100 rounded-box z-10 mt-2.5 p-2 shadow-sm border border-border-light',
-                        [
-                          dropdownButton(
-                            name: '10',
-                            isSelected: entries == 10,
-                            onClick: () => _changeEntry(10),
-                          ),
-                          dropdownButton(
-                            name: '25',
-                            isSelected: entries == 25,
-                            onClick: () => _changeEntry(25),
-                          ),
-                          dropdownButton(
-                            name: '50',
-                            isSelected: entries == 50,
-                            onClick: () => _changeEntry(50),
-                          ),
-                          dropdownButton(
-                            name: '100',
-                            isSelected: entries == 100,
-                            onClick: () => _changeEntry(100),
-                          ),
-                        ],
-                      ),
-                    ]),
-                    if (ordersTotalSignal.value > 0)
-                      .text(
-                        'Showing ${((currentPage - 1) * entries) + 1}–${(currentPage * entries).clamp(0, ordersTotalSignal.value)} of ${ordersTotalSignal.value}',
-                      ),
-                  ],
-                ),
-                DateRangePicker(
-                  fromDate: reportsFromDateSignal.value,
-                  toDate: reportsToDateSignal.value,
-                  onChanged: (from, to) {
-                    reportsFromDateSignal.value = from;
-                    reportsToDateSignal.value = to;
-                    ordersPageSignal.value = 1;
-                    refreshOrdersSignal();
-                  },
-                ),
-                OrdersFilterBar(
-                  onFiltersChanged: () {
-                    ordersPageSignal.value = 1;
-                    refreshOrdersSignal();
-                  },
-                ),
-                StatsToggleButton(
-                  showStats: showReportsStatsSignal.value,
-                  onToggle: () {
-                    showReportsStatsSignal.value = !showReportsStatsSignal.value;
-                  },
-                ),
-              ],
-            ),
-            div(
-              classes:
-                  'flex justify-between gap-2 items-center w-full sm:w-auto',
-              [
-                Searchbar(
-                  placeholder: 'Search Orders...',
-                  classes: 'flex-1 sm:flex-none sm:w-64',
-                  onInput: (val) {
-                    ordersSearchSignal.value = val;
-                    ordersPageSignal.value = 1;
-                    refreshOrdersSignal();
-                  },
-                ),
-              ],
-            ),
-          ],
+        OrdersToolbar(
+          entries: entries,
+          currentPage: currentPage,
+          totalCount: ordersTotalSignal.value,
+          onEntryChanged: _changeEntry,
+          onSearch: (val) {
+            ordersSearchSignal.value = val;
+            ordersPageSignal.value = 1;
+            refreshOrdersSignal();
+          },
         ),
 
         if (showReportsStatsSignal.value &&
@@ -198,10 +104,6 @@ class _OrdersState extends SignalState<Orders> {
             grossSubtotal: ordersSummarySignal.value.grossSubtotal,
             totalDiscount: ordersSummarySignal.value.totalDiscount,
             netRevenue: ordersSummarySignal.value.netRevenue,
-            cashCollected: ordersSummarySignal.value.cashCollected,
-            upiCollected: ordersSummarySignal.value.upiCollected,
-            walletCollected: ordersSummarySignal.value.walletCollected,
-            freeTotal: ordersSummarySignal.value.freeTotal,
           ),
 
         if (storesSignal.value.isLoading || orders.isLoading)
@@ -233,23 +135,5 @@ class _OrdersState extends SignalState<Orders> {
         ),
       ],
     );
-  }
-
-  li dropdownButton({
-    required String name,
-    required bool isSelected,
-    VoidCallback? onClick,
-  }) {
-    return li([
-      a(
-        href: '#',
-        classes:
-            'rounded-md text-xs hover:bg-neutral ${isSelected ? 'bg-neutral font-bold text-primary' : ''}',
-        onClick: onClick,
-        [
-          .text(name),
-        ],
-      ),
-    ]);
   }
 }

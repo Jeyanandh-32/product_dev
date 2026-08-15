@@ -5,9 +5,8 @@ import 'package:merchant/components/modals/modal.dart';
 import 'package:merchant/components/modals/stock_action_selector.dart';
 import 'package:merchant/components/modals/stock_monitor_settings_section.dart';
 import 'package:merchant/components/modals/stock_reason_section.dart';
+import 'package:merchant/components/modals/update_stock_handler.dart';
 import 'package:merchant/signals/navigation_signal.dart';
-import 'package:merchant/signals/products_signal.dart';
-import 'package:merchant/signals/toast_signal.dart';
 import 'package:models/models.dart';
 import 'package:web/web.dart' as web;
 
@@ -43,52 +42,15 @@ class _UpdateStockModalState extends State<UpdateStockModal> {
 
   void _onSubmit(web.Event e) {
     e.preventDefault();
-
-    final inputAmount = int.tryParse(_amount.trim());
-    final lowStockThreshold = int.tryParse(_lowStockThreshold.trim());
-    final currentQty = component.product.stock?.quantity ?? 0;
-
-    if (inputAmount == null || inputAmount < 0) {
-      showToast('Please enter a valid non-negative quantity.');
-      return;
-    }
-
-    if (_stockMonitor && lowStockThreshold == null) {
-      showToast(
-        'Low Stock Threshold is required when Stock Monitor is enabled.',
-      );
-      return;
-    }
-
-    final computedFinalQuantity = switch (_transactionType) {
-      .add => currentQty + inputAmount,
-      .reduce => (currentQty - inputAmount).clamp(0, 999999),
-      .set => inputAmount,
-    };
-
-    final showReasonSection =
-        _transactionType == StockTransactionType.reduce ||
-        _transactionType == StockTransactionType.set;
-
-    final stockId = component.product.stock?.id;
-    if (stockId != null) {
-      ProductsActions.updateStock(
-        stockId: stockId,
-        productId: component.product.id,
-        quantity: computedFinalQuantity,
-        lowStockThreshold: _stockMonitor ? lowStockThreshold : null,
-        stockMonitor: _stockMonitor,
-        transactionType: _transactionType,
-        amount: inputAmount,
-        reason: showReasonSection ? _reason : null,
-        customReason: showReasonSection && _customReason.trim().isNotEmpty
-            ? _customReason.trim()
-            : null,
-      );
-      activeModalSignal.value = ActiveModal.none;
-    } else {
-      showToast('Stock record not found for this product.');
-    }
+    UpdateStockHandler.submitStockUpdate(
+      product: component.product,
+      transactionType: _transactionType,
+      amountStr: _amount,
+      lowStockThresholdStr: _lowStockThreshold,
+      stockMonitor: _stockMonitor,
+      reason: _reason,
+      customReason: _customReason,
+    );
   }
 
   @override

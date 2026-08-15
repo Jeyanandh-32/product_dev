@@ -1,15 +1,12 @@
 import 'package:jaspr/client.dart';
 import 'package:jaspr/dom.dart';
-import 'package:jaspr_lucide/jaspr_lucide.dart';
-import 'package:merchant/components/buttons/add_button.dart';
 import 'package:merchant/components/centered_message.dart';
-import 'package:merchant/components/fields/searchbar.dart';
 import 'package:merchant/components/loading.dart';
 import 'package:merchant/components/modals/add_edit_product_modal.dart';
 import 'package:merchant/components/modals/update_stock_modal.dart';
-import 'package:merchant/components/reports/products_filter_bar.dart';
 import 'package:merchant/components/reports/products_table_header.dart';
 import 'package:merchant/components/reports/products_table_view.dart';
+import 'package:merchant/components/reports/products_toolbar.dart';
 import 'package:merchant/components/signal_component.dart';
 import 'package:merchant/components/sortable_header.dart';
 import 'package:merchant/components/table_pagination.dart';
@@ -93,111 +90,24 @@ class _ProductsState extends SignalState<Products> {
             editingProductSignal.value != null)
           UpdateStockModal(product: editingProductSignal.value!),
 
-        div(
-          classes:
-              'flex flex-col md:items-center md:flex-row md:justify-between w-full border-b border-border-medium p-4 gap-4',
-          [
-            div(
-              classes: 'flex flex-wrap items-center gap-3 text-sm font-medium',
-              [
-                span(
-                  classes:
-                      'flex gap-2 items-center text-sm font-medium whitespace-nowrap',
-                  [
-                    .text('Show'),
-                    div(classes: 'dropdown dropdown-bottom dropdown-center', [
-                      div(
-                        classes:
-                            'btn rounded-full border border-border-medium bg-white hover:bg-base-200 text-sm h-8 min-h-0',
-                        attributes: {
-                          'tabindex': '0',
-                          'role': 'button',
-                        },
-                        [
-                          .text('$entries'),
-                          ChevronDown(classes: 'w-4 h-4'),
-                        ],
-                      ),
-                      ul(
-                        attributes: {'tabindex': '-1'},
-                        classes:
-                            'dropdown-content menu bg-base-100 rounded-box z-10 mt-2.5 p-2 shadow-sm border border-border-light',
-                        [
-                          dropdownButton(
-                            name: '10',
-                            isSelected: entries == 10,
-                            onClick: () => _changeEntry(10),
-                          ),
-                          dropdownButton(
-                            name: '25',
-                            isSelected: entries == 25,
-                            onClick: () => _changeEntry(25),
-                          ),
-                          dropdownButton(
-                            name: '50',
-                            isSelected: entries == 50,
-                            onClick: () => _changeEntry(50),
-                          ),
-                          dropdownButton(
-                            name: '100',
-                            isSelected: entries == 100,
-                            onClick: () => _changeEntry(100),
-                          ),
-                        ],
-                      ),
-                    ]),
-                    if (productsTotalSignal.value > 0)
-                      .text(
-                        'Showing ${((currentPage - 1) * entries) + 1}–${(currentPage * entries).clamp(0, productsTotalSignal.value)} of ${productsTotalSignal.value}',
-                      ),
-                  ],
-                ),
-                ProductsFilterBar(
-                  statusFilter: _statusFilter,
-                  stockMonitorFilter: _stockMonitorFilter,
-                  onStatusFilterChanged: (val) {
-                    setState(() {
-                      _statusFilter = val;
-                    });
-                  },
-                  onStockMonitorFilterChanged: (val) {
-                    setState(() {
-                      _stockMonitorFilter = val;
-                    });
-                  },
-                ),
-              ],
-            ),
-            div(
-              classes:
-                  'flex justify-between gap-2 items-center w-full sm:w-auto',
-              [
-                Searchbar(
-                  placeholder: 'Search Products...',
-                  classes: 'flex-1 sm:flex-none sm:w-64',
-                  onInput: (val) {
-                    productSearchSignal.value = val;
-                    productsPageSignal.value = 1;
-                    refreshProductsSignal();
-                  },
-                ),
-                div(
-                  classes: 'flex items-center gap-2',
-                  [
-                    if (store != null)
-                      AddButton(
-                        name: 'Add Product',
-                        onClick: () {
-                          editingProductSignal.value = null;
-                          activeModalSignal.value = ActiveModal.addProduct;
-                        },
-                      ),
-                  ],
-                ),
-              ],
-            ),
-          ],
+        ProductsToolbar(
+          entries: entries,
+          currentPage: currentPage,
+          totalCount: productsTotalSignal.value,
+          store: store,
+          statusFilter: _statusFilter,
+          stockMonitorFilter: _stockMonitorFilter,
+          onEntryChanged: _changeEntry,
+          onStatusFilterChanged: (val) => setState(() => _statusFilter = val),
+          onStockMonitorFilterChanged:
+              (val) => setState(() => _stockMonitorFilter = val),
+          onSearch: (val) {
+            productSearchSignal.value = val;
+            productsPageSignal.value = 1;
+            refreshProductsSignal();
+          },
         ),
+
         if (storesSignal.value.isLoading || products.isLoading)
           Loading(text: 'Loading products...', fullScreen: false)
         else if (store == null)
@@ -229,23 +139,5 @@ class _ProductsState extends SignalState<Products> {
         ),
       ],
     );
-  }
-
-  li dropdownButton({
-    required String name,
-    required bool isSelected,
-    VoidCallback? onClick,
-  }) {
-    return li([
-      a(
-        href: '#',
-        classes:
-            'rounded-md text-xs hover:bg-neutral ${isSelected ? 'bg-neutral font-bold text-primary' : ''}',
-        onClick: onClick,
-        [
-          .text(name),
-        ],
-      ),
-    ]);
   }
 }

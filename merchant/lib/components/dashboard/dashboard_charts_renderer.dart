@@ -1,8 +1,10 @@
 import 'package:jaspr/jaspr.dart';
+import 'package:merchant/components/dashboard/dashboard_bar_line_charts_drawer.dart';
 import 'package:merchant/signals/dashboard_signal.dart';
 import 'package:merchant/utils/chart_js.dart';
 import 'package:web/web.dart' as web;
 
+/// Orchestrator for drawing Chart.js charts on the merchant KPI dashboard.
 class DashboardChartsRenderer {
   const DashboardChartsRenderer._();
 
@@ -15,100 +17,30 @@ class DashboardChartsRenderer {
     final formattedUpi = '₹ ${pMethods.upiTotal.toStringAsFixed(2)}';
     final formattedCash = '₹ ${pMethods.cashTotal.toStringAsFixed(2)}';
 
-    // 1. Sales & Revenue Trend Chart
-    drawChart(
-      canvasId: 'salesTrendChart',
-      type: 'line',
-      data: {
-        'labels': ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-        'datasets': [
-          {
-            'label': 'Revenue (₹)',
-            'data': [
-              summary.totalRevenue * 0.1,
-              summary.totalRevenue * 0.15,
-              summary.totalRevenue * 0.12,
-              summary.totalRevenue * 0.18,
-              summary.totalRevenue * 0.22,
-              summary.totalRevenue * 0.14,
-              summary.totalRevenue * 0.09,
-            ],
-            'borderColor': '#10B981',
-            'backgroundColor': 'rgba(16, 185, 129, 0.1)',
-            'fill': true,
-            'tension': 0.4,
-            'borderWidth': 2.5,
-            'pointRadius': 3,
-            'pointBackgroundColor': '#10B981',
-          },
-          {
-            'label': 'Orders',
-            'data': [
-              (summary.totalOrders * 0.1).round(),
-              (summary.totalOrders * 0.15).round(),
-              (summary.totalOrders * 0.12).round(),
-              (summary.totalOrders * 0.18).round(),
-              (summary.totalOrders * 0.22).round(),
-              (summary.totalOrders * 0.14).round(),
-              (summary.totalOrders * 0.09).round(),
-            ],
-            'borderColor': '#3B82F6',
-            'backgroundColor': 'rgba(59, 130, 246, 0.05)',
-            'fill': true,
-            'tension': 0.4,
-            'borderWidth': 2,
-            'borderDash': [4, 4],
-            'pointRadius': 2.5,
-            'pointBackgroundColor': '#3B82F6',
-          },
-        ],
-      },
-      options: {
-        'responsive': true,
-        'maintainAspectRatio': false,
-        'plugins': {
-          'legend': {'display': false},
-          'tooltip': {
-            'mode': 'index',
-            'intersect': false,
-            'padding': 8,
-            'cornerRadius': 6,
-          },
-        },
-        'scales': {
-          'x': {
-            'grid': {'display': false},
-          },
-          'y': {
-            'grid': {'color': '#F3F4F6'},
-            'beginAtZero': true,
-          },
-        },
-      },
-    );
+    // 1. Sales & Revenue Trend Line Chart
+    DashboardBarLineChartsDrawer.drawSalesTrendChart(summary);
 
-    // 2. Payment Method Share Chart (UPI vs Cash)
+    // 2. Payment Methods Donut Chart
     drawChart(
       canvasId: 'paymentMethodChart',
       type: 'doughnut',
       data: {
-        'labels': ['UPI / QR Code', 'Cash'],
+        'labels': ['UPI', 'Cash'],
         'datasets': [
           {
             'data': [pMethods.upiTotal, pMethods.cashTotal],
-            'backgroundColor': ['#191645', '#43c6ac'],
+            'backgroundColor': ['#8B5CF6', '#10B981'],
             'borderWidth': 0,
-            'hoverOffset': 3,
+            'hoverOffset': 4,
           },
         ],
       },
       options: {
         'responsive': true,
         'maintainAspectRatio': false,
-        'cutout': '70%',
+        'cutout': '75%',
         'plugins': {
           'legend': {'display': false},
-          'tooltip': {'enabled': false},
         },
         'centerHoverLabels': {
           'labelId': 'paymentCenterLabel',
@@ -116,16 +48,15 @@ class DashboardChartsRenderer {
           'defaultLabel': 'TOTAL',
           'defaultValue': formattedTotal,
           'items': [
-            {'label': 'UPI / QR CODE', 'value': formattedUpi},
+            {'label': 'UPI', 'value': formattedUpi},
             {'label': 'CASH', 'value': formattedCash},
           ],
         },
       },
     );
 
+    // 3. Payment / Order Status Donut Chart
     final totalOrdersCount = pStatus.paidCount + pStatus.freeCount;
-
-    // 3. Paid vs Free Chart
     drawChart(
       canvasId: 'paidFreeChart',
       type: 'doughnut',
@@ -134,19 +65,18 @@ class DashboardChartsRenderer {
         'datasets': [
           {
             'data': [pStatus.paidCount, pStatus.freeCount],
-            'backgroundColor': ['#8B5CF6', '#F59E0B'],
+            'backgroundColor': ['#10B981', '#3B82F6'],
             'borderWidth': 0,
-            'hoverOffset': 3,
+            'hoverOffset': 4,
           },
         ],
       },
       options: {
         'responsive': true,
         'maintainAspectRatio': false,
-        'cutout': '70%',
+        'cutout': '75%',
         'plugins': {
           'legend': {'display': false},
-          'tooltip': {'enabled': false},
         },
         'centerHoverLabels': {
           'labelId': 'paidFreeCenterLabel',
@@ -179,78 +109,13 @@ class DashboardChartsRenderer {
     }
 
     // 4. Top Categories Breakdown Chart
-    final catSales = dashboardCategorySalesSignal.value;
-    drawChart(
-      canvasId: 'topCategoriesChart',
-      type: 'bar',
-      data: {
-        'labels': catSales.labels,
-        'datasets': [
-          {
-            'label': 'Sales (₹)',
-            'data': catSales.data,
-            'backgroundColor': [
-              '#10B981',
-              '#3B82F6',
-              '#8B5CF6',
-              '#F59E0B',
-              '#EC4899',
-            ],
-            'borderRadius': 6,
-          },
-        ],
-      },
-      options: {
-        'responsive': true,
-        'maintainAspectRatio': false,
-        'plugins': {
-          'legend': {'display': false},
-        },
-        'scales': {
-          'x': {
-            'grid': {'display': false},
-          },
-          'y': {
-            'grid': {'color': '#F3F4F6'},
-            'beginAtZero': true,
-          },
-        },
-      },
+    DashboardBarLineChartsDrawer.drawTopCategoriesChart(
+      dashboardCategorySalesSignal.value,
     );
 
     // 5. Hourly Order Distribution Chart
-    final hourlyOrders = dashboardHourlyOrdersSignal.value;
-    drawChart(
-      canvasId: 'hourlyOrdersChart',
-      type: 'bar',
-      data: {
-        'labels': hourlyOrders.labels,
-        'datasets': [
-          {
-            'label': 'Order Count',
-            'data': hourlyOrders.data,
-            'backgroundColor': 'rgba(59, 130, 246, 0.85)',
-            'hoverBackgroundColor': '#2563EB',
-            'borderRadius': 5,
-          },
-        ],
-      },
-      options: {
-        'responsive': true,
-        'maintainAspectRatio': false,
-        'plugins': {
-          'legend': {'display': false},
-        },
-        'scales': {
-          'x': {
-            'grid': {'display': false},
-          },
-          'y': {
-            'grid': {'color': '#F3F4F6'},
-            'beginAtZero': true,
-          },
-        },
-      },
+    DashboardBarLineChartsDrawer.drawHourlyOrdersChart(
+      dashboardHourlyOrdersSignal.value,
     );
   }
 }

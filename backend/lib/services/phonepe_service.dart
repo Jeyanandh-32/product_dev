@@ -1,6 +1,5 @@
-import 'dart:convert';
 import 'package:backend/services/phonepe_payment_mode_builder.dart';
-import 'package:crypto/crypto.dart';
+import 'package:backend/services/phonepe_security_helper.dart';
 import 'package:dio/dio.dart';
 import 'package:models/models.dart';
 
@@ -22,18 +21,16 @@ class PhonePeService {
   final Dio _dio;
 
   /// Returns the base URL for standard PG checkout API.
-  String getBaseUrl(PaymentGatewayEnv env) {
-    return env == PaymentGatewayEnv.prod
-        ? 'https://api.phonepe.com/apis/pg'
-        : 'https://api-preprod.phonepe.com/apis/pg-sandbox';
-  }
+  String getBaseUrl(PaymentGatewayEnv env) =>
+      env == PaymentGatewayEnv.prod
+          ? 'https://api.phonepe.com/apis/pg'
+          : 'https://api-preprod.phonepe.com/apis/pg-sandbox';
 
   /// Returns the base URL for OAuth 2.0 client credential authorization.
-  String getAuthBaseUrl(PaymentGatewayEnv env) {
-    return env == PaymentGatewayEnv.prod
-        ? 'https://api.phonepe.com/apis/identity-manager'
-        : 'https://api-preprod.phonepe.com/apis/pg-sandbox';
-  }
+  String getAuthBaseUrl(PaymentGatewayEnv env) =>
+      env == PaymentGatewayEnv.prod
+          ? 'https://api.phonepe.com/apis/identity-manager'
+          : 'https://api-preprod.phonepe.com/apis/pg-sandbox';
 
   /// Step 1: Generate OAuth Token (/v1/oauth/token)
   Future<String?> getAuthToken(StorePhonePeConfig config) async {
@@ -62,9 +59,7 @@ class PhonePeService {
         final data = response.data!;
         return data['access_token'] as String?;
       }
-    } catch (_) {
-      // Fallback if OAuth token request encounters transient errors
-    }
+    } catch (_) {}
     return null;
   }
 
@@ -82,7 +77,6 @@ class PhonePeService {
   }) async {
     final url = '${getBaseUrl(config.env)}/checkout/v2/pay';
     final token = await getAuthToken(config);
-
     final paymentModeConfig = PhonePePaymentModeBuilder.build(config);
 
     final payload = <String, dynamic>{
@@ -110,11 +104,8 @@ class PhonePeService {
 
     final headers = <String, String>{
       'Content-Type': 'application/json',
+      if (token != null) 'Authorization': 'O-Bearer $token',
     };
-
-    if (token != null) {
-      headers['Authorization'] = 'O-Bearer $token';
-    }
 
     final response = await _dio.post<Map<String, dynamic>>(
       url,
@@ -152,10 +143,8 @@ class PhonePeService {
 
     final headers = <String, String>{
       'Content-Type': 'application/json',
+      if (token != null) 'Authorization': 'O-Bearer $token',
     };
-    if (token != null) {
-      headers['Authorization'] = 'O-Bearer $token';
-    }
 
     final response = await _dio.get<Map<String, dynamic>>(url, options: Options(headers: headers));
     return response.data ?? {};
@@ -166,11 +155,10 @@ class PhonePeService {
     required String rawRequestBody,
     required String signatureHeader,
     required String secretKey,
-  }) {
-    if (signatureHeader.isEmpty || secretKey.isEmpty) return false;
-    final hmac = Hmac(sha256, utf8.encode(secretKey));
-    final digest = hmac.convert(utf8.encode(rawRequestBody));
-    final computedSignature = digest.toString();
-    return computedSignature == signatureHeader;
-  }
+  }) =>
+      PhonePeSecurityHelper.verifyWebhookHmac(
+        rawRequestBody: rawRequestBody,
+        signatureHeader: signatureHeader,
+        secretKey: secretKey,
+      );
 }

@@ -5,6 +5,7 @@ import 'package:merchant/components/fields/counter_selector_field.dart';
 import 'package:merchant/components/fields/form_field.dart';
 import 'package:merchant/components/fields/product_pricing_fields.dart';
 import 'package:merchant/components/modals/modal.dart';
+import 'package:merchant/components/modals/product_metadata_section.dart';
 import 'package:merchant/components/signal_component.dart';
 import 'package:merchant/signals/categories_signal.dart';
 import 'package:merchant/signals/counters_signal.dart';
@@ -73,28 +74,28 @@ class _AddEditProductModalState extends SignalState<AddEditProductModal> {
     if (component.product != null) {
       ProductsActions.updateProduct(
         id: component.product!.id,
-        name: _name.trim(),
-        categoryId: _categoryId,
+        name: _name.trim().isNotEmpty ? _name : null,
+        categoryId: _categoryId.trim().isNotEmpty ? _categoryId : null,
         counterId: counterIdParam,
         basePrice: basePrice,
         sellingPrice: sellingPrice,
         taxRate: taxRate,
+        sku: _sku.trim().isNotEmpty ? _sku : null,
+        barcode: _barcode.trim().isNotEmpty ? _barcode : null,
+        imageUrl: _imageUrl.trim().isNotEmpty ? _imageUrl : null,
         isActive: _isActive,
-        sku: _sku.trim().isEmpty ? null : _sku.trim(),
-        barcode: _barcode.trim().isEmpty ? null : _barcode.trim(),
-        imageUrl: _imageUrl.trim().isEmpty ? null : _imageUrl.trim(),
       );
     } else {
       ProductsActions.create(
-        name: _name.trim(),
+        name: _name,
         categoryId: _categoryId,
         counterId: counterIdParam,
         basePrice: basePrice,
         sellingPrice: sellingPrice,
         taxRate: taxRate,
-        sku: _sku.trim().isEmpty ? null : _sku.trim(),
-        barcode: _barcode.trim().isEmpty ? null : _barcode.trim(),
-        imageUrl: _imageUrl.trim().isEmpty ? null : _imageUrl.trim(),
+        sku: _sku.trim().isNotEmpty ? _sku : null,
+        barcode: _barcode.trim().isNotEmpty ? _barcode : null,
+        imageUrl: _imageUrl.trim().isNotEmpty ? _imageUrl : null,
       );
     }
   }
@@ -107,36 +108,34 @@ class _AddEditProductModalState extends SignalState<AddEditProductModal> {
     return Modal(
       title: component.product != null ? 'Edit Product' : 'Add Product',
       child: form(
-        method: FormMethod.post,
-        events: {'submit': (e) => _onSubmit(e)},
+        events: {'submit': _onSubmit},
+        classes: 'flex flex-col gap-4',
         [
           div(
-            classes:
-                'max-h-[60vh] overflow-y-auto overflow-x-hidden flex flex-col gap-0 px-3',
+            classes: 'flex flex-col gap-4 max-h-[60vh] overflow-y-auto px-1',
             [
               FormField(
-                id: 'productName',
-                labelText: 'Product Name',
+                id: 'name',
+                labelText: 'Name',
                 type: InputType.text,
                 attributes: {
-                  'placeholder': 'Oreo Biscuits',
-                  'required': '',
+                  'placeholder': 'Product name',
+                  'required': 'true',
                   'value': _name,
                 },
-                hintText: 'Product name is required.',
                 onChange: (value) => _name = value as String,
               ),
 
               CategorySelectorField(
-                categoryId: _categoryId,
                 categories: categories,
-                onSelect: (id) => setState(() => _categoryId = id),
+                categoryId: _categoryId,
+                onSelect: (val) => setState(() => _categoryId = val),
               ),
 
               CounterSelectorField(
-                counterId: _counterId,
                 counters: counters,
-                onSelect: (id) => setState(() => _counterId = id),
+                counterId: _counterId,
+                onSelect: (val) => setState(() => _counterId = val),
               ),
 
               ProductPricingFields(
@@ -148,62 +147,17 @@ class _AddEditProductModalState extends SignalState<AddEditProductModal> {
                 onTaxRateChanged: (val) => _taxRate = val,
               ),
 
-              FormField(
-                id: 'sku',
-                labelText: 'SKU (optional)',
-                type: InputType.text,
-                attributes: {
-                  'placeholder': 'DF-BISCUIT-01',
-                  'value': _sku,
-                },
-                onChange: (value) => _sku = value as String,
+              ProductMetadataSection(
+                sku: _sku,
+                barcode: _barcode,
+                imageUrl: _imageUrl,
+                isActive: _isActive,
+                isEditing: component.product != null,
+                onSkuChanged: (val) => _sku = val,
+                onBarcodeChanged: (val) => _barcode = val,
+                onImageUrlChanged: (val) => _imageUrl = val,
+                onActiveChanged: (val) => setState(() => _isActive = val),
               ),
-              FormField(
-                id: 'barcode',
-                labelText: 'Barcode (optional)',
-                type: InputType.text,
-                attributes: {
-                  'placeholder': '8901728281223',
-                  'value': _barcode,
-                },
-                onChange: (value) => _barcode = value as String,
-              ),
-
-              FormField(
-                id: 'imageUrl',
-                labelText: 'Image URL (optional)',
-                type: InputType.url,
-                attributes: {
-                  'placeholder': 'https://example.com/image.png',
-                  'value': _imageUrl,
-                },
-                onChange: (value) => _imageUrl = value as String,
-              ),
-
-              if (component.product != null)
-                div(
-                  classes: 'form-control mb-4 flex flex-row items-center gap-3',
-                  [
-                    p(
-                      classes: 'text-[14px] font-semibold text-gray-500',
-                      [.text('Active')],
-                    ),
-                    input(
-                      type: InputType.checkbox,
-                      classes:
-                          'toggle ${_isActive ? 'toggle-success' : ''} hover:cursor-pointer',
-                      checked: _isActive,
-                      events: {
-                        'change': (e) {
-                          final target = e.target as web.HTMLInputElement;
-                          setState(() {
-                            _isActive = target.checked;
-                          });
-                        },
-                      },
-                    ),
-                  ],
-                ),
             ],
           ),
 

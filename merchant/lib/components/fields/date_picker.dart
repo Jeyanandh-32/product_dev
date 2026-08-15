@@ -1,11 +1,12 @@
-import 'package:date_format/date_format.dart' as df;
 import 'package:jaspr/client.dart';
 import 'package:jaspr/dom.dart';
 import 'package:jaspr_lucide/generated_icons/calendar.dart';
 import 'package:jaspr_lucide/generated_icons/chevron_down.dart';
+import 'package:merchant/components/fields/date_picker_helper.dart';
 import 'package:merchant/components/signal_component.dart';
 import 'package:web/web.dart' as web;
 
+/// Single date selection input with quick presets and calendar dialog popup.
 class DatePicker extends SignalComponent {
   const DatePicker({
     super.key,
@@ -23,40 +24,9 @@ class DatePicker extends SignalComponent {
 class _DatePickerState extends SignalState<DatePicker> {
   late String _tempDate;
 
-  String _cleanDate(String? str) {
-    if (str == null || str.isEmpty) return _getTodayString();
-    final dateOnly = str.contains('T')
-        ? str.split('T').first
-        : str.split(' ').first;
-    return dateOnly.trim();
-  }
-
-  String _formatDateForDisplay(String? dateStr) {
-    final cleaned = _cleanDate(dateStr);
-    final dt = DateTime.tryParse(cleaned);
-    if (dt == null) return cleaned;
-    return df.formatDate(dt.toLocal(), [df.dd, ' ', df.M, ' ', df.yyyy]);
-  }
-
-  String _getTodayString() => df.formatDate(DateTime.now().toLocal(), [
-    df.yyyy,
-    '-',
-    df.mm,
-    '-',
-    df.dd,
-  ]);
-
-  String _getYesterdayString() => df.formatDate(
-    DateTime.now().toLocal().subtract(const Duration(days: 1)),
-    [df.yyyy, '-', df.mm, '-', df.dd],
-  );
-
-  String _presetButtonClass(bool isSelected) {
-    if (isSelected) {
-      return 'btn btn-xs rounded-full border-0 shadow-none btn-primary text-white font-medium transition-colors cursor-pointer';
-    }
-    return 'btn btn-xs rounded-full border-0 shadow-none bg-base-200 text-gray-700 hover:bg-primary hover:text-white font-normal transition-colors cursor-pointer';
-  }
+  String _presetButtonClass(bool isSelected) => isSelected
+      ? 'btn btn-xs rounded-full border-0 shadow-none btn-primary text-white font-medium transition-colors cursor-pointer'
+      : 'btn btn-xs rounded-full border-0 shadow-none bg-base-200 text-gray-700 hover:bg-primary hover:text-white font-normal transition-colors cursor-pointer';
 
   void _closeDropdown() {
     final activeElement = web.document.activeElement;
@@ -64,37 +34,35 @@ class _DatePickerState extends SignalState<DatePicker> {
       final element = activeElement as web.HTMLElement;
       element.blur();
       final details = element.closest('details');
-      if (details != null) {
-        details.removeAttribute('open');
-      }
+      details?.removeAttribute('open');
     }
   }
 
   void _applyDate(String dateStr) {
-    final cleaned = _cleanDate(dateStr);
+    final cleaned = DatePickerHelper.cleanDate(dateStr);
     component.onDateChanged(cleaned);
     _closeDropdown();
   }
 
   String get _buttonText {
-    final cleaned = _cleanDate(component.date);
-    final today = _getTodayString();
-    final yesterday = _getYesterdayString();
+    final cleaned = DatePickerHelper.cleanDate(component.date);
+    final today = DatePickerHelper.getTodayString();
+    final yesterday = DatePickerHelper.getYesterdayString();
 
     if (cleaned == today) {
-      return 'Today (${_formatDateForDisplay(today)})';
+      return 'Today (${DatePickerHelper.formatDateForDisplay(today)})';
     }
     if (cleaned == yesterday) {
-      return 'Yesterday (${_formatDateForDisplay(yesterday)})';
+      return 'Yesterday (${DatePickerHelper.formatDateForDisplay(yesterday)})';
     }
-    return _formatDateForDisplay(cleaned);
+    return DatePickerHelper.formatDateForDisplay(cleaned);
   }
 
   @override
   Component buildSignal(BuildContext context) {
-    _tempDate = _cleanDate(component.date);
-    final today = _getTodayString();
-    final yesterday = _getYesterdayString();
+    _tempDate = DatePickerHelper.cleanDate(component.date);
+    final today = DatePickerHelper.getTodayString();
+    final yesterday = DatePickerHelper.getYesterdayString();
 
     final isToday = _tempDate == today;
     final isYesterday = _tempDate == yesterday;
@@ -152,7 +120,7 @@ class _DatePickerState extends SignalState<DatePicker> {
                         'input input-sm border border-border-medium bg-base-100 rounded-lg text-xs w-full focus:outline-none focus:border-primary',
                     onInput: (value) {
                       final val = value.toString().trim();
-                      _tempDate = _cleanDate(val);
+                      _tempDate = DatePickerHelper.cleanDate(val);
                     },
                   ),
                 ]),

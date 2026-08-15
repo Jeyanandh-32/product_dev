@@ -2,6 +2,7 @@ import 'package:jaspr/client.dart';
 import 'package:jaspr/dom.dart';
 import 'package:jaspr_lucide/generated_icons/calendar.dart';
 import 'package:jaspr_lucide/generated_icons/chevron_down.dart';
+import 'package:merchant/components/fields/custom_date_range_inputs.dart';
 import 'package:merchant/components/fields/date_picker_preset_buttons.dart';
 import 'package:merchant/components/signal_component.dart';
 import 'package:merchant/utils/date_range_utils.dart';
@@ -38,9 +39,7 @@ class _DateRangePickerState extends SignalState<DateRangePicker> {
       final element = activeElement as web.HTMLElement;
       element.blur();
       final details = element.closest('details');
-      if (details != null) {
-        details.removeAttribute('open');
-      }
+      details?.removeAttribute('open');
     }
   }
 
@@ -112,47 +111,11 @@ class _DateRangePickerState extends SignalState<DateRangePicker> {
               monthEnd: monthEnd,
               onSelectRange: _applyRange,
             ),
-            div(
-              classes: 'flex flex-col gap-1 pt-1 border-t border-border-light',
-              [
-                span(
-                  classes:
-                      'text-2xs font-semibold text-gray-500 uppercase tracking-wider px-1',
-                  [.text('Custom Range')],
-                ),
-                div(classes: 'grid grid-cols-2 gap-2 mt-0.5', [
-                  div(classes: 'flex flex-col gap-0.5', [
-                    label(classes: 'text-2xs font-medium text-gray-600 px-1', [
-                      .text('From Date'),
-                    ]),
-                    input(
-                      type: InputType.date,
-                      value: _tempFrom,
-                      classes:
-                          'input input-sm border border-border-medium bg-base-100 rounded-lg text-xs w-full focus:outline-none focus:border-primary',
-                      onInput: (value) {
-                        final val = value.toString().trim();
-                        _tempFrom = DateRangeUtils.cleanDate(val);
-                      },
-                    ),
-                  ]),
-                  div(classes: 'flex flex-col gap-0.5', [
-                    label(classes: 'text-2xs font-medium text-gray-600 px-1', [
-                      .text('To Date'),
-                    ]),
-                    input(
-                      type: InputType.date,
-                      value: _tempTo,
-                      classes:
-                          'input input-sm border border-border-medium bg-base-100 rounded-lg text-xs w-full focus:outline-none focus:border-primary',
-                      onInput: (value) {
-                        final val = value.toString().trim();
-                        _tempTo = DateRangeUtils.cleanDate(val);
-                      },
-                    ),
-                  ]),
-                ]),
-              ],
+            CustomDateRangeInputs(
+              tempFrom: _tempFrom,
+              tempTo: _tempTo,
+              onFromChanged: (val) => _tempFrom = DateRangeUtils.cleanDate(val),
+              onToChanged: (val) => _tempTo = DateRangeUtils.cleanDate(val),
             ),
             div(
               classes:

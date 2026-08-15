@@ -1,14 +1,12 @@
 import 'package:customer/components/profile/logout_action_card.dart';
 import 'package:customer/components/profile/profile_forms_section.dart';
 import 'package:customer/components/profile/profile_overview_card.dart';
+import 'package:customer/components/profile/profile_wallet_modals.dart';
 import 'package:customer/components/profile/store_wallet_card.dart';
-import 'package:customer/components/profile/top_up_modal.dart';
-import 'package:customer/components/profile/wallet_transactions_modal.dart';
 import 'package:customer/components/signal_component.dart';
 import 'package:customer/signals/cart_signal.dart';
 import 'package:customer/signals/customer_auth_signal.dart';
 import 'package:customer/utils/customer_navigation.dart';
-import 'package:customer/utils/customer_profile_handler.dart';
 import 'package:customer/utils/customer_wallet_handler.dart';
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
@@ -25,25 +23,6 @@ class CustomerProfilePage extends SignalComponent {
 }
 
 class _CustomerProfilePageState extends SignalState<CustomerProfilePage> {
-  String _name = '';
-  String _mobileNumber = '';
-  String _mobilePin = '';
-  String _currentPin = '';
-  String _newPin = '';
-  String _confirmPin = '';
-
-  bool _isEditingName = false;
-  bool _isEditingMobile = false;
-  bool _isEditingPin = false;
-
-  bool _isSavingName = false;
-  bool _isSavingMobile = false;
-  bool _isSavingPin = false;
-
-  String? _nameError;
-  String? _mobileError;
-  String? _pinError;
-
   bool _isTopUpModalOpen = false;
   bool _isTransactionsModalOpen = false;
   double _topUpAmount = 500.0;
@@ -54,11 +33,6 @@ class _CustomerProfilePageState extends SignalState<CustomerProfilePage> {
   @override
   void initState() {
     super.initState();
-    final customer = customerAuthSignal.value.value;
-    if (customer != null) {
-      _name = customer.name;
-      _mobileNumber = customer.mobileNumber;
-    }
     _loadWalletHistory();
   }
 
@@ -83,59 +57,6 @@ class _CustomerProfilePageState extends SignalState<CustomerProfilePage> {
       },
       onCompleted: _loadWalletHistory,
     );
-  }
-
-  Future<void> _handleSaveName() async {
-    setState(() => _isSavingName = true);
-    final success = await CustomerProfileHandler.saveName(
-      name: _name,
-      onError: (err) => setState(() => _nameError = err),
-    );
-    if (mounted) {
-      setState(() {
-        _isSavingName = false;
-        if (success) _isEditingName = false;
-      });
-    }
-  }
-
-  Future<void> _handleSaveMobile() async {
-    setState(() => _isSavingMobile = true);
-    final success = await CustomerProfileHandler.saveMobile(
-      mobileNumber: _mobileNumber,
-      mobilePin: _mobilePin,
-      onError: (err) => setState(() => _mobileError = err),
-    );
-    if (mounted) {
-      setState(() {
-        _isSavingMobile = false;
-        if (success) {
-          _isEditingMobile = false;
-          _mobilePin = '';
-        }
-      });
-    }
-  }
-
-  Future<void> _handleSavePin() async {
-    setState(() => _isSavingPin = true);
-    final success = await CustomerProfileHandler.savePin(
-      currentPin: _currentPin,
-      newPin: _newPin,
-      confirmPin: _confirmPin,
-      onError: (err) => setState(() => _pinError = err),
-    );
-    if (mounted) {
-      setState(() {
-        _isSavingPin = false;
-        if (success) {
-          _isEditingPin = false;
-          _currentPin = '';
-          _newPin = '';
-          _confirmPin = '';
-        }
-      });
-    }
   }
 
   @override
@@ -178,74 +99,22 @@ class _CustomerProfilePageState extends SignalState<CustomerProfilePage> {
             setState(() => _isTransactionsModalOpen = true),
       ),
 
-      if (_isTopUpModalOpen)
-        TopUpModal(
-          topUpAmount: _topUpAmount,
-          isLoading: _isTopUpLoading,
-          onAmountChanged: (amt) => setState(() => _topUpAmount = amt),
-          onConfirm: _handleTopUp,
-          onClose: () => setState(() => _isTopUpModalOpen = false),
-        ),
+      ProfileFormsSection(customer: customer),
 
-      if (_isTransactionsModalOpen)
-        WalletTransactionsModal(
-          transactions: _transactions,
-          onClose: () => setState(() => _isTransactionsModalOpen = false),
-        ),
+      const LogoutActionCard(),
 
-      ProfileFormsSection(
-        customer: customer,
-        name: _name,
-        mobileNumber: _mobileNumber,
-        isEditingName: _isEditingName,
-        isEditingMobile: _isEditingMobile,
-        isEditingPin: _isEditingPin,
-        isSavingName: _isSavingName,
-        isSavingMobile: _isSavingMobile,
-        isSavingPin: _isSavingPin,
-        nameError: _nameError,
-        mobileError: _mobileError,
-        pinError: _pinError,
-        onStartEditName: () => setState(() {
-          _isEditingName = true;
-          _name = customer.name;
-        }),
-        onCancelEditName: () => setState(() {
-          _isEditingName = false;
-          _name = customer.name;
-          _nameError = null;
-        }),
-        onNameChanged: (val) => _name = val,
-        onSaveName: _handleSaveName,
-        onStartEditMobile: () => setState(() {
-          _isEditingMobile = true;
-          _mobileNumber = customer.mobileNumber;
-          _mobilePin = '';
-        }),
-        onCancelEditMobile: () => setState(() {
-          _isEditingMobile = false;
-          _mobileNumber = customer.mobileNumber;
-          _mobilePin = '';
-          _mobileError = null;
-        }),
-        onMobileChanged: (val) => _mobileNumber = val,
-        onMobilePinChanged: (pin) => _mobilePin = pin,
-        onSaveMobile: _handleSaveMobile,
-        onStartEditPin: () => setState(() => _isEditingPin = true),
-        onCancelEditPin: () => setState(() {
-          _isEditingPin = false;
-          _currentPin = '';
-          _newPin = '';
-          _confirmPin = '';
-          _pinError = null;
-        }),
-        onCurrentPinChanged: (val) => _currentPin = val,
-        onNewPinChanged: (val) => _newPin = val,
-        onConfirmPinChanged: (val) => _confirmPin = val,
-        onSavePin: _handleSavePin,
+      ProfileWalletModals(
+        isTopUpModalOpen: _isTopUpModalOpen,
+        isTransactionsModalOpen: _isTransactionsModalOpen,
+        topUpAmount: _topUpAmount,
+        isTopUpLoading: _isTopUpLoading,
+        transactions: _transactions,
+        onAmountChanged: (amount) => setState(() => _topUpAmount = amount),
+        onCloseTopUp: () => setState(() => _isTopUpModalOpen = false),
+        onProceedTopUp: _handleTopUp,
+        onCloseTransactions: () =>
+            setState(() => _isTransactionsModalOpen = false),
       ),
-
-      LogoutActionCard(),
     ]);
   }
 }

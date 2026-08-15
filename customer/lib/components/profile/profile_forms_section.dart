@@ -1,109 +1,164 @@
 import 'package:customer/components/profile/editable_info_card.dart';
 import 'package:customer/components/profile/security_pin_card.dart';
+import 'package:customer/utils/customer_profile_handler.dart';
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:models/models.dart';
 
-/// Form cards section for modifying full name, mobile phone number, and security PIN.
-class ProfileFormsSection extends StatelessComponent {
+/// Form cards section for modifying personal name, mobile number, and security PIN.
+class ProfileFormsSection extends StatefulComponent {
   final Customer customer;
-  final String name;
-  final String mobileNumber;
-  final bool isEditingName;
-  final bool isEditingMobile;
-  final bool isEditingPin;
-  final bool isSavingName;
-  final bool isSavingMobile;
-  final bool isSavingPin;
-  final String? nameError;
-  final String? mobileError;
-  final String? pinError;
-  final VoidCallback onStartEditName;
-  final VoidCallback onCancelEditName;
-  final ValueChanged<String> onNameChanged;
-  final VoidCallback onSaveName;
-  final VoidCallback onStartEditMobile;
-  final VoidCallback onCancelEditMobile;
-  final ValueChanged<String> onMobileChanged;
-  final ValueChanged<String> onMobilePinChanged;
-  final VoidCallback onSaveMobile;
-  final VoidCallback onStartEditPin;
-  final VoidCallback onCancelEditPin;
-  final ValueChanged<String> onCurrentPinChanged;
-  final ValueChanged<String> onNewPinChanged;
-  final ValueChanged<String> onConfirmPinChanged;
-  final VoidCallback onSavePin;
 
-  const ProfileFormsSection({
-    super.key,
-    required this.customer,
-    required this.name,
-    required this.mobileNumber,
-    required this.isEditingName,
-    required this.isEditingMobile,
-    required this.isEditingPin,
-    required this.isSavingName,
-    required this.isSavingMobile,
-    required this.isSavingPin,
-    required this.nameError,
-    required this.mobileError,
-    required this.pinError,
-    required this.onStartEditName,
-    required this.onCancelEditName,
-    required this.onNameChanged,
-    required this.onSaveName,
-    required this.onStartEditMobile,
-    required this.onCancelEditMobile,
-    required this.onMobileChanged,
-    required this.onMobilePinChanged,
-    required this.onSaveMobile,
-    required this.onStartEditPin,
-    required this.onCancelEditPin,
-    required this.onCurrentPinChanged,
-    required this.onNewPinChanged,
-    required this.onConfirmPinChanged,
-    required this.onSavePin,
-  });
+  const ProfileFormsSection({super.key, required this.customer});
+
+  @override
+  State<ProfileFormsSection> createState() => _ProfileFormsSectionState();
+}
+
+class _ProfileFormsSectionState extends State<ProfileFormsSection> {
+  late String _name;
+  late String _mobileNumber;
+  String _mobilePin = '';
+  String _currentPin = '';
+  String _newPin = '';
+  String _confirmPin = '';
+
+  bool _isEditingName = false;
+  bool _isEditingMobile = false;
+  bool _isEditingPin = false;
+
+  bool _isSavingName = false;
+  bool _isSavingMobile = false;
+  bool _isSavingPin = false;
+
+  String? _nameError;
+  String? _mobileError;
+  String? _pinError;
+
+  @override
+  void initState() {
+    super.initState();
+    _name = component.customer.name;
+    _mobileNumber = component.customer.mobileNumber;
+  }
+
+  Future<void> _handleSaveName() async {
+    setState(() => _isSavingName = true);
+    final success = await CustomerProfileHandler.saveName(
+      name: _name,
+      onError: (err) => setState(() => _nameError = err),
+    );
+    if (mounted) {
+      setState(() {
+        _isSavingName = false;
+        if (success) _isEditingName = false;
+      });
+    }
+  }
+
+  Future<void> _handleSaveMobile() async {
+    setState(() => _isSavingMobile = true);
+    final success = await CustomerProfileHandler.saveMobile(
+      mobileNumber: _mobileNumber,
+      mobilePin: _mobilePin,
+      onError: (err) => setState(() => _mobileError = err),
+    );
+    if (mounted) {
+      setState(() {
+        _isSavingMobile = false;
+        if (success) {
+          _isEditingMobile = false;
+          _mobilePin = '';
+        }
+      });
+    }
+  }
+
+  Future<void> _handleSavePin() async {
+    setState(() => _isSavingPin = true);
+    final success = await CustomerProfileHandler.savePin(
+      currentPin: _currentPin,
+      newPin: _newPin,
+      confirmPin: _confirmPin,
+      onError: (err) => setState(() => _pinError = err),
+    );
+    if (mounted) {
+      setState(() {
+        _isSavingPin = false;
+        if (success) {
+          _isEditingPin = false;
+          _currentPin = '';
+          _newPin = '';
+          _confirmPin = '';
+        }
+      });
+    }
+  }
 
   @override
   Component build(BuildContext context) {
     return div(classes: 'flex flex-col gap-6', [
       EditableInfoCard(
         title: 'Personal Information',
-        currentValue: isEditingName ? name : customer.name,
+        currentValue: _isEditingName ? _name : component.customer.name,
         inputLabel: 'Full Name',
-        isEditing: isEditingName,
-        isSaving: isSavingName,
-        error: nameError,
-        onStartEdit: onStartEditName,
-        onCancel: onCancelEditName,
-        onValueChanged: onNameChanged,
-        onSave: onSaveName,
+        isEditing: _isEditingName,
+        isSaving: _isSavingName,
+        error: _nameError,
+        onStartEdit: () => setState(() {
+          _isEditingName = true;
+          _nameError = null;
+        }),
+        onCancel: () => setState(() {
+          _isEditingName = false;
+          _name = component.customer.name;
+          _nameError = null;
+        }),
+        onValueChanged: (val) => _name = val,
+        onSave: _handleSaveName,
       ),
       EditableInfoCard(
         title: 'Contact Details',
-        currentValue: isEditingMobile ? mobileNumber : customer.mobileNumber,
+        currentValue:
+            _isEditingMobile ? _mobileNumber : component.customer.mobileNumber,
         inputLabel: 'Mobile Number',
         inputType: InputType.tel,
-        isEditing: isEditingMobile,
-        isSaving: isSavingMobile,
-        error: mobileError,
-        onStartEdit: onStartEditMobile,
-        onCancel: onCancelEditMobile,
-        onValueChanged: onMobileChanged,
-        onPinChanged: onMobilePinChanged,
-        onSave: onSaveMobile,
+        isEditing: _isEditingMobile,
+        isSaving: _isSavingMobile,
+        error: _mobileError,
+        onStartEdit: () => setState(() {
+          _isEditingMobile = true;
+          _mobileError = null;
+          _mobilePin = '';
+        }),
+        onCancel: () => setState(() {
+          _isEditingMobile = false;
+          _mobileNumber = component.customer.mobileNumber;
+          _mobilePin = '';
+          _mobileError = null;
+        }),
+        onValueChanged: (val) => _mobileNumber = val,
+        onPinChanged: (val) => _mobilePin = val,
+        onSave: _handleSaveMobile,
       ),
       SecurityPinCard(
-        isEditing: isEditingPin,
-        isSaving: isSavingPin,
-        error: pinError,
-        onStartEdit: onStartEditPin,
-        onCancel: onCancelEditPin,
-        onCurrentPinChanged: onCurrentPinChanged,
-        onNewPinChanged: onNewPinChanged,
-        onConfirmPinChanged: onConfirmPinChanged,
-        onSave: onSavePin,
+        isEditing: _isEditingPin,
+        isSaving: _isSavingPin,
+        error: _pinError,
+        onStartEdit: () => setState(() {
+          _isEditingPin = true;
+          _pinError = null;
+          _currentPin = _newPin = _confirmPin = '';
+        }),
+        onCancel: () => setState(() {
+          _isEditingPin = false;
+          _pinError = null;
+          _currentPin = _newPin = _confirmPin = '';
+        }),
+        onCurrentPinChanged: (val) => _currentPin = val,
+        onNewPinChanged: (val) => _newPin = val,
+        onConfirmPinChanged: (val) => _confirmPin = val,
+        onSave: _handleSavePin,
       ),
     ]);
   }
