@@ -121,51 +121,71 @@ class TerminalLoginFormCard extends StatelessWidget {
               label: null,
             ),
             const Gap(28),
-            MouseRegion(
-              cursor: isLoading ? SystemMouseCursors.basic : SystemMouseCursors.click,
-              child: PressableBox(
-                onPress: isLoading ? null : onSignIn,
-                style: BoxStyler()
-                    .color(Colors.black)
-                    .width(double.infinity)
-                    .height(48)
-                    .borderRadiusAll(const Radius.circular(14))
-                    .borderAll(color: Colors.grey.shade800)
-                    .shadowOnly(
-                      color: Colors.black.withValues(alpha: 0.15),
-                      offset: const Offset(0, 4),
-                      blurRadius: 8,
-                    )
-                    .onHovered(
-                      BoxStyler()
-                          .color(const Color(0xFF1F2937))
-                          .shadowOnly(
-                            color: Colors.black.withValues(alpha: 0.25),
-                            offset: const Offset(0, 6),
-                            blurRadius: 16,
-                          ),
-                    )
-                    .onPressed(BoxStyler().scale(0.98))
-                    .animate(AnimationConfig.easeInOut(150.ms)),
-                child: const Center(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Sign In',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w800,
-                          color: Colors.white,
-                        ),
-                      ),
-                      SizedBox(width: 8),
-                      Icon(
-                        FLucideIcons.arrowRight,
-                        size: 16,
-                        color: Colors.white,
+            Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: isLoading ? null : onSignIn,
+                borderRadius: BorderRadius.circular(14),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  width: double.infinity,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: isLoading ? const Color(0xFF1F2937) : Colors.black,
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(color: Colors.grey.shade800),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.15),
+                        offset: const Offset(0, 4),
+                        blurRadius: 8,
                       ),
                     ],
+                  ),
+                  child: Center(
+                    child: isLoading
+                        ? const Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              SizedBox(
+                                width: 16,
+                                height: 16,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor:
+                                      AlwaysStoppedAnimation<Color>(Colors.white),
+                                ),
+                              ),
+                              SizedBox(width: 10),
+                              Text(
+                                'Signing In...',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
+                          )
+                        : const Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                'Sign In',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w800,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              SizedBox(width: 8),
+                              Icon(
+                                FLucideIcons.arrowRight,
+                                size: 16,
+                                color: Colors.white,
+                              ),
+                            ],
+                          ),
                   ),
                 ),
               ),

@@ -60,6 +60,7 @@ class _AddEditStoreModalState extends State<AddEditStoreModal> {
 
   void _onSubmit(web.Event e) {
     e.preventDefault();
+    (web.document.activeElement as web.HTMLElement?)?.blur();
     if (component.store != null) {
       StoresActions.updateStore(
         id: component.store!.id,

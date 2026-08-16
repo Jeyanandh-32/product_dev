@@ -37,6 +37,7 @@
     --color-gray-700: oklch(37.3% 0.034 259.733);
     --color-gray-800: oklch(27.8% 0.033 256.848);
     --color-gray-900: oklch(21% 0.034 264.665);
+    --color-neutral-900: oklch(20.5% 0 0);
     --color-black: #000;
     --color-white: #fff;
     --spacing: 0.25rem;
@@ -4006,6 +4007,11 @@
   .min-h-screen {
     min-height: 100vh;
   }
+  .loading-xs {
+    @layer daisyui.l1.l2 {
+      width: calc(var(--size-selector, 0.25rem) * 4);
+    }
+  }
   .w-1\.5 {
     width: calc(var(--spacing) * 1.5);
   }
@@ -5305,6 +5311,41 @@
       --tw-scale-y: 98%;
       --tw-scale-z: 98%;
       scale: var(--tw-scale-x) var(--tw-scale-y);
+    }
+  }
+  .disabled\:border-transparent {
+    &:disabled {
+      border-color: transparent;
+    }
+  }
+  .disabled\:bg-neutral-900 {
+    &:disabled {
+      background-color: var(--color-neutral-900);
+    }
+  }
+  .disabled\:bg-primary {
+    &:disabled {
+      background-color: var(--color-primary);
+    }
+  }
+  .disabled\:text-primary-content {
+    &:disabled {
+      color: var(--color-primary-content);
+    }
+  }
+  .disabled\:text-white {
+    &:disabled {
+      color: var(--color-white);
+    }
+  }
+  .disabled\:opacity-80 {
+    &:disabled {
+      opacity: 80%;
+    }
+  }
+  .disabled\:opacity-85 {
+    &:disabled {
+      opacity: 85%;
     }
   }
   .sm\:flex {

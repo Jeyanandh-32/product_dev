@@ -13,6 +13,7 @@ final productSearchSignal = signal<String>('');
 final editingProductSignal = signal<Product?>(null);
 
 final productsSignal = asyncSignal<List<Product>>(const AsyncLoading());
+final allStoreProductsSignal = asyncSignal<List<Product>>(const AsyncLoading());
 
 void resetProductsSignal() {
   productsPageSignal.value = 1;
@@ -21,6 +22,28 @@ void resetProductsSignal() {
   productSearchSignal.value = '';
   editingProductSignal.value = null;
   productsSignal.value = const AsyncData([]);
+  allStoreProductsSignal.value = const AsyncData([]);
+}
+
+Future<void> fetchAllStoreProductsSignal() async {
+  final selectedStore = storeSignal.value;
+  if (selectedStore == null) {
+    allStoreProductsSignal.value = const AsyncData([]);
+    return;
+  }
+
+  allStoreProductsSignal.value = const AsyncLoading();
+
+  try {
+    final result = await ProductRepository.getAll(
+      storeId: selectedStore.id,
+      page: 1,
+      size: 1000,
+    );
+    allStoreProductsSignal.value = AsyncData(result.items);
+  } catch (e, stack) {
+    allStoreProductsSignal.value = AsyncError(e, stack);
+  }
 }
 
 Future<void> refreshProductsSignal({int? customSize}) async {

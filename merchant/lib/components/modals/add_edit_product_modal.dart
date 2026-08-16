@@ -58,6 +58,7 @@ class _AddEditProductModalState extends SignalState<AddEditProductModal> {
 
   void _onSubmit(web.Event e) {
     e.preventDefault();
+    (web.document.activeElement as web.HTMLElement?)?.blur();
 
     if (_categoryId.isEmpty) {
       showToast('Category is required.');

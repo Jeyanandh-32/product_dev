@@ -44,7 +44,7 @@ class _CategoriesState extends SignalState<Categories> {
       _loadedStoreId = store.id;
     }
     refreshCategoriesSignal();
-    refreshProductsSignal(customSize: 1000);
+    fetchAllStoreProductsSignal();
   }
 
   void _closeDropdowns() {
@@ -67,7 +67,7 @@ class _CategoriesState extends SignalState<Categories> {
   }
 
   int _getAssociatedCount(Category category) {
-    final prods = productsSignal.value.value;
+    final prods = allStoreProductsSignal.value.value;
     if (prods == null) return 0;
     return prods.where((prod) => prod.category?.id == category.id).length;
   }
@@ -79,7 +79,7 @@ class _CategoriesState extends SignalState<Categories> {
       _loadedStoreId = store.id;
       Future.microtask(() {
         refreshCategoriesSignal();
-        refreshProductsSignal(customSize: 1000);
+        fetchAllStoreProductsSignal();
       });
     }
     final entries = entriesSignal.value;

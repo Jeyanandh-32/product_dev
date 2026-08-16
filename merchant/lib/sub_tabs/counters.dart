@@ -44,7 +44,7 @@ class _CountersState extends SignalState<Counters> {
       _loadedStoreId = store.id;
     }
     refreshCountersSignal();
-    refreshProductsSignal(customSize: 1000);
+    fetchAllStoreProductsSignal();
   }
 
   void _closeDropdowns() {
@@ -67,7 +67,7 @@ class _CountersState extends SignalState<Counters> {
   }
 
   int _getAssociatedCount(Counter counter) {
-    final prods = productsSignal.value.value;
+    final prods = allStoreProductsSignal.value.value;
     if (prods == null) return 0;
     return prods.where((prod) => prod.counter?.id == counter.id).length;
   }
@@ -79,7 +79,7 @@ class _CountersState extends SignalState<Counters> {
       _loadedStoreId = store.id;
       Future.microtask(() {
         refreshCountersSignal();
-        refreshProductsSignal(customSize: 1000);
+        fetchAllStoreProductsSignal();
       });
     }
     final entries = entriesSignal.value;

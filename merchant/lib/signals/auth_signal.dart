@@ -18,6 +18,7 @@ import 'package:models/models.dart';
 import 'package:signals/signals.dart';
 
 final authSignal = asyncSignal<Merchant?>(const AsyncLoading());
+final authSubmittingSignal = signal<bool>(false);
 
 void resetAllMerchantSignals() {
   resetStoresSignal();
@@ -67,7 +68,7 @@ Future<void> loginMerchant({
   required String email,
   required String password,
 }) async {
-  authSignal.value = const AsyncLoading();
+  authSubmittingSignal.value = true;
   resetAllMerchantSignals();
   try {
     final merchant = await AuthRepository.login(
@@ -82,6 +83,8 @@ Future<void> loginMerchant({
     final message = e is ApiException ? e.message : 'Something went wrong.';
     showToast(message);
     authSignal.value = const AsyncData(null);
+  } finally {
+    authSubmittingSignal.value = false;
   }
 }
 
@@ -92,7 +95,7 @@ Future<void> registerMerchant({
   required String email,
   required String password,
 }) async {
-  authSignal.value = const AsyncLoading();
+  authSubmittingSignal.value = true;
   resetAllMerchantSignals();
   try {
     final merchant = await AuthRepository.register(
@@ -108,12 +111,12 @@ Future<void> registerMerchant({
     final message = e is ApiException ? e.message : 'Something went wrong.';
     showToast(message);
     authSignal.value = const AsyncData(null);
+  } finally {
+    authSubmittingSignal.value = false;
   }
 }
 
 Future<void> logoutMerchant() async {
-  authSignal.value = const AsyncLoading();
-
   try {
     await AuthRepository.logout();
   } catch (e) {

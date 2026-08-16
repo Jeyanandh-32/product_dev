@@ -112,6 +112,9 @@ class _HomeState extends State<Home> {
                                         child: DynamicHeightGridView(
                                           crossAxisSpacing: isDesktop ? 12 : 8,
                                           mainAxisSpacing: isDesktop ? 12 : 8,
+                                          physics: const BouncingScrollPhysics(
+                                            parent: AlwaysScrollableScrollPhysics(),
+                                          ),
                                           builder: (context, index) {
                                             final product = filteredProducts[index];
                                             return ProductCard(

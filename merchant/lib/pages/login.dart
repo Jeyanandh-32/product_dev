@@ -4,7 +4,6 @@ import 'package:jaspr_lucide/jaspr_lucide.dart' hide Map;
 import 'package:jaspr_router/jaspr_router.dart';
 import 'package:merchant/components/fields/form_field.dart';
 import 'package:merchant/components/layouts/auth_layout.dart';
-import 'package:merchant/components/loading.dart';
 import 'package:merchant/components/signal_component.dart';
 import 'package:merchant/signals/auth_signal.dart';
 import 'package:validators/validators.dart';
@@ -23,6 +22,7 @@ class _LoginState extends SignalState<Login> {
 
   void _onSubmit(Event e) {
     e.preventDefault();
+    (document.activeElement as HTMLElement?)?.blur();
     final email = _email.trim();
     final password = _password.trim();
 
@@ -31,8 +31,7 @@ class _LoginState extends SignalState<Login> {
 
   @override
   Component buildSignal(BuildContext context) {
-    final authState = authSignal.value;
-    if (authState.isLoading) return const Loading();
+    final isSubmitting = authSubmittingSignal.value;
 
     return AuthLayout(
       title: 'Sign in to your account',
@@ -79,10 +78,16 @@ class _LoginState extends SignalState<Login> {
           ),
 
           button(
-            classes: 'btn btn-primary mt-3 rounded-lg h-12 w-full',
+            classes:
+                'btn btn-primary mt-3 rounded-lg h-12 w-full gap-2.5 disabled:bg-primary disabled:text-primary-content disabled:opacity-85 disabled:border-transparent',
             type: .submit,
+            disabled: isSubmitting,
             [
-              .text('Sign In'),
+              if (isSubmitting) ...[
+                span(classes: 'loading loading-spinner loading-xs text-white', []),
+                span(classes: 'text-sm font-bold text-white', [.text('Signing In...')]),
+              ] else
+                .text('Sign In'),
             ],
           ),
         ],

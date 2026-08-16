@@ -33,6 +33,7 @@ class _AddEditCounterModalState extends State<AddEditCounterModal> {
 
   void _onSubmit(Event e) {
     e.preventDefault();
+    (document.activeElement as HTMLElement?)?.blur();
     final counterName = _counterName.trim();
     final descriptionVal = _description.trim();
     final imageUrlVal = _imageUrl.trim();

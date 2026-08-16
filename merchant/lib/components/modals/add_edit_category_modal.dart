@@ -33,6 +33,7 @@ class _AddEditCategoryModalState extends State<AddEditCategoryModal> {
 
   void _onSubmit(Event e) {
     e.preventDefault();
+    (document.activeElement as HTMLElement?)?.blur();
     final categoryName = _categoryName.trim();
     final descriptionVal = _description.trim();
     final imageUrlVal = _imageUrl.trim();

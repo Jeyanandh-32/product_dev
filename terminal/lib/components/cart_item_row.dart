@@ -54,10 +54,8 @@ class _CartItemRowState extends State<CartItemRow> {
                 child: widget.item.product.imageUrl != null &&
                         widget.item.product.imageUrl!.trim().isNotEmpty
                     ? Image.network(
-                        widget.item.product.imageUrl!,
+                        widget.item.product.imageUrl!.trim(),
                         fit: BoxFit.cover,
-                        cacheWidth: 160,
-                        cacheHeight: 160,
                         errorBuilder: (context, error, stackTrace) => const Center(
                           child: Icon(
                             FLucideIcons.store,

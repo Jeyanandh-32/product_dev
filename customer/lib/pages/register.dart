@@ -23,6 +23,7 @@ class _RegisterPageState extends SignalState<RegisterPage> {
 
   void _onSubmit(Event e) {
     e.preventDefault();
+    (document.activeElement as HTMLElement?)?.blur();
     final fullName = _fullName.trim();
     final whatsappNumber = _whatsappNumber.trim();
     final password = _password.trim();
@@ -36,8 +37,7 @@ class _RegisterPageState extends SignalState<RegisterPage> {
 
   @override
   Component buildSignal(BuildContext context) {
-    final authState = customerAuthSignal.value;
-    final isSubmitting = authState.isLoading;
+    final isSubmitting = customerAuthSubmittingSignal.value;
 
     return AuthLayout(
       title: 'Create Your Account',
@@ -102,13 +102,14 @@ class _RegisterPageState extends SignalState<RegisterPage> {
 
           button(
             classes:
-                'w-full h-12 mt-2 rounded-xl bg-black hover:bg-gray-800 text-white font-extrabold text-sm flex items-center justify-center transition-all cursor-pointer shadow-2xs active:scale-98 disabled:opacity-50 border-0',
+                'w-full h-12 mt-2 rounded-xl bg-black hover:bg-gray-800 text-white font-extrabold text-sm flex items-center justify-center gap-2.5 transition-all cursor-pointer shadow-2xs active:scale-98 disabled:bg-black disabled:text-white disabled:opacity-85 disabled:cursor-not-allowed border-0',
             type: .submit,
             disabled: isSubmitting,
             [
-              if (isSubmitting)
-                span(classes: 'loading loading-spinner loading-sm text-white', [])
-              else
+              if (isSubmitting) ...[
+                span(classes: 'loading loading-spinner loading-xs text-white', []),
+                span(classes: 'text-sm font-bold text-white', [.text('Registering...')]),
+              ] else
                 .text('Register'),
             ],
           ),

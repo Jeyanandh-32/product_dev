@@ -29,6 +29,7 @@ class _CartSummaryState extends State<CartSummary> {
   }
 
   Future<void> _handleCheckout(String storeId, PaymentMethod paymentMode) async {
+    FocusManager.instance.primaryFocus?.unfocus();
     setState(() => _isCheckingOut = true);
 
     try {

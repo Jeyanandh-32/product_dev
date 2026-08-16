@@ -4,6 +4,7 @@ import 'package:models/models.dart';
 import 'package:signals/signals.dart';
 
 final customerAuthSignal = asyncSignal<Customer?>(const AsyncLoading());
+final customerAuthSubmittingSignal = signal<bool>(false);
 final redirectPathSignal = signal<String?>(null);
 
 Future<void> initCustomerAuthSignal() async {
@@ -20,7 +21,7 @@ Future<void> loginCustomer({
   required String mobileNumber,
   required String pin,
 }) async {
-  customerAuthSignal.value = const AsyncLoading();
+  customerAuthSubmittingSignal.value = true;
 
   try {
     final customer = await CustomerAuthRepository.login(
@@ -35,6 +36,8 @@ Future<void> loginCustomer({
       e.toString(),
       type: ToastType.error,
     );
+  } finally {
+    customerAuthSubmittingSignal.value = false;
   }
 }
 
@@ -43,7 +46,7 @@ Future<void> registerCustomer({
   required String mobileNumber,
   required String pin,
 }) async {
-  customerAuthSignal.value = const AsyncLoading();
+  customerAuthSubmittingSignal.value = true;
 
   try {
     final customer = await CustomerAuthRepository.register(
@@ -59,6 +62,8 @@ Future<void> registerCustomer({
       e.toString(),
       type: ToastType.error,
     );
+  } finally {
+    customerAuthSubmittingSignal.value = false;
   }
 }
 

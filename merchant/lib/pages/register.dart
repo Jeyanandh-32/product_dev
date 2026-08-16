@@ -24,6 +24,7 @@ class _RegisterState extends State<Register> {
 
   void _onSubmit(Event e) {
     e.preventDefault();
+    (document.activeElement as HTMLElement?)?.blur();
     final fullName = _fullName.trim();
     final businessName = _businessName.trim();
     final whatsappNumber = _whatsappNumber.trim();
@@ -131,10 +132,16 @@ class _RegisterState extends State<Register> {
           ),
 
           button(
-            classes: 'btn btn-primary mt-3 rounded-lg h-12 w-full',
+            classes:
+                'btn btn-primary mt-3 rounded-lg h-12 w-full gap-2.5 disabled:bg-primary disabled:text-primary-content disabled:opacity-85 disabled:border-transparent',
             type: .submit,
+            disabled: authSubmittingSignal.value,
             [
-              .text('Register'),
+              if (authSubmittingSignal.value) ...[
+                span(classes: 'loading loading-spinner loading-xs text-white', []),
+                span(classes: 'text-sm font-bold text-white', [.text('Registering...')]),
+              ] else
+                .text('Register'),
             ],
           ),
 

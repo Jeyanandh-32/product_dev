@@ -32,6 +32,7 @@ class _AddEditTerminalModalState extends State<AddEditTerminalModal> {
 
   void _onSubmit(Event e) {
     e.preventDefault();
+    (document.activeElement as HTMLElement?)?.blur();
     final name = _name.trim();
     final password = _password.trim();
     final isActive = _isActive;

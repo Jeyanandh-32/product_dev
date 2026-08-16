@@ -30,6 +30,7 @@ class _LoginState extends State<Login> {
   }
 
   Future<void> _signIn() async {
+    FocusManager.instance.primaryFocus?.unfocus();
     if (formKey.currentState?.validate() ?? false) {
       final code = codeController.text.trim();
       final password = passwordController.text;

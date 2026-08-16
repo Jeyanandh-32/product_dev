@@ -21,9 +21,11 @@ class CartPage extends SignalWidget {
         backgroundColor: Colors.white,
         elevation: 0,
         scrolledUnderElevation: 0,
-        leading: IconButton(
-          icon: Icon(FLucideIcons.arrowLeft, color: theme.colors.primary),
-          onPressed: () => context.pop(),
+        leading: const Center(
+          child: Padding(
+            padding: EdgeInsets.only(left: 12),
+            child: _CartBackButton(),
+          ),
         ),
         title: StyledText(
           'Order Items',
@@ -73,6 +75,46 @@ class CartPage extends SignalWidget {
       ),
       body: const SafeArea(
         child: Cart(isDrawerMode: true),
+      ),
+    );
+  }
+}
+
+/// Circular back navigation button matching the customer web app header style.
+class _CartBackButton extends StatefulWidget {
+  const _CartBackButton();
+
+  @override
+  State<_CartBackButton> createState() => _CartBackButtonState();
+}
+
+class _CartBackButtonState extends State<_CartBackButton> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: GestureDetector(
+        onTap: () => context.pop(),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 130),
+          width: 38,
+          height: 38,
+          decoration: BoxDecoration(
+            color: _isHovered ? Colors.black : const Color(0xFFF3F4F6),
+            shape: BoxShape.circle,
+          ),
+          child: Center(
+            child: Icon(
+              FLucideIcons.arrowLeft,
+              size: 18,
+              color: _isHovered ? Colors.white : Colors.black,
+            ),
+          ),
+        ),
       ),
     );
   }

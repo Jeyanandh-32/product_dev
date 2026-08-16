@@ -36,101 +36,95 @@ class _AppState extends SignalState<App> {
   @override
   Component buildSignal(BuildContext context) {
     final authState = authSignal.value;
-    return authState.map(
-      data: (data) => main_([
-        const Toast(),
-        Router(
-          routes: [
-            ShellRoute(
-              builder: (context, state, child) {
-                final merchant = authSignal.value.value;
-                if (merchant == null) {
-                  return const Login();
-                }
-                return Home(child: child);
-              },
-              routes: [
-                Route(
-                  path: '/',
-                  builder: (context, state) => const Dashboard(),
-                ),
-                Route(
-                  path: '/inventory',
-                  redirect: (context, state) => '/inventory/products',
-                ),
-                Route(
-                  path: '/inventory/products',
-                  builder: (context, state) => const Products(),
-                ),
-                Route(
-                  path: '/inventory/categories',
-                  builder: (context, state) => const Categories(),
-                ),
-                Route(
-                  path: '/inventory/counters',
-                  builder: (context, state) => const Counters(),
-                ),
-                Route(
-                  path: '/reports',
-                  redirect: (context, state) => '/reports/orders',
-                ),
-                Route(
-                  path: '/reports/orders',
-                  builder: (context, state) => const Orders(),
-                ),
-                Route(
-                  path: '/reports/payments',
-                  redirect: (context, state) => '/reports/orders',
-                ),
-                Route(
-                  path: '/reports/profit-loss',
-                  builder: (context, state) => const ProfitLoss(),
-                ),
-                Route(
-                  path: '/reports/stock-summary',
-                  builder: (context, state) => const StockSummary(),
-                ),
-                Route(
-                  path: '/stores',
-                  builder: (context, state) => const Stores(),
-                ),
-                Route(
-                  path: '/account',
-                  builder: (context, state) => const Account(),
-                ),
-              ],
-            ),
-            Route(
-              path: '/register',
-              builder: (context, state) => const Register(),
-              redirect: _guestOnlyRedirect,
-            ),
-            Route(
-              path: '/login',
-              builder: (context, state) => const Login(),
-              redirect: _guestOnlyRedirect,
-            ),
-            Route(
-              path: '/forgotPassword',
-              builder: (context, state) => const ForgotPassword(),
-              redirect: _guestOnlyRedirect,
-            ),
-            Route(
-              path: '/:path*',
-              redirect: (context, state) => '/',
-            ),
-          ],
-        ),
-      ]),
-      error: (error, stackTrace) => Router(
+
+    if (authState.isLoading) {
+      return const Loading();
+    }
+
+    return main_([
+      const Toast(),
+      Router(
         routes: [
+          ShellRoute(
+            builder: (context, state, child) {
+              final merchant = authSignal.value.value;
+              if (merchant == null) {
+                return const Login();
+              }
+              return Home(child: child);
+            },
+            routes: [
+              Route(
+                path: '/',
+                builder: (context, state) => const Dashboard(),
+              ),
+              Route(
+                path: '/inventory',
+                redirect: (context, state) => '/inventory/products',
+              ),
+              Route(
+                path: '/inventory/products',
+                builder: (context, state) => const Products(),
+              ),
+              Route(
+                path: '/inventory/categories',
+                builder: (context, state) => const Categories(),
+              ),
+              Route(
+                path: '/inventory/counters',
+                builder: (context, state) => const Counters(),
+              ),
+              Route(
+                path: '/reports',
+                redirect: (context, state) => '/reports/orders',
+              ),
+              Route(
+                path: '/reports/orders',
+                builder: (context, state) => const Orders(),
+              ),
+              Route(
+                path: '/reports/payments',
+                redirect: (context, state) => '/reports/orders',
+              ),
+              Route(
+                path: '/reports/profit-loss',
+                builder: (context, state) => const ProfitLoss(),
+              ),
+              Route(
+                path: '/reports/stock-summary',
+                builder: (context, state) => const StockSummary(),
+              ),
+              Route(
+                path: '/stores',
+                builder: (context, state) => const Stores(),
+              ),
+              Route(
+                path: '/account',
+                builder: (context, state) => const Account(),
+              ),
+            ],
+          ),
           Route(
-            path: '/',
+            path: '/register',
+            builder: (context, state) => const Register(),
+            redirect: _guestOnlyRedirect,
+          ),
+          Route(
+            path: '/login',
             builder: (context, state) => const Login(),
+            redirect: _guestOnlyRedirect,
+          ),
+          Route(
+            path: '/forgotPassword',
+            builder: (context, state) => const ForgotPassword(),
+            redirect: _guestOnlyRedirect,
+          ),
+          Route(
+            path: '/:path*',
+            redirect: (context, state) => '/',
           ),
         ],
       ),
-      loading: () => const Loading(),
-    );
+    ]);
   }
 }
