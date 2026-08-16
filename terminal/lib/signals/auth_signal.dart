@@ -20,15 +20,14 @@ Future<void> loginTerminal({
   required String code,
   required String password,
 }) async {
-  authSignal.value = const AsyncLoading();
   try {
     final terminal = await TerminalAuthRepository.login(
       code: code,
       password: password,
     );
     authSignal.value = AsyncData(terminal);
-  } catch (e, stack) {
-    authSignal.value = AsyncError(e, stack);
+  } catch (e) {
+    authSignal.value = const AsyncData(null);
     rethrow;
   }
 }

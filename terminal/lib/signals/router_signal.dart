@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:terminal/pages/cart_page.dart';
 import 'package:terminal/pages/home.dart';
 import 'package:terminal/pages/loading.dart';
 import 'package:terminal/pages/login.dart';
@@ -22,10 +23,7 @@ final appRouter = GoRouter(
     final authState = authSignal.value;
 
     if (authState.isLoading) {
-      if (state.matchedLocation == '/login') {
-        return null;
-      }
-      return '/loading';
+      return state.matchedLocation == '/loading' ? null : '/loading';
     }
 
     final terminal = authState.value;
@@ -48,5 +46,6 @@ final appRouter = GoRouter(
     ),
     GoRoute(path: '/login', builder: (context, state) => const Login()),
     GoRoute(path: '/', builder: (context, state) => const Home()),
+    GoRoute(path: '/cart', builder: (context, state) => const CartPage()),
   ],
 );

@@ -59,7 +59,10 @@ abstract final class CartController {
   }
 
   static void setDiscount(double discount) {
-    discountInputSignal.value = max(0.0, discount);
+    final current = cartSignal.value;
+    final maxAllowedDiscount = current.subtotal + current.taxTotal;
+    final sanitizedDiscount = max(0.0, min(discount, maxAllowedDiscount > 0 ? maxAllowedDiscount : discount));
+    discountInputSignal.value = sanitizedDiscount;
     _updateState(cartSignal.value.items);
   }
 
@@ -93,9 +96,10 @@ abstract final class CartController {
 
     final isComplimentary =
         paymentModeSignal.value == PaymentMethod.complimentary;
+    final maxAllowedDiscount = subtotal + taxTotal;
     double discountTotal = isComplimentary
-        ? (subtotal + taxTotal)
-        : discountInputSignal.value;
+        ? maxAllowedDiscount
+        : min(maxAllowedDiscount, discountInputSignal.value);
 
     cartSignal.value = CartState(
       items: items,

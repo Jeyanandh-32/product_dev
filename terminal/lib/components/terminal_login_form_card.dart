@@ -1,62 +1,68 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:forui/forui.dart';
 import 'package:gap/gap.dart';
 import 'package:mix/mix.dart';
-import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:validators/validators.dart';
 
-/// Clean card container with terminal login form fields and submit action.
+/// Clean card container with terminal login form fields and submit action using Forui.
 class TerminalLoginFormCard extends StatelessWidget {
-  final GlobalKey<ShadFormState> formKey;
+  final GlobalKey<FormState> formKey;
+  final TextEditingController codeController;
+  final TextEditingController passwordController;
   final bool isLoading;
   final VoidCallback onSignIn;
 
   const TerminalLoginFormCard({
     super.key,
     required this.formKey,
+    required this.codeController,
+    required this.passwordController,
     required this.isLoading,
     required this.onSignIn,
   });
 
   @override
   Widget build(BuildContext context) {
-    final theme = ShadTheme.of(context);
+    final theme = context.theme;
 
     return Box(
       style: BoxStyler()
           .color(Colors.white)
           .width(double.infinity)
-          .borderRadius(.circular(8))
-          .paddingAll(24)
+          .borderRadius(.circular(16))
+          .paddingAll(28)
+          .borderAll(color: theme.colors.border)
           .shadowOnly(
-            color: Colors.black.withValues(alpha: 0.05),
-            offset: const Offset(0, 1),
-            blurRadius: 2,
+            color: Colors.black.withValues(alpha: 0.04),
+            offset: const Offset(0, 4),
+            blurRadius: 16,
           ),
-      child: ShadForm(
+      child: Form(
         key: formKey,
         child: ColumnBox(
           children: [
             RowBox(
-              style: FlexBoxStyler().spacing(8),
+              style: FlexBoxStyler().spacing(8).crossAxisAlignment(CrossAxisAlignment.center),
               children: [
-                StyledIcon(
-                  icon: LucideIcons.monitor,
-                  style: IconStyler().color(Colors.grey.shade600),
+                Icon(
+                  FLucideIcons.monitor,
+                  size: 18,
+                  color: Colors.grey.shade700,
                 ),
                 StyledText(
                   'Terminal Code',
                   style: TextStyler()
                       .fontSize(14)
-                      .fontWeight(.w600)
-                      .color(Colors.grey.shade600),
+                      .fontWeight(.w700)
+                      .color(Colors.grey.shade700),
                 ),
               ],
             ),
-            const Gap(16),
-            ShadInputFormField(
-              id: 'code',
-              placeholder: const StyledText('HINXXXXXXOE5'),
+            const Gap(8),
+            FTextFormField(
+              control: .managed(controller: codeController),
+              hint: 'HINXXXXXXOE5',
               textInputAction: .next,
               inputFormatters: [
                 LengthLimitingTextInputFormatter(12),
@@ -68,43 +74,43 @@ class TerminalLoginFormCard extends StatelessWidget {
                 }),
               ],
               validator: (v) {
-                if (v.trim().isEmpty) {
+                if (v == null || v.trim().isEmpty) {
                   return 'Terminal Code is required.';
                 }
-                if (v.length < 12) {
+                if (v.trim().length < 12) {
                   return 'Terminal Code must be exactly 12 characters.';
                 }
                 return null;
               },
             ),
 
-            const Gap(16),
+            const Gap(20),
 
             RowBox(
-              style: FlexBoxStyler().spacing(8),
+              style: FlexBoxStyler().spacing(8).crossAxisAlignment(CrossAxisAlignment.center),
               children: [
-                StyledIcon(
-                  icon: LucideIcons.lock,
-                  style: IconStyler().color(Colors.grey.shade600),
+                Icon(
+                  FLucideIcons.lock,
+                  size: 18,
+                  color: Colors.grey.shade700,
                 ),
                 StyledText(
                   'Password',
                   style: TextStyler()
                       .fontSize(14)
-                      .fontWeight(.w600)
-                      .color(Colors.grey.shade600),
+                      .fontWeight(.w700)
+                      .color(Colors.grey.shade700),
                 ),
               ],
             ),
-            const Gap(16),
-            ShadInputFormField(
-              id: 'password',
-              placeholder: const StyledText('*********'),
+            const Gap(8),
+            FTextFormField.password(
+              control: .managed(controller: passwordController),
+              hint: '*********',
               textInputAction: .done,
-              obscureText: true,
-              onSubmitted: (value) => onSignIn(),
+              onSubmit: (_) => onSignIn(),
               validator: (v) {
-                if (v.isEmpty) {
+                if (v == null || v.isEmpty) {
                   return 'Password is required.';
                 }
                 if (!RegExp(ValidationPatterns.password).hasMatch(v)) {
@@ -112,29 +118,57 @@ class TerminalLoginFormCard extends StatelessWidget {
                 }
                 return null;
               },
+              label: null,
             ),
-
             const Gap(28),
-
-            ShadButton(
-              width: .infinity,
-              height: 48,
-              shadows: [
-                BoxShadow(
-                  color: theme.colorScheme.primary.withValues(alpha: 0.3),
-                  offset: const Offset(0, 3),
-                  blurRadius: 2,
-                  spreadRadius: -2,
+            MouseRegion(
+              cursor: isLoading ? SystemMouseCursors.basic : SystemMouseCursors.click,
+              child: PressableBox(
+                onPress: isLoading ? null : onSignIn,
+                style: BoxStyler()
+                    .color(Colors.black)
+                    .width(double.infinity)
+                    .height(48)
+                    .borderRadiusAll(const Radius.circular(14))
+                    .borderAll(color: Colors.grey.shade800)
+                    .shadowOnly(
+                      color: Colors.black.withValues(alpha: 0.15),
+                      offset: const Offset(0, 4),
+                      blurRadius: 8,
+                    )
+                    .onHovered(
+                      BoxStyler()
+                          .color(const Color(0xFF1F2937))
+                          .shadowOnly(
+                            color: Colors.black.withValues(alpha: 0.25),
+                            offset: const Offset(0, 6),
+                            blurRadius: 16,
+                          ),
+                    )
+                    .onPressed(BoxStyler().scale(0.98))
+                    .animate(AnimationConfig.easeInOut(150.ms)),
+                child: const Center(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Sign In',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w800,
+                          color: Colors.white,
+                        ),
+                      ),
+                      SizedBox(width: 8),
+                      Icon(
+                        FLucideIcons.arrowRight,
+                        size: 16,
+                        color: Colors.white,
+                      ),
+                    ],
+                  ),
                 ),
-                BoxShadow(
-                  color: theme.colorScheme.primary.withValues(alpha: 0.3),
-                  offset: const Offset(0, 4),
-                  blurRadius: 3,
-                  spreadRadius: -2,
-                ),
-              ],
-              onPressed: isLoading ? null : onSignIn,
-              child: const StyledText('Sign In'),
+              ),
             ),
           ],
         ),

@@ -54,6 +54,21 @@ void main() {
       expect(summary.discountTotal, 2000);
       expect(summary.grandTotal, 8000); // ₹80.00
     });
+
+    test('Clamps discountTotalInput so it never exceeds subtotal plus tax', () {
+      final summary = OrderCalculator.calculate(
+        lineItems: [
+          (productId: 'prod-1', quantity: 1, sellingPrice: 5000, taxRate: 5.0, discount: 0.0),
+        ],
+        discountTotalInput: 100, // ₹100 discount (more than subtotal ₹50 + tax ₹2.50)
+      );
+
+      // Subtotal = 5000, Tax = 250 -> Total = 5250 Paise
+      expect(summary.subtotal, 5000);
+      expect(summary.taxTotal, 250);
+      expect(summary.discountTotal, 5250); // Clamped to 5250 Paise
+      expect(summary.grandTotal, 0);
+    });
   });
 
   group('OrderReferenceGenerator Tests', () {

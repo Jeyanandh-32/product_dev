@@ -1,41 +1,48 @@
 import 'package:flutter/material.dart';
+import 'package:forui/forui.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:shadcn_ui/shadcn_ui.dart';
 
-final terminalLightTheme = ShadThemeData(
-  brightness: Brightness.light,
-  colorScheme: const ShadZincColorScheme.light(
-    background: Color(0xFFF8FAFC),
-    foreground: Color(0xFF0F172A),
-    card: Color(0xFFFFFFFF),
-    cardForeground: Color(0xFF0F172A),
-    popover: Color(0xFFFFFFFF),
-    popoverForeground: Color(0xFF0F172A),
-    primary: Color(0xFF191645),
-    primaryForeground: Color(0xFFFFFFFF),
-    secondary: Color(0xFFF1F5F9),
-    secondaryForeground: Color(0xFF0F172A),
-    muted: Color(0xFFF8FAFC),
-    mutedForeground: Color(0xFF64748B),
-    accent: Color(0xFF43C6AC),
-    accentForeground: Color(0xFF191645),
-    destructive: Color(0xFFDC2626),
-    destructiveForeground: Color(0xFFFFFFFF),
-    border: Color(0xFFCBD5E1),
-    input: Color(0xFFCBD5E1),
-    ring: Color(0xFF43C6AC),
-  ),
-  textTheme: ShadTextTheme.fromGoogleFont(GoogleFonts.plusJakartaSans),
-  inputTheme: const ShadInputTheme(
-    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-  ),
-);
+/// Clean Monochrome POS theme matching the customer web app aesthetic.
+///
+/// - Primary: Pure Solid Black `#000000` / `#0F172A`
+/// - Primary Foreground: Pure White `#FFFFFF`
+/// - Background: Pure Crisp White `#FFFFFF` & Soft Neutral `#F8FAFC`
+/// - Surface: `#FFFFFF`
+/// - Border: Crisp Light Gray `#E2E8F0` / `#E5E7EB`
+/// - Typography: GoogleFonts Manrope (sans) & Arizonia (script branding)
+class TerminalTheme {
+  const TerminalTheme._();
 
-final terminalDarkTheme = ShadThemeData(
-  brightness: Brightness.dark,
-  colorScheme: const ShadZincColorScheme.dark(),
-  textTheme: ShadTextTheme.fromGoogleFont(GoogleFonts.plusJakartaSans),
-  inputTheme: const ShadInputTheme(
-    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-  ),
-);
+  static FThemeData light([bool touch = true]) {
+    final baseTheme = touch ? FTheme.neutral.light.touch : FTheme.neutral.light.desktop;
+
+    final colors = baseTheme.colors.copyWith(
+      primary: const Color(0xFF000000),
+      primaryForeground: const Color(0xFFFFFFFF),
+      background: const Color(0xFFF8FAFC),
+      border: const Color(0xFFE2E8F0),
+    );
+
+    final fontName = GoogleFonts.manrope().fontFamily ?? 'Manrope';
+
+    final typography = FTypography(
+      display: FTypeface.inherit(
+        fontFamily: fontName,
+        colors: colors,
+        touch: touch,
+      ),
+      body: FTypeface.inherit(
+        fontFamily: fontName,
+        colors: colors,
+        touch: touch,
+      ),
+    );
+
+    return FThemeData(
+      colors: colors,
+      typography: typography,
+      style: baseTheme.style,
+      touch: touch,
+    );
+  }
+}

@@ -49,9 +49,10 @@ class OrderCalculator {
     }
 
     final overallDiscountPaise = (discountTotalInput * 100).round();
+    final maxAllowedDiscountPaise = subtotal + taxTotal;
     final discountTotal = isComplimentary
-        ? (subtotal + taxTotal)
-        : overallDiscountPaise;
+        ? maxAllowedDiscountPaise
+        : min(maxAllowedDiscountPaise, overallDiscountPaise);
 
     final grandTotal = max(0, subtotal + taxTotal - discountTotal);
 

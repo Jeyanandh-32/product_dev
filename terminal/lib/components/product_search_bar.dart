@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:forui/forui.dart';
 import 'package:mix/mix.dart';
-import 'package:shadcn_ui/shadcn_ui.dart';
 
+/// Clean pill-shaped search bar matching the customer web store search bar.
 class ProductSearchBar extends StatefulWidget {
   final ValueChanged<String>? onChanged;
 
@@ -28,48 +29,57 @@ class _ProductSearchBarState extends State<ProductSearchBar> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = context.theme;
+
     return Box(
       style: BoxStyler()
           .color(Colors.white)
           .borderRadiusAll(.circular(999))
-          .borderAll(color: Colors.grey.shade200)
+          .borderAll(color: theme.colors.border)
           .shadowOnly(
             color: Colors.black.withValues(alpha: 0.03),
             offset: const Offset(0, 2),
-            blurRadius: 4,
+            blurRadius: 6,
           )
           .paddingLeft(20)
-          .paddingRight(6)
-          .paddingY(4),
-      child: RowBox(
-        style: FlexBoxStyler().crossAxisAlignment(CrossAxisAlignment.center),
+          .paddingRight(8)
+          .paddingY(6),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
+          Icon(
+            FLucideIcons.search,
+            color: Colors.grey.shade400,
+            size: 20,
+          ),
+          const SizedBox(width: 12),
           Expanded(
-            child: ShadInput(
+            child: TextField(
               controller: _controller,
-              placeholder: StyledText(
-                'Search something sweet on your mind...',
-                style: TextStyler().fontSize(14).color(Colors.grey.shade400),
-              ),
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              decoration: const ShadDecoration(
-                border: ShadBorder.none,
-                secondaryFocusedBorder: ShadBorder.none,
-              ),
               onChanged: widget.onChanged,
+              decoration: InputDecoration(
+                hintText: 'Search products by name or barcode...',
+                hintStyle: TextStyle(
+                  color: Colors.grey.shade400,
+                  fontSize: 15,
+                  fontWeight: FontWeight.normal,
+                ),
+                border: InputBorder.none,
+                isDense: true,
+                contentPadding: const EdgeInsets.symmetric(vertical: 12),
+              ),
+              style: const TextStyle(fontSize: 15, color: Colors.black),
             ),
           ),
-          Box(
-            style: BoxStyler()
-                .color(const Color(0xFFF3F4F6))
-                .shape(.circle())
-                .paddingAll(8),
-            child: Icon(
-              LucideIcons.search,
-              color: Colors.grey.shade600,
-              size: 16,
+          if (_controller.text.isNotEmpty)
+            IconButton(
+              icon: Icon(FLucideIcons.x, size: 18, color: Colors.grey.shade500),
+              onPressed: () {
+                _controller.clear();
+                widget.onChanged?.call('');
+                setState(() {});
+              },
             ),
-          ),
         ],
       ),
     );

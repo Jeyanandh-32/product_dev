@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shadcn_ui/shadcn_ui.dart';
+import 'package:forui/forui.dart';
 import 'package:terminal/signals/router_signal.dart';
 import 'package:terminal/theme.dart';
 
@@ -8,13 +8,19 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ShadApp.router(
-      title: 'POS Terminal',
-      debugShowCheckedModeBanner: false,
-      theme: terminalLightTheme,
-      darkTheme: terminalDarkTheme,
-      themeMode: ThemeMode.light,
-      routerConfig: appRouter,
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+      child: MaterialApp.router(
+        title: 'POS Terminal',
+        debugShowCheckedModeBanner: false,
+        theme: TerminalTheme.light().toApproximateMaterialTheme(),
+        routerConfig: appRouter,
+        builder: (context, child) => FTheme(
+          data: TerminalTheme.light(),
+          child: FToaster(child: child ?? const SizedBox.shrink()),
+        ),
+      ),
     );
   }
 }

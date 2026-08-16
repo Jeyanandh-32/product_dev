@@ -74,6 +74,17 @@ void main() {
       expect(state.grandTotal, 0.0);
     });
 
+    test('Applying discount higher than total order amount caps at max order total', () {
+      CartController.addItem(testProduct1); // 1 Coffee = ₹50.00, Tax 5% = ₹2.50 -> ₹52.50
+      CartController.setDiscount(100.0); // Enter ₹100.00 (more than ₹52.50)
+
+      final state = cartSignal.value;
+      expect(state.subtotal, 50.0);
+      expect(state.taxTotal, 2.5);
+      expect(state.discountTotal, 52.5);
+      expect(state.grandTotal, 0.0);
+    });
+
     test('Decreasing and removing products updates cart state cleanly', () {
       CartController.addItem(testProduct1);
       CartController.addItem(testProduct1);

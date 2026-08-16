@@ -3,6 +3,7 @@ import 'package:models/models.dart';
 import 'package:signals_flutter/signals_flutter.dart';
 import 'package:terminal/signals/auth_signal.dart';
 
+/// Currently selected category for filtering. `null` represents 'All' / all products.
 final selectedCategorySignal = signal<Category?>(null);
 
 final categoriesSignal = futureSignal<List<Category>>(() async {
@@ -14,14 +15,7 @@ final categoriesSignal = futureSignal<List<Category>>(() async {
       storeId: storeId,
       size: 1000,
     );
-    final items = result.items;
-    if (items.isNotEmpty) {
-      final current = selectedCategorySignal.value;
-      if (current == null || !items.any((c) => c.id == current.id)) {
-        selectedCategorySignal.value = items.first;
-      }
-    }
-    return items;
+    return result.items;
   } catch (e) {
     return [];
   }
