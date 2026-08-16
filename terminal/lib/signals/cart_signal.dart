@@ -63,6 +63,11 @@ abstract final class CartController {
     _updateState(cartSignal.value.items);
   }
 
+  static void setPaymentMode(PaymentMethod mode) {
+    paymentModeSignal.value = mode;
+    _updateState(cartSignal.value.items);
+  }
+
   static void clear() {
     discountInputSignal.value = 0.0;
     paymentModeSignal.value = PaymentMethod.cash;

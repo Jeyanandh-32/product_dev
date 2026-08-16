@@ -13,10 +13,13 @@ import 'package:dart_frog/dart_frog.dart';
 import 'package:typed_sql/typed_sql.dart' hide Database;
 
 Future<Response> onRequest(RequestContext context) async {
-  if (context.request.method != HttpMethod.post) {
-    return methodNotAllowed();
-  }
+  return switch (context.request.method) {
+    .post => _onPost(context),
+    _ => methodNotAllowed(),
+  };
+}
 
+Future<Response> _onPost(RequestContext context) async {
   try {
     final rawBody = await context.request.body();
     final json = jsonDecode(rawBody) as Map<String, dynamic>;

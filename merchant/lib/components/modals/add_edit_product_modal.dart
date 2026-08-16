@@ -6,11 +6,11 @@ import 'package:merchant/components/fields/form_field.dart';
 import 'package:merchant/components/fields/product_pricing_fields.dart';
 import 'package:merchant/components/modals/modal.dart';
 import 'package:merchant/components/modals/product_metadata_section.dart';
+import 'package:merchant/components/modals/product_modal_submit_handler.dart';
 import 'package:merchant/components/signal_component.dart';
 import 'package:merchant/signals/categories_signal.dart';
 import 'package:merchant/signals/counters_signal.dart';
 import 'package:merchant/signals/navigation_signal.dart';
-import 'package:merchant/signals/products_signal.dart';
 import 'package:merchant/signals/toast_signal.dart';
 import 'package:models/models.dart';
 import 'package:web/web.dart' as web;
@@ -66,38 +66,19 @@ class _AddEditProductModalState extends SignalState<AddEditProductModal> {
 
     activeModalSignal.value = ActiveModal.none;
 
-    final basePrice = double.tryParse(_basePrice.trim()) ?? 0.0;
-    final sellingPrice = double.tryParse(_sellingPrice.trim()) ?? 0.0;
-    final taxRate = double.tryParse(_taxRate.trim()) ?? 0.0;
-    final counterIdParam = _counterId.trim().isEmpty ? null : _counterId;
-
-    if (component.product != null) {
-      ProductsActions.updateProduct(
-        id: component.product!.id,
-        name: _name.trim().isNotEmpty ? _name : null,
-        categoryId: _categoryId.trim().isNotEmpty ? _categoryId : null,
-        counterId: counterIdParam,
-        basePrice: basePrice,
-        sellingPrice: sellingPrice,
-        taxRate: taxRate,
-        sku: _sku.trim().isNotEmpty ? _sku : null,
-        barcode: _barcode.trim().isNotEmpty ? _barcode : null,
-        imageUrl: _imageUrl.trim().isNotEmpty ? _imageUrl : null,
-        isActive: _isActive,
-      );
-    } else {
-      ProductsActions.create(
-        name: _name,
-        categoryId: _categoryId,
-        counterId: counterIdParam,
-        basePrice: basePrice,
-        sellingPrice: sellingPrice,
-        taxRate: taxRate,
-        sku: _sku.trim().isNotEmpty ? _sku : null,
-        barcode: _barcode.trim().isNotEmpty ? _barcode : null,
-        imageUrl: _imageUrl.trim().isNotEmpty ? _imageUrl : null,
-      );
-    }
+    ProductModalSubmitHandler.submit(
+      product: component.product,
+      name: _name,
+      categoryId: _categoryId,
+      counterId: _counterId,
+      basePriceStr: _basePrice,
+      sellingPriceStr: _sellingPrice,
+      taxRateStr: _taxRate,
+      sku: _sku,
+      barcode: _barcode,
+      imageUrl: _imageUrl,
+      isActive: _isActive,
+    );
   }
 
   @override

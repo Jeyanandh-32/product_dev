@@ -1,5 +1,6 @@
 import 'package:backend/database/schema.dart';
 import 'package:backend/repositories/dashboard_order_aggregator.dart';
+import 'package:backend/repositories/dashboard_product_aggregator.dart';
 import 'package:backend/repositories/dashboard_sales_aggregator.dart';
 import 'package:typed_sql/typed_sql.dart' as ts;
 
@@ -102,26 +103,8 @@ class DashboardAnalyticsQuery {
         .map((cat) => salesMetrics.categorySales[cat] ?? 0.0)
         .toList();
 
-    final lowStockProducts = productRows
-        .where((tuple) {
-          final s = tuple.$2;
-          return s != null && s.quantity <= s.lowStockThreshold;
-        })
-        .take(5)
-        .map((tuple) {
-          final p = tuple.$1;
-          final s = tuple.$2;
-          final c = tuple.$3;
-          return {
-            'id': p.id,
-            'name': p.name,
-            'category': c?.name ?? 'General',
-            'quantity': s?.quantity ?? 0,
-            'lowStockThreshold': s?.lowStockThreshold ?? 5,
-            'sellingPrice': p.sellingPrice,
-          };
-        })
-        .toList();
+    final lowStockProducts =
+        DashboardProductAggregator.formatLowStockProducts(productRows);
 
     return {
       'totalRevenue': orderMetrics.totalRevenue,

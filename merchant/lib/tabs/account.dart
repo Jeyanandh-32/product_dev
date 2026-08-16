@@ -2,13 +2,11 @@ import 'package:client_repositories/client_repositories.dart';
 import 'package:jaspr/client.dart';
 import 'package:jaspr/dom.dart';
 import 'package:merchant/components/account/account_banner.dart';
+import 'package:merchant/components/account/account_side_column.dart';
 import 'package:merchant/components/account/merchant_profile_security_section.dart';
-import 'package:merchant/components/account/notification_settings_card.dart';
-import 'package:merchant/components/account/store_subscriptions_card.dart';
 import 'package:merchant/components/signal_component.dart';
 import 'package:merchant/signals/auth_signal.dart';
 import 'package:merchant/signals/stores_signal.dart';
-import 'package:merchant/signals/toast_signal.dart';
 import 'package:merchant/utils/merchant_account_handler.dart';
 import 'package:web/web.dart' hide Lock;
 
@@ -141,32 +139,18 @@ class _AccountState extends SignalState<Account> {
             currentPassword: _currentPassword,
             newPassword: _newPassword,
             confirmPassword: _confirmPassword,
-            onCurrentPasswordChanged: (val) =>
-                setState(() => _currentPassword = val),
+            onCurrentPasswordChanged: (val) => setState(() => _currentPassword = val),
             onNewPasswordChanged: (val) => setState(() => _newPassword = val),
-            onConfirmPasswordChanged: (val) =>
-                setState(() => _confirmPassword = val),
+            onConfirmPasswordChanged: (val) => setState(() => _confirmPassword = val),
             onUpdatePassword: _onUpdatePassword,
           ),
-
-          div(classes: 'space-y-4', [
-            StoreSubscriptionsCard(
-              stores: stores,
-              onManageSubscription: (st) =>
-                  showToast('Subscription for "${st.name}" is active.'),
-            ),
-            NotificationSettingsCard(
-              waNotifications: _waNotifications,
-              lowStockAlerts: _lowStockAlerts,
-              dailyReports: _dailyReports,
-              onWaNotificationsChanged: (val) =>
-                  _onNotificationSettingChanged(waNotifications: val),
-              onLowStockAlertsChanged: (val) =>
-                  _onNotificationSettingChanged(lowStockAlerts: val),
-              onDailyReportsChanged: (val) =>
-                  _onNotificationSettingChanged(dailyReports: val),
-            ),
-          ]),
+          AccountSideColumn(
+            stores: stores,
+            waNotifications: _waNotifications,
+            lowStockAlerts: _lowStockAlerts,
+            dailyReports: _dailyReports,
+            onNotificationSettingChanged: _onNotificationSettingChanged,
+          ),
         ]),
       ],
     );

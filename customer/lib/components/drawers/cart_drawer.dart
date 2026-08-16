@@ -21,7 +21,7 @@ class _CartDrawerState extends SignalState<CartDrawer> {
 
     final subtotal = items.fold<double>(
       0.0,
-      (sum, item) => sum + (item.product.sellingPrice / 100) * item.quantity,
+      (sum, item) => sum + item.product.sellingPrice * item.quantity,
     );
 
     if (!isOpen) return div([]);

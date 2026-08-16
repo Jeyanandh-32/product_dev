@@ -41,7 +41,7 @@ void main() {
 
   group('GET /v1/merchants/settings', () {
     test('responds with 200 and default settings', () async {
-      when(() => request.method).thenReturn(HttpMethod.get);
+      when(() => request.method).thenReturn(.get);
 
       final settings = MerchantSettings(
         merchantId: _testMerchantId,
@@ -75,7 +75,7 @@ void main() {
 
   group('PATCH /v1/merchants/settings', () {
     test('responds with 200 and updated settings', () async {
-      when(() => request.method).thenReturn(HttpMethod.patch);
+      when(() => request.method).thenReturn(.patch);
       when(() => request.json()).thenAnswer(
         (_) async => {
           'waNotifications': false,
@@ -118,7 +118,7 @@ void main() {
 
   group('unsupported methods', () {
     test('responds with 405 for DELETE', () async {
-      when(() => request.method).thenReturn(HttpMethod.delete);
+      when(() => request.method).thenReturn(.delete);
 
       final response = await route.onRequest(context);
 

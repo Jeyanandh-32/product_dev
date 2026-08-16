@@ -92,11 +92,13 @@ class _StoreDetailPageState extends SignalState<StoreDetailPage> {
     );
     final totalCartPrice = cartItems.values.fold<double>(
       0.0,
-      (sum, item) => sum + ((item.product.sellingPrice * item.quantity) / 100.0),
+      (sum, item) => sum + (item.product.sellingPrice * item.quantity),
     );
+    final hasCartItems = totalCartCount > 0;
 
     return div(
-      classes: 'flex flex-col gap-6 max-w-4xl w-full mx-auto pb-28',
+      classes:
+          'flex flex-col gap-6 max-w-4xl w-full mx-auto ${hasCartItems ? 'pb-24' : 'pb-2'}',
       [
         StoreDetailHeader(store: currentStore),
 

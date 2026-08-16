@@ -7,8 +7,8 @@ import 'package:dart_frog/dart_frog.dart';
 
 Future<Response> onRequest(RequestContext context) async {
   return switch (context.request.method) {
-    HttpMethod.get => _onGet(context),
-    HttpMethod.patch => _onPatch(context),
+    .get => _onGet(context),
+    .patch => _onPatch(context),
     _ => methodNotAllowed(),
   };
 }

@@ -6,7 +6,7 @@ import 'package:models/models.dart';
 
 Future<Response> onRequest(RequestContext context) async {
   return switch (context.request.method) {
-    HttpMethod.get => _onGet(context),
+    .get => _onGet(context),
     _ => methodNotAllowed(),
   };
 }

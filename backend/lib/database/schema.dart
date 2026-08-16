@@ -1,6 +1,7 @@
 import 'package:typed_sql/typed_sql.dart';
 
 part 'schema.g.dart';
+part 'schema_factories.dart';
 
 @SqlOverride.schema(naming: Naming.snake_case)
 abstract final class DatabaseSchema extends Schema {

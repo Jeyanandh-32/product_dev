@@ -1,5 +1,6 @@
 import 'package:backend/database/schema.dart';
 import 'package:backend/repositories/stock_summary_report_query.dart';
+import 'package:backend/repositories/stock_transaction_logger.dart';
 import 'package:models/models.dart';
 import 'package:typed_sql/typed_sql.dart' as ts;
 
@@ -43,41 +44,15 @@ class StockRepository {
     if (stockRows.isEmpty) return null;
     final stockRow = stockRows.first;
 
-    if (transactionType != null && amount != null && reason != null) {
-      var actualType = transactionType;
-      var actualAmount = amount;
-
-      if (transactionType == 'set' && quantity != null) {
-        final delta = quantity - stockRow.quantity;
-        if (delta > 0) {
-          actualType = 'add';
-          actualAmount = delta;
-        } else if (delta < 0) {
-          actualType = 'reduce';
-          actualAmount = delta.abs();
-        } else {
-          actualAmount = 0;
-        }
-      }
-
-      var actualReason = reason;
-      if (actualType == 'add') {
-        actualReason = 'restock';
-      }
-
-      if (actualAmount > 0) {
-        await _db.stockTransactions
-            .insertValue(
-              productId: stockRow.productId,
-              storeId: stockRow.storeId,
-              adjustmentType: actualType,
-              quantity: actualAmount,
-              reason: actualReason,
-              customReason: customReason,
-            )
-            .execute();
-      }
-    }
+    await StockTransactionLogger.logAdjustment(
+      db: _db,
+      stockRow: stockRow,
+      targetQuantity: quantity,
+      transactionType: transactionType,
+      amount: amount,
+      reason: reason,
+      customReason: customReason,
+    );
 
     final rows = await _db.stocks
         .where((ts.Expr<StockRow> s) => s.id.equalsValue(id))

@@ -18,7 +18,11 @@ class Env {
   static int get dbMaxConnections =>
       int.tryParse(_env['DB_MAX_CONNECTIONS'] ?? '10') ?? 10;
 
+  static bool _isInitialized = false;
+
   static void init() {
+    if (_isInitialized) return;
     _env = DotEnv(includePlatformEnvironment: true)..load();
+    _isInitialized = true;
   }
 }

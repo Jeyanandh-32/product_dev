@@ -6,14 +6,14 @@ import 'package:dart_frog/dart_frog.dart';
 Handler middleware(Handler handler) {
   return handler.use(
     authMiddleware(
-      allowedRoles: [UserRole.merchant, UserRole.customer],
+      allowedRoles: [.merchant, .customer],
       publicPaths: ['/v1/stores/online'],
       roleRestrictedMethods: {
         UserRole.customer: [
-          HttpMethod.post,
-          HttpMethod.patch,
-          HttpMethod.delete,
-          HttpMethod.put,
+          .post,
+          .patch,
+          .delete,
+          .put,
         ],
       },
     ),

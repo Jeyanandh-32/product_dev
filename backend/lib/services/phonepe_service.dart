@@ -1,4 +1,4 @@
-import 'package:backend/services/phonepe_payment_mode_builder.dart';
+import 'package:backend/services/phonepe_payload_builder.dart';
 import 'package:backend/services/phonepe_security_helper.dart';
 import 'package:dio/dio.dart';
 import 'package:models/models.dart';
@@ -77,30 +77,17 @@ class PhonePeService {
   }) async {
     final url = '${getBaseUrl(config.env)}/checkout/v2/pay';
     final token = await getAuthToken(config);
-    final paymentModeConfig = PhonePePaymentModeBuilder.build(config);
-
-    final payload = <String, dynamic>{
-      'merchantOrderId': merchantOrderId,
-      'amount': amountInPaisa,
-      'expireAfter': 1200,
-      'paymentFlow': {
-        'type': 'PG_CHECKOUT',
-        'merchantUrls': {'redirectUrl': redirectUrl},
-        if (paymentModeConfig != null) 'paymentModeConfig': paymentModeConfig,
-      },
-      if (customerPhone != null && customerPhone.isNotEmpty)
-        'prefillUserLoginDetails': {'phoneNumber': customerPhone},
-      if (customerName != null || customerEmail != null || customerPhone != null)
-        'customerDetails': {
-          if (customerName != null) 'name': customerName,
-          if (customerEmail != null) 'email': customerEmail,
-          if (customerPhone != null) 'phoneNumber': customerPhone,
-        },
-      'metaInfo': {
-        if (storeId != null) 'udf1': storeId,
-        if (customerId != null) 'udf2': customerId,
-      },
-    };
+    final payload = PhonePePayloadBuilder.buildCheckoutPayload(
+      config: config,
+      merchantOrderId: merchantOrderId,
+      amountInPaisa: amountInPaisa,
+      redirectUrl: redirectUrl,
+      customerName: customerName,
+      customerEmail: customerEmail,
+      customerPhone: customerPhone,
+      storeId: storeId,
+      customerId: customerId,
+    );
 
     final headers = <String, String>{
       'Content-Type': 'application/json',

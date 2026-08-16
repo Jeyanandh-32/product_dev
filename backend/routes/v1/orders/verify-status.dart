@@ -14,10 +14,13 @@ import 'package:models/models.dart';
 import 'package:typed_sql/typed_sql.dart' hide Database;
 
 Future<Response> onRequest(RequestContext context) async {
-  if (context.request.method != HttpMethod.get) {
-    return methodNotAllowed();
-  }
+  return switch (context.request.method) {
+    .get => _onGet(context),
+    _ => methodNotAllowed(),
+  };
+}
 
+Future<Response> _onGet(RequestContext context) async {
   final reference = context.request.uri.queryParameters['reference'];
   if (reference == null || reference.isEmpty) {
     return badRequest(message: 'Order reference is required.');

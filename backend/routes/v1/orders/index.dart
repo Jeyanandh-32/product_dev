@@ -6,10 +6,10 @@ import 'package:models/models.dart';
 import 'package:validators/validators.dart';
 
 Future<Response> onRequest(RequestContext context) async {
-  if (context.request.method != HttpMethod.post) {
-    return methodNotAllowed();
-  }
-  return _onPost(context);
+  return switch (context.request.method) {
+    .post => _onPost(context),
+    _ => methodNotAllowed(),
+  };
 }
 
 Future<Response> _onPost(RequestContext context) async {

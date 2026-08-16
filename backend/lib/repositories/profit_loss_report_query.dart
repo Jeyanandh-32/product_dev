@@ -1,5 +1,6 @@
 import 'package:backend/database/schema.dart';
 import 'package:backend/repositories/profit_loss_calculator.dart';
+import 'package:backend/repositories/profit_loss_item_builder.dart';
 import 'package:models/models.dart';
 import 'package:typed_sql/typed_sql.dart' as ts;
 
@@ -97,40 +98,14 @@ class ProfitLossReportQuery {
       toDate: toDate,
     );
 
-    var reportItems = <ProfitLossItem>[];
-
-    for (final p in products) {
-      final soldQty = soldQuantityMap[p.id] ?? 0;
-      final wastageLoss = wastageLossMap[p.id] ?? 0.0;
-      if (soldQty <= 0 && wastageLoss <= 0) continue;
-
-      final collectedPrice = collectedPriceMap[p.id] ?? 0.0;
-      final costPrice = (p.basePrice / 100.0) * soldQty;
-      final profit = collectedPrice - costPrice - wastageLoss;
-      final totalBase = costPrice + wastageLoss;
-      final percentage = totalBase > 0 ? (profit / totalBase) * 100.0 : 0.0;
-
-      final categoryName = p.categoryId != null
-          ? (categoryMap[p.categoryId!] ?? 'Unassigned')
-          : 'Unassigned';
-      final counterName = p.counterId != null
-          ? (counterMap[p.counterId!] ?? 'Unassigned')
-          : 'Unassigned';
-
-      reportItems.add(
-        ProfitLossItem(
-          productId: p.id,
-          productName: p.name,
-          categoryName: categoryName,
-          counterName: counterName,
-          soldQuantity: soldQty,
-          costPrice: costPrice,
-          collectedPrice: collectedPrice,
-          profit: profit,
-          profitLossPercentage: percentage,
-        ),
-      );
-    }
+    var reportItems = ProfitLossItemBuilder.buildItems(
+      products: products,
+      categoryMap: categoryMap,
+      counterMap: counterMap,
+      soldQuantityMap: soldQuantityMap,
+      collectedPriceMap: collectedPriceMap,
+      wastageLossMap: wastageLossMap,
+    );
 
     var totalCostPrice = 0.0;
     var totalCollectedPrice = 0.0;

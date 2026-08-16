@@ -63,13 +63,13 @@ class _CartPageState extends SignalState<CartPage> {
 
     final subtotal = items.fold<double>(
       0.0,
-      (sum, item) => sum + ((item.product.sellingPrice * item.quantity) / 100.0),
+      (sum, item) => sum + (item.product.sellingPrice * item.quantity),
     );
     final totalTax = items.fold<double>(
       0.0,
       (sum, item) {
         final taxRate = item.product.taxRate;
-        final itemPrice = (item.product.sellingPrice * item.quantity) / 100.0;
+        final itemPrice = item.product.sellingPrice * item.quantity;
         return sum + (itemPrice * (taxRate / 100.0));
       },
     );

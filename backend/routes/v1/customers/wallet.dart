@@ -3,10 +3,9 @@ import 'package:backend/database/schema.dart';
 import 'package:backend/extensions/request_context_extension.dart';
 import 'package:backend/extensions/store_phonepe_config_row_extension.dart';
 import 'package:backend/repositories/customer_repository.dart';
+import 'package:backend/services/customer_wallet_handler.dart';
 import 'package:backend/services/phonepe_service.dart';
-import 'package:backend/services/wallet_verification_service.dart';
 import 'package:backend/utils/responses.dart';
-import 'package:change_case/change_case.dart';
 import 'package:dart_frog/dart_frog.dart';
 import 'package:models/models.dart';
 import 'package:typed_sql/typed_sql.dart' hide Database;
@@ -14,8 +13,8 @@ import 'package:typed_sql/typed_sql.dart' hide Database;
 /// Endpoint for customer wallet balance retrieval, PhonePe top-up initiation, and verification.
 Future<Response> onRequest(RequestContext context) async {
   return switch (context.request.method) {
-    HttpMethod.get => _onGet(context),
-    HttpMethod.post => _onPost(context),
+    .get => _onGet(context),
+    .post => _onPost(context),
     _ => methodNotAllowed(),
   };
 }
@@ -35,53 +34,16 @@ Future<Response> _onGet(RequestContext context) async {
       return badRequest(message: 'Customer not found.');
     }
 
-    final txRows = await repo.getWalletTransactions(
-      customerId: tokenPayload.sub,
-      storeId: storeId,
-    );
-
-    // Verify pending PhonePe top-up transactions
-    final verificationService = WalletVerificationService(
+    final result = await CustomerWalletHandler.getWalletDetails(
       repo: repo,
-      phonePeService: PhonePeService(),
-    );
-    await verificationService.verifyPendingTopUps(
-      txRows: txRows,
-      storeId: storeId,
-      customerId: tokenPayload.sub,
-    );
-
-    final balancePaise = await repo.getStoreWalletBalance(
       customerId: tokenPayload.sub,
       storeId: storeId,
     );
-    final updatedTxRows = await repo.getWalletTransactions(
-      customerId: tokenPayload.sub,
-      storeId: storeId,
-    );
-
-    final transactions = updatedTxRows.map((row) {
-      final typeStr = row.type.toCamelCase();
-      final txType = WalletTransactionType.values.firstWhere(
-        (t) => t.name.toLowerCase() == typeStr.toLowerCase(),
-        orElse: () => WalletTransactionType.topUp,
-      );
-
-      return CustomerWalletTransaction(
-        id: row.id,
-        customerId: row.customerId,
-        amount: row.amount / 100.0,
-        type: txType,
-        reference: row.reference,
-        status: row.status,
-        createdAt: row.createdAt,
-      );
-    }).toList();
 
     return success(
       data: {
-        'balance': balancePaise / 100.0,
-        'transactions': transactions.map((t) => t.toJson()).toList(),
+        'balance': result.balance,
+        'transactions': result.transactions,
       },
     );
   } on Exception catch (e) {
@@ -153,15 +115,7 @@ Future<Response> _onPost(RequestContext context) async {
         'merchantOrderId': topUpRef,
         'phonePeOrderId': paymentSession.orderId,
         'isPendingPayment': true,
-        'transaction': CustomerWalletTransaction(
-          id: tx.id,
-          customerId: tx.customerId,
-          amount: tx.amount / 100.0,
-          type: WalletTransactionType.topUp,
-          reference: tx.reference,
-          status: tx.status,
-          createdAt: tx.createdAt,
-        ).toJson(),
+        'transaction': CustomerWalletHandler.formatTransactionJson(tx),
       },
     );
   } on Exception catch (e) {

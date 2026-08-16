@@ -7,17 +7,17 @@ Handler middleware(Handler handler) {
   return handler.use(
     authMiddleware(
       allowedRoles: [
-        UserRole.merchant,
-        UserRole.terminal,
-        UserRole.customer,
+        .merchant,
+        .terminal,
+        .customer,
       ],
       publicPaths: ['/v1/categories'],
       roleRestrictedMethods: {
         UserRole.customer: [
-          HttpMethod.post,
-          HttpMethod.patch,
-          HttpMethod.delete,
-          HttpMethod.put,
+          .post,
+          .patch,
+          .delete,
+          .put,
         ],
       },
     ),

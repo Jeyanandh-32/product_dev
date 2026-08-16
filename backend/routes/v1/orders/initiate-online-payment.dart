@@ -3,21 +3,24 @@ import 'package:backend/database/schema.dart';
 import 'package:backend/extensions/request_context_extension.dart';
 import 'package:backend/extensions/store_phonepe_config_row_extension.dart';
 import 'package:backend/repositories/customer_repository.dart';
+import 'package:backend/services/online_order_checkout_coordinator.dart';
 import 'package:backend/services/online_payment_calculator.dart';
 import 'package:backend/services/order_service.dart';
 import 'package:backend/services/phonepe_service.dart';
 import 'package:backend/utils/responses.dart';
 import 'package:dart_frog/dart_frog.dart';
-import 'package:models/models.dart';
 import 'package:typed_sql/typed_sql.dart' hide Database;
 import 'package:validators/validators.dart';
 
 /// Initiates online PhonePe payment session or direct wallet checkout for online orders.
 Future<Response> onRequest(RequestContext context) async {
-  if (context.request.method != HttpMethod.post) {
-    return methodNotAllowed();
-  }
+  return switch (context.request.method) {
+    .post => _onPost(context),
+    _ => methodNotAllowed(),
+  };
+}
 
+Future<Response> _onPost(RequestContext context) async {
   final storeIdError = context.validateStoreId();
   if (storeIdError != null) return storeIdError;
 
@@ -80,95 +83,32 @@ Future<Response> onRequest(RequestContext context) async {
 
     // If 100% covered by Wallet -> Create single completed order immediately
     if (calc.remainingPayablePaise <= 0) {
-      final completedOrder = await orderService.checkout(
+      return OnlineOrderCheckoutCoordinator.handleWalletOnlyOrder(
+        orderService: orderService,
+        customerRepo: customerRepo,
         merchantId: storeRow.merchantId,
         storeId: context.storeId,
-        productsInput: productsList,
-        source: OrderSource.web,
-        type: OrderType.takeaway,
-        paymentMethod: PaymentMethod.upi,
-        status: OrderStatus.pending,
-        discountTotalInput: input.discountTotal ?? 0.0,
-        walletDeductionInput: calc.actualWalletDeductionPaise / 100.0,
         customerId: tokenPayload.sub,
-      );
-
-      await customerRepo.updateStoreWalletBalance(
-        customerId: tokenPayload.sub,
-        storeId: context.storeId,
-        amountDeltaPaise: -calc.actualWalletDeductionPaise,
-      );
-
-      await customerRepo.createWalletTransaction(
-        customerId: tokenPayload.sub,
-        storeId: context.storeId,
-        amount: calc.actualWalletDeductionPaise,
-        type: WalletTransactionType.orderDebit.name,
-        reference: completedOrder.orderReference,
-      );
-
-      return success(
-        data: {
-          'order': completedOrder,
-          'tokenUrl': null,
-          'phonePeOrderId': null,
-          'merchantOrderId': completedOrder.orderReference,
-          'isFullyPaidByWallet': true,
-        },
+        productsList: productsList,
+        discountTotal: input.discountTotal ?? 0.0,
+        walletDeductionPaise: calc.actualWalletDeductionPaise,
       );
     }
 
     // Partial or zero wallet coverage: Create pending order and initiate PhonePe
-    final completeOrder = await orderService.checkout(
+    return OnlineOrderCheckoutCoordinator.handlePhonePeHybridOrder(
+      orderService: orderService,
+      customerRepo: customerRepo,
+      phonePeService: phonePeService,
+      phonePeConfig: phonePeConfig,
+      context: context,
       merchantId: storeRow.merchantId,
       storeId: context.storeId,
-      productsInput: productsList,
-      source: OrderSource.web,
-      type: OrderType.takeaway,
-      paymentMethod: PaymentMethod.upi,
-      status: OrderStatus.pending,
-      paymentStatus: PaymentStatus.pending,
-      discountTotalInput: input.discountTotal ?? 0.0,
-      walletDeductionInput: calc.actualWalletDeductionPaise / 100.0,
       customerId: tokenPayload.sub,
-    );
-
-    if (calc.actualWalletDeductionPaise > 0) {
-      await customerRepo.updateStoreWalletBalance(
-        customerId: tokenPayload.sub,
-        storeId: context.storeId,
-        amountDeltaPaise: -calc.actualWalletDeductionPaise,
-      );
-
-      await customerRepo.createWalletTransaction(
-        customerId: tokenPayload.sub,
-        storeId: context.storeId,
-        amount: calc.actualWalletDeductionPaise,
-        type: WalletTransactionType.orderDebit.name,
-        reference: completeOrder.orderReference,
-      );
-    }
-
-    final merchantOrderId = completeOrder.orderReference;
-    final redirectUrl =
-        '${context.request.uri.scheme}://${context.request.uri.authority}/order/status?reference=$merchantOrderId';
-
-    final paymentSession = await phonePeService.initiatePayment(
-      config: phonePeConfig,
-      merchantOrderId: merchantOrderId,
-      amountInPaisa: calc.remainingPayablePaise,
-      redirectUrl: redirectUrl,
-      storeId: context.storeId,
-    );
-
-    return success(
-      data: {
-        'order': completeOrder,
-        'tokenUrl': paymentSession.tokenUrl,
-        'phonePeOrderId': paymentSession.orderId,
-        'merchantOrderId': merchantOrderId,
-        'isFullyPaidByWallet': false,
-      },
+      productsList: productsList,
+      discountTotal: input.discountTotal ?? 0.0,
+      walletDeductionPaise: calc.actualWalletDeductionPaise,
+      remainingPayablePaise: calc.remainingPayablePaise,
     );
   } on ResponseException catch (e) {
     return e.response;

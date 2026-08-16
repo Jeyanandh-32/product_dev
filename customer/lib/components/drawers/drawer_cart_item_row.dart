@@ -39,7 +39,7 @@ class DrawerCartItemRow extends StatelessComponent {
               classes: 'text-xs font-semibold text-emerald-accent',
               [
                 .text(
-                  '₹${(item.product.sellingPrice / 100).toStringAsFixed(2)}',
+                  '₹${item.product.sellingPrice.toStringAsFixed(2)}',
                 ),
               ],
             ),
