@@ -5,7 +5,7 @@ import 'package:signals_flutter/signals_flutter.dart';
 import 'package:terminal/components/product/category_filter_pill.dart';
 import 'package:terminal/signals/categories_signal.dart';
 
-/// Clean pill-style category filters with letter badge avatars matching the customer web store.
+/// Clean pill-style category filters with image avatars matching the customer web store.
 class CategoryFilterList extends SignalWidget {
   const CategoryFilterList({super.key});
 
@@ -57,6 +57,7 @@ class CategoryFilterList extends SignalWidget {
                   child: CategoryFilterPill(
                     label: category.name,
                     avatarText: initial,
+                    imageUrl: category.imageUrl,
                     isSelected: isSelected,
                     onTap: () {
                       selectedCategorySignal.value =

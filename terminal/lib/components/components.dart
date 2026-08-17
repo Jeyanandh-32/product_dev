@@ -27,3 +27,4 @@ export 'product/product_card.dart';
 export 'product/product_card_image.dart';
 export 'product/product_card_stepper.dart';
 export 'product/product_search_bar.dart';
+export 'product/terminal_catalog_scrollbar.dart';

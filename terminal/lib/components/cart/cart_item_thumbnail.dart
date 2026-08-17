@@ -1,8 +1,9 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/widgets.dart';
 import 'package:forui/forui.dart';
 import 'package:mix/mix.dart';
 
-/// Product thumbnail image or placeholder for cart list item rows.
+/// Product thumbnail image or placeholder for cart list item rows with caching.
 class CartItemThumbnail extends StatelessWidget {
   final String? imageUrl;
 
@@ -20,10 +21,14 @@ class CartItemThumbnail extends StatelessWidget {
             .height(56)
             .color(const Color(0xFFF3F4F6)),
         child: validUrl
-            ? Image.network(
-                imageUrl!.trim(),
+            ? CachedNetworkImage(
+                imageUrl: imageUrl!.trim(),
                 fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) =>
+                memCacheWidth: 120,
+                memCacheHeight: 120,
+                fadeInDuration: const Duration(milliseconds: 150),
+                placeholder: (context, url) => const _PlaceholderIcon(),
+                errorWidget: (context, url, error) =>
                     const _PlaceholderIcon(),
               )
             : const _PlaceholderIcon(),

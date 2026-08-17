@@ -7,6 +7,7 @@ import 'package:terminal/components/cart/cart_clear_all_button.dart';
 import 'package:terminal/components/cart/cart_item_row.dart';
 import 'package:terminal/components/cart/cart_summary.dart';
 import 'package:terminal/signals/cart_signal.dart';
+import 'package:terminal/utils/responsive_extensions.dart';
 
 /// POS cart sidebar / drawer component using customer web app layouts and cards.
 class Cart extends SignalWidget {
@@ -17,13 +18,11 @@ class Cart extends SignalWidget {
   @override
   Widget build(BuildContext context) {
     final theme = context.theme;
-    final breakpoints = theme.breakpoints;
-    final screenWidth = MediaQuery.sizeOf(context).width;
     final cartWidth = isDrawerMode
         ? double.infinity
-        : screenWidth < breakpoints.xl
+        : context.screenWidth < context.breakpoints.xl
             ? 370.0
-            : screenWidth * .38;
+            : context.screenWidth * .38;
 
     final cartStyle = FlexBoxStyler()
         .paddingX(isDrawerMode ? 16 : 20)

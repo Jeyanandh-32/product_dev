@@ -1,11 +1,13 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gap/gap.dart';
 import 'package:mix/mix.dart';
 
-/// Single category filter pill button with avatar badge and hover animation.
+/// Single category filter pill button with avatar image/badge and hover animation.
 class CategoryFilterPill extends StatefulWidget {
   final String label;
   final String avatarText;
+  final String? imageUrl;
   final bool isSelected;
   final VoidCallback onTap;
   final Key? pillKey;
@@ -14,6 +16,7 @@ class CategoryFilterPill extends StatefulWidget {
     super.key,
     required this.label,
     required this.avatarText,
+    this.imageUrl,
     required this.isSelected,
     required this.onTap,
     this.pillKey,
@@ -30,10 +33,14 @@ class _CategoryFilterPillState extends State<CategoryFilterPill> {
   Widget build(BuildContext context) {
     final isDark = widget.isSelected || _isHovered;
     final bgColor = isDark ? const Color(0xFF000000) : const Color(0xFFFFFFFF);
-    final borderColor = isDark ? const Color(0xFF000000) : const Color(0xFFE5E7EB);
+    final borderColor =
+        isDark ? const Color(0xFF000000) : const Color(0xFFE5E7EB);
     final fgColor = isDark ? const Color(0xFFFFFFFF) : const Color(0xFF1F2937);
     final avatarBg = isDark ? const Color(0x33FFFFFF) : const Color(0xFFF3F4F6);
     final avatarFg = isDark ? const Color(0xFFFFFFFF) : const Color(0xFF000000);
+
+    final hasImage =
+        widget.imageUrl != null && widget.imageUrl!.trim().isNotEmpty;
 
     return MouseRegion(
       cursor: SystemMouseCursors.click,
@@ -58,21 +65,24 @@ class _CategoryFilterPillState extends State<CategoryFilterPill> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Box(
-              style: BoxStyler()
-                  .width(28)
-                  .height(28)
-                  .borderRadiusAll(const Radius.circular(999))
-                  .color(avatarBg),
-              child: Center(
-                child: Text(
-                  widget.avatarText,
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                    color: avatarFg,
-                  ),
-                ),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(999),
+              child: Box(
+                style: BoxStyler()
+                    .width(28)
+                    .height(28)
+                    .color(avatarBg),
+                child: hasImage
+                    ? CachedNetworkImage(
+                        imageUrl: widget.imageUrl!.trim(),
+                        fit: BoxFit.cover,
+                        memCacheWidth: 80,
+                        placeholder: (context, url) =>
+                            _buildFallback(avatarFg),
+                        errorWidget: (context, url, error) =>
+                            _buildFallback(avatarFg),
+                      )
+                    : _buildFallback(avatarFg),
               ),
             ),
             const Gap(8),
@@ -85,6 +95,19 @@ class _CategoryFilterPillState extends State<CategoryFilterPill> {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFallback(Color avatarFg) {
+    return Center(
+      child: Text(
+        widget.avatarText,
+        style: TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.w700,
+          color: avatarFg,
         ),
       ),
     );

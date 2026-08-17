@@ -1,8 +1,9 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/widgets.dart';
 import 'package:forui/forui.dart';
 import 'package:mix/mix.dart';
 
-/// Product thumbnail image display for the POS catalog card.
+/// Product thumbnail image display for the POS catalog card with non-distorting scaling.
 class ProductCardImage extends StatelessWidget {
   final String? imageUrl;
 
@@ -19,11 +20,17 @@ class ProductCardImage extends StatelessWidget {
         child: Box(
           style: BoxStyler().color(const Color(0xFFF3F4F6)),
           child: validUrl
-              ? Image.network(
-                  imageUrl!.trim(),
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) =>
-                      const _ImagePlaceholder(),
+              ? SizedBox.expand(
+                  child: CachedNetworkImage(
+                    imageUrl: imageUrl!.trim(),
+                    fit: BoxFit.cover,
+                    alignment: Alignment.center,
+                    memCacheWidth: 480,
+                    fadeInDuration: const Duration(milliseconds: 150),
+                    placeholder: (context, url) => const _ImagePlaceholder(),
+                    errorWidget: (context, url, error) =>
+                        const _ImagePlaceholder(),
+                  ),
                 )
               : const _ImagePlaceholder(),
         ),
