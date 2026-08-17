@@ -83,7 +83,7 @@ Future<Response> _onPost(RequestContext context) async {
 
     // If 100% covered by Wallet -> Create single completed order immediately
     if (calc.remainingPayablePaise <= 0) {
-      return OnlineOrderCheckoutCoordinator.handleWalletOnlyOrder(
+      return await OnlineOrderCheckoutCoordinator.handleWalletOnlyOrder(
         orderService: orderService,
         customerRepo: customerRepo,
         merchantId: storeRow.merchantId,
@@ -96,7 +96,7 @@ Future<Response> _onPost(RequestContext context) async {
     }
 
     // Partial or zero wallet coverage: Create pending order and initiate PhonePe
-    return OnlineOrderCheckoutCoordinator.handlePhonePeHybridOrder(
+    return await OnlineOrderCheckoutCoordinator.handlePhonePeHybridOrder(
       orderService: orderService,
       customerRepo: customerRepo,
       phonePeService: phonePeService,

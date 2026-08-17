@@ -8,6 +8,8 @@ void main() {
       cartSignal.value = CartState.initial();
       discountInputSignal.value = 0.0;
       paymentModeSignal.value = PaymentMethod.cash;
+      showOrderSummaryDetailsSignal.value = true;
+      printBillSignal.value = true;
     });
 
     final testProduct1 = Product(
@@ -108,6 +110,16 @@ void main() {
 
       CartController.togglePrintBill();
       expect(printBillSignal.value, isTrue);
+    });
+
+    test('Order summary details toggle updates state cleanly', () {
+      expect(showOrderSummaryDetailsSignal.value, isTrue);
+
+      CartController.toggleSummaryDetails(false);
+      expect(showOrderSummaryDetailsSignal.value, isFalse);
+
+      CartController.toggleSummaryDetails();
+      expect(showOrderSummaryDetailsSignal.value, isTrue);
     });
   });
 }

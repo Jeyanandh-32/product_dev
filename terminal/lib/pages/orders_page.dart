@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:forui/forui.dart';
 import 'package:gap/gap.dart';
-import 'package:go_router/go_router.dart';
+import 'package:terminal/components/components.dart';
 import 'package:mix/mix.dart';
 
 /// Order history log page for the current POS session using Forui and Mix.
@@ -14,10 +14,8 @@ class OrdersPage extends StatelessWidget {
       childPad: false,
       header: FHeader.nested(
         title: const Text('Order History'),
-        prefixes: [
-          FHeaderAction.back(
-            onPress: () => GoRouter.maybeOf(context)?.pop(),
-          ),
+        prefixes: const [
+          TerminalBackButton(),
         ],
       ),
       child: Center(

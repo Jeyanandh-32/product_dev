@@ -10,15 +10,15 @@ export 'package:terminal/models/cart_state.dart';
 final paymentModeSignal = signal<PaymentMethod>(PaymentMethod.cash);
 final discountInputSignal = signal<double>(0.0);
 final printBillSignal = signal<bool>(true);
+final showOrderSummaryDetailsSignal = signal<bool>(true);
 final cartSignal = signal<CartState>(CartState.initial());
 
 abstract final class CartController {
   static void addItem(Product product, {int quantity = 1}) {
     final current = cartSignal.value;
-    final existingIndex = current.items.indexWhere(
-      (item) => item.product.id == product.id,
-    );
-    List<CartItem> updatedItems = List.from(current.items);
+    final existingIndex =
+        current.items.indexWhere((item) => item.product.id == product.id);
+    final updatedItems = List<CartItem>.from(current.items);
 
     if (existingIndex >= 0) {
       final existing = current.items[existingIndex];
@@ -28,42 +28,31 @@ abstract final class CartController {
     } else {
       updatedItems.add(CartItem(product: product, quantity: quantity));
     }
-
     _updateState(updatedItems);
   }
 
   static void removeItem(String productId) {
     final current = cartSignal.value;
-    final updatedItems = current.items
-        .where((item) => item.product.id != productId)
-        .toList();
-
-    _updateState(updatedItems);
+    _updateState(
+      current.items.where((i) => i.product.id != productId).toList(),
+    );
   }
 
   static void updateQuantity(String productId, int quantity) {
-    if (quantity <= 0) {
-      removeItem(productId);
-      return;
-    }
-
+    if (quantity <= 0) return removeItem(productId);
     final current = cartSignal.value;
-    final updatedItems = current.items
-        .map(
-          (item) => item.product.id == productId
-              ? item.copyWith(quantity: quantity)
-              : item,
-        )
-        .toList();
-
-    _updateState(updatedItems);
+    _updateState(
+      current.items
+          .map((i) => i.product.id == productId ? i.copyWith(quantity: quantity) : i)
+          .toList(),
+    );
   }
 
   static void setDiscount(double discount) {
     final current = cartSignal.value;
-    final maxAllowedDiscount = current.subtotal + current.taxTotal;
-    final sanitizedDiscount = max(0.0, min(discount, maxAllowedDiscount > 0 ? maxAllowedDiscount : discount));
-    discountInputSignal.value = sanitizedDiscount;
+    final maxDiscount = current.subtotal + current.taxTotal;
+    discountInputSignal.value =
+        max(0.0, min(discount, maxDiscount > 0 ? maxDiscount : discount));
     _updateState(cartSignal.value.items);
   }
 
@@ -76,6 +65,11 @@ abstract final class CartController {
     printBillSignal.value = value ?? !printBillSignal.value;
   }
 
+  static void toggleSummaryDetails([bool? value]) {
+    showOrderSummaryDetailsSignal.value =
+        value ?? !showOrderSummaryDetailsSignal.value;
+  }
+
   static void clear() {
     discountInputSignal.value = 0.0;
     paymentModeSignal.value = PaymentMethod.cash;
@@ -83,32 +77,27 @@ abstract final class CartController {
   }
 
   static void _updateState(List<CartItem> items) {
-    int noOfItems = items.length;
-    int orderQuantity = 0;
-
-    double subtotal = 0.0;
-    double taxTotal = 0.0;
+    var orderQuantity = 0;
+    var subtotal = 0.0;
+    var taxTotal = 0.0;
 
     for (final item in items) {
       final price = item.product.sellingPrice * item.quantity;
       subtotal += price;
-
-      final tax = price * (item.product.taxRate / 100);
-      taxTotal += tax;
-
+      taxTotal += price * (item.product.taxRate / 100);
       orderQuantity += item.quantity;
     }
 
     final isComplimentary =
         paymentModeSignal.value == PaymentMethod.complimentary;
     final maxAllowedDiscount = subtotal + taxTotal;
-    double discountTotal = isComplimentary
+    final discountTotal = isComplimentary
         ? maxAllowedDiscount
         : min(maxAllowedDiscount, discountInputSignal.value);
 
     cartSignal.value = CartState(
       items: items,
-      noOfItems: noOfItems,
+      noOfItems: items.length,
       orderQuantity: orderQuantity,
       subtotal: subtotal,
       discountTotal: discountTotal,
@@ -122,18 +111,14 @@ abstract final class CartController {
     required PaymentMethod paymentMethod,
   }) async {
     final products = cartSignal.value.items
-        .map(
-          (item) => {'productId': item.product.id, 'quantity': item.quantity},
-        )
+        .map((i) => {'productId': i.product.id, 'quantity': i.quantity})
         .toList();
-
-    final discountTotal = cartSignal.value.discountTotal;
 
     final order = await OrderRepository.create(
       storeId: storeId,
       products: products,
       paymentMethod: paymentMethod,
-      discountTotal: discountTotal,
+      discountTotal: cartSignal.value.discountTotal,
       source: OrderSource.terminal,
       type: OrderType.dineIn,
     );

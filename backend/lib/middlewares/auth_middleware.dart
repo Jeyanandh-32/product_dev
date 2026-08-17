@@ -47,12 +47,12 @@ Middleware authMiddleware({
       );
 
       if (!tokenPayload.sub.isUUID()) {
-        if (isPublic) return handler(context);
+        if (isPublic) return await handler(context);
         return forbidden(message: 'Invalid Token.');
       }
 
       if (allowedRoles != null && !allowedRoles.contains(tokenPayload.role)) {
-        if (isPublic) return handler(context);
+        if (isPublic) return await handler(context);
         return forbidden(message: 'No access.');
       }
 

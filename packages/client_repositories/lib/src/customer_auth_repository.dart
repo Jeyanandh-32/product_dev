@@ -67,10 +67,10 @@ class CustomerAuthRepository {
       final result = await dio.patch(
         ApiEndpoints.customers,
         data: {
-          if (name != null) 'name': name,
-          if (mobileNumber != null) 'mobileNumber': mobileNumber,
-          if (pin != null) 'pin': pin,
-          if (currentPin != null) 'currentPin': currentPin,
+          'name': ?name,
+          'mobileNumber': ?mobileNumber,
+          'pin': ?pin,
+          'currentPin': ?currentPin,
         },
       );
 

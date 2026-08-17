@@ -5,6 +5,7 @@ import 'package:gap/gap.dart';
 import 'package:signals_flutter/signals_flutter.dart';
 import 'package:terminal/components/components.dart';
 import 'package:terminal/pages/loading.dart';
+import 'package:terminal/signals/cart_signal.dart';
 import 'package:terminal/signals/categories_signal.dart';
 import 'package:terminal/signals/products_signal.dart';
 
@@ -54,46 +55,65 @@ class _HomeState extends State<Home> {
                     children: [
                       Expanded(
                         child: Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: isDesktop ? 20 : 12,
-                            vertical: 16,
+                          padding: EdgeInsets.only(
+                            left: isDesktop ? 20 : 12,
+                            right: isDesktop ? 20 : 12,
+                            top: 12,
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
                               const CategoryFilterList(),
-                              const Gap(14),
+                              const Gap(12),
                               const ProductSearchBar(),
-                              const Gap(14),
+                              const Gap(10),
                               Expanded(
                                 child: SignalBuilder(
                                   builder: (context) {
                                     final filteredProducts =
                                         filteredProductsSignal.value;
+                                    final cart = cartSignal.value;
+                                    final bottomPad =
+                                        (!isDesktop && cart.items.isNotEmpty)
+                                            ? 88.0
+                                            : 16.0;
 
                                     return ExcludeSemantics(
                                       child: ScrollConfiguration(
                                         behavior: ScrollConfiguration.of(
                                           context,
                                         ).copyWith(scrollbars: false),
-                                        child: DynamicHeightGridView(
-                                          crossAxisSpacing: isDesktop ? 12 : 8,
-                                          mainAxisSpacing: isDesktop ? 12 : 8,
-                                          physics: const BouncingScrollPhysics(
-                                            parent:
-                                                AlwaysScrollableScrollPhysics(),
+                                        child: MediaQuery.removePadding(
+                                          context: context,
+                                          removeTop: true,
+                                          child: Padding(
+                                            padding: EdgeInsets.only(
+                                              bottom: bottomPad,
+                                            ),
+                                            child: DynamicHeightGridView(
+                                              crossAxisSpacing:
+                                                  isDesktop ? 12 : 8,
+                                              mainAxisSpacing:
+                                                  isDesktop ? 12 : 8,
+                                              physics:
+                                                  const BouncingScrollPhysics(
+                                                parent:
+                                                    AlwaysScrollableScrollPhysics(),
+                                              ),
+                                              builder: (context, index) {
+                                                final product =
+                                                    filteredProducts[index];
+                                                return ProductCard(
+                                                  key: ValueKey(product.id),
+                                                  product: product,
+                                                  isMobile: !isDesktop,
+                                                );
+                                              },
+                                              itemCount:
+                                                  filteredProducts.length,
+                                              crossAxisCount: crossAxisCount,
+                                            ),
                                           ),
-                                          builder: (context, index) {
-                                            final product =
-                                                filteredProducts[index];
-                                            return ProductCard(
-                                              key: ValueKey(product.id),
-                                              product: product,
-                                              isMobile: !isDesktop,
-                                            );
-                                          },
-                                          itemCount: filteredProducts.length,
-                                          crossAxisCount: crossAxisCount,
                                         ),
                                       ),
                                     );

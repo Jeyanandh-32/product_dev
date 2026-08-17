@@ -1,6 +1,5 @@
 import 'package:flutter/widgets.dart';
 import 'package:forui/forui.dart';
-import 'package:go_router/go_router.dart';
 import 'package:signals_flutter/signals_flutter.dart';
 import 'package:terminal/components/components.dart';
 import 'package:terminal/signals/cart_signal.dart';
@@ -17,10 +16,8 @@ class CartPage extends SignalWidget {
       childPad: false,
       header: FHeader.nested(
         title: const Text('Order Items'),
-        prefixes: [
-          FHeaderAction.back(
-            onPress: () => GoRouter.maybeOf(context)?.pop(),
-          ),
+        prefixes: const [
+          TerminalBackButton(),
         ],
         suffixes: [
           if (cart.items.isNotEmpty) const CartClearAllButton(),

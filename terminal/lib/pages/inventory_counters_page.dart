@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:forui/forui.dart';
-import 'package:go_router/go_router.dart';
+import 'package:terminal/components/components.dart';
 import 'package:mix/mix.dart';
 
 /// Read-only inventory counters overview page using Forui.
@@ -13,10 +13,8 @@ class InventoryCountersPage extends StatelessWidget {
       childPad: false,
       header: FHeader.nested(
         title: const Text('Store Counters'),
-        prefixes: [
-          FHeaderAction.back(
-            onPress: () => GoRouter.maybeOf(context)?.pop(),
-          ),
+        prefixes: const [
+          TerminalBackButton(),
         ],
       ),
       child: Center(

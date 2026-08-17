@@ -41,10 +41,10 @@ class DashboardAnalyticsQuery {
         .where((s) => s.quantity <= s.lowStockThreshold)
         .length;
 
-    var growth = (
-      revenueGrowth: 0.0,
-      ordersGrowth: 0.0,
-      aovGrowth: 0.0,
+    var growth = const DashboardGrowthMetrics(
+      revenueGrowth: 0,
+      ordersGrowth: 0,
+      aovGrowth: 0,
     );
 
     if (fromDate != null) {

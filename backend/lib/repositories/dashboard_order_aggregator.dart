@@ -1,23 +1,15 @@
 import 'package:backend/database/schema.dart';
+import 'package:backend/repositories/dashboard_metrics_models.dart';
 import 'package:models/models.dart';
+
+export 'dashboard_metrics_models.dart';
 
 /// Aggregates order metrics and hourly distribution.
 class DashboardOrderAggregator {
   const DashboardOrderAggregator._();
 
-  /// Computes revenue, payment channels, hourly distribution, and growth comparisons.
-  static ({
-    double totalRevenue,
-    int totalOrders,
-    double aov,
-    double upiTotal,
-    double cashTotal,
-    double paidTotal,
-    double freeTotal,
-    int paidCount,
-    int freeCount,
-    List<int> hourlyCounts,
-  }) aggregateOrders(List<OrderRow> orderRows) {
+  /// Computes revenue, payment channels, hourly distribution, and totals.
+  static DashboardOrderMetrics aggregateOrders(List<OrderRow> orderRows) {
     var totalRevenuePaise = 0;
     var upiPaise = 0;
     var cashPaise = 0;
@@ -74,7 +66,7 @@ class DashboardOrderAggregator {
     final totalRevenue = totalRevenuePaise / 100.0;
     final aov = totalOrders > 0 ? (totalRevenue / totalOrders) : 0.0;
 
-    return (
+    return DashboardOrderMetrics(
       totalRevenue: totalRevenue,
       totalOrders: totalOrders,
       aov: aov,
@@ -89,7 +81,7 @@ class DashboardOrderAggregator {
   }
 
   /// Computes percentage growth between current and previous period.
-  static ({double revenueGrowth, double ordersGrowth, double aovGrowth}) calculateGrowth({
+  static DashboardGrowthMetrics calculateGrowth({
     required double currentRevenue,
     required int currentOrders,
     required double currentAov,
@@ -119,7 +111,7 @@ class DashboardOrderAggregator {
       aovGrowth = 100.0;
     }
 
-    return (
+    return DashboardGrowthMetrics(
       revenueGrowth: revenueGrowth,
       ordersGrowth: ordersGrowth,
       aovGrowth: aovGrowth,

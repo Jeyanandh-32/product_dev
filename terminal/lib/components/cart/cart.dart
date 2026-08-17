@@ -26,11 +26,18 @@ class Cart extends SignalWidget {
 
     final cartStyle = FlexBoxStyler()
         .paddingX(isDrawerMode ? 16 : 20)
-        .paddingY(20)
-        .color(isDrawerMode ? const Color(0xFFF8FAFC) : const Color(0xFFFFFFFF))
+        .paddingTop(isDrawerMode ? 16 : 20)
+        .paddingBottom(isDrawerMode ? 24 : 20)
+        .color(
+          isDrawerMode
+              ? const Color(0xFFF8FAFC)
+              : const Color(0xFFFFFFFF),
+        )
         .width(cartWidth)
         .borderLeft(
-          color: isDrawerMode ? const Color(0x00000000) : theme.colors.border,
+          color: isDrawerMode
+              ? const Color(0x00000000)
+              : theme.colors.border,
         );
     final cart = cartSignal.value;
 
@@ -93,6 +100,10 @@ class Cart extends SignalWidget {
                   ],
                 )
               : ListView.builder(
+                  padding: EdgeInsets.only(
+                    top: isDrawerMode ? 6 : 0,
+                    bottom: 12,
+                  ),
                   itemCount: cart.items.length,
                   itemBuilder: (context, index) {
                     final item = cart.items[index];

@@ -1,9 +1,2 @@
 # Root analysis options configuration for the workspace
-analyzer:
-  plugins:
-    jaspr_lints:
-      version: ^0.7.1
-      diagnostics:
-        prefer_html_components: true
-        sort_children_last: true
-        styles_ordering: true
+include: package:lints/recommended.yaml

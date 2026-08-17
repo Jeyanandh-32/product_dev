@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:forui/forui.dart';
 import 'package:gap/gap.dart';
-import 'package:go_router/go_router.dart';
+import 'package:terminal/components/components.dart';
 import 'package:mix/mix.dart';
 import 'package:signals_flutter/signals_flutter.dart';
 import 'package:terminal/signals/auth_signal.dart';
@@ -18,10 +18,8 @@ class AccountPage extends SignalWidget {
       childPad: false,
       header: FHeader.nested(
         title: const Text('Device Account'),
-        prefixes: [
-          FHeaderAction.back(
-            onPress: () => GoRouter.maybeOf(context)?.pop(),
-          ),
+        prefixes: const [
+          TerminalBackButton(),
         ],
       ),
       child: Center(

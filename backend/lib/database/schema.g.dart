@@ -220,6 +220,7 @@ final class _$MerchantRow extends MerchantRow {
       ['email'],
     ],
     foreignKeys: [],
+    indexes: [],
     readRow: _$MerchantRow._$fromDatabase,
   );
 
@@ -973,6 +974,7 @@ final class _$MerchantSettingsRow extends MerchantSettingsRow {
         onUpdate: .noAction,
       ),
     ],
+    indexes: [],
     readRow: _$MerchantSettingsRow._$fromDatabase,
   );
 
@@ -1694,6 +1696,7 @@ final class _$StoreRow extends StoreRow {
         onUpdate: .noAction,
       ),
     ],
+    indexes: [],
     readRow: _$StoreRow._$fromDatabase,
   );
 
@@ -2668,6 +2671,7 @@ final class _$StorePhonePeConfigRow extends StorePhonePeConfigRow {
         onUpdate: .noAction,
       ),
     ],
+    indexes: [],
     readRow: _$StorePhonePeConfigRow._$fromDatabase,
   );
 
@@ -3754,6 +3758,7 @@ final class _$CategoryRow extends CategoryRow {
         onUpdate: .noAction,
       ),
     ],
+    indexes: [],
     readRow: _$CategoryRow._$fromDatabase,
   );
 
@@ -4565,6 +4570,7 @@ final class _$CounterRow extends CounterRow {
         onUpdate: .noAction,
       ),
     ],
+    indexes: [],
     readRow: _$CounterRow._$fromDatabase,
   );
 
@@ -5484,6 +5490,7 @@ final class _$ProductRow extends ProductRow {
         onUpdate: .noAction,
       ),
     ],
+    indexes: [],
     readRow: _$ProductRow._$fromDatabase,
   );
 
@@ -6497,6 +6504,7 @@ final class _$StockRow extends StockRow {
         onUpdate: .noAction,
       ),
     ],
+    indexes: [],
     readRow: _$StockRow._$fromDatabase,
   );
 
@@ -7267,6 +7275,7 @@ final class _$StockTransactionRow extends StockTransactionRow {
         onUpdate: .noAction,
       ),
     ],
+    indexes: [],
     readRow: _$StockTransactionRow._$fromDatabase,
   );
 
@@ -8028,6 +8037,7 @@ final class _$TerminalRow extends TerminalRow {
         onUpdate: .noAction,
       ),
     ],
+    indexes: [],
     readRow: _$TerminalRow._$fromDatabase,
   );
 
@@ -8759,6 +8769,7 @@ final class _$CustomerRow extends CustomerRow {
       ['mobile_number'],
     ],
     foreignKeys: [],
+    indexes: [],
     readRow: _$CustomerRow._$fromDatabase,
   );
 
@@ -9393,6 +9404,7 @@ final class _$CustomerRecentStoresRow extends CustomerRecentStoresRow {
         onUpdate: .noAction,
       ),
     ],
+    indexes: [],
     readRow: _$CustomerRecentStoresRow._$fromDatabase,
   );
 
@@ -9968,6 +9980,7 @@ final class _$CustomerStoreWalletRow extends CustomerStoreWalletRow {
         onUpdate: .noAction,
       ),
     ],
+    indexes: [],
     readRow: _$CustomerStoreWalletRow._$fromDatabase,
   );
 
@@ -10639,6 +10652,7 @@ final class _$CustomerWalletTransactionRow
         onUpdate: .noAction,
       ),
     ],
+    indexes: [],
     readRow: _$CustomerWalletTransactionRow._$fromDatabase,
   );
 
@@ -11549,6 +11563,7 @@ final class _$OrderRow extends OrderRow {
         onUpdate: .noAction,
       ),
     ],
+    indexes: [],
     readRow: _$OrderRow._$fromDatabase,
   );
 
@@ -12627,6 +12642,7 @@ final class _$OrderItemRow extends OrderItemRow {
         onUpdate: .noAction,
       ),
     ],
+    indexes: [],
     readRow: _$OrderItemRow._$fromDatabase,
   );
 
@@ -13248,28 +13264,89 @@ extension InsertOnConflictSingleOrderItemRowExt
 }
 
 /// Extension methods for building queries projected to a named record.
-extension QueryGrossSubtotalNetRevenueTotalDiscountTotalOrdersNamed<A, B, C, D>
+extension QueryItemsTotalNamed<A, B>
+    on Query<({Expr<A> items, Expr<B> total})> {
+  Query<(Expr<A>, Expr<B>)> get _asPositionalQuery =>
+      $ForGeneratedCode.renamedRecord(this, (e) => (e.items, e.total));
+
+  static Query<({Expr<A> items, Expr<B> total})> _fromPositionalQuery<A, B>(
+    Query<(Expr<A>, Expr<B>)> query,
+  ) =>
+      $ForGeneratedCode.renamedRecord(query, (e) => (items: e.$1, total: e.$2));
+
+  static T Function(Expr<A> a, Expr<B> b) _wrapBuilder<T, A, B>(
+    T Function(({Expr<A> items, Expr<B> total}) e) builder,
+  ) =>
+      (a, b) => builder((items: a, total: b));
+
+  /// Query the database for rows in this [Query] as a [Stream].
+  Stream<({A items, B total})> stream() async* {
+    yield* _asPositionalQuery.stream().map((e) => (items: e.$1, total: e.$2));
+  }
+
+  /// Query the database for rows in this [Query] as a [List].
+  Future<List<({A items, B total})>> fetch() async => await stream().toList();
+
+  /// Offset [Query] using `OFFSET` clause.
+  ///
+  /// The resulting [Query] will skip the first [offset] rows.
+  Query<({Expr<A> items, Expr<B> total})> offset(int offset) =>
+      _fromPositionalQuery(_asPositionalQuery.offset(offset));
+
+  /// Limit [Query] using `LIMIT` clause.
+  ///
+  /// The resulting [Query] will only return the first [limit] rows.
+  Query<({Expr<A> items, Expr<B> total})> limit(int limit) =>
+      _fromPositionalQuery(_asPositionalQuery.limit(limit));
+
+  /// Create a projection of this [Query] using `SELECT` clause.
+  ///
+  /// The [projectionBuilder] **must** return a [Record] where all the
+  /// values are [Expr] objects. If something else is returned you will
+  /// get a [Query] object which doesn't have any methods!
+  ///
+  /// All methods and properties on [Query<T>] are extension methods and
+  /// they are only defined for records `T` where all the values are
+  /// [Expr] objects.
+  Query<T> select<T extends Record>(
+    T Function(({Expr<A> items, Expr<B> total}) expr) projectionBuilder,
+  ) => _asPositionalQuery.select(_wrapBuilder(projectionBuilder));
+
+  /// Filter [Query] using `WHERE` clause.
+  ///
+  /// Returns a [Query] retaining rows from this [Query] where the expression
+  /// returned by [conditionBuilder] evaluates to `true`.
+  Query<({Expr<A> items, Expr<B> total})> where(
+    Expr<bool?> Function(({Expr<A> items, Expr<B> total}) expr)
+    conditionBuilder,
+  ) => _fromPositionalQuery(
+    _asPositionalQuery.where(_wrapBuilder(conditionBuilder)),
+  );
+}
+
+/// Extension methods for building queries projected to a named record.
+extension QueryCategoryNameTotalQuantitySoldTotalRevenuePaiseNamed<A, B, C, D>
     on
         Query<
           ({
-            Expr<A> grossSubtotal,
-            Expr<B> netRevenue,
-            Expr<C> totalDiscount,
-            Expr<D> totalOrders,
+            Expr<A> category,
+            Expr<B> name,
+            Expr<C> totalQuantitySold,
+            Expr<D> totalRevenuePaise,
           })
         > {
   Query<(Expr<A>, Expr<B>, Expr<C>, Expr<D>)> get _asPositionalQuery =>
       $ForGeneratedCode.renamedRecord(
         this,
-        (e) => (e.grossSubtotal, e.netRevenue, e.totalDiscount, e.totalOrders),
+        (e) => (e.category, e.name, e.totalQuantitySold, e.totalRevenuePaise),
       );
 
   static Query<
     ({
-      Expr<A> grossSubtotal,
-      Expr<B> netRevenue,
-      Expr<C> totalDiscount,
-      Expr<D> totalOrders,
+      Expr<A> category,
+      Expr<B> name,
+      Expr<C> totalQuantitySold,
+      Expr<D> totalRevenuePaise,
     })
   >
   _fromPositionalQuery<A, B, C, D>(
@@ -13277,10 +13354,10 @@ extension QueryGrossSubtotalNetRevenueTotalDiscountTotalOrdersNamed<A, B, C, D>
   ) => $ForGeneratedCode.renamedRecord(
     query,
     (e) => (
-      grossSubtotal: e.$1,
-      netRevenue: e.$2,
-      totalDiscount: e.$3,
-      totalOrders: e.$4,
+      category: e.$1,
+      name: e.$2,
+      totalQuantitySold: e.$3,
+      totalRevenuePaise: e.$4,
     ),
   );
 
@@ -13288,39 +13365,37 @@ extension QueryGrossSubtotalNetRevenueTotalDiscountTotalOrdersNamed<A, B, C, D>
   _wrapBuilder<T, A, B, C, D>(
     T Function(
       ({
-        Expr<A> grossSubtotal,
-        Expr<B> netRevenue,
-        Expr<C> totalDiscount,
-        Expr<D> totalOrders,
+        Expr<A> category,
+        Expr<B> name,
+        Expr<C> totalQuantitySold,
+        Expr<D> totalRevenuePaise,
       })
       e,
     )
     builder,
   ) =>
       (a, b, c, d) => builder((
-        grossSubtotal: a,
-        netRevenue: b,
-        totalDiscount: c,
-        totalOrders: d,
+        category: a,
+        name: b,
+        totalQuantitySold: c,
+        totalRevenuePaise: d,
       ));
 
   /// Query the database for rows in this [Query] as a [Stream].
-  Stream<({A grossSubtotal, B netRevenue, C totalDiscount, D totalOrders})>
+  Stream<({A category, B name, C totalQuantitySold, D totalRevenuePaise})>
   stream() async* {
     yield* _asPositionalQuery.stream().map(
       (e) => (
-        grossSubtotal: e.$1,
-        netRevenue: e.$2,
-        totalDiscount: e.$3,
-        totalOrders: e.$4,
+        category: e.$1,
+        name: e.$2,
+        totalQuantitySold: e.$3,
+        totalRevenuePaise: e.$4,
       ),
     );
   }
 
   /// Query the database for rows in this [Query] as a [List].
-  Future<
-    List<({A grossSubtotal, B netRevenue, C totalDiscount, D totalOrders})>
-  >
+  Future<List<({A category, B name, C totalQuantitySold, D totalRevenuePaise})>>
   fetch() async => await stream().toList();
 
   /// Offset [Query] using `OFFSET` clause.
@@ -13328,10 +13403,10 @@ extension QueryGrossSubtotalNetRevenueTotalDiscountTotalOrdersNamed<A, B, C, D>
   /// The resulting [Query] will skip the first [offset] rows.
   Query<
     ({
-      Expr<A> grossSubtotal,
-      Expr<B> netRevenue,
-      Expr<C> totalDiscount,
-      Expr<D> totalOrders,
+      Expr<A> category,
+      Expr<B> name,
+      Expr<C> totalQuantitySold,
+      Expr<D> totalRevenuePaise,
     })
   >
   offset(int offset) => _fromPositionalQuery(_asPositionalQuery.offset(offset));
@@ -13341,10 +13416,10 @@ extension QueryGrossSubtotalNetRevenueTotalDiscountTotalOrdersNamed<A, B, C, D>
   /// The resulting [Query] will only return the first [limit] rows.
   Query<
     ({
-      Expr<A> grossSubtotal,
-      Expr<B> netRevenue,
-      Expr<C> totalDiscount,
-      Expr<D> totalOrders,
+      Expr<A> category,
+      Expr<B> name,
+      Expr<C> totalQuantitySold,
+      Expr<D> totalRevenuePaise,
     })
   >
   limit(int limit) => _fromPositionalQuery(_asPositionalQuery.limit(limit));
@@ -13361,10 +13436,10 @@ extension QueryGrossSubtotalNetRevenueTotalDiscountTotalOrdersNamed<A, B, C, D>
   Query<T> select<T extends Record>(
     T Function(
       ({
-        Expr<A> grossSubtotal,
-        Expr<B> netRevenue,
-        Expr<C> totalDiscount,
-        Expr<D> totalOrders,
+        Expr<A> category,
+        Expr<B> name,
+        Expr<C> totalQuantitySold,
+        Expr<D> totalRevenuePaise,
       })
       expr,
     )
@@ -13377,19 +13452,336 @@ extension QueryGrossSubtotalNetRevenueTotalDiscountTotalOrdersNamed<A, B, C, D>
   /// returned by [conditionBuilder] evaluates to `true`.
   Query<
     ({
-      Expr<A> grossSubtotal,
-      Expr<B> netRevenue,
-      Expr<C> totalDiscount,
-      Expr<D> totalOrders,
+      Expr<A> category,
+      Expr<B> name,
+      Expr<C> totalQuantitySold,
+      Expr<D> totalRevenuePaise,
     })
   >
   where(
     Expr<bool?> Function(
       ({
-        Expr<A> grossSubtotal,
-        Expr<B> netRevenue,
-        Expr<C> totalDiscount,
-        Expr<D> totalOrders,
+        Expr<A> category,
+        Expr<B> name,
+        Expr<C> totalQuantitySold,
+        Expr<D> totalRevenuePaise,
+      })
+      expr,
+    )
+    conditionBuilder,
+  ) => _fromPositionalQuery(
+    _asPositionalQuery.where(_wrapBuilder(conditionBuilder)),
+  );
+}
+
+/// Extension methods for building queries projected to a named record.
+extension QueryCategorySalesTopProductsNamed<A, B>
+    on Query<({Expr<A> categorySales, Expr<B> topProducts})> {
+  Query<(Expr<A>, Expr<B>)> get _asPositionalQuery => $ForGeneratedCode
+      .renamedRecord(this, (e) => (e.categorySales, e.topProducts));
+
+  static Query<({Expr<A> categorySales, Expr<B> topProducts})>
+  _fromPositionalQuery<A, B>(Query<(Expr<A>, Expr<B>)> query) =>
+      $ForGeneratedCode.renamedRecord(
+        query,
+        (e) => (categorySales: e.$1, topProducts: e.$2),
+      );
+
+  static T Function(Expr<A> a, Expr<B> b) _wrapBuilder<T, A, B>(
+    T Function(({Expr<A> categorySales, Expr<B> topProducts}) e) builder,
+  ) =>
+      (a, b) => builder((categorySales: a, topProducts: b));
+
+  /// Query the database for rows in this [Query] as a [Stream].
+  Stream<({A categorySales, B topProducts})> stream() async* {
+    yield* _asPositionalQuery.stream().map(
+      (e) => (categorySales: e.$1, topProducts: e.$2),
+    );
+  }
+
+  /// Query the database for rows in this [Query] as a [List].
+  Future<List<({A categorySales, B topProducts})>> fetch() async =>
+      await stream().toList();
+
+  /// Offset [Query] using `OFFSET` clause.
+  ///
+  /// The resulting [Query] will skip the first [offset] rows.
+  Query<({Expr<A> categorySales, Expr<B> topProducts})> offset(int offset) =>
+      _fromPositionalQuery(_asPositionalQuery.offset(offset));
+
+  /// Limit [Query] using `LIMIT` clause.
+  ///
+  /// The resulting [Query] will only return the first [limit] rows.
+  Query<({Expr<A> categorySales, Expr<B> topProducts})> limit(int limit) =>
+      _fromPositionalQuery(_asPositionalQuery.limit(limit));
+
+  /// Create a projection of this [Query] using `SELECT` clause.
+  ///
+  /// The [projectionBuilder] **must** return a [Record] where all the
+  /// values are [Expr] objects. If something else is returned you will
+  /// get a [Query] object which doesn't have any methods!
+  ///
+  /// All methods and properties on [Query<T>] are extension methods and
+  /// they are only defined for records `T` where all the values are
+  /// [Expr] objects.
+  Query<T> select<T extends Record>(
+    T Function(({Expr<A> categorySales, Expr<B> topProducts}) expr)
+    projectionBuilder,
+  ) => _asPositionalQuery.select(_wrapBuilder(projectionBuilder));
+
+  /// Filter [Query] using `WHERE` clause.
+  ///
+  /// Returns a [Query] retaining rows from this [Query] where the expression
+  /// returned by [conditionBuilder] evaluates to `true`.
+  Query<({Expr<A> categorySales, Expr<B> topProducts})> where(
+    Expr<bool?> Function(({Expr<A> categorySales, Expr<B> topProducts}) expr)
+    conditionBuilder,
+  ) => _fromPositionalQuery(
+    _asPositionalQuery.where(_wrapBuilder(conditionBuilder)),
+  );
+}
+
+/// Extension methods for building queries projected to a named record.
+extension QueryCashCollectedFreeTotalGrossSubtotalNetRevenueTotalDiscountTotalOrdersUpiCollectedWalletCollectedNamed<
+  A,
+  B,
+  C,
+  D,
+  E,
+  F,
+  G,
+  H
+>
+    on
+        Query<
+          ({
+            Expr<A> cashCollected,
+            Expr<B> freeTotal,
+            Expr<C> grossSubtotal,
+            Expr<D> netRevenue,
+            Expr<E> totalDiscount,
+            Expr<F> totalOrders,
+            Expr<G> upiCollected,
+            Expr<H> walletCollected,
+          })
+        > {
+  Query<
+    (Expr<A>, Expr<B>, Expr<C>, Expr<D>, Expr<E>, Expr<F>, Expr<G>, Expr<H>)
+  >
+  get _asPositionalQuery => $ForGeneratedCode.renamedRecord(
+    this,
+    (e) => (
+      e.cashCollected,
+      e.freeTotal,
+      e.grossSubtotal,
+      e.netRevenue,
+      e.totalDiscount,
+      e.totalOrders,
+      e.upiCollected,
+      e.walletCollected,
+    ),
+  );
+
+  static Query<
+    ({
+      Expr<A> cashCollected,
+      Expr<B> freeTotal,
+      Expr<C> grossSubtotal,
+      Expr<D> netRevenue,
+      Expr<E> totalDiscount,
+      Expr<F> totalOrders,
+      Expr<G> upiCollected,
+      Expr<H> walletCollected,
+    })
+  >
+  _fromPositionalQuery<A, B, C, D, E, F, G, H>(
+    Query<
+      (Expr<A>, Expr<B>, Expr<C>, Expr<D>, Expr<E>, Expr<F>, Expr<G>, Expr<H>)
+    >
+    query,
+  ) => $ForGeneratedCode.renamedRecord(
+    query,
+    (e) => (
+      cashCollected: e.$1,
+      freeTotal: e.$2,
+      grossSubtotal: e.$3,
+      netRevenue: e.$4,
+      totalDiscount: e.$5,
+      totalOrders: e.$6,
+      upiCollected: e.$7,
+      walletCollected: e.$8,
+    ),
+  );
+
+  static T Function(
+    Expr<A> a,
+    Expr<B> b,
+    Expr<C> c,
+    Expr<D> d,
+    Expr<E> e,
+    Expr<F> f,
+    Expr<G> g,
+    Expr<H> h,
+  )
+  _wrapBuilder<T, A, B, C, D, E, F, G, H>(
+    T Function(
+      ({
+        Expr<A> cashCollected,
+        Expr<B> freeTotal,
+        Expr<C> grossSubtotal,
+        Expr<D> netRevenue,
+        Expr<E> totalDiscount,
+        Expr<F> totalOrders,
+        Expr<G> upiCollected,
+        Expr<H> walletCollected,
+      })
+      e,
+    )
+    builder,
+  ) =>
+      (a, b, c, d, e, f, g, h) => builder((
+        cashCollected: a,
+        freeTotal: b,
+        grossSubtotal: c,
+        netRevenue: d,
+        totalDiscount: e,
+        totalOrders: f,
+        upiCollected: g,
+        walletCollected: h,
+      ));
+
+  /// Query the database for rows in this [Query] as a [Stream].
+  Stream<
+    ({
+      A cashCollected,
+      B freeTotal,
+      C grossSubtotal,
+      D netRevenue,
+      E totalDiscount,
+      F totalOrders,
+      G upiCollected,
+      H walletCollected,
+    })
+  >
+  stream() async* {
+    yield* _asPositionalQuery.stream().map(
+      (e) => (
+        cashCollected: e.$1,
+        freeTotal: e.$2,
+        grossSubtotal: e.$3,
+        netRevenue: e.$4,
+        totalDiscount: e.$5,
+        totalOrders: e.$6,
+        upiCollected: e.$7,
+        walletCollected: e.$8,
+      ),
+    );
+  }
+
+  /// Query the database for rows in this [Query] as a [List].
+  Future<
+    List<
+      ({
+        A cashCollected,
+        B freeTotal,
+        C grossSubtotal,
+        D netRevenue,
+        E totalDiscount,
+        F totalOrders,
+        G upiCollected,
+        H walletCollected,
+      })
+    >
+  >
+  fetch() async => await stream().toList();
+
+  /// Offset [Query] using `OFFSET` clause.
+  ///
+  /// The resulting [Query] will skip the first [offset] rows.
+  Query<
+    ({
+      Expr<A> cashCollected,
+      Expr<B> freeTotal,
+      Expr<C> grossSubtotal,
+      Expr<D> netRevenue,
+      Expr<E> totalDiscount,
+      Expr<F> totalOrders,
+      Expr<G> upiCollected,
+      Expr<H> walletCollected,
+    })
+  >
+  offset(int offset) => _fromPositionalQuery(_asPositionalQuery.offset(offset));
+
+  /// Limit [Query] using `LIMIT` clause.
+  ///
+  /// The resulting [Query] will only return the first [limit] rows.
+  Query<
+    ({
+      Expr<A> cashCollected,
+      Expr<B> freeTotal,
+      Expr<C> grossSubtotal,
+      Expr<D> netRevenue,
+      Expr<E> totalDiscount,
+      Expr<F> totalOrders,
+      Expr<G> upiCollected,
+      Expr<H> walletCollected,
+    })
+  >
+  limit(int limit) => _fromPositionalQuery(_asPositionalQuery.limit(limit));
+
+  /// Create a projection of this [Query] using `SELECT` clause.
+  ///
+  /// The [projectionBuilder] **must** return a [Record] where all the
+  /// values are [Expr] objects. If something else is returned you will
+  /// get a [Query] object which doesn't have any methods!
+  ///
+  /// All methods and properties on [Query<T>] are extension methods and
+  /// they are only defined for records `T` where all the values are
+  /// [Expr] objects.
+  Query<T> select<T extends Record>(
+    T Function(
+      ({
+        Expr<A> cashCollected,
+        Expr<B> freeTotal,
+        Expr<C> grossSubtotal,
+        Expr<D> netRevenue,
+        Expr<E> totalDiscount,
+        Expr<F> totalOrders,
+        Expr<G> upiCollected,
+        Expr<H> walletCollected,
+      })
+      expr,
+    )
+    projectionBuilder,
+  ) => _asPositionalQuery.select(_wrapBuilder(projectionBuilder));
+
+  /// Filter [Query] using `WHERE` clause.
+  ///
+  /// Returns a [Query] retaining rows from this [Query] where the expression
+  /// returned by [conditionBuilder] evaluates to `true`.
+  Query<
+    ({
+      Expr<A> cashCollected,
+      Expr<B> freeTotal,
+      Expr<C> grossSubtotal,
+      Expr<D> netRevenue,
+      Expr<E> totalDiscount,
+      Expr<F> totalOrders,
+      Expr<G> upiCollected,
+      Expr<H> walletCollected,
+    })
+  >
+  where(
+    Expr<bool?> Function(
+      ({
+        Expr<A> cashCollected,
+        Expr<B> freeTotal,
+        Expr<C> grossSubtotal,
+        Expr<D> netRevenue,
+        Expr<E> totalDiscount,
+        Expr<F> totalOrders,
+        Expr<G> upiCollected,
+        Expr<H> walletCollected,
       })
       expr,
     )
@@ -13544,6 +13936,78 @@ extension QueryCashCollectedFreeTotalTotalCollectedUpiCollectedNamed<A, B, C, D>
         Expr<D> upiCollected,
       })
       expr,
+    )
+    conditionBuilder,
+  ) => _fromPositionalQuery(
+    _asPositionalQuery.where(_wrapBuilder(conditionBuilder)),
+  );
+}
+
+/// Extension methods for building queries projected to a named record.
+extension QueryCollectedPriceMapSoldQuantityMapNamed<A, B>
+    on Query<({Expr<A> collectedPriceMap, Expr<B> soldQuantityMap})> {
+  Query<(Expr<A>, Expr<B>)> get _asPositionalQuery => $ForGeneratedCode
+      .renamedRecord(this, (e) => (e.collectedPriceMap, e.soldQuantityMap));
+
+  static Query<({Expr<A> collectedPriceMap, Expr<B> soldQuantityMap})>
+  _fromPositionalQuery<A, B>(Query<(Expr<A>, Expr<B>)> query) =>
+      $ForGeneratedCode.renamedRecord(
+        query,
+        (e) => (collectedPriceMap: e.$1, soldQuantityMap: e.$2),
+      );
+
+  static T Function(Expr<A> a, Expr<B> b) _wrapBuilder<T, A, B>(
+    T Function(({Expr<A> collectedPriceMap, Expr<B> soldQuantityMap}) e)
+    builder,
+  ) =>
+      (a, b) => builder((collectedPriceMap: a, soldQuantityMap: b));
+
+  /// Query the database for rows in this [Query] as a [Stream].
+  Stream<({A collectedPriceMap, B soldQuantityMap})> stream() async* {
+    yield* _asPositionalQuery.stream().map(
+      (e) => (collectedPriceMap: e.$1, soldQuantityMap: e.$2),
+    );
+  }
+
+  /// Query the database for rows in this [Query] as a [List].
+  Future<List<({A collectedPriceMap, B soldQuantityMap})>> fetch() async =>
+      await stream().toList();
+
+  /// Offset [Query] using `OFFSET` clause.
+  ///
+  /// The resulting [Query] will skip the first [offset] rows.
+  Query<({Expr<A> collectedPriceMap, Expr<B> soldQuantityMap})> offset(
+    int offset,
+  ) => _fromPositionalQuery(_asPositionalQuery.offset(offset));
+
+  /// Limit [Query] using `LIMIT` clause.
+  ///
+  /// The resulting [Query] will only return the first [limit] rows.
+  Query<({Expr<A> collectedPriceMap, Expr<B> soldQuantityMap})> limit(
+    int limit,
+  ) => _fromPositionalQuery(_asPositionalQuery.limit(limit));
+
+  /// Create a projection of this [Query] using `SELECT` clause.
+  ///
+  /// The [projectionBuilder] **must** return a [Record] where all the
+  /// values are [Expr] objects. If something else is returned you will
+  /// get a [Query] object which doesn't have any methods!
+  ///
+  /// All methods and properties on [Query<T>] are extension methods and
+  /// they are only defined for records `T` where all the values are
+  /// [Expr] objects.
+  Query<T> select<T extends Record>(
+    T Function(({Expr<A> collectedPriceMap, Expr<B> soldQuantityMap}) expr)
+    projectionBuilder,
+  ) => _asPositionalQuery.select(_wrapBuilder(projectionBuilder));
+
+  /// Filter [Query] using `WHERE` clause.
+  ///
+  /// Returns a [Query] retaining rows from this [Query] where the expression
+  /// returned by [conditionBuilder] evaluates to `true`.
+  Query<({Expr<A> collectedPriceMap, Expr<B> soldQuantityMap})> where(
+    Expr<bool?> Function(
+      ({Expr<A> collectedPriceMap, Expr<B> soldQuantityMap}) expr,
     )
     conditionBuilder,
   ) => _fromPositionalQuery(
@@ -13758,217 +14222,6 @@ extension QueryItemsTotalTotalCollectedPriceTotalCostPriceTotalMarginPercentageT
       })
       expr,
     )
-    conditionBuilder,
-  ) => _fromPositionalQuery(
-    _asPositionalQuery.where(_wrapBuilder(conditionBuilder)),
-  );
-}
-
-/// Extension methods for building queries projected to a named record.
-extension QueryCategoryNameTotalQuantitySoldTotalRevenuePaiseNamed<A, B, C, D>
-    on
-        Query<
-          ({
-            Expr<A> category,
-            Expr<B> name,
-            Expr<C> totalQuantitySold,
-            Expr<D> totalRevenuePaise,
-          })
-        > {
-  Query<(Expr<A>, Expr<B>, Expr<C>, Expr<D>)> get _asPositionalQuery =>
-      $ForGeneratedCode.renamedRecord(
-        this,
-        (e) => (e.category, e.name, e.totalQuantitySold, e.totalRevenuePaise),
-      );
-
-  static Query<
-    ({
-      Expr<A> category,
-      Expr<B> name,
-      Expr<C> totalQuantitySold,
-      Expr<D> totalRevenuePaise,
-    })
-  >
-  _fromPositionalQuery<A, B, C, D>(
-    Query<(Expr<A>, Expr<B>, Expr<C>, Expr<D>)> query,
-  ) => $ForGeneratedCode.renamedRecord(
-    query,
-    (e) => (
-      category: e.$1,
-      name: e.$2,
-      totalQuantitySold: e.$3,
-      totalRevenuePaise: e.$4,
-    ),
-  );
-
-  static T Function(Expr<A> a, Expr<B> b, Expr<C> c, Expr<D> d)
-  _wrapBuilder<T, A, B, C, D>(
-    T Function(
-      ({
-        Expr<A> category,
-        Expr<B> name,
-        Expr<C> totalQuantitySold,
-        Expr<D> totalRevenuePaise,
-      })
-      e,
-    )
-    builder,
-  ) =>
-      (a, b, c, d) => builder((
-        category: a,
-        name: b,
-        totalQuantitySold: c,
-        totalRevenuePaise: d,
-      ));
-
-  /// Query the database for rows in this [Query] as a [Stream].
-  Stream<({A category, B name, C totalQuantitySold, D totalRevenuePaise})>
-  stream() async* {
-    yield* _asPositionalQuery.stream().map(
-      (e) => (
-        category: e.$1,
-        name: e.$2,
-        totalQuantitySold: e.$3,
-        totalRevenuePaise: e.$4,
-      ),
-    );
-  }
-
-  /// Query the database for rows in this [Query] as a [List].
-  Future<List<({A category, B name, C totalQuantitySold, D totalRevenuePaise})>>
-  fetch() async => await stream().toList();
-
-  /// Offset [Query] using `OFFSET` clause.
-  ///
-  /// The resulting [Query] will skip the first [offset] rows.
-  Query<
-    ({
-      Expr<A> category,
-      Expr<B> name,
-      Expr<C> totalQuantitySold,
-      Expr<D> totalRevenuePaise,
-    })
-  >
-  offset(int offset) => _fromPositionalQuery(_asPositionalQuery.offset(offset));
-
-  /// Limit [Query] using `LIMIT` clause.
-  ///
-  /// The resulting [Query] will only return the first [limit] rows.
-  Query<
-    ({
-      Expr<A> category,
-      Expr<B> name,
-      Expr<C> totalQuantitySold,
-      Expr<D> totalRevenuePaise,
-    })
-  >
-  limit(int limit) => _fromPositionalQuery(_asPositionalQuery.limit(limit));
-
-  /// Create a projection of this [Query] using `SELECT` clause.
-  ///
-  /// The [projectionBuilder] **must** return a [Record] where all the
-  /// values are [Expr] objects. If something else is returned you will
-  /// get a [Query] object which doesn't have any methods!
-  ///
-  /// All methods and properties on [Query<T>] are extension methods and
-  /// they are only defined for records `T` where all the values are
-  /// [Expr] objects.
-  Query<T> select<T extends Record>(
-    T Function(
-      ({
-        Expr<A> category,
-        Expr<B> name,
-        Expr<C> totalQuantitySold,
-        Expr<D> totalRevenuePaise,
-      })
-      expr,
-    )
-    projectionBuilder,
-  ) => _asPositionalQuery.select(_wrapBuilder(projectionBuilder));
-
-  /// Filter [Query] using `WHERE` clause.
-  ///
-  /// Returns a [Query] retaining rows from this [Query] where the expression
-  /// returned by [conditionBuilder] evaluates to `true`.
-  Query<
-    ({
-      Expr<A> category,
-      Expr<B> name,
-      Expr<C> totalQuantitySold,
-      Expr<D> totalRevenuePaise,
-    })
-  >
-  where(
-    Expr<bool?> Function(
-      ({
-        Expr<A> category,
-        Expr<B> name,
-        Expr<C> totalQuantitySold,
-        Expr<D> totalRevenuePaise,
-      })
-      expr,
-    )
-    conditionBuilder,
-  ) => _fromPositionalQuery(
-    _asPositionalQuery.where(_wrapBuilder(conditionBuilder)),
-  );
-}
-
-/// Extension methods for building queries projected to a named record.
-extension QueryItemsTotalNamed<A, B>
-    on Query<({Expr<A> items, Expr<B> total})> {
-  Query<(Expr<A>, Expr<B>)> get _asPositionalQuery =>
-      $ForGeneratedCode.renamedRecord(this, (e) => (e.items, e.total));
-
-  static Query<({Expr<A> items, Expr<B> total})> _fromPositionalQuery<A, B>(
-    Query<(Expr<A>, Expr<B>)> query,
-  ) =>
-      $ForGeneratedCode.renamedRecord(query, (e) => (items: e.$1, total: e.$2));
-
-  static T Function(Expr<A> a, Expr<B> b) _wrapBuilder<T, A, B>(
-    T Function(({Expr<A> items, Expr<B> total}) e) builder,
-  ) =>
-      (a, b) => builder((items: a, total: b));
-
-  /// Query the database for rows in this [Query] as a [Stream].
-  Stream<({A items, B total})> stream() async* {
-    yield* _asPositionalQuery.stream().map((e) => (items: e.$1, total: e.$2));
-  }
-
-  /// Query the database for rows in this [Query] as a [List].
-  Future<List<({A items, B total})>> fetch() async => await stream().toList();
-
-  /// Offset [Query] using `OFFSET` clause.
-  ///
-  /// The resulting [Query] will skip the first [offset] rows.
-  Query<({Expr<A> items, Expr<B> total})> offset(int offset) =>
-      _fromPositionalQuery(_asPositionalQuery.offset(offset));
-
-  /// Limit [Query] using `LIMIT` clause.
-  ///
-  /// The resulting [Query] will only return the first [limit] rows.
-  Query<({Expr<A> items, Expr<B> total})> limit(int limit) =>
-      _fromPositionalQuery(_asPositionalQuery.limit(limit));
-
-  /// Create a projection of this [Query] using `SELECT` clause.
-  ///
-  /// The [projectionBuilder] **must** return a [Record] where all the
-  /// values are [Expr] objects. If something else is returned you will
-  /// get a [Query] object which doesn't have any methods!
-  ///
-  /// All methods and properties on [Query<T>] are extension methods and
-  /// they are only defined for records `T` where all the values are
-  /// [Expr] objects.
-  Query<T> select<T extends Record>(
-    T Function(({Expr<A> items, Expr<B> total}) expr) projectionBuilder,
-  ) => _asPositionalQuery.select(_wrapBuilder(projectionBuilder));
-
-  /// Filter [Query] using `WHERE` clause.
-  ///
-  /// Returns a [Query] retaining rows from this [Query] where the expression
-  /// returned by [conditionBuilder] evaluates to `true`.
-  Query<({Expr<A> items, Expr<B> total})> where(
-    Expr<bool?> Function(({Expr<A> items, Expr<B> total}) expr)
     conditionBuilder,
   ) => _fromPositionalQuery(
     _asPositionalQuery.where(_wrapBuilder(conditionBuilder)),
@@ -14216,6 +14469,236 @@ extension QueryItemsTotalTotalAdjustmentTotalClosingStockTotalInTotalOpeningStoc
         Expr<F> totalOpeningStock,
         Expr<G> totalOut,
         Expr<H> totalWastage,
+      })
+      expr,
+    )
+    conditionBuilder,
+  ) => _fromPositionalQuery(
+    _asPositionalQuery.where(_wrapBuilder(conditionBuilder)),
+  );
+}
+
+/// Extension methods for building queries projected to a named record.
+extension QueryBalanceTransactionsNamed<A, B>
+    on Query<({Expr<A> balance, Expr<B> transactions})> {
+  Query<(Expr<A>, Expr<B>)> get _asPositionalQuery =>
+      $ForGeneratedCode.renamedRecord(this, (e) => (e.balance, e.transactions));
+
+  static Query<({Expr<A> balance, Expr<B> transactions})>
+  _fromPositionalQuery<A, B>(Query<(Expr<A>, Expr<B>)> query) =>
+      $ForGeneratedCode.renamedRecord(
+        query,
+        (e) => (balance: e.$1, transactions: e.$2),
+      );
+
+  static T Function(Expr<A> a, Expr<B> b) _wrapBuilder<T, A, B>(
+    T Function(({Expr<A> balance, Expr<B> transactions}) e) builder,
+  ) =>
+      (a, b) => builder((balance: a, transactions: b));
+
+  /// Query the database for rows in this [Query] as a [Stream].
+  Stream<({A balance, B transactions})> stream() async* {
+    yield* _asPositionalQuery.stream().map(
+      (e) => (balance: e.$1, transactions: e.$2),
+    );
+  }
+
+  /// Query the database for rows in this [Query] as a [List].
+  Future<List<({A balance, B transactions})>> fetch() async =>
+      await stream().toList();
+
+  /// Offset [Query] using `OFFSET` clause.
+  ///
+  /// The resulting [Query] will skip the first [offset] rows.
+  Query<({Expr<A> balance, Expr<B> transactions})> offset(int offset) =>
+      _fromPositionalQuery(_asPositionalQuery.offset(offset));
+
+  /// Limit [Query] using `LIMIT` clause.
+  ///
+  /// The resulting [Query] will only return the first [limit] rows.
+  Query<({Expr<A> balance, Expr<B> transactions})> limit(int limit) =>
+      _fromPositionalQuery(_asPositionalQuery.limit(limit));
+
+  /// Create a projection of this [Query] using `SELECT` clause.
+  ///
+  /// The [projectionBuilder] **must** return a [Record] where all the
+  /// values are [Expr] objects. If something else is returned you will
+  /// get a [Query] object which doesn't have any methods!
+  ///
+  /// All methods and properties on [Query<T>] are extension methods and
+  /// they are only defined for records `T` where all the values are
+  /// [Expr] objects.
+  Query<T> select<T extends Record>(
+    T Function(({Expr<A> balance, Expr<B> transactions}) expr)
+    projectionBuilder,
+  ) => _asPositionalQuery.select(_wrapBuilder(projectionBuilder));
+
+  /// Filter [Query] using `WHERE` clause.
+  ///
+  /// Returns a [Query] retaining rows from this [Query] where the expression
+  /// returned by [conditionBuilder] evaluates to `true`.
+  Query<({Expr<A> balance, Expr<B> transactions})> where(
+    Expr<bool?> Function(({Expr<A> balance, Expr<B> transactions}) expr)
+    conditionBuilder,
+  ) => _fromPositionalQuery(
+    _asPositionalQuery.where(_wrapBuilder(conditionBuilder)),
+  );
+}
+
+/// Extension methods for building queries projected to a named record.
+extension QueryDiscountProductIdQuantitySellingPriceTaxRateNamed<A, B, C, D, E>
+    on
+        Query<
+          ({
+            Expr<A> discount,
+            Expr<B> productId,
+            Expr<C> quantity,
+            Expr<D> sellingPrice,
+            Expr<E> taxRate,
+          })
+        > {
+  Query<(Expr<A>, Expr<B>, Expr<C>, Expr<D>, Expr<E>)> get _asPositionalQuery =>
+      $ForGeneratedCode.renamedRecord(
+        this,
+        (e) => (e.discount, e.productId, e.quantity, e.sellingPrice, e.taxRate),
+      );
+
+  static Query<
+    ({
+      Expr<A> discount,
+      Expr<B> productId,
+      Expr<C> quantity,
+      Expr<D> sellingPrice,
+      Expr<E> taxRate,
+    })
+  >
+  _fromPositionalQuery<A, B, C, D, E>(
+    Query<(Expr<A>, Expr<B>, Expr<C>, Expr<D>, Expr<E>)> query,
+  ) => $ForGeneratedCode.renamedRecord(
+    query,
+    (e) => (
+      discount: e.$1,
+      productId: e.$2,
+      quantity: e.$3,
+      sellingPrice: e.$4,
+      taxRate: e.$5,
+    ),
+  );
+
+  static T Function(Expr<A> a, Expr<B> b, Expr<C> c, Expr<D> d, Expr<E> e)
+  _wrapBuilder<T, A, B, C, D, E>(
+    T Function(
+      ({
+        Expr<A> discount,
+        Expr<B> productId,
+        Expr<C> quantity,
+        Expr<D> sellingPrice,
+        Expr<E> taxRate,
+      })
+      e,
+    )
+    builder,
+  ) =>
+      (a, b, c, d, e) => builder((
+        discount: a,
+        productId: b,
+        quantity: c,
+        sellingPrice: d,
+        taxRate: e,
+      ));
+
+  /// Query the database for rows in this [Query] as a [Stream].
+  Stream<({A discount, B productId, C quantity, D sellingPrice, E taxRate})>
+  stream() async* {
+    yield* _asPositionalQuery.stream().map(
+      (e) => (
+        discount: e.$1,
+        productId: e.$2,
+        quantity: e.$3,
+        sellingPrice: e.$4,
+        taxRate: e.$5,
+      ),
+    );
+  }
+
+  /// Query the database for rows in this [Query] as a [List].
+  Future<
+    List<({A discount, B productId, C quantity, D sellingPrice, E taxRate})>
+  >
+  fetch() async => await stream().toList();
+
+  /// Offset [Query] using `OFFSET` clause.
+  ///
+  /// The resulting [Query] will skip the first [offset] rows.
+  Query<
+    ({
+      Expr<A> discount,
+      Expr<B> productId,
+      Expr<C> quantity,
+      Expr<D> sellingPrice,
+      Expr<E> taxRate,
+    })
+  >
+  offset(int offset) => _fromPositionalQuery(_asPositionalQuery.offset(offset));
+
+  /// Limit [Query] using `LIMIT` clause.
+  ///
+  /// The resulting [Query] will only return the first [limit] rows.
+  Query<
+    ({
+      Expr<A> discount,
+      Expr<B> productId,
+      Expr<C> quantity,
+      Expr<D> sellingPrice,
+      Expr<E> taxRate,
+    })
+  >
+  limit(int limit) => _fromPositionalQuery(_asPositionalQuery.limit(limit));
+
+  /// Create a projection of this [Query] using `SELECT` clause.
+  ///
+  /// The [projectionBuilder] **must** return a [Record] where all the
+  /// values are [Expr] objects. If something else is returned you will
+  /// get a [Query] object which doesn't have any methods!
+  ///
+  /// All methods and properties on [Query<T>] are extension methods and
+  /// they are only defined for records `T` where all the values are
+  /// [Expr] objects.
+  Query<T> select<T extends Record>(
+    T Function(
+      ({
+        Expr<A> discount,
+        Expr<B> productId,
+        Expr<C> quantity,
+        Expr<D> sellingPrice,
+        Expr<E> taxRate,
+      })
+      expr,
+    )
+    projectionBuilder,
+  ) => _asPositionalQuery.select(_wrapBuilder(projectionBuilder));
+
+  /// Filter [Query] using `WHERE` clause.
+  ///
+  /// Returns a [Query] retaining rows from this [Query] where the expression
+  /// returned by [conditionBuilder] evaluates to `true`.
+  Query<
+    ({
+      Expr<A> discount,
+      Expr<B> productId,
+      Expr<C> quantity,
+      Expr<D> sellingPrice,
+      Expr<E> taxRate,
+    })
+  >
+  where(
+    Expr<bool?> Function(
+      ({
+        Expr<A> discount,
+        Expr<B> productId,
+        Expr<C> quantity,
+        Expr<D> sellingPrice,
+        Expr<E> taxRate,
       })
       expr,
     )

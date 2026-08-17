@@ -227,7 +227,7 @@ return $default(_that.id,_that.merchantId,_that.storeId,_that.orderReference,_th
 @JsonSerializable()
 
 class _Order implements Order {
-  const _Order({required this.id, required this.merchantId, required this.storeId, required this.orderReference, required this.billNo, required this.source, required this.type, required this.status, @JsonKey(unknownEnumValue: PaymentStatus.pending) required this.paymentStatus, required this.paymentMethod, required this.subtotal, this.discountTotal = 0.0, this.walletDeduction = 0.0, required this.taxTotal, required this.grandTotal, this.terminalCode, required final  List<OrderItem> items, required this.createdAt, required this.updatedAt}): _items = items;
+  const _Order({required this.id, required this.merchantId, required this.storeId, required this.orderReference, required this.billNo, required this.source, required this.type, required this.status, @JsonKey(unknownEnumValue: PaymentStatus.pending) required this.paymentStatus, required this.paymentMethod, required this.subtotal, this.discountTotal = 0.0, this.walletDeduction = 0.0, required this.taxTotal, required this.grandTotal, this.terminalCode, required List<OrderItem> items, required this.createdAt, required this.updatedAt}): _items = items;
   factory _Order.fromJson(Map<String, dynamic> json) => _$OrderFromJson(json);
 
 @override final  String id;
