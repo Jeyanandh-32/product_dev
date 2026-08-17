@@ -2,9 +2,7 @@ name: product_dev
 publish_to: none
 
 environment:
-  sdk: ^3.12.2
-
-
+  sdk: ^3.13.0
 
 workspace:
   - packages/models
@@ -17,7 +15,7 @@ workspace:
   - customer
 
 dev_dependencies:
-  melos: ^7.5.1
+  melos: ^8.3.0
 
 melos:
   scripts:

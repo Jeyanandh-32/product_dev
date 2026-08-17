@@ -4,8 +4,8 @@ publish_to: 'none'
 version: 1.0.0+1
 
 environment:
-  sdk: ^3.12.2
-  flutter: '>=3.44.0'
+  sdk: ^3.13.0
+  flutter: '>=3.47.0'
 
 resolution: workspace
 
@@ -27,8 +27,8 @@ dependencies:
   forui: ^0.25.0
   styled_divider: ^1.0.5
   signals_flutter: ^7.1.0
-  flutter_secure_storage: ^10.3.1
-  go_router: ^14.0.1
+  flutter_secure_storage: ^11.0.0
+  go_router: ^14.8.1
   mix: ^2.1.0
   google_fonts: ^8.1.0
   gap: ^3.0.1
@@ -41,7 +41,7 @@ dev_dependencies:
     sdk: flutter
 
   flutter_lints: ^6.0.0
-  build_runner: ^2.15.0
+  build_runner: ^2.15.1
   freezed: ^3.2.5
   json_serializable: ^6.14.0
 
