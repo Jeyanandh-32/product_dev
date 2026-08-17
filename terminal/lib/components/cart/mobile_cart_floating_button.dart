@@ -1,11 +1,12 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:forui/forui.dart';
+import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mix/mix.dart';
 import 'package:signals_flutter/signals_flutter.dart';
 import 'package:terminal/signals/cart_signal.dart';
 
-/// Floating checkout action bar button styled with customer web monochrome look.
+/// Floating checkout action bar button styled with Mix [PressableBox].
 class MobileCartFloatingButton extends SignalWidget {
   const MobileCartFloatingButton({super.key});
 
@@ -22,62 +23,62 @@ class MobileCartFloatingButton extends SignalWidget {
         child: MouseRegion(
           cursor: SystemMouseCursors.click,
           child: PressableBox(
-            onPress: () => context.push('/cart'),
+            onPress: () => GoRouter.maybeOf(context)?.push('/cart'),
             style: BoxStyler()
-                .color(Colors.black)
+                .color(const Color(0xFF000000))
                 .paddingAll(14)
-                .borderRadiusAll(Radius.circular(16))
-                .borderAll(color: Colors.grey.shade800)
+                .borderRadiusAll(const Radius.circular(16))
+                .borderAll(color: const Color(0xFF1E293B))
                 .shadowOnly(
-                  color: Colors.black.withValues(alpha: 0.25),
+                  color: const Color(0x40000000),
                   offset: const Offset(0, 8),
                   blurRadius: 20,
                 ),
-            child: RowBox(
-              style: FlexBoxStyler()
-                  .crossAxisAlignment(CrossAxisAlignment.center)
-                  .mainAxisAlignment(MainAxisAlignment.spaceBetween),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                RowBox(
-                  style: FlexBoxStyler().spacing(10).crossAxisAlignment(CrossAxisAlignment.center),
+                Row(
                   children: [
                     Box(
                       style: BoxStyler()
-                          .color(Colors.white)
+                          .color(const Color(0xFFFFFFFF))
                           .paddingX(9)
                           .paddingY(3)
-                          .borderRadiusAll(Radius.circular(999)),
+                          .borderRadiusAll(const Radius.circular(999)),
                       child: StyledText(
                         '${cart.orderQuantity} ${cart.orderQuantity == 1 ? 'item' : 'items'}',
                         style: TextStyler()
-                            .color(Colors.black)
+                            .color(const Color(0xFF000000))
                             .fontSize(12)
                             .fontWeight(.w800),
                       ),
                     ),
+                    const Gap(10),
                     StyledText(
                       '₹${cart.grandTotal.toStringAsFixed(2)}',
                       style: TextStyler()
-                          .color(Colors.white)
-                          .fontSize(16)
-                          .fontWeight(.w800),
+                          .color(const Color(0xFFFFFFFF))
+                          .fontSize(15)
+                          .fontWeight(.w900),
                     ),
                   ],
                 ),
-                RowBox(
-                  style: FlexBoxStyler().spacing(6).crossAxisAlignment(CrossAxisAlignment.center),
+                const Row(
                   children: [
-                    StyledText(
+                    Text(
                       'View Order',
-                      style: TextStyler()
-                          .color(Colors.white)
-                          .fontSize(14)
-                          .fontWeight(.w700),
+                      style: TextStyle(
+                        color: Color(0xFFFFFFFF),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w800,
+                      ),
                     ),
-                    const Icon(
+                    Gap(6),
+                    Icon(
                       FLucideIcons.arrowRight,
-                      color: Colors.white,
                       size: 16,
+                      color: Color(0xFFFFFFFF),
                     ),
                   ],
                 ),

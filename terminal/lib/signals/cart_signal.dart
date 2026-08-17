@@ -9,6 +9,7 @@ export 'package:terminal/models/cart_state.dart';
 
 final paymentModeSignal = signal<PaymentMethod>(PaymentMethod.cash);
 final discountInputSignal = signal<double>(0.0);
+final printBillSignal = signal<bool>(true);
 final cartSignal = signal<CartState>(CartState.initial());
 
 abstract final class CartController {
@@ -69,6 +70,10 @@ abstract final class CartController {
   static void setPaymentMode(PaymentMethod mode) {
     paymentModeSignal.value = mode;
     _updateState(cartSignal.value.items);
+  }
+
+  static void togglePrintBill([bool? value]) {
+    printBillSignal.value = value ?? !printBillSignal.value;
   }
 
   static void clear() {

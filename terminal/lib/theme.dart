@@ -6,7 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 ///
 /// - Primary: Pure Solid Black `#000000` / `#0F172A`
 /// - Primary Foreground: Pure White `#FFFFFF`
-/// - Background: Pure Crisp White `#FFFFFF` & Soft Neutral `#F8FAFC`
+/// - Background: Soft Neutral `#F8FAFC` & Pure White `#FFFFFF`
 /// - Surface: `#FFFFFF`
 /// - Border: Crisp Light Gray `#E2E8F0` / `#E5E7EB`
 /// - Typography: GoogleFonts Manrope (sans) & Arizonia (script branding)

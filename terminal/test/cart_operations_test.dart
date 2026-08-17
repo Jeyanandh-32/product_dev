@@ -99,5 +99,15 @@ void main() {
       expect(cartSignal.value.items.isEmpty, isTrue);
       expect(cartSignal.value.grandTotal, 0.0);
     });
+
+    test('Print bill toggle updates state cleanly', () {
+      expect(printBillSignal.value, isTrue);
+
+      CartController.togglePrintBill(false);
+      expect(printBillSignal.value, isFalse);
+
+      CartController.togglePrintBill();
+      expect(printBillSignal.value, isTrue);
+    });
   });
 }

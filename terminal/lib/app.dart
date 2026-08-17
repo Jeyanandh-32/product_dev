@@ -15,10 +15,18 @@ class MyApp extends StatelessWidget {
         title: 'POS Terminal',
         debugShowCheckedModeBanner: false,
         theme: TerminalTheme.light().toApproximateMaterialTheme(),
+        scrollBehavior: const MaterialScrollBehavior().copyWith(
+          scrollbars: false,
+        ),
         routerConfig: appRouter,
         builder: (context, child) => FTheme(
           data: TerminalTheme.light(),
-          child: FToaster(child: child ?? const SizedBox.shrink()),
+          child: FToaster(
+            child: Material(
+              type: MaterialType.transparency,
+              child: child ?? const SizedBox.shrink(),
+            ),
+          ),
         ),
       ),
     );

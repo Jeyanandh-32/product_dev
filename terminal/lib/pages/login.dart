@@ -1,13 +1,13 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:forui/forui.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mix/mix.dart';
-import 'package:terminal/components/terminal_login_form_card.dart';
+import 'package:terminal/components/components.dart';
 import 'package:terminal/exceptions/api_exception.dart';
 import 'package:terminal/signals/auth_signal.dart';
 
-/// Terminal device authentication page with customer app brand styling.
+/// Terminal device authentication page with customer app brand styling using Forui.
 class Login extends StatefulWidget {
   const Login({super.key});
 
@@ -16,7 +16,8 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  static final String _arizoniaFontFamily = GoogleFonts.arizonia().fontFamily!;
+  static final String _arizoniaFontFamily =
+      GoogleFonts.arizonia().fontFamily ?? 'Arizonia';
   final formKey = GlobalKey<FormState>();
   final codeController = TextEditingController();
   final passwordController = TextEditingController();
@@ -54,7 +55,10 @@ class _LoginState extends State<Login> {
           ),
           title: const Text(
             'Authentication Error',
-            style: TextStyle(color: Color(0xFFDC2626), fontWeight: FontWeight.bold),
+            style: TextStyle(
+              color: Color(0xFFDC2626),
+              fontWeight: FontWeight.bold,
+            ),
           ),
           description: Text(message),
         );
@@ -70,40 +74,33 @@ class _LoginState extends State<Login> {
   Widget build(BuildContext context) {
     final theme = context.theme;
 
-    return Scaffold(
-      backgroundColor: theme.colors.background,
-      body: Center(
-        child: Box(
-          style: BoxStyler()
-              .maxWidth(480)
-              .onMobile(BoxStyler().marginX(20)),
-          child: SingleChildScrollView(
-            child: ColumnBox(
+    return FScaffold(
+      childPad: false,
+      child: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 440),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 StyledText(
                   'Branding',
                   style: TextStyler()
-                      .fontSize(44)
-                      .color(theme.colors.primary)
-                  .fontFamily(_arizoniaFontFamily),
-                ),
-                const Gap(12),
-                StyledText(
-                  'Sign in to your terminal',
-                  style: TextStyler()
-                      .fontSize(28)
-                      .fontWeight(.w800)
-                      .color(Colors.black),
+                      .fontSize(56)
+                      .fontFamily(_arizoniaFontFamily)
+                      .color(theme.colors.primary),
                 ),
                 const Gap(8),
                 StyledText(
-                  'Enter your device credentials to access the terminal\nand manage instant checkout operations.',
+                  'Cashier POS Portal',
                   style: TextStyler()
-                      .textAlign(.center)
                       .fontSize(14)
-                      .color(Colors.grey.shade600),
+                      .fontWeight(.w600)
+                      .color(const Color(0xFF6B7280)),
                 ),
-                const Gap(28),
+                const Gap(32),
                 TerminalLoginFormCard(
                   formKey: formKey,
                   codeController: codeController,
