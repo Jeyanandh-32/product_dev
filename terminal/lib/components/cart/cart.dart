@@ -17,10 +17,11 @@ class Cart extends SignalWidget {
   @override
   Widget build(BuildContext context) {
     final theme = context.theme;
+    final breakpoints = theme.breakpoints;
     final screenWidth = MediaQuery.sizeOf(context).width;
     final cartWidth = isDrawerMode
         ? double.infinity
-        : screenWidth < 1200
+        : screenWidth < breakpoints.xl
             ? 370.0
             : screenWidth * .38;
 

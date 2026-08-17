@@ -14,7 +14,8 @@ class TerminalTheme {
   const TerminalTheme._();
 
   static FThemeData light([bool touch = true]) {
-    final baseTheme = touch ? FTheme.neutral.light.touch : FTheme.neutral.light.desktop;
+    final baseTheme =
+        touch ? FTheme.neutral.light.touch : FTheme.neutral.light.desktop;
 
     final colors = baseTheme.colors.copyWith(
       primary: const Color(0xFF000000),
@@ -38,9 +39,35 @@ class TerminalTheme {
       ),
     );
 
+    final circularProgressStyles = FCircularProgressSizeStyles(
+      FVariants(
+        FCircularProgressStyle(
+          iconStyle: const IconThemeData(color: Color(0xFF000000), size: 20),
+        ),
+        variants: {
+          [.xs]: FCircularProgressStyle(
+            iconStyle: const IconThemeData(color: Color(0xFF000000), size: 12),
+          ),
+          [.sm]: FCircularProgressStyle(
+            iconStyle: const IconThemeData(color: Color(0xFF000000), size: 16),
+          ),
+          [.md]: FCircularProgressStyle(
+            iconStyle: const IconThemeData(color: Color(0xFF000000), size: 20),
+          ),
+          [.lg]: FCircularProgressStyle(
+            iconStyle: const IconThemeData(color: Color(0xFF000000), size: 28),
+          ),
+          [.xl]: FCircularProgressStyle(
+            iconStyle: const IconThemeData(color: Color(0xFF000000), size: 36),
+          ),
+        },
+      ),
+    );
+
     return FThemeData(
       colors: colors,
       typography: typography,
+      circularProgressStyles: circularProgressStyles,
       style: baseTheme.style,
       touch: touch,
     );
