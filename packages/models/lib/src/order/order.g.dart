@@ -27,6 +27,9 @@ _Order _$OrderFromJson(Map<String, dynamic> json) => _Order(
   taxTotal: (json['taxTotal'] as num).toDouble(),
   grandTotal: (json['grandTotal'] as num).toDouble(),
   terminalCode: json['terminalCode'] as String?,
+  customer: json['customer'] == null
+      ? null
+      : Customer.fromJson(json['customer'] as Map<String, dynamic>),
   items: (json['items'] as List<dynamic>)
       .map((e) => OrderItem.fromJson(e as Map<String, dynamic>))
       .toList(),
@@ -51,6 +54,7 @@ Map<String, dynamic> _$OrderToJson(_Order instance) => <String, dynamic>{
   'taxTotal': instance.taxTotal,
   'grandTotal': instance.grandTotal,
   'terminalCode': instance.terminalCode,
+  'customer': instance.customer,
   'items': instance.items,
   'createdAt': instance.createdAt.toIso8601String(),
   'updatedAt': instance.updatedAt.toIso8601String(),

@@ -5318,11 +5318,6 @@
       border-color: transparent;
     }
   }
-  .disabled\:bg-neutral-900 {
-    &:disabled {
-      background-color: var(--color-neutral-900);
-    }
-  }
   .disabled\:bg-primary {
     &:disabled {
       background-color: var(--color-primary);
@@ -5331,16 +5326,6 @@
   .disabled\:text-primary-content {
     &:disabled {
       color: var(--color-primary-content);
-    }
-  }
-  .disabled\:text-white {
-    &:disabled {
-      color: var(--color-white);
-    }
-  }
-  .disabled\:opacity-80 {
-    &:disabled {
-      opacity: 80%;
     }
   }
   .disabled\:opacity-85 {

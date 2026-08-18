@@ -1,6 +1,10 @@
+import 'package:backend/database/schema.dart';
 import 'package:backend/extensions/order_row_extension.dart';
 import 'package:backend/extensions/request_context_extension.dart';
+import 'package:backend/repositories/customer_repository.dart';
+import 'package:backend/repositories/order_item_repository.dart';
 import 'package:backend/repositories/order_repository.dart';
+import 'package:backend/repositories/product_repository.dart';
 import 'package:backend/utils/responses.dart';
 import 'package:dart_frog/dart_frog.dart';
 
@@ -48,6 +52,9 @@ Future<Response> _onGet(RequestContext context) async {
   }
 
   final orderRepo = context.read<OrderRepository>();
+  final itemRepo = context.read<OrderItemRepository>();
+  final productRepo = context.read<ProductRepository>();
+  final customerRepo = context.read<CustomerRepository>();
   final tokenPayload = context.tokenPayload;
 
   try {
@@ -81,9 +88,28 @@ Future<Response> _onGet(RequestContext context) async {
       toDate: toDate,
     );
 
-    final orders = orderRows
-        .map((orderRow) => orderRow.toOrder(const []).toJson())
-        .toList();
+    final orders = <Map<String, dynamic>>[];
+    for (final orderRow in orderRows) {
+      final itemRows = await itemRepo.getAllForOrder(orderRow.id);
+      final productRowsMap = <String, ProductRow>{};
+      for (final item in itemRows) {
+        if (!productRowsMap.containsKey(item.productId)) {
+          final productResult = await productRepo.getById(item.productId);
+          if (productResult != null) {
+            productRowsMap[item.productId] = productResult.$1;
+          }
+        }
+      }
+      final customerRow = orderRow.customerId != null
+          ? await customerRepo.getById(orderRow.customerId!)
+          : null;
+      orders.add(orderRow.toOrder(
+        itemRows,
+        productRows: productRowsMap,
+        customerRow: customerRow,
+      ).toJson());
+    }
+
     final totalPages = (total / size).ceil();
 
     return success(

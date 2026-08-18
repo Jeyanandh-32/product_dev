@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Order {
 
- String get id; String get merchantId; String get storeId; String get orderReference; int get billNo; OrderSource get source; OrderType get type; OrderStatus get status;@JsonKey(unknownEnumValue: PaymentStatus.pending) PaymentStatus get paymentStatus; PaymentMethod get paymentMethod; double get subtotal; double get discountTotal; double get walletDeduction; double get taxTotal; double get grandTotal; String? get terminalCode; List<OrderItem> get items; DateTime get createdAt; DateTime get updatedAt;
+ String get id; String get merchantId; String get storeId; String get orderReference; int get billNo; OrderSource get source; OrderType get type; OrderStatus get status;@JsonKey(unknownEnumValue: PaymentStatus.pending) PaymentStatus get paymentStatus; PaymentMethod get paymentMethod; double get subtotal; double get discountTotal; double get walletDeduction; double get taxTotal; double get grandTotal; String? get terminalCode; Customer? get customer; List<OrderItem> get items; DateTime get createdAt; DateTime get updatedAt;
 /// Create a copy of Order
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $OrderCopyWith<Order> get copyWith => _$OrderCopyWithImpl<Order>(this as Order, 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Order&&(identical(other.id, id) || other.id == id)&&(identical(other.merchantId, merchantId) || other.merchantId == merchantId)&&(identical(other.storeId, storeId) || other.storeId == storeId)&&(identical(other.orderReference, orderReference) || other.orderReference == orderReference)&&(identical(other.billNo, billNo) || other.billNo == billNo)&&(identical(other.source, source) || other.source == source)&&(identical(other.type, type) || other.type == type)&&(identical(other.status, status) || other.status == status)&&(identical(other.paymentStatus, paymentStatus) || other.paymentStatus == paymentStatus)&&(identical(other.paymentMethod, paymentMethod) || other.paymentMethod == paymentMethod)&&(identical(other.subtotal, subtotal) || other.subtotal == subtotal)&&(identical(other.discountTotal, discountTotal) || other.discountTotal == discountTotal)&&(identical(other.walletDeduction, walletDeduction) || other.walletDeduction == walletDeduction)&&(identical(other.taxTotal, taxTotal) || other.taxTotal == taxTotal)&&(identical(other.grandTotal, grandTotal) || other.grandTotal == grandTotal)&&(identical(other.terminalCode, terminalCode) || other.terminalCode == terminalCode)&&const DeepCollectionEquality().equals(other.items, items)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Order&&(identical(other.id, id) || other.id == id)&&(identical(other.merchantId, merchantId) || other.merchantId == merchantId)&&(identical(other.storeId, storeId) || other.storeId == storeId)&&(identical(other.orderReference, orderReference) || other.orderReference == orderReference)&&(identical(other.billNo, billNo) || other.billNo == billNo)&&(identical(other.source, source) || other.source == source)&&(identical(other.type, type) || other.type == type)&&(identical(other.status, status) || other.status == status)&&(identical(other.paymentStatus, paymentStatus) || other.paymentStatus == paymentStatus)&&(identical(other.paymentMethod, paymentMethod) || other.paymentMethod == paymentMethod)&&(identical(other.subtotal, subtotal) || other.subtotal == subtotal)&&(identical(other.discountTotal, discountTotal) || other.discountTotal == discountTotal)&&(identical(other.walletDeduction, walletDeduction) || other.walletDeduction == walletDeduction)&&(identical(other.taxTotal, taxTotal) || other.taxTotal == taxTotal)&&(identical(other.grandTotal, grandTotal) || other.grandTotal == grandTotal)&&(identical(other.terminalCode, terminalCode) || other.terminalCode == terminalCode)&&(identical(other.customer, customer) || other.customer == customer)&&const DeepCollectionEquality().equals(other.items, items)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hashAll([runtimeType,id,merchantId,storeId,orderReference,billNo,source,type,status,paymentStatus,paymentMethod,subtotal,discountTotal,walletDeduction,taxTotal,grandTotal,terminalCode,const DeepCollectionEquality().hash(items),createdAt,updatedAt]);
+int get hashCode => Object.hashAll([runtimeType,id,merchantId,storeId,orderReference,billNo,source,type,status,paymentStatus,paymentMethod,subtotal,discountTotal,walletDeduction,taxTotal,grandTotal,terminalCode,customer,const DeepCollectionEquality().hash(items),createdAt,updatedAt]);
 
 @override
 String toString() {
-  return 'Order(id: $id, merchantId: $merchantId, storeId: $storeId, orderReference: $orderReference, billNo: $billNo, source: $source, type: $type, status: $status, paymentStatus: $paymentStatus, paymentMethod: $paymentMethod, subtotal: $subtotal, discountTotal: $discountTotal, walletDeduction: $walletDeduction, taxTotal: $taxTotal, grandTotal: $grandTotal, terminalCode: $terminalCode, items: $items, createdAt: $createdAt, updatedAt: $updatedAt)';
+  return 'Order(id: $id, merchantId: $merchantId, storeId: $storeId, orderReference: $orderReference, billNo: $billNo, source: $source, type: $type, status: $status, paymentStatus: $paymentStatus, paymentMethod: $paymentMethod, subtotal: $subtotal, discountTotal: $discountTotal, walletDeduction: $walletDeduction, taxTotal: $taxTotal, grandTotal: $grandTotal, terminalCode: $terminalCode, customer: $customer, items: $items, createdAt: $createdAt, updatedAt: $updatedAt)';
 }
 
 
@@ -48,11 +48,11 @@ abstract mixin class $OrderCopyWith<$Res>  {
   factory $OrderCopyWith(Order value, $Res Function(Order) _then) = _$OrderCopyWithImpl;
 @useResult
 $Res call({
- String id, String merchantId, String storeId, String orderReference, int billNo, OrderSource source, OrderType type, OrderStatus status,@JsonKey(unknownEnumValue: PaymentStatus.pending) PaymentStatus paymentStatus, PaymentMethod paymentMethod, double subtotal, double discountTotal, double walletDeduction, double taxTotal, double grandTotal, String? terminalCode, List<OrderItem> items, DateTime createdAt, DateTime updatedAt
+ String id, String merchantId, String storeId, String orderReference, int billNo, OrderSource source, OrderType type, OrderStatus status,@JsonKey(unknownEnumValue: PaymentStatus.pending) PaymentStatus paymentStatus, PaymentMethod paymentMethod, double subtotal, double discountTotal, double walletDeduction, double taxTotal, double grandTotal, String? terminalCode, Customer? customer, List<OrderItem> items, DateTime createdAt, DateTime updatedAt
 });
 
 
-
+$CustomerCopyWith<$Res>? get customer;
 
 }
 /// @nodoc
@@ -65,7 +65,7 @@ class _$OrderCopyWithImpl<$Res>
 
 /// Create a copy of Order
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? merchantId = null,Object? storeId = null,Object? orderReference = null,Object? billNo = null,Object? source = null,Object? type = null,Object? status = null,Object? paymentStatus = null,Object? paymentMethod = null,Object? subtotal = null,Object? discountTotal = null,Object? walletDeduction = null,Object? taxTotal = null,Object? grandTotal = null,Object? terminalCode = freezed,Object? items = null,Object? createdAt = null,Object? updatedAt = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? merchantId = null,Object? storeId = null,Object? orderReference = null,Object? billNo = null,Object? source = null,Object? type = null,Object? status = null,Object? paymentStatus = null,Object? paymentMethod = null,Object? subtotal = null,Object? discountTotal = null,Object? walletDeduction = null,Object? taxTotal = null,Object? grandTotal = null,Object? terminalCode = freezed,Object? customer = freezed,Object? items = null,Object? createdAt = null,Object? updatedAt = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,merchantId: null == merchantId ? _self.merchantId : merchantId // ignore: cast_nullable_to_non_nullable
@@ -83,13 +83,26 @@ as double,walletDeduction: null == walletDeduction ? _self.walletDeduction : wal
 as double,taxTotal: null == taxTotal ? _self.taxTotal : taxTotal // ignore: cast_nullable_to_non_nullable
 as double,grandTotal: null == grandTotal ? _self.grandTotal : grandTotal // ignore: cast_nullable_to_non_nullable
 as double,terminalCode: freezed == terminalCode ? _self.terminalCode : terminalCode // ignore: cast_nullable_to_non_nullable
-as String?,items: null == items ? _self.items : items // ignore: cast_nullable_to_non_nullable
+as String?,customer: freezed == customer ? _self.customer : customer // ignore: cast_nullable_to_non_nullable
+as Customer?,items: null == items ? _self.items : items // ignore: cast_nullable_to_non_nullable
 as List<OrderItem>,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
 as DateTime,
   ));
 }
+/// Create a copy of Order
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$CustomerCopyWith<$Res>? get customer {
+    if (_self.customer == null) {
+    return null;
+  }
 
+  return $CustomerCopyWith<$Res>(_self.customer!, (value) {
+    return _then(_self.copyWith(customer: value));
+  });
+}
 }
 
 
@@ -171,10 +184,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String merchantId,  String storeId,  String orderReference,  int billNo,  OrderSource source,  OrderType type,  OrderStatus status, @JsonKey(unknownEnumValue: PaymentStatus.pending)  PaymentStatus paymentStatus,  PaymentMethod paymentMethod,  double subtotal,  double discountTotal,  double walletDeduction,  double taxTotal,  double grandTotal,  String? terminalCode,  List<OrderItem> items,  DateTime createdAt,  DateTime updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String merchantId,  String storeId,  String orderReference,  int billNo,  OrderSource source,  OrderType type,  OrderStatus status, @JsonKey(unknownEnumValue: PaymentStatus.pending)  PaymentStatus paymentStatus,  PaymentMethod paymentMethod,  double subtotal,  double discountTotal,  double walletDeduction,  double taxTotal,  double grandTotal,  String? terminalCode,  Customer? customer,  List<OrderItem> items,  DateTime createdAt,  DateTime updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Order() when $default != null:
-return $default(_that.id,_that.merchantId,_that.storeId,_that.orderReference,_that.billNo,_that.source,_that.type,_that.status,_that.paymentStatus,_that.paymentMethod,_that.subtotal,_that.discountTotal,_that.walletDeduction,_that.taxTotal,_that.grandTotal,_that.terminalCode,_that.items,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.merchantId,_that.storeId,_that.orderReference,_that.billNo,_that.source,_that.type,_that.status,_that.paymentStatus,_that.paymentMethod,_that.subtotal,_that.discountTotal,_that.walletDeduction,_that.taxTotal,_that.grandTotal,_that.terminalCode,_that.customer,_that.items,_that.createdAt,_that.updatedAt);case _:
   return orElse();
 
 }
@@ -192,10 +205,10 @@ return $default(_that.id,_that.merchantId,_that.storeId,_that.orderReference,_th
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String merchantId,  String storeId,  String orderReference,  int billNo,  OrderSource source,  OrderType type,  OrderStatus status, @JsonKey(unknownEnumValue: PaymentStatus.pending)  PaymentStatus paymentStatus,  PaymentMethod paymentMethod,  double subtotal,  double discountTotal,  double walletDeduction,  double taxTotal,  double grandTotal,  String? terminalCode,  List<OrderItem> items,  DateTime createdAt,  DateTime updatedAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String merchantId,  String storeId,  String orderReference,  int billNo,  OrderSource source,  OrderType type,  OrderStatus status, @JsonKey(unknownEnumValue: PaymentStatus.pending)  PaymentStatus paymentStatus,  PaymentMethod paymentMethod,  double subtotal,  double discountTotal,  double walletDeduction,  double taxTotal,  double grandTotal,  String? terminalCode,  Customer? customer,  List<OrderItem> items,  DateTime createdAt,  DateTime updatedAt)  $default,) {final _that = this;
 switch (_that) {
 case _Order():
-return $default(_that.id,_that.merchantId,_that.storeId,_that.orderReference,_that.billNo,_that.source,_that.type,_that.status,_that.paymentStatus,_that.paymentMethod,_that.subtotal,_that.discountTotal,_that.walletDeduction,_that.taxTotal,_that.grandTotal,_that.terminalCode,_that.items,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.merchantId,_that.storeId,_that.orderReference,_that.billNo,_that.source,_that.type,_that.status,_that.paymentStatus,_that.paymentMethod,_that.subtotal,_that.discountTotal,_that.walletDeduction,_that.taxTotal,_that.grandTotal,_that.terminalCode,_that.customer,_that.items,_that.createdAt,_that.updatedAt);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -212,10 +225,10 @@ return $default(_that.id,_that.merchantId,_that.storeId,_that.orderReference,_th
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String merchantId,  String storeId,  String orderReference,  int billNo,  OrderSource source,  OrderType type,  OrderStatus status, @JsonKey(unknownEnumValue: PaymentStatus.pending)  PaymentStatus paymentStatus,  PaymentMethod paymentMethod,  double subtotal,  double discountTotal,  double walletDeduction,  double taxTotal,  double grandTotal,  String? terminalCode,  List<OrderItem> items,  DateTime createdAt,  DateTime updatedAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String merchantId,  String storeId,  String orderReference,  int billNo,  OrderSource source,  OrderType type,  OrderStatus status, @JsonKey(unknownEnumValue: PaymentStatus.pending)  PaymentStatus paymentStatus,  PaymentMethod paymentMethod,  double subtotal,  double discountTotal,  double walletDeduction,  double taxTotal,  double grandTotal,  String? terminalCode,  Customer? customer,  List<OrderItem> items,  DateTime createdAt,  DateTime updatedAt)?  $default,) {final _that = this;
 switch (_that) {
 case _Order() when $default != null:
-return $default(_that.id,_that.merchantId,_that.storeId,_that.orderReference,_that.billNo,_that.source,_that.type,_that.status,_that.paymentStatus,_that.paymentMethod,_that.subtotal,_that.discountTotal,_that.walletDeduction,_that.taxTotal,_that.grandTotal,_that.terminalCode,_that.items,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.merchantId,_that.storeId,_that.orderReference,_that.billNo,_that.source,_that.type,_that.status,_that.paymentStatus,_that.paymentMethod,_that.subtotal,_that.discountTotal,_that.walletDeduction,_that.taxTotal,_that.grandTotal,_that.terminalCode,_that.customer,_that.items,_that.createdAt,_that.updatedAt);case _:
   return null;
 
 }
@@ -227,7 +240,7 @@ return $default(_that.id,_that.merchantId,_that.storeId,_that.orderReference,_th
 @JsonSerializable()
 
 class _Order implements Order {
-  const _Order({required this.id, required this.merchantId, required this.storeId, required this.orderReference, required this.billNo, required this.source, required this.type, required this.status, @JsonKey(unknownEnumValue: PaymentStatus.pending) required this.paymentStatus, required this.paymentMethod, required this.subtotal, this.discountTotal = 0.0, this.walletDeduction = 0.0, required this.taxTotal, required this.grandTotal, this.terminalCode, required List<OrderItem> items, required this.createdAt, required this.updatedAt}): _items = items;
+  const _Order({required this.id, required this.merchantId, required this.storeId, required this.orderReference, required this.billNo, required this.source, required this.type, required this.status, @JsonKey(unknownEnumValue: PaymentStatus.pending) required this.paymentStatus, required this.paymentMethod, required this.subtotal, this.discountTotal = 0.0, this.walletDeduction = 0.0, required this.taxTotal, required this.grandTotal, this.terminalCode, this.customer, required this.items, required this.createdAt, required this.updatedAt});
   factory _Order.fromJson(Map<String, dynamic> json) => _$OrderFromJson(json);
 
 @override final  String id;
@@ -246,13 +259,8 @@ class _Order implements Order {
 @override final  double taxTotal;
 @override final  double grandTotal;
 @override final  String? terminalCode;
- final  List<OrderItem> _items;
-@override List<OrderItem> get items {
-  if (_items is EqualUnmodifiableListView) return _items;
-  // ignore: implicit_dynamic_type
-  return EqualUnmodifiableListView(_items);
-}
-
+@override final  Customer? customer;
+@override final  List<OrderItem> items;
 @override final  DateTime createdAt;
 @override final  DateTime updatedAt;
 
@@ -269,16 +277,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Order&&(identical(other.id, id) || other.id == id)&&(identical(other.merchantId, merchantId) || other.merchantId == merchantId)&&(identical(other.storeId, storeId) || other.storeId == storeId)&&(identical(other.orderReference, orderReference) || other.orderReference == orderReference)&&(identical(other.billNo, billNo) || other.billNo == billNo)&&(identical(other.source, source) || other.source == source)&&(identical(other.type, type) || other.type == type)&&(identical(other.status, status) || other.status == status)&&(identical(other.paymentStatus, paymentStatus) || other.paymentStatus == paymentStatus)&&(identical(other.paymentMethod, paymentMethod) || other.paymentMethod == paymentMethod)&&(identical(other.subtotal, subtotal) || other.subtotal == subtotal)&&(identical(other.discountTotal, discountTotal) || other.discountTotal == discountTotal)&&(identical(other.walletDeduction, walletDeduction) || other.walletDeduction == walletDeduction)&&(identical(other.taxTotal, taxTotal) || other.taxTotal == taxTotal)&&(identical(other.grandTotal, grandTotal) || other.grandTotal == grandTotal)&&(identical(other.terminalCode, terminalCode) || other.terminalCode == terminalCode)&&const DeepCollectionEquality().equals(other._items, _items)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Order&&(identical(other.id, id) || other.id == id)&&(identical(other.merchantId, merchantId) || other.merchantId == merchantId)&&(identical(other.storeId, storeId) || other.storeId == storeId)&&(identical(other.orderReference, orderReference) || other.orderReference == orderReference)&&(identical(other.billNo, billNo) || other.billNo == billNo)&&(identical(other.source, source) || other.source == source)&&(identical(other.type, type) || other.type == type)&&(identical(other.status, status) || other.status == status)&&(identical(other.paymentStatus, paymentStatus) || other.paymentStatus == paymentStatus)&&(identical(other.paymentMethod, paymentMethod) || other.paymentMethod == paymentMethod)&&(identical(other.subtotal, subtotal) || other.subtotal == subtotal)&&(identical(other.discountTotal, discountTotal) || other.discountTotal == discountTotal)&&(identical(other.walletDeduction, walletDeduction) || other.walletDeduction == walletDeduction)&&(identical(other.taxTotal, taxTotal) || other.taxTotal == taxTotal)&&(identical(other.grandTotal, grandTotal) || other.grandTotal == grandTotal)&&(identical(other.terminalCode, terminalCode) || other.terminalCode == terminalCode)&&(identical(other.customer, customer) || other.customer == customer)&&const DeepCollectionEquality().equals(other.items, items)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hashAll([runtimeType,id,merchantId,storeId,orderReference,billNo,source,type,status,paymentStatus,paymentMethod,subtotal,discountTotal,walletDeduction,taxTotal,grandTotal,terminalCode,const DeepCollectionEquality().hash(_items),createdAt,updatedAt]);
+int get hashCode => Object.hashAll([runtimeType,id,merchantId,storeId,orderReference,billNo,source,type,status,paymentStatus,paymentMethod,subtotal,discountTotal,walletDeduction,taxTotal,grandTotal,terminalCode,customer,const DeepCollectionEquality().hash(items),createdAt,updatedAt]);
 
 @override
 String toString() {
-  return 'Order(id: $id, merchantId: $merchantId, storeId: $storeId, orderReference: $orderReference, billNo: $billNo, source: $source, type: $type, status: $status, paymentStatus: $paymentStatus, paymentMethod: $paymentMethod, subtotal: $subtotal, discountTotal: $discountTotal, walletDeduction: $walletDeduction, taxTotal: $taxTotal, grandTotal: $grandTotal, terminalCode: $terminalCode, items: $items, createdAt: $createdAt, updatedAt: $updatedAt)';
+  return 'Order(id: $id, merchantId: $merchantId, storeId: $storeId, orderReference: $orderReference, billNo: $billNo, source: $source, type: $type, status: $status, paymentStatus: $paymentStatus, paymentMethod: $paymentMethod, subtotal: $subtotal, discountTotal: $discountTotal, walletDeduction: $walletDeduction, taxTotal: $taxTotal, grandTotal: $grandTotal, terminalCode: $terminalCode, customer: $customer, items: $items, createdAt: $createdAt, updatedAt: $updatedAt)';
 }
 
 
@@ -289,11 +297,11 @@ abstract mixin class _$OrderCopyWith<$Res> implements $OrderCopyWith<$Res> {
   factory _$OrderCopyWith(_Order value, $Res Function(_Order) _then) = __$OrderCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String merchantId, String storeId, String orderReference, int billNo, OrderSource source, OrderType type, OrderStatus status,@JsonKey(unknownEnumValue: PaymentStatus.pending) PaymentStatus paymentStatus, PaymentMethod paymentMethod, double subtotal, double discountTotal, double walletDeduction, double taxTotal, double grandTotal, String? terminalCode, List<OrderItem> items, DateTime createdAt, DateTime updatedAt
+ String id, String merchantId, String storeId, String orderReference, int billNo, OrderSource source, OrderType type, OrderStatus status,@JsonKey(unknownEnumValue: PaymentStatus.pending) PaymentStatus paymentStatus, PaymentMethod paymentMethod, double subtotal, double discountTotal, double walletDeduction, double taxTotal, double grandTotal, String? terminalCode, Customer? customer, List<OrderItem> items, DateTime createdAt, DateTime updatedAt
 });
 
 
-
+@override $CustomerCopyWith<$Res>? get customer;
 
 }
 /// @nodoc
@@ -306,7 +314,7 @@ class __$OrderCopyWithImpl<$Res>
 
 /// Create a copy of Order
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? merchantId = null,Object? storeId = null,Object? orderReference = null,Object? billNo = null,Object? source = null,Object? type = null,Object? status = null,Object? paymentStatus = null,Object? paymentMethod = null,Object? subtotal = null,Object? discountTotal = null,Object? walletDeduction = null,Object? taxTotal = null,Object? grandTotal = null,Object? terminalCode = freezed,Object? items = null,Object? createdAt = null,Object? updatedAt = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? merchantId = null,Object? storeId = null,Object? orderReference = null,Object? billNo = null,Object? source = null,Object? type = null,Object? status = null,Object? paymentStatus = null,Object? paymentMethod = null,Object? subtotal = null,Object? discountTotal = null,Object? walletDeduction = null,Object? taxTotal = null,Object? grandTotal = null,Object? terminalCode = freezed,Object? customer = freezed,Object? items = null,Object? createdAt = null,Object? updatedAt = null,}) {
   return _then(_Order(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,merchantId: null == merchantId ? _self.merchantId : merchantId // ignore: cast_nullable_to_non_nullable
@@ -324,14 +332,27 @@ as double,walletDeduction: null == walletDeduction ? _self.walletDeduction : wal
 as double,taxTotal: null == taxTotal ? _self.taxTotal : taxTotal // ignore: cast_nullable_to_non_nullable
 as double,grandTotal: null == grandTotal ? _self.grandTotal : grandTotal // ignore: cast_nullable_to_non_nullable
 as double,terminalCode: freezed == terminalCode ? _self.terminalCode : terminalCode // ignore: cast_nullable_to_non_nullable
-as String?,items: null == items ? _self._items : items // ignore: cast_nullable_to_non_nullable
+as String?,customer: freezed == customer ? _self.customer : customer // ignore: cast_nullable_to_non_nullable
+as Customer?,items: null == items ? _self.items : items // ignore: cast_nullable_to_non_nullable
 as List<OrderItem>,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
 as DateTime,
   ));
 }
 
+/// Create a copy of Order
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$CustomerCopyWith<$Res>? get customer {
+    if (_self.customer == null) {
+    return null;
+  }
 
+  return $CustomerCopyWith<$Res>(_self.customer!, (value) {
+    return _then(_self.copyWith(customer: value));
+  });
+}
 }
 
 // dart format on

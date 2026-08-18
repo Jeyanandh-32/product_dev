@@ -4,7 +4,7 @@ import 'package:models/models.dart';
 part 'order.freezed.dart';
 part 'order.g.dart';
 
-@freezed
+@Freezed(makeCollectionsUnmodifiable: false)
 abstract class Order with _$Order {
   const factory Order({
     required String id,
@@ -24,6 +24,7 @@ abstract class Order with _$Order {
     required double taxTotal,
     required double grandTotal,
     String? terminalCode,
+    Customer? customer,
     required List<OrderItem> items,
     required DateTime createdAt,
     required DateTime updatedAt,

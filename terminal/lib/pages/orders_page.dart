@@ -1,61 +1,143 @@
+import 'package:dynamic_height_grid_view/dynamic_height_grid_view.dart';
 import 'package:flutter/widgets.dart';
 import 'package:forui/forui.dart';
 import 'package:gap/gap.dart';
-import 'package:terminal/components/components.dart';
 import 'package:mix/mix.dart';
+import 'package:signals_flutter/signals_flutter.dart';
+import 'package:terminal/components/components.dart';
+import 'package:terminal/pages/loading.dart';
+import 'package:terminal/signals/orders_signal.dart';
+import 'package:terminal/utils/responsive_extensions.dart';
 
-/// Order history log page for the current POS session using Forui and Mix.
-class OrdersPage extends StatelessWidget {
+/// POS order history page with 2-column order card grid, pagination, and details sidebar.
+class OrdersPage extends StatefulWidget {
   const OrdersPage({super.key});
 
   @override
+  State<OrdersPage> createState() => _OrdersPageState();
+}
+
+class _OrdersPageState extends State<OrdersPage> {
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    if (ordersSignal.value.isLoading) refreshOrdersSignal();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return FScaffold(
-      childPad: false,
-      header: FHeader.nested(
-        title: const Text('Order History'),
-        prefixes: const [
-          TerminalBackButton(),
-        ],
-      ),
-      child: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+    return SignalBuilder(
+      builder: (context) {
+        if (ordersSignal.value.isLoading) {
+          return const FScaffold(childPad: false, child: Loading());
+        }
+
+        final isDesktop = context.isDesktop;
+
+        return FScaffold(
+          childPad: false,
+          header: const TerminalAppBar(),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Box(
-                style: BoxStyler()
-                    .width(64)
-                    .height(64)
-                    .borderRadiusAll(const Radius.circular(999))
-                    .color(const Color(0xFFF3F4F6))
-                    .alignment(Alignment.center),
-                child: const Icon(
-                  FLucideIcons.receipt,
-                  size: 28,
-                  color: Color(0xFF9CA3AF),
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.only(
+                    left: isDesktop ? 20 : 12,
+                    right: isDesktop ? 12 : 8,
+                    top: 12,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      const OrdersSourceTabs(),
+                      const Gap(12),
+                      Row(
+                        children: [
+                          const Expanded(child: OrdersSearchBar()),
+                          const Gap(8),
+                          _buildRefreshButton(),
+                        ],
+                      ),
+                      const Gap(10),
+                      const OrdersDateFilterRow(),
+                      const Gap(12),
+                      Expanded(child: _buildOrdersGrid(isDesktop)),
+                      const OrdersPagination(),
+                    ],
+                  ),
                 ),
               ),
-              const Gap(16),
-              StyledText(
-                'No orders placed yet',
-                style: TextStyler()
-                    .fontSize(16)
-                    .fontWeight(.w800)
-                    .color(const Color(0xFF000000)),
-              ),
-              const Gap(6),
-              StyledText(
-                'Completed orders will appear here for reprint and review',
-                style: TextStyler()
-                    .fontSize(13)
-                    .color(const Color(0xFF6B7280)),
-              ),
+              if (isDesktop) const RepaintBoundary(child: OrderDetailsSidebar()),
             ],
           ),
+        );
+      },
+    );
+  }
+
+  Widget _buildRefreshButton() {
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: PressableBox(
+        onPress: refreshOrdersSignal,
+        style: BoxStyler()
+            .width(44)
+            .height(44)
+            .color(const Color(0xFFFFFFFF))
+            .borderRadiusAll(const Radius.circular(999))
+            .borderAll(color: const Color(0xFFE2E8F0))
+            .shadowOnly(color: const Color(0x08000000), offset: const Offset(0, 1), blurRadius: 3)
+            .alignment(Alignment.center)
+            .onHovered(BoxStyler().color(const Color(0xFF000000))),
+        child: StyledIcon(
+          icon: FLucideIcons.rotateCw,
+          style: IconStyler().size(16.5).color(const Color(0xFF0F172A)).onHovered(IconStyler().color(const Color(0xFFFFFFFF))),
         ),
       ),
+    );
+  }
+
+  Widget _buildOrdersGrid(bool isDesktop) {
+    return SignalBuilder(
+      builder: (context) {
+        final pagedOrders = pagedOrdersSignal.value;
+        if (pagedOrders.isEmpty && filteredOrdersSignal.value.isEmpty) {
+          return const OrdersEmptyState();
+        }
+
+        return TerminalCatalogScrollbar(
+          controller: _scrollController,
+          child: Padding(
+            padding: EdgeInsets.only(right: isDesktop ? 14 : 10),
+            child: DynamicHeightGridView(
+              controller: _scrollController,
+              crossAxisCount: isDesktop ? 2 : 1,
+              crossAxisSpacing: 12,
+              mainAxisSpacing: 12,
+              physics: const BouncingScrollPhysics(
+                parent: AlwaysScrollableScrollPhysics(),
+              ),
+              itemCount: pagedOrders.length,
+              builder: (context, index) {
+                final order = pagedOrders[index];
+                return OrderCardItem(
+                  order: order,
+                  onTap: () => selectedOrderSignal.value = order,
+                );
+              },
+            ),
+          ),
+        );
+      },
     );
   }
 }

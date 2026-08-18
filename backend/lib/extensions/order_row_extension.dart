@@ -1,4 +1,5 @@
 import 'package:backend/database/schema.dart';
+import 'package:backend/extensions/customer_row_extension.dart';
 import 'package:backend/extensions/order_item_row_extension.dart';
 import 'package:models/models.dart';
 
@@ -6,6 +7,7 @@ extension OrderRowExtension on OrderRow {
   Order toOrder(
     List<OrderItemRow> items, {
     Map<String, ProductRow>? productRows,
+    CustomerRow? customerRow,
   }) => Order(
     id: id,
     merchantId: merchantId,
@@ -38,6 +40,7 @@ extension OrderRowExtension on OrderRow {
     taxTotal: taxTotal / 100,
     grandTotal: grandTotal / 100,
     terminalCode: terminalCode,
+    customer: customerRow?.toCustomer(),
     items: items
         .map((o) => o.toOrderItem(productRow: productRows?[o.productId]))
         .toList(),
