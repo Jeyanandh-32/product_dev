@@ -2,23 +2,17 @@ import 'package:flutter/widgets.dart';
 import 'package:forui/forui.dart';
 import 'package:gap/gap.dart';
 import 'package:mix/mix.dart';
-import 'package:models/models.dart';
-import 'package:terminal/components/cart/cart_discount_field.dart';
 import 'package:terminal/components/cart/cart_summary_item_row.dart';
 import 'package:terminal/signals/cart_signal.dart';
 
-/// Overlay popover card displaying full order metrics, taxes, and discounts.
+/// Overlay popover card displaying full order metrics, taxes, and applied discounts.
 class CartBreakdownPopover extends StatelessWidget {
   final CartState cart;
-  final PaymentMethod paymentMode;
-  final TextEditingController discountController;
   final VoidCallback onClose;
 
   const CartBreakdownPopover({
     super.key,
     required this.cart,
-    required this.paymentMode,
-    required this.discountController,
     required this.onClose,
   });
 
@@ -26,7 +20,7 @@ class CartBreakdownPopover extends StatelessWidget {
   Widget build(BuildContext context) {
     return Box(
       style: BoxStyler()
-          .width(320)
+          .width(300)
           .paddingAll(16)
           .color(const Color(0xFFFFFFFF))
           .borderRadiusAll(const Radius.circular(16))
@@ -82,19 +76,15 @@ class CartBreakdownPopover extends StatelessWidget {
             title: 'Subtotal',
             value: '₹${cart.subtotal.toStringAsFixed(2)}',
           ),
-          const Gap(10),
-          if (paymentMode != PaymentMethod.complimentary) ...[
-            CartDiscountField(controller: discountController),
-            const Gap(10),
-          ],
           if (cart.discountTotal > 0) ...[
+            const Gap(10),
             CartSummaryItemRow(
-              title: 'Total Discount',
+              title: 'Discount Applied',
               value: '-₹${cart.discountTotal.toStringAsFixed(2)}',
               valueColor: const Color(0xFF15803D),
             ),
-            const Gap(10),
           ],
+          const Gap(10),
           CartSummaryItemRow(
             title: 'Taxes',
             value: '₹${cart.taxTotal.toStringAsFixed(2)}',

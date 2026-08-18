@@ -39,9 +39,6 @@ class _OrdersPageState extends State<OrdersPage> {
     return SignalBuilder(
       builder: (context) {
         final ordersAsync = ordersSignal.value;
-        if (ordersAsync.isLoading && ordersAsync.value == null) {
-          return const Center(child: Loading(message: 'Loading orders...'));
-        }
 
         return Stack(
           children: [
@@ -64,7 +61,7 @@ class _OrdersPageState extends State<OrdersPage> {
                         const Gap(10),
                         const OrdersSearchBar(),
                         Gap(isDesktop ? 12 : 10),
-                        Expanded(child: _buildOrdersList(isDesktop)),
+                        Expanded(child: _buildOrdersGrid(isDesktop, ordersAsync)),
                         const Gap(12),
                         const OrdersPagination(),
                         const Gap(12),
@@ -81,7 +78,11 @@ class _OrdersPageState extends State<OrdersPage> {
     );
   }
 
-  Widget _buildOrdersList(bool isDesktop) {
+  Widget _buildOrdersGrid(bool isDesktop, AsyncState<List<Order>> ordersAsync) {
+    if (ordersAsync.isLoading && ordersAsync.value == null) {
+      return const Center(child: Loading(message: 'Loading orders...'));
+    }
+
     return SignalBuilder(
       builder: (context) {
         final pagedOrders = pagedOrdersSignal.value;
@@ -96,7 +97,7 @@ class _OrdersPageState extends State<OrdersPage> {
               removeTop: true,
               child: CustomScrollView(
                 controller: _scrollController,
-                cacheExtent: 800,
+                cacheExtent: 800.0,
                 physics: isDesktop
                     ? const ClampingScrollPhysics()
                     : const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),

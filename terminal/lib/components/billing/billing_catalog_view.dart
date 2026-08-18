@@ -107,7 +107,7 @@ class _BillingCatalogViewState extends State<BillingCatalogView> {
               removeTop: true,
               child: CustomScrollView(
                 controller: _scrollController,
-                cacheExtent: 800,
+                cacheExtent: 800.0,
                 physics: isDesktop
                     ? const ClampingScrollPhysics()
                     : const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),

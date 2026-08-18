@@ -4,13 +4,14 @@ import 'package:gap/gap.dart';
 import 'package:mix/mix.dart';
 import 'package:models/models.dart';
 import 'package:terminal/components/cart/cart_breakdown_popover.dart';
+import 'package:terminal/components/cart/cart_discount_field.dart';
 import 'package:terminal/components/cart/cart_payment_mode_selector.dart';
 import 'package:terminal/components/cart/cart_print_bill_toggle.dart';
 import 'package:terminal/components/cart/cart_summary_item_row.dart';
 import 'package:terminal/signals/cart_signal.dart';
 import 'package:terminal/theme.dart';
 
-/// Clean totals breakdown with floating popover breakdown overlay to keep cart item list at maximum height.
+/// Clean totals breakdown with discount field and payment mode in the primary billing summary card.
 class CartTotalsBreakdown extends StatefulWidget {
   final CartState cart;
   final PaymentMethod paymentMode;
@@ -60,8 +61,6 @@ class _CartTotalsBreakdownState extends State<CartTotalsBreakdown> with SingleTi
                 childAnchor: Alignment.topRight,
                 popoverBuilder: (context, controller) => CartBreakdownPopover(
                   cart: widget.cart,
-                  paymentMode: widget.paymentMode,
-                  discountController: widget.discountController,
                   onClose: _controller.toggle,
                 ),
                 child: MouseRegion(
@@ -96,6 +95,10 @@ class _CartTotalsBreakdownState extends State<CartTotalsBreakdown> with SingleTi
           ],
         ),
         const Gap(14),
+        if (widget.paymentMode != PaymentMethod.complimentary) ...[
+          CartDiscountField(controller: widget.discountController),
+          const Gap(14),
+        ],
         CartPaymentModeSelector(selectedMode: widget.paymentMode),
         const Gap(14),
         const CartPrintBillToggle(),
