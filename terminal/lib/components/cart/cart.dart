@@ -7,6 +7,7 @@ import 'package:terminal/components/cart/cart_clear_all_button.dart';
 import 'package:terminal/components/cart/cart_empty_state.dart';
 import 'package:terminal/components/cart/cart_item_row.dart';
 import 'package:terminal/components/cart/cart_summary.dart';
+import 'package:terminal/components/product/scroll_down_indicator_pill.dart';
 import 'package:terminal/components/product/terminal_catalog_scrollbar.dart';
 import 'package:terminal/signals/cart_signal.dart';
 import 'package:terminal/utils/responsive_extensions.dart';
@@ -96,51 +97,18 @@ class _CartState extends State<Cart> {
       children: [
         TerminalCatalogScrollbar(
           controller: _scrollController,
-          child: ListView.builder(
-            controller: _scrollController,
-            padding: EdgeInsets.only(top: widget.isDrawerMode ? 6 : 0, bottom: 24, right: 8),
-            itemCount: cart.items.length,
-            itemBuilder: (context, index) => CartItemRow(item: cart.items[index]),
-          ),
-        ),
-        Positioned(
-          left: 0,
-          right: 0,
-          bottom: 0,
-          child: AnimatedOpacity(
-            duration: const Duration(milliseconds: 180),
-            opacity: _canScrollDown ? 1.0 : 0.0,
-            child: IgnorePointer(
-              ignoring: !_canScrollDown,
-              child: MouseRegion(
-                cursor: SystemMouseCursors.click,
-                child: GestureDetector(
-                  onTap: () => _scrollController.animateTo(_scrollController.offset + 140, duration: const Duration(milliseconds: 250), curve: Curves.easeOut),
-                  child: Center(
-                    child: Container(
-                      margin: const EdgeInsets.only(bottom: 8),
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF0F172A),
-                        borderRadius: BorderRadius.circular(999),
-                        border: Border.all(color: const Color(0xFF334155), width: 1.2),
-                        boxShadow: const [BoxShadow(color: Color(0x33000000), blurRadius: 8, offset: Offset(0, 3))],
-                      ),
-                      child: const Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(FLucideIcons.chevronDown, size: 15, color: Color(0xFFFFFFFF)),
-                          Gap(6),
-                          Text('More items below', style: TextStyle(fontSize: 13.5, fontWeight: FontWeight.w900, color: Color(0xFFFFFFFF))),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+          child: MediaQuery.removePadding(
+            context: context,
+            removeTop: true,
+            child: ListView.builder(
+              controller: _scrollController,
+              padding: const EdgeInsets.only(top: 8, bottom: 24, right: 14),
+              itemCount: cart.items.length,
+              itemBuilder: (context, index) => CartItemRow(item: cart.items[index]),
             ),
           ),
         ),
+        ScrollDownIndicatorPill(visible: _canScrollDown, controller: _scrollController),
       ],
     );
   }

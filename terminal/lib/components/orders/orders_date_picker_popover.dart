@@ -58,6 +58,7 @@ class _OrdersDatePickerPopoverState extends State<OrdersDatePickerPopover>
                 customDateRangeSignal.value = range;
                 orderDatePresetSignal.value = null;
                 orderCurrentPageSignal.value = 1;
+                refreshOrdersSignal();
               },
             ),
             child: MouseRegion(

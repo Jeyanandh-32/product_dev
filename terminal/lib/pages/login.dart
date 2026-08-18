@@ -39,6 +39,25 @@ class _LoginState extends State<Login> {
       setState(() => _isSubmitting = true);
       try {
         await loginTerminal(code: code, password: password);
+        if (!mounted) return;
+        showFToast(
+          context: context,
+          alignment: .topCenter,
+          duration: const Duration(seconds: 3),
+          icon: const Icon(
+            FLucideIcons.circleCheck,
+            color: Color(0xFF16A34A),
+            size: 20,
+          ),
+          title: const Text(
+            'Login Successful',
+            style: TextStyle(
+              color: Color(0xFF16A34A),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          description: const Text('Terminal session authenticated.'),
+        );
       } catch (e) {
         if (!mounted) return;
         final message = e is ApiException

@@ -3,15 +3,17 @@ import 'package:client_repositories/src/order_response_types.dart';
 import 'package:dio/dio.dart';
 import 'package:models/models.dart';
 
-/// Helper handling merchant reports orders query and dashboard analytics requests.
+/// Helper handling orders querying, status updates, and dashboard analytics.
 class OrderReportsHelper {
   const OrderReportsHelper._();
 
-  /// Retrieves paginated orders report with summary totals for merchant management.
+  /// Retrieves paginated orders report with summary totals for merchant/terminal management.
   static Future<OrderPaginatedResponse> getAll({
     required String storeId,
     int? page,
     int? size,
+    String? source,
+    String? terminalCode,
     String? fromDate,
     String? toDate,
     String? paymentMethod,
@@ -20,11 +22,13 @@ class OrderReportsHelper {
   }) async {
     try {
       final result = await dio.get(
-        ApiEndpoints.reportsOrders,
+        ApiEndpoints.orders,
         queryParameters: {
           'storeId': storeId,
           'page': ?page,
           'size': ?size,
+          'source': ?source,
+          'terminalCode': ?terminalCode,
           'fromDate': ?fromDate,
           'toDate': ?toDate,
           'paymentMethod': ?paymentMethod,
@@ -44,16 +48,12 @@ class OrderReportsHelper {
 
       final summary = (
         totalOrders: summaryData['totalOrders'] as int? ?? 0,
-        grossSubtotal:
-            (summaryData['grossSubtotal'] as num?)?.toDouble() ?? 0.0,
-        totalDiscount:
-            (summaryData['totalDiscount'] as num?)?.toDouble() ?? 0.0,
+        grossSubtotal: (summaryData['grossSubtotal'] as num?)?.toDouble() ?? 0.0,
+        totalDiscount: (summaryData['totalDiscount'] as num?)?.toDouble() ?? 0.0,
         netRevenue: (summaryData['netRevenue'] as num?)?.toDouble() ?? 0.0,
-        cashCollected:
-            (summaryData['cashCollected'] as num?)?.toDouble() ?? 0.0,
+        cashCollected: (summaryData['cashCollected'] as num?)?.toDouble() ?? 0.0,
         upiCollected: (summaryData['upiCollected'] as num?)?.toDouble() ?? 0.0,
-        walletCollected:
-            (summaryData['walletCollected'] as num?)?.toDouble() ?? 0.0,
+        walletCollected: (summaryData['walletCollected'] as num?)?.toDouble() ?? 0.0,
         freeTotal: (summaryData['freeTotal'] as num?)?.toDouble() ?? 0.0,
       );
 
@@ -67,6 +67,52 @@ class OrderReportsHelper {
       );
     } on DioException catch (e) {
       handleDioError(e, 'Failed to fetch orders.');
+    }
+  }
+
+  /// Updates order state, payment status, or payment method via PATCH /v1/orders/[id].
+  static Future<Order> updateStatus({
+    required String storeId,
+    required String id,
+    OrderStatus? status,
+    PaymentStatus? paymentStatus,
+    PaymentMethod? paymentMethod,
+  }) async {
+    try {
+      final result = await dio.patch(
+        '${ApiEndpoints.orders}/$id',
+        queryParameters: {'storeId': storeId},
+        data: {
+          'status': ?status?.name,
+          'paymentStatus': ?paymentStatus?.name,
+          'paymentMethod': ?paymentMethod?.name,
+        },
+      );
+
+      return Order.fromJson(
+        result.data['data']['order'] as Map<String, Object?>,
+      );
+    } on DioException catch (e) {
+      handleDioError(e, 'Failed to update order.');
+    }
+  }
+
+  /// Retrieves order details by primary UUID or bill number.
+  static Future<Order> getById({
+    required String storeId,
+    required String id,
+  }) async {
+    try {
+      final result = await dio.get(
+        '${ApiEndpoints.orders}/$id',
+        queryParameters: {'storeId': storeId},
+      );
+
+      return Order.fromJson(
+        result.data['data']['order'] as Map<String, Object?>,
+      );
+    } on DioException catch (e) {
+      handleDioError(e, 'Failed to fetch order details.');
     }
   }
 

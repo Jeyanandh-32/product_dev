@@ -1,15 +1,18 @@
 import 'package:backend/database/schema.dart';
+import 'package:models/models.dart';
 import 'package:typed_sql/typed_sql.dart' as ts;
 
 /// Query builder helper for filtered orders listing, lookup, and counting.
 class OrderQueryBuilder {
   const OrderQueryBuilder._();
 
-  /// Fetches orders filtered by merchant, store, date range, and pagination.
+  /// Fetches orders filtered by merchant, store, tab source, date range, and pagination.
   static Future<List<OrderRow>> getAll({
     required ts.Database<DatabaseSchema> db,
     required String merchantId,
     String? storeId,
+    String? source,
+    String? terminalCode,
     DateTime? fromDate,
     DateTime? toDate,
     String? paymentMethod,
@@ -18,44 +21,32 @@ class OrderQueryBuilder {
     int? limit,
     int? offset,
   }) async {
-    var query = db.orders.where(
-      (o) => o.merchantId.equals(ts.toExpr(merchantId)),
-    );
+    var query = db.orders.where((o) => o.merchantId.equals(ts.toExpr(merchantId)));
 
-    if (storeId != null) {
-      query = query.where((o) => o.storeId.equals(ts.toExpr(storeId)));
+    if (storeId != null) query = query.where((o) => o.storeId.equals(ts.toExpr(storeId)));
+    if (source != null && source.isNotEmpty) {
+      if (source == 'online') {
+        query = query.where((o) => o.source.equals(ts.toExpr(OrderSource.web.name)).or(o.source.equals(ts.toExpr(OrderSource.mobileApp.name))));
+      } else {
+        query = query.where((o) => o.source.equals(ts.toExpr(source)));
+      }
     }
-    if (fromDate != null) {
-      query = query.where((o) => o.createdAt.isAfterValue(fromDate));
+    if (terminalCode != null && terminalCode.isNotEmpty) {
+      query = query.where((o) => o.terminalCode.equals(ts.toExpr(terminalCode)));
     }
-    if (toDate != null) {
-      query = query.where((o) => o.createdAt.isBeforeValue(toDate));
-    }
+    if (fromDate != null) query = query.where((o) => o.createdAt.isAfterValue(fromDate));
+    if (toDate != null) query = query.where((o) => o.createdAt.isBeforeValue(toDate));
     if (paymentMethod != null && paymentMethod.isNotEmpty) {
-      query = query.where(
-        (o) => o.paymentMethod.equals(ts.toExpr(paymentMethod)),
-      );
+      query = query.where((o) => o.paymentMethod.equals(ts.toExpr(paymentMethod)));
     }
-    if (status != null && status.isNotEmpty) {
-      query = query.where((o) => o.status.equals(ts.toExpr(status)));
-    }
+    if (status != null && status.isNotEmpty) query = query.where((o) => o.status.equals(ts.toExpr(status)));
     if (paymentStatus != null && paymentStatus.isNotEmpty) {
-      query = query.where(
-        (o) => o.paymentStatus.equals(ts.toExpr(paymentStatus)),
-      );
+      query = query.where((o) => o.paymentStatus.equals(ts.toExpr(paymentStatus)));
     }
-    if (offset != null) {
-      query = query.offset(offset);
-    }
-    if (limit != null) {
-      query = query.limit(limit);
-    }
+    if (offset != null) query = query.offset(offset);
+    if (limit != null) query = query.limit(limit);
 
-    final rows = await query
-        .orderBy((o) => [(o.createdAt, ts.Order.descending)])
-        .fetch();
-
-    return rows;
+    return query.orderBy((o) => [(o.createdAt, ts.Order.descending)]).fetch();
   }
 
   /// Counts total orders matching filter parameters.
@@ -63,37 +54,35 @@ class OrderQueryBuilder {
     required ts.Database<DatabaseSchema> db,
     required String merchantId,
     String? storeId,
+    String? source,
+    String? terminalCode,
     DateTime? fromDate,
     DateTime? toDate,
     String? paymentMethod,
     String? status,
     String? paymentStatus,
   }) async {
-    var query = db.orders.where(
-      (o) => o.merchantId.equals(ts.toExpr(merchantId)),
-    );
+    var query = db.orders.where((o) => o.merchantId.equals(ts.toExpr(merchantId)));
 
-    if (storeId != null) {
-      query = query.where((o) => o.storeId.equals(ts.toExpr(storeId)));
+    if (storeId != null) query = query.where((o) => o.storeId.equals(ts.toExpr(storeId)));
+    if (source != null && source.isNotEmpty) {
+      if (source == 'online') {
+        query = query.where((o) => o.source.equals(ts.toExpr(OrderSource.web.name)).or(o.source.equals(ts.toExpr(OrderSource.mobileApp.name))));
+      } else {
+        query = query.where((o) => o.source.equals(ts.toExpr(source)));
+      }
     }
-    if (fromDate != null) {
-      query = query.where((o) => o.createdAt.isAfterValue(fromDate));
+    if (terminalCode != null && terminalCode.isNotEmpty) {
+      query = query.where((o) => o.terminalCode.equals(ts.toExpr(terminalCode)));
     }
-    if (toDate != null) {
-      query = query.where((o) => o.createdAt.isBeforeValue(toDate));
-    }
+    if (fromDate != null) query = query.where((o) => o.createdAt.isAfterValue(fromDate));
+    if (toDate != null) query = query.where((o) => o.createdAt.isBeforeValue(toDate));
     if (paymentMethod != null && paymentMethod.isNotEmpty) {
-      query = query.where(
-        (o) => o.paymentMethod.equals(ts.toExpr(paymentMethod)),
-      );
+      query = query.where((o) => o.paymentMethod.equals(ts.toExpr(paymentMethod)));
     }
-    if (status != null && status.isNotEmpty) {
-      query = query.where((o) => o.status.equals(ts.toExpr(status)));
-    }
+    if (status != null && status.isNotEmpty) query = query.where((o) => o.status.equals(ts.toExpr(status)));
     if (paymentStatus != null && paymentStatus.isNotEmpty) {
-      query = query.where(
-        (o) => o.paymentStatus.equals(ts.toExpr(paymentStatus)),
-      );
+      query = query.where((o) => o.paymentStatus.equals(ts.toExpr(paymentStatus)));
     }
 
     final total = await query.count().fetch();
@@ -116,15 +105,9 @@ class OrderQueryBuilder {
       if (row != null) return row;
     }
 
-    final byId = await db.orders
-        .where((o) => o.id.equals(ts.toExpr(idOrBillNo)))
-        .first
-        .fetch();
+    final byId = await db.orders.where((o) => o.id.equals(ts.toExpr(idOrBillNo))).first.fetch();
     if (byId != null) return byId;
 
-    return db.orders
-        .where((o) => o.orderReference.equals(ts.toExpr(idOrBillNo)))
-        .first
-        .fetch();
+    return db.orders.where((o) => o.orderReference.equals(ts.toExpr(idOrBillNo))).first.fetch();
   }
 }

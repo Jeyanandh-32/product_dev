@@ -35,6 +35,7 @@ class OrdersDateFilterRow extends SignalWidget {
                   customDateRangeSignal.value = null;
                   orderDatePresetSignal.value = preset;
                   orderCurrentPageSignal.value = 1;
+                  refreshOrdersSignal();
                 },
               ),
             );
@@ -55,6 +56,7 @@ class OrdersDateFilterRow extends SignalWidget {
               onSelected: (val) {
                 orderPaymentMethodFilterSignal.value = val;
                 orderCurrentPageSignal.value = 1;
+                refreshOrdersSignal();
               },
             ),
             const Gap(8),
@@ -69,6 +71,7 @@ class OrdersDateFilterRow extends SignalWidget {
               onSelected: (val) {
                 orderStatusFilterSignal.value = val;
                 orderCurrentPageSignal.value = 1;
+                refreshOrdersSignal();
               },
             ),
           ] else ...[
@@ -85,6 +88,7 @@ class OrdersDateFilterRow extends SignalWidget {
               onSelected: (val) {
                 orderPaymentStatusFilterSignal.value = val;
                 orderCurrentPageSignal.value = 1;
+                refreshOrdersSignal();
               },
             ),
             const Gap(8),
@@ -101,6 +105,7 @@ class OrdersDateFilterRow extends SignalWidget {
               onSelected: (val) {
                 orderStatusFilterSignal.value = val;
                 orderCurrentPageSignal.value = 1;
+                refreshOrdersSignal();
               },
             ),
           ],

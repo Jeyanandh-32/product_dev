@@ -17,13 +17,16 @@ class CartPaymentModeSelector extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        StyledText(
-          'Payment Mode',
-          style: TextStyler()
-              .fontSize(14.5)
-              .fontWeight(.w700)
-              .color(const Color(0xFF000000)),
+        Flexible(
+          child: StyledText(
+            'Payment Mode',
+            style: TextStyler()
+                .fontSize(14)
+                .fontWeight(.w700)
+                .color(const Color(0xFF000000)),
+          ),
         ),
+        const Gap(6),
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -33,14 +36,14 @@ class CartPaymentModeSelector extends StatelessWidget {
               icon: FLucideIcons.banknote,
               isSelected: selectedMode == PaymentMethod.cash,
             ),
-            const Gap(6),
+            const Gap(4.5),
             _ModeTab(
               mode: PaymentMethod.upi,
               label: 'UPI',
               icon: FLucideIcons.qrCode,
               isSelected: selectedMode == PaymentMethod.upi,
             ),
-            const Gap(6),
+            const Gap(4.5),
             _ModeTab(
               mode: PaymentMethod.complimentary,
               label: 'Free',
@@ -89,9 +92,9 @@ class _ModeTabState extends State<_ModeTab> {
         onPress: () => CartController.setPaymentMode(widget.mode),
         style: BoxStyler()
             .alignment(Alignment.center)
-            .height(35)
-            .paddingX(11)
-            .borderRadiusAll(const Radius.circular(10))
+            .height(34)
+            .paddingX(8.5)
+            .borderRadiusAll(const Radius.circular(9))
             .color(bgColor)
             .borderAll(color: borderColor, width: isDark ? 1.5 : 1.0)
             .shadowOnly(
@@ -103,12 +106,12 @@ class _ModeTabState extends State<_ModeTab> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Icon(widget.icon, size: 14.5, color: fgColor),
-            const Gap(5),
+            Icon(widget.icon, size: 13.5, color: fgColor),
+            const Gap(4.5),
             Text(
               widget.label,
               style: TextStyle(
-                fontSize: 13,
+                fontSize: 12.5,
                 fontWeight: isDark ? FontWeight.w800 : FontWeight.w700,
                 color: fgColor,
               ),

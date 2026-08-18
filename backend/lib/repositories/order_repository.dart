@@ -72,10 +72,12 @@ class OrderRepository {
     terminalCode: terminalCode,
   );
 
-  /// Fetches orders filtered by merchant, store, date range, and pagination.
+  /// Fetches orders filtered by merchant, store, tab source, date range, and pagination.
   Future<List<OrderRow>> getAll({
     required String merchantId,
     String? storeId,
+    String? source,
+    String? terminalCode,
     DateTime? fromDate,
     DateTime? toDate,
     String? paymentMethod,
@@ -87,6 +89,8 @@ class OrderRepository {
     db: _db,
     merchantId: merchantId,
     storeId: storeId,
+    source: source,
+    terminalCode: terminalCode,
     fromDate: fromDate,
     toDate: toDate,
     paymentMethod: paymentMethod,
@@ -100,6 +104,8 @@ class OrderRepository {
   Future<int> count({
     required String merchantId,
     String? storeId,
+    String? source,
+    String? terminalCode,
     DateTime? fromDate,
     DateTime? toDate,
     String? paymentMethod,
@@ -109,6 +115,8 @@ class OrderRepository {
     db: _db,
     merchantId: merchantId,
     storeId: storeId,
+    source: source,
+    terminalCode: terminalCode,
     fromDate: fromDate,
     toDate: toDate,
     paymentMethod: paymentMethod,

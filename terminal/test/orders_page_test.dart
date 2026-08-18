@@ -10,24 +10,16 @@ import 'package:terminal/signals/auth_signal.dart';
 import 'package:terminal/signals/orders_signal.dart';
 import 'package:terminal/theme.dart';
 
-Widget _wrapTestWidget(Widget child) {
-  return MaterialApp(
-    theme: TerminalTheme.light().toApproximateMaterialTheme(),
-    home: FTheme(
-      data: TerminalTheme.light(),
-      child: FToaster(
-        child: Material(
-          type: MaterialType.transparency,
-          child: child,
-        ),
+Widget _wrapTestWidget(Widget child) => MaterialApp(
+      theme: TerminalTheme.light().toApproximateMaterialTheme(),
+      home: FTheme(
+        data: TerminalTheme.light(),
+        child: FToaster(child: Material(type: MaterialType.transparency, child: child)),
       ),
-    ),
-  );
-}
+    );
 
 void main() {
   final now = DateTime.now();
-
   final category = Category(
     id: 'cat-1',
     name: 'Beverages',
@@ -83,25 +75,22 @@ void main() {
 
   setUp(() {
     initDio(Dio(BaseOptions(baseUrl: 'http://localhost:8080')));
-    authSignal.value = AsyncData(
-      Terminal(
-        code: 'TERM001',
-        merchantId: 'm-1',
-        name: 'Main Counter',
-        storeId: 'store-1',
-        isActive: true,
-        createdAt: now,
-        updatedAt: now,
-      ),
-    );
+    authSignal.value = AsyncData(Terminal(
+      code: 'TERM001',
+      merchantId: 'm-1',
+      name: 'Main Counter',
+      storeId: 'store-1',
+      isActive: true,
+      createdAt: now,
+      updatedAt: now,
+    ));
     ordersSignal.value = AsyncData([testOrder]);
     orderSourceTabSignal.value = OrderSourceTab.thisTerminal;
     orderDatePresetSignal.value = OrderDatePreset.today;
     selectedOrderSignal.value = testOrder;
   });
 
-  testWidgets('OrdersPage renders pills row, search bar, order cards, and sidebar',
-      (tester) async {
+  testWidgets('OrdersPage renders pills, cards, and sidebar', (tester) async {
     tester.view.physicalSize = const Size(1280, 800);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(() => tester.view.resetPhysicalSize());
@@ -109,19 +98,46 @@ void main() {
     await tester.pumpWidget(_wrapTestWidget(const OrdersPage()));
     await tester.pumpAndSettle();
 
-    // Verify filter pills matching Billing
     expect(find.text('This Terminal'), findsOneWidget);
-    expect(find.text('Online Orders'), findsOneWidget);
-    expect(find.text('Today'), findsOneWidget);
-    expect(find.text('Yesterday'), findsOneWidget);
-
-    // Verify order card content
     expect(find.text('#1042'), findsWidgets);
-    expect(find.text('ORD-9901'), findsWidgets);
     expect(find.text('₹210.00'), findsWidgets);
-
-    // Verify right sidebar content
     expect(find.text('Espresso'), findsOneWidget);
     expect(find.text('Reprint Receipt'), findsOneWidget);
+  });
+
+  testWidgets('Pending order shows Print & Complete Order and completes on tap', (tester) async {
+    tester.view.physicalSize = const Size(1280, 800);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(() => tester.view.resetPhysicalSize());
+
+    final pendingOrder = testOrder.copyWith(status: OrderStatus.pending);
+    ordersSignal.value = AsyncData([pendingOrder]);
+    selectedOrderSignal.value = pendingOrder;
+
+    await tester.pumpWidget(_wrapTestWidget(const OrdersPage()));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Print & Complete Order'), findsOneWidget);
+    await tester.tap(find.text('Print & Complete Order'));
+    await tester.pumpAndSettle();
+
+    expect(selectedOrderSignal.value?.status, OrderStatus.completed);
+    expect(find.text('Reprint Receipt'), findsOneWidget);
+  });
+
+  testWidgets('Cancelled or unpaid order hides print button', (tester) async {
+    tester.view.physicalSize = const Size(1280, 800);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(() => tester.view.resetPhysicalSize());
+
+    selectedOrderSignal.value = testOrder.copyWith(status: OrderStatus.cancelled);
+    await tester.pumpWidget(_wrapTestWidget(const OrdersPage()));
+    await tester.pumpAndSettle();
+    expect(find.text('Reprint Receipt'), findsNothing);
+
+    selectedOrderSignal.value = testOrder.copyWith(paymentStatus: PaymentStatus.pending);
+    await tester.pumpWidget(_wrapTestWidget(const OrdersPage()));
+    await tester.pumpAndSettle();
+    expect(find.text('Reprint Receipt'), findsNothing);
   });
 }

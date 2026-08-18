@@ -7,7 +7,7 @@ import 'package:models/models.dart';
 
 export 'package:client_repositories/src/order_response_types.dart';
 
-/// Client repository for creating, retrieving, and paying orders via backend API.
+/// Client repository for creating, retrieving, updating, and paying orders via backend API.
 abstract final class OrderRepository {
   /// Places an in-store terminal order.
   static Future<Order> create({
@@ -53,30 +53,36 @@ abstract final class OrderRepository {
         useWallet: useWallet,
       );
 
-  /// Retrieves order details by primary UUID.
+  /// Retrieves order details by primary UUID or bill number.
   static Future<Order> getById({
     required String storeId,
     required String id,
-  }) async {
-    try {
-      final result = await dio.get(
-        '${ApiEndpoints.orders}/$id',
-        queryParameters: {'storeId': storeId},
-      );
+  }) =>
+      OrderReportsHelper.getById(storeId: storeId, id: id);
 
-      return Order.fromJson(
-        result.data['data']['order'] as Map<String, Object?>,
+  /// Updates order state, payment status, or payment method via PATCH /v1/orders/[id].
+  static Future<Order> updateStatus({
+    required String storeId,
+    required String id,
+    OrderStatus? status,
+    PaymentStatus? paymentStatus,
+    PaymentMethod? paymentMethod,
+  }) =>
+      OrderReportsHelper.updateStatus(
+        storeId: storeId,
+        id: id,
+        status: status,
+        paymentStatus: paymentStatus,
+        paymentMethod: paymentMethod,
       );
-    } on DioException catch (e) {
-      handleDioError(e, 'Failed to fetch order details.');
-    }
-  }
 
   /// Retrieves paginated orders report with summary totals for merchant management.
   static Future<OrderPaginatedResponse> getAll({
     required String storeId,
     int? page,
     int? size,
+    String? source,
+    String? terminalCode,
     String? fromDate,
     String? toDate,
     String? paymentMethod,
@@ -87,6 +93,8 @@ abstract final class OrderRepository {
         storeId: storeId,
         page: page,
         size: size,
+        source: source,
+        terminalCode: terminalCode,
         fromDate: fromDate,
         toDate: toDate,
         paymentMethod: paymentMethod,

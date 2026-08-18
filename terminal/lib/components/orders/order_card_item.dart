@@ -5,6 +5,7 @@ import 'package:mix/mix.dart';
 import 'package:models/models.dart';
 import 'package:signals_flutter/signals_flutter.dart';
 import 'package:terminal/signals/orders_signal.dart';
+import 'package:terminal/utils/responsive_extensions.dart';
 
 const _months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
@@ -17,8 +18,8 @@ class OrderCardItem extends SignalWidget {
 
   @override
   Widget build(BuildContext context) {
-    final selectedOrder = selectedOrderSignal.value;
-    final isSelected = selectedOrder?.id == order.id;
+    final isDesktop = context.isDesktop;
+    final isSelected = selectedOrderSignal.value?.id == order.id;
 
     final (payBg, payFg, payLabel) = switch (order.paymentStatus) {
       PaymentStatus.completed => (const Color(0xFFDCFCE7), const Color(0xFF15803D), 'PAID'),
@@ -35,22 +36,16 @@ class OrderCardItem extends SignalWidget {
 
     final cardStyle = BoxStyler()
         .color(const Color(0xFFFFFFFF))
-        .paddingAll(18)
+        .paddingAll(isDesktop ? 18 : 14)
         .borderRadiusAll(const Radius.circular(16))
         .borderAll(color: isSelected ? const Color(0xFF0F172A) : const Color(0xFFE2E8F0), width: isSelected ? 2.0 : 1.2)
-        .shadowOnly(color: isSelected ? const Color(0x14000000) : const Color(0x06000000), offset: const Offset(0, 2), blurRadius: isSelected ? 8 : 4)
-        .onHovered(
-          BoxStyler()
-              .borderAll(color: const Color(0xFF0F172A), width: isSelected ? 2.0 : 1.4)
-              .shadowOnly(color: const Color(0x0E000000), offset: const Offset(0, 4), blurRadius: 8),
-        );
+        .shadowOnly(color: isSelected ? const Color(0x14000000) : const Color(0x06000000), offset: const Offset(0, 2), blurRadius: isSelected ? 8 : 4);
 
     final rawHour = order.createdAt.hour;
     final period = rawHour >= 12 ? 'PM' : 'AM';
     final hour12 = rawHour % 12 == 0 ? 12 : rawHour % 12;
     final min = order.createdAt.minute.toString().padLeft(2, '0');
-    final dateStr = '${order.createdAt.day} ${_months[order.createdAt.month - 1]}';
-    final dateTimeStr = '$dateStr, $hour12:$min $period';
+    final dateTimeStr = '${order.createdAt.day} ${_months[order.createdAt.month - 1]}, $hour12:$min $period';
     final isOnline = order.source == OrderSource.web || order.source == OrderSource.mobileApp;
 
     return MouseRegion(
@@ -63,34 +58,59 @@ class OrderCardItem extends SignalWidget {
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
-                  child: Row(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       StyledText('#${order.billNo}', style: TextStyler().fontSize(20).fontWeight(.w900).color(const Color(0xFF000000))),
-                      const Gap(8),
-                      Flexible(
-                        child: Box(
-                          style: BoxStyler().color(const Color(0xFFF8FAFC)).borderAll(color: const Color(0xFFE2E8F0)).paddingX(8).paddingY(3).borderRadiusAll(const Radius.circular(6)),
-                          child: StyledText(order.orderReference, style: TextStyler().fontSize(11.5).fontWeight(.w800).color(const Color(0xFF334155))),
+                      const Gap(6),
+                      Box(
+                        style: BoxStyler().color(const Color(0xFFF8FAFC)).borderAll(color: const Color(0xFFE2E8F0)).paddingX(6).paddingY(2).borderRadiusAll(const Radius.circular(5)),
+                        child: Text(
+                          order.orderReference,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w800, color: Color(0xFF475569)),
                         ),
                       ),
                     ],
                   ),
                 ),
                 const Gap(8),
-                StyledText('₹${order.grandTotal.toStringAsFixed(2)}', style: TextStyler().fontSize(20).fontWeight(.w900).color(const Color(0xFF000000))),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (isOnline) ...[
+                      Box(
+                        style: BoxStyler().color(payBg).paddingX(7).paddingY(3).borderRadiusAll(const Radius.circular(999)),
+                        child: StyledText(payLabel, style: TextStyler().fontSize(10.5).fontWeight(.w900).color(payFg)),
+                      ),
+                      const Gap(4.5),
+                    ],
+                    Box(
+                      style: BoxStyler().color(orderBg).paddingX(8).paddingY(3).borderRadiusAll(const Radius.circular(999)),
+                      child: StyledText(order.status.name.toUpperCase(), style: TextStyler().fontSize(10.5).fontWeight(.w800).color(orderFg)),
+                    ),
+                  ],
+                ),
               ],
             ),
             if (order.customer != null) ...[
               const Gap(14),
               Row(
                 children: [
-                  const Icon(FLucideIcons.user, size: 14, color: Color(0xFF64748B)),
+                  const Icon(FLucideIcons.user, size: 13.5, color: Color(0xFF64748B)),
                   const Gap(6),
-                  Flexible(
-                    child: StyledText('${order.customer!.name} • ${order.customer!.mobileNumber}', style: TextStyler().fontSize(13.5).fontWeight(.w800).color(const Color(0xFF0F172A))),
+                  Expanded(
+                    child: Text(
+                      '${order.customer!.name} • ${order.customer!.mobileNumber}',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w800, color: Color(0xFF0F172A)),
+                    ),
                   ),
                 ],
               ),
@@ -103,35 +123,21 @@ class OrderCardItem extends SignalWidget {
                 Expanded(
                   child: Row(
                     children: [
-                      const Icon(FLucideIcons.calendar, size: 14, color: Color(0xFF64748B)),
+                      const Icon(FLucideIcons.calendar, size: 13.5, color: Color(0xFF64748B)),
                       const Gap(5),
-                      Flexible(
-                        child: StyledText(dateTimeStr, style: TextStyler().fontSize(13).fontWeight(.w700).color(const Color(0xFF334155))),
-                      ),
-                      const Gap(6),
-                      Flexible(
-                        child: StyledText('• ${order.items.length} ${order.items.length == 1 ? 'item' : 'items'}', style: TextStyler().fontSize(13).fontWeight(.w700).color(const Color(0xFF334155))),
+                      Expanded(
+                        child: Text(
+                          '$dateTimeStr • ${order.items.length} ${order.items.length == 1 ? 'item' : 'items'}',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700, color: Color(0xFF334155)),
+                        ),
                       ),
                     ],
                   ),
                 ),
                 const Gap(8),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (isOnline) ...[
-                      Box(
-                        style: BoxStyler().color(payBg).paddingX(8).paddingY(3.5).borderRadiusAll(const Radius.circular(999)),
-                        child: StyledText(payLabel, style: TextStyler().fontSize(11).fontWeight(.w900).color(payFg)),
-                      ),
-                      const Gap(5),
-                    ],
-                    Box(
-                      style: BoxStyler().color(orderBg).paddingX(9).paddingY(3.5).borderRadiusAll(const Radius.circular(999)),
-                      child: StyledText(order.status.name.toUpperCase(), style: TextStyler().fontSize(11).fontWeight(.w800).color(orderFg)),
-                    ),
-                  ],
-                ),
+                StyledText('₹${order.grandTotal.toStringAsFixed(2)}', style: TextStyler().fontSize(18).fontWeight(.w900).color(const Color(0xFF000000))),
               ],
             ),
           ],

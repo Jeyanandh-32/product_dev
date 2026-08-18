@@ -236,9 +236,20 @@ void main() {
     });
   });
 
-  group('unsupported methods', () {
-    test('responds with 405 for GET', () async {
+  group('GET /v1/orders', () {
+    test('responds with 400 for GET when storeId is missing', () async {
       when(() => request.method).thenReturn(.get);
+      when(() => request.uri).thenReturn(Uri.parse('http://localhost/v1/orders'));
+
+      final response = await route.onRequest(context);
+
+      expect(response.statusCode, equals(HttpStatus.badRequest));
+    });
+  });
+
+  group('unsupported methods', () {
+    test('responds with 405 for PUT', () async {
+      when(() => request.method).thenReturn(.put);
 
       final response = await route.onRequest(context);
 
