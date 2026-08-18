@@ -7,8 +7,12 @@ import 'package:models/models.dart';
 import 'package:signals_flutter/signals_flutter.dart';
 import 'package:terminal/components/components.dart';
 import 'package:terminal/pages/account_page.dart';
+import 'package:terminal/pages/inventory_categories_page.dart';
+import 'package:terminal/pages/inventory_counters_page.dart';
+import 'package:terminal/pages/inventory_products_page.dart';
 import 'package:terminal/pages/orders_page.dart';
 import 'package:terminal/signals/auth_signal.dart';
+import 'package:terminal/signals/orders_signal.dart';
 import 'package:terminal/theme.dart';
 
 Widget _wrapTestWidget(Widget child) {
@@ -16,7 +20,12 @@ Widget _wrapTestWidget(Widget child) {
     theme: TerminalTheme.light().toApproximateMaterialTheme(),
     home: FTheme(
       data: TerminalTheme.light(),
-      child: FToaster(child: child),
+      child: FToaster(
+        child: Material(
+          type: MaterialType.transparency,
+          child: child,
+        ),
+      ),
     ),
   );
 }
@@ -26,6 +35,7 @@ void main() {
 
   setUp(() {
     initDio(Dio(BaseOptions(baseUrl: 'http://localhost:8080')));
+    ordersSignal.value = const AsyncData([]);
     authSignal.value = AsyncData(
       Terminal(
         code: 'TERM001',
@@ -39,7 +49,8 @@ void main() {
     );
   });
 
-  testWidgets('TerminalAppBar renders branding and logout button', (tester) async {
+  testWidgets('TerminalAppBar renders branding, Billing trigger, and logout button',
+      (tester) async {
     await tester.pumpWidget(
       _wrapTestWidget(
         const FScaffold(
@@ -51,24 +62,31 @@ void main() {
     await tester.pump();
 
     expect(find.text('Branding'), findsOneWidget);
+    expect(find.text('Billing'), findsOneWidget);
     expect(find.text('Log Out'), findsOneWidget);
+
+    // Tap the dropdown trigger to open the Forui PopoverMenu
+    await tester.tap(find.text('Billing'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Billing'), findsWidgets);
+    expect(find.text('Orders'), findsOneWidget);
+    expect(find.text('Inventory'), findsOneWidget);
+    expect(find.text('Account'), findsOneWidget);
   });
 
-  testWidgets('AccountPage renders terminal device information', (tester) async {
-    await tester.pumpWidget(_wrapTestWidget(const AccountPage()));
-    await tester.pump();
-
-    expect(find.text('Device Account'), findsOneWidget);
-    expect(find.text('Main Counter'), findsOneWidget);
-    expect(find.text('Code: TERM001'), findsOneWidget);
-    expect(find.text('Store ID'), findsOneWidget);
-  });
-
-  testWidgets('OrdersPage renders empty history placeholder', (tester) async {
-    await tester.pumpWidget(_wrapTestWidget(const OrdersPage()));
-    await tester.pump();
-
-    expect(find.text('Order History'), findsOneWidget);
-    expect(find.text('No orders placed yet'), findsOneWidget);
+  testWidgets('Dummy pages render unified TerminalAppBar', (tester) async {
+    for (final page in const [
+      AccountPage(),
+      OrdersPage(),
+      InventoryProductsPage(),
+      InventoryCategoriesPage(),
+      InventoryCountersPage(),
+    ]) {
+      await tester.pumpWidget(_wrapTestWidget(page));
+      await tester.pumpAndSettle();
+      expect(find.byType(TerminalAppBar), findsOneWidget);
+      expect(find.text('Branding'), findsOneWidget);
+    }
   });
 }

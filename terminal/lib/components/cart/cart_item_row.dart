@@ -8,7 +8,7 @@ import 'package:terminal/components/cart/stepper_circle_button.dart';
 import 'package:terminal/models/cart_item.dart';
 import 'package:terminal/signals/cart_signal.dart';
 
-/// Single item card in the POS cart list using Mix [Box] and [PressableBox].
+/// Single item card in the POS cart list with enhanced high-contrast text readability.
 class CartItemRow extends StatelessWidget {
   final CartItem item;
 
@@ -52,18 +52,18 @@ class CartItemRow extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
-                    fontSize: 14,
+                    fontSize: 14.5,
                     fontWeight: FontWeight.w800,
                     color: Color(0xFF000000),
                   ),
                 ),
-                const Gap(2),
+                const Gap(3),
                 StyledText(
                   '₹${item.product.sellingPrice.toStringAsFixed(2)} × ${item.quantity}',
                   style: TextStyler()
-                      .fontSize(12)
-                      .fontWeight(.w500)
-                      .color(const Color(0xFF6B7280)),
+                      .fontSize(13)
+                      .fontWeight(.w700)
+                      .color(const Color(0xFF334155)),
                 ),
               ],
             ),
@@ -104,7 +104,7 @@ class CartItemRow extends StatelessWidget {
             child: StyledText(
               '${item.quantity}',
               style: TextStyler()
-                  .fontSize(13)
+                  .fontSize(13.5)
                   .fontWeight(.w900)
                   .color(const Color(0xFF000000)),
             ),

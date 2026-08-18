@@ -4,7 +4,7 @@ import 'package:gap/gap.dart';
 import 'package:mix/mix.dart';
 import 'package:terminal/signals/auth_signal.dart';
 
-/// Clean animated logout action button with hover inversion using Mix [PressableBox].
+/// Clean animated logout action button with matching 38px height and large readable typography.
 class TerminalLogoutButton extends StatefulWidget {
   const TerminalLogoutButton({super.key});
 
@@ -17,39 +17,34 @@ class _TerminalLogoutButtonState extends State<TerminalLogoutButton> {
 
   @override
   Widget build(BuildContext context) {
-    final fgColor =
-        _isHovered ? const Color(0xFFFFFFFF) : const Color(0xFFDC2626);
-    final bgColor =
-        _isHovered ? const Color(0xFFDC2626) : const Color(0xFFFEF2F2);
-    final borderColor =
-        _isHovered ? const Color(0xFFDC2626) : const Color(0xFFFECACA);
+    final fgColor = _isHovered ? const Color(0xFFFFFFFF) : const Color(0xFFDC2626);
+    final bgColor = _isHovered ? const Color(0xFFDC2626) : const Color(0xFFFEF2F2);
+    final borderColor = _isHovered ? const Color(0xFFDC2626) : const Color(0xFFFECACA);
 
     return MouseRegion(
       cursor: SystemMouseCursors.click,
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
       child: PressableBox(
-        onPress: () => logoutTerminal(),
+        onPress: logoutTerminal,
         style: BoxStyler()
+            .height(38)
             .paddingX(14)
-            .paddingY(7)
             .borderRadiusAll(const Radius.circular(999))
             .color(bgColor)
-            .borderAll(color: borderColor),
+            .borderAll(color: borderColor)
+            .shadowOnly(color: const Color(0x06000000), offset: const Offset(0, 1), blurRadius: 2)
+            .alignment(Alignment.center),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Icon(
-              FLucideIcons.logOut,
-              size: 14,
-              color: fgColor,
-            ),
+            Icon(FLucideIcons.logOut, size: 14.5, color: fgColor),
             const Gap(6),
             Text(
               'Log Out',
               style: TextStyle(
-                fontSize: 12,
+                fontSize: 13.5,
                 fontWeight: FontWeight.w800,
                 color: fgColor,
               ),

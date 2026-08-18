@@ -1,10 +1,12 @@
 import 'package:flutter/widgets.dart';
 import 'package:forui/forui.dart';
+import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mix/mix.dart';
 import 'package:terminal/components/navigation/terminal_logout_button.dart';
+import 'package:terminal/components/navigation/terminal_navigation_dropdown.dart';
 
-/// Top POS App Header with pure white background, unbolded Arizonia branding, and bottom border.
+/// Top POS App Header with unbolded Arizonia branding, navigation menu, and logout button.
 class TerminalAppBar extends StatelessWidget {
   const TerminalAppBar({super.key});
 
@@ -30,6 +32,8 @@ class TerminalAppBar extends StatelessWidget {
                   .color(theme.colors.primary),
             ),
             suffixes: const [
+              TerminalNavigationDropdown(),
+              Gap(8),
               TerminalLogoutButton(),
             ],
           ),

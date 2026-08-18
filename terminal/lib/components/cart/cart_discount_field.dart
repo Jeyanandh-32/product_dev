@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:terminal/signals/cart_signal.dart';
 
-/// Ultra-compact discount input field for order totals calculation.
+/// High-contrast readable discount input field for order totals calculation.
 class CartDiscountField extends StatelessWidget {
   final TextEditingController controller;
 
@@ -16,18 +16,18 @@ class CartDiscountField extends StatelessWidget {
         const Text(
           'Discount (₹)',
           style: TextStyle(
-            fontSize: 13.5,
-            fontWeight: FontWeight.w600,
-            color: Color(0xFF334155),
+            fontSize: 14.5,
+            fontWeight: FontWeight.w700,
+            color: Color(0xFF000000),
           ),
         ),
         Container(
-          width: 84,
-          height: 28,
+          width: 95,
+          height: 34,
           decoration: BoxDecoration(
-            color: const Color(0xFFF9FAFB),
+            color: const Color(0xFFFFFFFF),
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: const Color(0xFFE5E7EB)),
+            border: Border.all(color: const Color(0xFFCBD5E1), width: 1.2),
           ),
           alignment: Alignment.center,
           child: TextField(
@@ -37,15 +37,15 @@ class CartDiscountField extends StatelessWidget {
             textAlign: TextAlign.right,
             decoration: const InputDecoration(
               prefixIcon: Padding(
-                padding: EdgeInsets.only(left: 6, right: 2),
+                padding: EdgeInsets.only(left: 8, right: 2),
                 child: Center(
                   widthFactor: 1.0,
                   child: Text(
                     '₹',
                     style: TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w700,
-                      color: Color(0xFF9CA3AF),
+                      fontSize: 13,
+                      fontWeight: FontWeight.w800,
+                      color: Color(0xFF64748B),
                     ),
                   ),
                 ),
@@ -53,17 +53,17 @@ class CartDiscountField extends StatelessWidget {
               prefixIconConstraints: BoxConstraints(minWidth: 0, minHeight: 0),
               hintText: '0.00',
               hintStyle: TextStyle(
-                color: Color(0xFF9CA3AF),
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
+                color: Color(0xFF94A3B8),
+                fontSize: 13,
+                fontWeight: FontWeight.w700,
               ),
-              contentPadding: EdgeInsets.symmetric(horizontal: 6),
+              contentPadding: EdgeInsets.symmetric(horizontal: 8),
               border: InputBorder.none,
               isCollapsed: true,
             ),
             style: const TextStyle(
-              fontSize: 12.5,
-              fontWeight: FontWeight.w800,
+              fontSize: 14,
+              fontWeight: FontWeight.w900,
               color: Color(0xFF000000),
             ),
             onChanged: (val) {

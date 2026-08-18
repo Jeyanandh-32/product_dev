@@ -5,7 +5,7 @@ import 'package:mix/mix.dart';
 import 'package:models/models.dart';
 import 'package:terminal/signals/cart_signal.dart';
 
-/// Clean payment method selector tabs positioned side-by-side with the label text.
+/// Clean payment method selector tabs positioned side-by-side with large readable tabs.
 class CartPaymentModeSelector extends StatelessWidget {
   final PaymentMethod selectedMode;
 
@@ -20,9 +20,9 @@ class CartPaymentModeSelector extends StatelessWidget {
         StyledText(
           'Payment Mode',
           style: TextStyler()
-              .fontSize(13.5)
-              .fontWeight(.w600)
-              .color(const Color(0xFF334155)),
+              .fontSize(14.5)
+              .fontWeight(.w700)
+              .color(const Color(0xFF000000)),
         ),
         Row(
           mainAxisSize: MainAxisSize.min,
@@ -77,9 +77,9 @@ class _ModeTabState extends State<_ModeTab> {
   @override
   Widget build(BuildContext context) {
     final isDark = widget.isSelected || _isHovered;
-    final bgColor = isDark ? const Color(0xFF000000) : const Color(0xFFF8FAFC);
-    final borderColor = isDark ? const Color(0xFF000000) : const Color(0xFFE2E8F0);
-    final fgColor = isDark ? const Color(0xFFFFFFFF) : const Color(0xFF374151);
+    final bgColor = isDark ? const Color(0xFF000000) : const Color(0xFFF1F5F9);
+    final borderColor = isDark ? const Color(0xFF000000) : const Color(0xFFCBD5E1);
+    final fgColor = isDark ? const Color(0xFFFFFFFF) : const Color(0xFF0F172A);
 
     return MouseRegion(
       cursor: SystemMouseCursors.click,
@@ -89,11 +89,11 @@ class _ModeTabState extends State<_ModeTab> {
         onPress: () => CartController.setPaymentMode(widget.mode),
         style: BoxStyler()
             .alignment(Alignment.center)
-            .height(30)
-            .paddingX(10)
+            .height(35)
+            .paddingX(11)
             .borderRadiusAll(const Radius.circular(10))
             .color(bgColor)
-            .borderAll(color: borderColor)
+            .borderAll(color: borderColor, width: isDark ? 1.5 : 1.0)
             .shadowOnly(
               color: const Color(0x08000000),
               offset: const Offset(0, 1),
@@ -103,13 +103,13 @@ class _ModeTabState extends State<_ModeTab> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Icon(widget.icon, size: 13, color: fgColor),
+            Icon(widget.icon, size: 14.5, color: fgColor),
             const Gap(5),
             Text(
               widget.label,
               style: TextStyle(
-                fontSize: 12,
-                fontWeight: isDark ? FontWeight.w800 : FontWeight.w600,
+                fontSize: 13,
+                fontWeight: isDark ? FontWeight.w800 : FontWeight.w700,
                 color: fgColor,
               ),
             ),

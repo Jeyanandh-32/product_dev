@@ -2,7 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:forui/forui.dart';
 import 'package:go_router/go_router.dart';
 
-/// Clean inventory submenu group for the terminal navigation dropdown.
+/// Clean compact inventory submenu group for the terminal navigation dropdown.
 class InventorySubmenuItem extends StatelessWidget with FItemMixin {
   final FPopoverController parentController;
 
@@ -11,13 +11,13 @@ class InventorySubmenuItem extends StatelessWidget with FItemMixin {
   @override
   Widget build(BuildContext context) {
     return FSubmenuItem(
-      prefix: const Icon(FLucideIcons.layers, size: 16),
+      prefix: const Icon(FLucideIcons.boxes, size: 14),
       title: const Text('Inventory'),
       submenu: [
         FItemGroup(
           children: [
             FItem(
-              prefix: const Icon(FLucideIcons.package, size: 16),
+              prefix: const Icon(FLucideIcons.package, size: 14),
               title: const Text('Products'),
               onPress: () {
                 parentController.toggle();
@@ -25,7 +25,7 @@ class InventorySubmenuItem extends StatelessWidget with FItemMixin {
               },
             ),
             FItem(
-              prefix: const Icon(FLucideIcons.folder, size: 16),
+              prefix: const Icon(FLucideIcons.folder, size: 14),
               title: const Text('Categories'),
               onPress: () {
                 parentController.toggle();
@@ -33,7 +33,7 @@ class InventorySubmenuItem extends StatelessWidget with FItemMixin {
               },
             ),
             FItem(
-              prefix: const Icon(FLucideIcons.hash, size: 16),
+              prefix: const Icon(FLucideIcons.hash, size: 14),
               title: const Text('Counters'),
               onPress: () {
                 parentController.toggle();

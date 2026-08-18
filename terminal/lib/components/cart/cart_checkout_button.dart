@@ -4,7 +4,7 @@ import 'package:gap/gap.dart';
 import 'package:mix/mix.dart';
 import 'package:models/models.dart';
 
-/// Checkout button with animated hover and loading state using Mix [PressableBox] matching customer CTA (rounded-2xl).
+/// Checkout button with animated hover and loading state using Mix [PressableBox].
 class CartCheckoutButton extends StatelessWidget {
   final bool canCheckout;
   final bool isCheckingOut;
@@ -74,8 +74,12 @@ class CartCheckoutButton extends StatelessWidget {
                       'Place Order ($modeLabel)',
                       style: TextStyler()
                           .fontSize(14)
-                          .fontWeight(.w700)
-                          .color(const Color(0xFFFFFFFF)),
+                          .fontWeight(.w800)
+                          .color(
+                            canCheckout
+                                ? const Color(0xFFFFFFFF)
+                                : const Color(0xFF94A3B8),
+                          ),
                     ),
                   ],
                 ),
