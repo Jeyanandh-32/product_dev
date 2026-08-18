@@ -94,8 +94,14 @@ void main() {
 
     expect(find.text('Order Items'), findsOneWidget);
     expect(find.text('Iced Latte'), findsOneWidget);
-    expect(find.text('Total No of Items'), findsOneWidget);
+    expect(find.text('Details'), findsOneWidget);
     expect(find.text('Place Order (CASH)'), findsOneWidget);
+
+    await tester.tap(find.text('Details'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Order Breakdown'), findsOneWidget);
+    expect(find.text('Total No of Items'), findsOneWidget);
   });
 
   testWidgets('Cart component renders cleanly in standalone/drawer mode',
