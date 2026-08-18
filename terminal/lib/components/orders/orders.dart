@@ -1,6 +1,7 @@
 library;
 
 export 'calendar_grid_card.dart';
+export 'order_card_customer_info.dart';
 export 'order_card_item.dart';
 export 'order_details_actions.dart';
 export 'order_details_empty_state.dart';

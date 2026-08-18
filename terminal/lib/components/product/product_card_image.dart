@@ -3,7 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:forui/forui.dart';
 import 'package:mix/mix.dart';
 
-/// Product thumbnail image display for the POS catalog card with non-distorting scaling.
+/// Ultra-smooth product thumbnail image display with hardware-accelerated decode caching.
 class ProductCardImage extends StatelessWidget {
   final String? imageUrl;
 
@@ -25,11 +25,13 @@ class ProductCardImage extends StatelessWidget {
                     imageUrl: imageUrl!.trim(),
                     fit: BoxFit.cover,
                     alignment: Alignment.center,
-                    memCacheWidth: 480,
-                    fadeInDuration: const Duration(milliseconds: 150),
+                    memCacheWidth: 320,
+                    maxWidthDiskCache: 600,
+                    filterQuality: FilterQuality.low,
+                    fadeInDuration: Duration.zero,
+                    fadeOutDuration: Duration.zero,
                     placeholder: (context, url) => const _ImagePlaceholder(),
-                    errorWidget: (context, url, error) =>
-                        const _ImagePlaceholder(),
+                    errorWidget: (context, url, error) => const _ImagePlaceholder(),
                   ),
                 )
               : const _ImagePlaceholder(),

@@ -4,12 +4,13 @@ import 'package:gap/gap.dart';
 import 'package:mix/mix.dart';
 import 'package:models/models.dart';
 import 'package:signals_flutter/signals_flutter.dart';
+import 'package:terminal/components/orders/order_card_customer_info.dart';
 import 'package:terminal/signals/orders_signal.dart';
 import 'package:terminal/utils/responsive_extensions.dart';
 
 const _months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-/// High-contrast, spacious order card item for the POS orders grid.
+/// High-contrast, spacious order card item for the POS orders grid with GPU repaint isolation.
 class OrderCardItem extends SignalWidget {
   final Order order;
   final VoidCallback onTap;
@@ -48,99 +49,88 @@ class OrderCardItem extends SignalWidget {
     final dateTimeStr = '${order.createdAt.day} ${_months[order.createdAt.month - 1]}, $hour12:$min $period';
     final isOnline = order.source == OrderSource.web || order.source == OrderSource.mobileApp;
 
-    return MouseRegion(
-      cursor: SystemMouseCursors.click,
-      child: PressableBox(
-        onPress: onTap,
-        style: cardStyle,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+    return RepaintBoundary(
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: PressableBox(
+          onPress: onTap,
+          style: cardStyle,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        StyledText('#${order.billNo}', style: TextStyler().fontSize(20).fontWeight(.w900).color(const Color(0xFF000000))),
+                        const Gap(6),
+                        Box(
+                          style: BoxStyler().color(const Color(0xFFF8FAFC)).borderAll(color: const Color(0xFFE2E8F0)).paddingX(6).paddingY(2).borderRadiusAll(const Radius.circular(5)),
+                          child: Text(
+                            order.orderReference,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w800, color: Color(0xFF475569)),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Gap(8),
+                  Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      StyledText('#${order.billNo}', style: TextStyler().fontSize(20).fontWeight(.w900).color(const Color(0xFF000000))),
-                      const Gap(6),
-                      Box(
-                        style: BoxStyler().color(const Color(0xFFF8FAFC)).borderAll(color: const Color(0xFFE2E8F0)).paddingX(6).paddingY(2).borderRadiusAll(const Radius.circular(5)),
-                        child: Text(
-                          order.orderReference,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w800, color: Color(0xFF475569)),
+                      if (isOnline) ...[
+                        Box(
+                          style: BoxStyler().color(payBg).paddingX(7).paddingY(3).borderRadiusAll(const Radius.circular(999)),
+                          child: StyledText(payLabel, style: TextStyler().fontSize(10.5).fontWeight(.w900).color(payFg)),
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-                const Gap(8),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (isOnline) ...[
+                        const Gap(4.5),
+                      ],
                       Box(
-                        style: BoxStyler().color(payBg).paddingX(7).paddingY(3).borderRadiusAll(const Radius.circular(999)),
-                        child: StyledText(payLabel, style: TextStyler().fontSize(10.5).fontWeight(.w900).color(payFg)),
+                        style: BoxStyler().color(orderBg).paddingX(8).paddingY(3).borderRadiusAll(const Radius.circular(999)),
+                        child: StyledText(order.status.name.toUpperCase(), style: TextStyler().fontSize(10.5).fontWeight(.w800).color(orderFg)),
                       ),
-                      const Gap(4.5),
                     ],
-                    Box(
-                      style: BoxStyler().color(orderBg).paddingX(8).paddingY(3).borderRadiusAll(const Radius.circular(999)),
-                      child: StyledText(order.status.name.toUpperCase(), style: TextStyler().fontSize(10.5).fontWeight(.w800).color(orderFg)),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            if (order.customer != null) ...[
-              const Gap(14),
-              Row(
-                children: [
-                  const Icon(FLucideIcons.user, size: 13.5, color: Color(0xFF64748B)),
-                  const Gap(6),
-                  Expanded(
-                    child: Text(
-                      '${order.customer!.name} • ${order.customer!.mobileNumber}',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w800, color: Color(0xFF0F172A)),
-                    ),
                   ),
                 ],
               ),
-            ],
-            Gap(order.customer != null ? 14 : 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Expanded(
-                  child: Row(
-                    children: [
-                      const Icon(FLucideIcons.calendar, size: 13.5, color: Color(0xFF64748B)),
-                      const Gap(5),
-                      Expanded(
-                        child: Text(
-                          '$dateTimeStr • ${order.items.length} ${order.items.length == 1 ? 'item' : 'items'}',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700, color: Color(0xFF334155)),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const Gap(8),
-                StyledText('₹${order.grandTotal.toStringAsFixed(2)}', style: TextStyler().fontSize(18).fontWeight(.w900).color(const Color(0xFF000000))),
+              if (order.customer != null) ...[
+                const Gap(14),
+                OrderCardCustomerInfo(customer: order.customer!),
               ],
-            ),
-          ],
+              Gap(order.customer != null ? 14 : 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: Row(
+                      children: [
+                        const Icon(FLucideIcons.calendar, size: 13.5, color: Color(0xFF64748B)),
+                        const Gap(5),
+                        Expanded(
+                          child: Text(
+                            '$dateTimeStr • ${order.items.length} ${order.items.length == 1 ? 'item' : 'items'}',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700, color: Color(0xFF334155)),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Gap(8),
+                  StyledText('₹${order.grandTotal.toStringAsFixed(2)}', style: TextStyler().fontSize(18).fontWeight(.w900).color(const Color(0xFF000000))),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

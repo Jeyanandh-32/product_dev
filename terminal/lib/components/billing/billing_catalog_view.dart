@@ -105,23 +105,28 @@ class _BillingCatalogViewState extends State<BillingCatalogView> {
             child: MediaQuery.removePadding(
               context: context,
               removeTop: true,
-              child: DynamicHeightGridView(
+              child: CustomScrollView(
                 controller: _scrollController,
-                crossAxisSpacing: isDesktop ? 12 : 8,
-                mainAxisSpacing: isDesktop ? 12 : 8,
-                physics: const BouncingScrollPhysics(
-                  parent: AlwaysScrollableScrollPhysics(),
-                ),
-                builder: (context, index) {
-                  final product = filteredProducts[index];
-                  return ProductCard(
-                    key: ValueKey(product.id),
-                    product: product,
-                    isMobile: !isDesktop,
-                  );
-                },
-                itemCount: filteredProducts.length,
-                crossAxisCount: crossAxisCount,
+                cacheExtent: 800,
+                physics: isDesktop
+                    ? const ClampingScrollPhysics()
+                    : const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+                slivers: [
+                  SliverDynamicHeightGridView(
+                    crossAxisSpacing: isDesktop ? 12 : 8,
+                    mainAxisSpacing: isDesktop ? 12 : 8,
+                    builder: (context, index) {
+                      final product = filteredProducts[index];
+                      return ProductCard(
+                        key: ValueKey(product.id),
+                        product: product,
+                        isMobile: !isDesktop,
+                      );
+                    },
+                    itemCount: filteredProducts.length,
+                    crossAxisCount: crossAxisCount,
+                  ),
+                ],
               ),
             ),
           ),

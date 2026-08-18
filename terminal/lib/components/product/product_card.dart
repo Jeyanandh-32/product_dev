@@ -7,7 +7,7 @@ import 'package:terminal/components/product/product_card_image.dart';
 import 'package:terminal/components/product/product_card_stepper.dart';
 import 'package:terminal/signals/cart_signal.dart';
 
-/// Product card styled with the exact customer web store hover effects and animations.
+/// Product card with high-contrast active border indicator for selected products in cart.
 class ProductCard extends StatelessWidget {
   final Product product;
   final bool isMobile;
@@ -23,12 +23,7 @@ class ProductCard extends StatelessWidget {
     return RepaintBoundary(
       child: SignalBuilder(
         builder: (context) {
-          final cart = cartSignal.value;
-          final cartIndex =
-              cart.items.indexWhere((item) => item.product.id == product.id);
-          final isExisting = cartIndex >= 0;
-          final currentQuantity =
-              isExisting ? cart.items[cartIndex].quantity : 0;
+          final isExisting = cartSignal.value.items.any((i) => i.product.id == product.id);
 
           return MouseRegion(
             cursor: SystemMouseCursors.click,
@@ -39,22 +34,17 @@ class ProductCard extends StatelessWidget {
                   .paddingAll(14)
                   .borderRadiusAll(const Radius.circular(16))
                   .borderAll(
-                    color: isExisting
-                        ? const Color(0xFF000000)
-                        : const Color(0xFFE5E7EB),
-                    width: 1.5,
+                    color: isExisting ? const Color(0xFF000000) : const Color(0xFFE5E7EB),
+                    width: isExisting ? 2.0 : 1.5,
                   )
                   .shadowOnly(
-                    color: const Color(0x08000000),
+                    color: isExisting ? const Color(0x14000000) : const Color(0x08000000),
                     offset: const Offset(0, 2),
                     blurRadius: isExisting ? 6 : 4,
                   )
                   .onHovered(
                     BoxStyler()
-                        .borderAll(
-                          color: const Color(0xFF000000),
-                          width: 1.5,
-                        )
+                        .borderAll(color: const Color(0xFF000000), width: 1.5)
                         .shadowOnly(
                           color: const Color(0x14000000),
                           offset: const Offset(0, 4),
@@ -77,8 +67,7 @@ class ProductCard extends StatelessWidget {
                       color: Color(0xFF000000),
                     ),
                   ),
-                  if (product.description != null &&
-                      product.description!.trim().isNotEmpty) ...[
+                  if (product.description != null && product.description!.trim().isNotEmpty) ...[
                     const Gap(4),
                     Text(
                       product.description!,
@@ -100,11 +89,7 @@ class ProductCard extends StatelessWidget {
                     ),
                   ),
                   const Gap(12),
-                  ProductCardStepper(
-                    product: product,
-                    currentQuantity: currentQuantity,
-                    isExisting: isExisting,
-                  ),
+                  ProductCardStepper(product: product),
                 ],
               ),
             ),

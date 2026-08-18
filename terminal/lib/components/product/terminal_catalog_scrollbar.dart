@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 
-/// Modern premium custom scrollbar with interactive cursor pointer and drag support.
+/// Modern premium custom scrollbar with interactive cursor pointer, drag support and paint boundary isolation.
 class TerminalCatalogScrollbar extends StatefulWidget {
   final ScrollController controller;
   final Widget child;
@@ -71,63 +71,64 @@ class _TerminalCatalogScrollbarState extends State<TerminalCatalogScrollbar> {
               right: 1,
               bottom: 8,
               width: 12,
-              child: AnimatedBuilder(
-                animation: widget.controller,
-                builder: (context, _) {
-                  if (!widget.controller.hasClients ||
-                      !widget.controller.position.hasContentDimensions) {
-                    return const SizedBox.shrink();
-                  }
+              child: RepaintBoundary(
+                child: AnimatedBuilder(
+                  animation: widget.controller,
+                  builder: (context, _) {
+                    if (!widget.controller.hasClients ||
+                        !widget.controller.position.hasContentDimensions) {
+                      return const SizedBox.shrink();
+                    }
 
-                  final position = widget.controller.position;
-                  final maxScroll = position.maxScrollExtent;
-                  if (maxScroll <= 0) return const SizedBox.shrink();
+                    final position = widget.controller.position;
+                    final maxScroll = position.maxScrollExtent;
+                    if (maxScroll <= 0) return const SizedBox.shrink();
 
-                  final thumbHeight = _calculateThumbHeight(trackHeight);
-                  final scrollableTrack = trackHeight - thumbHeight;
-                  final progress =
-                      (position.pixels / maxScroll).clamp(0.0, 1.0);
-                  final topOffset = progress * scrollableTrack;
+                    final thumbHeight = _calculateThumbHeight(trackHeight);
+                    final scrollableTrack = trackHeight - thumbHeight;
+                    final progress =
+                        (position.pixels / maxScroll).clamp(0.0, 1.0);
+                    final topOffset = progress * scrollableTrack;
 
-                  final isActive = _isHovered || _isDragging;
+                    final isActive = _isHovered || _isDragging;
 
-                  return MouseRegion(
-                    cursor: SystemMouseCursors.click,
-                    onEnter: (_) => setState(() => _isHovered = true),
-                    onExit: (_) => setState(() => _isHovered = false),
-                    child: GestureDetector(
-                      behavior: HitTestBehavior.opaque,
-                      onVerticalDragStart: (_) =>
-                          setState(() => _isDragging = true),
-                      onVerticalDragEnd: (_) =>
-                          setState(() => _isDragging = false),
-                      onVerticalDragCancel: () =>
-                          setState(() => _isDragging = false),
-                      onVerticalDragUpdate: (details) =>
-                          _onVerticalDragUpdate(details, trackHeight),
-                      child: Stack(
-                        alignment: Alignment.topRight,
-                        children: [
-                          Positioned(
-                            top: topOffset,
-                            right: 0,
-                            width: 5,
-                            height: thumbHeight,
-                            child: AnimatedContainer(
-                              duration: const Duration(milliseconds: 120),
-                              decoration: BoxDecoration(
-                                color: isActive
-                                    ? const Color(0xFF0F172A)
-                                    : const Color(0x590F172A),
-                                borderRadius: BorderRadius.circular(999),
+                    return MouseRegion(
+                      cursor: SystemMouseCursors.click,
+                      onEnter: (_) => setState(() => _isHovered = true),
+                      onExit: (_) => setState(() => _isHovered = false),
+                      child: GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onVerticalDragStart: (_) =>
+                            setState(() => _isDragging = true),
+                        onVerticalDragEnd: (_) =>
+                            setState(() => _isDragging = false),
+                        onVerticalDragCancel: () =>
+                            setState(() => _isDragging = false),
+                        onVerticalDragUpdate: (details) =>
+                            _onVerticalDragUpdate(details, trackHeight),
+                        child: Stack(
+                          alignment: Alignment.topRight,
+                          children: [
+                            Positioned(
+                              top: topOffset,
+                              right: 0,
+                              width: 5,
+                              height: thumbHeight,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: isActive
+                                      ? const Color(0xFF0F172A)
+                                      : const Color(0x590F172A),
+                                  borderRadius: BorderRadius.circular(999),
+                                ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
             ),
           ],
