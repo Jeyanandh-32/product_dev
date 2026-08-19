@@ -3,9 +3,11 @@ import 'package:forui/forui.dart';
 import 'package:mix/mix.dart';
 import 'package:terminal/signals/orders_signal.dart';
 
-/// Refresh button with hover micro-animations for POS orders.
+/// Refresh button with hover micro-animations for POS orders screen.
 class OrdersRefreshButton extends StatelessWidget {
-  const OrdersRefreshButton({super.key});
+  final double size;
+
+  const OrdersRefreshButton({super.key, this.size = 44});
 
   @override
   Widget build(BuildContext context) {
@@ -14,8 +16,8 @@ class OrdersRefreshButton extends StatelessWidget {
       child: PressableBox(
         onPress: refreshOrdersSignal,
         style: BoxStyler()
-            .width(44)
-            .height(44)
+            .width(size)
+            .height(size)
             .color(const Color(0xFFFFFFFF))
             .borderRadiusAll(const Radius.circular(999))
             .borderAll(color: const Color(0xFFE2E8F0))

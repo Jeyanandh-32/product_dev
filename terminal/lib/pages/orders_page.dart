@@ -59,7 +59,13 @@ class _OrdersPageState extends State<OrdersPage> {
                         const Gap(10),
                         const OrdersDateFilterRow(),
                         const Gap(10),
-                        const OrdersSearchBar(),
+                        const Row(
+                          children: [
+                            Expanded(child: OrdersSearchBar()),
+                            Gap(8),
+                            OrdersRefreshButton(),
+                          ],
+                        ),
                         Gap(isDesktop ? 12 : 10),
                         Expanded(child: _buildOrdersGrid(isDesktop, ordersAsync)),
                         const Gap(12),
@@ -97,7 +103,6 @@ class _OrdersPageState extends State<OrdersPage> {
               removeTop: true,
               child: CustomScrollView(
                 controller: _scrollController,
-                cacheExtent: 800.0,
                 physics: isDesktop
                     ? const ClampingScrollPhysics()
                     : const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
