@@ -53,17 +53,17 @@ class InventoryTrinaColumns {
           child: Text(ctx.cell.value?.toString() ?? '', style: const TextStyle(fontSize: 13.5, fontWeight: FontWeight.w700, color: Color(0xFF000000))),
         ),
       ),
-      _col('SKU', 'sku', 130),
-      _col('Barcode', 'barcode', 140),
+      _sortableCol('SKU', 'sku', 130),
+      _sortableCol('Barcode', 'barcode', 140),
       TrinaColumn(
         title: 'Status',
         field: 'status',
         type: TrinaColumnType.text(),
         width: 110,
+        enableSorting: false,
         enableEditingMode: false,
         enableContextMenu: false,
         enableDropToResize: false,
-        titleRenderer: (ctx) => InventoryTableCells.sortableTitle(ctx, 'Status'),
         renderer: (ctx) => Align(alignment: Alignment.centerLeft, child: InventoryTableCells.statusBadge(ctx.cell.value == true)),
       ),
       TrinaColumn(
@@ -80,27 +80,27 @@ class InventoryTrinaColumns {
           return Align(alignment: Alignment.centerLeft, child: InventoryStockBadge(stock: product?.stock));
         },
       ),
-      _col('Low Stock', 'low_stock', 100),
+      _sortableCol('Low Stock', 'low_stock', 100),
       TrinaColumn(
         title: 'Stock Monitor',
         field: 'monitor',
         type: TrinaColumnType.text(),
         width: 120,
+        enableSorting: false,
         enableEditingMode: false,
         enableContextMenu: false,
         enableDropToResize: false,
-        titleRenderer: (ctx) => InventoryTableCells.sortableTitle(ctx, 'Stock Monitor'),
         renderer: (ctx) => Align(alignment: Alignment.centerLeft, child: InventoryTableCells.monitorBadge(ctx.cell.value == true)),
       ),
-      _col('Base Price', 'base_price', 115),
-      _col('Selling Price', 'selling_price', 125),
-      _col('Tax Rate', 'tax_rate', 96),
-      _col('Category', 'category', 140),
-      _col('Counter', 'counter', 130),
+      _sortableCol('Base Price', 'base_price', 115),
+      _sortableCol('Selling Price', 'selling_price', 125),
+      _sortableCol('Tax Rate', 'tax_rate', 96),
+      _plainCol('Category', 'category', 140),
+      _plainCol('Counter', 'counter', 130),
     ];
   }
 
-  static TrinaColumn _col(String title, String field, double width) => TrinaColumn(
+  static TrinaColumn _sortableCol(String title, String field, double width) => TrinaColumn(
         title: title,
         field: field,
         type: TrinaColumnType.text(),
@@ -109,6 +109,21 @@ class InventoryTrinaColumns {
         enableContextMenu: false,
         enableDropToResize: false,
         titleRenderer: (ctx) => InventoryTableCells.sortableTitle(ctx, title),
+        renderer: (ctx) => Align(
+          alignment: Alignment.centerLeft,
+          child: Text(ctx.cell.value?.toString() ?? '-', style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w400, color: Color(0xFF000000))),
+        ),
+      );
+
+  static TrinaColumn _plainCol(String title, String field, double width) => TrinaColumn(
+        title: title,
+        field: field,
+        type: TrinaColumnType.text(),
+        width: width,
+        enableSorting: false,
+        enableEditingMode: false,
+        enableContextMenu: false,
+        enableDropToResize: false,
         renderer: (ctx) => Align(
           alignment: Alignment.centerLeft,
           child: Text(ctx.cell.value?.toString() ?? '-', style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w400, color: Color(0xFF000000))),

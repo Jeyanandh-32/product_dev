@@ -18,6 +18,7 @@ class InventoryTableCells {
     return Container(
       width: double.infinity,
       height: ctx.height,
+      padding: const EdgeInsets.symmetric(horizontal: 12),
       color: const Color(0x00000000),
       alignment: Alignment.centerLeft,
       child: Row(
