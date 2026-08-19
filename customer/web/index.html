@@ -25,11 +25,25 @@
                 }
             };
             window.renderQrCode = function(elementId, text, size) {
-                const el = document.getElementById(elementId);
-                if (el) {
+                let attempts = 0;
+                function render() {
+                    attempts++;
+                    const el = document.getElementById(elementId);
+                    if (!el || typeof QRCode === 'undefined') {
+                        if (attempts < 50) {
+                            setTimeout(render, 30);
+                        }
+                        return;
+                    }
                     el.innerHTML = '';
-                    new QRCode(el, { text: text, width: size || 200, height: size || 200, correctLevel: QRCode.CorrectLevel.H });
+                    new QRCode(el, {
+                        text: text,
+                        width: size || 190,
+                        height: size || 190,
+                        correctLevel: QRCode.CorrectLevel.M
+                    });
                 }
+                render();
             };
         </script>
 

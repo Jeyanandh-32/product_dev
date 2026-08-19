@@ -237,6 +237,161 @@
   }
 }
 @layer utilities {
+  .modal {
+    @layer daisyui.l1.l2.l3 {
+      pointer-events: none;
+      visibility: hidden;
+      position: fixed;
+      inset: 0px;
+      margin: 0px;
+      display: grid;
+      height: 100%;
+      max-height: none;
+      width: 100%;
+      max-width: none;
+      align-items: center;
+      justify-items: center;
+      background-color: transparent;
+      padding: 0px;
+      color: inherit;
+      transition: overlay 0.3s allow-discrete, visibility 0.3s allow-discrete, background-color 0.3s ease-out, opacity 0.1s ease-out;
+      overflow: clip;
+      overscroll-behavior: contain;
+      z-index: 999;
+      scrollbar-gutter: auto;
+    }
+    &::backdrop {
+      @layer daisyui.l1.l2.l3 {
+        display: none;
+      }
+    }
+    &[popover] {
+      @layer daisyui.l1.l2.l3 {
+        inset: 0;
+        margin: 0;
+        border: 0;
+        padding: 0;
+        background: transparent;
+        color: inherit;
+        max-width: none;
+        max-height: none;
+        &::backdrop {
+          background-color: oklch(0% 0 0/ 0.4);
+          transition: background-color 0.3s ease-out;
+        }
+      }
+    }
+    &.modal-open {
+      @layer daisyui.l1.l2 {
+        pointer-events: auto;
+        visibility: visible;
+        opacity: 100%;
+        transition: visibility 0s allow-discrete, background-color 0.3s ease-out, opacity 0.1s ease-out;
+        background-color: oklch(0% 0 0/ 0.4);
+        > .modal-box {
+          translate: 0 0;
+          scale: 1;
+          opacity: 1;
+        }
+        :root:has(&) {
+          --page-scroll-lock:  ;
+        }
+      }
+      @layer daisyui.l1.l2 {
+        @starting-style {
+          opacity: 0%;
+        }
+      }
+    }
+    &[open] {
+      @layer daisyui.l1.l2 {
+        pointer-events: auto;
+        visibility: visible;
+        opacity: 100%;
+        transition: visibility 0s allow-discrete, background-color 0.3s ease-out, opacity 0.1s ease-out;
+        background-color: oklch(0% 0 0/ 0.4);
+        > .modal-box {
+          translate: 0 0;
+          scale: 1;
+          opacity: 1;
+        }
+        :root:has(&) {
+          --page-scroll-lock:  ;
+        }
+      }
+      @layer daisyui.l1.l2 {
+        @starting-style {
+          opacity: 0%;
+        }
+      }
+    }
+    &:popover-open {
+      @layer daisyui.l1.l2 {
+        pointer-events: auto;
+        visibility: visible;
+        opacity: 100%;
+        transition: visibility 0s allow-discrete, background-color 0.3s ease-out, opacity 0.1s ease-out;
+        background-color: oklch(0% 0 0/ 0.4);
+        > .modal-box {
+          translate: 0 0;
+          scale: 1;
+          opacity: 1;
+        }
+        :root:has(&) {
+          --page-scroll-lock:  ;
+        }
+      }
+      @layer daisyui.l1.l2 {
+        @starting-style {
+          opacity: 0%;
+        }
+      }
+    }
+    &:target {
+      @layer daisyui.l1.l2 {
+        pointer-events: auto;
+        visibility: visible;
+        opacity: 100%;
+        transition: visibility 0s allow-discrete, background-color 0.3s ease-out, opacity 0.1s ease-out;
+        background-color: oklch(0% 0 0/ 0.4);
+        > .modal-box {
+          translate: 0 0;
+          scale: 1;
+          opacity: 1;
+        }
+        :root:has(&) {
+          --page-scroll-lock:  ;
+        }
+      }
+      @layer daisyui.l1.l2 {
+        @starting-style {
+          opacity: 0%;
+        }
+      }
+    }
+    .modal-toggle:checked + & {
+      @layer daisyui.l1.l2 {
+        pointer-events: auto;
+        visibility: visible;
+        opacity: 100%;
+        transition: visibility 0s allow-discrete, background-color 0.3s ease-out, opacity 0.1s ease-out;
+        background-color: oklch(0% 0 0/ 0.4);
+        > .modal-box {
+          translate: 0 0;
+          scale: 1;
+          opacity: 1;
+        }
+        :root:has(&) {
+          --page-scroll-lock:  ;
+        }
+      }
+      @layer daisyui.l1.l2 {
+        @starting-style {
+          opacity: 0%;
+        }
+      }
+    }
+  }
   .tab {
     &:is(.tabs > .tab) {
       @layer daisyui.l1.l2.l3 {
@@ -2196,6 +2351,9 @@
   .min-h-\[60vh\] {
     min-height: 60vh;
   }
+  .min-h-\[220px\] {
+    min-height: 220px;
+  }
   .min-h-screen {
     min-height: 100vh;
   }
@@ -2309,6 +2467,9 @@
   }
   .min-w-\[200px\] {
     min-width: 200px;
+  }
+  .min-w-\[220px\] {
+    min-width: 220px;
   }
   .flex-1 {
     flex: 1;
@@ -3413,11 +3574,6 @@
   .disabled\:text-white {
     &:disabled {
       color: var(--color-white);
-    }
-  }
-  .disabled\:opacity-75 {
-    &:disabled {
-      opacity: 75%;
     }
   }
   .disabled\:opacity-85 {

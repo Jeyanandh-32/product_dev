@@ -6,7 +6,6 @@ import 'package:customer/components/orders/customer_orders_list.dart';
 import 'package:customer/components/orders/order_qr_modal.dart';
 import 'package:customer/components/signal_component.dart';
 import 'package:customer/signals/cart_signal.dart';
-import 'package:customer/utils/phonepe_interop.dart';
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:models/models.dart';
@@ -60,13 +59,6 @@ class _CustomerOrdersPageState extends SignalState<CustomerOrdersPage> {
 
   void _onShowQr(Order order) {
     setState(() => _qrModalOrder = order);
-    Future.microtask(() {
-      renderQrCodeCanvas(
-        elementId: 'customer-qr-canvas',
-        text: order.orderReference,
-        size: 190,
-      );
-    });
   }
 
   @override

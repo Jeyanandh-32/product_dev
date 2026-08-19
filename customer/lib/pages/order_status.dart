@@ -3,7 +3,6 @@ import 'package:customer/components/orders/order_qr_modal.dart';
 import 'package:customer/components/orders/order_status_card.dart';
 import 'package:customer/components/orders/order_status_pending_card.dart';
 import 'package:customer/components/signal_component.dart';
-import 'package:customer/utils/phonepe_interop.dart';
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_lucide/jaspr_lucide.dart' hide List, Map, Router, Store;
@@ -64,13 +63,6 @@ class _OrderStatusPageState extends SignalState<OrderStatusPage> {
 
   void _onShowQr(Order order) {
     setState(() => _showQrModal = true);
-    Future.microtask(() {
-      renderQrCodeCanvas(
-        elementId: 'order-qr-canvas',
-        text: order.orderReference,
-        size: 190,
-      );
-    });
   }
 
   void _onBackNavigation() {
