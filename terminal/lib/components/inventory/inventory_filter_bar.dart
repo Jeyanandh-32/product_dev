@@ -4,7 +4,7 @@ import 'package:signals_flutter/signals_flutter.dart';
 import 'package:terminal/components/inventory/inventory_dropdown_filter.dart';
 import 'package:terminal/signals/inventory_products_signal.dart';
 
-/// Top filter row containing Status, Monitor, Category, and Counter dropdowns.
+/// Top filter row containing Status, Stock Monitor, Category, and Counter dropdowns.
 class InventoryFilterBar extends SignalWidget {
   final List<Category> categories;
   final List<Counter> counters;
@@ -27,9 +27,9 @@ class InventoryFilterBar extends SignalWidget {
           label: 'Status',
           value: statusFilter,
           items: const [
-            (label: 'All Statuses', value: null),
-            (label: 'Active Only', value: true),
-            (label: 'Inactive Only', value: false),
+            (label: 'All', value: null),
+            (label: 'Active', value: true),
+            (label: 'Inactive', value: false),
           ],
           onSelected: (val) {
             inventoryStatusFilterSignal.value = val;
@@ -37,10 +37,10 @@ class InventoryFilterBar extends SignalWidget {
           },
         ),
         InventoryDropdownFilter<bool>(
-          label: 'Monitor',
+          label: 'Stock Monitor',
           value: monitorFilter,
           items: const [
-            (label: 'All Monitors', value: null),
+            (label: 'All', value: null),
             (label: 'On', value: true),
             (label: 'Off', value: false),
           ],
@@ -54,7 +54,7 @@ class InventoryFilterBar extends SignalWidget {
             label: 'Category',
             value: categoryFilter,
             items: [
-              (label: 'All Categories', value: null),
+              (label: 'All', value: null),
               ...categories.map((c) => (label: c.name, value: c.id)),
             ],
             onSelected: (val) {
@@ -67,7 +67,7 @@ class InventoryFilterBar extends SignalWidget {
             label: 'Counter',
             value: counterFilter,
             items: [
-              (label: 'All Counters', value: null),
+              (label: 'All', value: null),
               ...counters.map((c) => (label: c.name, value: c.id)),
             ],
             onSelected: (val) {
