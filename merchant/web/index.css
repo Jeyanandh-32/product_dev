@@ -118,3 +118,12 @@
 .table-zebra tbody tr:nth-child(even) th {
     background-color: #f8fafc;
 }
+
+/* Disable sticky pinned columns on mobile screens (< Tailwind sm breakpoint: 640px) */
+@media (max-width: 639.98px) {
+    .table :where(.table-pin-cols tr th),
+    .table-pin-cols tr th,
+    .table-pin-cols th {
+        position: static !important;
+    }
+}
