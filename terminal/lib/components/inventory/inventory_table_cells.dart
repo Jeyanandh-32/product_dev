@@ -9,6 +9,23 @@ import 'package:trina_grid/trina_grid.dart';
 class InventoryTableCells {
   const InventoryTableCells._();
 
+  static Widget plainTitle(String title) {
+    return Container(
+      alignment: Alignment.centerLeft,
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      child: Text(
+        title,
+        softWrap: false,
+        overflow: TextOverflow.visible,
+        style: const TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.w700,
+          color: Color(0xFF475569),
+        ),
+      ),
+    );
+  }
+
   static Widget sortableTitle(TrinaColumnTitleRendererContext ctx, String title) {
     final sort = ctx.column.sort;
     final isAsc = sort.isAscending;
@@ -18,31 +35,34 @@ class InventoryTableCells {
     return Container(
       width: double.infinity,
       height: ctx.height,
-      padding: const EdgeInsets.symmetric(horizontal: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 8),
       color: const Color(0x00000000),
       alignment: Alignment.centerLeft,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Flexible(
-            child: Text(
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        physics: const NeverScrollableScrollPhysics(),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
               title,
+              softWrap: false,
+              overflow: TextOverflow.visible,
               style: TextStyle(
-                fontSize: 12.5,
+                fontSize: 12,
                 fontWeight: isActive ? FontWeight.w800 : FontWeight.w700,
                 color: isActive ? const Color(0xFF191645) : const Color(0xFF475569),
               ),
-              overflow: TextOverflow.ellipsis,
             ),
-          ),
-          const Gap(4.5),
-          Icon(
-            isActive ? (isAsc ? FLucideIcons.arrowUp : FLucideIcons.arrowDown) : FLucideIcons.arrowUpDown,
-            size: 13,
-            color: isActive ? const Color(0xFF191645) : const Color(0xFFCBD5E1),
-          ),
-        ],
+            const Gap(4),
+            Icon(
+              isActive ? (isAsc ? FLucideIcons.arrowUp : FLucideIcons.arrowDown) : FLucideIcons.arrowUpDown,
+              size: 13,
+              color: isActive ? const Color(0xFF191645) : const Color(0xFF94A3B8),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -105,6 +125,7 @@ class InventoryTableCells {
         ),
         child: Text(
           isActive ? 'ACTIVE' : 'INACTIVE',
+          softWrap: false,
           style: TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.w600,
@@ -122,6 +143,7 @@ class InventoryTableCells {
         ),
         child: Text(
           isEnabled ? 'ON' : 'OFF',
+          softWrap: false,
           style: TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.w600,

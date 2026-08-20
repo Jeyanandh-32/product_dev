@@ -54,9 +54,7 @@ class _InventoryDataTableState extends State<InventoryDataTable> {
     return TrinaGrid(
       columns: _columns,
       rows: _rows,
-      onLoaded: (event) {
-        _stateManager = event.stateManager;
-      },
+      onLoaded: (event) => _stateManager = event.stateManager,
       configuration: InventoryTrinaGridConfig.build(),
     );
   }
