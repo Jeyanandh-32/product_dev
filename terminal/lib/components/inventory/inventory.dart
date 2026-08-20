@@ -2,6 +2,7 @@ library;
 
 export 'inventory_data_table.dart';
 export 'inventory_dropdown_filter.dart';
+export 'inventory_empty_products.dart';
 export 'inventory_filter_bar.dart';
 export 'inventory_pagination_toolbar.dart';
 export 'inventory_product_card_mobile.dart';

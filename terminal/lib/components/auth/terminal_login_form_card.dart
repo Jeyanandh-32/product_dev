@@ -3,9 +3,10 @@ import 'package:flutter/widgets.dart';
 import 'package:forui/forui.dart';
 import 'package:gap/gap.dart';
 import 'package:mix/mix.dart';
+import 'package:terminal/components/auth/login_input_field.dart';
 import 'package:terminal/components/auth/terminal_login_submit_button.dart';
 
-/// Clean card container with terminal login form fields and submit action using Mix and Forui (rounded-3xl).
+/// Clean card container with terminal login form fields (42px) and submit action using Mix and Forui.
 class TerminalLoginFormCard extends StatelessWidget {
   final GlobalKey<FormState> formKey;
   final TextEditingController codeController;
@@ -45,10 +46,10 @@ class TerminalLoginFormCard extends StatelessWidget {
           children: [
             _fieldLabel(icon: FLucideIcons.monitor, label: 'Terminal Code'),
             const Gap(8),
-            FTextFormField(
-              control: .managed(controller: codeController),
+            LoginInputField(
+              controller: codeController,
               hint: 'HINXXXXXXOE5',
-              textInputAction: .next,
+              textInputAction: TextInputAction.next,
               inputFormatters: [
                 LengthLimitingTextInputFormatter(12),
                 TextInputFormatter.withFunction((oldValue, newValue) {
@@ -71,10 +72,11 @@ class TerminalLoginFormCard extends StatelessWidget {
             const Gap(20),
             _fieldLabel(icon: FLucideIcons.lock, label: 'Password'),
             const Gap(8),
-            FTextFormField.password(
-              control: .managed(controller: passwordController),
+            LoginInputField(
+              controller: passwordController,
               hint: '••••••••',
-              textInputAction: .done,
+              isPassword: true,
+              textInputAction: TextInputAction.done,
               validator: (v) =>
                   v == null || v.isEmpty ? 'Password is required.' : null,
             ),

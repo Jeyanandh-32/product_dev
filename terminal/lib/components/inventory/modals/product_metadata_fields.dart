@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:models/models.dart';
+import 'package:terminal/components/inventory/modals/modal_input_field.dart';
+import 'package:terminal/components/inventory/modals/modal_select_field.dart';
+import 'package:terminal/components/inventory/modals/modal_switch.dart';
 
 /// Form fields for product name, category, counter, identifiers, and active status.
 class ProductMetadataFields extends StatelessWidget {
@@ -48,74 +51,98 @@ class ProductMetadataFields extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        TextField(
-          controller: TextEditingController(text: name)..selection = TextSelection.collapsed(offset: name.length),
+        ModalInputField(
+          label: 'Product Name',
+          hint: 'e.g. Masala Chai 250ml',
+          value: name,
+          isRequired: true,
           onChanged: onNameChanged,
-          decoration: InputDecoration(labelText: 'Product Name*', hintText: 'Enter name', border: OutlineInputBorder(borderRadius: BorderRadius.circular(10))),
         ),
-        const Gap(12),
+        const Gap(14),
         Row(
           children: [
             Expanded(
-              child: DropdownButtonFormField<String>(
-                initialValue: categoryId.isEmpty ? null : categoryId,
-                isExpanded: true,
-                decoration: InputDecoration(labelText: 'Category*', border: OutlineInputBorder(borderRadius: BorderRadius.circular(10))),
-                items: categories.map((c) => DropdownMenuItem(value: c.id, child: Text(c.name, overflow: TextOverflow.ellipsis))).toList(),
+              child: ModalSelectField<String>(
+                label: 'Category',
+                value: categoryId.isEmpty ? null : categoryId,
+                isRequired: true,
+                hint: 'Select category',
+                items: categories.map((c) => (label: c.name, value: c.id)).toList(),
                 onChanged: (val) => onCategoryChanged(val ?? ''),
               ),
             ),
-            const Gap(10),
+            const Gap(12),
             Expanded(
-              child: DropdownButtonFormField<String>(
-                initialValue: counterId.isEmpty ? null : counterId,
-                isExpanded: true,
-                decoration: InputDecoration(labelText: 'Counter (Optional)', border: OutlineInputBorder(borderRadius: BorderRadius.circular(10))),
+              child: ModalSelectField<String>(
+                label: 'Counter',
+                value: counterId.isEmpty ? null : counterId,
+                hint: 'No counter',
                 items: [
-                  const DropdownMenuItem(value: '', child: Text('No Counter')),
-                  ...counters.map((c) => DropdownMenuItem(value: c.id, child: Text(c.name, overflow: TextOverflow.ellipsis))),
+                  (label: 'No Counter', value: ''),
+                  ...counters.map((c) => (label: c.name, value: c.id)),
                 ],
                 onChanged: (val) => onCounterChanged(val ?? ''),
               ),
             ),
           ],
         ),
-        const Gap(12),
+        const Gap(14),
         Row(
           children: [
             Expanded(
-              child: TextField(
-                controller: TextEditingController(text: sku)..selection = TextSelection.collapsed(offset: sku.length),
+              child: ModalInputField(
+                label: 'SKU',
+                hint: 'e.g. CHAI-001',
+                value: sku,
                 onChanged: onSkuChanged,
-                decoration: InputDecoration(labelText: 'SKU (Optional)', border: OutlineInputBorder(borderRadius: BorderRadius.circular(10))),
               ),
             ),
-            const Gap(10),
+            const Gap(12),
             Expanded(
-              child: TextField(
-                controller: TextEditingController(text: barcode)..selection = TextSelection.collapsed(offset: barcode.length),
+              child: ModalInputField(
+                label: 'Barcode',
+                hint: 'e.g. 8901234567890',
+                value: barcode,
                 onChanged: onBarcodeChanged,
-                decoration: InputDecoration(labelText: 'Barcode (Optional)', border: OutlineInputBorder(borderRadius: BorderRadius.circular(10))),
               ),
             ),
           ],
         ),
-        const Gap(12),
-        TextField(
-          controller: TextEditingController(text: imageUrl)..selection = TextSelection.collapsed(offset: imageUrl.length),
+        const Gap(14),
+        ModalInputField(
+          label: 'Image URL',
+          hint: 'https://images.unsplash.com/...',
+          value: imageUrl,
           onChanged: onImageUrlChanged,
-          decoration: InputDecoration(labelText: 'Image URL (Optional)', border: OutlineInputBorder(borderRadius: BorderRadius.circular(10))),
         ),
-        if (isEditing) ...[
-          const Gap(12),
-          Row(
+        const Gap(14),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          decoration: BoxDecoration(
+            color: const Color(0xFFF8FAFC),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: const Color(0xFFE2E8F0)),
+          ),
+          child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('Active Status', style: TextStyle(fontSize: 13.5, fontWeight: FontWeight.w700)),
-              Switch.adaptive(value: isActive, activeThumbColor: const Color(0xFF000000), onChanged: onActiveChanged),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('Active Status', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: Color(0xFF0F172A))),
+                    Text(isActive ? 'Product is available in POS catalog' : 'Hidden from POS catalog', style: const TextStyle(fontSize: 11.5, color: Color(0xFF64748B)), overflow: TextOverflow.ellipsis),
+                  ],
+                ),
+              ),
+              const Gap(8),
+              ModalSwitch(
+                value: isActive,
+                onChanged: onActiveChanged,
+              ),
             ],
           ),
-        ],
+        ),
       ],
     );
   }

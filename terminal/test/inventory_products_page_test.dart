@@ -2,6 +2,7 @@ import 'package:api_client/api_client.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:forui/forui.dart';
 import 'package:models/models.dart';
 import 'package:signals_flutter/signals_flutter.dart';
 import 'package:terminal/pages/inventory_products_page.dart';
@@ -10,11 +11,15 @@ import 'package:terminal/signals/categories_signal.dart';
 import 'package:terminal/signals/counters_signal.dart';
 import 'package:terminal/signals/inventory_products_signal.dart';
 import 'package:terminal/signals/products_signal.dart';
+import 'package:terminal/theme.dart';
 import 'package:trina_grid/trina_grid.dart';
 
 Widget _wrapTestWidget(Widget child) {
-  return MaterialApp(
-    home: Scaffold(body: child),
+  return FTheme(
+    data: TerminalTheme.light(false),
+    child: MaterialApp(
+      home: Scaffold(body: child),
+    ),
   );
 }
 
@@ -90,5 +95,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Espresso Single'), findsOneWidget);
+    expect(find.textContaining('ESP-1'), findsOneWidget);
+    expect(find.text('ACTIVE'), findsOneWidget);
   });
 }

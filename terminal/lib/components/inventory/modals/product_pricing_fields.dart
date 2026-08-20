@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:terminal/components/inventory/modals/modal_input_field.dart';
 
 /// Pricing input fields for base price, selling price, and tax rate.
 class ProductPricingFields extends StatelessWidget {
@@ -22,47 +23,55 @@ class ProductPricingFields extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          child: TextField(
-            controller: TextEditingController(text: basePrice)..selection = TextSelection.collapsed(offset: basePrice.length),
-            keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            onChanged: onBasePriceChanged,
-            decoration: InputDecoration(
-              labelText: 'Base Price (₹)*',
-              hintText: '0.00',
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-            ),
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF8FAFC),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFFE2E8F0)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('PRICING & TAXES', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, letterSpacing: 0.5, color: Color(0xFF64748B))),
+          const Gap(10),
+          Row(
+            children: [
+              Expanded(
+                child: ModalInputField(
+                  label: 'Base Price (₹)',
+                  hint: '0.00',
+                  value: basePrice,
+                  isRequired: true,
+                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  onChanged: onBasePriceChanged,
+                ),
+              ),
+              const Gap(10),
+              Expanded(
+                child: ModalInputField(
+                  label: 'Selling Price (₹)',
+                  hint: '0.00',
+                  value: sellingPrice,
+                  isRequired: true,
+                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  onChanged: onSellingPriceChanged,
+                ),
+              ),
+              const Gap(10),
+              Expanded(
+                child: ModalInputField(
+                  label: 'Tax Rate (%)',
+                  hint: '0.00',
+                  value: taxRate,
+                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  onChanged: onTaxRateChanged,
+                ),
+              ),
+            ],
           ),
-        ),
-        const Gap(10),
-        Expanded(
-          child: TextField(
-            controller: TextEditingController(text: sellingPrice)..selection = TextSelection.collapsed(offset: sellingPrice.length),
-            keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            onChanged: onSellingPriceChanged,
-            decoration: InputDecoration(
-              labelText: 'Selling Price (₹)*',
-              hintText: '0.00',
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-            ),
-          ),
-        ),
-        const Gap(10),
-        Expanded(
-          child: TextField(
-            controller: TextEditingController(text: taxRate)..selection = TextSelection.collapsed(offset: taxRate.length),
-            keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            onChanged: onTaxRateChanged,
-            decoration: InputDecoration(
-              labelText: 'Tax Rate (%)',
-              hintText: '0.00',
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-            ),
-          ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

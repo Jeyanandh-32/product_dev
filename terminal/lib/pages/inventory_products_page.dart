@@ -34,6 +34,7 @@ class _InventoryProductsPageState extends State<InventoryProductsPage> {
           return const Center(child: Loading(message: 'Loading inventory products...'));
         }
 
+        final allProducts = productsAsync.value ?? [];
         final pagedProducts = pagedInventoryProductsSignal.value;
 
         return Padding(
@@ -58,7 +59,10 @@ class _InventoryProductsPageState extends State<InventoryProductsPage> {
                 const Divider(height: 1, color: Color(0xFFE2E8F0)),
                 Expanded(
                   child: pagedProducts.isEmpty
-                      ? const Center(child: Text('No products match the selected filters.', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Color(0xFF64748B))))
+                      ? InventoryEmptyProducts(
+                          isFiltered: allProducts.isNotEmpty,
+                          onAddProduct: () => showDialog<void>(context: context, builder: (_) => const AddEditProductDialog()),
+                        )
                       : (isDesktop ? _buildDesktopTable(pagedProducts) : _buildMobileList(pagedProducts)),
                 ),
                 const Divider(height: 1, color: Color(0xFFE2E8F0)),

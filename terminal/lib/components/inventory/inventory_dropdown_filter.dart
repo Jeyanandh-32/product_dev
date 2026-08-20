@@ -62,36 +62,41 @@ class _InventoryDropdownFilterState<T> extends State<InventoryDropdownFilter<T>>
             border: Border.all(color: const Color(0xFFE2E8F0)),
             boxShadow: const [BoxShadow(color: Color(0x14000000), blurRadius: 12, offset: Offset(0, 4))],
           ),
-          padding: const EdgeInsets.symmetric(vertical: 4),
+          clipBehavior: Clip.antiAlias,
+          padding: const EdgeInsets.all(4),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: widget.items.map((item) {
               final isSelected = item.value == widget.value;
-              return MouseRegion(
-                cursor: SystemMouseCursors.click,
-                child: PressableBox(
-                  onPress: () {
-                    widget.onSelected(item.value);
-                    controller.hide();
-                  },
-                  style: BoxStyler()
-                      .paddingX(12)
-                      .paddingY(7)
-                      .color(isSelected ? const Color(0xFFF1F5F9) : const Color(0xFFFFFFFF))
-                      .onHovered(isSelected ? BoxStyler() : BoxStyler().color(const Color(0xFFF8FAFC))),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        item.label,
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: isSelected ? FontWeight.w800 : FontWeight.w500,
-                          color: isSelected ? const Color(0xFF0F172A) : const Color(0xFF334155),
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 1),
+                child: MouseRegion(
+                  cursor: SystemMouseCursors.click,
+                  child: PressableBox(
+                    onPress: () {
+                      widget.onSelected(item.value);
+                      controller.hide();
+                    },
+                    style: BoxStyler()
+                        .paddingX(12)
+                        .paddingY(7)
+                        .borderRadiusAll(const Radius.circular(8))
+                        .color(isSelected ? const Color(0xFFF1F5F9) : const Color(0xFFFFFFFF))
+                        .onHovered(isSelected ? BoxStyler() : BoxStyler().color(const Color(0xFFF8FAFC))),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          item.label,
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: isSelected ? FontWeight.w800 : FontWeight.w500,
+                            color: isSelected ? const Color(0xFF0F172A) : const Color(0xFF334155),
+                          ),
                         ),
-                      ),
-                      if (isSelected) const Icon(FLucideIcons.check, size: 13, color: Color(0xFF0F172A)),
-                    ],
+                        if (isSelected) const Icon(FLucideIcons.check, size: 13, color: Color(0xFF0F172A)),
+                      ],
+                    ),
                   ),
                 ),
               );

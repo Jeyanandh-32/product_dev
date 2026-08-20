@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:terminal/components/inventory/modals/modal_input_field.dart';
+import 'package:terminal/components/inventory/modals/modal_switch.dart';
 
 /// Stock monitoring toggle and low stock threshold configuration fields.
 class UpdateStockMonitorSection extends StatelessWidget {
@@ -19,10 +21,10 @@ class UpdateStockMonitorSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: const Color(0xFFF8FAFC),
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(color: const Color(0xFFE2E8F0)),
       ),
       child: Column(
@@ -35,44 +37,27 @@ class UpdateStockMonitorSection extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Stock Monitor', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: Color(0xFF0F172A))),
-                    Text('Trigger low stock warning alerts', style: TextStyle(fontSize: 11.5, color: Color(0xFF64748B)), overflow: TextOverflow.ellipsis),
+                    Text('Stock Monitoring', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: Color(0xFF0F172A))),
+                    Text('Receive low stock alerts in POS', style: TextStyle(fontSize: 11.5, color: Color(0xFF64748B)), overflow: TextOverflow.ellipsis),
                   ],
                 ),
               ),
               const Gap(8),
-              Switch.adaptive(
+              ModalSwitch(
                 value: stockMonitor,
-                activeThumbColor: const Color(0xFF000000),
                 onChanged: onToggleMonitor,
               ),
             ],
           ),
           if (stockMonitor) ...[
-            const Gap(10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text('Low Stock Alert Limit', style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w600, color: Color(0xFF334155))),
-                SizedBox(
-                  width: 80,
-                  height: 32,
-                  child: TextField(
-                    controller: TextEditingController(text: lowStockThreshold)..selection = TextSelection.collapsed(offset: lowStockThreshold.length),
-                    keyboardType: TextInputType.number,
-                    textAlign: TextAlign.center,
-                    onChanged: onThresholdChanged,
-                    decoration: InputDecoration(
-                      hintText: '5',
-                      contentPadding: EdgeInsets.zero,
-                      filled: true,
-                      fillColor: const Color(0xFFFFFFFF),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: const BorderSide(color: Color(0xFFCBD5E1))),
-                    ),
-                    style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
-                  ),
-                ),
-              ],
+            const Gap(12),
+            ModalInputField(
+              label: 'Low Stock Alert Threshold',
+              hint: '5',
+              value: lowStockThreshold,
+              isRequired: true,
+              keyboardType: TextInputType.number,
+              onChanged: onThresholdChanged,
             ),
           ],
         ],
