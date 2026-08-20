@@ -6,6 +6,7 @@ import 'package:signals_flutter/signals_flutter.dart';
 import 'package:terminal/components/orders/orders.dart';
 import 'package:terminal/components/product/terminal_catalog_scrollbar.dart';
 import 'package:terminal/pages/loading.dart';
+import 'package:terminal/signals/navigation_signal.dart';
 import 'package:terminal/signals/orders_signal.dart';
 import 'package:terminal/utils/responsive_extensions.dart';
 
@@ -19,15 +20,22 @@ class OrdersPage extends StatefulWidget {
 
 class _OrdersPageState extends State<OrdersPage> {
   final ScrollController _scrollController = ScrollController();
+  late final void Function() _disposeEffect;
 
   @override
   void initState() {
     super.initState();
-    if (ordersSignal.value.value == null) refreshOrdersSignal();
+    _disposeEffect = effect(() {
+      final activePage = activeTerminalPageSignal.value;
+      if (activePage == TerminalNavPage.orders) {
+        refreshOrdersSignal();
+      }
+    });
   }
 
   @override
   void dispose() {
+    _disposeEffect();
     _scrollController.dispose();
     super.dispose();
   }

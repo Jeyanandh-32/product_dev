@@ -3,9 +3,8 @@ import 'package:gap/gap.dart';
 import 'package:models/models.dart';
 import 'package:terminal/components/inventory/modals/modal_input_field.dart';
 import 'package:terminal/components/inventory/modals/modal_select_field.dart';
-import 'package:terminal/components/inventory/modals/modal_switch.dart';
 
-/// Form fields for product name, category, counter, identifiers, and active status.
+/// Form fields for product name, category, counter, and identifiers.
 class ProductMetadataFields extends StatelessWidget {
   final String name;
   final String categoryId;
@@ -13,8 +12,6 @@ class ProductMetadataFields extends StatelessWidget {
   final String sku;
   final String barcode;
   final String imageUrl;
-  final bool isActive;
-  final bool isEditing;
   final List<Category> categories;
   final List<Counter> counters;
   final ValueChanged<String> onNameChanged;
@@ -23,7 +20,6 @@ class ProductMetadataFields extends StatelessWidget {
   final ValueChanged<String> onSkuChanged;
   final ValueChanged<String> onBarcodeChanged;
   final ValueChanged<String> onImageUrlChanged;
-  final ValueChanged<bool> onActiveChanged;
 
   const ProductMetadataFields({
     super.key,
@@ -33,8 +29,6 @@ class ProductMetadataFields extends StatelessWidget {
     required this.sku,
     required this.barcode,
     required this.imageUrl,
-    required this.isActive,
-    required this.isEditing,
     required this.categories,
     required this.counters,
     required this.onNameChanged,
@@ -43,7 +37,6 @@ class ProductMetadataFields extends StatelessWidget {
     required this.onSkuChanged,
     required this.onBarcodeChanged,
     required this.onImageUrlChanged,
-    required this.onActiveChanged,
   });
 
   @override
@@ -114,34 +107,6 @@ class ProductMetadataFields extends StatelessWidget {
           hint: 'https://images.unsplash.com/...',
           value: imageUrl,
           onChanged: onImageUrlChanged,
-        ),
-        const Gap(14),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-          decoration: BoxDecoration(
-            color: const Color(0xFFF8FAFC),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: const Color(0xFFE2E8F0)),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text('Active Status', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: Color(0xFF0F172A))),
-                    Text(isActive ? 'Product is available in POS catalog' : 'Hidden from POS catalog', style: const TextStyle(fontSize: 11.5, color: Color(0xFF64748B)), overflow: TextOverflow.ellipsis),
-                  ],
-                ),
-              ),
-              const Gap(8),
-              ModalSwitch(
-                value: isActive,
-                onChanged: onActiveChanged,
-              ),
-            ],
-          ),
         ),
       ],
     );

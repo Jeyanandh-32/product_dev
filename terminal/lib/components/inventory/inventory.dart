@@ -11,6 +11,5 @@ export 'inventory_stock_badge.dart';
 export 'inventory_table_cells.dart';
 export 'modals/add_edit_product_dialog.dart';
 export 'modals/update_stock_dialog.dart';
-export 'trina/inventory_trina_columns.dart';
-export 'trina/inventory_trina_grid_config.dart';
-export 'trina/inventory_trina_rows.dart';
+export 'products/inventory_product_table_row.dart';
+export 'products/inventory_products_table_header.dart';

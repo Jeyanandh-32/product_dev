@@ -111,26 +111,23 @@ class _AddEditCategoryDialogState extends State<AddEditCategoryDialog> {
                       ModalInputField(label: 'Description (Optional)', hint: 'e.g. Coffee, tea, hot cocoa...', value: _description, onChanged: (v) => _description = v),
                       const Gap(14),
                       ModalInputField(label: 'Image URL (Optional)', hint: 'https://images.unsplash.com/...', value: _imageUrl, onChanged: (v) => _imageUrl = v),
-                      const Gap(14),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                        decoration: BoxDecoration(color: const Color(0xFFF8FAFC), borderRadius: BorderRadius.circular(12), border: Border.all(color: const Color(0xFFE2E8F0))),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text('Active Status', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: Color(0xFF0F172A))),
-                                  Text(_isActive ? 'Category is visible in POS catalog' : 'Hidden from POS catalog', style: const TextStyle(fontSize: 11.5, color: Color(0xFF64748B)), overflow: TextOverflow.ellipsis),
-                                ],
-                              ),
+                      const Gap(16),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text('Active Status', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: Color(0xFF0F172A))),
+                                const Gap(2),
+                                Text(_isActive ? 'Category is visible in POS catalog' : 'Hidden from POS catalog', style: const TextStyle(fontSize: 11.5, color: Color(0xFF64748B)), overflow: TextOverflow.ellipsis),
+                              ],
                             ),
-                            const Gap(8),
-                            ModalSwitch(value: _isActive, onChanged: (v) => setState(() => _isActive = v)),
-                          ],
-                        ),
+                          ),
+                          const Gap(8),
+                          ModalSwitch(value: _isActive, onChanged: (v) => setState(() => _isActive = v)),
+                        ],
                       ),
                     ],
                   ),

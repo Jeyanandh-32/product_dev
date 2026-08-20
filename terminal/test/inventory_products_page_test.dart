@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:forui/forui.dart';
 import 'package:models/models.dart';
 import 'package:signals_flutter/signals_flutter.dart';
+import 'package:terminal/components/inventory/inventory_data_table.dart';
 import 'package:terminal/pages/inventory_products_page.dart';
 import 'package:terminal/signals/auth_signal.dart';
 import 'package:terminal/signals/categories_signal.dart';
@@ -12,7 +13,6 @@ import 'package:terminal/signals/counters_signal.dart';
 import 'package:terminal/signals/inventory_products_signal.dart';
 import 'package:terminal/signals/products_signal.dart';
 import 'package:terminal/theme.dart';
-import 'package:trina_grid/trina_grid.dart';
 
 Widget _wrapTestWidget(Widget child) {
   return FTheme(
@@ -46,7 +46,7 @@ void main() {
     initDio(Dio(BaseOptions(baseUrl: 'http://localhost:8080')));
     productsSignal.value = AsyncData([product]);
     categoriesSignal.value = AsyncData([category]);
-    countersSignal.value = AsyncData(<Counter>[]);
+    countersSignal.value = const AsyncData(<Counter>[]);
     authSignal.value = AsyncData(Terminal(code: 'T1', merchantId: 'm1', name: 'Main', storeId: 's1', isActive: true, createdAt: now, updatedAt: now));
     inventorySearchSignal.value = '';
     inventoryPageSignal.value = 1;
@@ -62,11 +62,11 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Add Product'), findsOneWidget);
-    expect(find.byType(TrinaGrid), findsOneWidget);
+    expect(find.byType(InventoryDataTable), findsOneWidget);
     expect(find.text('Espresso Single'), findsOneWidget);
     expect(find.text('ESP-1'), findsOneWidget);
     expect(find.text('ACTIVE'), findsOneWidget);
-    expect(find.text('₹100.00'), findsOneWidget);
+    expect(find.text('100.00'), findsOneWidget);
   });
 
   testWidgets('Tapping Add Product button opens AddEditProductDialog', (tester) async {
