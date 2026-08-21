@@ -1,0 +1,77 @@
+import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
+import 'package:models/models.dart';
+import 'package:terminal/components/inventory/inventory_table_cells.dart';
+import 'package:terminal/theme/terminal_colors.dart';
+
+/// Horizontally scrollable data cells for a category row with equal width column distribution.
+class InventoryCategoryScrollableRow extends StatelessWidget {
+  final Category category;
+  final int productsCount;
+  final bool isEven;
+  final bool isHovered;
+  final ValueChanged<bool> onHoverChanged;
+
+  const InventoryCategoryScrollableRow({
+    super.key,
+    required this.category,
+    required this.productsCount,
+    required this.isEven,
+    required this.isHovered,
+    required this.onHoverChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final cat = category;
+    final rowBg = isHovered
+        ? TerminalColors.secondaryBackground
+        : (isEven ? TerminalColors.surface : TerminalColors.pageBackground);
+
+    return MouseRegion(
+      onEnter: (_) => onHoverChanged(true),
+      onExit: (_) => onHoverChanged(false),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 120),
+        height: 60,
+        decoration: BoxDecoration(
+          color: rowBg,
+          border: const Border(
+            bottom: BorderSide(color: TerminalColors.borderSubtle, width: 1),
+          ),
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Row(
+          children: [
+            Expanded(
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: InventoryTableCells.statusBadge(cat.isActive),
+              ),
+            ),
+            const Gap(16),
+            Expanded(
+              child: Text(
+                '$productsCount',
+                style: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                  color: TerminalColors.textPrimary,
+                ),
+              ),
+            ),
+            const Gap(16),
+            Expanded(
+              child: Text(
+                cat.description ?? '-',
+                style: const TextStyle(fontSize: 13, color: TerminalColors.textSecondary),
+                softWrap: false,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

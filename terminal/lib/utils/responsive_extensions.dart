@@ -25,7 +25,7 @@ extension ResponsiveContextX on BuildContext {
   /// Dynamic product catalog column count based on current breakpoint.
   int get productGridColumns => switch (screenWidth) {
         _ when screenWidth < breakpoints.sm => 2,
-        _ when screenWidth < breakpoints.lg => 3,
+        _ when screenWidth < breakpoints.lg => 2,
         _ when screenWidth < breakpoints.xl => 3,
         _ => 4,
       };

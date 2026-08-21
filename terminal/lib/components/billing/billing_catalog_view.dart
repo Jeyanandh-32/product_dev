@@ -14,6 +14,7 @@ import 'package:terminal/pages/loading.dart';
 import 'package:terminal/signals/cart_signal.dart';
 import 'package:terminal/signals/categories_signal.dart';
 import 'package:terminal/signals/products_signal.dart';
+import 'package:terminal/theme/terminal_colors.dart';
 import 'package:terminal/utils/responsive_extensions.dart';
 
 /// Main POS cashier catalog and cart view.
@@ -48,7 +49,7 @@ class _BillingCatalogViewState extends State<BillingCatalogView> {
         return const Center(child: Loading(message: 'Loading products...'));
       }
       final allProducts = products.value ?? [];
-      final isDesktop = context.isDesktop;
+      final isMobile = context.isMobile;
       final crossAxisCount = context.productGridColumns;
 
       return Stack(
@@ -57,47 +58,52 @@ class _BillingCatalogViewState extends State<BillingCatalogView> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Expanded(
+                flex: isMobile ? 1 : 6,
                 child: allProducts.isEmpty
                     ? const BillingEmptyCatalog()
                     : Padding(
-                        padding: EdgeInsets.only(left: isDesktop ? 20 : 12, right: isDesktop ? 12 : 8, top: 12),
+                        padding: EdgeInsets.only(left: isMobile ? 12 : 20, right: isMobile ? 8 : 12, top: 12),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             const CategoryFilterList(),
                             const Gap(12),
                             const ProductSearchBar(),
-                            Gap(isDesktop ? 10 : 8),
-                            Expanded(child: _buildProductGrid(isDesktop, crossAxisCount)),
+                            Gap(isMobile ? 8 : 10),
+                            Expanded(child: _buildProductGrid(isMobile, crossAxisCount)),
                           ],
                         ),
                       ),
               ),
-              if (isDesktop) const RepaintBoundary(child: Cart()),
+              if (!isMobile)
+                const Expanded(
+                  flex: 4,
+                  child: RepaintBoundary(child: Cart()),
+                ),
             ],
           ),
-          if (!isDesktop) const MobileCartFloatingButton(),
+          if (isMobile) const MobileCartFloatingButton(),
         ],
       );
     });
   }
 
-  Widget _buildProductGrid(bool isDesktop, int crossAxisCount) {
+  Widget _buildProductGrid(bool isMobile, int crossAxisCount) {
     return SignalBuilder(builder: (context) {
       final filteredProducts = filteredProductsSignal.value;
       final cart = cartSignal.value;
-      final bottomPad = (!isDesktop && cart.items.isNotEmpty) ? 88.0 : 16.0;
+      final bottomPad = (isMobile && cart.items.isNotEmpty) ? 88.0 : 16.0;
 
       if (filteredProducts.isEmpty) {
         return const Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(FLucideIcons.searchX, size: 36, color: Color(0xFF94A3B8)),
+              Icon(FLucideIcons.searchX, size: 36, color: TerminalColors.textMuted),
               Gap(12),
-              Text('No matching products found', style: TextStyle(fontSize: 14.5, fontWeight: FontWeight.w700, color: Color(0xFF0F172A))),
+              Text('No matching products found', style: TextStyle(fontSize: 14.5, fontWeight: FontWeight.w700, color: TerminalColors.textPrimary)),
               Gap(4),
-              Text('Try changing your category filter or search keyword.', style: TextStyle(fontSize: 12.5, color: Color(0xFF64748B))),
+              Text('Try changing your category filter or search keyword.', style: TextStyle(fontSize: 12.5, color: TerminalColors.textSecondary)),
             ],
           ),
         );
@@ -106,18 +112,18 @@ class _BillingCatalogViewState extends State<BillingCatalogView> {
       return TerminalCatalogScrollbar(
         controller: _scrollController,
         child: Padding(
-          padding: EdgeInsets.only(top: 2, right: isDesktop ? 14 : 10, bottom: bottomPad),
+          padding: EdgeInsets.only(top: 2, right: isMobile ? 10 : 14, bottom: bottomPad),
           child: MediaQuery.removePadding(
             context: context,
             removeTop: true,
             child: CustomScrollView(
               controller: _scrollController,
-              physics: isDesktop ? const ClampingScrollPhysics() : const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+              physics: isMobile ? const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()) : const ClampingScrollPhysics(),
               slivers: [
                 SliverDynamicHeightGridView(
-                  crossAxisSpacing: isDesktop ? 12 : 8,
-                  mainAxisSpacing: isDesktop ? 12 : 8,
-                  builder: (context, index) => ProductCard(key: ValueKey(filteredProducts[index].id), product: filteredProducts[index], isMobile: !isDesktop),
+                  crossAxisSpacing: isMobile ? 8 : 12,
+                  mainAxisSpacing: isMobile ? 8 : 12,
+                  builder: (context, index) => ProductCard(key: ValueKey(filteredProducts[index].id), product: filteredProducts[index], isMobile: isMobile),
                   itemCount: filteredProducts.length,
                   crossAxisCount: crossAxisCount,
                 ),

@@ -47,7 +47,7 @@ class ProductDialogActions extends StatelessWidget {
                 .alignment(Alignment.center)
                 .onHovered(BoxStyler().color(const Color(0xFF1E293B))),
             child: isSubmitting
-                ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2, color: Color(0xFFFFFFFF)))
                 : Text(isEditing ? 'Save Changes' : 'Create Product', style: const TextStyle(fontWeight: FontWeight.w700, color: Color(0xFFFFFFFF), fontSize: 13.5)),
           ),
         ),

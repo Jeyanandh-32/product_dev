@@ -7,6 +7,7 @@ import 'package:terminal/pages/loading.dart';
 import 'package:terminal/signals/counters_signal.dart';
 import 'package:terminal/signals/inventory_counters_signal.dart';
 import 'package:terminal/signals/products_signal.dart';
+import 'package:terminal/theme/terminal_colors.dart';
 import 'package:terminal/utils/responsive_extensions.dart';
 
 /// Full-featured, responsive read-only POS Inventory Counters overview screen.
@@ -26,7 +27,7 @@ class _InventoryCountersPageState extends State<InventoryCountersPage> {
 
   @override
   Widget build(BuildContext context) {
-    final isDesktop = context.isDesktop;
+    final isMobile = context.isMobile;
 
     return SignalBuilder(
       builder: (context) {
@@ -40,13 +41,13 @@ class _InventoryCountersPageState extends State<InventoryCountersPage> {
         final allProducts = productsSignal.value.value ?? [];
 
         return Padding(
-          padding: EdgeInsets.all(isDesktop ? 16 : 10),
+          padding: EdgeInsets.all(isMobile ? 10 : 16),
           child: Material(
-            color: const Color(0xFFFFFFFF),
+            color: TerminalColors.surface,
             elevation: 0,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
-              side: const BorderSide(color: Color(0xFFE2E8F0), width: 1),
+              side: const BorderSide(color: TerminalColors.border, width: 1),
             ),
             clipBehavior: Clip.antiAlias,
             child: Column(
@@ -56,17 +57,17 @@ class _InventoryCountersPageState extends State<InventoryCountersPage> {
                   padding: EdgeInsets.all(14),
                   child: InventoryCountersToolbar(),
                 ),
-                const Divider(height: 1, color: Color(0xFFE2E8F0)),
+                const Divider(height: 1, color: TerminalColors.border),
                 Expanded(
                   child: pagedCounters.isEmpty
                       ? InventoryEmptyCounters(
                           isFiltered: allCounters.isNotEmpty,
                         )
-                      : (isDesktop
-                          ? _buildDesktopTable(pagedCounters, allProducts)
-                          : _buildMobileList(pagedCounters, allProducts)),
+                      : (isMobile
+                          ? _buildMobileList(pagedCounters, allProducts)
+                          : _buildTable(pagedCounters, allProducts)),
                 ),
-                const Divider(height: 1, color: Color(0xFFE2E8F0)),
+                const Divider(height: 1, color: TerminalColors.border),
                 const InventoryCountersPaginationToolbar(),
               ],
             ),
@@ -76,7 +77,7 @@ class _InventoryCountersPageState extends State<InventoryCountersPage> {
     );
   }
 
-  Widget _buildDesktopTable(List<Counter> counters, List<Product> allProducts) {
+  Widget _buildTable(List<Counter> counters, List<Product> allProducts) {
     return InventoryCountersDataTable(
       counters: counters,
       allProducts: allProducts,

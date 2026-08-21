@@ -7,6 +7,7 @@ import 'package:terminal/pages/loading.dart';
 import 'package:terminal/signals/categories_signal.dart';
 import 'package:terminal/signals/inventory_categories_signal.dart';
 import 'package:terminal/signals/products_signal.dart';
+import 'package:terminal/theme/terminal_colors.dart';
 import 'package:terminal/utils/responsive_extensions.dart';
 
 /// Full-featured, responsive POS Inventory Categories management screen.
@@ -26,7 +27,7 @@ class _InventoryCategoriesPageState extends State<InventoryCategoriesPage> {
 
   @override
   Widget build(BuildContext context) {
-    final isDesktop = context.isDesktop;
+    final isMobile = context.isMobile;
 
     return SignalBuilder(
       builder: (context) {
@@ -40,13 +41,13 @@ class _InventoryCategoriesPageState extends State<InventoryCategoriesPage> {
         final allProducts = productsSignal.value.value ?? [];
 
         return Padding(
-          padding: EdgeInsets.all(isDesktop ? 16 : 10),
+          padding: EdgeInsets.all(isMobile ? 10 : 16),
           child: Material(
-            color: const Color(0xFFFFFFFF),
+            color: TerminalColors.surface,
             elevation: 0,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
-              side: const BorderSide(color: Color(0xFFE2E8F0), width: 1),
+              side: const BorderSide(color: TerminalColors.border, width: 1),
             ),
             clipBehavior: Clip.antiAlias,
             child: Column(
@@ -58,18 +59,18 @@ class _InventoryCategoriesPageState extends State<InventoryCategoriesPage> {
                     onAddCategory: () => _openModal(context),
                   ),
                 ),
-                const Divider(height: 1, color: Color(0xFFE2E8F0)),
+                const Divider(height: 1, color: TerminalColors.border),
                 Expanded(
                   child: pagedCategories.isEmpty
                       ? InventoryEmptyCategories(
                           isFiltered: allCategories.isNotEmpty,
                           onAddCategory: () => _openModal(context),
                         )
-                      : (isDesktop
-                          ? _buildDesktopTable(pagedCategories, allProducts)
-                          : _buildMobileList(pagedCategories, allProducts)),
+                      : (isMobile
+                          ? _buildMobileList(pagedCategories, allProducts)
+                          : _buildTable(pagedCategories, allProducts)),
                 ),
-                const Divider(height: 1, color: Color(0xFFE2E8F0)),
+                const Divider(height: 1, color: TerminalColors.border),
                 const InventoryCategoriesPaginationToolbar(),
               ],
             ),
@@ -79,7 +80,7 @@ class _InventoryCategoriesPageState extends State<InventoryCategoriesPage> {
     );
   }
 
-  Widget _buildDesktopTable(List<Category> categories, List<Product> allProducts) {
+  Widget _buildTable(List<Category> categories, List<Product> allProducts) {
     return InventoryCategoriesDataTable(
       categories: categories,
       allProducts: allProducts,

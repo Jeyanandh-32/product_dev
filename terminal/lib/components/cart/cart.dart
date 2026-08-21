@@ -1,5 +1,4 @@
 import 'package:flutter/widgets.dart';
-import 'package:forui/forui.dart';
 import 'package:gap/gap.dart';
 import 'package:mix/mix.dart';
 import 'package:signals_flutter/signals_flutter.dart';
@@ -10,7 +9,7 @@ import 'package:terminal/components/cart/cart_summary.dart';
 import 'package:terminal/components/product/scroll_down_indicator_pill.dart';
 import 'package:terminal/components/product/terminal_catalog_scrollbar.dart';
 import 'package:terminal/signals/cart_signal.dart';
-import 'package:terminal/utils/responsive_extensions.dart';
+import 'package:terminal/theme/terminal_colors.dart';
 
 /// POS cart sidebar / drawer component with scrollbar and high-readability scroll down indicator.
 class Cart extends StatefulWidget {
@@ -48,21 +47,14 @@ class _CartState extends State<Cart> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = context.theme;
     final isDrawerMode = widget.isDrawerMode;
-    final cartWidth = isDrawerMode
-        ? double.infinity
-        : context.screenWidth < context.breakpoints.xl
-            ? 370.0
-            : context.screenWidth * .38;
 
     final cartStyle = FlexBoxStyler()
         .paddingX(isDrawerMode ? 16 : 20)
         .paddingTop(isDrawerMode ? 16 : 20)
         .paddingBottom(isDrawerMode ? 24 : 20)
-        .color(isDrawerMode ? const Color(0xFFF8FAFC) : const Color(0xFFFFFFFF))
-        .width(cartWidth)
-        .borderLeft(color: isDrawerMode ? const Color(0x00000000) : theme.colors.border);
+        .color(isDrawerMode ? TerminalColors.pageBackground : TerminalColors.surface)
+        .borderLeft(color: isDrawerMode ? TerminalColors.transparent : TerminalColors.border);
 
     return SignalBuilder(
       builder: (context) {
@@ -76,7 +68,7 @@ class _CartState extends State<Cart> {
               RowBox(
                 style: FlexBoxStyler().mainAxisAlignment(MainAxisAlignment.spaceBetween).crossAxisAlignment(CrossAxisAlignment.center),
                 children: [
-                  StyledText('Current Order', style: TextStyler().fontSize(20).fontWeight(.w900).color(const Color(0xFF000000))),
+                  StyledText('Current Order', style: TextStyler().fontSize(20).fontWeight(.w900).color(TerminalColors.textBlack)),
                   if (cart.items.isNotEmpty) const CartClearAllButton(),
                 ],
               ),

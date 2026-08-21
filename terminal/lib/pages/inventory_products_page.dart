@@ -6,6 +6,7 @@ import 'package:terminal/components/inventory/inventory.dart';
 import 'package:terminal/pages/loading.dart';
 import 'package:terminal/signals/inventory_products_signal.dart';
 import 'package:terminal/signals/products_signal.dart';
+import 'package:terminal/theme/terminal_colors.dart';
 import 'package:terminal/utils/responsive_extensions.dart';
 
 /// Full-featured, responsive POS Inventory Products management screen.
@@ -25,7 +26,7 @@ class _InventoryProductsPageState extends State<InventoryProductsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final isDesktop = context.isDesktop;
+    final isMobile = context.isMobile;
 
     return SignalBuilder(
       builder: (context) {
@@ -38,13 +39,13 @@ class _InventoryProductsPageState extends State<InventoryProductsPage> {
         final pagedProducts = pagedInventoryProductsSignal.value;
 
         return Padding(
-          padding: EdgeInsets.all(isDesktop ? 16 : 10),
+          padding: EdgeInsets.all(isMobile ? 10 : 16),
           child: Material(
-            color: const Color(0xFFFFFFFF),
+            color: TerminalColors.surface,
             elevation: 0,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
-              side: const BorderSide(color: Color(0xFFE2E8F0), width: 1),
+              side: const BorderSide(color: TerminalColors.border, width: 1),
             ),
             clipBehavior: Clip.antiAlias,
             child: Column(
@@ -56,16 +57,16 @@ class _InventoryProductsPageState extends State<InventoryProductsPage> {
                     onAddProduct: () => showDialog<void>(context: context, builder: (_) => const AddEditProductDialog()),
                   ),
                 ),
-                const Divider(height: 1, color: Color(0xFFE2E8F0)),
+                const Divider(height: 1, color: TerminalColors.border),
                 Expanded(
                   child: pagedProducts.isEmpty
                       ? InventoryEmptyProducts(
                           isFiltered: allProducts.isNotEmpty,
                           onAddProduct: () => showDialog<void>(context: context, builder: (_) => const AddEditProductDialog()),
                         )
-                      : (isDesktop ? _buildDesktopTable(pagedProducts) : _buildMobileList(pagedProducts)),
+                      : (isMobile ? _buildMobileList(pagedProducts) : _buildTable(pagedProducts)),
                 ),
-                const Divider(height: 1, color: Color(0xFFE2E8F0)),
+                const Divider(height: 1, color: TerminalColors.border),
                 const InventoryPaginationToolbar(),
               ],
             ),
@@ -75,7 +76,7 @@ class _InventoryProductsPageState extends State<InventoryProductsPage> {
     );
   }
 
-  Widget _buildDesktopTable(List<Product> products) {
+  Widget _buildTable(List<Product> products) {
     return InventoryDataTable(
       products: products,
       onEdit: (product) => _openEditModal(context, product),
