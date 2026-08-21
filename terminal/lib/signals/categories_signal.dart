@@ -25,3 +25,9 @@ final categoriesSignal = futureSignal<List<Category>>(() async {
 Future<void> refreshCategoriesSignal() async {
   categoriesSignal.refresh();
 }
+
+/// Resets category selection and refreshes categories future signal.
+void resetCategoriesSignal() {
+  selectedCategorySignal.value = null;
+  categoriesSignal.refresh();
+}

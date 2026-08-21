@@ -43,3 +43,9 @@ Future<void> refreshProductsSignal() async {
     productsSignal.value = AsyncError(e, stack);
   }
 }
+
+/// Resets search query and product cache to initial state.
+void resetProductsSignal() {
+  searchQuerySignal.value = '';
+  productsSignal.value = const AsyncLoading();
+}

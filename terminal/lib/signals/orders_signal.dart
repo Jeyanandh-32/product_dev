@@ -125,3 +125,22 @@ final pagedOrdersSignal = computed<List<Order>>(() {
 
 /// Legacy computed signal for backwards compatibility with existing UI helpers.
 final filteredOrdersSignal = computed<List<Order>>(() => pagedOrdersSignal.value);
+
+/// Resets all orders filters, queries, pagination, and data to initial state.
+void resetOrdersSignal() {
+  orderSourceTabSignal.value = OrderSourceTab.thisTerminal;
+  orderDatePresetSignal.value = OrderDatePreset.today;
+  customDateRangeSignal.value = null;
+  orderSearchQuerySignal.value = '';
+  orderPageSizeSignal.value = 50;
+  orderPaymentMethodFilterSignal.value = null;
+  orderPaymentStatusFilterSignal.value = null;
+  orderStatusFilterSignal.value = null;
+  orderCurrentPageSignal.value = 1;
+  selectedOrderSignal.value = null;
+  orderTotalItemsSignal.value = 0;
+  orderTotalPagesSignal.value = 1;
+  terminalTabCountSignal.value = 0;
+  onlineTabCountSignal.value = 0;
+  ordersSignal.value = const AsyncLoading();
+}

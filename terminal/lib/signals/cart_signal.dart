@@ -1,4 +1,5 @@
 import 'dart:math';
+
 import 'package:client_repositories/client_repositories.dart';
 import 'package:models/models.dart';
 import 'package:signals_flutter/signals_flutter.dart';
@@ -13,11 +14,21 @@ final printBillSignal = signal<bool>(true);
 final showOrderSummaryDetailsSignal = signal<bool>(true);
 final cartSignal = signal<CartState>(CartState.initial());
 
+/// Resets all cart-related signals to their clean initial state.
+void resetCartSignal() {
+  discountInputSignal.value = 0.0;
+  paymentModeSignal.value = PaymentMethod.cash;
+  printBillSignal.value = true;
+  showOrderSummaryDetailsSignal.value = true;
+  cartSignal.value = CartState.initial();
+}
+
 abstract final class CartController {
   static void addItem(Product product, {int quantity = 1}) {
     final current = cartSignal.value;
-    final existingIndex =
-        current.items.indexWhere((item) => item.product.id == product.id);
+    final existingIndex = current.items.indexWhere(
+      (item) => item.product.id == product.id,
+    );
     final updatedItems = List<CartItem>.from(current.items);
 
     if (existingIndex >= 0) {
@@ -43,7 +54,10 @@ abstract final class CartController {
     final current = cartSignal.value;
     _updateState(
       current.items
-          .map((i) => i.product.id == productId ? i.copyWith(quantity: quantity) : i)
+          .map(
+            (i) =>
+                i.product.id == productId ? i.copyWith(quantity: quantity) : i,
+          )
           .toList(),
     );
   }
@@ -51,8 +65,10 @@ abstract final class CartController {
   static void setDiscount(double discount) {
     final current = cartSignal.value;
     final maxDiscount = current.subtotal + current.taxTotal;
-    discountInputSignal.value =
-        max(0.0, min(discount, maxDiscount > 0 ? maxDiscount : discount));
+    discountInputSignal.value = max(
+      0.0,
+      min(discount, maxDiscount > 0 ? maxDiscount : discount),
+    );
     _updateState(cartSignal.value.items);
   }
 
@@ -70,11 +86,7 @@ abstract final class CartController {
         value ?? !showOrderSummaryDetailsSignal.value;
   }
 
-  static void clear() {
-    discountInputSignal.value = 0.0;
-    paymentModeSignal.value = PaymentMethod.cash;
-    cartSignal.value = CartState.initial();
-  }
+  static void clear() => resetCartSignal();
 
   static void _updateState(List<CartItem> items) {
     var orderQuantity = 0;

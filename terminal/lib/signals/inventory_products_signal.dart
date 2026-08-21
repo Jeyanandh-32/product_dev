@@ -11,8 +11,12 @@ final inventoryCategoryFilterSignal = signal<String?>(null);
 final inventoryCounterFilterSignal = signal<String?>(null);
 final inventoryStatusFilterSignal = signal<bool?>(null);
 final inventoryStockMonitorFilterSignal = signal<bool?>(null);
-final inventoryStockHealthFilterSignal = signal<StockHealthFilter>(StockHealthFilter.all);
-final inventorySortStateSignal = signal<ProductSortState>(const ProductSortState());
+final inventoryStockHealthFilterSignal = signal<StockHealthFilter>(
+  StockHealthFilter.all,
+);
+final inventorySortStateSignal = signal<ProductSortState>(
+  const ProductSortState(),
+);
 final inventoryEntriesSignal = signal<int>(10);
 final inventoryPageSignal = signal<int>(1);
 final editingInventoryProductSignal = signal<Product?>(null);
@@ -38,7 +42,10 @@ final filteredInventoryProductsSignal = computed<List<Product>>(() {
     if (catId != null && p.category?.id != catId) return false;
     if (counterId != null && p.counter?.id != counterId) return false;
     if (status != null && p.isActive != status) return false;
-    if (stockMonitor != null && (p.stock?.stockMonitor ?? false) != stockMonitor) return false;
+    if (stockMonitor != null &&
+        (p.stock?.stockMonitor ?? false) != stockMonitor) {
+      return false;
+    }
 
     if (stockHealth != StockHealthFilter.all) {
       final stock = p.stock;
@@ -49,9 +56,16 @@ final filteredInventoryProductsSignal = computed<List<Product>>(() {
       } else {
         final qty = stock.quantity;
         final threshold = stock.lowStockThreshold;
-        if (stockHealth == StockHealthFilter.outOfStock && qty > 0) return false;
-        if (stockHealth == StockHealthFilter.lowStock && (qty <= 0 || qty > threshold)) return false;
-        if (stockHealth == StockHealthFilter.inStock && qty <= threshold) return false;
+        if (stockHealth == StockHealthFilter.outOfStock && qty > 0) {
+          return false;
+        }
+        if (stockHealth == StockHealthFilter.lowStock &&
+            (qty <= 0 || qty > threshold)) {
+          return false;
+        }
+        if (stockHealth == StockHealthFilter.inStock && qty <= threshold) {
+          return false;
+        }
       }
     }
     return true;
@@ -69,18 +83,30 @@ final filteredInventoryProductsSignal = computed<List<Product>>(() {
 });
 
 int _compareProducts(Product a, Product b, ProductSortKey key) => switch (key) {
-      ProductSortKey.name => a.name.toLowerCase().compareTo(b.name.toLowerCase()),
-      ProductSortKey.sku => (a.sku ?? '').toLowerCase().compareTo((b.sku ?? '').toLowerCase()),
-      ProductSortKey.barcode => (a.barcode ?? '').toLowerCase().compareTo((b.barcode ?? '').toLowerCase()),
-      ProductSortKey.status => (a.isActive ? 1 : 0).compareTo(b.isActive ? 1 : 0),
-      ProductSortKey.stock => (a.stock?.quantity ?? 0).compareTo(b.stock?.quantity ?? 0),
-      ProductSortKey.lowStock => (a.stock?.lowStockThreshold ?? 0).compareTo(b.stock?.lowStockThreshold ?? 0),
-      ProductSortKey.basePrice => a.basePrice.compareTo(b.basePrice),
-      ProductSortKey.sellingPrice => a.sellingPrice.compareTo(b.sellingPrice),
-      ProductSortKey.taxRate => a.taxRate.compareTo(b.taxRate),
-      ProductSortKey.category => (a.category?.name ?? '').toLowerCase().compareTo((b.category?.name ?? '').toLowerCase()),
-      ProductSortKey.counter => (a.counter?.name ?? '').toLowerCase().compareTo((b.counter?.name ?? '').toLowerCase()),
-    };
+  ProductSortKey.name => a.name.toLowerCase().compareTo(b.name.toLowerCase()),
+  ProductSortKey.sku => (a.sku ?? '').toLowerCase().compareTo(
+    (b.sku ?? '').toLowerCase(),
+  ),
+  ProductSortKey.barcode => (a.barcode ?? '').toLowerCase().compareTo(
+    (b.barcode ?? '').toLowerCase(),
+  ),
+  ProductSortKey.status => (a.isActive ? 1 : 0).compareTo(b.isActive ? 1 : 0),
+  ProductSortKey.stock => (a.stock?.quantity ?? 0).compareTo(
+    b.stock?.quantity ?? 0,
+  ),
+  ProductSortKey.lowStock => (a.stock?.lowStockThreshold ?? 0).compareTo(
+    b.stock?.lowStockThreshold ?? 0,
+  ),
+  ProductSortKey.basePrice => a.basePrice.compareTo(b.basePrice),
+  ProductSortKey.sellingPrice => a.sellingPrice.compareTo(b.sellingPrice),
+  ProductSortKey.taxRate => a.taxRate.compareTo(b.taxRate),
+  ProductSortKey.category => (a.category?.name ?? '').toLowerCase().compareTo(
+    (b.category?.name ?? '').toLowerCase(),
+  ),
+  ProductSortKey.counter => (a.counter?.name ?? '').toLowerCase().compareTo(
+    (b.counter?.name ?? '').toLowerCase(),
+  ),
+};
 
 /// Computed paginated slice of inventory products.
 final pagedInventoryProductsSignal = computed<List<Product>>(() {
@@ -100,3 +126,17 @@ final inventoryTotalPagesSignal = computed<int>(() {
   if (total <= 0) return 1;
   return (total / entries).ceil();
 });
+
+/// Resets all inventory product filters, sort state, pagination, and editing states.
+void resetInventoryProductsSignal() {
+  inventorySearchSignal.value = '';
+  inventoryCategoryFilterSignal.value = null;
+  inventoryCounterFilterSignal.value = null;
+  inventoryStatusFilterSignal.value = null;
+  inventoryStockMonitorFilterSignal.value = null;
+  inventoryStockHealthFilterSignal.value = StockHealthFilter.all;
+  inventorySortStateSignal.value = const ProductSortState();
+  inventoryEntriesSignal.value = 10;
+  inventoryPageSignal.value = 1;
+  editingInventoryProductSignal.value = null;
+}

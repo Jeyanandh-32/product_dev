@@ -104,3 +104,12 @@ abstract final class CategoryActions {
     return updated;
   }
 }
+
+/// Resets inventory category search, filter, sort state, and pagination.
+void resetInventoryCategoriesSignal() {
+  categorySearchSignal.value = '';
+  categoryStatusFilterSignal.value = null;
+  categorySortStateSignal.value = const CategorySortState();
+  categoryEntriesSignal.value = 10;
+  categoryPageSignal.value = 1;
+}

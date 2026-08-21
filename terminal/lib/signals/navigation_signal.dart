@@ -15,3 +15,8 @@ enum TerminalNavPage {
 
 /// Reactive signal tracking the active page in the index-based terminal body.
 final activeTerminalPageSignal = signal<TerminalNavPage>(TerminalNavPage.billing);
+
+/// Resets active navigation page back to billing.
+void resetNavigationSignal() {
+  activeTerminalPageSignal.value = TerminalNavPage.billing;
+}

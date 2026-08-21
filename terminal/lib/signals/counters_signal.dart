@@ -8,10 +8,7 @@ final countersSignal = futureSignal<List<Counter>>(() async {
   final storeId = terminal?.storeId;
   if (storeId == null) return [];
   try {
-    final result = await CounterRepository.getAll(
-      storeId: storeId,
-      size: 1000,
-    );
+    final result = await CounterRepository.getAll(storeId: storeId, size: 1000);
     return result.items;
   } catch (e) {
     return [];
@@ -20,5 +17,10 @@ final countersSignal = futureSignal<List<Counter>>(() async {
 
 /// Refreshes counters future signal.
 Future<void> refreshCountersSignal() async {
+  countersSignal.refresh();
+}
+
+/// Resets and refreshes counters future signal.
+void resetCountersSignal() {
   countersSignal.refresh();
 }

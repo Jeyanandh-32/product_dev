@@ -29,7 +29,9 @@ class CounterSortState {
 
 final counterSearchSignal = signal<String>('');
 final counterStatusFilterSignal = signal<bool?>(null);
-final counterSortStateSignal = signal<CounterSortState>(const CounterSortState());
+final counterSortStateSignal = signal<CounterSortState>(
+  const CounterSortState(),
+);
 final counterEntriesSignal = signal<int>(10);
 final counterPageSignal = signal<int>(1);
 
@@ -43,7 +45,8 @@ final filteredCountersSignal = computed<List<Counter>>(() {
   final filtered = counters.where((c) {
     if (search.isNotEmpty) {
       final nameMatches = c.name.toLowerCase().contains(search);
-      final descMatches = c.description?.toLowerCase().contains(search) ?? false;
+      final descMatches =
+          c.description?.toLowerCase().contains(search) ?? false;
       if (!nameMatches && !descMatches) return false;
     }
     if (status != null && c.isActive != status) return false;
@@ -56,10 +59,21 @@ final filteredCountersSignal = computed<List<Counter>>(() {
   final isAsc = sortState.isAscending;
   filtered.sort((a, b) {
     final cmp = switch (sortKey) {
-      CounterSortKey.name => a.name.toLowerCase().compareTo(b.name.toLowerCase()),
-      CounterSortKey.status => (a.isActive ? 1 : 0).compareTo(b.isActive ? 1 : 0),
-      CounterSortKey.productCount => allProducts.where((p) => p.counter?.id == a.id).length.compareTo(allProducts.where((p) => p.counter?.id == b.id).length),
-      CounterSortKey.description => (a.description ?? '').toLowerCase().compareTo((b.description ?? '').toLowerCase()),
+      CounterSortKey.name => a.name.toLowerCase().compareTo(
+        b.name.toLowerCase(),
+      ),
+      CounterSortKey.status => (a.isActive ? 1 : 0).compareTo(
+        b.isActive ? 1 : 0,
+      ),
+      CounterSortKey.productCount =>
+        allProducts
+            .where((p) => p.counter?.id == a.id)
+            .length
+            .compareTo(allProducts.where((p) => p.counter?.id == b.id).length),
+      CounterSortKey.description =>
+        (a.description ?? '').toLowerCase().compareTo(
+          (b.description ?? '').toLowerCase(),
+        ),
     };
     return isAsc ? cmp : -cmp;
   });
@@ -83,3 +97,12 @@ final pagedCountersSignal = computed<List<Counter>>(() {
   final endIndex = (startIndex + entries).clamp(0, filtered.length);
   return filtered.sublist(startIndex, endIndex);
 });
+
+/// Resets inventory counter search, filter, sort state, and pagination.
+void resetInventoryCountersSignal() {
+  counterSearchSignal.value = '';
+  counterStatusFilterSignal.value = null;
+  counterSortStateSignal.value = const CounterSortState();
+  counterEntriesSignal.value = 10;
+  counterPageSignal.value = 1;
+}
