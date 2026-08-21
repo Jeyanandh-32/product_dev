@@ -20,50 +20,45 @@ class AddEditStoreModal extends StatefulComponent {
 }
 
 class _AddEditStoreModalState extends State<AddEditStoreModal> {
-  late String _storeName;
+  String _storeName = '';
   StoreType? _storeType;
-  late bool _isActive;
-  late bool _isOnlineEnabled;
-  late String _slug;
+  bool _isActive = true;
+  bool _isOnlineEnabled = false;
+  String _slug = '';
 
   @override
   void initState() {
     super.initState();
-    _storeName = component.store?.name ?? '';
-    _storeType = component.store?.storeType != null
-        ? StoreType.values.firstWhere(
-            (t) => t.name == component.store?.storeType?.toLowerCase(),
-            orElse: () => StoreType.other,
-          )
-        : null;
-    _isActive = component.store?.isActive ?? true;
-    _isOnlineEnabled = component.store?.isOnlineEnabled ?? false;
-    _slug = component.store?.slug ?? '';
+    final s = component.store;
+    if (s != null) {
+      _storeName = s.name;
+      _storeType = s.storeType != null
+          ? StoreType.values.firstWhere((t) => t.name == s.storeType?.toLowerCase(), orElse: () => StoreType.other)
+          : null;
+      _isActive = s.isActive;
+      _isOnlineEnabled = s.isOnlineEnabled;
+      _slug = s.slug ?? '';
+    }
   }
 
   String _toSlug(String input) {
-    return input
-        .toLowerCase()
-        .replaceAll(RegExp(r'[^a-z0-9\s-]'), '')
-        .replaceAll(RegExp(r'\s+'), '-')
-        .replaceAll(RegExp(r'-+'), '-');
+    return input.toLowerCase().replaceAll(RegExp(r'[^a-z0-9\s-]'), '').replaceAll(RegExp(r'\s+'), '-').replaceAll(RegExp(r'-+'), '-');
   }
 
   void _onStoreNameChange(String name) {
     _storeName = name;
     if (_isOnlineEnabled && (_slug.isEmpty || component.store == null)) {
-      setState(() {
-        _slug = _toSlug(name);
-      });
+      setState(() => _slug = _toSlug(name));
     }
   }
 
   void _onSubmit(web.Event e) {
     e.preventDefault();
     (web.document.activeElement as web.HTMLElement?)?.blur();
-    if (component.store != null) {
+    final store = component.store;
+    if (store != null) {
       StoresActions.updateStore(
-        id: component.store!.id,
+        id: store.id,
         name: _storeName,
         storeType: _storeType,
         isActive: _isActive,
@@ -83,8 +78,10 @@ class _AddEditStoreModalState extends State<AddEditStoreModal> {
 
   @override
   Component build(BuildContext context) {
+    final isEditing = component.store != null;
+
     return Modal(
-      title: component.store != null ? 'Edit Store' : 'Add Store',
+      title: isEditing ? 'Edit Store' : 'Add Store',
       child: form(
         events: {'submit': _onSubmit},
         [
@@ -92,64 +89,45 @@ class _AddEditStoreModalState extends State<AddEditStoreModal> {
             id: 'name',
             labelText: 'Store Name',
             type: InputType.text,
-            attributes: {
-              'placeholder': "Jack Dev's Cafe",
-              'required': '',
-              'value': _storeName,
-            },
+            attributes: {'placeholder': "Jack Dev's Cafe", 'required': '', 'value': _storeName},
             hintText: 'Store name is required.',
             onChange: (value) => _onStoreNameChange(value as String),
           ),
-
           StoreTypeSelectorField(
             selectedType: _storeType,
             onTypeSelected: (type) => setState(() => _storeType = type),
           ),
-
           StoreOnlineSettingsSection(
             isOnlineEnabled: _isOnlineEnabled,
             slug: _slug,
             onToggleOnline: (enabled) {
               setState(() {
                 _isOnlineEnabled = enabled;
-                if (_isOnlineEnabled && _slug.isEmpty) {
-                  _slug = _toSlug(_storeName);
-                }
+                if (_isOnlineEnabled && _slug.isEmpty) _slug = _toSlug(_storeName);
               });
             },
             onSlugChanged: (slugVal) => setState(() => _slug = slugVal),
           ),
-
-          if (component.store != null)
+          if (isEditing)
             div(classes: 'form-control mb-4 flex flex-row items-center gap-3', [
-              p(
-                classes: 'text-[14px] font-semibold text-gray-500',
-                [.text('Active')],
-              ),
+              p(classes: 'text-[14px] font-semibold text-gray-500', [.text('Active')]),
               input(
                 type: InputType.checkbox,
-                classes:
-                    'toggle ${_isActive ? 'toggle-success' : ''} hover:cursor-pointer',
+                classes: 'toggle ${_isActive ? 'toggle-success' : ''} hover:cursor-pointer',
                 checked: _isActive,
                 events: {
                   'change': (e) {
                     final target = e.target as web.HTMLInputElement;
-                    setState(() {
-                      _isActive = target.checked;
-                    });
+                    setState(() => _isActive = target.checked);
                   },
                 },
               ),
             ]),
-
           div(classes: 'flex justify-end items-center pt-2', [
             button(
               type: ButtonType.submit,
-              classes:
-                  'bg-primary text-primary-content px-6 h-10 rounded-lg hover:cursor-pointer hover:bg-opacity-80 transition-all duration-300',
-              [
-                .text('Save'),
-              ],
+              classes: 'bg-primary text-primary-content px-6 h-10 rounded-lg hover:cursor-pointer hover:bg-opacity-80 transition-all duration-300',
+              [.text('Save')],
             ),
           ]),
         ],

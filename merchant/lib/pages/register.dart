@@ -25,18 +25,12 @@ class _RegisterState extends State<Register> {
   void _onSubmit(Event e) {
     e.preventDefault();
     (document.activeElement as HTMLElement?)?.blur();
-    final fullName = _fullName.trim();
-    final businessName = _businessName.trim();
-    final whatsappNumber = _whatsappNumber.trim();
-    final email = _email.trim();
-    final password = _password.trim();
-
     registerMerchant(
-      name: fullName,
-      businessName: businessName,
-      whatsappNumber: whatsappNumber,
-      email: email,
-      password: password,
+      name: _fullName.trim(),
+      businessName: _businessName.trim(),
+      whatsappNumber: _whatsappNumber.trim(),
+      email: _email.trim(),
+      password: _password.trim(),
     );
   }
 
@@ -49,9 +43,7 @@ class _RegisterState extends State<Register> {
       formContent: form(
         classes: 'card-body items-start',
         method: .post,
-        events: {
-          'submit': (e) => _onSubmit(e),
-        },
+        events: {'submit': _onSubmit},
         [
           FormField(
             onChange: (value) => _fullName = value as String,
@@ -59,28 +51,18 @@ class _RegisterState extends State<Register> {
             labelText: 'Full Name',
             icon: User(classes: 'w-4.5 h-4.5'),
             type: .text,
-            attributes: {
-              'placeholder': 'Jack Dev',
-              'required': '',
-              'value': _fullName,
-            },
+            attributes: {'placeholder': 'Jack Dev', 'required': '', 'value': _fullName},
             hintText: 'Name is required.',
           ),
-
           FormField(
             id: 'businessName',
             labelText: 'Business Name',
             icon: Building(classes: 'w-4.5 h-4.5'),
             type: .text,
             onChange: (value) => _businessName = value as String,
-            attributes: {
-              'placeholder': 'Acme Retail Solutions',
-              'required': '',
-              'value': _businessName,
-            },
+            attributes: {'placeholder': 'Acme Retail Solutions', 'required': '', 'value': _businessName},
             hintText: 'Business Name is required.',
           ),
-
           FormField(
             id: 'whatsappNumber',
             labelText: 'Whatsapp Number',
@@ -98,28 +80,21 @@ class _RegisterState extends State<Register> {
             },
             hintText: 'Must be 10 digits.',
           ),
-
           FormField(
             id: 'email',
             labelText: 'Email',
             icon: Mail(classes: 'w-4.5 h-4.5'),
             type: .email,
             onChange: (value) => _email = value as String,
-            attributes: {
-              'placeholder': 'jacksparrow@example.com',
-              'required': '',
-              'value': _email,
-            },
+            attributes: {'placeholder': 'jacksparrow@example.com', 'required': '', 'value': _email},
             hintText: 'Email is required.',
           ),
-
           FormField(
             id: 'password',
             labelText: 'Password',
             icon: Lock(classes: 'w-4.5 h-4.5'),
             type: .password,
             onChange: (value) => setState(() => _password = value as String),
-
             attributes: {
               'placeholder': '*********',
               'required': '',
@@ -127,13 +102,10 @@ class _RegisterState extends State<Register> {
               'minlength': '6',
               'value': _password,
             },
-            hintText:
-                'Must be 6+ characters with a number, lowercase, and uppercase.',
+            hintText: 'Must be 6+ characters with a number, lowercase, and uppercase.',
           ),
-
           button(
-            classes:
-                'btn btn-primary mt-3 rounded-lg h-12 w-full gap-2.5 disabled:bg-primary disabled:text-primary-content disabled:opacity-85 disabled:border-transparent',
+            classes: 'btn btn-primary mt-3 rounded-lg h-12 w-full gap-2.5 disabled:bg-primary disabled:text-primary-content disabled:opacity-85 disabled:border-transparent',
             type: .submit,
             disabled: authSubmittingSignal.value,
             [
@@ -144,11 +116,8 @@ class _RegisterState extends State<Register> {
                 .text('Register'),
             ],
           ),
-
-          span(classes: 'text-gray-500 text-center px-8  md:px-16 mt-6', [
-            .text(
-              'By clicking "Register Business", you agree to our Terms of Service and Privacy Policy.',
-            ),
+          span(classes: 'text-gray-500 text-center px-8 md:px-16 mt-6', [
+            .text('By clicking "Register Business", you agree to our Terms of Service and Privacy Policy.'),
           ]),
         ],
       ),
@@ -157,9 +126,7 @@ class _RegisterState extends State<Register> {
         onClick: () => context.push('/login'),
         [
           span([.text('Already have an account?')]),
-          span(classes: 'text-accent font-semibold ml-1', [
-            .text('Sign in to Brand'),
-          ]),
+          span(classes: 'text-accent font-semibold ml-1', [.text('Sign in to Brand')]),
         ],
       ),
     );

@@ -22,21 +22,15 @@ class PhonePeService {
 
   /// Returns the base URL for standard PG checkout API.
   String getBaseUrl(PaymentGatewayEnv env) =>
-      env == PaymentGatewayEnv.prod
-          ? 'https://api.phonepe.com/apis/pg'
-          : 'https://api-preprod.phonepe.com/apis/pg-sandbox';
+      env == PaymentGatewayEnv.prod ? 'https://api.phonepe.com/apis/pg' : 'https://api-preprod.phonepe.com/apis/pg-sandbox';
 
   /// Returns the base URL for OAuth 2.0 client credential authorization.
   String getAuthBaseUrl(PaymentGatewayEnv env) =>
-      env == PaymentGatewayEnv.prod
-          ? 'https://api.phonepe.com/apis/identity-manager'
-          : 'https://api-preprod.phonepe.com/apis/pg-sandbox';
+      env == PaymentGatewayEnv.prod ? 'https://api.phonepe.com/apis/identity-manager' : 'https://api-preprod.phonepe.com/apis/pg-sandbox';
 
   /// Step 1: Generate OAuth Token (/v1/oauth/token)
   Future<String?> getAuthToken(StorePhonePeConfig config) async {
-    if (config.clientId == null ||
-        config.clientSecret == null ||
-        config.clientVersion == null) {
+    if (config.clientId == null || config.clientSecret == null || config.clientVersion == null) {
       return null;
     }
 
@@ -44,9 +38,7 @@ class PhonePeService {
       final url = '${getAuthBaseUrl(config.env)}/v1/oauth/token';
       final response = await _dio.post<Map<String, dynamic>>(
         url,
-        options: Options(
-          headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-        ),
+        options: Options(headers: {'Content-Type': 'application/x-www-form-urlencoded'}),
         data: {
           'client_id': config.clientId,
           'client_version': config.clientVersion,
@@ -55,8 +47,8 @@ class PhonePeService {
         },
       );
 
-      if (response.statusCode == 200 && response.data != null) {
-        final data = response.data!;
+      final data = response.data;
+      if (response.statusCode == 200 && data != null) {
         return data['access_token'] as String?;
       }
     } catch (_) {}
@@ -94,22 +86,12 @@ class PhonePeService {
       if (token != null) 'Authorization': 'O-Bearer $token',
     };
 
-    final response = await _dio.post<Map<String, dynamic>>(
-      url,
-      options: Options(headers: headers),
-      data: payload,
-    );
-
-    if (response.statusCode == 200 && response.data != null) {
-      final data = response.data!;
-      final innerData = data['data'] is Map<String, dynamic>
-          ? data['data'] as Map<String, dynamic>
-          : null;
-      final redirectUrlStr = (data['redirectUrl'] as String?) ??
-          (innerData?['redirectUrl'] as String?);
-      final orderIdStr = (data['orderId'] as String?) ??
-          (innerData?['orderId'] as String?) ??
-          '';
+    final response = await _dio.post<Map<String, dynamic>>(url, options: Options(headers: headers), data: payload);
+    final data = response.data;
+    if (response.statusCode == 200 && data != null) {
+      final innerData = data['data'] is Map<String, dynamic> ? data['data'] as Map<String, dynamic> : null;
+      final redirectUrlStr = (data['redirectUrl'] as String?) ?? (innerData?['redirectUrl'] as String?);
+      final orderIdStr = (data['orderId'] as String?) ?? (innerData?['orderId'] as String?) ?? '';
 
       if (redirectUrlStr != null && redirectUrlStr.isNotEmpty) {
         return (tokenUrl: redirectUrlStr, orderId: orderIdStr);
@@ -124,10 +106,8 @@ class PhonePeService {
     required StorePhonePeConfig config,
     required String merchantOrderId,
   }) async {
-    final url =
-        '${getBaseUrl(config.env)}/checkout/v2/order/$merchantOrderId/status?details=false&errorContext=true';
+    final url = '${getBaseUrl(config.env)}/checkout/v2/order/$merchantOrderId/status?details=false&errorContext=true';
     final token = await getAuthToken(config);
-
     final headers = <String, String>{
       'Content-Type': 'application/json',
       if (token != null) 'Authorization': 'O-Bearer $token',
@@ -142,10 +122,9 @@ class PhonePeService {
     required String rawRequestBody,
     required String signatureHeader,
     required String secretKey,
-  }) =>
-      PhonePeSecurityHelper.verifyWebhookHmac(
-        rawRequestBody: rawRequestBody,
-        signatureHeader: signatureHeader,
-        secretKey: secretKey,
-      );
+  }) => PhonePeSecurityHelper.verifyWebhookHmac(
+    rawRequestBody: rawRequestBody,
+    signatureHeader: signatureHeader,
+    secretKey: secretKey,
+  );
 }

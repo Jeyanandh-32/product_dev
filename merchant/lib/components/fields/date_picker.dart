@@ -22,7 +22,7 @@ class DatePicker extends SignalComponent {
 }
 
 class _DatePickerState extends SignalState<DatePicker> {
-  late String _tempDate;
+  String _tempDate = '';
 
   String _presetButtonClass(bool isSelected) => isSelected
       ? 'btn btn-xs rounded-full border-0 shadow-none btn-primary text-white font-medium transition-colors cursor-pointer'
@@ -33,8 +33,7 @@ class _DatePickerState extends SignalState<DatePicker> {
     if (activeElement != null) {
       final element = activeElement as web.HTMLElement;
       element.blur();
-      final details = element.closest('details');
-      details?.removeAttribute('open');
+      element.closest('details')?.removeAttribute('open');
     }
   }
 
@@ -49,12 +48,8 @@ class _DatePickerState extends SignalState<DatePicker> {
     final today = DatePickerHelper.getTodayString();
     final yesterday = DatePickerHelper.getYesterdayString();
 
-    if (cleaned == today) {
-      return 'Today (${DatePickerHelper.formatDateForDisplay(today)})';
-    }
-    if (cleaned == yesterday) {
-      return 'Yesterday (${DatePickerHelper.formatDateForDisplay(yesterday)})';
-    }
+    if (cleaned == today) return 'Today (${DatePickerHelper.formatDateForDisplay(today)})';
+    if (cleaned == yesterday) return 'Yesterday (${DatePickerHelper.formatDateForDisplay(yesterday)})';
     return DatePickerHelper.formatDateForDisplay(cleaned);
   }
 
@@ -75,75 +70,43 @@ class _DatePickerState extends SignalState<DatePicker> {
               'btn btn-sm rounded-full border border-border-medium bg-base-100 hover:bg-base-200 text-xs px-3 font-medium flex items-center gap-2 shadow-2xs cursor-pointer list-none select-none',
           [
             Calendar(classes: 'w-3.5 h-3.5 text-primary'),
-            span(classes: 'text-xs text-base-content font-medium', [
-              .text(_buttonText),
-            ]),
+            span(classes: 'text-xs text-base-content font-medium', [.text(_buttonText)]),
             ChevronDown(classes: 'w-3.5 h-3.5 opacity-60'),
           ],
         ),
         div(
-          classes:
-              'dropdown-content menu bg-base-100 rounded-2xl z-30 mt-2 p-3 shadow-xl border border-border-medium w-72 flex flex-col gap-2.5',
+          classes: 'dropdown-content menu bg-base-100 rounded-2xl z-30 mt-2 p-3 shadow-xl border border-border-medium w-72 flex flex-col gap-2.5',
           [
             div(classes: 'flex flex-col gap-1', [
-              span(
-                classes:
-                    'text-2xs font-semibold text-gray-500 uppercase tracking-wider px-1',
-                [.text('Quick Selection')],
-              ),
+              span(classes: 'text-2xs font-semibold text-gray-500 uppercase tracking-wider px-1', [.text('Quick Selection')]),
               div(classes: 'flex flex-wrap gap-1.5', [
-                button(
-                  classes: _presetButtonClass(isToday),
-                  onClick: () => _applyDate(today),
-                  [.text('Today')],
-                ),
-                button(
-                  classes: _presetButtonClass(isYesterday),
-                  onClick: () => _applyDate(yesterday),
-                  [.text('Yesterday')],
+                button(classes: _presetButtonClass(isToday), onClick: () => _applyDate(today), [.text('Today')]),
+                button(classes: _presetButtonClass(isYesterday), onClick: () => _applyDate(yesterday), [.text('Yesterday')]),
+              ]),
+            ]),
+            div(classes: 'flex flex-col gap-1 pt-1 border-t border-border-light', [
+              span(classes: 'text-2xs font-semibold text-gray-500 uppercase tracking-wider px-1', [.text('Select Date')]),
+              div(classes: 'flex flex-col gap-0.5 mt-0.5', [
+                input(
+                  type: InputType.date,
+                  value: _tempDate,
+                  classes: 'input input-sm border border-border-medium bg-base-100 rounded-lg text-xs w-full focus:outline-none focus:border-primary',
+                  onInput: (val) => _tempDate = DatePickerHelper.cleanDate(val.toString().trim()),
                 ),
               ]),
             ]),
-            div(
-              classes: 'flex flex-col gap-1 pt-1 border-t border-border-light',
-              [
-                span(
-                  classes:
-                      'text-2xs font-semibold text-gray-500 uppercase tracking-wider px-1',
-                  [.text('Select Date')],
-                ),
-                div(classes: 'flex flex-col gap-0.5 mt-0.5', [
-                  input(
-                    type: InputType.date,
-                    value: _tempDate,
-                    classes:
-                        'input input-sm border border-border-medium bg-base-100 rounded-lg text-xs w-full focus:outline-none focus:border-primary',
-                    onInput: (value) {
-                      final val = value.toString().trim();
-                      _tempDate = DatePickerHelper.cleanDate(val);
-                    },
-                  ),
-                ]),
-              ],
-            ),
-            div(
-              classes:
-                  'flex justify-between items-center mt-0.5 border-t border-border-light pt-2',
-              [
-                button(
-                  classes:
-                      'btn btn-xs btn-ghost text-error rounded-full font-medium cursor-pointer',
-                  onClick: () => _applyDate(today),
-                  [.text('Reset to Today')],
-                ),
-                button(
-                  classes:
-                      'btn btn-xs btn-primary rounded-full px-4 text-white font-medium cursor-pointer',
-                  onClick: () => _applyDate(_tempDate),
-                  [.text('Apply')],
-                ),
-              ],
-            ),
+            div(classes: 'flex justify-between items-center mt-0.5 border-t border-border-light pt-2', [
+              button(
+                classes: 'btn btn-xs btn-ghost text-error rounded-full font-medium cursor-pointer',
+                onClick: () => _applyDate(today),
+                [.text('Reset to Today')],
+              ),
+              button(
+                classes: 'btn btn-xs btn-primary rounded-full px-4 text-white font-medium cursor-pointer',
+                onClick: () => _applyDate(_tempDate),
+                [.text('Apply')],
+              ),
+            ]),
           ],
         ),
       ],

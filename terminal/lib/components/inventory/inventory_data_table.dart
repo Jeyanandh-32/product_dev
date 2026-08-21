@@ -40,8 +40,7 @@ class _InventoryDataTableState extends State<InventoryDataTable> {
   void _syncLeftToRight() {
     if (_isSyncing) return;
     _isSyncing = true;
-    if (_rightController.hasClients &&
-        _rightController.offset != _leftController.offset) {
+    if (_rightController.hasClients && _rightController.offset != _leftController.offset) {
       _rightController.jumpTo(_leftController.offset);
     }
     _isSyncing = false;
@@ -50,8 +49,7 @@ class _InventoryDataTableState extends State<InventoryDataTable> {
   void _syncRightToLeft() {
     if (_isSyncing) return;
     _isSyncing = true;
-    if (_leftController.hasClients &&
-        _leftController.offset != _rightController.offset) {
+    if (_leftController.hasClients && _leftController.offset != _rightController.offset) {
       _leftController.jumpTo(_rightController.offset);
     }
     _isSyncing = false;
@@ -77,75 +75,64 @@ class _InventoryDataTableState extends State<InventoryDataTable> {
 
         return ValueListenableBuilder<int?>(
           valueListenable: _hoveredIndex,
-          builder: (context, hoveredIndex, _) {
-            return Row(
-              children: [
-                // Pinned Left Pane (Action, Image, Product Name)
-                SizedBox(
-                  width: pinnedWidth,
-                  child: Column(
-                    children: [
-                      const InventoryProductsPinnedHeader(),
-                      Expanded(
-                        child: ListView.builder(
-                          controller: _leftController,
-                          itemCount: widget.products.length,
-                          itemBuilder: (context, index) {
-                            final product = widget.products[index];
-                            return InventoryProductPinnedRow(
-                              product: product,
-                              isEven: index.isEven,
-                              isHovered: hoveredIndex == index,
-                              onEdit: () => widget.onEdit(product),
-                              onUpdateStock: () =>
-                                  widget.onUpdateStock(product),
-                              onHoverChanged: (hovered) {
-                                _hoveredIndex.value = hovered ? index : null;
-                              },
-                            );
-                          },
-                        ),
+          builder: (context, hoveredIndex, _) => Row(
+            children: [
+              SizedBox(
+                width: pinnedWidth,
+                child: Column(
+                  children: [
+                    const InventoryProductsPinnedHeader(),
+                    Expanded(
+                      child: ListView.builder(
+                        controller: _leftController,
+                        itemCount: widget.products.length,
+                        itemBuilder: (context, index) {
+                          final product = widget.products[index];
+                          return InventoryProductPinnedRow(
+                            product: product,
+                            isEven: index.isEven,
+                            isHovered: hoveredIndex == index,
+                            onEdit: () => widget.onEdit(product),
+                            onUpdateStock: () => widget.onUpdateStock(product),
+                            onHoverChanged: (hovered) => _hoveredIndex.value = hovered ? index : null,
+                          );
+                        },
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                // Horizontally Scrollable Right Pane (11 Data Columns)
-                Expanded(
-                  child: SingleChildScrollView(
-                    key: const ValueKey('inventory_products_scrollable_pane'),
-                    scrollDirection: Axis.horizontal,
-                    child: SizedBox(
-                      width: scrollableWidth,
-                      child: Column(
-                        children: [
-                          const InventoryProductsScrollableHeader(),
-                          Expanded(
-                            child: ListView.builder(
-                              controller: _rightController,
-                              itemCount: widget.products.length,
-                              itemBuilder: (context, index) {
-                                final product = widget.products[index];
-                                return InventoryProductScrollableRow(
-                                  product: product,
-                                  isEven: index.isEven,
-                                  isHovered: hoveredIndex == index,
-                                  onHoverChanged: (hovered) {
-                                    _hoveredIndex.value = hovered
-                                        ? index
-                                        : null;
-                                  },
-                                );
-                              },
-                            ),
+              ),
+              Expanded(
+                child: SingleChildScrollView(
+                  key: const ValueKey('inventory_products_scrollable_pane'),
+                  scrollDirection: Axis.horizontal,
+                  child: SizedBox(
+                    width: scrollableWidth,
+                    child: Column(
+                      children: [
+                        const InventoryProductsScrollableHeader(),
+                        Expanded(
+                          child: ListView.builder(
+                            controller: _rightController,
+                            itemCount: widget.products.length,
+                            itemBuilder: (context, index) {
+                              final product = widget.products[index];
+                              return InventoryProductScrollableRow(
+                                product: product,
+                                isEven: index.isEven,
+                                isHovered: hoveredIndex == index,
+                                onHoverChanged: (hovered) => _hoveredIndex.value = hovered ? index : null,
+                              );
+                            },
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
-              ],
-            );
-          },
+              ),
+            ],
+          ),
         );
       },
     );

@@ -21,12 +21,10 @@ class InventoryCategoriesDataTable extends StatefulWidget {
   });
 
   @override
-  State<InventoryCategoriesDataTable> createState() =>
-      _InventoryCategoriesDataTableState();
+  State<InventoryCategoriesDataTable> createState() => _InventoryCategoriesDataTableState();
 }
 
-class _InventoryCategoriesDataTableState
-    extends State<InventoryCategoriesDataTable> {
+class _InventoryCategoriesDataTableState extends State<InventoryCategoriesDataTable> {
   final ScrollController _leftController = ScrollController();
   final ScrollController _rightController = ScrollController();
   final ValueNotifier<int?> _hoveredIndex = ValueNotifier<int?>(null);
@@ -42,8 +40,7 @@ class _InventoryCategoriesDataTableState
   void _syncLeftToRight() {
     if (_isSyncing) return;
     _isSyncing = true;
-    if (_rightController.hasClients &&
-        _rightController.offset != _leftController.offset) {
+    if (_rightController.hasClients && _rightController.offset != _leftController.offset) {
       _rightController.jumpTo(_leftController.offset);
     }
     _isSyncing = false;
@@ -52,8 +49,7 @@ class _InventoryCategoriesDataTableState
   void _syncRightToLeft() {
     if (_isSyncing) return;
     _isSyncing = true;
-    if (_leftController.hasClients &&
-        _leftController.offset != _rightController.offset) {
+    if (_leftController.hasClients && _leftController.offset != _rightController.offset) {
       _leftController.jumpTo(_rightController.offset);
     }
     _isSyncing = false;
@@ -75,82 +71,71 @@ class _InventoryCategoriesDataTableState
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        final colWidth = max(
-          160.0,
-          (constraints.maxWidth - fixedLeftWidth) / 4,
-        );
+        final colWidth = max(160.0, (constraints.maxWidth - fixedLeftWidth) / 4);
         final pinnedWidth = fixedLeftWidth + colWidth;
         final scrollableWidth = colWidth * 3;
 
         return ValueListenableBuilder<int?>(
           valueListenable: _hoveredIndex,
-          builder: (context, hoveredIndex, _) {
-            return Row(
-              children: [
-                SizedBox(
-                  width: pinnedWidth,
-                  child: Column(
-                    children: [
-                      const InventoryCategoriesPinnedHeader(),
-                      Expanded(
-                        child: ListView.builder(
-                          controller: _leftController,
-                          itemCount: widget.categories.length,
-                          itemBuilder: (context, index) {
-                            final category = widget.categories[index];
-                            return InventoryCategoryPinnedRow(
-                              category: category,
-                              isEven: index.isEven,
-                              isHovered: hoveredIndex == index,
-                              onEdit: () => widget.onEdit(category),
-                              onHoverChanged: (hovered) =>
-                                  _hoveredIndex.value = hovered ? index : null,
-                            );
-                          },
-                        ),
+          builder: (context, hoveredIndex, _) => Row(
+            children: [
+              SizedBox(
+                width: pinnedWidth,
+                child: Column(
+                  children: [
+                    const InventoryCategoriesPinnedHeader(),
+                    Expanded(
+                      child: ListView.builder(
+                        controller: _leftController,
+                        itemCount: widget.categories.length,
+                        itemBuilder: (context, index) {
+                          final category = widget.categories[index];
+                          return InventoryCategoryPinnedRow(
+                            category: category,
+                            isEven: index.isEven,
+                            isHovered: hoveredIndex == index,
+                            onEdit: () => widget.onEdit(category),
+                            onHoverChanged: (hovered) => _hoveredIndex.value = hovered ? index : null,
+                          );
+                        },
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    key: const ValueKey('inventory_categories_scrollable_pane'),
-                    scrollDirection: Axis.horizontal,
-                    child: SizedBox(
-                      width: scrollableWidth,
-                      child: Column(
-                        children: [
-                          const InventoryCategoriesScrollableHeader(),
-                          Expanded(
-                            child: ListView.builder(
-                              controller: _rightController,
-                              itemCount: widget.categories.length,
-                              itemBuilder: (context, index) {
-                                final category = widget.categories[index];
-                                final count = widget.allProducts
-                                    .where((p) => p.category?.id == category.id)
-                                    .length;
-                                return InventoryCategoryScrollableRow(
-                                  category: category,
-                                  productsCount: count,
-                                  isEven: index.isEven,
-                                  isHovered: hoveredIndex == index,
-                                  onHoverChanged: (hovered) =>
-                                      _hoveredIndex.value = hovered
-                                      ? index
-                                      : null,
-                                );
-                              },
-                            ),
+              ),
+              Expanded(
+                child: SingleChildScrollView(
+                  key: const ValueKey('inventory_categories_scrollable_pane'),
+                  scrollDirection: Axis.horizontal,
+                  child: SizedBox(
+                    width: scrollableWidth,
+                    child: Column(
+                      children: [
+                        const InventoryCategoriesScrollableHeader(),
+                        Expanded(
+                          child: ListView.builder(
+                            controller: _rightController,
+                            itemCount: widget.categories.length,
+                            itemBuilder: (context, index) {
+                              final category = widget.categories[index];
+                              final count = widget.allProducts.where((p) => p.category?.id == category.id).length;
+                              return InventoryCategoryScrollableRow(
+                                category: category,
+                                productsCount: count,
+                                isEven: index.isEven,
+                                isHovered: hoveredIndex == index,
+                                onHoverChanged: (hovered) => _hoveredIndex.value = hovered ? index : null,
+                              );
+                            },
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
-              ],
-            );
-          },
+              ),
+            ],
+          ),
         );
       },
     );

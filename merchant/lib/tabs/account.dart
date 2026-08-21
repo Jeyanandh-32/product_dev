@@ -19,10 +19,10 @@ class Account extends SignalComponent {
 }
 
 class _AccountState extends SignalState<Account> {
-  late String _name;
-  late String _businessName;
-  late String _whatsappNumber;
-  late String _email;
+  String _name = 'Merchant Owner';
+  String _businessName = 'Retail & POS Enterprise';
+  String _whatsappNumber = '+91 98765 43210';
+  String _email = 'merchant@store.com';
 
   String _currentPassword = '';
   String _newPassword = '';
@@ -36,10 +36,12 @@ class _AccountState extends SignalState<Account> {
   void initState() {
     super.initState();
     final merchant = authSignal.value.value;
-    _name = merchant?.name ?? 'Merchant Owner';
-    _businessName = merchant?.businessName ?? 'Retail & POS Enterprise';
-    _whatsappNumber = merchant?.whatsappNumber ?? '+91 98765 43210';
-    _email = merchant?.email ?? 'merchant@store.com';
+    if (merchant != null) {
+      _name = merchant.name;
+      _businessName = merchant.businessName;
+      _whatsappNumber = merchant.whatsappNumber;
+      _email = merchant.email;
+    }
     _fetchNotificationSettings();
   }
 
@@ -58,10 +60,7 @@ class _AccountState extends SignalState<Account> {
     e.preventDefault();
     (document.activeElement as HTMLElement?)?.blur();
     await MerchantAccountHandler.saveProfile(
-      name: _name,
-      businessName: _businessName,
-      whatsappNumber: _whatsappNumber,
-      email: _email,
+      name: _name, businessName: _businessName, whatsappNumber: _whatsappNumber, email: _email,
     );
   }
 
@@ -69,9 +68,7 @@ class _AccountState extends SignalState<Account> {
     e.preventDefault();
     (document.activeElement as HTMLElement?)?.blur();
     final success = await MerchantAccountHandler.updatePassword(
-      currentPassword: _currentPassword,
-      newPassword: _newPassword,
-      confirmPassword: _confirmPassword,
+      currentPassword: _currentPassword, newPassword: _newPassword, confirmPassword: _confirmPassword,
     );
     if (success) {
       setState(() {
@@ -82,15 +79,9 @@ class _AccountState extends SignalState<Account> {
     }
   }
 
-  Future<void> _onNotificationSettingChanged({
-    bool? waNotifications,
-    bool? lowStockAlerts,
-    bool? dailyReports,
-  }) async {
+  Future<void> _onNotificationSettingChanged({bool? waNotifications, bool? lowStockAlerts, bool? dailyReports}) async {
     final updated = await MerchantAccountHandler.updateNotifications(
-      waNotifications: waNotifications,
-      lowStockAlerts: lowStockAlerts,
-      dailyReports: dailyReports,
+      waNotifications: waNotifications, lowStockAlerts: lowStockAlerts, dailyReports: dailyReports,
     );
     if (updated != null) {
       setState(() {
@@ -117,39 +108,23 @@ class _AccountState extends SignalState<Account> {
       classes: 'flex-1 h-full overflow-y-auto bg-neutral/30 p-4 space-y-4',
       [
         AccountBanner(
-          displayName: displayName,
-          displayBusiness: displayBusiness,
-          displayEmail: displayEmail,
-          displayWhatsapp: displayWhatsapp,
-          initials: initials,
-          activeStoreCount: activeStoreCount,
+          displayName: displayName, displayBusiness: displayBusiness, displayEmail: displayEmail,
+          displayWhatsapp: displayWhatsapp, initials: initials, activeStoreCount: activeStoreCount,
         ),
-
         div(classes: 'grid grid-cols-1 lg:grid-cols-3 gap-4', [
           MerchantProfileSecuritySection(
-            name: _name,
-            businessName: _businessName,
-            email: _email,
-            whatsappNumber: _whatsappNumber,
-            onNameChanged: (val) => _name = val,
-            onBusinessNameChanged: (val) => _businessName = val,
-            onEmailChanged: (val) => _email = val,
-            onWhatsappChanged: (val) => _whatsappNumber = val,
-            onSaveProfile: _onSaveProfile,
-            currentPassword: _currentPassword,
-            newPassword: _newPassword,
-            confirmPassword: _confirmPassword,
-            onCurrentPasswordChanged: (val) => setState(() => _currentPassword = val),
+            name: _name, businessName: _businessName, email: _email, whatsappNumber: _whatsappNumber,
+            onNameChanged: (val) => _name = val, onBusinessNameChanged: (val) => _businessName = val,
+            onEmailChanged: (val) => _email = val, onWhatsappChanged: (val) => _whatsappNumber = val,
+            onSaveProfile: _onSaveProfile, currentPassword: _currentPassword, newPassword: _newPassword,
+            confirmPassword: _confirmPassword, onCurrentPasswordChanged: (val) => setState(() => _currentPassword = val),
             onNewPasswordChanged: (val) => setState(() => _newPassword = val),
             onConfirmPasswordChanged: (val) => setState(() => _confirmPassword = val),
             onUpdatePassword: _onUpdatePassword,
           ),
           AccountSideColumn(
-            stores: stores,
-            waNotifications: _waNotifications,
-            lowStockAlerts: _lowStockAlerts,
-            dailyReports: _dailyReports,
-            onNotificationSettingChanged: _onNotificationSettingChanged,
+            stores: stores, waNotifications: _waNotifications, lowStockAlerts: _lowStockAlerts,
+            dailyReports: _dailyReports, onNotificationSettingChanged: _onNotificationSettingChanged,
           ),
         ]),
       ],

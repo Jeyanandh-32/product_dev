@@ -19,12 +19,10 @@ class InventoryCountersDataTable extends StatefulWidget {
   });
 
   @override
-  State<InventoryCountersDataTable> createState() =>
-      _InventoryCountersDataTableState();
+  State<InventoryCountersDataTable> createState() => _InventoryCountersDataTableState();
 }
 
-class _InventoryCountersDataTableState
-    extends State<InventoryCountersDataTable> {
+class _InventoryCountersDataTableState extends State<InventoryCountersDataTable> {
   final ScrollController _leftController = ScrollController();
   final ScrollController _rightController = ScrollController();
   final ValueNotifier<int?> _hoveredIndex = ValueNotifier<int?>(null);
@@ -40,8 +38,7 @@ class _InventoryCountersDataTableState
   void _syncLeftToRight() {
     if (_isSyncing) return;
     _isSyncing = true;
-    if (_rightController.hasClients &&
-        _rightController.offset != _leftController.offset) {
+    if (_rightController.hasClients && _rightController.offset != _leftController.offset) {
       _rightController.jumpTo(_leftController.offset);
     }
     _isSyncing = false;
@@ -50,8 +47,7 @@ class _InventoryCountersDataTableState
   void _syncRightToLeft() {
     if (_isSyncing) return;
     _isSyncing = true;
-    if (_leftController.hasClients &&
-        _leftController.offset != _rightController.offset) {
+    if (_leftController.hasClients && _leftController.offset != _rightController.offset) {
       _leftController.jumpTo(_rightController.offset);
     }
     _isSyncing = false;
@@ -73,81 +69,70 @@ class _InventoryCountersDataTableState
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        final colWidth = max(
-          160.0,
-          (constraints.maxWidth - fixedLeftWidth) / 4,
-        );
+        final colWidth = max(160.0, (constraints.maxWidth - fixedLeftWidth) / 4);
         final pinnedWidth = fixedLeftWidth + colWidth;
         final scrollableWidth = colWidth * 3;
 
         return ValueListenableBuilder<int?>(
           valueListenable: _hoveredIndex,
-          builder: (context, hoveredIndex, _) {
-            return Row(
-              children: [
-                SizedBox(
-                  width: pinnedWidth,
-                  child: Column(
-                    children: [
-                      const InventoryCountersPinnedHeader(),
-                      Expanded(
-                        child: ListView.builder(
-                          controller: _leftController,
-                          itemCount: widget.counters.length,
-                          itemBuilder: (context, index) {
-                            final counter = widget.counters[index];
-                            return InventoryCounterPinnedRow(
-                              counter: counter,
-                              isEven: index.isEven,
-                              isHovered: hoveredIndex == index,
-                              onHoverChanged: (hovered) =>
-                                  _hoveredIndex.value = hovered ? index : null,
-                            );
-                          },
-                        ),
+          builder: (context, hoveredIndex, _) => Row(
+            children: [
+              SizedBox(
+                width: pinnedWidth,
+                child: Column(
+                  children: [
+                    const InventoryCountersPinnedHeader(),
+                    Expanded(
+                      child: ListView.builder(
+                        controller: _leftController,
+                        itemCount: widget.counters.length,
+                        itemBuilder: (context, index) {
+                          final counter = widget.counters[index];
+                          return InventoryCounterPinnedRow(
+                            counter: counter,
+                            isEven: index.isEven,
+                            isHovered: hoveredIndex == index,
+                            onHoverChanged: (hovered) => _hoveredIndex.value = hovered ? index : null,
+                          );
+                        },
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    key: const ValueKey('inventory_counters_scrollable_pane'),
-                    scrollDirection: Axis.horizontal,
-                    child: SizedBox(
-                      width: scrollableWidth,
-                      child: Column(
-                        children: [
-                          const InventoryCountersScrollableHeader(),
-                          Expanded(
-                            child: ListView.builder(
-                              controller: _rightController,
-                              itemCount: widget.counters.length,
-                              itemBuilder: (context, index) {
-                                final counter = widget.counters[index];
-                                final count = widget.allProducts
-                                    .where((p) => p.counter?.id == counter.id)
-                                    .length;
-                                return InventoryCounterScrollableRow(
-                                  counter: counter,
-                                  productsCount: count,
-                                  isEven: index.isEven,
-                                  isHovered: hoveredIndex == index,
-                                  onHoverChanged: (hovered) =>
-                                      _hoveredIndex.value = hovered
-                                      ? index
-                                      : null,
-                                );
-                              },
-                            ),
+              ),
+              Expanded(
+                child: SingleChildScrollView(
+                  key: const ValueKey('inventory_counters_scrollable_pane'),
+                  scrollDirection: Axis.horizontal,
+                  child: SizedBox(
+                    width: scrollableWidth,
+                    child: Column(
+                      children: [
+                        const InventoryCountersScrollableHeader(),
+                        Expanded(
+                          child: ListView.builder(
+                            controller: _rightController,
+                            itemCount: widget.counters.length,
+                            itemBuilder: (context, index) {
+                              final counter = widget.counters[index];
+                              final count = widget.allProducts.where((p) => p.counter?.id == counter.id).length;
+                              return InventoryCounterScrollableRow(
+                                counter: counter,
+                                productsCount: count,
+                                isEven: index.isEven,
+                                isHovered: hoveredIndex == index,
+                                onHoverChanged: (hovered) => _hoveredIndex.value = hovered ? index : null,
+                              );
+                            },
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
-              ],
-            );
-          },
+              ),
+            ],
+          ),
         );
       },
     );

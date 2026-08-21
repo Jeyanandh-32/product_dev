@@ -31,18 +31,14 @@ class _CountersState extends SignalState<Counters> {
   bool? _statusFilter;
 
   void _onSort(CounterSortKey key) {
-    setState(() {
-      _sortState = _sortState.toggle(key);
-    });
+    setState(() => _sortState = _sortState.toggle(key));
   }
 
   @override
   void initState() {
     super.initState();
     final store = storeSignal.value;
-    if (store != null) {
-      _loadedStoreId = store.id;
-    }
+    if (store != null) _loadedStoreId = store.id;
     refreshCountersSignal();
     fetchAllStoreProductsSignal();
   }
@@ -52,10 +48,7 @@ class _CountersState extends SignalState<Counters> {
     if (activeElement != null) {
       final element = activeElement as web.HTMLElement;
       element.blur();
-      final details = element.closest('details');
-      if (details != null) {
-        details.removeAttribute('open');
-      }
+      element.closest('details')?.removeAttribute('open');
     }
   }
 
@@ -82,22 +75,16 @@ class _CountersState extends SignalState<Counters> {
         fetchAllStoreProductsSignal();
       });
     }
-    final entries = entriesSignal.value;
-    final counters = countersSignal.value;
-    final currentPage = countersPageSignal.value;
-    final totalPages = countersTotalPagesSignal.value;
+
+    final isModalActive = activeModalSignal.value == ActiveModal.addCounter || activeModalSignal.value == ActiveModal.editCounter;
 
     return div(
-      classes:
-          'flex flex-col flex-1 min-h-0 m-4 bg-white rounded-2xl border border-border-medium shadow-xs overflow-hidden',
+      classes: 'flex flex-col flex-1 min-h-0 m-4 bg-white rounded-2xl border border-border-medium shadow-xs overflow-hidden',
       [
-        if (activeModalSignal.value == ActiveModal.addCounter ||
-            activeModalSignal.value == ActiveModal.editCounter)
-          const AddEditCounterModal(),
-
+        if (isModalActive) const AddEditCounterModal(),
         CountersFilterBar(
-          entries: entries,
-          currentPage: currentPage,
+          entries: entriesSignal.value,
+          currentPage: countersPageSignal.value,
           totalCount: countersTotalSignal.value,
           statusFilter: _statusFilter,
           onEntryChanged: _changeEntry,
@@ -108,25 +95,18 @@ class _CountersState extends SignalState<Counters> {
             refreshCountersSignal();
           },
         ),
-
         div(
           classes: 'flex-1 overflow-auto min-h-0',
           [
-            counters.map(
+            countersSignal.value.map(
               data: (data) {
                 if (data.isEmpty) {
-                  return const CenteredMessage(
-                    message: 'No Counters found. Add some counters to your store.',
-                  );
+                  return const CenteredMessage(message: 'No Counters found. Add some counters to your store.');
                 }
-
                 var filteredList = data;
                 if (_statusFilter != null) {
-                  filteredList = filteredList
-                      .where((c) => c.isActive == _statusFilter)
-                      .toList();
+                  filteredList = filteredList.where((c) => c.isActive == _statusFilter).toList();
                 }
-
                 return CountersTableView(
                   counters: filteredList,
                   sortState: _sortState,
@@ -134,19 +114,16 @@ class _CountersState extends SignalState<Counters> {
                   getAssociatedCount: _getAssociatedCount,
                 );
               },
-              error: (error, _) => CenteredMessage(
-                message: (error is ApiException)
-                    ? error.message
-                    : 'Error loading counters. Something went wrong.',
+              error: (err, _) => CenteredMessage(
+                message: (err is ApiException) ? err.message : 'Error loading counters. Something went wrong.',
               ),
               loading: () => const Loading(),
             ),
           ],
         ),
-
         TablePagination(
-          currentPage: currentPage,
-          totalPages: totalPages,
+          currentPage: countersPageSignal.value,
+          totalPages: countersTotalPagesSignal.value,
           onPageChanged: (page) {
             countersPageSignal.value = page;
             refreshCountersSignal();

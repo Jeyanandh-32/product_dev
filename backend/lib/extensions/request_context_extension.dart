@@ -23,7 +23,7 @@ extension RequestContextExtension on RequestContext {
   }
 
   /// Gets the validated storeId from query parameters.
-  String get storeId => request.uri.queryParameters['storeId']!;
+  String get storeId => request.uri.queryParameters['storeId'] ?? '';
 
   /// Parses and validates the request body using a schema validator.
   /// Returns the parsed body Map, or throws a [ResponseException] to exit early.

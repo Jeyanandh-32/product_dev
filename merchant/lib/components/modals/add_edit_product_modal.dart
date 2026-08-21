@@ -26,32 +26,33 @@ class AddEditProductModal extends SignalComponent {
 }
 
 class _AddEditProductModalState extends SignalState<AddEditProductModal> {
-  late String _name;
-  late String _categoryId;
-  late String _counterId;
-  late String _basePrice;
-  late String _sellingPrice;
-  late String _taxRate;
-  late String _sku;
-  late String _barcode;
-  late String _imageUrl;
-  late bool _isActive;
+  String _name = '';
+  String _categoryId = '';
+  String _counterId = '';
+  String _basePrice = '';
+  String _sellingPrice = '';
+  String _taxRate = '0';
+  String _sku = '';
+  String _barcode = '';
+  String _imageUrl = '';
+  bool _isActive = true;
 
   @override
   void initState() {
     super.initState();
     final p = component.product;
-    _name = p?.name ?? '';
-    _categoryId = p?.category?.id ?? '';
-    _counterId = p?.counter?.id ?? '';
-    _basePrice = p != null ? '${p.basePrice}' : '';
-    _sellingPrice = p != null ? '${p.sellingPrice}' : '';
-    _taxRate = p != null ? '${p.taxRate}' : '0';
-    _sku = p?.sku ?? '';
-    _barcode = p?.barcode ?? '';
-    _imageUrl = p?.imageUrl ?? '';
-    _isActive = p?.isActive ?? true;
-
+    if (p != null) {
+      _name = p.name;
+      _categoryId = p.category?.id ?? '';
+      _counterId = p.counter?.id ?? '';
+      _basePrice = '${p.basePrice}';
+      _sellingPrice = '${p.sellingPrice}';
+      _taxRate = '${p.taxRate}';
+      _sku = p.sku ?? '';
+      _barcode = p.barcode ?? '';
+      _imageUrl = p.imageUrl ?? '';
+      _isActive = p.isActive;
+    }
     refreshCategoriesSignal(customSize: 1000);
     refreshCountersSignal(customSize: 1000);
   }
@@ -59,14 +60,11 @@ class _AddEditProductModalState extends SignalState<AddEditProductModal> {
   void _onSubmit(web.Event e) {
     e.preventDefault();
     (web.document.activeElement as web.HTMLElement?)?.blur();
-
     if (_categoryId.isEmpty) {
       showToast('Category is required.');
       return;
     }
-
     activeModalSignal.value = ActiveModal.none;
-
     ProductModalSubmitHandler.submit(
       product: component.product,
       name: _name,
@@ -93,64 +91,49 @@ class _AddEditProductModalState extends SignalState<AddEditProductModal> {
         events: {'submit': _onSubmit},
         classes: 'flex flex-col gap-4',
         [
-          div(
-            classes: 'flex flex-col gap-4 max-h-[60vh] overflow-y-auto px-1',
-            [
-              FormField(
-                id: 'name',
-                labelText: 'Name',
-                type: InputType.text,
-                attributes: {
-                  'placeholder': 'Product name',
-                  'required': 'true',
-                  'value': _name,
-                },
-                onChange: (value) => _name = value as String,
-              ),
-
-              CategorySelectorField(
-                categories: categories,
-                categoryId: _categoryId,
-                onSelect: (val) => setState(() => _categoryId = val),
-              ),
-
-              CounterSelectorField(
-                counters: counters,
-                counterId: _counterId,
-                onSelect: (val) => setState(() => _counterId = val),
-              ),
-
-              ProductPricingFields(
-                basePrice: _basePrice,
-                sellingPrice: _sellingPrice,
-                taxRate: _taxRate,
-                onBasePriceChanged: (val) => _basePrice = val,
-                onSellingPriceChanged: (val) => _sellingPrice = val,
-                onTaxRateChanged: (val) => _taxRate = val,
-              ),
-
-              ProductMetadataSection(
-                sku: _sku,
-                barcode: _barcode,
-                imageUrl: _imageUrl,
-                isActive: _isActive,
-                isEditing: component.product != null,
-                onSkuChanged: (val) => _sku = val,
-                onBarcodeChanged: (val) => _barcode = val,
-                onImageUrlChanged: (val) => _imageUrl = val,
-                onActiveChanged: (val) => setState(() => _isActive = val),
-              ),
-            ],
-          ),
-
+          div(classes: 'flex flex-col gap-4 max-h-[60vh] overflow-y-auto px-1', [
+            FormField(
+              id: 'name',
+              labelText: 'Name',
+              type: InputType.text,
+              attributes: {'placeholder': 'Product name', 'required': 'true', 'value': _name},
+              onChange: (value) => _name = value as String,
+            ),
+            CategorySelectorField(
+              categories: categories,
+              categoryId: _categoryId,
+              onSelect: (val) => setState(() => _categoryId = val),
+            ),
+            CounterSelectorField(
+              counters: counters,
+              counterId: _counterId,
+              onSelect: (val) => setState(() => _counterId = val),
+            ),
+            ProductPricingFields(
+              basePrice: _basePrice,
+              sellingPrice: _sellingPrice,
+              taxRate: _taxRate,
+              onBasePriceChanged: (val) => _basePrice = val,
+              onSellingPriceChanged: (val) => _sellingPrice = val,
+              onTaxRateChanged: (val) => _taxRate = val,
+            ),
+            ProductMetadataSection(
+              sku: _sku,
+              barcode: _barcode,
+              imageUrl: _imageUrl,
+              isActive: _isActive,
+              isEditing: component.product != null,
+              onSkuChanged: (val) => _sku = val,
+              onBarcodeChanged: (val) => _barcode = val,
+              onImageUrlChanged: (val) => _imageUrl = val,
+              onActiveChanged: (val) => setState(() => _isActive = val),
+            ),
+          ]),
           div(classes: 'flex justify-end items-center pt-2', [
             button(
               type: ButtonType.submit,
-              classes:
-                  'bg-primary text-primary-content px-6 h-10 rounded-lg hover:cursor-pointer hover:bg-opacity-80 transition-all duration-300',
-              [
-                .text('Save'),
-              ],
+              classes: 'bg-primary text-primary-content px-6 h-10 rounded-lg hover:cursor-pointer hover:bg-opacity-80 transition-all duration-300',
+              [.text('Save')],
             ),
           ]),
         ],

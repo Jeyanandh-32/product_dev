@@ -27,12 +27,10 @@ class ProfitLossItemBuilder {
       final totalBase = costPrice + wastageLoss;
       final percentage = totalBase > 0 ? (profit / totalBase) * 100.0 : 0.0;
 
-      final categoryName = p.categoryId != null
-          ? (categoryMap[p.categoryId!] ?? 'Unassigned')
-          : 'Unassigned';
-      final counterName = p.counterId != null
-          ? (counterMap[p.counterId!] ?? 'Unassigned')
-          : 'Unassigned';
+      final catId = p.categoryId;
+      final categoryName = catId != null ? (categoryMap[catId] ?? 'Unassigned') : 'Unassigned';
+      final cntId = p.counterId;
+      final counterName = cntId != null ? (counterMap[cntId] ?? 'Unassigned') : 'Unassigned';
 
       reportItems.add(
         ProfitLossItem(

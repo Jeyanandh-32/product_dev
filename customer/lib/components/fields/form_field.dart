@@ -35,20 +35,21 @@ class _FormFieldState extends State<FormField> {
   bool _obscureText = true;
 
   void _handleInput(dynamic eventOrValue) {
-    if (component.onChange == null) return;
+    final callback = component.onChange;
+    if (callback == null) return;
     try {
       final event = eventOrValue as web.Event;
       final target = event.target as web.HTMLInputElement?;
       if (target != null) {
-        component.onChange!(target.value);
+        callback(target.value);
         return;
       }
     } catch (_) {}
     if (eventOrValue is String) {
-      component.onChange!(eventOrValue);
+      callback(eventOrValue);
       return;
     }
-    component.onChange!(eventOrValue?.toString());
+    callback(eventOrValue?.toString());
   }
 
   void _handleKeyDown(dynamic eventOrValue) {
@@ -57,18 +58,14 @@ class _FormFieldState extends State<FormField> {
       if (event.key == 'Enter') {
         final currentTarget = event.target as web.HTMLInputElement?;
         final form = currentTarget?.form;
-        if (form != null) {
-          final elements = form.querySelectorAll(
-            'input:not([type="hidden"]):not([disabled])',
-          );
+        if (form != null && currentTarget != null) {
+          final elements = form.querySelectorAll('input:not([type="hidden"]):not([disabled])');
           final list = <web.HTMLInputElement>[];
           for (var i = 0; i < elements.length; i++) {
             final item = elements.item(i);
-            if (item.isA<web.HTMLInputElement>()) {
-              list.add(item as web.HTMLInputElement);
-            }
+            if (item.isA<web.HTMLInputElement>()) list.add(item as web.HTMLInputElement);
           }
-          final index = list.indexOf(currentTarget!);
+          final index = list.indexOf(currentTarget);
           if (index != -1 && index < list.length - 1) {
             event.preventDefault();
             list[index + 1].focus();
@@ -81,6 +78,8 @@ class _FormFieldState extends State<FormField> {
   @override
   Component build(BuildContext context) {
     final isPassword = component.type == InputType.password;
+    final icon = component.icon;
+    final hint = component.hintText;
 
     return fieldset(classes: 'w-full flex flex-col gap-1.5 mb-4', [
       div(classes: 'flex items-center justify-between', [
@@ -88,19 +87,16 @@ class _FormFieldState extends State<FormField> {
           htmlFor: component.id,
           classes: 'text-xs font-extrabold text-black uppercase tracking-wider flex items-center gap-1.5',
           [
-            if (component.icon != null) component.icon!,
+            ?icon,
             .text(component.labelText),
           ],
         ),
         if (component.enableForgotPassword)
           button(
             type: .button,
-            classes:
-                'text-xs font-extrabold text-black underline hover:text-gray-700 cursor-pointer border-0 bg-transparent p-0',
+            classes: 'text-xs font-extrabold text-black underline hover:text-gray-700 cursor-pointer border-0 bg-transparent p-0',
             onClick: () => context.push('/forgotPassword'),
-            [
-              .text('Forgot Password?'),
-            ],
+            [.text('Forgot Password?')],
           ),
       ]),
       if (isPassword)
@@ -120,14 +116,8 @@ class _FormFieldState extends State<FormField> {
             type: .button,
             classes:
                 'absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black cursor-pointer p-1 rounded-md transition-colors border-0 bg-transparent',
-            onClick: () {
-              setState(() {
-                _obscureText = !_obscureText;
-              });
-            },
-            [
-              if (_obscureText) EyeOff(classes: 'w-4 h-4') else Eye(classes: 'w-4 h-4'),
-            ],
+            onClick: () => setState(() => _obscureText = !_obscureText),
+            [if (_obscureText) EyeOff(classes: 'w-4 h-4') else Eye(classes: 'w-4 h-4')],
           ),
         ])
       else
@@ -142,10 +132,7 @@ class _FormFieldState extends State<FormField> {
               'h-12 w-full px-4 bg-gray-50 hover:bg-gray-100/80 focus:bg-white border border-gray-200 focus:border-black rounded-xl text-sm font-medium text-black transition-all focus:outline-none focus:ring-1 focus:ring-black',
           attributes: component.attributes,
         ),
-      if (component.hintText != null)
-        p(classes: 'text-[11px] font-medium text-gray-400 px-1', [
-          .text(component.hintText!),
-        ]),
+      if (hint != null) p(classes: 'text-[11px] font-medium text-gray-400 px-1', [.text(hint)]),
     ]);
   }
 }

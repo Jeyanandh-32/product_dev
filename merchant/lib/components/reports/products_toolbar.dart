@@ -4,8 +4,6 @@ import 'package:jaspr_lucide/generated_icons/chevron_down.dart';
 import 'package:merchant/components/buttons/add_button.dart';
 import 'package:merchant/components/fields/searchbar.dart';
 import 'package:merchant/components/reports/products_filter_bar.dart';
-import 'package:merchant/signals/navigation_signal.dart';
-import 'package:merchant/signals/products_signal.dart';
 import 'package:models/models.dart';
 
 /// Top control toolbar for products sub-tab (entries selector, filter dropdowns, search, add button).
@@ -20,6 +18,7 @@ class ProductsToolbar extends StatelessComponent {
   final ValueChanged<bool?> onStatusFilterChanged;
   final ValueChanged<bool?> onStockMonitorFilterChanged;
   final ValueChanged<String> onSearch;
+  final VoidCallback onAddProduct;
 
   const ProductsToolbar({
     super.key,
@@ -33,6 +32,7 @@ class ProductsToolbar extends StatelessComponent {
     required this.onStatusFilterChanged,
     required this.onStockMonitorFilterChanged,
     required this.onSearch,
+    required this.onAddProduct,
   });
 
   @override
@@ -104,10 +104,7 @@ class ProductsToolbar extends StatelessComponent {
             if (store != null)
               AddButton(
                 name: 'Add Product',
-                onClick: () {
-                  editingProductSignal.value = null;
-                  activeModalSignal.value = ActiveModal.addProduct;
-                },
+                onClick: onAddProduct,
               ),
           ],
         ),

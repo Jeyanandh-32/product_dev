@@ -31,18 +31,14 @@ class _CategoriesState extends SignalState<Categories> {
   bool? _statusFilter;
 
   void _onSort(CategorySortKey key) {
-    setState(() {
-      _sortState = _sortState.toggle(key);
-    });
+    setState(() => _sortState = _sortState.toggle(key));
   }
 
   @override
   void initState() {
     super.initState();
     final store = storeSignal.value;
-    if (store != null) {
-      _loadedStoreId = store.id;
-    }
+    if (store != null) _loadedStoreId = store.id;
     refreshCategoriesSignal();
     fetchAllStoreProductsSignal();
   }
@@ -52,10 +48,7 @@ class _CategoriesState extends SignalState<Categories> {
     if (activeElement != null) {
       final element = activeElement as web.HTMLElement;
       element.blur();
-      final details = element.closest('details');
-      if (details != null) {
-        details.removeAttribute('open');
-      }
+      element.closest('details')?.removeAttribute('open');
     }
   }
 
@@ -82,22 +75,16 @@ class _CategoriesState extends SignalState<Categories> {
         fetchAllStoreProductsSignal();
       });
     }
-    final entries = entriesSignal.value;
-    final categories = categoriesSignal.value;
-    final currentPage = categoriesPageSignal.value;
-    final totalPages = categoriesTotalPagesSignal.value;
+
+    final isModalActive = activeModalSignal.value == ActiveModal.addCategory || activeModalSignal.value == ActiveModal.editCategory;
 
     return div(
-      classes:
-          'flex flex-col flex-1 min-h-0 m-4 bg-white rounded-2xl border border-border-medium shadow-xs overflow-hidden',
+      classes: 'flex flex-col flex-1 min-h-0 m-4 bg-white rounded-2xl border border-border-medium shadow-xs overflow-hidden',
       [
-        if (activeModalSignal.value == ActiveModal.addCategory ||
-            activeModalSignal.value == ActiveModal.editCategory)
-          const AddEditCategoryModal(),
-
+        if (isModalActive) const AddEditCategoryModal(),
         CategoriesFilterBar(
-          entries: entries,
-          currentPage: currentPage,
+          entries: entriesSignal.value,
+          currentPage: categoriesPageSignal.value,
           totalCount: categoriesTotalSignal.value,
           statusFilter: _statusFilter,
           onEntryChanged: _changeEntry,
@@ -108,25 +95,18 @@ class _CategoriesState extends SignalState<Categories> {
             refreshCategoriesSignal();
           },
         ),
-
         div(
           classes: 'flex-1 overflow-auto min-h-0',
           [
-            categories.map(
+            categoriesSignal.value.map(
               data: (data) {
                 if (data.isEmpty) {
-                  return const CenteredMessage(
-                    message: 'No Categories found. Add some categories to your store.',
-                  );
+                  return const CenteredMessage(message: 'No Categories found. Add some categories to your store.');
                 }
-
                 var filteredList = data;
                 if (_statusFilter != null) {
-                  filteredList = filteredList
-                      .where((c) => c.isActive == _statusFilter)
-                      .toList();
+                  filteredList = filteredList.where((c) => c.isActive == _statusFilter).toList();
                 }
-
                 return CategoriesTableView(
                   categories: filteredList,
                   sortState: _sortState,
@@ -134,19 +114,16 @@ class _CategoriesState extends SignalState<Categories> {
                   getAssociatedCount: _getAssociatedCount,
                 );
               },
-              error: (error, _) => CenteredMessage(
-                message: (error is ApiException)
-                    ? error.message
-                    : 'Error loading categories. Something went wrong.',
+              error: (err, _) => CenteredMessage(
+                message: (err is ApiException) ? err.message : 'Error loading categories. Something went wrong.',
               ),
               loading: () => const Loading(),
             ),
           ],
         ),
-
         TablePagination(
-          currentPage: currentPage,
-          totalPages: totalPages,
+          currentPage: categoriesPageSignal.value,
+          totalPages: categoriesTotalPagesSignal.value,
           onPageChanged: (page) {
             categoriesPageSignal.value = page;
             refreshCategoriesSignal();
