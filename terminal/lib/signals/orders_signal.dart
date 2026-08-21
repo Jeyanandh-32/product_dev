@@ -4,13 +4,9 @@ import 'package:models/models.dart';
 import 'package:signals_flutter/signals_flutter.dart';
 import 'package:terminal/signals/auth_signal.dart';
 
-/// Available entries per page options.
 const orderEntriesOptions = [50, 100, 150, 200];
-
-/// Active source tab filter for POS orders view.
 enum OrderSourceTab { thisTerminal, online }
 
-/// Active quick date presets for POS orders.
 enum OrderDatePreset {
   today('Today'),
   yesterday('Yesterday'),
@@ -35,12 +31,23 @@ final orderTotalItemsSignal = signal<int>(0);
 final orderTotalPagesSignal = signal<int>(1);
 final terminalTabCountSignal = signal<int>(0);
 final onlineTabCountSignal = signal<int>(0);
-
-/// Master async signal fetching orders for the store.
 final ordersSignal = asyncSignal<List<Order>>(const AsyncLoading());
 
-/// Refreshes the orders signal from the server matching active tab, date, and page filters.
+Future<void>? _ordersInFlight;
+
+/// Refreshes the orders signal with in-flight deduplication.
 Future<void> refreshOrdersSignal() async {
+  if (_ordersInFlight != null) return _ordersInFlight!;
+  final future = _fetchOrders();
+  _ordersInFlight = future;
+  try {
+    await future;
+  } finally {
+    _ordersInFlight = null;
+  }
+}
+
+Future<void> _fetchOrders() async {
   selectedOrderSignal.value = null;
   ordersSignal.value = const AsyncLoading();
   final terminal = authSignal.value.value;
@@ -85,7 +92,6 @@ Future<void> refreshOrdersSignal() async {
   }
 }
 
-/// Computed signal for active page orders (filtered by client search query if present).
 final pagedOrdersSignal = computed<List<Order>>(() {
   final orders = ordersSignal.value.value ?? [];
   final query = orderSearchQuerySignal.value.trim().toLowerCase();
@@ -97,14 +103,10 @@ final pagedOrdersSignal = computed<List<Order>>(() {
   return orders.where((o) {
     if (o.orderReference.toLowerCase().contains(query)) return true;
     final c = o.customer;
-    if (c != null && (c.name.toLowerCase().contains(query) || c.mobileNumber.contains(query))) {
-      return true;
-    }
-    return false;
+    return c != null && (c.name.toLowerCase().contains(query) || c.mobileNumber.contains(query));
   }).toList();
 });
 
-/// Computes UTC start and end bounds for the given date preset and optional custom range.
 (DateTime?, DateTime?) _computeDateRange(OrderDatePreset? preset, DateTimeRange<DateTime>? customRange) {
   if (customRange != null) return (customRange.start, customRange.end);
   final now = DateTime.now();
@@ -113,20 +115,15 @@ final pagedOrdersSignal = computed<List<Order>>(() {
 
   return switch (preset) {
     OrderDatePreset.today => (startOfToday, endOfToday),
-    OrderDatePreset.yesterday => (
-        startOfToday.subtract(const Duration(days: 1)),
-        DateTime(now.year, now.month, now.day - 1, 23, 59, 59, 999),
-      ),
+    OrderDatePreset.yesterday => (startOfToday.subtract(const Duration(days: 1)), DateTime(now.year, now.month, now.day - 1, 23, 59, 59, 999)),
     OrderDatePreset.past7Days => (startOfToday.subtract(const Duration(days: 6)), endOfToday),
     OrderDatePreset.past30Days => (startOfToday.subtract(const Duration(days: 29)), endOfToday),
     null => (startOfToday, endOfToday),
   };
 }
 
-/// Legacy computed signal for backwards compatibility with existing UI helpers.
 final filteredOrdersSignal = computed<List<Order>>(() => pagedOrdersSignal.value);
 
-/// Resets all orders filters, queries, pagination, and data to initial state.
 void resetOrdersSignal() {
   orderSourceTabSignal.value = OrderSourceTab.thisTerminal;
   orderDatePresetSignal.value = OrderDatePreset.today;

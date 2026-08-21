@@ -37,22 +37,13 @@ Future<Response> onRequest(RequestContext context) async {
   }
 }
 
-Future<Response> _onGetTerminal(
-  RequestContext context,
-  TokenPayload tokenPayload,
-) async {
+Future<Response> _onGetTerminal(RequestContext context, TokenPayload tokenPayload) async {
   final repo = context.read<TerminalRepository>();
 
   try {
     final terminalRow = await repo.getByCode(tokenPayload.terminalCode!);
-
-    if (terminalRow == null) {
-      return badRequest(message: 'Terminal not exists');
-    }
-
-    if (!terminalRow.isActive) {
-      return forbidden(message: 'This Terminal is deactivated.');
-    }
+    if (terminalRow == null) return badRequest(message: 'Terminal not exists');
+    if (!terminalRow.isActive) return forbidden(message: 'This Terminal is deactivated.');
 
     return success(data: {'terminal': terminalRow.toTerminal()});
   } catch (e) {
@@ -71,18 +62,11 @@ Future<Response> _onGet(RequestContext context, String? storeId) async {
   final tokenPayload = context.tokenPayload;
 
   try {
-    final total = await repo.count(
-      merchantId: tokenPayload.sub,
-      storeId: storeId,
-    );
-
     final offset = (page - 1) * size;
-    final terminalRows = await repo.getAll(
-      storeId: storeId,
-      merchantId: tokenPayload.sub,
-      limit: size,
-      offset: offset,
-    );
+    final totalFuture = repo.count(merchantId: tokenPayload.sub, storeId: storeId);
+    final terminalRowsFuture = repo.getAll(storeId: storeId, merchantId: tokenPayload.sub, limit: size, offset: offset);
+
+    final (total, terminalRows) = await (totalFuture, terminalRowsFuture).wait;
 
     final terminals = terminalRows.map((s) => s.toTerminal()).toList();
     final totalPages = (total / size).ceil();
@@ -108,7 +92,6 @@ Future<Response> _onPost(RequestContext context, String storeId) async {
   try {
     final body = await context.validateBody(TerminalValidator.create);
     final input = TerminalCreate.fromJson(body);
-
     final passwordHash = await PasswordService.hash(input.password);
     final code = _generateTerminalCode();
 

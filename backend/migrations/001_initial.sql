@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS merchants (
 );
 
 CREATE INDEX IF NOT EXISTS idx_merchants_email ON merchants (email);
+CREATE INDEX IF NOT EXISTS idx_merchants_whatsapp ON merchants (whatsapp_number);
 
 CREATE TABLE IF NOT EXISTS merchant_settings (
     merchant_id UUID PRIMARY KEY REFERENCES merchants (id) ON DELETE CASCADE,
@@ -42,6 +43,8 @@ CREATE TABLE IF NOT EXISTS customer_store_wallets (
     PRIMARY KEY (customer_id, store_id)
 );
 
+CREATE INDEX IF NOT EXISTS idx_customer_store_wallets_store ON customer_store_wallets (store_id);
+
 CREATE TABLE IF NOT EXISTS customer_wallet_transactions (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
     customer_id UUID NOT NULL REFERENCES customers (id) ON DELETE CASCADE,
@@ -54,6 +57,8 @@ CREATE TABLE IF NOT EXISTS customer_wallet_transactions (
 );
 
 CREATE INDEX IF NOT EXISTS idx_customer_wallet_tx_customer_store ON customer_wallet_transactions (customer_id, store_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_customer_wallet_tx_store ON customer_wallet_transactions (store_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_customer_wallet_tx_reference ON customer_wallet_transactions (reference);
 
 CREATE TABLE IF NOT EXISTS customer_recent_stores (
     customer_id UUID NOT NULL REFERENCES customers (id) ON DELETE CASCADE,
@@ -63,8 +68,6 @@ CREATE TABLE IF NOT EXISTS customer_recent_stores (
 );
 
 CREATE INDEX IF NOT EXISTS idx_customer_recent_stores ON customer_recent_stores (customer_id, last_visited_at DESC);
-
-
 
 CREATE TABLE IF NOT EXISTS subscription_plans (
     code VARCHAR(50) PRIMARY KEY,
@@ -95,6 +98,7 @@ CREATE TABLE IF NOT EXISTS stores (
     )
 );
 
+CREATE INDEX IF NOT EXISTS idx_stores_merchant_active ON stores (merchant_id, is_active);
 CREATE INDEX IF NOT EXISTS idx_stores_online_slug ON stores (is_online_enabled, slug);
 
 CREATE TABLE IF NOT EXISTS store_phonepe_configs (
@@ -121,7 +125,7 @@ CREATE TABLE IF NOT EXISTS store_phonepe_configs (
 
 CREATE TABLE IF NOT EXISTS store_subscriptions (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
-    merchant_id UUID NOT NULL REFERENCES merchants (id) ON DELETE CASCADE,
+    store_id UUID NOT NULL REFERENCES stores (id) ON DELETE CASCADE,
     plan_code VARCHAR(50) NOT NULL REFERENCES subscription_plans (code),
     status VARCHAR(20) NOT NULL DEFAULT 'active',
     starts_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -130,6 +134,8 @@ CREATE TABLE IF NOT EXISTS store_subscriptions (
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+CREATE INDEX IF NOT EXISTS idx_store_subscriptions_store ON store_subscriptions (store_id, status);
 
 CREATE TABLE IF NOT EXISTS terminals (
     code VARCHAR(12) PRIMARY KEY,
@@ -141,6 +147,8 @@ CREATE TABLE IF NOT EXISTS terminals (
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     CONSTRAINT unique_store_terminal_name UNIQUE (store_id, name)
 );
+
+CREATE INDEX IF NOT EXISTS idx_terminals_store_active ON terminals (store_id, is_active);
 
 CREATE TABLE IF NOT EXISTS counters (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
@@ -154,6 +162,8 @@ CREATE TABLE IF NOT EXISTS counters (
     CONSTRAINT unique_store_counter_name UNIQUE (store_id, name)
 );
 
+CREATE INDEX IF NOT EXISTS idx_counters_store_active ON counters (store_id, is_active);
+
 CREATE TABLE IF NOT EXISTS categories (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
     store_id UUID NOT NULL REFERENCES stores (id) ON DELETE CASCADE,
@@ -165,6 +175,8 @@ CREATE TABLE IF NOT EXISTS categories (
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     CONSTRAINT unique_store_category_name UNIQUE (store_id, name)
 );
+
+CREATE INDEX IF NOT EXISTS idx_categories_store_active ON categories (store_id, is_active);
 
 CREATE TABLE IF NOT EXISTS products (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
@@ -185,6 +197,12 @@ CREATE TABLE IF NOT EXISTS products (
     CONSTRAINT unique_store_product_name UNIQUE (store_id, name)
 );
 
+CREATE INDEX IF NOT EXISTS idx_products_store_active ON products (store_id, is_active);
+CREATE INDEX IF NOT EXISTS idx_products_store_category ON products (store_id, category_id, is_active);
+CREATE INDEX IF NOT EXISTS idx_products_store_counter ON products (store_id, counter_id, is_active);
+CREATE INDEX IF NOT EXISTS idx_products_sku ON products (sku);
+CREATE INDEX IF NOT EXISTS idx_products_barcode ON products (barcode);
+
 CREATE TABLE IF NOT EXISTS stocks (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
     store_id UUID NOT NULL REFERENCES stores (id) ON DELETE CASCADE,
@@ -197,6 +215,8 @@ CREATE TABLE IF NOT EXISTS stocks (
     CONSTRAINT unique_store_product_stock UNIQUE (store_id, product_id)
 );
 
+CREATE INDEX IF NOT EXISTS idx_stocks_product ON stocks (product_id);
+CREATE INDEX IF NOT EXISTS idx_stocks_store_monitor ON stocks (store_id, stock_monitor, quantity, low_stock_threshold);
 
 CREATE TABLE IF NOT EXISTS orders (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -213,13 +233,22 @@ CREATE TABLE IF NOT EXISTS orders (
     tax_total INT NOT NULL,
     grand_total INT NOT NULL,
     terminal_code VARCHAR(12) REFERENCES terminals(code) ON DELETE SET NULL,
-
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     discount_total INT NOT NULL DEFAULT 0,
     wallet_deduction INT NOT NULL DEFAULT 0,
     customer_id UUID REFERENCES customers(id) ON DELETE SET NULL
 );
+
+CREATE INDEX IF NOT EXISTS idx_orders_order_reference ON orders(order_reference);
+CREATE INDEX IF NOT EXISTS idx_orders_store_created_at ON orders(store_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_orders_store_terminal ON orders(store_id, terminal_code, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_orders_store_source_created ON orders(store_id, source, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_orders_store_status ON orders(store_id, status, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_orders_store_pay_status ON orders(store_id, payment_status, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_orders_customer_created ON orders(customer_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_orders_merchant_created ON orders(merchant_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_orders_bill_no ON orders(store_id, bill_no);
 
 CREATE TABLE IF NOT EXISTS order_items (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -232,6 +261,11 @@ CREATE TABLE IF NOT EXISTS order_items (
     discount INT NOT NULL DEFAULT 0
 );
 
+CREATE INDEX IF NOT EXISTS idx_order_items_order_id ON order_items(order_id);
+CREATE INDEX IF NOT EXISTS idx_order_items_product_id ON order_items(product_id);
+CREATE INDEX IF NOT EXISTS idx_order_items_store_id ON order_items(store_id);
+CREATE INDEX IF NOT EXISTS idx_order_items_order_store ON order_items(order_id, store_id);
+
 CREATE TABLE IF NOT EXISTS stock_transactions (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     product_id UUID NOT NULL REFERENCES products(id) ON DELETE CASCADE,
@@ -243,9 +277,5 @@ CREATE TABLE IF NOT EXISTS stock_transactions (
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE INDEX IF NOT EXISTS idx_order_items_order_id ON order_items(order_id);
-CREATE INDEX IF NOT EXISTS idx_order_items_product_id ON order_items(product_id);
-CREATE INDEX IF NOT EXISTS idx_orders_order_reference ON orders(order_reference);
-CREATE INDEX IF NOT EXISTS idx_orders_store_created_at ON orders(store_id, created_at);
-CREATE INDEX IF NOT EXISTS idx_stock_transactions_store_id ON stock_transactions(store_id);
-
+CREATE INDEX IF NOT EXISTS idx_stock_transactions_store_id ON stock_transactions(store_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_stock_transactions_product_store ON stock_transactions(store_id, product_id, created_at DESC);

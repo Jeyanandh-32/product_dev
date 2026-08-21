@@ -31,27 +31,23 @@ class StockSummaryReportQuery {
     int limit = 10,
     int offset = 0,
   }) async {
-    final products = await db.products
-        .where((p) => p.storeId.equals(ts.toExpr(storeId)))
-        .fetch();
+    final productsFuture = db.products.where((p) => p.storeId.equals(ts.toExpr(storeId))).fetch();
+    final stocksFuture = db.stocks.where((s) => s.storeId.equals(ts.toExpr(storeId))).fetch();
+    final categoriesFuture = db.categories.where((c) => c.storeId.equals(ts.toExpr(storeId))).fetch();
+    final countersFuture = db.counters.where((c) => c.storeId.equals(ts.toExpr(storeId))).fetch();
+    final allTxFuture = db.stockTransactions.where((t) => t.storeId.equals(ts.toExpr(storeId))).fetch();
 
-    final stocks = await db.stocks
-        .where((s) => s.storeId.equals(ts.toExpr(storeId)))
-        .fetch();
+    final (products, stocks, categories, counters, allTx) = await (
+      productsFuture,
+      stocksFuture,
+      categoriesFuture,
+      countersFuture,
+      allTxFuture,
+    ).wait;
+
     final stockMap = {for (final s in stocks) s.productId: s.quantity};
-
-    final categories = await db.categories
-        .where((c) => c.storeId.equals(ts.toExpr(storeId)))
-        .fetch();
-    final counters = await db.counters
-        .where((c) => c.storeId.equals(ts.toExpr(storeId)))
-        .fetch();
     final categoryMap = {for (final c in categories) c.id: c.name};
     final counterMap = {for (final c in counters) c.id: c.name};
-
-    final allTx = await db.stockTransactions
-        .where((t) => t.storeId.equals(ts.toExpr(storeId)))
-        .fetch();
 
     final txByProduct = <String, List<StockTransactionRow>>{};
     for (final tx in allTx) {
@@ -63,12 +59,8 @@ class StockSummaryReportQuery {
     for (final p in products) {
       final productTx = txByProduct[p.id] ?? [];
       final currentStock = stockMap[p.id] ?? 0;
-      final categoryName = p.categoryId != null
-          ? (categoryMap[p.categoryId!] ?? 'Unassigned')
-          : 'Unassigned';
-      final counterName = p.counterId != null
-          ? (counterMap[p.counterId!] ?? 'Unassigned')
-          : 'Unassigned';
+      final categoryName = p.categoryId != null ? (categoryMap[p.categoryId!] ?? 'Unassigned') : 'Unassigned';
+      final counterName = p.counterId != null ? (counterMap[p.counterId!] ?? 'Unassigned') : 'Unassigned';
 
       final item = StockMovementCalculator.computeItemMetrics(
         product: p,
@@ -80,9 +72,7 @@ class StockSummaryReportQuery {
         toDate: toDate,
       );
 
-      if (item != null) {
-        reportItems.add(item);
-      }
+      if (item != null) reportItems.add(item);
     }
 
     var totalOpeningStock = 0;

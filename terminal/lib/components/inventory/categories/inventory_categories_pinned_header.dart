@@ -57,27 +57,31 @@ class InventoryCategoriesPinnedHeader extends StatelessWidget {
       child: InkWell(
         mouseCursor: SystemMouseCursors.click,
         onTap: () => categorySortStateSignal.value = categorySortStateSignal.value.toggle(key),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              label,
-              softWrap: false,
-              overflow: TextOverflow.visible,
-              style: TextStyle(
-                fontSize: 11.5,
-                fontWeight: isActive ? FontWeight.w800 : FontWeight.w700,
-                letterSpacing: 0.5,
-                color: isActive ? TerminalColors.textPrimary : TerminalColors.textSecondary,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          physics: const NeverScrollableScrollPhysics(),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                label,
+                softWrap: false,
+                overflow: TextOverflow.visible,
+                style: TextStyle(
+                  fontSize: 11.5,
+                  fontWeight: isActive ? FontWeight.w800 : FontWeight.w700,
+                  letterSpacing: 0.5,
+                  color: isActive ? TerminalColors.textPrimary : TerminalColors.textSecondary,
+                ),
               ),
-            ),
-            const Gap(4),
-            Icon(
-              isActive ? (isAsc ? FLucideIcons.arrowUp : FLucideIcons.arrowDown) : FLucideIcons.arrowUpDown,
-              size: 13,
-              color: isActive ? TerminalColors.textPrimary : TerminalColors.textMuted,
-            ),
-          ],
+              const Gap(4),
+              Icon(
+                isActive ? (isAsc ? FLucideIcons.arrowUp : FLucideIcons.arrowDown) : FLucideIcons.arrowUpDown,
+                size: 13,
+                color: isActive ? TerminalColors.textPrimary : TerminalColors.textMuted,
+              ),
+            ],
+          ),
         ),
       ),
     );

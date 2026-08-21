@@ -6,6 +6,7 @@ import 'package:signals_flutter/signals_flutter.dart';
 import 'package:terminal/components/orders/order_dropdown_filter.dart';
 import 'package:terminal/components/orders/orders_date_picker_popover.dart';
 import 'package:terminal/signals/orders_signal.dart';
+import 'package:terminal/theme/terminal_colors.dart';
 
 /// Horizontal scrollable row of date presets, calendar popover, and context-aware dropdown filters.
 class OrdersDateFilterRow extends SignalWidget {
@@ -16,9 +17,6 @@ class OrdersDateFilterRow extends SignalWidget {
     final activePreset = orderDatePresetSignal.value;
     final customRange = customDateRangeSignal.value;
     final isThisTerminal = orderSourceTabSignal.value == OrderSourceTab.thisTerminal;
-    final payMethod = orderPaymentMethodFilterSignal.value;
-    final payStatus = orderPaymentStatusFilterSignal.value;
-    final orderStatus = orderStatusFilterSignal.value;
 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
@@ -42,86 +40,65 @@ class OrdersDateFilterRow extends SignalWidget {
           }),
           const Gap(2),
           const OrdersDatePickerPopover(),
-          if (isThisTerminal) ...[
-            const Gap(8),
-            OrderDropdownFilter<PaymentMethod>(
-              title: 'Payment',
-              currentValue: payMethod,
-              items: const [
-                (label: 'All Modes', value: null),
-                (label: 'Cash', value: PaymentMethod.cash),
-                (label: 'UPI', value: PaymentMethod.upi),
-                (label: 'Free', value: PaymentMethod.complimentary),
-              ],
-              onSelected: (val) {
-                orderPaymentMethodFilterSignal.value = val;
-                orderCurrentPageSignal.value = 1;
-                refreshOrdersSignal();
-              },
-            ),
-            const Gap(8),
-            OrderDropdownFilter<OrderStatus>(
-              title: 'Status',
-              currentValue: orderStatus,
-              items: const [
-                (label: 'All Statuses', value: null),
-                (label: 'Completed', value: OrderStatus.completed),
-                (label: 'Cancelled', value: OrderStatus.cancelled),
-              ],
-              onSelected: (val) {
-                orderStatusFilterSignal.value = val;
-                orderCurrentPageSignal.value = 1;
-                refreshOrdersSignal();
-              },
-            ),
-          ] else ...[
-            const Gap(8),
-            OrderDropdownFilter<PaymentStatus>(
-              title: 'Pay Status',
-              currentValue: payStatus,
-              items: const [
-                (label: 'All Statuses', value: null),
-                (label: 'Completed', value: PaymentStatus.completed),
-                (label: 'Pending', value: PaymentStatus.pending),
-                (label: 'Failed', value: PaymentStatus.failed),
-              ],
-              onSelected: (val) {
-                orderPaymentStatusFilterSignal.value = val;
-                orderCurrentPageSignal.value = 1;
-                refreshOrdersSignal();
-              },
-            ),
-            const Gap(8),
-            OrderDropdownFilter<OrderStatus>(
-              title: 'Order Status',
-              currentValue: orderStatus,
-              items: const [
-                (label: 'All Statuses', value: null),
-                (label: 'Completed', value: OrderStatus.completed),
-                (label: 'Preparing', value: OrderStatus.preparing),
-                (label: 'Pending', value: OrderStatus.pending),
-                (label: 'Cancelled', value: OrderStatus.cancelled),
-              ],
-              onSelected: (val) {
-                orderStatusFilterSignal.value = val;
-                orderCurrentPageSignal.value = 1;
-                refreshOrdersSignal();
-              },
-            ),
-          ],
+          const Gap(8),
+          if (isThisTerminal) ..._buildTerminalFilters() else ..._buildOnlineFilters(),
         ],
       ),
     );
   }
 
-  Widget _buildPill({
-    required String label,
-    required bool isSelected,
-    required VoidCallback onTap,
-  }) {
-    final bgColor = isSelected ? const Color(0xFF0F172A) : const Color(0xFFFFFFFF);
-    final fgColor = isSelected ? const Color(0xFFFFFFFF) : const Color(0xFF0F172A);
-    final borderColor = isSelected ? const Color(0xFF0F172A) : const Color(0xFFE2E8F0);
+  List<Widget> _buildTerminalFilters() => [
+        OrderDropdownFilter<PaymentMethod>(
+          title: 'Payment',
+          currentValue: orderPaymentMethodFilterSignal.value,
+          items: const [(label: 'All Modes', value: null), (label: 'Cash', value: PaymentMethod.cash), (label: 'UPI', value: PaymentMethod.upi), (label: 'Free', value: PaymentMethod.complimentary)],
+          onSelected: (val) {
+            orderPaymentMethodFilterSignal.value = val;
+            orderCurrentPageSignal.value = 1;
+            refreshOrdersSignal();
+          },
+        ),
+        const Gap(8),
+        OrderDropdownFilter<OrderStatus>(
+          title: 'Status',
+          currentValue: orderStatusFilterSignal.value,
+          items: const [(label: 'All Statuses', value: null), (label: 'Completed', value: OrderStatus.completed), (label: 'Cancelled', value: OrderStatus.cancelled)],
+          onSelected: (val) {
+            orderStatusFilterSignal.value = val;
+            orderCurrentPageSignal.value = 1;
+            refreshOrdersSignal();
+          },
+        ),
+      ];
+
+  List<Widget> _buildOnlineFilters() => [
+        OrderDropdownFilter<PaymentStatus>(
+          title: 'Pay Status',
+          currentValue: orderPaymentStatusFilterSignal.value,
+          items: const [(label: 'All Statuses', value: null), (label: 'Completed', value: PaymentStatus.completed), (label: 'Pending', value: PaymentStatus.pending), (label: 'Failed', value: PaymentStatus.failed)],
+          onSelected: (val) {
+            orderPaymentStatusFilterSignal.value = val;
+            orderCurrentPageSignal.value = 1;
+            refreshOrdersSignal();
+          },
+        ),
+        const Gap(8),
+        OrderDropdownFilter<OrderStatus>(
+          title: 'Order Status',
+          currentValue: orderStatusFilterSignal.value,
+          items: const [(label: 'All Statuses', value: null), (label: 'Completed', value: OrderStatus.completed), (label: 'Preparing', value: OrderStatus.preparing), (label: 'Pending', value: OrderStatus.pending), (label: 'Cancelled', value: OrderStatus.cancelled)],
+          onSelected: (val) {
+            orderStatusFilterSignal.value = val;
+            orderCurrentPageSignal.value = 1;
+            refreshOrdersSignal();
+          },
+        ),
+      ];
+
+  Widget _buildPill({required String label, required bool isSelected, required VoidCallback onTap}) {
+    final bgColor = isSelected ? TerminalColors.textPrimary : TerminalColors.surface;
+    final fgColor = isSelected ? TerminalColors.textWhite : TerminalColors.textPrimary;
+    final borderColor = isSelected ? TerminalColors.textPrimary : TerminalColors.border;
 
     return MouseRegion(
       cursor: SystemMouseCursors.click,
@@ -133,17 +110,10 @@ class OrdersDateFilterRow extends SignalWidget {
             .paddingX(16)
             .borderRadiusAll(const Radius.circular(999))
             .borderAll(color: borderColor)
-            .shadowOnly(color: const Color(0x08000000), offset: const Offset(0, 1), blurRadius: 2)
+            .shadowOnly(color: TerminalColors.shadow, offset: const Offset(0, 1), blurRadius: 2)
             .alignment(Alignment.center)
-            .onHovered(
-              isSelected
-                  ? BoxStyler()
-                  : BoxStyler().color(const Color(0xFFF8FAFC)).borderAll(color: const Color(0xFFCBD5E1)),
-            ),
-        child: StyledText(
-          label,
-          style: TextStyler().fontSize(13.5).fontWeight(isSelected ? .w800 : .w700).color(fgColor),
-        ),
+            .onHovered(isSelected ? BoxStyler() : BoxStyler().color(TerminalColors.pageBackground).borderAll(color: const Color(0xFFCBD5E1))),
+        child: StyledText(label, style: TextStyler().fontSize(13.5).fontWeight(isSelected ? .w800 : .w700).color(fgColor)),
       ),
     );
   }

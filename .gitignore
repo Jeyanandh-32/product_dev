@@ -12,3 +12,7 @@
 .dart_skills/
 AGENTS.md
 *.png
+# Widget Preview related
+.widget_preview/
+build/
+*.exe

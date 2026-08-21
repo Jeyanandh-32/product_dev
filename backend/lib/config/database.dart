@@ -9,6 +9,7 @@ class Database {
   const Database._();
 
   static Pool<Object>? _pool;
+  static bool _warmedUp = false;
 
   static Pool<Object> get pool {
     _pool ??= Pool.withEndpoints(
@@ -35,7 +36,18 @@ class Database {
   );
 
   static Future<void> init() async {
-    pool;
+    await ensureWarm();
+  }
+
+  /// Ensures database connection is active to avoid first-request latency.
+  static Future<void> ensureWarm() async {
+    if (_warmedUp) return;
+    _warmedUp = true;
+    try {
+      await pool.execute('SELECT 1');
+    } catch (_) {
+      _warmedUp = false;
+    }
   }
 
   static Future<void> close() async {
@@ -55,7 +67,6 @@ class Database {
     );
 
     await _executeSqlFiles(connection);
-
     await connection.close();
   }
 
@@ -63,20 +74,16 @@ class Database {
     final dir = Directory('migrations');
     if (!dir.existsSync()) return;
 
-    final files =
-        dir
-            .listSync()
-            .whereType<File>()
-            .where((f) => f.path.endsWith('.sql'))
-            .toList()
-          ..sort((a, b) => a.path.compareTo(b.path));
+    final files = dir
+        .listSync()
+        .whereType<File>()
+        .where((f) => f.path.endsWith('.sql'))
+        .toList()
+      ..sort((a, b) => a.path.compareTo(b.path));
 
     for (final file in files) {
       final content = await file.readAsString();
-      final statements = content
-          .split(';')
-          .map((s) => s.trim())
-          .where((s) => s.isNotEmpty);
+      final statements = content.split(';').map((s) => s.trim()).where((s) => s.isNotEmpty);
 
       for (final statement in statements) {
         if (statement.startsWith('--') && !statement.contains('\n')) continue;

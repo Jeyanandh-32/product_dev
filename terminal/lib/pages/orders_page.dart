@@ -8,6 +8,7 @@ import 'package:terminal/components/product/terminal_catalog_scrollbar.dart';
 import 'package:terminal/pages/loading.dart';
 import 'package:terminal/signals/navigation_signal.dart';
 import 'package:terminal/signals/orders_signal.dart';
+import 'package:terminal/theme/terminal_colors.dart';
 import 'package:terminal/utils/responsive_extensions.dart';
 
 /// Full-featured, responsive POS Orders management screen.
@@ -26,8 +27,7 @@ class _OrdersPageState extends State<OrdersPage> {
   void initState() {
     super.initState();
     _disposeEffect = effect(() {
-      final activePage = activeTerminalPageSignal.value;
-      if (activePage == TerminalNavPage.orders) {
+      if (activeTerminalPageSignal.value == TerminalNavPage.orders) {
         refreshOrdersSignal();
       }
     });
@@ -48,44 +48,30 @@ class _OrdersPageState extends State<OrdersPage> {
       builder: (context) {
         final ordersAsync = ordersSignal.value;
 
-        return Stack(
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Expanded(
-                  child: Padding(
-                    padding: EdgeInsets.only(
-                      left: isDesktop ? 20 : 12,
-                      right: isDesktop ? 12 : 8,
-                      top: 12,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        const OrdersSourceTabs(),
-                        const Gap(10),
-                        const OrdersDateFilterRow(),
-                        const Gap(10),
-                        const Row(
-                          children: [
-                            Expanded(child: OrdersSearchBar()),
-                            Gap(8),
-                            OrdersRefreshButton(),
-                          ],
-                        ),
-                        Gap(isDesktop ? 12 : 10),
-                        Expanded(child: _buildOrdersGrid(isDesktop, ordersAsync)),
-                        const Gap(12),
-                        const OrdersPagination(),
-                        const Gap(12),
-                      ],
-                    ),
-                  ),
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.only(left: isDesktop ? 20 : 12, right: isDesktop ? 12 : 8, top: 12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    const OrdersSourceTabs(),
+                    const Gap(10),
+                    const OrdersDateFilterRow(),
+                    const Gap(10),
+                    const Row(children: [Expanded(child: OrdersSearchBar()), Gap(8), OrdersRefreshButton()]),
+                    Gap(isDesktop ? 12 : 10),
+                    Expanded(child: _buildOrdersGrid(isDesktop, ordersAsync)),
+                    const Gap(12),
+                    const OrdersPagination(),
+                    const Gap(12),
+                  ],
                 ),
-                if (isDesktop) const RepaintBoundary(child: OrderDetailsSidebar()),
-              ],
+              ),
             ),
+            if (isDesktop) const RepaintBoundary(child: OrderDetailsSidebar()),
           ],
         );
       },
@@ -111,9 +97,7 @@ class _OrdersPageState extends State<OrdersPage> {
               removeTop: true,
               child: CustomScrollView(
                 controller: _scrollController,
-                physics: isDesktop
-                    ? const ClampingScrollPhysics()
-                    : const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+                physics: isDesktop ? const ClampingScrollPhysics() : const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
                 slivers: [
                   SliverDynamicHeightGridView(
                     crossAxisCount: isDesktop ? 2 : 1,
@@ -141,7 +125,7 @@ class _OrdersPageState extends State<OrdersPage> {
         context: context,
         isScrollControlled: true,
         clipBehavior: Clip.antiAlias,
-        backgroundColor: const Color(0xFFF8FAFC),
+        backgroundColor: TerminalColors.pageBackground,
         shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
         builder: (ctx) => const FractionallySizedBox(heightFactor: 0.88, child: OrderDetailsSidebar(isDrawerMode: true)),
       );

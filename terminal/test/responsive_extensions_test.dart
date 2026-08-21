@@ -18,8 +18,7 @@ void main() {
     );
   }
 
-  testWidgets('ResponsiveContextX computes correct flags and grid columns',
-      (tester) async {
+  testWidgets('ResponsiveContextX computes correct flags and grid columns', (tester) async {
     // 1. Mobile screen (width 400)
     await tester.pumpWidget(
       buildApp(
@@ -37,7 +36,7 @@ void main() {
       ),
     );
 
-    // 2. Tablet screen (width 700)
+    // 2. Tablet screen (width 700, 60% catalog layout)
     await tester.pumpWidget(
       buildApp(
         Builder(
@@ -46,7 +45,7 @@ void main() {
             expect(context.isMobile, isFalse);
             expect(context.isTablet, isTrue);
             expect(context.isDesktop, isFalse);
-            expect(context.productGridColumns, 3);
+            expect(context.productGridColumns, 2);
             return const SizedBox();
           },
         ),

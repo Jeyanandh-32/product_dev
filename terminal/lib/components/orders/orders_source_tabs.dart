@@ -4,6 +4,7 @@ import 'package:gap/gap.dart';
 import 'package:mix/mix.dart';
 import 'package:signals_flutter/signals_flutter.dart';
 import 'package:terminal/signals/orders_signal.dart';
+import 'package:terminal/theme/terminal_colors.dart';
 
 /// Premium segmented source tab bar for switching between 'This Terminal' and 'Online Orders'.
 class OrdersSourceTabs extends SignalWidget {
@@ -18,10 +19,10 @@ class OrdersSourceTabs extends SignalWidget {
     return Box(
       style: BoxStyler()
           .height(48)
-          .color(const Color(0xFFF1F5F9))
+          .color(TerminalColors.secondaryBackground)
           .paddingAll(4)
           .borderRadiusAll(const Radius.circular(14))
-          .borderAll(color: const Color(0xFFE2E8F0)),
+          .borderAll(color: TerminalColors.border),
       child: Row(
         children: [
           Expanded(
@@ -78,8 +79,8 @@ class _TabButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bgColor = isSelected ? const Color(0xFFFFFFFF) : const Color(0x00000000);
-    final fgColor = isSelected ? const Color(0xFF000000) : const Color(0xFF475569);
+    final bgColor = isSelected ? TerminalColors.surface : TerminalColors.transparent;
+    final fgColor = isSelected ? TerminalColors.textBlack : TerminalColors.textLight;
 
     return MouseRegion(
       cursor: SystemMouseCursors.click,
@@ -90,9 +91,9 @@ class _TabButton extends StatelessWidget {
             .color(bgColor)
             .paddingX(14)
             .borderRadiusAll(const Radius.circular(10))
-            .borderAll(color: isSelected ? const Color(0xFFE2E8F0) : const Color(0x00000000))
+            .borderAll(color: isSelected ? TerminalColors.border : TerminalColors.transparent)
             .shadowOnly(
-              color: isSelected ? const Color(0x12000000) : const Color(0x00000000),
+              color: isSelected ? TerminalColors.shadow : TerminalColors.transparent,
               offset: const Offset(0, 1),
               blurRadius: 3,
             )
@@ -100,7 +101,7 @@ class _TabButton extends StatelessWidget {
             .onHovered(
               isSelected
                   ? BoxStyler()
-                  : BoxStyler().color(const Color(0xFFFFFFFF)).borderAll(color: const Color(0xFFE2E8F0)),
+                  : BoxStyler().color(TerminalColors.surface).borderAll(color: TerminalColors.border),
             ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -119,15 +120,14 @@ class _TabButton extends StatelessWidget {
               const Gap(8),
               Box(
                 style: BoxStyler()
-                    .color(const Color(0xFF000000))
-                    .height(22)
-                    .minWidth(22)
-                    .paddingX(count > 9 ? 6 : 0)
+                    .color(TerminalColors.primary)
+                    .height(20)
+                    .paddingX(7)
                     .alignment(Alignment.center)
-                    .borderRadiusAll(const Radius.circular(999)),
+                    .borderRadiusAll(const Radius.circular(6)),
                 child: StyledText(
                   count.toString(),
-                  style: TextStyler().fontSize(12).fontWeight(.w800).color(const Color(0xFFFFFFFF)),
+                  style: TextStyler().fontSize(11.5).fontWeight(.w800).color(TerminalColors.textWhite),
                 ),
               ),
             ],

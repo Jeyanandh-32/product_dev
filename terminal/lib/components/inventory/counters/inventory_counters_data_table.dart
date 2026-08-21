@@ -1,4 +1,5 @@
 import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:models/models.dart';
 import 'package:terminal/components/inventory/counters/inventory_counter_pinned_row.dart';
@@ -18,10 +19,12 @@ class InventoryCountersDataTable extends StatefulWidget {
   });
 
   @override
-  State<InventoryCountersDataTable> createState() => _InventoryCountersDataTableState();
+  State<InventoryCountersDataTable> createState() =>
+      _InventoryCountersDataTableState();
 }
 
-class _InventoryCountersDataTableState extends State<InventoryCountersDataTable> {
+class _InventoryCountersDataTableState
+    extends State<InventoryCountersDataTable> {
   final ScrollController _leftController = ScrollController();
   final ScrollController _rightController = ScrollController();
   final ValueNotifier<int?> _hoveredIndex = ValueNotifier<int?>(null);
@@ -37,7 +40,8 @@ class _InventoryCountersDataTableState extends State<InventoryCountersDataTable>
   void _syncLeftToRight() {
     if (_isSyncing) return;
     _isSyncing = true;
-    if (_rightController.hasClients && _rightController.offset != _leftController.offset) {
+    if (_rightController.hasClients &&
+        _rightController.offset != _leftController.offset) {
       _rightController.jumpTo(_leftController.offset);
     }
     _isSyncing = false;
@@ -46,7 +50,8 @@ class _InventoryCountersDataTableState extends State<InventoryCountersDataTable>
   void _syncRightToLeft() {
     if (_isSyncing) return;
     _isSyncing = true;
-    if (_leftController.hasClients && _leftController.offset != _rightController.offset) {
+    if (_leftController.hasClients &&
+        _leftController.offset != _rightController.offset) {
       _leftController.jumpTo(_rightController.offset);
     }
     _isSyncing = false;
@@ -68,7 +73,10 @@ class _InventoryCountersDataTableState extends State<InventoryCountersDataTable>
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        final colWidth = max(160.0, (constraints.maxWidth - fixedLeftWidth) / 4);
+        final colWidth = max(
+          160.0,
+          (constraints.maxWidth - fixedLeftWidth) / 4,
+        );
         final pinnedWidth = fixedLeftWidth + colWidth;
         final scrollableWidth = colWidth * 3;
 
@@ -92,7 +100,8 @@ class _InventoryCountersDataTableState extends State<InventoryCountersDataTable>
                               counter: counter,
                               isEven: index.isEven,
                               isHovered: hoveredIndex == index,
-                              onHoverChanged: (hovered) => _hoveredIndex.value = hovered ? index : null,
+                              onHoverChanged: (hovered) =>
+                                  _hoveredIndex.value = hovered ? index : null,
                             );
                           },
                         ),
@@ -102,6 +111,7 @@ class _InventoryCountersDataTableState extends State<InventoryCountersDataTable>
                 ),
                 Expanded(
                   child: SingleChildScrollView(
+                    key: const ValueKey('inventory_counters_scrollable_pane'),
                     scrollDirection: Axis.horizontal,
                     child: SizedBox(
                       width: scrollableWidth,
@@ -114,13 +124,18 @@ class _InventoryCountersDataTableState extends State<InventoryCountersDataTable>
                               itemCount: widget.counters.length,
                               itemBuilder: (context, index) {
                                 final counter = widget.counters[index];
-                                final count = widget.allProducts.where((p) => p.counter?.id == counter.id).length;
+                                final count = widget.allProducts
+                                    .where((p) => p.counter?.id == counter.id)
+                                    .length;
                                 return InventoryCounterScrollableRow(
                                   counter: counter,
                                   productsCount: count,
                                   isEven: index.isEven,
                                   isHovered: hoveredIndex == index,
-                                  onHoverChanged: (hovered) => _hoveredIndex.value = hovered ? index : null,
+                                  onHoverChanged: (hovered) =>
+                                      _hoveredIndex.value = hovered
+                                      ? index
+                                      : null,
                                 );
                               },
                             ),

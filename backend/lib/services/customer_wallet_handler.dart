@@ -14,31 +14,24 @@ class CustomerWalletHandler {
     required String customerId,
     required String storeId,
   }) async {
-    final txRows = await repo.getWalletTransactions(
-      customerId: customerId,
-      storeId: storeId,
-    );
+    final initialTxRowsFuture = repo.getWalletTransactions(customerId: customerId, storeId: storeId);
+    final initialBalanceFuture = repo.getStoreWalletBalance(customerId: customerId, storeId: storeId);
 
-    final verificationService = WalletVerificationService(
-      repo: repo,
-      phonePeService: PhonePeService(),
-    );
-    await verificationService.verifyPendingTopUps(
-      txRows: txRows,
-      storeId: storeId,
-      customerId: customerId,
-    );
+    var (txRows, balancePaise) = await (initialTxRowsFuture, initialBalanceFuture).wait;
 
-    final balancePaise = await repo.getStoreWalletBalance(
-      customerId: customerId,
-      storeId: storeId,
-    );
-    final updatedTxRows = await repo.getWalletTransactions(
-      customerId: customerId,
-      storeId: storeId,
-    );
+    final hasPending = txRows.any((t) => t.status == 'pending');
+    if (hasPending) {
+      final verificationService = WalletVerificationService(repo: repo, phonePeService: PhonePeService());
+      await verificationService.verifyPendingTopUps(txRows: txRows, storeId: storeId, customerId: customerId);
 
-    final transactions = updatedTxRows.map((row) {
+      final updatedTxFuture = repo.getWalletTransactions(customerId: customerId, storeId: storeId);
+      final updatedBalanceFuture = repo.getStoreWalletBalance(customerId: customerId, storeId: storeId);
+      final updated = await (updatedTxFuture, updatedBalanceFuture).wait;
+      txRows = updated.$1;
+      balancePaise = updated.$2;
+    }
+
+    final transactions = txRows.map((row) {
       final typeStr = row.type.toCamelCase();
       final txType = WalletTransactionType.values.firstWhere(
         (t) => t.name.toLowerCase() == typeStr.toLowerCase(),

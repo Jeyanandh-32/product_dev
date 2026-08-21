@@ -1,4 +1,5 @@
 import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:models/models.dart';
 import 'package:terminal/components/inventory/products/inventory_product_pinned_row.dart';
@@ -39,7 +40,8 @@ class _InventoryDataTableState extends State<InventoryDataTable> {
   void _syncLeftToRight() {
     if (_isSyncing) return;
     _isSyncing = true;
-    if (_rightController.hasClients && _rightController.offset != _leftController.offset) {
+    if (_rightController.hasClients &&
+        _rightController.offset != _leftController.offset) {
       _rightController.jumpTo(_leftController.offset);
     }
     _isSyncing = false;
@@ -48,7 +50,8 @@ class _InventoryDataTableState extends State<InventoryDataTable> {
   void _syncRightToLeft() {
     if (_isSyncing) return;
     _isSyncing = true;
-    if (_leftController.hasClients && _leftController.offset != _rightController.offset) {
+    if (_leftController.hasClients &&
+        _leftController.offset != _rightController.offset) {
       _leftController.jumpTo(_rightController.offset);
     }
     _isSyncing = false;
@@ -94,7 +97,8 @@ class _InventoryDataTableState extends State<InventoryDataTable> {
                               isEven: index.isEven,
                               isHovered: hoveredIndex == index,
                               onEdit: () => widget.onEdit(product),
-                              onUpdateStock: () => widget.onUpdateStock(product),
+                              onUpdateStock: () =>
+                                  widget.onUpdateStock(product),
                               onHoverChanged: (hovered) {
                                 _hoveredIndex.value = hovered ? index : null;
                               },
@@ -108,6 +112,7 @@ class _InventoryDataTableState extends State<InventoryDataTable> {
                 // Horizontally Scrollable Right Pane (11 Data Columns)
                 Expanded(
                   child: SingleChildScrollView(
+                    key: const ValueKey('inventory_products_scrollable_pane'),
                     scrollDirection: Axis.horizontal,
                     child: SizedBox(
                       width: scrollableWidth,
@@ -125,7 +130,9 @@ class _InventoryDataTableState extends State<InventoryDataTable> {
                                   isEven: index.isEven,
                                   isHovered: hoveredIndex == index,
                                   onHoverChanged: (hovered) {
-                                    _hoveredIndex.value = hovered ? index : null;
+                                    _hoveredIndex.value = hovered
+                                        ? index
+                                        : null;
                                   },
                                 );
                               },

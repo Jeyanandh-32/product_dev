@@ -67,12 +67,15 @@ void main() {
   test('/v1/reports/orders GET responds with order summary metrics and order items', () async {
     when(() => request.method).thenReturn(.get);
     when(() => request.uri).thenReturn(Uri.parse('http://localhost/v1/reports/orders?storeId=$validStoreId'));
-    when(() => orderRepo.count(merchantId: 'm-1', storeId: validStoreId, fromDate: any(named: 'fromDate'), toDate: any(named: 'toDate'), paymentMethod: any(named: 'paymentMethod'), status: any(named: 'status'), paymentStatus: any(named: 'paymentStatus')))
+    when(() => orderRepo.count(merchantId: 'm-1', storeId: validStoreId, source: any(named: 'source'), terminalCode: any(named: 'terminalCode'), fromDate: any(named: 'fromDate'), toDate: any(named: 'toDate'), paymentMethod: any(named: 'paymentMethod'), status: any(named: 'status'), paymentStatus: any(named: 'paymentStatus')))
         .thenAnswer((_) async => 10);
-    when(() => orderRepo.getAll(merchantId: 'm-1', storeId: validStoreId, fromDate: any(named: 'fromDate'), toDate: any(named: 'toDate'), paymentMethod: any(named: 'paymentMethod'), status: any(named: 'status'), paymentStatus: any(named: 'paymentStatus'), limit: any(named: 'limit'), offset: any(named: 'offset')))
+    when(() => orderRepo.getAll(merchantId: 'm-1', storeId: validStoreId, source: any(named: 'source'), terminalCode: any(named: 'terminalCode'), fromDate: any(named: 'fromDate'), toDate: any(named: 'toDate'), paymentMethod: any(named: 'paymentMethod'), status: any(named: 'status'), paymentStatus: any(named: 'paymentStatus'), limit: any(named: 'limit'), offset: any(named: 'offset')))
         .thenAnswer((_) async => []);
     when(() => orderRepo.getOrderSummary(merchantId: 'm-1', storeId: validStoreId, fromDate: any(named: 'fromDate'), toDate: any(named: 'toDate')))
         .thenAnswer((_) async => (totalOrders: 10, grossSubtotal: 50000.0, totalDiscount: 500.0, netRevenue: 49500.0, cashCollected: 30000.0, upiCollected: 19500.0, walletCollected: 0.0, freeTotal: 0.0));
+    when(() => orderItemRepo.getAllForOrders(any())).thenAnswer((_) async => []);
+    when(() => productRepo.getByIds(any())).thenAnswer((_) async => []);
+    when(() => customerRepo.getByIds(any())).thenAnswer((_) async => []);
 
     final response = await orders_route.onRequest(context);
     expect(response.statusCode, equals(HttpStatus.ok));

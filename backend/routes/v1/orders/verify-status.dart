@@ -22,30 +22,19 @@ Future<Response> onRequest(RequestContext context) async {
 
 Future<Response> _onGet(RequestContext context) async {
   final reference = context.request.uri.queryParameters['reference'];
-  if (reference == null || reference.isEmpty) {
-    return badRequest(message: 'Order reference is required.');
-  }
+  if (reference == null || reference.isEmpty) return badRequest(message: 'Order reference is required.');
 
   try {
     final db = Database.db;
     final orderRepo = OrderRepository(db: db);
+    final itemRepo = OrderItemRepository(db: db);
+    final productRepo = ProductRepository(db: db);
 
-    final orderRow = await db.orders
-        .where((o) => o.orderReference.equals(toExpr(reference)))
-        .first
-        .fetch();
+    final orderRow = await db.orders.where((o) => o.orderReference.equals(toExpr(reference))).first.fetch();
+    if (orderRow == null) return notFound(message: 'Order not found.');
 
-    if (orderRow == null) {
-      return notFound(message: 'Order not found.');
-    }
-
-    // If order is still pending or failed, verify live payment status from PhonePe Status API
-    if (orderRow.paymentStatus == PaymentStatus.pending.name ||
-        orderRow.paymentStatus == PaymentStatus.failed.name) {
-      final phonePeConfigRow = await db.storePhonepeConfigs
-          .where((c) => c.storeId.equals(toExpr(orderRow.storeId)))
-          .first
-          .fetch();
+    if (orderRow.paymentStatus == PaymentStatus.pending.name || orderRow.paymentStatus == PaymentStatus.failed.name) {
+      final phonePeConfigRow = await db.storePhonepeConfigs.where((c) => c.storeId.equals(toExpr(orderRow.storeId))).first.fetch();
 
       if (phonePeConfigRow != null) {
         final phonePeService = PhonePeService();
@@ -55,46 +44,32 @@ Future<Response> _onGet(RequestContext context) async {
         );
 
         final state = (statusResult['state'] as String?) ??
-            (statusResult['data'] is Map
-                ? (statusResult['data'] as Map)['state'] as String?
-                : null);
+            (statusResult['data'] is Map ? (statusResult['data'] as Map)['state'] as String? : null);
 
         final stateUpper = state?.toUpperCase();
-        final itemRows = await OrderItemRepository(db: db).getAllForOrder(orderRow.id);
+        final itemRows = await itemRepo.getAllForOrder(orderRow.id);
         final orderService = OrderService(
           orderRepo: orderRepo,
-          orderItemRepo: OrderItemRepository(db: db),
-          productRepo: ProductRepository(db: db),
+          orderItemRepo: itemRepo,
+          productRepo: productRepo,
           stockRepo: StockRepository(db: db),
         );
 
         if (stateUpper == 'COMPLETED') {
-          await orderService.completeOrderPayment(
-            orderRow: orderRow,
-            orderItems: itemRows,
-          );
+          await orderService.completeOrderPayment(orderRow: orderRow, orderItems: itemRows);
         } else {
-          // If state is FAILED, CANCELLED, DECLINED, EXPIRED, or not COMPLETED on verification redirect
-          await orderService.cancelOrder(
-            orderRow: orderRow,
-          );
+          await orderService.cancelOrder(orderRow: orderRow);
         }
       }
     }
 
-    // Re-fetch updated row
-    final updatedOrderRow = (await db.orders.byKey(orderRow.id).fetch())!;
-    final itemRows = await OrderItemRepository(db: db).getAllForOrder(orderRow.id);
-    final productRowsMap = <String, ProductRow>{};
+    final updatedOrderRow = await db.orders.byKey(orderRow.id).fetch();
+    if (updatedOrderRow == null) return notFound(message: 'Order not found.');
 
-    for (final item in itemRows) {
-      if (!productRowsMap.containsKey(item.productId)) {
-        final productResult = await ProductRepository(db: db).getById(item.productId);
-        if (productResult != null) {
-          productRowsMap[item.productId] = productResult.$1;
-        }
-      }
-    }
+    final itemRows = await itemRepo.getAllForOrder(orderRow.id);
+    final productIds = itemRows.map((i) => i.productId).toSet().toList();
+    final productRowsList = await productRepo.getByIds(productIds);
+    final productRowsMap = {for (final p in productRowsList) p.id: p};
 
     final order = updatedOrderRow.toOrder(itemRows, productRows: productRowsMap);
     return success(data: {'order': order.toJson()});

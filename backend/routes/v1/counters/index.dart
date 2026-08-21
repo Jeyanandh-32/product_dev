@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:backend/enums/user_role.dart';
 import 'package:backend/extensions/counter_row_extension.dart';
 import 'package:backend/extensions/request_context_extension.dart';
 import 'package:backend/repositories/counter_repository.dart';
@@ -29,25 +30,17 @@ Future<Response> _onGet(RequestContext context) async {
   if (sizeError != null) return sizeError;
 
   final repo = context.read<CounterRepository>();
-  final tokenPayload = context.tokenPayload;
+  final tokenPayload = context.optionalTokenPayload;
 
   try {
     final searchQuery = context.request.uri.queryParameters['search'];
-
-    final total = await repo.count(
-      merchantId: tokenPayload.sub,
-      storeId: storeId,
-      searchQuery: searchQuery,
-    );
-
+    final merchantId = (tokenPayload == null || tokenPayload.role != UserRole.merchant) ? null : tokenPayload.sub;
     final offset = (page - 1) * size;
-    final counterRows = await repo.getAll(
-      storeId: storeId,
-      merchantId: tokenPayload.sub,
-      searchQuery: searchQuery,
-      limit: size,
-      offset: offset,
-    );
+
+    final totalFuture = repo.count(merchantId: merchantId, storeId: storeId, searchQuery: searchQuery);
+    final counterRowsFuture = repo.getAll(storeId: storeId, merchantId: merchantId, searchQuery: searchQuery, limit: size, offset: offset);
+
+    final (total, counterRows) = await (totalFuture, counterRowsFuture).wait;
 
     final counters = counterRows.map((s) => s.toCounter()).toList();
     final totalPages = (total / size).ceil();

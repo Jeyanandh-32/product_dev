@@ -28,7 +28,21 @@ final filteredProductsSignal = computed(() {
   }).toList();
 });
 
+Future<void>? _productsInFlight;
+
+/// Refreshes products with in-flight deduplication to avoid redundant concurrent requests.
 Future<void> refreshProductsSignal() async {
+  if (_productsInFlight != null) return _productsInFlight!;
+  final future = _fetchProducts();
+  _productsInFlight = future;
+  try {
+    await future;
+  } finally {
+    _productsInFlight = null;
+  }
+}
+
+Future<void> _fetchProducts() async {
   final terminal = authSignal.value.value;
   final storeId = terminal?.storeId;
   if (storeId == null) {

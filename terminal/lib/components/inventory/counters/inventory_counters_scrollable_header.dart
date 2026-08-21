@@ -49,14 +49,16 @@ class InventoryCountersScrollableHeader extends StatelessWidget {
       child: InkWell(
         mouseCursor: SystemMouseCursors.click,
         onTap: () => counterSortStateSignal.value = counterSortStateSignal.value.toggle(key),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Flexible(
-              child: Text(
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          physics: const NeverScrollableScrollPhysics(),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
                 label,
                 softWrap: false,
-                overflow: TextOverflow.ellipsis,
+                overflow: TextOverflow.visible,
                 style: TextStyle(
                   fontSize: 11.5,
                   fontWeight: isActive ? FontWeight.w800 : FontWeight.w700,
@@ -64,14 +66,14 @@ class InventoryCountersScrollableHeader extends StatelessWidget {
                   color: isActive ? TerminalColors.textPrimary : TerminalColors.textSecondary,
                 ),
               ),
-            ),
-            const Gap(4),
-            Icon(
-              isActive ? (isAsc ? FLucideIcons.arrowUp : FLucideIcons.arrowDown) : FLucideIcons.arrowUpDown,
-              size: 13,
-              color: isActive ? TerminalColors.textPrimary : TerminalColors.textMuted,
-            ),
-          ],
+              const Gap(4),
+              Icon(
+                isActive ? (isAsc ? FLucideIcons.arrowUp : FLucideIcons.arrowDown) : FLucideIcons.arrowUpDown,
+                size: 13,
+                color: isActive ? TerminalColors.textPrimary : TerminalColors.textMuted,
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -33,42 +33,26 @@ Future<Response> _onPost(RequestContext context) async {
     final db = Database.db;
     final phonePeService = PhonePeService();
 
-    final storeRow = await db.stores
-        .where((s) => s.id.equals(toExpr(context.storeId)))
+    final storeFuture = db.stores.where((s) => s.id.equals(toExpr(context.storeId))).first.fetch();
+    final phonePeFuture = db.storePhonepeConfigs
+        .where((c) => c.storeId.equals(toExpr(context.storeId)) & c.isEnabled.equals(toExpr(true)))
         .first
         .fetch();
+
+    final (storeRow, phonePeConfigRow) = await (storeFuture, phonePeFuture).wait;
 
     if (storeRow == null || !storeRow.isOnlineEnabled) {
-      return badRequest(
-        message: 'Online ordering is currently disabled for this store.',
-      );
+      return badRequest(message: 'Online ordering is currently disabled for this store.');
     }
 
-    final phonePeConfigRow = await db.storePhonepeConfigs
-        .where(
-          (c) =>
-              c.storeId.equals(toExpr(context.storeId)) &
-              c.isEnabled.equals(toExpr(true)),
-        )
-        .first
-        .fetch();
-
     if (phonePeConfigRow == null) {
-      return badRequest(
-        message: 'Online checkout configuration is incomplete for this store.',
-      );
+      return badRequest(message: 'Online checkout configuration is incomplete for this store.');
     }
 
     final phonePeConfig = phonePeConfigRow.toStorePhonePeConfig();
 
     final productsList = input.products
-        .map(
-          (p) => {
-            'productId': p.productId,
-            'quantity': p.quantity,
-            'discount': p.discount,
-          },
-        )
+        .map((p) => {'productId': p.productId, 'quantity': p.quantity, 'discount': p.discount})
         .toList();
 
     final calc = await OnlinePaymentCalculator.computeAmounts(
@@ -81,7 +65,6 @@ Future<Response> _onPost(RequestContext context) async {
       useWallet: input.useWallet ?? false,
     );
 
-    // If 100% covered by Wallet -> Create single completed order immediately
     if (calc.remainingPayablePaise <= 0) {
       return await OnlineOrderCheckoutCoordinator.handleWalletOnlyOrder(
         orderService: orderService,
@@ -95,7 +78,6 @@ Future<Response> _onPost(RequestContext context) async {
       );
     }
 
-    // Partial or zero wallet coverage: Create pending order and initiate PhonePe
     return await OnlineOrderCheckoutCoordinator.handlePhonePeHybridOrder(
       orderService: orderService,
       customerRepo: customerRepo,

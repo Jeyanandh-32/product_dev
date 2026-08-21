@@ -12,23 +12,50 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   final now = DateTime.now();
   final testCategories = [
-    Category(id: 'c1', merchantId: 'm1', storeId: 's1', name: 'Beverages', description: 'Hot & Cold Drinks', isActive: true, createdAt: now, updatedAt: now),
-    Category(id: 'c2', merchantId: 'm1', storeId: 's1', name: 'Snacks', description: 'Quick bites', isActive: false, createdAt: now, updatedAt: now),
+    Category(
+      id: 'c1',
+      merchantId: 'm1',
+      storeId: 's1',
+      name: 'Beverages',
+      description: 'Hot & Cold Drinks',
+      isActive: true,
+      createdAt: now,
+      updatedAt: now,
+    ),
+    Category(
+      id: 'c2',
+      merchantId: 'm1',
+      storeId: 's1',
+      name: 'Snacks',
+      description: 'Quick bites',
+      isActive: false,
+      createdAt: now,
+      updatedAt: now,
+    ),
   ];
 
   Widget buildTestWidget({double width = 1000}) => MaterialApp(
-        builder: (context, child) => FTheme(data: FTheme.neutral.light.desktop, child: child ?? const SizedBox()),
-        home: Scaffold(
-          body: SizedBox(
-            width: width,
-            height: 500,
-            child: InventoryCategoriesDataTable(categories: testCategories, allProducts: const [], onEdit: (_) {}),
-          ),
+    builder: (context, child) => FTheme(
+      data: FTheme.neutral.light.desktop,
+      child: child ?? const SizedBox(),
+    ),
+    home: Scaffold(
+      body: SizedBox(
+        width: width,
+        height: 500,
+        child: InventoryCategoriesDataTable(
+          categories: testCategories,
+          allProducts: const [],
+          onEdit: (_) {},
         ),
-      );
+      ),
+    ),
+  );
 
   group('InventoryCategoriesDataTable Pinned Column Layout Tests', () {
-    testWidgets('renders pinned left pane and scrollable right pane', (tester) async {
+    testWidgets('renders pinned left pane and scrollable right pane', (
+      tester,
+    ) async {
       await tester.pumpWidget(buildTestWidget(width: 1200));
       await tester.pumpAndSettle();
 
@@ -42,11 +69,15 @@ void main() {
       expect(find.byType(InventoryCategoryScrollableRow), findsNWidgets(2));
     });
 
-    testWidgets('horizontal scroll maintains pinned category name', (tester) async {
+    testWidgets('horizontal scroll maintains pinned category name', (
+      tester,
+    ) async {
       await tester.pumpWidget(buildTestWidget(width: 600));
       await tester.pumpAndSettle();
 
-      final scrollableFinder = find.byType(SingleChildScrollView);
+      final scrollableFinder = find.byKey(
+        const ValueKey('inventory_categories_scrollable_pane'),
+      );
       expect(scrollableFinder, findsOneWidget);
 
       await tester.drag(scrollableFinder, const Offset(-200, 0));

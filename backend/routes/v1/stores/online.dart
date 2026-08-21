@@ -30,12 +30,11 @@ Future<Response> _onGet(RequestContext context) async {
       return success(data: {'store': storeRow.toStore().toJson()});
     }
 
-    final total = await repo.countOnlineStores();
     final offset = (page - 1) * size;
-    final storeRows = await repo.getOnlineStores(
-      limit: size,
-      offset: offset,
-    );
+    final totalFuture = repo.countOnlineStores();
+    final storeRowsFuture = repo.getOnlineStores(limit: size, offset: offset);
+
+    final (total, storeRows) = await (totalFuture, storeRowsFuture).wait;
 
     final stores = storeRows.map((s) => s.toStore().toJson()).toList();
     final totalPages = (total / size).ceil();

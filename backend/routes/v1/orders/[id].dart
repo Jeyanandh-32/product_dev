@@ -1,4 +1,3 @@
-import 'package:backend/database/schema.dart';
 import 'package:backend/extensions/order_row_extension.dart';
 import 'package:backend/extensions/request_context_extension.dart';
 import 'package:backend/repositories/order_item_repository.dart';
@@ -26,21 +25,12 @@ Future<Response> _onGet(RequestContext context, String id) async {
 
   try {
     final orderRow = await orderRepo.getByIdOrBillNo(id, context.storeId);
-    if (orderRow == null) {
-      return notFound(message: 'Order not found.');
-    }
+    if (orderRow == null) return notFound(message: 'Order not found.');
 
     final itemRows = await orderItemRepo.getAllForOrder(orderRow.id);
-    final productRowsMap = <String, ProductRow>{};
-
-    for (final item in itemRows) {
-      if (!productRowsMap.containsKey(item.productId)) {
-        final productResult = await productRepo.getById(item.productId);
-        if (productResult != null) {
-          productRowsMap[item.productId] = productResult.$1;
-        }
-      }
-    }
+    final productIds = itemRows.map((i) => i.productId).toSet().toList();
+    final productRowsList = await productRepo.getByIds(productIds);
+    final productRowsMap = {for (final p in productRowsList) p.id: p};
 
     final order = orderRow.toOrder(itemRows, productRows: productRowsMap);
     return success(data: {'order': order.toJson()});
@@ -59,24 +49,16 @@ Future<Response> _onPatch(RequestContext context, String id) async {
 
   try {
     final orderRow = await orderRepo.getByIdOrBillNo(id, context.storeId);
-    if (orderRow == null) {
-      return notFound(message: 'Order not found.');
-    }
+    if (orderRow == null) return notFound(message: 'Order not found.');
 
     final body = await context.request.json() as Map<String, dynamic>;
     final statusStr = body['status'] as String?;
     final paymentStatusStr = body['paymentStatus'] as String?;
     final paymentMethodStr = body['paymentMethod'] as String?;
 
-    final status = statusStr != null
-        ? OrderStatus.values.where((e) => e.name == statusStr).firstOrNull
-        : null;
-    final paymentStatus = paymentStatusStr != null
-        ? PaymentStatus.values.where((e) => e.name == paymentStatusStr).firstOrNull
-        : null;
-    final paymentMethod = paymentMethodStr != null
-        ? PaymentMethod.values.where((e) => e.name == paymentMethodStr).firstOrNull
-        : null;
+    final status = statusStr != null ? OrderStatus.values.where((e) => e.name == statusStr).firstOrNull : null;
+    final paymentStatus = paymentStatusStr != null ? PaymentStatus.values.where((e) => e.name == paymentStatusStr).firstOrNull : null;
+    final paymentMethod = paymentMethodStr != null ? PaymentMethod.values.where((e) => e.name == paymentMethodStr).firstOrNull : null;
 
     final updatedRow = await orderRepo.update(
       id: orderRow.id,
@@ -85,19 +67,12 @@ Future<Response> _onPatch(RequestContext context, String id) async {
       paymentMethod: paymentMethod,
     );
 
-    if (updatedRow == null) {
-      return error(message: 'Failed to update order.');
-    }
+    if (updatedRow == null) return error(message: 'Failed to update order.');
 
     final itemRows = await orderItemRepo.getAllForOrder(orderRow.id);
-    final productRowsMap = <String, ProductRow>{};
-
-    for (final item in itemRows) {
-      if (!productRowsMap.containsKey(item.productId)) {
-        final productResult = await productRepo.getById(item.productId);
-        if (productResult != null) productRowsMap[item.productId] = productResult.$1;
-      }
-    }
+    final productIds = itemRows.map((i) => i.productId).toSet().toList();
+    final productRowsList = await productRepo.getByIds(productIds);
+    final productRowsMap = {for (final p in productRowsList) p.id: p};
 
     final order = updatedRow.toOrder(itemRows, productRows: productRowsMap);
     return success(data: {'order': order.toJson()});

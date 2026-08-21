@@ -1,11 +1,17 @@
 import 'package:backend/database/schema.dart';
+import 'package:backend/services/cache/in_memory_cache.dart';
 import 'package:typed_sql/typed_sql.dart' as ts;
 
+/// Repository for handling terminal records with native in-memory caching.
 class TerminalRepository {
   TerminalRepository({required this._db});
 
   final ts.Database<DatabaseSchema> _db;
+  static final _codeCache = InMemoryCache<TerminalRow?>();
+  static final _listCache = InMemoryCache<List<TerminalRow>>();
+  static final _countCache = InMemoryCache<int>();
 
+  /// Creates a new terminal and clears terminal cache.
   Future<TerminalRow> create({
     required String code,
     required String merchantId,
@@ -24,56 +30,44 @@ class TerminalRepository {
         .returnInserted()
         .executeAndFetch();
 
+    _clearCache();
     return row;
   }
 
+  /// Retrieves list of terminals with in-memory caching and deduplication.
   Future<List<TerminalRow>> getAll({
     required String merchantId,
     String? storeId,
     int? limit,
     int? offset,
-  }) async {
-    var query = _db.terminals.where(
-      (t) => t.merchantId.equalsValue(merchantId),
-    );
-
-    if (storeId != null) {
-      query = query.where((t) => t.storeId.equalsValue(storeId));
-    }
-
-    if (offset != null) {
-      query = query.offset(offset);
-    }
-
-    if (limit != null) {
-      query = query.limit(limit);
-    }
-
-    final rows = await query.fetch();
-    return rows;
+  }) {
+    final key = '$merchantId:$storeId:$limit:$offset';
+    return _listCache.getOrFetch(key, () async {
+      var query = _db.terminals.where((t) => t.merchantId.equalsValue(merchantId));
+      if (storeId != null) query = query.where((t) => t.storeId.equalsValue(storeId));
+      if (offset != null) query = query.offset(offset);
+      if (limit != null) query = query.limit(limit);
+      return query.fetch();
+    });
   }
 
-  Future<int> count({
-    required String merchantId,
-    String? storeId,
-  }) async {
-    var query = _db.terminals.where(
-      (t) => t.merchantId.equalsValue(merchantId),
-    );
-
-    if (storeId != null) {
-      query = query.where((t) => t.storeId.equalsValue(storeId));
-    }
-
-    final total = await query.count().fetch();
-    return total ?? 0;
+  /// Counts matching terminals with in-memory caching.
+  Future<int> count({required String merchantId, String? storeId}) {
+    final key = '$merchantId:$storeId';
+    return _countCache.getOrFetch(key, () async {
+      var query = _db.terminals.where((t) => t.merchantId.equalsValue(merchantId));
+      if (storeId != null) query = query.where((t) => t.storeId.equalsValue(storeId));
+      final total = await query.count().fetch();
+      return total ?? 0;
+    });
   }
 
-  Future<TerminalRow?> getByCode(String code) async {
-    final row = await _db.terminals.byKey(code).fetch();
-    return row;
+  /// Retrieves terminal by [code] with in-memory caching.
+  Future<TerminalRow?> getByCode(String code) {
+    return _codeCache.getOrFetch(code, () => _db.terminals.byKey(code).fetch());
   }
 
+  /// Updates terminal and invalidates cache.
   Future<TerminalRow?> update({
     required String code,
     String? name,
@@ -85,9 +79,7 @@ class TerminalRepository {
         .update(
           (t, set) => set(
             name: name != null ? ts.toExpr(name) : t.name,
-            passwordHash: passwordHash != null
-                ? ts.toExpr(passwordHash)
-                : t.passwordHash,
+            passwordHash: passwordHash != null ? ts.toExpr(passwordHash) : t.passwordHash,
             isActive: isActive != null ? ts.toExpr(isActive) : t.isActive,
             updatedAt: ts.Expr.currentTimestamp,
           ),
@@ -95,6 +87,13 @@ class TerminalRepository {
         .returnUpdated()
         .executeAndFetch();
 
+    _clearCache();
     return row;
+  }
+
+  static void _clearCache() {
+    _codeCache.clear();
+    _listCache.clear();
+    _countCache.clear();
   }
 }

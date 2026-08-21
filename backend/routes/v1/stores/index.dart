@@ -28,16 +28,11 @@ Future<Response> _onGet(RequestContext context) async {
   final tokenPayload = context.tokenPayload;
 
   try {
-    final total = await repo.count(
-      merchantId: tokenPayload.sub,
-    );
-
     final offset = (page - 1) * size;
-    final storeRows = await repo.getAll(
-      merchantId: tokenPayload.sub,
-      limit: size,
-      offset: offset,
-    );
+    final totalFuture = repo.count(merchantId: tokenPayload.sub);
+    final storeRowsFuture = repo.getAll(merchantId: tokenPayload.sub, limit: size, offset: offset);
+
+    final (total, storeRows) = await (totalFuture, storeRowsFuture).wait;
 
     final stores = storeRows.map((s) => s.toStore()).toList();
     final totalPages = (total / size).ceil();
@@ -65,18 +60,12 @@ Future<Response> _onPost(RequestContext context) async {
     final input = StoreCreate.fromJson(body);
 
     if (input.isOnlineEnabled ?? false) {
-      return badRequest(
-        message:
-            'Cannot create a store with online ordering enabled. Please contact system administrator.',
-      );
+      return badRequest(message: 'Cannot create a store with online ordering enabled. Please contact system administrator.');
     }
 
     final rawStoreType = input.storeType?.trim();
     final storeTypeEnum = rawStoreType != null && rawStoreType.isNotEmpty
-        ? StoreType.values.firstWhere(
-            (t) => t.name == rawStoreType,
-            orElse: () => StoreType.other,
-          )
+        ? StoreType.values.firstWhere((t) => t.name == rawStoreType, orElse: () => StoreType.other)
         : null;
 
     final storeRow = await repo.create(
@@ -86,10 +75,7 @@ Future<Response> _onPost(RequestContext context) async {
       slug: input.slug?.trim().toLowerCase(),
     );
 
-    return success(
-      statusCode: HttpStatus.created,
-      data: {'store': storeRow.toStore()},
-    );
+    return success(statusCode: HttpStatus.created, data: {'store': storeRow.toStore()});
   } on ResponseException catch (e) {
     return e.response;
   } catch (e) {

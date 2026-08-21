@@ -8,11 +8,11 @@ import 'package:backend/repositories/product_repository.dart';
 import 'package:backend/utils/responses.dart';
 import 'package:dart_frog/dart_frog.dart';
 
-/// Helper coordinating paginated order querying, customer/product resolution, and summary aggregation.
+/// Helper coordinating paginated order querying, batch item/product/customer resolution, and summary aggregation.
 class OrderQueryHelper {
   const OrderQueryHelper._();
 
-  /// Executes paginated query for orders matching filters.
+  /// Executes high-performance paginated batch query for orders matching filters.
   static Future<Response> fetchPaginatedOrders(RequestContext context) async {
     final storeIdError = context.validateStoreId();
     if (storeIdError != null) return storeIdError;
@@ -32,9 +32,7 @@ class OrderQueryHelper {
     final statusStr = queryParams['status'];
     final paymentStatusStr = queryParams['paymentStatus'];
 
-    final fromDate = fromDateStr != null && fromDateStr.isNotEmpty
-        ? DateTime.tryParse(fromDateStr)?.toUtc()
-        : null;
+    final fromDate = fromDateStr != null && fromDateStr.isNotEmpty ? DateTime.tryParse(fromDateStr)?.toUtc() : null;
     DateTime? toDate;
     if (toDateStr != null && toDateStr.isNotEmpty) {
       final parsed = DateTime.tryParse(toDateStr);
@@ -50,7 +48,8 @@ class OrderQueryHelper {
     final tokenPayload = context.tokenPayload;
 
     try {
-      final total = await orderRepo.count(
+      final offset = (page - 1) * size;
+      final totalFuture = orderRepo.count(
         merchantId: tokenPayload.sub,
         storeId: context.storeId,
         source: source,
@@ -62,8 +61,7 @@ class OrderQueryHelper {
         paymentStatus: paymentStatusStr,
       );
 
-      final offset = (page - 1) * size;
-      final orderRows = await orderRepo.getAll(
+      final orderRowsFuture = orderRepo.getAll(
         merchantId: tokenPayload.sub,
         storeId: context.storeId,
         source: source,
@@ -77,24 +75,36 @@ class OrderQueryHelper {
         offset: offset,
       );
 
-      final orderSummary = await orderRepo.getOrderSummary(
+      final orderSummaryFuture = orderRepo.getOrderSummary(
         merchantId: tokenPayload.sub,
         storeId: context.storeId,
         fromDate: fromDate,
         toDate: toDate,
       );
 
+      final (total, orderRows, orderSummary) = await (totalFuture, orderRowsFuture, orderSummaryFuture).wait;
+
+      final orderIds = orderRows.map((o) => o.id).toList();
+      final allItems = await itemRepo.getAllForOrders(orderIds);
+
+      final itemsByOrderId = <String, List<OrderItemRow>>{};
+      final productIds = <String>{};
+      for (final item in allItems) {
+        itemsByOrderId.putIfAbsent(item.orderId, () => []).add(item);
+        productIds.add(item.productId);
+      }
+
+      final productRowsList = await productRepo.getByIds(productIds.toList());
+      final productRowsMap = {for (final p in productRowsList) p.id: p};
+
+      final customerIds = orderRows.map((o) => o.customerId).whereType<String>().toSet().toList();
+      final customerRowsList = await customerRepo.getByIds(customerIds);
+      final customerRowsMap = {for (final c in customerRowsList) c.id: c};
+
       final orders = <Map<String, dynamic>>[];
       for (final orderRow in orderRows) {
-        final itemRows = await itemRepo.getAllForOrder(orderRow.id);
-        final productRowsMap = <String, ProductRow>{};
-        for (final item in itemRows) {
-          if (!productRowsMap.containsKey(item.productId)) {
-            final productResult = await productRepo.getById(item.productId);
-            if (productResult != null) productRowsMap[item.productId] = productResult.$1;
-          }
-        }
-        final customerRow = orderRow.customerId != null ? await customerRepo.getById(orderRow.customerId!) : null;
+        final itemRows = itemsByOrderId[orderRow.id] ?? const [];
+        final customerRow = orderRow.customerId != null ? customerRowsMap[orderRow.customerId] : null;
         orders.add(orderRow.toOrder(itemRows, productRows: productRowsMap, customerRow: customerRow).toJson());
       }
 

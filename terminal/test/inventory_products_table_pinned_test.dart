@@ -8,7 +8,15 @@ import 'package:terminal/components/inventory/products/inventory_product_scrolla
 import 'package:terminal/components/inventory/products/inventory_products_pinned_header.dart';
 import 'package:terminal/components/inventory/products/inventory_products_scrollable_header.dart';
 
-Product _mockProd(String id, String name, String sku, String barcode, double price, bool active, DateTime now) {
+Product _mockProd(
+  String id,
+  String name,
+  String sku,
+  String barcode,
+  double price,
+  bool active,
+  DateTime now,
+) {
   return Product(
     id: id,
     merchantId: 'm1',
@@ -19,9 +27,34 @@ Product _mockProd(String id, String name, String sku, String barcode, double pri
     sellingPrice: price,
     taxRate: 5.0,
     isActive: active,
-    stock: Stock(id: 's_$id', productId: id, storeId: 's1', quantity: 50, lowStockThreshold: 10, stockMonitor: true, createdAt: now, updatedAt: now),
-    category: Category(id: 'c1', merchantId: 'm1', storeId: 's1', name: 'Coffee', isActive: true, createdAt: now, updatedAt: now),
-    counter: Counter(id: 'cnt1', merchantId: 'm1', storeId: 's1', name: 'Main Bar', isActive: true, createdAt: now, updatedAt: now),
+    stock: Stock(
+      id: 's_$id',
+      productId: id,
+      storeId: 's1',
+      quantity: 50,
+      lowStockThreshold: 10,
+      stockMonitor: true,
+      createdAt: now,
+      updatedAt: now,
+    ),
+    category: Category(
+      id: 'c1',
+      merchantId: 'm1',
+      storeId: 's1',
+      name: 'Coffee',
+      isActive: true,
+      createdAt: now,
+      updatedAt: now,
+    ),
+    counter: Counter(
+      id: 'cnt1',
+      merchantId: 'm1',
+      storeId: 's1',
+      name: 'Main Bar',
+      isActive: true,
+      createdAt: now,
+      updatedAt: now,
+    ),
     createdAt: now,
     updatedAt: now,
   );
@@ -31,23 +64,48 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   final now = DateTime.now();
   final testProducts = [
-    _mockProd('p1', 'Espresso Roast', 'SKU-001', '8901234567890', 150.0, true, now),
-    _mockProd('p2', 'Caramel Macchiato', 'SKU-002', '8901234567891', 220.0, false, now),
+    _mockProd(
+      'p1',
+      'Espresso Roast',
+      'SKU-001',
+      '8901234567890',
+      150.0,
+      true,
+      now,
+    ),
+    _mockProd(
+      'p2',
+      'Caramel Macchiato',
+      'SKU-002',
+      '8901234567891',
+      220.0,
+      false,
+      now,
+    ),
   ];
 
   Widget buildTestWidget() => MaterialApp(
-        builder: (context, child) => FTheme(data: FTheme.neutral.light.desktop, child: child ?? const SizedBox()),
-        home: Scaffold(
-          body: SizedBox(
-            width: 1000,
-            height: 600,
-            child: InventoryDataTable(products: testProducts, onEdit: (_) {}, onUpdateStock: (_) {}),
-          ),
+    builder: (context, child) => FTheme(
+      data: FTheme.neutral.light.desktop,
+      child: child ?? const SizedBox(),
+    ),
+    home: Scaffold(
+      body: SizedBox(
+        width: 1000,
+        height: 600,
+        child: InventoryDataTable(
+          products: testProducts,
+          onEdit: (_) {},
+          onUpdateStock: (_) {},
         ),
-      );
+      ),
+    ),
+  );
 
   group('InventoryDataTable Pinned Column Layout Tests', () {
-    testWidgets('renders both pinned left pane and scrollable right pane', (tester) async {
+    testWidgets('renders both pinned left pane and scrollable right pane', (
+      tester,
+    ) async {
       await tester.pumpWidget(buildTestWidget());
       await tester.pumpAndSettle();
 
@@ -63,18 +121,23 @@ void main() {
       expect(find.byType(InventoryProductScrollableRow), findsNWidgets(2));
     });
 
-    testWidgets('horizontal scroll scrolls right pane while pinned pane remains fixed', (tester) async {
-      await tester.pumpWidget(buildTestWidget());
-      await tester.pumpAndSettle();
+    testWidgets(
+      'horizontal scroll scrolls right pane while pinned pane remains fixed',
+      (tester) async {
+        await tester.pumpWidget(buildTestWidget());
+        await tester.pumpAndSettle();
 
-      final scrollableFinder = find.byType(SingleChildScrollView);
-      expect(scrollableFinder, findsOneWidget);
+        final scrollableFinder = find.byKey(
+          const ValueKey('inventory_products_scrollable_pane'),
+        );
+        expect(scrollableFinder, findsOneWidget);
 
-      await tester.drag(scrollableFinder, const Offset(-300, 0));
-      await tester.pumpAndSettle();
+        await tester.drag(scrollableFinder, const Offset(-300, 0));
+        await tester.pumpAndSettle();
 
-      expect(find.text('Espresso Roast'), findsOneWidget);
-      expect(find.text('Caramel Macchiato'), findsOneWidget);
-    });
+        expect(find.text('Espresso Roast'), findsOneWidget);
+        expect(find.text('Caramel Macchiato'), findsOneWidget);
+      },
+    );
   });
 }

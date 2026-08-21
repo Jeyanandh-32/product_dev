@@ -21,47 +21,57 @@ class DashboardAnalyticsQuery {
         .where((o) => o.merchantId.equals(ts.toExpr(merchantId)))
         .where((o) => o.storeId.equals(ts.toExpr(storeId)));
 
-    if (fromDate != null) {
-      query = query.where((o) => o.createdAt.isAfterValue(fromDate));
-    }
-    if (toDate != null) {
-      query = query.where((o) => o.createdAt.isBeforeValue(toDate));
-    }
+    if (fromDate != null) query = query.where((o) => o.createdAt.isAfterValue(fromDate));
+    if (toDate != null) query = query.where((o) => o.createdAt.isBeforeValue(toDate));
 
-    final orderRows = await query
-        .orderBy((o) => [(o.createdAt, ts.Order.descending)])
+    final ordersFuture = query.orderBy((o) => [(o.createdAt, ts.Order.descending)]).fetch();
+    final stocksFuture = db.stocks.where((s) => s.storeId.equals(ts.toExpr(storeId))).fetch();
+
+    final productsFuture = db.products
+        .leftJoin(db.stocks)
+        .on((p, s) => p.id.equals(s.productId))
+        .leftJoin(db.categories)
+        .on((p, s, c) => p.categoryId.equals(c.id))
+        .where((p, s, c) => p.storeId.equals(ts.toExpr(storeId)))
         .fetch();
 
-    final orderMetrics = DashboardOrderAggregator.aggregateOrders(orderRows);
-
-    final stocks = await db.stocks
-        .where((s) => s.storeId.equals(ts.toExpr(storeId)))
+    final orderItemsFuture = db.orderItems
+        .leftJoin(db.orders)
+        .on((item, o) => item.orderId.equals(o.id))
+        .leftJoin(db.products)
+        .on((item, o, p) => item.productId.equals(p.id))
+        .leftJoin(db.categories)
+        .on((item, o, p, c) => p.categoryId.equals(c.id))
+        .where((item, o, p, c) => item.storeId.equals(ts.toExpr(storeId)))
         .fetch();
-    final lowStockCount = stocks
-        .where((s) => s.quantity <= s.lowStockThreshold)
-        .length;
 
-    var growth = const DashboardGrowthMetrics(
-      revenueGrowth: 0,
-      ordersGrowth: 0,
-      aovGrowth: 0,
-    );
-
+    Future<List<OrderRow>>? prevOrdersFuture;
     if (fromDate != null) {
       final now = toDate ?? DateTime.now().toUtc();
       final duration = now.difference(fromDate);
       final prevFromDate = fromDate.subtract(duration);
-      final prevToDate = fromDate;
-
-      final prevRows = await db.orders
+      prevOrdersFuture = db.orders
           .where((o) => o.merchantId.equals(ts.toExpr(merchantId)))
           .where((o) => o.storeId.equals(ts.toExpr(storeId)))
           .where((o) => o.createdAt.isAfterValue(prevFromDate))
-          .where((o) => o.createdAt.isBeforeValue(prevToDate))
+          .where((o) => o.createdAt.isBeforeValue(fromDate))
           .fetch();
+    }
 
+    final (orderRows, stocks, productRows, orderItemTuples) = await (
+      ordersFuture,
+      stocksFuture,
+      productsFuture,
+      orderItemsFuture,
+    ).wait;
+
+    final orderMetrics = DashboardOrderAggregator.aggregateOrders(orderRows);
+    final lowStockCount = stocks.where((s) => s.quantity <= s.lowStockThreshold).length;
+
+    var growth = const DashboardGrowthMetrics(revenueGrowth: 0, ordersGrowth: 0, aovGrowth: 0);
+    if (prevOrdersFuture != null) {
+      final prevRows = await prevOrdersFuture;
       final prevMetrics = DashboardOrderAggregator.aggregateOrders(prevRows);
-
       growth = DashboardOrderAggregator.calculateGrowth(
         currentRevenue: orderMetrics.totalRevenue,
         currentOrders: orderMetrics.totalOrders,
@@ -72,39 +82,10 @@ class DashboardAnalyticsQuery {
       );
     }
 
-    final productRows = await db.products
-        .leftJoin(db.stocks)
-        .on((p, s) => p.id.equals(s.productId))
-        .leftJoin(db.categories)
-        .on((p, s, c) => p.categoryId.equals(c.id))
-        .where((p, s, c) => p.storeId.equals(ts.toExpr(storeId)))
-        .fetch();
-
-    final orderItemTuples = await db.orderItems
-        .leftJoin(db.orders)
-        .on((item, o) => item.orderId.equals(o.id))
-        .leftJoin(db.products)
-        .on((item, o, p) => item.productId.equals(p.id))
-        .leftJoin(db.categories)
-        .on((item, o, p, c) => p.categoryId.equals(c.id))
-        .where((item, o, p, c) => item.storeId.equals(ts.toExpr(storeId)))
-        .fetch();
-
-    final salesMetrics = DashboardSalesAggregator.aggregateItemSales(
-      orderItemTuples,
-      fromDate: fromDate,
-      toDate: toDate,
-    );
-
-    final categoryLabels = salesMetrics.categorySales.isEmpty
-        ? <String>[]
-        : salesMetrics.categorySales.keys.take(5).toList();
-    final categoryData = categoryLabels
-        .map((cat) => salesMetrics.categorySales[cat] ?? 0.0)
-        .toList();
-
-    final lowStockProducts =
-        DashboardProductAggregator.formatLowStockProducts(productRows);
+    final salesMetrics = DashboardSalesAggregator.aggregateItemSales(orderItemTuples, fromDate: fromDate, toDate: toDate);
+    final categoryLabels = salesMetrics.categorySales.isEmpty ? <String>[] : salesMetrics.categorySales.keys.take(5).toList();
+    final categoryData = categoryLabels.map((cat) => salesMetrics.categorySales[cat] ?? 0.0).toList();
+    final lowStockProducts = DashboardProductAggregator.formatLowStockProducts(productRows);
 
     return {
       'totalRevenue': orderMetrics.totalRevenue,
@@ -114,33 +95,10 @@ class DashboardAnalyticsQuery {
       'revenueGrowth': growth.revenueGrowth,
       'ordersGrowth': growth.ordersGrowth,
       'aovGrowth': growth.aovGrowth,
-      'paymentMethods': {
-        'upiTotal': orderMetrics.upiTotal,
-        'cashTotal': orderMetrics.cashTotal,
-      },
-      'paymentStatus': {
-        'paidTotal': orderMetrics.paidTotal,
-        'freeTotal': orderMetrics.freeTotal,
-        'paidCount': orderMetrics.paidCount,
-        'freeCount': orderMetrics.freeCount,
-      },
-      'categorySales': {
-        'labels': categoryLabels,
-        'data': categoryData,
-      },
-      'hourlyTraffic': {
-        'labels': [
-          '8 AM',
-          '10 AM',
-          '12 PM',
-          '2 PM',
-          '4 PM',
-          '6 PM',
-          '8 PM',
-          '10 PM',
-        ],
-        'data': orderMetrics.hourlyCounts,
-      },
+      'paymentMethods': {'upiTotal': orderMetrics.upiTotal, 'cashTotal': orderMetrics.cashTotal},
+      'paymentStatus': {'paidTotal': orderMetrics.paidTotal, 'freeTotal': orderMetrics.freeTotal, 'paidCount': orderMetrics.paidCount, 'freeCount': orderMetrics.freeCount},
+      'categorySales': {'labels': categoryLabels, 'data': categoryData},
+      'hourlyTraffic': {'labels': ['8 AM', '10 AM', '12 PM', '2 PM', '4 PM', '6 PM', '8 PM', '10 PM'], 'data': orderMetrics.hourlyCounts},
       'topProducts': salesMetrics.topProducts,
       'lowStockProducts': lowStockProducts,
     };

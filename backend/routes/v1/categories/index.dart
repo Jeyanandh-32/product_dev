@@ -34,25 +34,13 @@ Future<Response> _onGet(RequestContext context) async {
 
   try {
     final searchQuery = context.request.uri.queryParameters['search'];
-
-    final merchantId = (tokenPayload == null || tokenPayload.role == UserRole.customer)
-        ? null
-        : tokenPayload.sub;
-
-    final total = await repo.count(
-      merchantId: merchantId,
-      storeId: storeId,
-      searchQuery: searchQuery,
-    );
-
+    final merchantId = (tokenPayload == null || tokenPayload.role != UserRole.merchant) ? null : tokenPayload.sub;
     final offset = (page - 1) * size;
-    final categoryRows = await repo.getAll(
-      storeId: storeId,
-      merchantId: merchantId,
-      searchQuery: searchQuery,
-      limit: size,
-      offset: offset,
-    );
+
+    final totalFuture = repo.count(merchantId: merchantId, storeId: storeId, searchQuery: searchQuery);
+    final categoryRowsFuture = repo.getAll(storeId: storeId, merchantId: merchantId, searchQuery: searchQuery, limit: size, offset: offset);
+
+    final (total, categoryRows) = await (totalFuture, categoryRowsFuture).wait;
 
     final categories = categoryRows.map((s) => s.toCategory()).toList();
     final totalPages = (total / size).ceil();

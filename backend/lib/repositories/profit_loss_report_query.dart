@@ -34,36 +34,37 @@ class ProfitLossReportQuery {
         .where((o) => o.merchantId.equals(ts.toExpr(merchantId)))
         .where((o) => o.storeId.equals(ts.toExpr(storeId)));
 
-    if (fromDate != null) {
-      orderQuery = orderQuery.where((o) => o.createdAt.isAfterValue(fromDate));
-    }
-    if (toDate != null) {
-      orderQuery = orderQuery.where((o) => o.createdAt.isBeforeValue(toDate));
-    }
+    if (fromDate != null) orderQuery = orderQuery.where((o) => o.createdAt.isAfterValue(fromDate));
+    if (toDate != null) orderQuery = orderQuery.where((o) => o.createdAt.isBeforeValue(toDate));
 
-    final rawOrders = await orderQuery.fetch();
+    final ordersFuture = orderQuery.fetch();
+    final productsFuture = db.products.where((p) => p.storeId.equals(ts.toExpr(storeId))).fetch();
+    final categoriesFuture = db.categories.where((c) => c.storeId.equals(ts.toExpr(storeId))).fetch();
+    final countersFuture = db.counters.where((c) => c.storeId.equals(ts.toExpr(storeId))).fetch();
+    final itemsFuture = db.orderItems.where((i) => i.storeId.equals(ts.toExpr(storeId))).fetch();
+    final stockAdjustmentsFuture = db.stockTransactions
+        .where((a) => a.storeId.equals(ts.toExpr(storeId)))
+        .where((a) => a.reason.equals(ts.toExpr(StockTransactionReason.wastage.name)))
+        .fetch();
+
+    final (rawOrders, products, categories, counters, items, stockAdjustments) = await (
+      ordersFuture,
+      productsFuture,
+      categoriesFuture,
+      countersFuture,
+      itemsFuture,
+      stockAdjustmentsFuture,
+    ).wait;
+
     final orders = rawOrders.where((o) {
       final pStatus = o.paymentStatus.toLowerCase();
       final status = o.status.toLowerCase();
-      final isPaidOrCompleted =
-          pStatus == PaymentStatus.completed.name ||
-          o.paymentMethod.toLowerCase() == PaymentMethod.complimentary.name;
+      final isPaidOrCompleted = pStatus == PaymentStatus.completed.name || o.paymentMethod.toLowerCase() == PaymentMethod.complimentary.name;
       final isCancelled = status == OrderStatus.cancelled.name;
       return isPaidOrCompleted && !isCancelled;
     }).toList();
 
     final orderIds = orders.map((o) => o.id).toSet();
-
-    final products = await db.products
-        .where((p) => p.storeId.equals(ts.toExpr(storeId)))
-        .fetch();
-    final categories = await db.categories
-        .where((c) => c.storeId.equals(ts.toExpr(storeId)))
-        .fetch();
-    final counters = await db.counters
-        .where((c) => c.storeId.equals(ts.toExpr(storeId)))
-        .fetch();
-
     final categoryMap = {for (final c in categories) c.id: c.name};
     final counterMap = {for (final c in counters) c.id: c.name};
     final orderMap = {for (final o in orders) o.id: o};
@@ -72,24 +73,10 @@ class ProfitLossReportQuery {
     var collectedPriceMap = <String, double>{};
 
     if (orderIds.isNotEmpty) {
-      final items = await db.orderItems
-          .where((i) => i.storeId.equals(ts.toExpr(storeId)))
-          .fetch();
-
-      final salesData = ProfitLossCalculator.computeSalesAndCollectedRevenue(
-        items: items,
-        orderMap: orderMap,
-      );
+      final salesData = ProfitLossCalculator.computeSalesAndCollectedRevenue(items: items, orderMap: orderMap);
       soldQuantityMap = salesData.soldQuantityMap;
       collectedPriceMap = salesData.collectedPriceMap;
     }
-
-    final stockAdjustments = await db.stockTransactions
-        .where((a) => a.storeId.equals(ts.toExpr(storeId)))
-        .where(
-          (a) => a.reason.equals(ts.toExpr(StockTransactionReason.wastage.name)),
-        )
-        .fetch();
 
     final wastageLossMap = ProfitLossCalculator.computeWastageLosses(
       stockAdjustments: stockAdjustments,
@@ -115,9 +102,7 @@ class ProfitLossReportQuery {
     }
 
     final totalProfit = totalCollectedPrice - totalCostPrice;
-    final totalMarginPercentage = totalCostPrice > 0
-        ? (totalProfit / totalCostPrice) * 100.0
-        : 0.0;
+    final totalMarginPercentage = totalCostPrice > 0 ? (totalProfit / totalCostPrice) * 100.0 : 0.0;
 
     if (searchQuery != null && searchQuery.trim().isNotEmpty) {
       final query = searchQuery.trim().toLowerCase();

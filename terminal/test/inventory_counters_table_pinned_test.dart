@@ -12,23 +12,49 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   final now = DateTime.now();
   final testCounters = [
-    Counter(id: 'cnt1', merchantId: 'm1', storeId: 's1', name: 'Main Bar', description: 'Main espresso counter', isActive: true, createdAt: now, updatedAt: now),
-    Counter(id: 'cnt2', merchantId: 'm1', storeId: 's1', name: 'Drive Thru', description: 'Express lane counter', isActive: false, createdAt: now, updatedAt: now),
+    Counter(
+      id: 'cnt1',
+      merchantId: 'm1',
+      storeId: 's1',
+      name: 'Main Bar',
+      description: 'Main espresso counter',
+      isActive: true,
+      createdAt: now,
+      updatedAt: now,
+    ),
+    Counter(
+      id: 'cnt2',
+      merchantId: 'm1',
+      storeId: 's1',
+      name: 'Drive Thru',
+      description: 'Express lane counter',
+      isActive: false,
+      createdAt: now,
+      updatedAt: now,
+    ),
   ];
 
   Widget buildTestWidget({double width = 1000}) => MaterialApp(
-        builder: (context, child) => FTheme(data: FTheme.neutral.light.desktop, child: child ?? const SizedBox()),
-        home: Scaffold(
-          body: SizedBox(
-            width: width,
-            height: 500,
-            child: InventoryCountersDataTable(counters: testCounters, allProducts: const []),
-          ),
+    builder: (context, child) => FTheme(
+      data: FTheme.neutral.light.desktop,
+      child: child ?? const SizedBox(),
+    ),
+    home: Scaffold(
+      body: SizedBox(
+        width: width,
+        height: 500,
+        child: InventoryCountersDataTable(
+          counters: testCounters,
+          allProducts: const [],
         ),
-      );
+      ),
+    ),
+  );
 
   group('InventoryCountersDataTable Pinned Column Layout Tests', () {
-    testWidgets('renders pinned left pane and scrollable right pane', (tester) async {
+    testWidgets('renders pinned left pane and scrollable right pane', (
+      tester,
+    ) async {
       await tester.pumpWidget(buildTestWidget(width: 1200));
       await tester.pumpAndSettle();
 
@@ -42,11 +68,15 @@ void main() {
       expect(find.byType(InventoryCounterScrollableRow), findsNWidgets(2));
     });
 
-    testWidgets('horizontal scroll maintains pinned counter name', (tester) async {
+    testWidgets('horizontal scroll maintains pinned counter name', (
+      tester,
+    ) async {
       await tester.pumpWidget(buildTestWidget(width: 600));
       await tester.pumpAndSettle();
 
-      final scrollableFinder = find.byType(SingleChildScrollView);
+      final scrollableFinder = find.byKey(
+        const ValueKey('inventory_counters_scrollable_pane'),
+      );
       expect(scrollableFinder, findsOneWidget);
 
       await tester.drag(scrollableFinder, const Offset(-200, 0));

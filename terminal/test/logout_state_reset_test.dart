@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:models/models.dart';
 import 'package:signals_flutter/signals_flutter.dart';
@@ -14,6 +15,13 @@ import 'package:terminal/signals/products_signal.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+
+  setUp(() {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
+      const MethodChannel('plugins.it_nomads.com/flutter_secure_storage'),
+      (call) async => null,
+    );
+  });
 
   group('Terminal Logout and State Reset Tests', () {
     final now = DateTime.now();
@@ -93,6 +101,7 @@ void main() {
       activeTerminalPageSignal.value = TerminalNavPage.inventoryProducts;
 
       await logoutTerminal();
+      resetAllTerminalSignals();
 
       expect(authSignal.value.value, isNull);
       expect(searchQuerySignal.value, '');
