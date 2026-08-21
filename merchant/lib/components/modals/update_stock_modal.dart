@@ -21,23 +21,28 @@ class UpdateStockModal extends StatefulComponent {
 }
 
 class _UpdateStockModalState extends State<UpdateStockModal> {
-  late StockTransactionType _transactionType;
-  late String _amount;
-  late StockTransactionReason _reason;
-  late String _customReason;
-  late String _lowStockThreshold;
-  late bool _stockMonitor;
+  StockTransactionType _transactionType = .add;
+  String _amount = '';
+  StockTransactionReason _reason = .adjustment;
+  String _customReason = '';
+  String _lowStockThreshold = '5';
+  bool _stockMonitor = true;
 
   @override
   void initState() {
     super.initState();
     final s = component.product.stock;
-    _transactionType = .add;
-    _amount = '1';
-    _reason = .adjustment;
-    _customReason = '';
-    _lowStockThreshold = s != null ? '${s.lowStockThreshold}' : '5';
-    _stockMonitor = s?.stockMonitor ?? true;
+    if (s != null) {
+      _lowStockThreshold = '${s.lowStockThreshold}';
+      _stockMonitor = s.stockMonitor;
+    }
+  }
+
+  void _onTypeChanged(StockTransactionType t) {
+    setState(() {
+      _transactionType = t;
+      _reason = StockTransactionReason.adjustment;
+    });
   }
 
   void _onSubmit(web.Event e) {
@@ -56,8 +61,9 @@ class _UpdateStockModalState extends State<UpdateStockModal> {
   @override
   Component build(BuildContext context) {
     final currentQty = component.product.stock?.quantity ?? 0;
-    final isReduction = _transactionType == StockTransactionType.reduce ||
-        _transactionType == StockTransactionType.set;
+    final parsed = int.tryParse(_amount.trim());
+    final isAdjustment = parsed != null && parsed > 0;
+    final isReduction = isAdjustment && (_transactionType == StockTransactionType.reduce || (_transactionType == StockTransactionType.set && parsed < currentQty));
 
     return Modal(
       title: 'Update Stock - ${component.product.name}',
@@ -65,41 +71,29 @@ class _UpdateStockModalState extends State<UpdateStockModal> {
         events: {'submit': _onSubmit},
         [
           div(
-            classes:
-                'mb-4 p-3 rounded-xl bg-neutral/20 border border-border-medium flex justify-between items-center',
+            classes: 'mb-4 p-3 rounded-xl bg-neutral/20 border border-border-medium flex justify-between items-center',
             [
-              span(classes: 'text-sm font-medium text-gray-600', [
-                .text('Current Inventory:'),
-              ]),
-              span(classes: 'text-lg font-bold text-gray-900', [
-                .text('$currentQty units'),
-              ]),
+              span(classes: 'text-sm font-medium text-gray-600', [.text('Current Inventory:')]),
+              span(classes: 'text-lg font-bold text-gray-900', [.text('$currentQty units')]),
             ],
           ),
-
-          StockActionSelector(
-            selectedType: _transactionType,
-            onTypeChanged: (t) => setState(() => _transactionType = t),
-          ),
-
+          StockActionSelector(selectedType: _transactionType, onTypeChanged: _onTypeChanged),
           FormField(
             id: 'amount',
             labelText: switch (_transactionType) {
-              .add => 'Quantity to Add',
-              .reduce => 'Quantity to Reduce',
-              .set => 'Set Exact Total Quantity',
+              .add => 'Quantity to Add (Optional)',
+              .reduce => 'Quantity to Reduce (Optional)',
+              .set => 'Set Exact Total Quantity (Optional)',
             },
             type: InputType.number,
             attributes: {
-              'placeholder': '1',
-              'required': '',
+              'placeholder': 'Leave empty to keep $currentQty units',
               'min': '0',
               'value': _amount,
             },
-            hintText: 'Enter a valid quantity.',
-            onChange: (value) => _amount = value.toString(),
+            hintText: 'Leave empty or 0 to update alerts and monitoring settings only.',
+            onChange: (value) => setState(() => _amount = value.toString()),
           ),
-
           if (isReduction)
             StockReasonSection(
               reason: _reason,
@@ -107,34 +101,25 @@ class _UpdateStockModalState extends State<UpdateStockModal> {
               onReasonChanged: (r) => setState(() => _reason = r),
               onCustomReasonChanged: (val) => _customReason = val,
             ),
-
           StockMonitorSettingsSection(
             stockMonitor: _stockMonitor,
             lowStockThreshold: _lowStockThreshold,
             onToggleMonitor: (val) => setState(() => _stockMonitor = val),
             onThresholdChanged: (val) => _lowStockThreshold = val,
           ),
-
           div(
-            classes:
-                'flex justify-end gap-3 pt-4 border-t border-border-light',
+            classes: 'flex justify-end gap-3 pt-4 border-t border-border-light',
             [
               button(
                 type: ButtonType.button,
-                classes:
-                    'btn btn-ghost border border-border-medium px-5 rounded-xl hover:bg-neutral text-gray-700 font-medium',
-                events: {
-                  'click': (e) {
-                    activeModalSignal.value = ActiveModal.none;
-                  },
-                },
+                classes: 'btn btn-ghost border border-border-medium px-5 rounded-xl hover:bg-neutral text-gray-700 font-medium',
+                events: {'click': (e) => activeModalSignal.value = ActiveModal.none},
                 [.text('Cancel')],
               ),
               button(
                 type: ButtonType.submit,
-                classes:
-                    'btn bg-primary hover:bg-primary/90 text-white font-bold px-6 rounded-xl shadow-xs border-0 cursor-pointer',
-                [.text('Update Stock')],
+                classes: 'btn bg-primary hover:bg-primary/90 text-white font-bold px-6 rounded-xl shadow-xs border-0 cursor-pointer',
+                [.text('Save Changes')],
               ),
             ],
           ),

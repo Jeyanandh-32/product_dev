@@ -1,5 +1,4 @@
 import 'package:flutter/widgets.dart';
-import 'package:forui/forui.dart';
 import 'package:gap/gap.dart';
 import 'package:mix/mix.dart';
 import 'package:models/models.dart';
@@ -9,6 +8,7 @@ import 'package:terminal/components/cart/cart_totals_breakdown.dart';
 import 'package:terminal/exceptions/api_exception.dart';
 import 'package:terminal/signals/auth_signal.dart';
 import 'package:terminal/signals/cart_signal.dart';
+import 'package:terminal/utils/terminal_toast.dart';
 
 /// Checkout summary card styled identically to customer web app order summary (rounded-3xl / 24px radius).
 class CartSummary extends StatefulWidget {
@@ -41,45 +41,22 @@ class _CartSummaryState extends State<CartSummary> {
       _discountController.clear();
 
       if (!mounted) return;
-      showFToast(
+      TerminalToast.showSuccess(
         context: context,
-        alignment: .topCenter,
+        title: 'Order Placed Successfully',
+        description: 'Bill No: #${order.billNo} • Payment: ${paymentMode.name.toUpperCase()}',
         duration: const Duration(seconds: 4),
-        icon: const Icon(
-          FLucideIcons.circleCheck,
-          color: Color(0xFF16A34A),
-          size: 20,
-        ),
-        title: const Text(
-          'Order Placed Successfully',
-          style: TextStyle(color: Color(0xFF16A34A), fontWeight: FontWeight.bold),
-        ),
-        description: Text('Bill No: #${order.billNo} • Payment: ${paymentMode.name.toUpperCase()}'),
       );
     } catch (e) {
       if (!mounted) return;
-      final message = e is ApiException
-          ? e.message
-          : 'Failed to place order. Please try again.';
-      showFToast(
+      final message = e is ApiException ? e.message : 'Failed to place order. Please try again.';
+      TerminalToast.showError(
         context: context,
-        alignment: .topCenter,
-        duration: const Duration(seconds: 4),
-        icon: const Icon(
-          FLucideIcons.circleAlert,
-          color: Color(0xFFDC2626),
-          size: 20,
-        ),
-        title: const Text(
-          'Order Error',
-          style: TextStyle(color: Color(0xFFDC2626), fontWeight: FontWeight.bold),
-        ),
-        description: Text(message),
+        title: 'Order Error',
+        description: message,
       );
     } finally {
-      if (mounted) {
-        setState(() => _isCheckingOut = false);
-      }
+      if (mounted) setState(() => _isCheckingOut = false);
     }
   }
 
@@ -91,9 +68,7 @@ class _CartSummaryState extends State<CartSummary> {
         final paymentMode = paymentModeSignal.value;
         final authState = authSignal.value;
         final terminal = authState.value;
-
-        final canCheckout =
-            !_isCheckingOut && cart.items.isNotEmpty && terminal != null;
+        final canCheckout = !_isCheckingOut && cart.items.isNotEmpty && terminal != null;
 
         return Box(
           style: BoxStyler()

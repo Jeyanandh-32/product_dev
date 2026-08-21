@@ -15,7 +15,7 @@ class StockTransactionLogger {
     String? reason,
     String? customReason,
   }) async {
-    if (transactionType == null || amount == null || reason == null) return;
+    if (transactionType == null || amount == null) return;
 
     var actualType = transactionType;
     var actualAmount = amount;
@@ -33,10 +33,7 @@ class StockTransactionLogger {
       }
     }
 
-    var actualReason = reason;
-    if (actualType == 'add') {
-      actualReason = 'restock';
-    }
+    final actualReason = reason ?? (actualType == 'add' ? 'restock' : 'adjustment');
 
     if (actualAmount > 0) {
       await db.stockTransactions

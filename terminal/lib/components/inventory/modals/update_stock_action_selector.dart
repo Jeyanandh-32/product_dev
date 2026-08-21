@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:models/models.dart';
 
-/// Segmented action selector for stock transaction operations matching Merchant layout & sizes.
+/// Segmented action selector for stock transaction operations matching Merchant layout & semantic colors.
 class UpdateStockActionSelector extends StatelessWidget {
   final StockTransactionType selectedType;
   final ValueChanged<StockTransactionType> onTypeChanged;
@@ -29,18 +29,18 @@ class UpdateStockActionSelector extends StatelessWidget {
         const Gap(8),
         Row(
           children: [
-            _buildButton('Add Stock (+)', StockTransactionType.add),
+            _buildButton('Add Stock (+)', StockTransactionType.add, const Color(0xFF059669)),
             const Gap(8),
-            _buildButton('Reduce (-)', StockTransactionType.reduce),
+            _buildButton('Reduce (-)', StockTransactionType.reduce, const Color(0xFFE11D48)),
             const Gap(8),
-            _buildButton('Set Exact (=)', StockTransactionType.set),
+            _buildButton('Set Exact (=)', StockTransactionType.set, const Color(0xFF0F172A)),
           ],
         ),
       ],
     );
   }
 
-  Widget _buildButton(String label, StockTransactionType type) {
+  Widget _buildButton(String label, StockTransactionType type, Color activeColor) {
     final isSelected = selectedType == type;
     return Expanded(
       child: GestureDetector(
@@ -51,10 +51,10 @@ class UpdateStockActionSelector extends StatelessWidget {
           height: 38,
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: isSelected ? const Color(0xFF000000) : const Color(0xFFFFFFFF),
+            color: isSelected ? activeColor : const Color(0xFFFFFFFF),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: isSelected ? const Color(0xFF000000) : const Color(0xFFE2E8F0),
+              color: isSelected ? activeColor : const Color(0xFFE2E8F0),
             ),
           ),
           child: Text(

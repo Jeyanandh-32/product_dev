@@ -6,6 +6,7 @@ import 'package:mix/mix.dart';
 import 'package:terminal/components/components.dart';
 import 'package:terminal/exceptions/api_exception.dart';
 import 'package:terminal/signals/auth_signal.dart';
+import 'package:terminal/utils/terminal_toast.dart';
 
 /// Terminal device authentication page with customer app brand styling using Forui.
 class Login extends StatefulWidget {
@@ -16,8 +17,7 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  static final String _arizoniaFontFamily =
-      GoogleFonts.arizonia().fontFamily ?? 'Arizonia';
+  static final String _arizoniaFontFamily = GoogleFonts.arizonia().fontFamily ?? 'Arizonia';
   final formKey = GlobalKey<FormState>();
   final codeController = TextEditingController();
   final passwordController = TextEditingController();
@@ -40,51 +40,21 @@ class _LoginState extends State<Login> {
       try {
         await loginTerminal(code: code, password: password);
         if (!mounted) return;
-        showFToast(
+        TerminalToast.showSuccess(
           context: context,
-          alignment: .topCenter,
-          duration: const Duration(seconds: 3),
-          icon: const Icon(
-            FLucideIcons.circleCheck,
-            color: Color(0xFF16A34A),
-            size: 20,
-          ),
-          title: const Text(
-            'Login Successful',
-            style: TextStyle(
-              color: Color(0xFF16A34A),
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          description: const Text('Terminal session authenticated.'),
+          title: 'Login Successful',
+          description: 'Terminal session authenticated.',
         );
       } catch (e) {
         if (!mounted) return;
-        final message = e is ApiException
-            ? e.message
-            : 'Login failed. Please check your credentials.';
-        showFToast(
+        final message = e is ApiException ? e.message : 'Login failed. Please check your credentials.';
+        TerminalToast.showError(
           context: context,
-          alignment: .topCenter,
-          duration: const Duration(seconds: 4),
-          icon: const Icon(
-            FLucideIcons.circleAlert,
-            color: Color(0xFFDC2626),
-            size: 20,
-          ),
-          title: const Text(
-            'Authentication Error',
-            style: TextStyle(
-              color: Color(0xFFDC2626),
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          description: Text(message),
+          title: 'Authentication Error',
+          description: message,
         );
       } finally {
-        if (mounted) {
-          setState(() => _isSubmitting = false);
-        }
+        if (mounted) setState(() => _isSubmitting = false);
       }
     }
   }
@@ -106,18 +76,12 @@ class _LoginState extends State<Login> {
               children: [
                 StyledText(
                   'Branding',
-                  style: TextStyler()
-                      .fontSize(56)
-                      .fontFamily(_arizoniaFontFamily)
-                      .color(theme.colors.primary),
+                  style: TextStyler().fontSize(56).fontFamily(_arizoniaFontFamily).color(theme.colors.primary),
                 ),
                 const Gap(8),
                 StyledText(
                   'Cashier POS Portal',
-                  style: TextStyler()
-                      .fontSize(14)
-                      .fontWeight(.w600)
-                      .color(const Color(0xFF6B7280)),
+                  style: TextStyler().fontSize(14).fontWeight(.w600).color(const Color(0xFF6B7280)),
                 ),
                 const Gap(32),
                 TerminalLoginFormCard(

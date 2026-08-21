@@ -17,58 +17,39 @@ class StockReasonSection extends StatelessComponent {
     required this.onCustomReasonChanged,
   });
 
+  static const List<({String label, StockTransactionReason value})> _items = [
+    (label: 'Wastage / Damaged Goods', value: StockTransactionReason.wastage),
+    (label: 'Inventory Adjustment / Shrinkage', value: StockTransactionReason.adjustment),
+  ];
+
   @override
   Component build(BuildContext context) {
+    final validReason = _items.any((item) => item.value == reason) ? reason : _items.first.value;
+
     return div(classes: 'flex flex-col gap-4 mb-4', [
       div(classes: 'flex flex-col gap-1.5', [
-        label(classes: 'text-[14px] font-semibold text-gray-700', [
-          .text('Reason for Adjustment'),
-        ]),
+        label(classes: 'text-[14px] font-semibold text-gray-700', [.text('Reason for Reduction / Adjustment')]),
         select(
-          classes:
-              'select select-bordered w-full rounded-xl text-sm border-border-medium focus:outline-hidden',
+          classes: 'select select-bordered w-full rounded-xl text-sm border-border-medium focus:outline-hidden',
           events: {
             'change': (e) {
               final target = e.target as HTMLSelectElement;
-              onReasonChanged(
-                StockTransactionReason.values.byName(target.value),
-              );
+              onReasonChanged(StockTransactionReason.values.byName(target.value));
             },
           },
-          [
-            option(
-              value: StockTransactionReason.adjustment.name,
-              selected: reason == StockTransactionReason.adjustment,
-              [.text('Inventory Adjustment / Audit')],
-            ),
-            option(
-              value: StockTransactionReason.wastage.name,
-              selected: reason == StockTransactionReason.wastage,
-              [.text('Wastage / Damaged Goods')],
-            ),
-          ],
+          _items.map((item) => option(value: item.value.name, selected: validReason == item.value, [.text(item.label)])).toList(),
         ),
-        if (reason == StockTransactionReason.wastage)
+        if (validReason == StockTransactionReason.wastage)
           p(classes: 'text-xs text-rose-500 font-medium mt-1', [
-            .text(
-              '⚠️ Wasted items will be recorded as inventory loss in Profit & Loss report.',
-            ),
+            .text('⚠️ Wasted items will be recorded as inventory loss in Profit & Loss report.'),
           ]),
       ]),
-
       div(classes: 'flex flex-col gap-1.5', [
-        label(classes: 'text-[14px] font-semibold text-gray-700', [
-          .text('Reason Description (Optional)'),
-        ]),
+        label(classes: 'text-[14px] font-semibold text-gray-700', [.text('Reason Description (Optional)')]),
         input(
           type: .text,
-          classes:
-              'input input-bordered w-full rounded-xl text-sm border-border-medium focus:outline-hidden',
-          attributes: {
-            'placeholder':
-                'e.g. Expired on 04/08, Damaged in shipping (Optional)',
-            'value': customReason,
-          },
+          classes: 'input input-bordered w-full rounded-xl text-sm border-border-medium focus:outline-hidden',
+          attributes: {'placeholder': 'e.g. Expired on 04/08, Damaged in shipping (Optional)', 'value': customReason},
           onInput: (val) => onCustomReasonChanged(val as String? ?? ''),
         ),
       ]),

@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:models/models.dart';
 import 'package:signals_flutter/signals_flutter.dart';
+import 'package:terminal/components/inventory/categories/modals/add_edit_category_dialog.dart';
 import 'package:terminal/components/inventory/inventory.dart';
 import 'package:terminal/pages/loading.dart';
+import 'package:terminal/signals/categories_signal.dart';
 import 'package:terminal/signals/inventory_products_signal.dart';
 import 'package:terminal/signals/products_signal.dart';
 import 'package:terminal/theme/terminal_colors.dart';
 import 'package:terminal/utils/responsive_extensions.dart';
+import 'package:terminal/utils/terminal_toast.dart';
 
 /// Full-featured, responsive POS Inventory Products management screen.
 class InventoryProductsPage extends StatefulWidget {
@@ -22,6 +25,21 @@ class _InventoryProductsPageState extends State<InventoryProductsPage> {
   void initState() {
     super.initState();
     if (productsSignal.value.value == null) refreshProductsSignal();
+    if (categoriesSignal.value.value == null) refreshCategoriesSignal();
+  }
+
+  void _handleAddProduct() {
+    final categories = categoriesSignal.value.value ?? [];
+    if (categories.isEmpty) {
+      TerminalToast.showInfo(
+        context: context,
+        title: 'Action Required',
+        description: 'Please create a category first before adding products.',
+      );
+      showDialog<void>(context: context, builder: (_) => const AddEditCategoryDialog());
+      return;
+    }
+    showDialog<void>(context: context, builder: (_) => const AddEditProductDialog());
   }
 
   @override
@@ -37,6 +55,8 @@ class _InventoryProductsPageState extends State<InventoryProductsPage> {
 
         final allProducts = productsAsync.value ?? [];
         final pagedProducts = pagedInventoryProductsSignal.value;
+        final categories = categoriesSignal.value.value ?? [];
+        final hasCategories = categories.isNotEmpty;
 
         return Padding(
           padding: EdgeInsets.all(isMobile ? 10 : 16),
@@ -53,16 +73,16 @@ class _InventoryProductsPageState extends State<InventoryProductsPage> {
               children: [
                 Padding(
                   padding: const EdgeInsets.all(14),
-                  child: InventoryProductsToolbar(
-                    onAddProduct: () => showDialog<void>(context: context, builder: (_) => const AddEditProductDialog()),
-                  ),
+                  child: InventoryProductsToolbar(onAddProduct: _handleAddProduct),
                 ),
                 const Divider(height: 1, color: TerminalColors.border),
                 Expanded(
                   child: pagedProducts.isEmpty
                       ? InventoryEmptyProducts(
                           isFiltered: allProducts.isNotEmpty,
-                          onAddProduct: () => showDialog<void>(context: context, builder: (_) => const AddEditProductDialog()),
+                          hasCategories: hasCategories,
+                          onAddProduct: _handleAddProduct,
+                          onAddCategory: () => showDialog<void>(context: context, builder: (_) => const AddEditCategoryDialog()),
                         )
                       : (isMobile ? _buildMobileList(pagedProducts) : _buildTable(pagedProducts)),
                 ),

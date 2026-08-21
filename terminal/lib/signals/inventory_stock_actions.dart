@@ -78,7 +78,7 @@ abstract final class InventoryStockActions {
   static Future<Stock> updateStock({
     required String stockId,
     required String productId,
-    required int quantity,
+    int? quantity,
     int? lowStockThreshold,
     bool? stockMonitor,
     StockTransactionType? transactionType,

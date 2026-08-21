@@ -9,6 +9,7 @@ import 'package:terminal/components/inventory/modals/product_dialog_actions.dart
 import 'package:terminal/components/inventory/modals/product_form_submit_handler.dart';
 import 'package:terminal/signals/categories_signal.dart';
 import 'package:terminal/signals/counters_signal.dart';
+import 'package:terminal/utils/terminal_toast.dart';
 
 /// Modal dialog for adding a new product or editing an existing product matching Merchant design.
 class AddEditProductDialog extends StatefulWidget {
@@ -20,51 +21,64 @@ class AddEditProductDialog extends StatefulWidget {
 }
 
 class _AddEditProductDialogState extends State<AddEditProductDialog> {
-  late String _name = widget.product?.name ?? '';
-  late String _categoryId = widget.product?.category?.id ?? '';
-  late String _counterId = widget.product?.counter?.id ?? '';
-  late String _basePrice = widget.product != null ? '${widget.product!.basePrice}' : '';
-  late String _sellingPrice = widget.product != null ? '${widget.product!.sellingPrice}' : '';
-  late String _taxRate = widget.product != null ? '${widget.product!.taxRate}' : '0';
-  late String _sku = widget.product?.sku ?? '';
-  late String _barcode = widget.product?.barcode ?? '';
-  late String _imageUrl = widget.product?.imageUrl ?? '';
-  late bool _isActive = widget.product?.isActive ?? true;
+  String _name = '';
+  String _categoryId = '';
+  String _counterId = '';
+  String _basePrice = '';
+  String _sellingPrice = '';
+  String _taxRate = '0';
+  String _sku = '';
+  String _barcode = '';
+  String _imageUrl = '';
+  bool _isActive = true;
   bool _isSubmitting = false;
 
   @override
   void initState() {
     super.initState();
+    final p = widget.product;
+    if (p != null) {
+      _name = p.name;
+      _categoryId = p.category?.id ?? '';
+      _counterId = p.counter?.id ?? '';
+      _basePrice = '${p.basePrice}';
+      _sellingPrice = '${p.sellingPrice}';
+      _taxRate = '${p.taxRate}';
+      _sku = p.sku ?? '';
+      _barcode = p.barcode ?? '';
+      _imageUrl = p.imageUrl ?? '';
+      _isActive = p.isActive;
+    }
     if (categoriesSignal.value.value == null) refreshCategoriesSignal();
     if (countersSignal.value.value == null) refreshCountersSignal();
   }
 
   Future<void> _handleSubmit() async {
     if (_name.trim().isEmpty || _categoryId.trim().isEmpty) {
-      showFToast(context: context, alignment: .topCenter, title: const Text('Validation Error'), description: Text(_name.trim().isEmpty ? 'Product name is required.' : 'Category is required.'));
+      TerminalToast.showError(
+        context: context,
+        title: 'Validation Error',
+        description: _name.trim().isEmpty ? 'Product name is required.' : 'Category is required.',
+      );
       return;
     }
     setState(() => _isSubmitting = true);
     try {
       await ProductFormSubmitHandler.submit(
-        product: widget.product,
-        name: _name,
-        categoryId: _categoryId,
-        counterId: _counterId,
-        basePriceStr: _basePrice,
-        sellingPriceStr: _sellingPrice,
-        taxRateStr: _taxRate,
-        sku: _sku,
-        barcode: _barcode,
-        imageUrl: _imageUrl,
-        isActive: _isActive,
+        product: widget.product, name: _name, categoryId: _categoryId, counterId: _counterId,
+        basePriceStr: _basePrice, sellingPriceStr: _sellingPrice, taxRateStr: _taxRate,
+        sku: _sku, barcode: _barcode, imageUrl: _imageUrl, isActive: _isActive,
       );
       if (!mounted) return;
       Navigator.of(context).pop();
-      showFToast(context: context, alignment: .topCenter, title: const Text('Success'), description: Text(widget.product != null ? 'Product updated.' : 'Product created.'));
+      TerminalToast.showSuccess(
+        context: context,
+        title: widget.product != null ? 'Product Updated' : 'Product Created',
+        description: '${_name.trim()} saved successfully.',
+      );
     } catch (e) {
       if (!mounted) return;
-      showFToast(context: context, alignment: .topCenter, title: const Text('Error'), description: Text(e.toString()));
+      TerminalToast.showError(context: context, title: 'Error', description: e.toString());
     } finally {
       if (mounted) setState(() => _isSubmitting = false);
     }
@@ -109,29 +123,14 @@ class _AddEditProductDialogState extends State<AddEditProductDialog> {
                 Flexible(
                   child: SingleChildScrollView(
                     child: AddEditProductForm(
-                      name: _name,
-                      categoryId: _categoryId,
-                      counterId: _counterId,
-                      sku: _sku,
-                      barcode: _barcode,
-                      imageUrl: _imageUrl,
-                      isActive: _isActive,
-                      isEditing: isEditing,
-                      basePrice: _basePrice,
-                      sellingPrice: _sellingPrice,
-                      taxRate: _taxRate,
-                      categories: categories,
-                      counters: counters,
-                      onNameChanged: (v) => _name = v,
-                      onCategoryChanged: (v) => setState(() => _categoryId = v),
-                      onCounterChanged: (v) => setState(() => _counterId = v),
-                      onSkuChanged: (v) => _sku = v,
-                      onBarcodeChanged: (v) => _barcode = v,
-                      onImageUrlChanged: (v) => _imageUrl = v,
-                      onActiveChanged: (v) => setState(() => _isActive = v),
-                      onBasePriceChanged: (v) => _basePrice = v,
-                      onSellingPriceChanged: (v) => _sellingPrice = v,
-                      onTaxRateChanged: (v) => _taxRate = v,
+                      name: _name, categoryId: _categoryId, counterId: _counterId, sku: _sku, barcode: _barcode,
+                      imageUrl: _imageUrl, isActive: _isActive, isEditing: isEditing, basePrice: _basePrice,
+                      sellingPrice: _sellingPrice, taxRate: _taxRate, categories: categories, counters: counters,
+                      onNameChanged: (v) => _name = v, onCategoryChanged: (v) => setState(() => _categoryId = v),
+                      onCounterChanged: (v) => setState(() => _counterId = v), onSkuChanged: (v) => _sku = v,
+                      onBarcodeChanged: (v) => _barcode = v, onImageUrlChanged: (v) => _imageUrl = v,
+                      onActiveChanged: (v) => setState(() => _isActive = v), onBasePriceChanged: (v) => _basePrice = v,
+                      onSellingPriceChanged: (v) => _sellingPrice = v, onTaxRateChanged: (v) => _taxRate = v,
                     ),
                   ),
                 ),

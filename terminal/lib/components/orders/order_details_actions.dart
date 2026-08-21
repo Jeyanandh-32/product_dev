@@ -6,6 +6,7 @@ import 'package:mix/mix.dart';
 import 'package:models/models.dart';
 import 'package:signals_flutter/signals_flutter.dart';
 import 'package:terminal/signals/orders_signal.dart';
+import 'package:terminal/utils/terminal_toast.dart';
 
 /// Senior-friendly print receipt and complete order action button.
 class OrderDetailsActions extends StatelessWidget {
@@ -24,23 +25,11 @@ class OrderDetailsActions extends StatelessWidget {
       OrderRepository.updateStatus(storeId: order.storeId, id: order.id, status: OrderStatus.completed).catchError((_) => updated);
     }
 
-    showFToast(
+    TerminalToast.showSuccess(
       context: context,
-      alignment: .topCenter,
+      title: isAlreadyCompleted ? 'Receipt Sent to Printer' : 'Order Completed & Printed',
+      description: 'Bill #${order.billNo} • ${order.orderReference}',
       duration: const Duration(seconds: 4),
-      icon: const Icon(
-        FLucideIcons.circleCheck,
-        color: Color(0xFF16A34A),
-        size: 20,
-      ),
-      title: Text(
-        isAlreadyCompleted ? 'Receipt Sent to Printer' : 'Order Completed & Printed',
-        style: const TextStyle(
-          color: Color(0xFF16A34A),
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-      description: Text('Bill #${order.billNo} • ${order.orderReference}'),
     );
   }
 

@@ -1,5 +1,5 @@
 import 'package:merchant/signals/navigation_signal.dart';
-import 'package:merchant/signals/products_signal.dart';
+import 'package:merchant/signals/products_actions.dart';
 import 'package:merchant/signals/toast_signal.dart';
 import 'package:models/models.dart';
 
@@ -17,50 +17,61 @@ class UpdateStockHandler {
     required StockTransactionReason reason,
     required String customReason,
   }) {
-    final inputAmount = int.tryParse(amountStr.trim());
+    final amountTrimmed = amountStr.trim();
     final lowStockThreshold = int.tryParse(lowStockThresholdStr.trim());
     final currentQty = product.stock?.quantity ?? 0;
+    final stockId = product.stock?.id;
 
-    if (inputAmount == null || inputAmount < 0) {
-      showToast('Please enter a valid non-negative quantity.');
+    if (stockId == null) {
+      showToast('Stock record not found for this product.');
       return;
     }
 
     if (stockMonitor && lowStockThreshold == null) {
-      showToast(
-        'Low Stock Threshold is required when Stock Monitor is enabled.',
-      );
+      showToast('Low Stock Threshold is required when Stock Monitor is enabled.');
       return;
     }
 
-    final computedFinalQuantity = switch (transactionType) {
+    final int? inputAmount = amountTrimmed.isEmpty ? null : int.tryParse(amountTrimmed);
+    if (amountTrimmed.isNotEmpty && (inputAmount == null || inputAmount < 0)) {
+      showToast('Please enter a valid non-negative quantity.');
+      return;
+    }
+
+    final isAdjustment = inputAmount != null;
+    if (isAdjustment && transactionType == StockTransactionType.reduce) {
+      if (currentQty <= 0) {
+        showToast('Cannot reduce stock because current inventory is 0 units.');
+        return;
+      }
+      if (inputAmount > currentQty) {
+        showToast('Cannot reduce $inputAmount units. Maximum available is $currentQty units.');
+        return;
+      }
+    }
+
+    final computedFinalQuantity = isAdjustment ? switch (transactionType) {
       .add => currentQty + inputAmount,
       .reduce => (currentQty - inputAmount).clamp(0, 999999),
       .set => inputAmount,
-    };
+    } : null;
 
-    final showReasonSection =
-        transactionType == StockTransactionType.reduce ||
-        transactionType == StockTransactionType.set;
+    final isReduction = isAdjustment && (transactionType == StockTransactionType.reduce || (transactionType == StockTransactionType.set && (computedFinalQuantity ?? currentQty) < currentQty));
+    final effectiveReason = isReduction ? reason : StockTransactionReason.restock;
 
-    final stockId = product.stock?.id;
-    if (stockId != null) {
-      ProductsActions.updateStock(
-        stockId: stockId,
-        productId: product.id,
-        quantity: computedFinalQuantity,
-        lowStockThreshold: stockMonitor ? lowStockThreshold : null,
-        stockMonitor: stockMonitor,
-        transactionType: transactionType,
-        amount: inputAmount,
-        reason: showReasonSection ? reason : null,
-        customReason: showReasonSection && customReason.trim().isNotEmpty
-            ? customReason.trim()
-            : null,
-      );
-      activeModalSignal.value = ActiveModal.none;
-    } else {
-      showToast('Stock record not found for this product.');
-    }
+    ProductsActions.updateStock(
+      stockId: stockId,
+      productId: product.id,
+      quantity: computedFinalQuantity,
+      lowStockThreshold: stockMonitor ? lowStockThreshold : null,
+      stockMonitor: stockMonitor,
+      transactionType: isAdjustment ? transactionType : null,
+      amount: inputAmount,
+      reason: isAdjustment ? effectiveReason : null,
+      customReason: isReduction && customReason.trim().isNotEmpty ? customReason.trim() : null,
+    );
+
+    activeModalSignal.value = ActiveModal.none;
+    showToast(isAdjustment ? 'Stock updated successfully.' : 'Stock settings updated successfully.', type: ToastType.success);
   }
 }

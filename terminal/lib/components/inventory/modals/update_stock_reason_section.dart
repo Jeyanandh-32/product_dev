@@ -4,7 +4,7 @@ import 'package:models/models.dart';
 import 'package:terminal/components/inventory/modals/modal_input_field.dart';
 import 'package:terminal/components/inventory/modals/modal_select_field.dart';
 
-/// Reason selection section for stock reduction matching Merchant options & warnings.
+/// Reason selection section for stock reductions and audits matching Merchant design.
 class UpdateStockReasonSection extends StatelessWidget {
   final StockTransactionReason reason;
   final String customReason;
@@ -19,23 +19,27 @@ class UpdateStockReasonSection extends StatelessWidget {
     required this.onCustomReasonChanged,
   });
 
+  static const List<({String label, StockTransactionReason value})> _items = [
+    (label: 'Wastage / Damaged Goods', value: StockTransactionReason.wastage),
+    (label: 'Inventory Adjustment / Shrinkage', value: StockTransactionReason.adjustment),
+  ];
+
   @override
   Widget build(BuildContext context) {
+    final validReason = _items.any((i) => i.value == reason) ? reason : _items.first.value;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         ModalSelectField<StockTransactionReason>(
-          label: 'Reason for Adjustment',
-          value: reason,
-          items: const [
-            (label: 'Inventory Adjustment / Audit', value: StockTransactionReason.adjustment),
-            (label: 'Wastage / Damaged Goods', value: StockTransactionReason.wastage),
-          ],
+          label: 'Reason for Reduction / Adjustment',
+          value: validReason,
+          items: _items,
           onChanged: (val) {
             if (val != null) onReasonChanged(val);
           },
         ),
-        if (reason == StockTransactionReason.wastage) ...[
+        if (validReason == StockTransactionReason.wastage) ...[
           const Gap(6),
           const Text(
             '⚠️ Wasted items will be recorded as inventory loss in Profit & Loss report.',
