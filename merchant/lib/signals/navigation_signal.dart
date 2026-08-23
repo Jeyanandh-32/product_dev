@@ -18,6 +18,7 @@ enum ActiveModal {
   editProduct,
   updateStock,
   orderDetails,
+  bottleReturns,
 }
 
 final activeModalSignal = signal<ActiveModal>(.none);

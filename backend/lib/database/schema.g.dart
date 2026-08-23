@@ -25,6 +25,12 @@ extension DatabaseSchemaSchema on Database<DatabaseSchema> {
     _$CustomerWalletTransactionRow._$table,
     _$OrderRow._$table,
     _$OrderItemRow._$table,
+    _$BottleReturnConfigRow._$table,
+    _$BottleReturnProductRow._$table,
+    _$BottleQrTokenRow._$table,
+    _$BottleCreditRow._$table,
+    _$BottleCreditTransactionRow._$table,
+    _$BottlePhysicalCouponRow._$table,
   ];
 
   Table<MerchantRow> get merchants =>
@@ -77,6 +83,27 @@ extension DatabaseSchemaSchema on Database<DatabaseSchema> {
 
   Table<OrderItemRow> get orderItems =>
       $ForGeneratedCode.declareTable(this, _$OrderItemRow._$table);
+
+  Table<BottleReturnConfigRow> get bottleReturnConfigs =>
+      $ForGeneratedCode.declareTable(this, _$BottleReturnConfigRow._$table);
+
+  Table<BottleReturnProductRow> get bottleReturnProducts =>
+      $ForGeneratedCode.declareTable(this, _$BottleReturnProductRow._$table);
+
+  Table<BottleQrTokenRow> get bottleQrTokens =>
+      $ForGeneratedCode.declareTable(this, _$BottleQrTokenRow._$table);
+
+  Table<BottleCreditRow> get bottleCredits =>
+      $ForGeneratedCode.declareTable(this, _$BottleCreditRow._$table);
+
+  Table<BottleCreditTransactionRow> get bottleCreditTransactions =>
+      $ForGeneratedCode.declareTable(
+        this,
+        _$BottleCreditTransactionRow._$table,
+      );
+
+  Table<BottlePhysicalCouponRow> get bottlePhysicalCoupons =>
+      $ForGeneratedCode.declareTable(this, _$BottlePhysicalCouponRow._$table);
 
   /// Create tables defined in [DatabaseSchema].
   ///
@@ -13263,6 +13290,4455 @@ extension InsertOnConflictSingleOrderItemRowExt
   );
 }
 
+final class _$BottleReturnConfigRow extends BottleReturnConfigRow {
+  _$BottleReturnConfigRow._(
+    this.storeId,
+    this.isEnabled,
+    this.rewardAmountInRupees,
+    this.iotApiKey,
+    this.createdAt,
+    this.updatedAt,
+  );
+
+  @override
+  final String storeId;
+
+  @override
+  final bool isEnabled;
+
+  @override
+  final int rewardAmountInRupees;
+
+  @override
+  final String? iotApiKey;
+
+  @override
+  final DateTime createdAt;
+
+  @override
+  final DateTime updatedAt;
+
+  static final _$table = $ForGeneratedCode.tableDefinition(
+    tableName: 'bottle_return_configs',
+    columns: <String>[
+      'store_id',
+      'is_enabled',
+      'reward_amount_in_rupees',
+      'iot_api_key',
+      'created_at',
+      'updated_at',
+    ],
+    columnInfo: [
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: true,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.boolean,
+        isNotNull: true,
+        defaultValue: (kind: 'raw', value: true),
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.integer,
+        isNotNull: true,
+        defaultValue: (kind: 'raw', value: 10),
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: false,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.dateTime,
+        isNotNull: true,
+        defaultValue: (kind: 'datetime', value: 'now'),
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.dateTime,
+        isNotNull: true,
+        defaultValue: (kind: 'datetime', value: 'now'),
+        autoIncrement: false,
+        overrides: [],
+      ),
+    ],
+    primaryKey: <String>['store_id'],
+    unique: <List<String>>[],
+    foreignKeys: [
+      $ForGeneratedCode.foreignKeyDefinition(
+        name: 'null',
+        columns: ['store_id'],
+        referencedTable: 'stores',
+        referencedColumns: ['id'],
+        onDelete: .cascade,
+        onUpdate: .noAction,
+      ),
+    ],
+    indexes: [],
+    readRow: _$BottleReturnConfigRow._$fromDatabase,
+  );
+
+  static BottleReturnConfigRow? _$fromDatabase(RowReader row) {
+    final storeId = row.readString();
+    final isEnabled = row.readBool();
+    final rewardAmountInRupees = row.readInt();
+    final iotApiKey = row.readString();
+    final createdAt = row.readDateTime();
+    final updatedAt = row.readDateTime();
+    if (storeId == null &&
+        isEnabled == null &&
+        rewardAmountInRupees == null &&
+        iotApiKey == null &&
+        createdAt == null &&
+        updatedAt == null) {
+      return null;
+    }
+    return _$BottleReturnConfigRow._(
+      storeId!,
+      isEnabled!,
+      rewardAmountInRupees!,
+      iotApiKey,
+      createdAt!,
+      updatedAt!,
+    );
+  }
+
+  @override
+  String toString() =>
+      'BottleReturnConfigRow(storeId: "$storeId", isEnabled: "$isEnabled", rewardAmountInRupees: "$rewardAmountInRupees", iotApiKey: "$iotApiKey", createdAt: "$createdAt", updatedAt: "$updatedAt")';
+}
+
+/// Extension methods for table defined in [BottleReturnConfigRow].
+extension TableBottleReturnConfigRowExt on Table<BottleReturnConfigRow> {
+  /// Insert row into the `bottleReturnConfigs` table.
+  ///
+  /// Returns a [InsertSingle] statement on which `.execute` must be
+  /// called for the row to be inserted.
+  InsertSingle<BottleReturnConfigRow> insert({
+    required Expr<String> storeId,
+    Expr<bool>? isEnabled,
+    Expr<int>? rewardAmountInRupees,
+    Expr<String?>? iotApiKey,
+    Expr<DateTime>? createdAt,
+    Expr<DateTime>? updatedAt,
+  }) => $ForGeneratedCode.insertInto(
+    table: this,
+    values: [
+      storeId,
+      isEnabled,
+      rewardAmountInRupees,
+      iotApiKey,
+      createdAt,
+      updatedAt,
+    ],
+  );
+
+  /// Insert row into the `bottleReturnConfigs` table.
+  ///
+  /// Returns a [InsertSingle] statement on which `.execute` must be
+  /// called for the row to be inserted.
+  InsertSingle<BottleReturnConfigRow> insertValue({
+    required String storeId,
+    bool? isEnabled,
+    int? rewardAmountInRupees,
+    String? iotApiKey,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) => $ForGeneratedCode.insertInto(
+    table: this,
+    values: [
+      storeId.asExpr,
+      isEnabled?.asExpr,
+      rewardAmountInRupees?.asExpr,
+      iotApiKey.asExpr,
+      createdAt?.asExpr,
+      updatedAt?.asExpr,
+    ],
+  );
+
+  /// Bulk insert rows into the `bottleReturnConfigs` table.
+  ///
+  /// This method takes an `Iterable<T>` and requires that you provide
+  /// a _mapping function_ from `T` to each column to be inserted.
+  ///
+  /// If a mapping function is omitted, the _default value_ will be
+  /// inserted, or `NULL` if column is nullable and as no default value.
+  /// To explicitely insert `NULL`, use a _mapping function_ that maps
+  /// `T` to `null`.
+  ///
+  /// > [!NOTE]
+  /// > This method aims utilize database specific bulk insertion logic
+  /// > to ensure good performance. Database adapters may pipeline bulk
+  /// > insertions through multiple statements inside a transaction.
+  ///
+  /// Returns a [Insert] statement on which `.execute` must be
+  /// called for the rows to be inserted.
+  Insert<BottleReturnConfigRow> insertValuesMapped<T>(
+    Iterable<T> rows, {
+    required String Function(T row) storeId,
+    bool Function(T row)? isEnabled,
+    int Function(T row)? rewardAmountInRupees,
+    String? Function(T row)? iotApiKey,
+    DateTime Function(T row)? createdAt,
+    DateTime Function(T row)? updatedAt,
+  }) => $ForGeneratedCode.insertValuesMapped(
+    table: this,
+    rows: rows,
+    mappings: [
+      storeId,
+      isEnabled,
+      rewardAmountInRupees,
+      iotApiKey,
+      createdAt,
+      updatedAt,
+    ],
+  );
+
+  /// Delete a single row from the `bottleReturnConfigs` table, specified by
+  /// _primary key_.
+  ///
+  /// Returns a [DeleteSingle] statement on which `.execute()` must be
+  /// called for the row to be deleted.
+  ///
+  /// To delete multiple rows, using `.where()` to filter which rows
+  /// should be deleted. If you wish to delete all rows, use
+  /// `.where((_) => toExpr(true)).delete()`.
+  DeleteSingle<BottleReturnConfigRow> delete(String storeId) =>
+      $ForGeneratedCode.deleteSingle(
+        byKey(storeId),
+        _$BottleReturnConfigRow._$table,
+      );
+}
+
+/// Extension methods for building queries against the `bottleReturnConfigs` table.
+extension QueryBottleReturnConfigRowExt
+    on Query<(Expr<BottleReturnConfigRow>,)> {
+  /// Lookup a single row in `bottleReturnConfigs` table using the _primary key_.
+  ///
+  /// Returns a [QuerySingle] object, which returns at-most one row,
+  /// when `.fetch()` is called.
+  QuerySingle<(Expr<BottleReturnConfigRow>,)> byKey(String storeId) => where(
+    (bottleReturnConfigRow) =>
+        bottleReturnConfigRow.storeId.equalsValue(storeId),
+  ).first;
+
+  /// Update all rows in the `bottleReturnConfigs` table matching this [Query].
+  ///
+  /// The changes to be applied to each row matching this [Query] are
+  /// defined using the [updateBuilder], which is given an [Expr]
+  /// representation of the row being updated and a `set` function to
+  /// specify which fields should be updated. The result of the `set`
+  /// function should always be returned from the `updateBuilder`.
+  ///
+  /// Returns an [Update] statement on which `.execute()` must be called
+  /// for the rows to be updated.
+  ///
+  /// **Example:** decrementing `1` from the `value` field for each row
+  /// where `value > 0`.
+  /// ```dart
+  /// await db.mytable
+  ///   .where((row) => row.value > toExpr(0))
+  ///   .update((row, set) => set(
+  ///     value: row.value - toExpr(1),
+  ///   ))
+  ///   .execute();
+  /// ```
+  ///
+  /// > [!WARNING]
+  /// > The `updateBuilder` callback does not make the update, it builds
+  /// > the expressions for updating the rows. You should **never** invoke
+  /// > the `set` function more than once, and the result should always
+  /// > be returned immediately.
+  Update<BottleReturnConfigRow> update(
+    UpdateSet<BottleReturnConfigRow> Function(
+      Expr<BottleReturnConfigRow> bottleReturnConfigRow,
+      UpdateSet<BottleReturnConfigRow> Function({
+        Expr<String> storeId,
+        Expr<bool> isEnabled,
+        Expr<int> rewardAmountInRupees,
+        Expr<String?> iotApiKey,
+        Expr<DateTime> createdAt,
+        Expr<DateTime> updatedAt,
+      })
+      set,
+    )
+    updateBuilder,
+  ) => $ForGeneratedCode.update<BottleReturnConfigRow>(
+    this,
+    _$BottleReturnConfigRow._$table,
+    (bottleReturnConfigRow) => updateBuilder(
+      bottleReturnConfigRow,
+      ({
+        Expr<String>? storeId,
+        Expr<bool>? isEnabled,
+        Expr<int>? rewardAmountInRupees,
+        Expr<String?>? iotApiKey,
+        Expr<DateTime>? createdAt,
+        Expr<DateTime>? updatedAt,
+      }) => $ForGeneratedCode.buildUpdate<BottleReturnConfigRow>([
+        storeId,
+        isEnabled,
+        rewardAmountInRupees,
+        iotApiKey,
+        createdAt,
+        updatedAt,
+      ]),
+    ),
+  );
+
+  /// Delete all rows in the `bottleReturnConfigs` table matching this [Query].
+  ///
+  /// Returns a [Delete] statement on which `.execute()` must be called
+  /// for the rows to be deleted.
+  Delete<BottleReturnConfigRow> delete() =>
+      $ForGeneratedCode.delete(this, _$BottleReturnConfigRow._$table);
+}
+
+/// Extension methods for building point queries against the `bottleReturnConfigs` table.
+extension QuerySingleBottleReturnConfigRowExt
+    on QuerySingle<(Expr<BottleReturnConfigRow>,)> {
+  /// Update the row (if any) in the `bottleReturnConfigs` table matching this
+  /// [QuerySingle].
+  ///
+  /// The changes to be applied to the row matching this [QuerySingle] are
+  /// defined using the [updateBuilder], which is given an [Expr]
+  /// representation of the row being updated and a `set` function to
+  /// specify which fields should be updated. The result of the `set`
+  /// function should always be returned from the `updateBuilder`.
+  ///
+  /// Returns an [UpdateSingle] statement on which `.execute()` must be
+  /// called for the row to be updated. The resulting statement will
+  /// **not** fail, if there are no rows matching this query exists.
+  ///
+  /// **Example:** decrementing `1` from the `value` field the row with
+  /// `id = 1`.
+  /// ```dart
+  /// await db.mytable
+  ///   .byKey(1)
+  ///   .update((row, set) => set(
+  ///     value: row.value - toExpr(1),
+  ///   ))
+  ///   .execute();
+  /// ```
+  ///
+  /// > [!WARNING]
+  /// > The `updateBuilder` callback does not make the update, it builds
+  /// > the expressions for updating the rows. You should **never** invoke
+  /// > the `set` function more than once, and the result should always
+  /// > be returned immediately.
+  UpdateSingle<BottleReturnConfigRow> update(
+    UpdateSet<BottleReturnConfigRow> Function(
+      Expr<BottleReturnConfigRow> bottleReturnConfigRow,
+      UpdateSet<BottleReturnConfigRow> Function({
+        Expr<String> storeId,
+        Expr<bool> isEnabled,
+        Expr<int> rewardAmountInRupees,
+        Expr<String?> iotApiKey,
+        Expr<DateTime> createdAt,
+        Expr<DateTime> updatedAt,
+      })
+      set,
+    )
+    updateBuilder,
+  ) => $ForGeneratedCode.updateSingle<BottleReturnConfigRow>(
+    this,
+    _$BottleReturnConfigRow._$table,
+    (bottleReturnConfigRow) => updateBuilder(
+      bottleReturnConfigRow,
+      ({
+        Expr<String>? storeId,
+        Expr<bool>? isEnabled,
+        Expr<int>? rewardAmountInRupees,
+        Expr<String?>? iotApiKey,
+        Expr<DateTime>? createdAt,
+        Expr<DateTime>? updatedAt,
+      }) => $ForGeneratedCode.buildUpdate<BottleReturnConfigRow>([
+        storeId,
+        isEnabled,
+        rewardAmountInRupees,
+        iotApiKey,
+        createdAt,
+        updatedAt,
+      ]),
+    ),
+  );
+
+  /// Delete the row (if any) in the `bottleReturnConfigs` table matching this [QuerySingle].
+  ///
+  /// Returns a [DeleteSingle] statement on which `.execute()` must be called
+  /// for the row to be deleted. The resulting statement will **not**
+  /// fail, if there are no rows matching this query exists.
+  DeleteSingle<BottleReturnConfigRow> delete() =>
+      $ForGeneratedCode.deleteSingle(this, _$BottleReturnConfigRow._$table);
+}
+
+/// Extension methods for expressions on a row in the `bottleReturnConfigs` table.
+extension ExpressionBottleReturnConfigRowExt on Expr<BottleReturnConfigRow> {
+  Expr<String> get storeId =>
+      $ForGeneratedCode.field(this, 0, $ForGeneratedCode.text);
+
+  Expr<bool> get isEnabled =>
+      $ForGeneratedCode.field(this, 1, $ForGeneratedCode.boolean);
+
+  Expr<int> get rewardAmountInRupees =>
+      $ForGeneratedCode.field(this, 2, $ForGeneratedCode.integer);
+
+  Expr<String?> get iotApiKey =>
+      $ForGeneratedCode.field(this, 3, $ForGeneratedCode.text);
+
+  Expr<DateTime> get createdAt =>
+      $ForGeneratedCode.field(this, 4, $ForGeneratedCode.dateTime);
+
+  Expr<DateTime> get updatedAt =>
+      $ForGeneratedCode.field(this, 5, $ForGeneratedCode.dateTime);
+}
+
+extension ExpressionNullableBottleReturnConfigRowExt
+    on Expr<BottleReturnConfigRow?> {
+  Expr<String?> get storeId =>
+      $ForGeneratedCode.field(this, 0, $ForGeneratedCode.text);
+
+  Expr<bool?> get isEnabled =>
+      $ForGeneratedCode.field(this, 1, $ForGeneratedCode.boolean);
+
+  Expr<int?> get rewardAmountInRupees =>
+      $ForGeneratedCode.field(this, 2, $ForGeneratedCode.integer);
+
+  Expr<String?> get iotApiKey =>
+      $ForGeneratedCode.field(this, 3, $ForGeneratedCode.text);
+
+  Expr<DateTime?> get createdAt =>
+      $ForGeneratedCode.field(this, 4, $ForGeneratedCode.dateTime);
+
+  Expr<DateTime?> get updatedAt =>
+      $ForGeneratedCode.field(this, 5, $ForGeneratedCode.dateTime);
+
+  /// Check if the row is not `NULL`.
+  ///
+  /// This will check if _primary key_ fields in this row are `NULL`.
+  ///
+  /// If this is a reference lookup by subquery it might be more efficient
+  /// to check if the referencing field is `NULL`.
+  Expr<bool> isNotNull() => storeId.isNotNull();
+
+  /// Check if the row is `NULL`.
+  ///
+  /// This will check if _primary key_ fields in this row are `NULL`.
+  ///
+  /// If this is a reference lookup by subquery it might be more efficient
+  /// to check if the referencing field is `NULL`.
+  Expr<bool> isNull() => isNotNull().not();
+}
+
+/// `Table<BottleReturnConfigRow>` conflict targets for use with `.onConflict`.
+enum BottleReturnConfigRowConflict {
+  /// Conflict with an existing row that has a matching primary key.
+  ///
+  /// Thus, the other row has matching values for:
+  /// `storeId`.
+  primaryKey(['store_id']);
+
+  const BottleReturnConfigRowConflict(this._fields);
+
+  final List<String> _fields;
+}
+
+extension InsertBottleReturnConfigRowExt on Insert<BottleReturnConfigRow> {
+  /// Build an `INSERT` statement with an `ON CONFLICT` clause.
+  ///
+  /// The [target] argument specifies the _conflict target_ to be
+  /// handled. The _conflict target_ is always a `UNIQUE` constraint or
+  /// `PRIMARY KEY` constraint.
+  ///
+  /// If a row to be inserted violates the _conflict target_ constraint,
+  /// then the conflict action is triggered:
+  /// * `.doNothing()` to skip insertion of the new row, and,
+  /// * `.update((bottleReturnConfigRow, excluded, set) => set(...))` to
+  ///   update the conflicting row.
+  ///
+  /// If a row to be inserted violates a constraint other than the one
+  /// specified in _conflict target_ then the entire `INSERT` statement
+  /// will fail.
+  ///
+  /// This is equivalent to `INSERT ... ON CONFLICT (...)` in SQL.
+  InsertOnConflict<BottleReturnConfigRow> onConflict(
+    BottleReturnConfigRowConflict target,
+  ) => $ForGeneratedCode.insertOnConflict(this, target._fields);
+}
+
+extension InsertOnConflictBottleReturnConfigRowExt
+    on InsertOnConflict<BottleReturnConfigRow> {
+  /// Build an `INSERT` statement an [upsert-clause][1].
+  ///
+  /// When a row to be inserted violates the `UNIQUE` or `PRIMARY KEY`
+  /// constraint previously specified as _conflict target_, the existing
+  /// row is updated using the expressions defined with the
+  /// [updateBuilder]. The [updateBuilder] is given 3 parameters:
+  ///   * `bottleReturnConfigRow` an [Expr] representing the existing row in
+  ///     the database,
+  ///   * `excluded` an [Expr] representing the row to be inserted in the
+  ///     database, and,
+  ///   * `set` a function to specify which fields should be updated and
+  ///     build the [UpdateSet].
+  ///
+  /// The result of the `set` function should always be immediately
+  /// returned from the [updateBuilder].
+  ///
+  /// **Example:** Insert a counter with `count = 2` or increment the
+  /// existing row, if a `PRIMARY KEY` conflict occurs.
+  /// ```dart
+  /// await db.counters.insertValue(
+  ///     name: 'my-counter', // primary key
+  ///     count: 2,
+  ///   )
+  ///   .onConflict(.primaryKey)
+  ///   .update((counter, excluded, set) => set(
+  ///     count: counter.count + excluded.count,
+  ///   ))
+  ///   .execute();
+  /// ```
+  ///
+  /// This is equivalent to
+  /// `INSERT ... ON CONFLICT (...) UPDATE SET ...` in SQL.
+  ///
+  /// > [!WARNING]
+  /// > The `updateBuilder` callback does not make the update, it builds
+  /// > the expressions for updating the rows. You should **never** invoke
+  /// > the `set` function more than once, and the result should always
+  /// > be returned immediately.
+  ///
+  /// [1]: https://www.sqlite.org/lang_upsert.html
+  Upsert<BottleReturnConfigRow> update(
+    UpdateSet<BottleReturnConfigRow> Function(
+      Expr<BottleReturnConfigRow> bottleReturnConfigRow,
+      Expr<BottleReturnConfigRow> excluded,
+      UpdateSet<BottleReturnConfigRow> Function({
+        Expr<String> storeId,
+        Expr<bool> isEnabled,
+        Expr<int> rewardAmountInRupees,
+        Expr<String?> iotApiKey,
+        Expr<DateTime> createdAt,
+        Expr<DateTime> updatedAt,
+      })
+      set,
+    )
+    updateBuilder,
+  ) => $ForGeneratedCode.updateOnConflict<BottleReturnConfigRow>(
+    this,
+    (bottleReturnConfigRow, excluded) => updateBuilder(
+      bottleReturnConfigRow,
+      excluded,
+      ({
+        Expr<String>? storeId,
+        Expr<bool>? isEnabled,
+        Expr<int>? rewardAmountInRupees,
+        Expr<String?>? iotApiKey,
+        Expr<DateTime>? createdAt,
+        Expr<DateTime>? updatedAt,
+      }) => $ForGeneratedCode.buildUpdate<BottleReturnConfigRow>([
+        storeId,
+        isEnabled,
+        rewardAmountInRupees,
+        iotApiKey,
+        createdAt,
+        updatedAt,
+      ]),
+    ),
+  );
+}
+
+extension InsertSingleBottleReturnConfigRowExt
+    on InsertSingle<BottleReturnConfigRow> {
+  /// Build an `INSERT` statement with an `ON CONFLICT` clause.
+  ///
+  /// The [target] argument specifies the _conflict target_ to be
+  /// handled. The _conflict target_ is always a `UNIQUE` constraint or
+  /// `PRIMARY KEY` constraint.
+  ///
+  /// If a row to be inserted violates the _conflict target_ constraint,
+  /// then the conflict action is triggered:
+  /// * `.doNothing()` to skip insertion of the new row, and,
+  /// * `.update((bottleReturnConfigRow, excluded, set) => set(...))` to
+  ///   update the conflicting row.
+  ///
+  /// If a row to be inserted violates a constraint other than the one
+  /// specified in _conflict target_ then the entire `INSERT` statement
+  /// will fail.
+  ///
+  /// This is equivalent to `INSERT ... ON CONFLICT (...)` in SQL.
+  InsertOnConflictSingle<BottleReturnConfigRow> onConflict(
+    BottleReturnConfigRowConflict target,
+  ) => $ForGeneratedCode.insertOnConflictSingle(this, target._fields);
+}
+
+extension InsertOnConflictSingleBottleReturnConfigRowExt
+    on InsertOnConflictSingle<BottleReturnConfigRow> {
+  /// Build an `INSERT` statement an [upsert-clause][1].
+  ///
+  /// When a row to be inserted violates the `UNIQUE` or `PRIMARY KEY`
+  /// constraint previously specified as _conflict target_, the existing
+  /// row is updated using the expressions defined with the
+  /// [updateBuilder]. The [updateBuilder] is given 3 parameters:
+  ///   * `bottleReturnConfigRow` an [Expr] representing the existing row in
+  ///     the database,
+  ///   * `excluded` an [Expr] representing the row to be inserted in the
+  ///     database, and,
+  ///   * `set` a function to specify which fields should be updated and
+  ///     build the [UpdateSet].
+  ///
+  /// The result of the `set` function should always be immediately
+  /// returned from the [updateBuilder].
+  ///
+  /// **Example:** Insert a counter with `count = 2` or increment the
+  /// existing row, if a `PRIMARY KEY` conflict occurs.
+  /// ```dart
+  /// await db.counters.insertValue(
+  ///     name: 'my-counter', // primary key
+  ///     count: 2,
+  ///   )
+  ///   .onConflict(.primaryKey)
+  ///   .update((counter, excluded, set) => set(
+  ///     count: counter.count + excluded.count,
+  ///   ))
+  ///   .execute();
+  /// ```
+  ///
+  /// This is equivalent to
+  /// `INSERT ... ON CONFLICT (...) UPDATE SET ...` in SQL.
+  ///
+  /// > [!WARNING]
+  /// > The `updateBuilder` callback does not make the update, it builds
+  /// > the expressions for updating the rows. You should **never** invoke
+  /// > the `set` function more than once, and the result should always
+  /// > be returned immediately.
+  ///
+  /// [1]: https://www.sqlite.org/lang_upsert.html
+  UpsertSingle<BottleReturnConfigRow> update(
+    UpdateSet<BottleReturnConfigRow> Function(
+      Expr<BottleReturnConfigRow> bottleReturnConfigRow,
+      Expr<BottleReturnConfigRow> excluded,
+      UpdateSet<BottleReturnConfigRow> Function({
+        Expr<String> storeId,
+        Expr<bool> isEnabled,
+        Expr<int> rewardAmountInRupees,
+        Expr<String?> iotApiKey,
+        Expr<DateTime> createdAt,
+        Expr<DateTime> updatedAt,
+      })
+      set,
+    )
+    updateBuilder,
+  ) => $ForGeneratedCode.updateOnConflictSingle<BottleReturnConfigRow>(
+    this,
+    (bottleReturnConfigRow, excluded) => updateBuilder(
+      bottleReturnConfigRow,
+      excluded,
+      ({
+        Expr<String>? storeId,
+        Expr<bool>? isEnabled,
+        Expr<int>? rewardAmountInRupees,
+        Expr<String?>? iotApiKey,
+        Expr<DateTime>? createdAt,
+        Expr<DateTime>? updatedAt,
+      }) => $ForGeneratedCode.buildUpdate<BottleReturnConfigRow>([
+        storeId,
+        isEnabled,
+        rewardAmountInRupees,
+        iotApiKey,
+        createdAt,
+        updatedAt,
+      ]),
+    ),
+  );
+}
+
+final class _$BottleReturnProductRow extends BottleReturnProductRow {
+  _$BottleReturnProductRow._(
+    this.productId,
+    this.storeId,
+    this.isReturnable,
+    this.createdAt,
+  );
+
+  @override
+  final String productId;
+
+  @override
+  final String storeId;
+
+  @override
+  final bool isReturnable;
+
+  @override
+  final DateTime createdAt;
+
+  static final _$table = $ForGeneratedCode.tableDefinition(
+    tableName: 'bottle_return_products',
+    columns: <String>['product_id', 'store_id', 'is_returnable', 'created_at'],
+    columnInfo: [
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: true,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: true,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.boolean,
+        isNotNull: true,
+        defaultValue: (kind: 'raw', value: true),
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.dateTime,
+        isNotNull: true,
+        defaultValue: (kind: 'datetime', value: 'now'),
+        autoIncrement: false,
+        overrides: [],
+      ),
+    ],
+    primaryKey: <String>['product_id'],
+    unique: <List<String>>[],
+    foreignKeys: [
+      $ForGeneratedCode.foreignKeyDefinition(
+        name: 'null',
+        columns: ['product_id'],
+        referencedTable: 'products',
+        referencedColumns: ['id'],
+        onDelete: .cascade,
+        onUpdate: .noAction,
+      ),
+      $ForGeneratedCode.foreignKeyDefinition(
+        name: 'null',
+        columns: ['store_id'],
+        referencedTable: 'stores',
+        referencedColumns: ['id'],
+        onDelete: .cascade,
+        onUpdate: .noAction,
+      ),
+    ],
+    indexes: [],
+    readRow: _$BottleReturnProductRow._$fromDatabase,
+  );
+
+  static BottleReturnProductRow? _$fromDatabase(RowReader row) {
+    final productId = row.readString();
+    final storeId = row.readString();
+    final isReturnable = row.readBool();
+    final createdAt = row.readDateTime();
+    if (productId == null &&
+        storeId == null &&
+        isReturnable == null &&
+        createdAt == null) {
+      return null;
+    }
+    return _$BottleReturnProductRow._(
+      productId!,
+      storeId!,
+      isReturnable!,
+      createdAt!,
+    );
+  }
+
+  @override
+  String toString() =>
+      'BottleReturnProductRow(productId: "$productId", storeId: "$storeId", isReturnable: "$isReturnable", createdAt: "$createdAt")';
+}
+
+/// Extension methods for table defined in [BottleReturnProductRow].
+extension TableBottleReturnProductRowExt on Table<BottleReturnProductRow> {
+  /// Insert row into the `bottleReturnProducts` table.
+  ///
+  /// Returns a [InsertSingle] statement on which `.execute` must be
+  /// called for the row to be inserted.
+  InsertSingle<BottleReturnProductRow> insert({
+    required Expr<String> productId,
+    required Expr<String> storeId,
+    Expr<bool>? isReturnable,
+    Expr<DateTime>? createdAt,
+  }) => $ForGeneratedCode.insertInto(
+    table: this,
+    values: [productId, storeId, isReturnable, createdAt],
+  );
+
+  /// Insert row into the `bottleReturnProducts` table.
+  ///
+  /// Returns a [InsertSingle] statement on which `.execute` must be
+  /// called for the row to be inserted.
+  InsertSingle<BottleReturnProductRow> insertValue({
+    required String productId,
+    required String storeId,
+    bool? isReturnable,
+    DateTime? createdAt,
+  }) => $ForGeneratedCode.insertInto(
+    table: this,
+    values: [
+      productId.asExpr,
+      storeId.asExpr,
+      isReturnable?.asExpr,
+      createdAt?.asExpr,
+    ],
+  );
+
+  /// Bulk insert rows into the `bottleReturnProducts` table.
+  ///
+  /// This method takes an `Iterable<T>` and requires that you provide
+  /// a _mapping function_ from `T` to each column to be inserted.
+  ///
+  /// If a mapping function is omitted, the _default value_ will be
+  /// inserted, or `NULL` if column is nullable and as no default value.
+  /// To explicitely insert `NULL`, use a _mapping function_ that maps
+  /// `T` to `null`.
+  ///
+  /// > [!NOTE]
+  /// > This method aims utilize database specific bulk insertion logic
+  /// > to ensure good performance. Database adapters may pipeline bulk
+  /// > insertions through multiple statements inside a transaction.
+  ///
+  /// Returns a [Insert] statement on which `.execute` must be
+  /// called for the rows to be inserted.
+  Insert<BottleReturnProductRow> insertValuesMapped<T>(
+    Iterable<T> rows, {
+    required String Function(T row) productId,
+    required String Function(T row) storeId,
+    bool Function(T row)? isReturnable,
+    DateTime Function(T row)? createdAt,
+  }) => $ForGeneratedCode.insertValuesMapped(
+    table: this,
+    rows: rows,
+    mappings: [productId, storeId, isReturnable, createdAt],
+  );
+
+  /// Delete a single row from the `bottleReturnProducts` table, specified by
+  /// _primary key_.
+  ///
+  /// Returns a [DeleteSingle] statement on which `.execute()` must be
+  /// called for the row to be deleted.
+  ///
+  /// To delete multiple rows, using `.where()` to filter which rows
+  /// should be deleted. If you wish to delete all rows, use
+  /// `.where((_) => toExpr(true)).delete()`.
+  DeleteSingle<BottleReturnProductRow> delete(String productId) =>
+      $ForGeneratedCode.deleteSingle(
+        byKey(productId),
+        _$BottleReturnProductRow._$table,
+      );
+}
+
+/// Extension methods for building queries against the `bottleReturnProducts` table.
+extension QueryBottleReturnProductRowExt
+    on Query<(Expr<BottleReturnProductRow>,)> {
+  /// Lookup a single row in `bottleReturnProducts` table using the _primary key_.
+  ///
+  /// Returns a [QuerySingle] object, which returns at-most one row,
+  /// when `.fetch()` is called.
+  QuerySingle<(Expr<BottleReturnProductRow>,)> byKey(String productId) => where(
+    (bottleReturnProductRow) =>
+        bottleReturnProductRow.productId.equalsValue(productId),
+  ).first;
+
+  /// Update all rows in the `bottleReturnProducts` table matching this [Query].
+  ///
+  /// The changes to be applied to each row matching this [Query] are
+  /// defined using the [updateBuilder], which is given an [Expr]
+  /// representation of the row being updated and a `set` function to
+  /// specify which fields should be updated. The result of the `set`
+  /// function should always be returned from the `updateBuilder`.
+  ///
+  /// Returns an [Update] statement on which `.execute()` must be called
+  /// for the rows to be updated.
+  ///
+  /// **Example:** decrementing `1` from the `value` field for each row
+  /// where `value > 0`.
+  /// ```dart
+  /// await db.mytable
+  ///   .where((row) => row.value > toExpr(0))
+  ///   .update((row, set) => set(
+  ///     value: row.value - toExpr(1),
+  ///   ))
+  ///   .execute();
+  /// ```
+  ///
+  /// > [!WARNING]
+  /// > The `updateBuilder` callback does not make the update, it builds
+  /// > the expressions for updating the rows. You should **never** invoke
+  /// > the `set` function more than once, and the result should always
+  /// > be returned immediately.
+  Update<BottleReturnProductRow> update(
+    UpdateSet<BottleReturnProductRow> Function(
+      Expr<BottleReturnProductRow> bottleReturnProductRow,
+      UpdateSet<BottleReturnProductRow> Function({
+        Expr<String> productId,
+        Expr<String> storeId,
+        Expr<bool> isReturnable,
+        Expr<DateTime> createdAt,
+      })
+      set,
+    )
+    updateBuilder,
+  ) => $ForGeneratedCode.update<BottleReturnProductRow>(
+    this,
+    _$BottleReturnProductRow._$table,
+    (bottleReturnProductRow) => updateBuilder(
+      bottleReturnProductRow,
+      ({
+        Expr<String>? productId,
+        Expr<String>? storeId,
+        Expr<bool>? isReturnable,
+        Expr<DateTime>? createdAt,
+      }) => $ForGeneratedCode.buildUpdate<BottleReturnProductRow>([
+        productId,
+        storeId,
+        isReturnable,
+        createdAt,
+      ]),
+    ),
+  );
+
+  /// Delete all rows in the `bottleReturnProducts` table matching this [Query].
+  ///
+  /// Returns a [Delete] statement on which `.execute()` must be called
+  /// for the rows to be deleted.
+  Delete<BottleReturnProductRow> delete() =>
+      $ForGeneratedCode.delete(this, _$BottleReturnProductRow._$table);
+}
+
+/// Extension methods for building point queries against the `bottleReturnProducts` table.
+extension QuerySingleBottleReturnProductRowExt
+    on QuerySingle<(Expr<BottleReturnProductRow>,)> {
+  /// Update the row (if any) in the `bottleReturnProducts` table matching this
+  /// [QuerySingle].
+  ///
+  /// The changes to be applied to the row matching this [QuerySingle] are
+  /// defined using the [updateBuilder], which is given an [Expr]
+  /// representation of the row being updated and a `set` function to
+  /// specify which fields should be updated. The result of the `set`
+  /// function should always be returned from the `updateBuilder`.
+  ///
+  /// Returns an [UpdateSingle] statement on which `.execute()` must be
+  /// called for the row to be updated. The resulting statement will
+  /// **not** fail, if there are no rows matching this query exists.
+  ///
+  /// **Example:** decrementing `1` from the `value` field the row with
+  /// `id = 1`.
+  /// ```dart
+  /// await db.mytable
+  ///   .byKey(1)
+  ///   .update((row, set) => set(
+  ///     value: row.value - toExpr(1),
+  ///   ))
+  ///   .execute();
+  /// ```
+  ///
+  /// > [!WARNING]
+  /// > The `updateBuilder` callback does not make the update, it builds
+  /// > the expressions for updating the rows. You should **never** invoke
+  /// > the `set` function more than once, and the result should always
+  /// > be returned immediately.
+  UpdateSingle<BottleReturnProductRow> update(
+    UpdateSet<BottleReturnProductRow> Function(
+      Expr<BottleReturnProductRow> bottleReturnProductRow,
+      UpdateSet<BottleReturnProductRow> Function({
+        Expr<String> productId,
+        Expr<String> storeId,
+        Expr<bool> isReturnable,
+        Expr<DateTime> createdAt,
+      })
+      set,
+    )
+    updateBuilder,
+  ) => $ForGeneratedCode.updateSingle<BottleReturnProductRow>(
+    this,
+    _$BottleReturnProductRow._$table,
+    (bottleReturnProductRow) => updateBuilder(
+      bottleReturnProductRow,
+      ({
+        Expr<String>? productId,
+        Expr<String>? storeId,
+        Expr<bool>? isReturnable,
+        Expr<DateTime>? createdAt,
+      }) => $ForGeneratedCode.buildUpdate<BottleReturnProductRow>([
+        productId,
+        storeId,
+        isReturnable,
+        createdAt,
+      ]),
+    ),
+  );
+
+  /// Delete the row (if any) in the `bottleReturnProducts` table matching this [QuerySingle].
+  ///
+  /// Returns a [DeleteSingle] statement on which `.execute()` must be called
+  /// for the row to be deleted. The resulting statement will **not**
+  /// fail, if there are no rows matching this query exists.
+  DeleteSingle<BottleReturnProductRow> delete() =>
+      $ForGeneratedCode.deleteSingle(this, _$BottleReturnProductRow._$table);
+}
+
+/// Extension methods for expressions on a row in the `bottleReturnProducts` table.
+extension ExpressionBottleReturnProductRowExt on Expr<BottleReturnProductRow> {
+  Expr<String> get productId =>
+      $ForGeneratedCode.field(this, 0, $ForGeneratedCode.text);
+
+  Expr<String> get storeId =>
+      $ForGeneratedCode.field(this, 1, $ForGeneratedCode.text);
+
+  Expr<bool> get isReturnable =>
+      $ForGeneratedCode.field(this, 2, $ForGeneratedCode.boolean);
+
+  Expr<DateTime> get createdAt =>
+      $ForGeneratedCode.field(this, 3, $ForGeneratedCode.dateTime);
+}
+
+extension ExpressionNullableBottleReturnProductRowExt
+    on Expr<BottleReturnProductRow?> {
+  Expr<String?> get productId =>
+      $ForGeneratedCode.field(this, 0, $ForGeneratedCode.text);
+
+  Expr<String?> get storeId =>
+      $ForGeneratedCode.field(this, 1, $ForGeneratedCode.text);
+
+  Expr<bool?> get isReturnable =>
+      $ForGeneratedCode.field(this, 2, $ForGeneratedCode.boolean);
+
+  Expr<DateTime?> get createdAt =>
+      $ForGeneratedCode.field(this, 3, $ForGeneratedCode.dateTime);
+
+  /// Check if the row is not `NULL`.
+  ///
+  /// This will check if _primary key_ fields in this row are `NULL`.
+  ///
+  /// If this is a reference lookup by subquery it might be more efficient
+  /// to check if the referencing field is `NULL`.
+  Expr<bool> isNotNull() => productId.isNotNull();
+
+  /// Check if the row is `NULL`.
+  ///
+  /// This will check if _primary key_ fields in this row are `NULL`.
+  ///
+  /// If this is a reference lookup by subquery it might be more efficient
+  /// to check if the referencing field is `NULL`.
+  Expr<bool> isNull() => isNotNull().not();
+}
+
+/// `Table<BottleReturnProductRow>` conflict targets for use with `.onConflict`.
+enum BottleReturnProductRowConflict {
+  /// Conflict with an existing row that has a matching primary key.
+  ///
+  /// Thus, the other row has matching values for:
+  /// `productId`.
+  primaryKey(['product_id']);
+
+  const BottleReturnProductRowConflict(this._fields);
+
+  final List<String> _fields;
+}
+
+extension InsertBottleReturnProductRowExt on Insert<BottleReturnProductRow> {
+  /// Build an `INSERT` statement with an `ON CONFLICT` clause.
+  ///
+  /// The [target] argument specifies the _conflict target_ to be
+  /// handled. The _conflict target_ is always a `UNIQUE` constraint or
+  /// `PRIMARY KEY` constraint.
+  ///
+  /// If a row to be inserted violates the _conflict target_ constraint,
+  /// then the conflict action is triggered:
+  /// * `.doNothing()` to skip insertion of the new row, and,
+  /// * `.update((bottleReturnProductRow, excluded, set) => set(...))` to
+  ///   update the conflicting row.
+  ///
+  /// If a row to be inserted violates a constraint other than the one
+  /// specified in _conflict target_ then the entire `INSERT` statement
+  /// will fail.
+  ///
+  /// This is equivalent to `INSERT ... ON CONFLICT (...)` in SQL.
+  InsertOnConflict<BottleReturnProductRow> onConflict(
+    BottleReturnProductRowConflict target,
+  ) => $ForGeneratedCode.insertOnConflict(this, target._fields);
+}
+
+extension InsertOnConflictBottleReturnProductRowExt
+    on InsertOnConflict<BottleReturnProductRow> {
+  /// Build an `INSERT` statement an [upsert-clause][1].
+  ///
+  /// When a row to be inserted violates the `UNIQUE` or `PRIMARY KEY`
+  /// constraint previously specified as _conflict target_, the existing
+  /// row is updated using the expressions defined with the
+  /// [updateBuilder]. The [updateBuilder] is given 3 parameters:
+  ///   * `bottleReturnProductRow` an [Expr] representing the existing row in
+  ///     the database,
+  ///   * `excluded` an [Expr] representing the row to be inserted in the
+  ///     database, and,
+  ///   * `set` a function to specify which fields should be updated and
+  ///     build the [UpdateSet].
+  ///
+  /// The result of the `set` function should always be immediately
+  /// returned from the [updateBuilder].
+  ///
+  /// **Example:** Insert a counter with `count = 2` or increment the
+  /// existing row, if a `PRIMARY KEY` conflict occurs.
+  /// ```dart
+  /// await db.counters.insertValue(
+  ///     name: 'my-counter', // primary key
+  ///     count: 2,
+  ///   )
+  ///   .onConflict(.primaryKey)
+  ///   .update((counter, excluded, set) => set(
+  ///     count: counter.count + excluded.count,
+  ///   ))
+  ///   .execute();
+  /// ```
+  ///
+  /// This is equivalent to
+  /// `INSERT ... ON CONFLICT (...) UPDATE SET ...` in SQL.
+  ///
+  /// > [!WARNING]
+  /// > The `updateBuilder` callback does not make the update, it builds
+  /// > the expressions for updating the rows. You should **never** invoke
+  /// > the `set` function more than once, and the result should always
+  /// > be returned immediately.
+  ///
+  /// [1]: https://www.sqlite.org/lang_upsert.html
+  Upsert<BottleReturnProductRow> update(
+    UpdateSet<BottleReturnProductRow> Function(
+      Expr<BottleReturnProductRow> bottleReturnProductRow,
+      Expr<BottleReturnProductRow> excluded,
+      UpdateSet<BottleReturnProductRow> Function({
+        Expr<String> productId,
+        Expr<String> storeId,
+        Expr<bool> isReturnable,
+        Expr<DateTime> createdAt,
+      })
+      set,
+    )
+    updateBuilder,
+  ) => $ForGeneratedCode.updateOnConflict<BottleReturnProductRow>(
+    this,
+    (bottleReturnProductRow, excluded) => updateBuilder(
+      bottleReturnProductRow,
+      excluded,
+      ({
+        Expr<String>? productId,
+        Expr<String>? storeId,
+        Expr<bool>? isReturnable,
+        Expr<DateTime>? createdAt,
+      }) => $ForGeneratedCode.buildUpdate<BottleReturnProductRow>([
+        productId,
+        storeId,
+        isReturnable,
+        createdAt,
+      ]),
+    ),
+  );
+}
+
+extension InsertSingleBottleReturnProductRowExt
+    on InsertSingle<BottleReturnProductRow> {
+  /// Build an `INSERT` statement with an `ON CONFLICT` clause.
+  ///
+  /// The [target] argument specifies the _conflict target_ to be
+  /// handled. The _conflict target_ is always a `UNIQUE` constraint or
+  /// `PRIMARY KEY` constraint.
+  ///
+  /// If a row to be inserted violates the _conflict target_ constraint,
+  /// then the conflict action is triggered:
+  /// * `.doNothing()` to skip insertion of the new row, and,
+  /// * `.update((bottleReturnProductRow, excluded, set) => set(...))` to
+  ///   update the conflicting row.
+  ///
+  /// If a row to be inserted violates a constraint other than the one
+  /// specified in _conflict target_ then the entire `INSERT` statement
+  /// will fail.
+  ///
+  /// This is equivalent to `INSERT ... ON CONFLICT (...)` in SQL.
+  InsertOnConflictSingle<BottleReturnProductRow> onConflict(
+    BottleReturnProductRowConflict target,
+  ) => $ForGeneratedCode.insertOnConflictSingle(this, target._fields);
+}
+
+extension InsertOnConflictSingleBottleReturnProductRowExt
+    on InsertOnConflictSingle<BottleReturnProductRow> {
+  /// Build an `INSERT` statement an [upsert-clause][1].
+  ///
+  /// When a row to be inserted violates the `UNIQUE` or `PRIMARY KEY`
+  /// constraint previously specified as _conflict target_, the existing
+  /// row is updated using the expressions defined with the
+  /// [updateBuilder]. The [updateBuilder] is given 3 parameters:
+  ///   * `bottleReturnProductRow` an [Expr] representing the existing row in
+  ///     the database,
+  ///   * `excluded` an [Expr] representing the row to be inserted in the
+  ///     database, and,
+  ///   * `set` a function to specify which fields should be updated and
+  ///     build the [UpdateSet].
+  ///
+  /// The result of the `set` function should always be immediately
+  /// returned from the [updateBuilder].
+  ///
+  /// **Example:** Insert a counter with `count = 2` or increment the
+  /// existing row, if a `PRIMARY KEY` conflict occurs.
+  /// ```dart
+  /// await db.counters.insertValue(
+  ///     name: 'my-counter', // primary key
+  ///     count: 2,
+  ///   )
+  ///   .onConflict(.primaryKey)
+  ///   .update((counter, excluded, set) => set(
+  ///     count: counter.count + excluded.count,
+  ///   ))
+  ///   .execute();
+  /// ```
+  ///
+  /// This is equivalent to
+  /// `INSERT ... ON CONFLICT (...) UPDATE SET ...` in SQL.
+  ///
+  /// > [!WARNING]
+  /// > The `updateBuilder` callback does not make the update, it builds
+  /// > the expressions for updating the rows. You should **never** invoke
+  /// > the `set` function more than once, and the result should always
+  /// > be returned immediately.
+  ///
+  /// [1]: https://www.sqlite.org/lang_upsert.html
+  UpsertSingle<BottleReturnProductRow> update(
+    UpdateSet<BottleReturnProductRow> Function(
+      Expr<BottleReturnProductRow> bottleReturnProductRow,
+      Expr<BottleReturnProductRow> excluded,
+      UpdateSet<BottleReturnProductRow> Function({
+        Expr<String> productId,
+        Expr<String> storeId,
+        Expr<bool> isReturnable,
+        Expr<DateTime> createdAt,
+      })
+      set,
+    )
+    updateBuilder,
+  ) => $ForGeneratedCode.updateOnConflictSingle<BottleReturnProductRow>(
+    this,
+    (bottleReturnProductRow, excluded) => updateBuilder(
+      bottleReturnProductRow,
+      excluded,
+      ({
+        Expr<String>? productId,
+        Expr<String>? storeId,
+        Expr<bool>? isReturnable,
+        Expr<DateTime>? createdAt,
+      }) => $ForGeneratedCode.buildUpdate<BottleReturnProductRow>([
+        productId,
+        storeId,
+        isReturnable,
+        createdAt,
+      ]),
+    ),
+  );
+}
+
+final class _$BottleQrTokenRow extends BottleQrTokenRow {
+  _$BottleQrTokenRow._(
+    this.id,
+    this.token,
+    this.merchantId,
+    this.storeId,
+    this.orderId,
+    this.productId,
+    this.rewardMode,
+    this.customerPhone,
+    this.status,
+    this.returnedAt,
+    this.returnedStoreId,
+    this.createdAt,
+  );
+
+  @override
+  final String id;
+
+  @override
+  final String token;
+
+  @override
+  final String merchantId;
+
+  @override
+  final String storeId;
+
+  @override
+  final String orderId;
+
+  @override
+  final String productId;
+
+  @override
+  final String rewardMode;
+
+  @override
+  final String? customerPhone;
+
+  @override
+  final String status;
+
+  @override
+  final DateTime? returnedAt;
+
+  @override
+  final String? returnedStoreId;
+
+  @override
+  final DateTime createdAt;
+
+  static final _$table = $ForGeneratedCode.tableDefinition(
+    tableName: 'bottle_qr_tokens',
+    columns: <String>[
+      'id',
+      'token',
+      'merchant_id',
+      'store_id',
+      'order_id',
+      'product_id',
+      'reward_mode',
+      'customer_phone',
+      'status',
+      'returned_at',
+      'returned_store_id',
+      'created_at',
+    ],
+    columnInfo: [
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: true,
+        defaultValue: (kind: 'raw', value: 'gen_random_uuid()'),
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: true,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: true,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: true,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: true,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: true,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: true,
+        defaultValue: (kind: 'raw', value: 'digital'),
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: false,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: true,
+        defaultValue: (kind: 'raw', value: 'active'),
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.dateTime,
+        isNotNull: false,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: false,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.dateTime,
+        isNotNull: true,
+        defaultValue: (kind: 'datetime', value: 'now'),
+        autoIncrement: false,
+        overrides: [],
+      ),
+    ],
+    primaryKey: <String>['id'],
+    unique: <List<String>>[
+      ['token'],
+    ],
+    foreignKeys: [
+      $ForGeneratedCode.foreignKeyDefinition(
+        name: 'null',
+        columns: ['merchant_id'],
+        referencedTable: 'merchants',
+        referencedColumns: ['id'],
+        onDelete: .cascade,
+        onUpdate: .noAction,
+      ),
+      $ForGeneratedCode.foreignKeyDefinition(
+        name: 'null',
+        columns: ['store_id'],
+        referencedTable: 'stores',
+        referencedColumns: ['id'],
+        onDelete: .cascade,
+        onUpdate: .noAction,
+      ),
+      $ForGeneratedCode.foreignKeyDefinition(
+        name: 'null',
+        columns: ['order_id'],
+        referencedTable: 'orders',
+        referencedColumns: ['id'],
+        onDelete: .cascade,
+        onUpdate: .noAction,
+      ),
+      $ForGeneratedCode.foreignKeyDefinition(
+        name: 'null',
+        columns: ['product_id'],
+        referencedTable: 'products',
+        referencedColumns: ['id'],
+        onDelete: .cascade,
+        onUpdate: .noAction,
+      ),
+    ],
+    indexes: [],
+    readRow: _$BottleQrTokenRow._$fromDatabase,
+  );
+
+  static BottleQrTokenRow? _$fromDatabase(RowReader row) {
+    final id = row.readString();
+    final token = row.readString();
+    final merchantId = row.readString();
+    final storeId = row.readString();
+    final orderId = row.readString();
+    final productId = row.readString();
+    final rewardMode = row.readString();
+    final customerPhone = row.readString();
+    final status = row.readString();
+    final returnedAt = row.readDateTime();
+    final returnedStoreId = row.readString();
+    final createdAt = row.readDateTime();
+    if (id == null &&
+        token == null &&
+        merchantId == null &&
+        storeId == null &&
+        orderId == null &&
+        productId == null &&
+        rewardMode == null &&
+        customerPhone == null &&
+        status == null &&
+        returnedAt == null &&
+        returnedStoreId == null &&
+        createdAt == null) {
+      return null;
+    }
+    return _$BottleQrTokenRow._(
+      id!,
+      token!,
+      merchantId!,
+      storeId!,
+      orderId!,
+      productId!,
+      rewardMode!,
+      customerPhone,
+      status!,
+      returnedAt,
+      returnedStoreId,
+      createdAt!,
+    );
+  }
+
+  @override
+  String toString() =>
+      'BottleQrTokenRow(id: "$id", token: "$token", merchantId: "$merchantId", storeId: "$storeId", orderId: "$orderId", productId: "$productId", rewardMode: "$rewardMode", customerPhone: "$customerPhone", status: "$status", returnedAt: "$returnedAt", returnedStoreId: "$returnedStoreId", createdAt: "$createdAt")';
+}
+
+/// Extension methods for table defined in [BottleQrTokenRow].
+extension TableBottleQrTokenRowExt on Table<BottleQrTokenRow> {
+  /// Insert row into the `bottleQrTokens` table.
+  ///
+  /// Returns a [InsertSingle] statement on which `.execute` must be
+  /// called for the row to be inserted.
+  InsertSingle<BottleQrTokenRow> insert({
+    Expr<String>? id,
+    required Expr<String> token,
+    required Expr<String> merchantId,
+    required Expr<String> storeId,
+    required Expr<String> orderId,
+    required Expr<String> productId,
+    Expr<String>? rewardMode,
+    Expr<String?>? customerPhone,
+    Expr<String>? status,
+    Expr<DateTime?>? returnedAt,
+    Expr<String?>? returnedStoreId,
+    Expr<DateTime>? createdAt,
+  }) => $ForGeneratedCode.insertInto(
+    table: this,
+    values: [
+      id,
+      token,
+      merchantId,
+      storeId,
+      orderId,
+      productId,
+      rewardMode,
+      customerPhone,
+      status,
+      returnedAt,
+      returnedStoreId,
+      createdAt,
+    ],
+  );
+
+  /// Insert row into the `bottleQrTokens` table.
+  ///
+  /// Returns a [InsertSingle] statement on which `.execute` must be
+  /// called for the row to be inserted.
+  InsertSingle<BottleQrTokenRow> insertValue({
+    String? id,
+    required String token,
+    required String merchantId,
+    required String storeId,
+    required String orderId,
+    required String productId,
+    String? rewardMode,
+    String? customerPhone,
+    String? status,
+    DateTime? returnedAt,
+    String? returnedStoreId,
+    DateTime? createdAt,
+  }) => $ForGeneratedCode.insertInto(
+    table: this,
+    values: [
+      id?.asExpr,
+      token.asExpr,
+      merchantId.asExpr,
+      storeId.asExpr,
+      orderId.asExpr,
+      productId.asExpr,
+      rewardMode?.asExpr,
+      customerPhone.asExpr,
+      status?.asExpr,
+      returnedAt.asExpr,
+      returnedStoreId.asExpr,
+      createdAt?.asExpr,
+    ],
+  );
+
+  /// Bulk insert rows into the `bottleQrTokens` table.
+  ///
+  /// This method takes an `Iterable<T>` and requires that you provide
+  /// a _mapping function_ from `T` to each column to be inserted.
+  ///
+  /// If a mapping function is omitted, the _default value_ will be
+  /// inserted, or `NULL` if column is nullable and as no default value.
+  /// To explicitely insert `NULL`, use a _mapping function_ that maps
+  /// `T` to `null`.
+  ///
+  /// > [!NOTE]
+  /// > This method aims utilize database specific bulk insertion logic
+  /// > to ensure good performance. Database adapters may pipeline bulk
+  /// > insertions through multiple statements inside a transaction.
+  ///
+  /// Returns a [Insert] statement on which `.execute` must be
+  /// called for the rows to be inserted.
+  Insert<BottleQrTokenRow> insertValuesMapped<T>(
+    Iterable<T> rows, {
+    String Function(T row)? id,
+    required String Function(T row) token,
+    required String Function(T row) merchantId,
+    required String Function(T row) storeId,
+    required String Function(T row) orderId,
+    required String Function(T row) productId,
+    String Function(T row)? rewardMode,
+    String? Function(T row)? customerPhone,
+    String Function(T row)? status,
+    DateTime? Function(T row)? returnedAt,
+    String? Function(T row)? returnedStoreId,
+    DateTime Function(T row)? createdAt,
+  }) => $ForGeneratedCode.insertValuesMapped(
+    table: this,
+    rows: rows,
+    mappings: [
+      id,
+      token,
+      merchantId,
+      storeId,
+      orderId,
+      productId,
+      rewardMode,
+      customerPhone,
+      status,
+      returnedAt,
+      returnedStoreId,
+      createdAt,
+    ],
+  );
+
+  /// Delete a single row from the `bottleQrTokens` table, specified by
+  /// _primary key_.
+  ///
+  /// Returns a [DeleteSingle] statement on which `.execute()` must be
+  /// called for the row to be deleted.
+  ///
+  /// To delete multiple rows, using `.where()` to filter which rows
+  /// should be deleted. If you wish to delete all rows, use
+  /// `.where((_) => toExpr(true)).delete()`.
+  DeleteSingle<BottleQrTokenRow> delete(String id) =>
+      $ForGeneratedCode.deleteSingle(byKey(id), _$BottleQrTokenRow._$table);
+}
+
+/// Extension methods for building queries against the `bottleQrTokens` table.
+extension QueryBottleQrTokenRowExt on Query<(Expr<BottleQrTokenRow>,)> {
+  /// Lookup a single row in `bottleQrTokens` table using the _primary key_.
+  ///
+  /// Returns a [QuerySingle] object, which returns at-most one row,
+  /// when `.fetch()` is called.
+  QuerySingle<(Expr<BottleQrTokenRow>,)> byKey(String id) =>
+      where((bottleQrTokenRow) => bottleQrTokenRow.id.equalsValue(id)).first;
+
+  /// Update all rows in the `bottleQrTokens` table matching this [Query].
+  ///
+  /// The changes to be applied to each row matching this [Query] are
+  /// defined using the [updateBuilder], which is given an [Expr]
+  /// representation of the row being updated and a `set` function to
+  /// specify which fields should be updated. The result of the `set`
+  /// function should always be returned from the `updateBuilder`.
+  ///
+  /// Returns an [Update] statement on which `.execute()` must be called
+  /// for the rows to be updated.
+  ///
+  /// **Example:** decrementing `1` from the `value` field for each row
+  /// where `value > 0`.
+  /// ```dart
+  /// await db.mytable
+  ///   .where((row) => row.value > toExpr(0))
+  ///   .update((row, set) => set(
+  ///     value: row.value - toExpr(1),
+  ///   ))
+  ///   .execute();
+  /// ```
+  ///
+  /// > [!WARNING]
+  /// > The `updateBuilder` callback does not make the update, it builds
+  /// > the expressions for updating the rows. You should **never** invoke
+  /// > the `set` function more than once, and the result should always
+  /// > be returned immediately.
+  Update<BottleQrTokenRow> update(
+    UpdateSet<BottleQrTokenRow> Function(
+      Expr<BottleQrTokenRow> bottleQrTokenRow,
+      UpdateSet<BottleQrTokenRow> Function({
+        Expr<String> id,
+        Expr<String> token,
+        Expr<String> merchantId,
+        Expr<String> storeId,
+        Expr<String> orderId,
+        Expr<String> productId,
+        Expr<String> rewardMode,
+        Expr<String?> customerPhone,
+        Expr<String> status,
+        Expr<DateTime?> returnedAt,
+        Expr<String?> returnedStoreId,
+        Expr<DateTime> createdAt,
+      })
+      set,
+    )
+    updateBuilder,
+  ) => $ForGeneratedCode.update<BottleQrTokenRow>(
+    this,
+    _$BottleQrTokenRow._$table,
+    (bottleQrTokenRow) => updateBuilder(
+      bottleQrTokenRow,
+      ({
+        Expr<String>? id,
+        Expr<String>? token,
+        Expr<String>? merchantId,
+        Expr<String>? storeId,
+        Expr<String>? orderId,
+        Expr<String>? productId,
+        Expr<String>? rewardMode,
+        Expr<String?>? customerPhone,
+        Expr<String>? status,
+        Expr<DateTime?>? returnedAt,
+        Expr<String?>? returnedStoreId,
+        Expr<DateTime>? createdAt,
+      }) => $ForGeneratedCode.buildUpdate<BottleQrTokenRow>([
+        id,
+        token,
+        merchantId,
+        storeId,
+        orderId,
+        productId,
+        rewardMode,
+        customerPhone,
+        status,
+        returnedAt,
+        returnedStoreId,
+        createdAt,
+      ]),
+    ),
+  );
+
+  /// Lookup a single row in `bottleQrTokens` table using the
+  /// `token` field
+  ///
+  /// We know that lookup by the `token` field returns
+  /// at-most one row because the [Unique] annotation in [BottleQrTokenRow].
+  ///
+  /// Returns a [QuerySingle] object, which returns at-most one row,
+  /// when `.fetch()` is called.
+  QuerySingle<(Expr<BottleQrTokenRow>,)> byToken(String token) => where(
+    (bottleQrTokenRow) => bottleQrTokenRow.token.equalsValue(token),
+  ).first;
+
+  /// Delete all rows in the `bottleQrTokens` table matching this [Query].
+  ///
+  /// Returns a [Delete] statement on which `.execute()` must be called
+  /// for the rows to be deleted.
+  Delete<BottleQrTokenRow> delete() =>
+      $ForGeneratedCode.delete(this, _$BottleQrTokenRow._$table);
+}
+
+/// Extension methods for building point queries against the `bottleQrTokens` table.
+extension QuerySingleBottleQrTokenRowExt
+    on QuerySingle<(Expr<BottleQrTokenRow>,)> {
+  /// Update the row (if any) in the `bottleQrTokens` table matching this
+  /// [QuerySingle].
+  ///
+  /// The changes to be applied to the row matching this [QuerySingle] are
+  /// defined using the [updateBuilder], which is given an [Expr]
+  /// representation of the row being updated and a `set` function to
+  /// specify which fields should be updated. The result of the `set`
+  /// function should always be returned from the `updateBuilder`.
+  ///
+  /// Returns an [UpdateSingle] statement on which `.execute()` must be
+  /// called for the row to be updated. The resulting statement will
+  /// **not** fail, if there are no rows matching this query exists.
+  ///
+  /// **Example:** decrementing `1` from the `value` field the row with
+  /// `id = 1`.
+  /// ```dart
+  /// await db.mytable
+  ///   .byKey(1)
+  ///   .update((row, set) => set(
+  ///     value: row.value - toExpr(1),
+  ///   ))
+  ///   .execute();
+  /// ```
+  ///
+  /// > [!WARNING]
+  /// > The `updateBuilder` callback does not make the update, it builds
+  /// > the expressions for updating the rows. You should **never** invoke
+  /// > the `set` function more than once, and the result should always
+  /// > be returned immediately.
+  UpdateSingle<BottleQrTokenRow> update(
+    UpdateSet<BottleQrTokenRow> Function(
+      Expr<BottleQrTokenRow> bottleQrTokenRow,
+      UpdateSet<BottleQrTokenRow> Function({
+        Expr<String> id,
+        Expr<String> token,
+        Expr<String> merchantId,
+        Expr<String> storeId,
+        Expr<String> orderId,
+        Expr<String> productId,
+        Expr<String> rewardMode,
+        Expr<String?> customerPhone,
+        Expr<String> status,
+        Expr<DateTime?> returnedAt,
+        Expr<String?> returnedStoreId,
+        Expr<DateTime> createdAt,
+      })
+      set,
+    )
+    updateBuilder,
+  ) => $ForGeneratedCode.updateSingle<BottleQrTokenRow>(
+    this,
+    _$BottleQrTokenRow._$table,
+    (bottleQrTokenRow) => updateBuilder(
+      bottleQrTokenRow,
+      ({
+        Expr<String>? id,
+        Expr<String>? token,
+        Expr<String>? merchantId,
+        Expr<String>? storeId,
+        Expr<String>? orderId,
+        Expr<String>? productId,
+        Expr<String>? rewardMode,
+        Expr<String?>? customerPhone,
+        Expr<String>? status,
+        Expr<DateTime?>? returnedAt,
+        Expr<String?>? returnedStoreId,
+        Expr<DateTime>? createdAt,
+      }) => $ForGeneratedCode.buildUpdate<BottleQrTokenRow>([
+        id,
+        token,
+        merchantId,
+        storeId,
+        orderId,
+        productId,
+        rewardMode,
+        customerPhone,
+        status,
+        returnedAt,
+        returnedStoreId,
+        createdAt,
+      ]),
+    ),
+  );
+
+  /// Delete the row (if any) in the `bottleQrTokens` table matching this [QuerySingle].
+  ///
+  /// Returns a [DeleteSingle] statement on which `.execute()` must be called
+  /// for the row to be deleted. The resulting statement will **not**
+  /// fail, if there are no rows matching this query exists.
+  DeleteSingle<BottleQrTokenRow> delete() =>
+      $ForGeneratedCode.deleteSingle(this, _$BottleQrTokenRow._$table);
+}
+
+/// Extension methods for expressions on a row in the `bottleQrTokens` table.
+extension ExpressionBottleQrTokenRowExt on Expr<BottleQrTokenRow> {
+  Expr<String> get id =>
+      $ForGeneratedCode.field(this, 0, $ForGeneratedCode.text);
+
+  Expr<String> get token =>
+      $ForGeneratedCode.field(this, 1, $ForGeneratedCode.text);
+
+  Expr<String> get merchantId =>
+      $ForGeneratedCode.field(this, 2, $ForGeneratedCode.text);
+
+  Expr<String> get storeId =>
+      $ForGeneratedCode.field(this, 3, $ForGeneratedCode.text);
+
+  Expr<String> get orderId =>
+      $ForGeneratedCode.field(this, 4, $ForGeneratedCode.text);
+
+  Expr<String> get productId =>
+      $ForGeneratedCode.field(this, 5, $ForGeneratedCode.text);
+
+  Expr<String> get rewardMode =>
+      $ForGeneratedCode.field(this, 6, $ForGeneratedCode.text);
+
+  Expr<String?> get customerPhone =>
+      $ForGeneratedCode.field(this, 7, $ForGeneratedCode.text);
+
+  Expr<String> get status =>
+      $ForGeneratedCode.field(this, 8, $ForGeneratedCode.text);
+
+  Expr<DateTime?> get returnedAt =>
+      $ForGeneratedCode.field(this, 9, $ForGeneratedCode.dateTime);
+
+  Expr<String?> get returnedStoreId =>
+      $ForGeneratedCode.field(this, 10, $ForGeneratedCode.text);
+
+  Expr<DateTime> get createdAt =>
+      $ForGeneratedCode.field(this, 11, $ForGeneratedCode.dateTime);
+}
+
+extension ExpressionNullableBottleQrTokenRowExt on Expr<BottleQrTokenRow?> {
+  Expr<String?> get id =>
+      $ForGeneratedCode.field(this, 0, $ForGeneratedCode.text);
+
+  Expr<String?> get token =>
+      $ForGeneratedCode.field(this, 1, $ForGeneratedCode.text);
+
+  Expr<String?> get merchantId =>
+      $ForGeneratedCode.field(this, 2, $ForGeneratedCode.text);
+
+  Expr<String?> get storeId =>
+      $ForGeneratedCode.field(this, 3, $ForGeneratedCode.text);
+
+  Expr<String?> get orderId =>
+      $ForGeneratedCode.field(this, 4, $ForGeneratedCode.text);
+
+  Expr<String?> get productId =>
+      $ForGeneratedCode.field(this, 5, $ForGeneratedCode.text);
+
+  Expr<String?> get rewardMode =>
+      $ForGeneratedCode.field(this, 6, $ForGeneratedCode.text);
+
+  Expr<String?> get customerPhone =>
+      $ForGeneratedCode.field(this, 7, $ForGeneratedCode.text);
+
+  Expr<String?> get status =>
+      $ForGeneratedCode.field(this, 8, $ForGeneratedCode.text);
+
+  Expr<DateTime?> get returnedAt =>
+      $ForGeneratedCode.field(this, 9, $ForGeneratedCode.dateTime);
+
+  Expr<String?> get returnedStoreId =>
+      $ForGeneratedCode.field(this, 10, $ForGeneratedCode.text);
+
+  Expr<DateTime?> get createdAt =>
+      $ForGeneratedCode.field(this, 11, $ForGeneratedCode.dateTime);
+
+  /// Check if the row is not `NULL`.
+  ///
+  /// This will check if _primary key_ fields in this row are `NULL`.
+  ///
+  /// If this is a reference lookup by subquery it might be more efficient
+  /// to check if the referencing field is `NULL`.
+  Expr<bool> isNotNull() => id.isNotNull();
+
+  /// Check if the row is `NULL`.
+  ///
+  /// This will check if _primary key_ fields in this row are `NULL`.
+  ///
+  /// If this is a reference lookup by subquery it might be more efficient
+  /// to check if the referencing field is `NULL`.
+  Expr<bool> isNull() => isNotNull().not();
+}
+
+/// `Table<BottleQrTokenRow>` conflict targets for use with `.onConflict`.
+enum BottleQrTokenRowConflict {
+  /// Conflict with an existing row that has a matching primary key.
+  ///
+  /// Thus, the other row has matching values for:
+  /// `id`.
+  primaryKey(['id']),
+
+  /// `token` conflict.
+  ///
+  /// Due to violation of the `UNIQUE` constraint on
+  /// `token`.
+  ///
+  /// Thus, the conflicting row has matching values for these fields.
+  token(['token']);
+
+  const BottleQrTokenRowConflict(this._fields);
+
+  final List<String> _fields;
+}
+
+extension InsertBottleQrTokenRowExt on Insert<BottleQrTokenRow> {
+  /// Build an `INSERT` statement with an `ON CONFLICT` clause.
+  ///
+  /// The [target] argument specifies the _conflict target_ to be
+  /// handled. The _conflict target_ is always a `UNIQUE` constraint or
+  /// `PRIMARY KEY` constraint.
+  ///
+  /// If a row to be inserted violates the _conflict target_ constraint,
+  /// then the conflict action is triggered:
+  /// * `.doNothing()` to skip insertion of the new row, and,
+  /// * `.update((bottleQrTokenRow, excluded, set) => set(...))` to
+  ///   update the conflicting row.
+  ///
+  /// If a row to be inserted violates a constraint other than the one
+  /// specified in _conflict target_ then the entire `INSERT` statement
+  /// will fail.
+  ///
+  /// This is equivalent to `INSERT ... ON CONFLICT (...)` in SQL.
+  InsertOnConflict<BottleQrTokenRow> onConflict(
+    BottleQrTokenRowConflict target,
+  ) => $ForGeneratedCode.insertOnConflict(this, target._fields);
+}
+
+extension InsertOnConflictBottleQrTokenRowExt
+    on InsertOnConflict<BottleQrTokenRow> {
+  /// Build an `INSERT` statement an [upsert-clause][1].
+  ///
+  /// When a row to be inserted violates the `UNIQUE` or `PRIMARY KEY`
+  /// constraint previously specified as _conflict target_, the existing
+  /// row is updated using the expressions defined with the
+  /// [updateBuilder]. The [updateBuilder] is given 3 parameters:
+  ///   * `bottleQrTokenRow` an [Expr] representing the existing row in
+  ///     the database,
+  ///   * `excluded` an [Expr] representing the row to be inserted in the
+  ///     database, and,
+  ///   * `set` a function to specify which fields should be updated and
+  ///     build the [UpdateSet].
+  ///
+  /// The result of the `set` function should always be immediately
+  /// returned from the [updateBuilder].
+  ///
+  /// **Example:** Insert a counter with `count = 2` or increment the
+  /// existing row, if a `PRIMARY KEY` conflict occurs.
+  /// ```dart
+  /// await db.counters.insertValue(
+  ///     name: 'my-counter', // primary key
+  ///     count: 2,
+  ///   )
+  ///   .onConflict(.primaryKey)
+  ///   .update((counter, excluded, set) => set(
+  ///     count: counter.count + excluded.count,
+  ///   ))
+  ///   .execute();
+  /// ```
+  ///
+  /// This is equivalent to
+  /// `INSERT ... ON CONFLICT (...) UPDATE SET ...` in SQL.
+  ///
+  /// > [!WARNING]
+  /// > The `updateBuilder` callback does not make the update, it builds
+  /// > the expressions for updating the rows. You should **never** invoke
+  /// > the `set` function more than once, and the result should always
+  /// > be returned immediately.
+  ///
+  /// [1]: https://www.sqlite.org/lang_upsert.html
+  Upsert<BottleQrTokenRow> update(
+    UpdateSet<BottleQrTokenRow> Function(
+      Expr<BottleQrTokenRow> bottleQrTokenRow,
+      Expr<BottleQrTokenRow> excluded,
+      UpdateSet<BottleQrTokenRow> Function({
+        Expr<String> id,
+        Expr<String> token,
+        Expr<String> merchantId,
+        Expr<String> storeId,
+        Expr<String> orderId,
+        Expr<String> productId,
+        Expr<String> rewardMode,
+        Expr<String?> customerPhone,
+        Expr<String> status,
+        Expr<DateTime?> returnedAt,
+        Expr<String?> returnedStoreId,
+        Expr<DateTime> createdAt,
+      })
+      set,
+    )
+    updateBuilder,
+  ) => $ForGeneratedCode.updateOnConflict<BottleQrTokenRow>(
+    this,
+    (bottleQrTokenRow, excluded) => updateBuilder(
+      bottleQrTokenRow,
+      excluded,
+      ({
+        Expr<String>? id,
+        Expr<String>? token,
+        Expr<String>? merchantId,
+        Expr<String>? storeId,
+        Expr<String>? orderId,
+        Expr<String>? productId,
+        Expr<String>? rewardMode,
+        Expr<String?>? customerPhone,
+        Expr<String>? status,
+        Expr<DateTime?>? returnedAt,
+        Expr<String?>? returnedStoreId,
+        Expr<DateTime>? createdAt,
+      }) => $ForGeneratedCode.buildUpdate<BottleQrTokenRow>([
+        id,
+        token,
+        merchantId,
+        storeId,
+        orderId,
+        productId,
+        rewardMode,
+        customerPhone,
+        status,
+        returnedAt,
+        returnedStoreId,
+        createdAt,
+      ]),
+    ),
+  );
+}
+
+extension InsertSingleBottleQrTokenRowExt on InsertSingle<BottleQrTokenRow> {
+  /// Build an `INSERT` statement with an `ON CONFLICT` clause.
+  ///
+  /// The [target] argument specifies the _conflict target_ to be
+  /// handled. The _conflict target_ is always a `UNIQUE` constraint or
+  /// `PRIMARY KEY` constraint.
+  ///
+  /// If a row to be inserted violates the _conflict target_ constraint,
+  /// then the conflict action is triggered:
+  /// * `.doNothing()` to skip insertion of the new row, and,
+  /// * `.update((bottleQrTokenRow, excluded, set) => set(...))` to
+  ///   update the conflicting row.
+  ///
+  /// If a row to be inserted violates a constraint other than the one
+  /// specified in _conflict target_ then the entire `INSERT` statement
+  /// will fail.
+  ///
+  /// This is equivalent to `INSERT ... ON CONFLICT (...)` in SQL.
+  InsertOnConflictSingle<BottleQrTokenRow> onConflict(
+    BottleQrTokenRowConflict target,
+  ) => $ForGeneratedCode.insertOnConflictSingle(this, target._fields);
+}
+
+extension InsertOnConflictSingleBottleQrTokenRowExt
+    on InsertOnConflictSingle<BottleQrTokenRow> {
+  /// Build an `INSERT` statement an [upsert-clause][1].
+  ///
+  /// When a row to be inserted violates the `UNIQUE` or `PRIMARY KEY`
+  /// constraint previously specified as _conflict target_, the existing
+  /// row is updated using the expressions defined with the
+  /// [updateBuilder]. The [updateBuilder] is given 3 parameters:
+  ///   * `bottleQrTokenRow` an [Expr] representing the existing row in
+  ///     the database,
+  ///   * `excluded` an [Expr] representing the row to be inserted in the
+  ///     database, and,
+  ///   * `set` a function to specify which fields should be updated and
+  ///     build the [UpdateSet].
+  ///
+  /// The result of the `set` function should always be immediately
+  /// returned from the [updateBuilder].
+  ///
+  /// **Example:** Insert a counter with `count = 2` or increment the
+  /// existing row, if a `PRIMARY KEY` conflict occurs.
+  /// ```dart
+  /// await db.counters.insertValue(
+  ///     name: 'my-counter', // primary key
+  ///     count: 2,
+  ///   )
+  ///   .onConflict(.primaryKey)
+  ///   .update((counter, excluded, set) => set(
+  ///     count: counter.count + excluded.count,
+  ///   ))
+  ///   .execute();
+  /// ```
+  ///
+  /// This is equivalent to
+  /// `INSERT ... ON CONFLICT (...) UPDATE SET ...` in SQL.
+  ///
+  /// > [!WARNING]
+  /// > The `updateBuilder` callback does not make the update, it builds
+  /// > the expressions for updating the rows. You should **never** invoke
+  /// > the `set` function more than once, and the result should always
+  /// > be returned immediately.
+  ///
+  /// [1]: https://www.sqlite.org/lang_upsert.html
+  UpsertSingle<BottleQrTokenRow> update(
+    UpdateSet<BottleQrTokenRow> Function(
+      Expr<BottleQrTokenRow> bottleQrTokenRow,
+      Expr<BottleQrTokenRow> excluded,
+      UpdateSet<BottleQrTokenRow> Function({
+        Expr<String> id,
+        Expr<String> token,
+        Expr<String> merchantId,
+        Expr<String> storeId,
+        Expr<String> orderId,
+        Expr<String> productId,
+        Expr<String> rewardMode,
+        Expr<String?> customerPhone,
+        Expr<String> status,
+        Expr<DateTime?> returnedAt,
+        Expr<String?> returnedStoreId,
+        Expr<DateTime> createdAt,
+      })
+      set,
+    )
+    updateBuilder,
+  ) => $ForGeneratedCode.updateOnConflictSingle<BottleQrTokenRow>(
+    this,
+    (bottleQrTokenRow, excluded) => updateBuilder(
+      bottleQrTokenRow,
+      excluded,
+      ({
+        Expr<String>? id,
+        Expr<String>? token,
+        Expr<String>? merchantId,
+        Expr<String>? storeId,
+        Expr<String>? orderId,
+        Expr<String>? productId,
+        Expr<String>? rewardMode,
+        Expr<String?>? customerPhone,
+        Expr<String>? status,
+        Expr<DateTime?>? returnedAt,
+        Expr<String?>? returnedStoreId,
+        Expr<DateTime>? createdAt,
+      }) => $ForGeneratedCode.buildUpdate<BottleQrTokenRow>([
+        id,
+        token,
+        merchantId,
+        storeId,
+        orderId,
+        productId,
+        rewardMode,
+        customerPhone,
+        status,
+        returnedAt,
+        returnedStoreId,
+        createdAt,
+      ]),
+    ),
+  );
+}
+
+final class _$BottleCreditRow extends BottleCreditRow {
+  _$BottleCreditRow._(
+    this.id,
+    this.merchantId,
+    this.customerPhone,
+    this.balance,
+    this.createdAt,
+    this.updatedAt,
+  );
+
+  @override
+  final String id;
+
+  @override
+  final String merchantId;
+
+  @override
+  final String customerPhone;
+
+  @override
+  final int balance;
+
+  @override
+  final DateTime createdAt;
+
+  @override
+  final DateTime updatedAt;
+
+  static final _$table = $ForGeneratedCode.tableDefinition(
+    tableName: 'bottle_credits',
+    columns: <String>[
+      'id',
+      'merchant_id',
+      'customer_phone',
+      'balance',
+      'created_at',
+      'updated_at',
+    ],
+    columnInfo: [
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: true,
+        defaultValue: (kind: 'raw', value: 'gen_random_uuid()'),
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: true,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: true,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.integer,
+        isNotNull: true,
+        defaultValue: (kind: 'raw', value: 0),
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.dateTime,
+        isNotNull: true,
+        defaultValue: (kind: 'datetime', value: 'now'),
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.dateTime,
+        isNotNull: true,
+        defaultValue: (kind: 'datetime', value: 'now'),
+        autoIncrement: false,
+        overrides: [],
+      ),
+    ],
+    primaryKey: <String>['id'],
+    unique: <List<String>>[
+      ['merchant_id', 'customer_phone'],
+    ],
+    foreignKeys: [
+      $ForGeneratedCode.foreignKeyDefinition(
+        name: 'null',
+        columns: ['merchant_id'],
+        referencedTable: 'merchants',
+        referencedColumns: ['id'],
+        onDelete: .cascade,
+        onUpdate: .noAction,
+      ),
+    ],
+    indexes: [],
+    readRow: _$BottleCreditRow._$fromDatabase,
+  );
+
+  static BottleCreditRow? _$fromDatabase(RowReader row) {
+    final id = row.readString();
+    final merchantId = row.readString();
+    final customerPhone = row.readString();
+    final balance = row.readInt();
+    final createdAt = row.readDateTime();
+    final updatedAt = row.readDateTime();
+    if (id == null &&
+        merchantId == null &&
+        customerPhone == null &&
+        balance == null &&
+        createdAt == null &&
+        updatedAt == null) {
+      return null;
+    }
+    return _$BottleCreditRow._(
+      id!,
+      merchantId!,
+      customerPhone!,
+      balance!,
+      createdAt!,
+      updatedAt!,
+    );
+  }
+
+  @override
+  String toString() =>
+      'BottleCreditRow(id: "$id", merchantId: "$merchantId", customerPhone: "$customerPhone", balance: "$balance", createdAt: "$createdAt", updatedAt: "$updatedAt")';
+}
+
+/// Extension methods for table defined in [BottleCreditRow].
+extension TableBottleCreditRowExt on Table<BottleCreditRow> {
+  /// Insert row into the `bottleCredits` table.
+  ///
+  /// Returns a [InsertSingle] statement on which `.execute` must be
+  /// called for the row to be inserted.
+  InsertSingle<BottleCreditRow> insert({
+    Expr<String>? id,
+    required Expr<String> merchantId,
+    required Expr<String> customerPhone,
+    Expr<int>? balance,
+    Expr<DateTime>? createdAt,
+    Expr<DateTime>? updatedAt,
+  }) => $ForGeneratedCode.insertInto(
+    table: this,
+    values: [id, merchantId, customerPhone, balance, createdAt, updatedAt],
+  );
+
+  /// Insert row into the `bottleCredits` table.
+  ///
+  /// Returns a [InsertSingle] statement on which `.execute` must be
+  /// called for the row to be inserted.
+  InsertSingle<BottleCreditRow> insertValue({
+    String? id,
+    required String merchantId,
+    required String customerPhone,
+    int? balance,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) => $ForGeneratedCode.insertInto(
+    table: this,
+    values: [
+      id?.asExpr,
+      merchantId.asExpr,
+      customerPhone.asExpr,
+      balance?.asExpr,
+      createdAt?.asExpr,
+      updatedAt?.asExpr,
+    ],
+  );
+
+  /// Bulk insert rows into the `bottleCredits` table.
+  ///
+  /// This method takes an `Iterable<T>` and requires that you provide
+  /// a _mapping function_ from `T` to each column to be inserted.
+  ///
+  /// If a mapping function is omitted, the _default value_ will be
+  /// inserted, or `NULL` if column is nullable and as no default value.
+  /// To explicitely insert `NULL`, use a _mapping function_ that maps
+  /// `T` to `null`.
+  ///
+  /// > [!NOTE]
+  /// > This method aims utilize database specific bulk insertion logic
+  /// > to ensure good performance. Database adapters may pipeline bulk
+  /// > insertions through multiple statements inside a transaction.
+  ///
+  /// Returns a [Insert] statement on which `.execute` must be
+  /// called for the rows to be inserted.
+  Insert<BottleCreditRow> insertValuesMapped<T>(
+    Iterable<T> rows, {
+    String Function(T row)? id,
+    required String Function(T row) merchantId,
+    required String Function(T row) customerPhone,
+    int Function(T row)? balance,
+    DateTime Function(T row)? createdAt,
+    DateTime Function(T row)? updatedAt,
+  }) => $ForGeneratedCode.insertValuesMapped(
+    table: this,
+    rows: rows,
+    mappings: [id, merchantId, customerPhone, balance, createdAt, updatedAt],
+  );
+
+  /// Delete a single row from the `bottleCredits` table, specified by
+  /// _primary key_.
+  ///
+  /// Returns a [DeleteSingle] statement on which `.execute()` must be
+  /// called for the row to be deleted.
+  ///
+  /// To delete multiple rows, using `.where()` to filter which rows
+  /// should be deleted. If you wish to delete all rows, use
+  /// `.where((_) => toExpr(true)).delete()`.
+  DeleteSingle<BottleCreditRow> delete(String id) =>
+      $ForGeneratedCode.deleteSingle(byKey(id), _$BottleCreditRow._$table);
+}
+
+/// Extension methods for building queries against the `bottleCredits` table.
+extension QueryBottleCreditRowExt on Query<(Expr<BottleCreditRow>,)> {
+  /// Lookup a single row in `bottleCredits` table using the _primary key_.
+  ///
+  /// Returns a [QuerySingle] object, which returns at-most one row,
+  /// when `.fetch()` is called.
+  QuerySingle<(Expr<BottleCreditRow>,)> byKey(String id) =>
+      where((bottleCreditRow) => bottleCreditRow.id.equalsValue(id)).first;
+
+  /// Update all rows in the `bottleCredits` table matching this [Query].
+  ///
+  /// The changes to be applied to each row matching this [Query] are
+  /// defined using the [updateBuilder], which is given an [Expr]
+  /// representation of the row being updated and a `set` function to
+  /// specify which fields should be updated. The result of the `set`
+  /// function should always be returned from the `updateBuilder`.
+  ///
+  /// Returns an [Update] statement on which `.execute()` must be called
+  /// for the rows to be updated.
+  ///
+  /// **Example:** decrementing `1` from the `value` field for each row
+  /// where `value > 0`.
+  /// ```dart
+  /// await db.mytable
+  ///   .where((row) => row.value > toExpr(0))
+  ///   .update((row, set) => set(
+  ///     value: row.value - toExpr(1),
+  ///   ))
+  ///   .execute();
+  /// ```
+  ///
+  /// > [!WARNING]
+  /// > The `updateBuilder` callback does not make the update, it builds
+  /// > the expressions for updating the rows. You should **never** invoke
+  /// > the `set` function more than once, and the result should always
+  /// > be returned immediately.
+  Update<BottleCreditRow> update(
+    UpdateSet<BottleCreditRow> Function(
+      Expr<BottleCreditRow> bottleCreditRow,
+      UpdateSet<BottleCreditRow> Function({
+        Expr<String> id,
+        Expr<String> merchantId,
+        Expr<String> customerPhone,
+        Expr<int> balance,
+        Expr<DateTime> createdAt,
+        Expr<DateTime> updatedAt,
+      })
+      set,
+    )
+    updateBuilder,
+  ) => $ForGeneratedCode.update<BottleCreditRow>(
+    this,
+    _$BottleCreditRow._$table,
+    (bottleCreditRow) => updateBuilder(
+      bottleCreditRow,
+      ({
+        Expr<String>? id,
+        Expr<String>? merchantId,
+        Expr<String>? customerPhone,
+        Expr<int>? balance,
+        Expr<DateTime>? createdAt,
+        Expr<DateTime>? updatedAt,
+      }) => $ForGeneratedCode.buildUpdate<BottleCreditRow>([
+        id,
+        merchantId,
+        customerPhone,
+        balance,
+        createdAt,
+        updatedAt,
+      ]),
+    ),
+  );
+
+  /// Lookup a single row in `bottleCredits` table using the
+  /// `merchantId`, `customerPhone` fields
+  ///
+  /// We know that lookup by the `merchantId`, `customerPhone` fields returns
+  /// at-most one row because the [Unique] annotation in [BottleCreditRow].
+  ///
+  /// Returns a [QuerySingle] object, which returns at-most one row,
+  /// when `.fetch()` is called.
+  QuerySingle<(Expr<BottleCreditRow>,)> byUniqueMerchantCustomerPhoneCredit(
+    String merchantId,
+    String customerPhone,
+  ) => where(
+    (bottleCreditRow) =>
+        bottleCreditRow.merchantId.equalsValue(merchantId) &
+        bottleCreditRow.customerPhone.equalsValue(customerPhone),
+  ).first;
+
+  /// Delete all rows in the `bottleCredits` table matching this [Query].
+  ///
+  /// Returns a [Delete] statement on which `.execute()` must be called
+  /// for the rows to be deleted.
+  Delete<BottleCreditRow> delete() =>
+      $ForGeneratedCode.delete(this, _$BottleCreditRow._$table);
+}
+
+/// Extension methods for building point queries against the `bottleCredits` table.
+extension QuerySingleBottleCreditRowExt
+    on QuerySingle<(Expr<BottleCreditRow>,)> {
+  /// Update the row (if any) in the `bottleCredits` table matching this
+  /// [QuerySingle].
+  ///
+  /// The changes to be applied to the row matching this [QuerySingle] are
+  /// defined using the [updateBuilder], which is given an [Expr]
+  /// representation of the row being updated and a `set` function to
+  /// specify which fields should be updated. The result of the `set`
+  /// function should always be returned from the `updateBuilder`.
+  ///
+  /// Returns an [UpdateSingle] statement on which `.execute()` must be
+  /// called for the row to be updated. The resulting statement will
+  /// **not** fail, if there are no rows matching this query exists.
+  ///
+  /// **Example:** decrementing `1` from the `value` field the row with
+  /// `id = 1`.
+  /// ```dart
+  /// await db.mytable
+  ///   .byKey(1)
+  ///   .update((row, set) => set(
+  ///     value: row.value - toExpr(1),
+  ///   ))
+  ///   .execute();
+  /// ```
+  ///
+  /// > [!WARNING]
+  /// > The `updateBuilder` callback does not make the update, it builds
+  /// > the expressions for updating the rows. You should **never** invoke
+  /// > the `set` function more than once, and the result should always
+  /// > be returned immediately.
+  UpdateSingle<BottleCreditRow> update(
+    UpdateSet<BottleCreditRow> Function(
+      Expr<BottleCreditRow> bottleCreditRow,
+      UpdateSet<BottleCreditRow> Function({
+        Expr<String> id,
+        Expr<String> merchantId,
+        Expr<String> customerPhone,
+        Expr<int> balance,
+        Expr<DateTime> createdAt,
+        Expr<DateTime> updatedAt,
+      })
+      set,
+    )
+    updateBuilder,
+  ) => $ForGeneratedCode.updateSingle<BottleCreditRow>(
+    this,
+    _$BottleCreditRow._$table,
+    (bottleCreditRow) => updateBuilder(
+      bottleCreditRow,
+      ({
+        Expr<String>? id,
+        Expr<String>? merchantId,
+        Expr<String>? customerPhone,
+        Expr<int>? balance,
+        Expr<DateTime>? createdAt,
+        Expr<DateTime>? updatedAt,
+      }) => $ForGeneratedCode.buildUpdate<BottleCreditRow>([
+        id,
+        merchantId,
+        customerPhone,
+        balance,
+        createdAt,
+        updatedAt,
+      ]),
+    ),
+  );
+
+  /// Delete the row (if any) in the `bottleCredits` table matching this [QuerySingle].
+  ///
+  /// Returns a [DeleteSingle] statement on which `.execute()` must be called
+  /// for the row to be deleted. The resulting statement will **not**
+  /// fail, if there are no rows matching this query exists.
+  DeleteSingle<BottleCreditRow> delete() =>
+      $ForGeneratedCode.deleteSingle(this, _$BottleCreditRow._$table);
+}
+
+/// Extension methods for expressions on a row in the `bottleCredits` table.
+extension ExpressionBottleCreditRowExt on Expr<BottleCreditRow> {
+  Expr<String> get id =>
+      $ForGeneratedCode.field(this, 0, $ForGeneratedCode.text);
+
+  Expr<String> get merchantId =>
+      $ForGeneratedCode.field(this, 1, $ForGeneratedCode.text);
+
+  Expr<String> get customerPhone =>
+      $ForGeneratedCode.field(this, 2, $ForGeneratedCode.text);
+
+  Expr<int> get balance =>
+      $ForGeneratedCode.field(this, 3, $ForGeneratedCode.integer);
+
+  Expr<DateTime> get createdAt =>
+      $ForGeneratedCode.field(this, 4, $ForGeneratedCode.dateTime);
+
+  Expr<DateTime> get updatedAt =>
+      $ForGeneratedCode.field(this, 5, $ForGeneratedCode.dateTime);
+}
+
+extension ExpressionNullableBottleCreditRowExt on Expr<BottleCreditRow?> {
+  Expr<String?> get id =>
+      $ForGeneratedCode.field(this, 0, $ForGeneratedCode.text);
+
+  Expr<String?> get merchantId =>
+      $ForGeneratedCode.field(this, 1, $ForGeneratedCode.text);
+
+  Expr<String?> get customerPhone =>
+      $ForGeneratedCode.field(this, 2, $ForGeneratedCode.text);
+
+  Expr<int?> get balance =>
+      $ForGeneratedCode.field(this, 3, $ForGeneratedCode.integer);
+
+  Expr<DateTime?> get createdAt =>
+      $ForGeneratedCode.field(this, 4, $ForGeneratedCode.dateTime);
+
+  Expr<DateTime?> get updatedAt =>
+      $ForGeneratedCode.field(this, 5, $ForGeneratedCode.dateTime);
+
+  /// Check if the row is not `NULL`.
+  ///
+  /// This will check if _primary key_ fields in this row are `NULL`.
+  ///
+  /// If this is a reference lookup by subquery it might be more efficient
+  /// to check if the referencing field is `NULL`.
+  Expr<bool> isNotNull() => id.isNotNull();
+
+  /// Check if the row is `NULL`.
+  ///
+  /// This will check if _primary key_ fields in this row are `NULL`.
+  ///
+  /// If this is a reference lookup by subquery it might be more efficient
+  /// to check if the referencing field is `NULL`.
+  Expr<bool> isNull() => isNotNull().not();
+}
+
+/// `Table<BottleCreditRow>` conflict targets for use with `.onConflict`.
+enum BottleCreditRowConflict {
+  /// Conflict with an existing row that has a matching primary key.
+  ///
+  /// Thus, the other row has matching values for:
+  /// `id`.
+  primaryKey(['id']),
+
+  /// `merchantId`, `customerPhone` conflict.
+  ///
+  /// Due to violation of the `UNIQUE` constraint on
+  /// `merchantId`, `customerPhone`.
+  ///
+  /// Thus, the conflicting row has matching values for these fields.
+  uniqueMerchantCustomerPhoneCredit(['merchant_id', 'customer_phone']);
+
+  const BottleCreditRowConflict(this._fields);
+
+  final List<String> _fields;
+}
+
+extension InsertBottleCreditRowExt on Insert<BottleCreditRow> {
+  /// Build an `INSERT` statement with an `ON CONFLICT` clause.
+  ///
+  /// The [target] argument specifies the _conflict target_ to be
+  /// handled. The _conflict target_ is always a `UNIQUE` constraint or
+  /// `PRIMARY KEY` constraint.
+  ///
+  /// If a row to be inserted violates the _conflict target_ constraint,
+  /// then the conflict action is triggered:
+  /// * `.doNothing()` to skip insertion of the new row, and,
+  /// * `.update((bottleCreditRow, excluded, set) => set(...))` to
+  ///   update the conflicting row.
+  ///
+  /// If a row to be inserted violates a constraint other than the one
+  /// specified in _conflict target_ then the entire `INSERT` statement
+  /// will fail.
+  ///
+  /// This is equivalent to `INSERT ... ON CONFLICT (...)` in SQL.
+  InsertOnConflict<BottleCreditRow> onConflict(
+    BottleCreditRowConflict target,
+  ) => $ForGeneratedCode.insertOnConflict(this, target._fields);
+}
+
+extension InsertOnConflictBottleCreditRowExt
+    on InsertOnConflict<BottleCreditRow> {
+  /// Build an `INSERT` statement an [upsert-clause][1].
+  ///
+  /// When a row to be inserted violates the `UNIQUE` or `PRIMARY KEY`
+  /// constraint previously specified as _conflict target_, the existing
+  /// row is updated using the expressions defined with the
+  /// [updateBuilder]. The [updateBuilder] is given 3 parameters:
+  ///   * `bottleCreditRow` an [Expr] representing the existing row in
+  ///     the database,
+  ///   * `excluded` an [Expr] representing the row to be inserted in the
+  ///     database, and,
+  ///   * `set` a function to specify which fields should be updated and
+  ///     build the [UpdateSet].
+  ///
+  /// The result of the `set` function should always be immediately
+  /// returned from the [updateBuilder].
+  ///
+  /// **Example:** Insert a counter with `count = 2` or increment the
+  /// existing row, if a `PRIMARY KEY` conflict occurs.
+  /// ```dart
+  /// await db.counters.insertValue(
+  ///     name: 'my-counter', // primary key
+  ///     count: 2,
+  ///   )
+  ///   .onConflict(.primaryKey)
+  ///   .update((counter, excluded, set) => set(
+  ///     count: counter.count + excluded.count,
+  ///   ))
+  ///   .execute();
+  /// ```
+  ///
+  /// This is equivalent to
+  /// `INSERT ... ON CONFLICT (...) UPDATE SET ...` in SQL.
+  ///
+  /// > [!WARNING]
+  /// > The `updateBuilder` callback does not make the update, it builds
+  /// > the expressions for updating the rows. You should **never** invoke
+  /// > the `set` function more than once, and the result should always
+  /// > be returned immediately.
+  ///
+  /// [1]: https://www.sqlite.org/lang_upsert.html
+  Upsert<BottleCreditRow> update(
+    UpdateSet<BottleCreditRow> Function(
+      Expr<BottleCreditRow> bottleCreditRow,
+      Expr<BottleCreditRow> excluded,
+      UpdateSet<BottleCreditRow> Function({
+        Expr<String> id,
+        Expr<String> merchantId,
+        Expr<String> customerPhone,
+        Expr<int> balance,
+        Expr<DateTime> createdAt,
+        Expr<DateTime> updatedAt,
+      })
+      set,
+    )
+    updateBuilder,
+  ) => $ForGeneratedCode.updateOnConflict<BottleCreditRow>(
+    this,
+    (bottleCreditRow, excluded) => updateBuilder(
+      bottleCreditRow,
+      excluded,
+      ({
+        Expr<String>? id,
+        Expr<String>? merchantId,
+        Expr<String>? customerPhone,
+        Expr<int>? balance,
+        Expr<DateTime>? createdAt,
+        Expr<DateTime>? updatedAt,
+      }) => $ForGeneratedCode.buildUpdate<BottleCreditRow>([
+        id,
+        merchantId,
+        customerPhone,
+        balance,
+        createdAt,
+        updatedAt,
+      ]),
+    ),
+  );
+}
+
+extension InsertSingleBottleCreditRowExt on InsertSingle<BottleCreditRow> {
+  /// Build an `INSERT` statement with an `ON CONFLICT` clause.
+  ///
+  /// The [target] argument specifies the _conflict target_ to be
+  /// handled. The _conflict target_ is always a `UNIQUE` constraint or
+  /// `PRIMARY KEY` constraint.
+  ///
+  /// If a row to be inserted violates the _conflict target_ constraint,
+  /// then the conflict action is triggered:
+  /// * `.doNothing()` to skip insertion of the new row, and,
+  /// * `.update((bottleCreditRow, excluded, set) => set(...))` to
+  ///   update the conflicting row.
+  ///
+  /// If a row to be inserted violates a constraint other than the one
+  /// specified in _conflict target_ then the entire `INSERT` statement
+  /// will fail.
+  ///
+  /// This is equivalent to `INSERT ... ON CONFLICT (...)` in SQL.
+  InsertOnConflictSingle<BottleCreditRow> onConflict(
+    BottleCreditRowConflict target,
+  ) => $ForGeneratedCode.insertOnConflictSingle(this, target._fields);
+}
+
+extension InsertOnConflictSingleBottleCreditRowExt
+    on InsertOnConflictSingle<BottleCreditRow> {
+  /// Build an `INSERT` statement an [upsert-clause][1].
+  ///
+  /// When a row to be inserted violates the `UNIQUE` or `PRIMARY KEY`
+  /// constraint previously specified as _conflict target_, the existing
+  /// row is updated using the expressions defined with the
+  /// [updateBuilder]. The [updateBuilder] is given 3 parameters:
+  ///   * `bottleCreditRow` an [Expr] representing the existing row in
+  ///     the database,
+  ///   * `excluded` an [Expr] representing the row to be inserted in the
+  ///     database, and,
+  ///   * `set` a function to specify which fields should be updated and
+  ///     build the [UpdateSet].
+  ///
+  /// The result of the `set` function should always be immediately
+  /// returned from the [updateBuilder].
+  ///
+  /// **Example:** Insert a counter with `count = 2` or increment the
+  /// existing row, if a `PRIMARY KEY` conflict occurs.
+  /// ```dart
+  /// await db.counters.insertValue(
+  ///     name: 'my-counter', // primary key
+  ///     count: 2,
+  ///   )
+  ///   .onConflict(.primaryKey)
+  ///   .update((counter, excluded, set) => set(
+  ///     count: counter.count + excluded.count,
+  ///   ))
+  ///   .execute();
+  /// ```
+  ///
+  /// This is equivalent to
+  /// `INSERT ... ON CONFLICT (...) UPDATE SET ...` in SQL.
+  ///
+  /// > [!WARNING]
+  /// > The `updateBuilder` callback does not make the update, it builds
+  /// > the expressions for updating the rows. You should **never** invoke
+  /// > the `set` function more than once, and the result should always
+  /// > be returned immediately.
+  ///
+  /// [1]: https://www.sqlite.org/lang_upsert.html
+  UpsertSingle<BottleCreditRow> update(
+    UpdateSet<BottleCreditRow> Function(
+      Expr<BottleCreditRow> bottleCreditRow,
+      Expr<BottleCreditRow> excluded,
+      UpdateSet<BottleCreditRow> Function({
+        Expr<String> id,
+        Expr<String> merchantId,
+        Expr<String> customerPhone,
+        Expr<int> balance,
+        Expr<DateTime> createdAt,
+        Expr<DateTime> updatedAt,
+      })
+      set,
+    )
+    updateBuilder,
+  ) => $ForGeneratedCode.updateOnConflictSingle<BottleCreditRow>(
+    this,
+    (bottleCreditRow, excluded) => updateBuilder(
+      bottleCreditRow,
+      excluded,
+      ({
+        Expr<String>? id,
+        Expr<String>? merchantId,
+        Expr<String>? customerPhone,
+        Expr<int>? balance,
+        Expr<DateTime>? createdAt,
+        Expr<DateTime>? updatedAt,
+      }) => $ForGeneratedCode.buildUpdate<BottleCreditRow>([
+        id,
+        merchantId,
+        customerPhone,
+        balance,
+        createdAt,
+        updatedAt,
+      ]),
+    ),
+  );
+}
+
+final class _$BottleCreditTransactionRow extends BottleCreditTransactionRow {
+  _$BottleCreditTransactionRow._(
+    this.id,
+    this.merchantId,
+    this.customerPhone,
+    this.amount,
+    this.type,
+    this.referenceOrderId,
+    this.storeId,
+    this.createdAt,
+  );
+
+  @override
+  final String id;
+
+  @override
+  final String merchantId;
+
+  @override
+  final String customerPhone;
+
+  @override
+  final int amount;
+
+  @override
+  final String type;
+
+  @override
+  final String? referenceOrderId;
+
+  @override
+  final String? storeId;
+
+  @override
+  final DateTime createdAt;
+
+  static final _$table = $ForGeneratedCode.tableDefinition(
+    tableName: 'bottle_credit_transactions',
+    columns: <String>[
+      'id',
+      'merchant_id',
+      'customer_phone',
+      'amount',
+      'type',
+      'reference_order_id',
+      'store_id',
+      'created_at',
+    ],
+    columnInfo: [
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: true,
+        defaultValue: (kind: 'raw', value: 'gen_random_uuid()'),
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: true,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: true,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.integer,
+        isNotNull: true,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: true,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: false,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: false,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.dateTime,
+        isNotNull: true,
+        defaultValue: (kind: 'datetime', value: 'now'),
+        autoIncrement: false,
+        overrides: [],
+      ),
+    ],
+    primaryKey: <String>['id'],
+    unique: <List<String>>[],
+    foreignKeys: [
+      $ForGeneratedCode.foreignKeyDefinition(
+        name: 'null',
+        columns: ['merchant_id'],
+        referencedTable: 'merchants',
+        referencedColumns: ['id'],
+        onDelete: .cascade,
+        onUpdate: .noAction,
+      ),
+    ],
+    indexes: [],
+    readRow: _$BottleCreditTransactionRow._$fromDatabase,
+  );
+
+  static BottleCreditTransactionRow? _$fromDatabase(RowReader row) {
+    final id = row.readString();
+    final merchantId = row.readString();
+    final customerPhone = row.readString();
+    final amount = row.readInt();
+    final type = row.readString();
+    final referenceOrderId = row.readString();
+    final storeId = row.readString();
+    final createdAt = row.readDateTime();
+    if (id == null &&
+        merchantId == null &&
+        customerPhone == null &&
+        amount == null &&
+        type == null &&
+        referenceOrderId == null &&
+        storeId == null &&
+        createdAt == null) {
+      return null;
+    }
+    return _$BottleCreditTransactionRow._(
+      id!,
+      merchantId!,
+      customerPhone!,
+      amount!,
+      type!,
+      referenceOrderId,
+      storeId,
+      createdAt!,
+    );
+  }
+
+  @override
+  String toString() =>
+      'BottleCreditTransactionRow(id: "$id", merchantId: "$merchantId", customerPhone: "$customerPhone", amount: "$amount", type: "$type", referenceOrderId: "$referenceOrderId", storeId: "$storeId", createdAt: "$createdAt")';
+}
+
+/// Extension methods for table defined in [BottleCreditTransactionRow].
+extension TableBottleCreditTransactionRowExt
+    on Table<BottleCreditTransactionRow> {
+  /// Insert row into the `bottleCreditTransactions` table.
+  ///
+  /// Returns a [InsertSingle] statement on which `.execute` must be
+  /// called for the row to be inserted.
+  InsertSingle<BottleCreditTransactionRow> insert({
+    Expr<String>? id,
+    required Expr<String> merchantId,
+    required Expr<String> customerPhone,
+    required Expr<int> amount,
+    required Expr<String> type,
+    Expr<String?>? referenceOrderId,
+    Expr<String?>? storeId,
+    Expr<DateTime>? createdAt,
+  }) => $ForGeneratedCode.insertInto(
+    table: this,
+    values: [
+      id,
+      merchantId,
+      customerPhone,
+      amount,
+      type,
+      referenceOrderId,
+      storeId,
+      createdAt,
+    ],
+  );
+
+  /// Insert row into the `bottleCreditTransactions` table.
+  ///
+  /// Returns a [InsertSingle] statement on which `.execute` must be
+  /// called for the row to be inserted.
+  InsertSingle<BottleCreditTransactionRow> insertValue({
+    String? id,
+    required String merchantId,
+    required String customerPhone,
+    required int amount,
+    required String type,
+    String? referenceOrderId,
+    String? storeId,
+    DateTime? createdAt,
+  }) => $ForGeneratedCode.insertInto(
+    table: this,
+    values: [
+      id?.asExpr,
+      merchantId.asExpr,
+      customerPhone.asExpr,
+      amount.asExpr,
+      type.asExpr,
+      referenceOrderId.asExpr,
+      storeId.asExpr,
+      createdAt?.asExpr,
+    ],
+  );
+
+  /// Bulk insert rows into the `bottleCreditTransactions` table.
+  ///
+  /// This method takes an `Iterable<T>` and requires that you provide
+  /// a _mapping function_ from `T` to each column to be inserted.
+  ///
+  /// If a mapping function is omitted, the _default value_ will be
+  /// inserted, or `NULL` if column is nullable and as no default value.
+  /// To explicitely insert `NULL`, use a _mapping function_ that maps
+  /// `T` to `null`.
+  ///
+  /// > [!NOTE]
+  /// > This method aims utilize database specific bulk insertion logic
+  /// > to ensure good performance. Database adapters may pipeline bulk
+  /// > insertions through multiple statements inside a transaction.
+  ///
+  /// Returns a [Insert] statement on which `.execute` must be
+  /// called for the rows to be inserted.
+  Insert<BottleCreditTransactionRow> insertValuesMapped<T>(
+    Iterable<T> rows, {
+    String Function(T row)? id,
+    required String Function(T row) merchantId,
+    required String Function(T row) customerPhone,
+    required int Function(T row) amount,
+    required String Function(T row) type,
+    String? Function(T row)? referenceOrderId,
+    String? Function(T row)? storeId,
+    DateTime Function(T row)? createdAt,
+  }) => $ForGeneratedCode.insertValuesMapped(
+    table: this,
+    rows: rows,
+    mappings: [
+      id,
+      merchantId,
+      customerPhone,
+      amount,
+      type,
+      referenceOrderId,
+      storeId,
+      createdAt,
+    ],
+  );
+
+  /// Delete a single row from the `bottleCreditTransactions` table, specified by
+  /// _primary key_.
+  ///
+  /// Returns a [DeleteSingle] statement on which `.execute()` must be
+  /// called for the row to be deleted.
+  ///
+  /// To delete multiple rows, using `.where()` to filter which rows
+  /// should be deleted. If you wish to delete all rows, use
+  /// `.where((_) => toExpr(true)).delete()`.
+  DeleteSingle<BottleCreditTransactionRow> delete(String id) =>
+      $ForGeneratedCode.deleteSingle(
+        byKey(id),
+        _$BottleCreditTransactionRow._$table,
+      );
+}
+
+/// Extension methods for building queries against the `bottleCreditTransactions` table.
+extension QueryBottleCreditTransactionRowExt
+    on Query<(Expr<BottleCreditTransactionRow>,)> {
+  /// Lookup a single row in `bottleCreditTransactions` table using the _primary key_.
+  ///
+  /// Returns a [QuerySingle] object, which returns at-most one row,
+  /// when `.fetch()` is called.
+  QuerySingle<(Expr<BottleCreditTransactionRow>,)> byKey(String id) => where(
+    (bottleCreditTransactionRow) =>
+        bottleCreditTransactionRow.id.equalsValue(id),
+  ).first;
+
+  /// Update all rows in the `bottleCreditTransactions` table matching this [Query].
+  ///
+  /// The changes to be applied to each row matching this [Query] are
+  /// defined using the [updateBuilder], which is given an [Expr]
+  /// representation of the row being updated and a `set` function to
+  /// specify which fields should be updated. The result of the `set`
+  /// function should always be returned from the `updateBuilder`.
+  ///
+  /// Returns an [Update] statement on which `.execute()` must be called
+  /// for the rows to be updated.
+  ///
+  /// **Example:** decrementing `1` from the `value` field for each row
+  /// where `value > 0`.
+  /// ```dart
+  /// await db.mytable
+  ///   .where((row) => row.value > toExpr(0))
+  ///   .update((row, set) => set(
+  ///     value: row.value - toExpr(1),
+  ///   ))
+  ///   .execute();
+  /// ```
+  ///
+  /// > [!WARNING]
+  /// > The `updateBuilder` callback does not make the update, it builds
+  /// > the expressions for updating the rows. You should **never** invoke
+  /// > the `set` function more than once, and the result should always
+  /// > be returned immediately.
+  Update<BottleCreditTransactionRow> update(
+    UpdateSet<BottleCreditTransactionRow> Function(
+      Expr<BottleCreditTransactionRow> bottleCreditTransactionRow,
+      UpdateSet<BottleCreditTransactionRow> Function({
+        Expr<String> id,
+        Expr<String> merchantId,
+        Expr<String> customerPhone,
+        Expr<int> amount,
+        Expr<String> type,
+        Expr<String?> referenceOrderId,
+        Expr<String?> storeId,
+        Expr<DateTime> createdAt,
+      })
+      set,
+    )
+    updateBuilder,
+  ) => $ForGeneratedCode.update<BottleCreditTransactionRow>(
+    this,
+    _$BottleCreditTransactionRow._$table,
+    (bottleCreditTransactionRow) => updateBuilder(
+      bottleCreditTransactionRow,
+      ({
+        Expr<String>? id,
+        Expr<String>? merchantId,
+        Expr<String>? customerPhone,
+        Expr<int>? amount,
+        Expr<String>? type,
+        Expr<String?>? referenceOrderId,
+        Expr<String?>? storeId,
+        Expr<DateTime>? createdAt,
+      }) => $ForGeneratedCode.buildUpdate<BottleCreditTransactionRow>([
+        id,
+        merchantId,
+        customerPhone,
+        amount,
+        type,
+        referenceOrderId,
+        storeId,
+        createdAt,
+      ]),
+    ),
+  );
+
+  /// Delete all rows in the `bottleCreditTransactions` table matching this [Query].
+  ///
+  /// Returns a [Delete] statement on which `.execute()` must be called
+  /// for the rows to be deleted.
+  Delete<BottleCreditTransactionRow> delete() =>
+      $ForGeneratedCode.delete(this, _$BottleCreditTransactionRow._$table);
+}
+
+/// Extension methods for building point queries against the `bottleCreditTransactions` table.
+extension QuerySingleBottleCreditTransactionRowExt
+    on QuerySingle<(Expr<BottleCreditTransactionRow>,)> {
+  /// Update the row (if any) in the `bottleCreditTransactions` table matching this
+  /// [QuerySingle].
+  ///
+  /// The changes to be applied to the row matching this [QuerySingle] are
+  /// defined using the [updateBuilder], which is given an [Expr]
+  /// representation of the row being updated and a `set` function to
+  /// specify which fields should be updated. The result of the `set`
+  /// function should always be returned from the `updateBuilder`.
+  ///
+  /// Returns an [UpdateSingle] statement on which `.execute()` must be
+  /// called for the row to be updated. The resulting statement will
+  /// **not** fail, if there are no rows matching this query exists.
+  ///
+  /// **Example:** decrementing `1` from the `value` field the row with
+  /// `id = 1`.
+  /// ```dart
+  /// await db.mytable
+  ///   .byKey(1)
+  ///   .update((row, set) => set(
+  ///     value: row.value - toExpr(1),
+  ///   ))
+  ///   .execute();
+  /// ```
+  ///
+  /// > [!WARNING]
+  /// > The `updateBuilder` callback does not make the update, it builds
+  /// > the expressions for updating the rows. You should **never** invoke
+  /// > the `set` function more than once, and the result should always
+  /// > be returned immediately.
+  UpdateSingle<BottleCreditTransactionRow> update(
+    UpdateSet<BottleCreditTransactionRow> Function(
+      Expr<BottleCreditTransactionRow> bottleCreditTransactionRow,
+      UpdateSet<BottleCreditTransactionRow> Function({
+        Expr<String> id,
+        Expr<String> merchantId,
+        Expr<String> customerPhone,
+        Expr<int> amount,
+        Expr<String> type,
+        Expr<String?> referenceOrderId,
+        Expr<String?> storeId,
+        Expr<DateTime> createdAt,
+      })
+      set,
+    )
+    updateBuilder,
+  ) => $ForGeneratedCode.updateSingle<BottleCreditTransactionRow>(
+    this,
+    _$BottleCreditTransactionRow._$table,
+    (bottleCreditTransactionRow) => updateBuilder(
+      bottleCreditTransactionRow,
+      ({
+        Expr<String>? id,
+        Expr<String>? merchantId,
+        Expr<String>? customerPhone,
+        Expr<int>? amount,
+        Expr<String>? type,
+        Expr<String?>? referenceOrderId,
+        Expr<String?>? storeId,
+        Expr<DateTime>? createdAt,
+      }) => $ForGeneratedCode.buildUpdate<BottleCreditTransactionRow>([
+        id,
+        merchantId,
+        customerPhone,
+        amount,
+        type,
+        referenceOrderId,
+        storeId,
+        createdAt,
+      ]),
+    ),
+  );
+
+  /// Delete the row (if any) in the `bottleCreditTransactions` table matching this [QuerySingle].
+  ///
+  /// Returns a [DeleteSingle] statement on which `.execute()` must be called
+  /// for the row to be deleted. The resulting statement will **not**
+  /// fail, if there are no rows matching this query exists.
+  DeleteSingle<BottleCreditTransactionRow> delete() => $ForGeneratedCode
+      .deleteSingle(this, _$BottleCreditTransactionRow._$table);
+}
+
+/// Extension methods for expressions on a row in the `bottleCreditTransactions` table.
+extension ExpressionBottleCreditTransactionRowExt
+    on Expr<BottleCreditTransactionRow> {
+  Expr<String> get id =>
+      $ForGeneratedCode.field(this, 0, $ForGeneratedCode.text);
+
+  Expr<String> get merchantId =>
+      $ForGeneratedCode.field(this, 1, $ForGeneratedCode.text);
+
+  Expr<String> get customerPhone =>
+      $ForGeneratedCode.field(this, 2, $ForGeneratedCode.text);
+
+  Expr<int> get amount =>
+      $ForGeneratedCode.field(this, 3, $ForGeneratedCode.integer);
+
+  Expr<String> get type =>
+      $ForGeneratedCode.field(this, 4, $ForGeneratedCode.text);
+
+  Expr<String?> get referenceOrderId =>
+      $ForGeneratedCode.field(this, 5, $ForGeneratedCode.text);
+
+  Expr<String?> get storeId =>
+      $ForGeneratedCode.field(this, 6, $ForGeneratedCode.text);
+
+  Expr<DateTime> get createdAt =>
+      $ForGeneratedCode.field(this, 7, $ForGeneratedCode.dateTime);
+}
+
+extension ExpressionNullableBottleCreditTransactionRowExt
+    on Expr<BottleCreditTransactionRow?> {
+  Expr<String?> get id =>
+      $ForGeneratedCode.field(this, 0, $ForGeneratedCode.text);
+
+  Expr<String?> get merchantId =>
+      $ForGeneratedCode.field(this, 1, $ForGeneratedCode.text);
+
+  Expr<String?> get customerPhone =>
+      $ForGeneratedCode.field(this, 2, $ForGeneratedCode.text);
+
+  Expr<int?> get amount =>
+      $ForGeneratedCode.field(this, 3, $ForGeneratedCode.integer);
+
+  Expr<String?> get type =>
+      $ForGeneratedCode.field(this, 4, $ForGeneratedCode.text);
+
+  Expr<String?> get referenceOrderId =>
+      $ForGeneratedCode.field(this, 5, $ForGeneratedCode.text);
+
+  Expr<String?> get storeId =>
+      $ForGeneratedCode.field(this, 6, $ForGeneratedCode.text);
+
+  Expr<DateTime?> get createdAt =>
+      $ForGeneratedCode.field(this, 7, $ForGeneratedCode.dateTime);
+
+  /// Check if the row is not `NULL`.
+  ///
+  /// This will check if _primary key_ fields in this row are `NULL`.
+  ///
+  /// If this is a reference lookup by subquery it might be more efficient
+  /// to check if the referencing field is `NULL`.
+  Expr<bool> isNotNull() => id.isNotNull();
+
+  /// Check if the row is `NULL`.
+  ///
+  /// This will check if _primary key_ fields in this row are `NULL`.
+  ///
+  /// If this is a reference lookup by subquery it might be more efficient
+  /// to check if the referencing field is `NULL`.
+  Expr<bool> isNull() => isNotNull().not();
+}
+
+/// `Table<BottleCreditTransactionRow>` conflict targets for use with `.onConflict`.
+enum BottleCreditTransactionRowConflict {
+  /// Conflict with an existing row that has a matching primary key.
+  ///
+  /// Thus, the other row has matching values for:
+  /// `id`.
+  primaryKey(['id']);
+
+  const BottleCreditTransactionRowConflict(this._fields);
+
+  final List<String> _fields;
+}
+
+extension InsertBottleCreditTransactionRowExt
+    on Insert<BottleCreditTransactionRow> {
+  /// Build an `INSERT` statement with an `ON CONFLICT` clause.
+  ///
+  /// The [target] argument specifies the _conflict target_ to be
+  /// handled. The _conflict target_ is always a `UNIQUE` constraint or
+  /// `PRIMARY KEY` constraint.
+  ///
+  /// If a row to be inserted violates the _conflict target_ constraint,
+  /// then the conflict action is triggered:
+  /// * `.doNothing()` to skip insertion of the new row, and,
+  /// * `.update((bottleCreditTransactionRow, excluded, set) => set(...))` to
+  ///   update the conflicting row.
+  ///
+  /// If a row to be inserted violates a constraint other than the one
+  /// specified in _conflict target_ then the entire `INSERT` statement
+  /// will fail.
+  ///
+  /// This is equivalent to `INSERT ... ON CONFLICT (...)` in SQL.
+  InsertOnConflict<BottleCreditTransactionRow> onConflict(
+    BottleCreditTransactionRowConflict target,
+  ) => $ForGeneratedCode.insertOnConflict(this, target._fields);
+}
+
+extension InsertOnConflictBottleCreditTransactionRowExt
+    on InsertOnConflict<BottleCreditTransactionRow> {
+  /// Build an `INSERT` statement an [upsert-clause][1].
+  ///
+  /// When a row to be inserted violates the `UNIQUE` or `PRIMARY KEY`
+  /// constraint previously specified as _conflict target_, the existing
+  /// row is updated using the expressions defined with the
+  /// [updateBuilder]. The [updateBuilder] is given 3 parameters:
+  ///   * `bottleCreditTransactionRow` an [Expr] representing the existing row in
+  ///     the database,
+  ///   * `excluded` an [Expr] representing the row to be inserted in the
+  ///     database, and,
+  ///   * `set` a function to specify which fields should be updated and
+  ///     build the [UpdateSet].
+  ///
+  /// The result of the `set` function should always be immediately
+  /// returned from the [updateBuilder].
+  ///
+  /// **Example:** Insert a counter with `count = 2` or increment the
+  /// existing row, if a `PRIMARY KEY` conflict occurs.
+  /// ```dart
+  /// await db.counters.insertValue(
+  ///     name: 'my-counter', // primary key
+  ///     count: 2,
+  ///   )
+  ///   .onConflict(.primaryKey)
+  ///   .update((counter, excluded, set) => set(
+  ///     count: counter.count + excluded.count,
+  ///   ))
+  ///   .execute();
+  /// ```
+  ///
+  /// This is equivalent to
+  /// `INSERT ... ON CONFLICT (...) UPDATE SET ...` in SQL.
+  ///
+  /// > [!WARNING]
+  /// > The `updateBuilder` callback does not make the update, it builds
+  /// > the expressions for updating the rows. You should **never** invoke
+  /// > the `set` function more than once, and the result should always
+  /// > be returned immediately.
+  ///
+  /// [1]: https://www.sqlite.org/lang_upsert.html
+  Upsert<BottleCreditTransactionRow> update(
+    UpdateSet<BottleCreditTransactionRow> Function(
+      Expr<BottleCreditTransactionRow> bottleCreditTransactionRow,
+      Expr<BottleCreditTransactionRow> excluded,
+      UpdateSet<BottleCreditTransactionRow> Function({
+        Expr<String> id,
+        Expr<String> merchantId,
+        Expr<String> customerPhone,
+        Expr<int> amount,
+        Expr<String> type,
+        Expr<String?> referenceOrderId,
+        Expr<String?> storeId,
+        Expr<DateTime> createdAt,
+      })
+      set,
+    )
+    updateBuilder,
+  ) => $ForGeneratedCode.updateOnConflict<BottleCreditTransactionRow>(
+    this,
+    (bottleCreditTransactionRow, excluded) => updateBuilder(
+      bottleCreditTransactionRow,
+      excluded,
+      ({
+        Expr<String>? id,
+        Expr<String>? merchantId,
+        Expr<String>? customerPhone,
+        Expr<int>? amount,
+        Expr<String>? type,
+        Expr<String?>? referenceOrderId,
+        Expr<String?>? storeId,
+        Expr<DateTime>? createdAt,
+      }) => $ForGeneratedCode.buildUpdate<BottleCreditTransactionRow>([
+        id,
+        merchantId,
+        customerPhone,
+        amount,
+        type,
+        referenceOrderId,
+        storeId,
+        createdAt,
+      ]),
+    ),
+  );
+}
+
+extension InsertSingleBottleCreditTransactionRowExt
+    on InsertSingle<BottleCreditTransactionRow> {
+  /// Build an `INSERT` statement with an `ON CONFLICT` clause.
+  ///
+  /// The [target] argument specifies the _conflict target_ to be
+  /// handled. The _conflict target_ is always a `UNIQUE` constraint or
+  /// `PRIMARY KEY` constraint.
+  ///
+  /// If a row to be inserted violates the _conflict target_ constraint,
+  /// then the conflict action is triggered:
+  /// * `.doNothing()` to skip insertion of the new row, and,
+  /// * `.update((bottleCreditTransactionRow, excluded, set) => set(...))` to
+  ///   update the conflicting row.
+  ///
+  /// If a row to be inserted violates a constraint other than the one
+  /// specified in _conflict target_ then the entire `INSERT` statement
+  /// will fail.
+  ///
+  /// This is equivalent to `INSERT ... ON CONFLICT (...)` in SQL.
+  InsertOnConflictSingle<BottleCreditTransactionRow> onConflict(
+    BottleCreditTransactionRowConflict target,
+  ) => $ForGeneratedCode.insertOnConflictSingle(this, target._fields);
+}
+
+extension InsertOnConflictSingleBottleCreditTransactionRowExt
+    on InsertOnConflictSingle<BottleCreditTransactionRow> {
+  /// Build an `INSERT` statement an [upsert-clause][1].
+  ///
+  /// When a row to be inserted violates the `UNIQUE` or `PRIMARY KEY`
+  /// constraint previously specified as _conflict target_, the existing
+  /// row is updated using the expressions defined with the
+  /// [updateBuilder]. The [updateBuilder] is given 3 parameters:
+  ///   * `bottleCreditTransactionRow` an [Expr] representing the existing row in
+  ///     the database,
+  ///   * `excluded` an [Expr] representing the row to be inserted in the
+  ///     database, and,
+  ///   * `set` a function to specify which fields should be updated and
+  ///     build the [UpdateSet].
+  ///
+  /// The result of the `set` function should always be immediately
+  /// returned from the [updateBuilder].
+  ///
+  /// **Example:** Insert a counter with `count = 2` or increment the
+  /// existing row, if a `PRIMARY KEY` conflict occurs.
+  /// ```dart
+  /// await db.counters.insertValue(
+  ///     name: 'my-counter', // primary key
+  ///     count: 2,
+  ///   )
+  ///   .onConflict(.primaryKey)
+  ///   .update((counter, excluded, set) => set(
+  ///     count: counter.count + excluded.count,
+  ///   ))
+  ///   .execute();
+  /// ```
+  ///
+  /// This is equivalent to
+  /// `INSERT ... ON CONFLICT (...) UPDATE SET ...` in SQL.
+  ///
+  /// > [!WARNING]
+  /// > The `updateBuilder` callback does not make the update, it builds
+  /// > the expressions for updating the rows. You should **never** invoke
+  /// > the `set` function more than once, and the result should always
+  /// > be returned immediately.
+  ///
+  /// [1]: https://www.sqlite.org/lang_upsert.html
+  UpsertSingle<BottleCreditTransactionRow> update(
+    UpdateSet<BottleCreditTransactionRow> Function(
+      Expr<BottleCreditTransactionRow> bottleCreditTransactionRow,
+      Expr<BottleCreditTransactionRow> excluded,
+      UpdateSet<BottleCreditTransactionRow> Function({
+        Expr<String> id,
+        Expr<String> merchantId,
+        Expr<String> customerPhone,
+        Expr<int> amount,
+        Expr<String> type,
+        Expr<String?> referenceOrderId,
+        Expr<String?> storeId,
+        Expr<DateTime> createdAt,
+      })
+      set,
+    )
+    updateBuilder,
+  ) => $ForGeneratedCode.updateOnConflictSingle<BottleCreditTransactionRow>(
+    this,
+    (bottleCreditTransactionRow, excluded) => updateBuilder(
+      bottleCreditTransactionRow,
+      excluded,
+      ({
+        Expr<String>? id,
+        Expr<String>? merchantId,
+        Expr<String>? customerPhone,
+        Expr<int>? amount,
+        Expr<String>? type,
+        Expr<String?>? referenceOrderId,
+        Expr<String?>? storeId,
+        Expr<DateTime>? createdAt,
+      }) => $ForGeneratedCode.buildUpdate<BottleCreditTransactionRow>([
+        id,
+        merchantId,
+        customerPhone,
+        amount,
+        type,
+        referenceOrderId,
+        storeId,
+        createdAt,
+      ]),
+    ),
+  );
+}
+
+final class _$BottlePhysicalCouponRow extends BottlePhysicalCouponRow {
+  _$BottlePhysicalCouponRow._(
+    this.id,
+    this.code,
+    this.merchantId,
+    this.storeId,
+    this.amount,
+    this.status,
+    this.redeemedAt,
+    this.redeemedOrderId,
+    this.createdAt,
+  );
+
+  @override
+  final String id;
+
+  @override
+  final String code;
+
+  @override
+  final String merchantId;
+
+  @override
+  final String storeId;
+
+  @override
+  final int amount;
+
+  @override
+  final String status;
+
+  @override
+  final DateTime? redeemedAt;
+
+  @override
+  final String? redeemedOrderId;
+
+  @override
+  final DateTime createdAt;
+
+  static final _$table = $ForGeneratedCode.tableDefinition(
+    tableName: 'bottle_physical_coupons',
+    columns: <String>[
+      'id',
+      'code',
+      'merchant_id',
+      'store_id',
+      'amount',
+      'status',
+      'redeemed_at',
+      'redeemed_order_id',
+      'created_at',
+    ],
+    columnInfo: [
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: true,
+        defaultValue: (kind: 'raw', value: 'gen_random_uuid()'),
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: true,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: true,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: true,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.integer,
+        isNotNull: true,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: true,
+        defaultValue: (kind: 'raw', value: 'active'),
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.dateTime,
+        isNotNull: false,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: false,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.dateTime,
+        isNotNull: true,
+        defaultValue: (kind: 'datetime', value: 'now'),
+        autoIncrement: false,
+        overrides: [],
+      ),
+    ],
+    primaryKey: <String>['id'],
+    unique: <List<String>>[
+      ['code'],
+    ],
+    foreignKeys: [
+      $ForGeneratedCode.foreignKeyDefinition(
+        name: 'null',
+        columns: ['merchant_id'],
+        referencedTable: 'merchants',
+        referencedColumns: ['id'],
+        onDelete: .cascade,
+        onUpdate: .noAction,
+      ),
+      $ForGeneratedCode.foreignKeyDefinition(
+        name: 'null',
+        columns: ['store_id'],
+        referencedTable: 'stores',
+        referencedColumns: ['id'],
+        onDelete: .cascade,
+        onUpdate: .noAction,
+      ),
+    ],
+    indexes: [],
+    readRow: _$BottlePhysicalCouponRow._$fromDatabase,
+  );
+
+  static BottlePhysicalCouponRow? _$fromDatabase(RowReader row) {
+    final id = row.readString();
+    final code = row.readString();
+    final merchantId = row.readString();
+    final storeId = row.readString();
+    final amount = row.readInt();
+    final status = row.readString();
+    final redeemedAt = row.readDateTime();
+    final redeemedOrderId = row.readString();
+    final createdAt = row.readDateTime();
+    if (id == null &&
+        code == null &&
+        merchantId == null &&
+        storeId == null &&
+        amount == null &&
+        status == null &&
+        redeemedAt == null &&
+        redeemedOrderId == null &&
+        createdAt == null) {
+      return null;
+    }
+    return _$BottlePhysicalCouponRow._(
+      id!,
+      code!,
+      merchantId!,
+      storeId!,
+      amount!,
+      status!,
+      redeemedAt,
+      redeemedOrderId,
+      createdAt!,
+    );
+  }
+
+  @override
+  String toString() =>
+      'BottlePhysicalCouponRow(id: "$id", code: "$code", merchantId: "$merchantId", storeId: "$storeId", amount: "$amount", status: "$status", redeemedAt: "$redeemedAt", redeemedOrderId: "$redeemedOrderId", createdAt: "$createdAt")';
+}
+
+/// Extension methods for table defined in [BottlePhysicalCouponRow].
+extension TableBottlePhysicalCouponRowExt on Table<BottlePhysicalCouponRow> {
+  /// Insert row into the `bottlePhysicalCoupons` table.
+  ///
+  /// Returns a [InsertSingle] statement on which `.execute` must be
+  /// called for the row to be inserted.
+  InsertSingle<BottlePhysicalCouponRow> insert({
+    Expr<String>? id,
+    required Expr<String> code,
+    required Expr<String> merchantId,
+    required Expr<String> storeId,
+    required Expr<int> amount,
+    Expr<String>? status,
+    Expr<DateTime?>? redeemedAt,
+    Expr<String?>? redeemedOrderId,
+    Expr<DateTime>? createdAt,
+  }) => $ForGeneratedCode.insertInto(
+    table: this,
+    values: [
+      id,
+      code,
+      merchantId,
+      storeId,
+      amount,
+      status,
+      redeemedAt,
+      redeemedOrderId,
+      createdAt,
+    ],
+  );
+
+  /// Insert row into the `bottlePhysicalCoupons` table.
+  ///
+  /// Returns a [InsertSingle] statement on which `.execute` must be
+  /// called for the row to be inserted.
+  InsertSingle<BottlePhysicalCouponRow> insertValue({
+    String? id,
+    required String code,
+    required String merchantId,
+    required String storeId,
+    required int amount,
+    String? status,
+    DateTime? redeemedAt,
+    String? redeemedOrderId,
+    DateTime? createdAt,
+  }) => $ForGeneratedCode.insertInto(
+    table: this,
+    values: [
+      id?.asExpr,
+      code.asExpr,
+      merchantId.asExpr,
+      storeId.asExpr,
+      amount.asExpr,
+      status?.asExpr,
+      redeemedAt.asExpr,
+      redeemedOrderId.asExpr,
+      createdAt?.asExpr,
+    ],
+  );
+
+  /// Bulk insert rows into the `bottlePhysicalCoupons` table.
+  ///
+  /// This method takes an `Iterable<T>` and requires that you provide
+  /// a _mapping function_ from `T` to each column to be inserted.
+  ///
+  /// If a mapping function is omitted, the _default value_ will be
+  /// inserted, or `NULL` if column is nullable and as no default value.
+  /// To explicitely insert `NULL`, use a _mapping function_ that maps
+  /// `T` to `null`.
+  ///
+  /// > [!NOTE]
+  /// > This method aims utilize database specific bulk insertion logic
+  /// > to ensure good performance. Database adapters may pipeline bulk
+  /// > insertions through multiple statements inside a transaction.
+  ///
+  /// Returns a [Insert] statement on which `.execute` must be
+  /// called for the rows to be inserted.
+  Insert<BottlePhysicalCouponRow> insertValuesMapped<T>(
+    Iterable<T> rows, {
+    String Function(T row)? id,
+    required String Function(T row) code,
+    required String Function(T row) merchantId,
+    required String Function(T row) storeId,
+    required int Function(T row) amount,
+    String Function(T row)? status,
+    DateTime? Function(T row)? redeemedAt,
+    String? Function(T row)? redeemedOrderId,
+    DateTime Function(T row)? createdAt,
+  }) => $ForGeneratedCode.insertValuesMapped(
+    table: this,
+    rows: rows,
+    mappings: [
+      id,
+      code,
+      merchantId,
+      storeId,
+      amount,
+      status,
+      redeemedAt,
+      redeemedOrderId,
+      createdAt,
+    ],
+  );
+
+  /// Delete a single row from the `bottlePhysicalCoupons` table, specified by
+  /// _primary key_.
+  ///
+  /// Returns a [DeleteSingle] statement on which `.execute()` must be
+  /// called for the row to be deleted.
+  ///
+  /// To delete multiple rows, using `.where()` to filter which rows
+  /// should be deleted. If you wish to delete all rows, use
+  /// `.where((_) => toExpr(true)).delete()`.
+  DeleteSingle<BottlePhysicalCouponRow> delete(String id) => $ForGeneratedCode
+      .deleteSingle(byKey(id), _$BottlePhysicalCouponRow._$table);
+}
+
+/// Extension methods for building queries against the `bottlePhysicalCoupons` table.
+extension QueryBottlePhysicalCouponRowExt
+    on Query<(Expr<BottlePhysicalCouponRow>,)> {
+  /// Lookup a single row in `bottlePhysicalCoupons` table using the _primary key_.
+  ///
+  /// Returns a [QuerySingle] object, which returns at-most one row,
+  /// when `.fetch()` is called.
+  QuerySingle<(Expr<BottlePhysicalCouponRow>,)> byKey(String id) => where(
+    (bottlePhysicalCouponRow) => bottlePhysicalCouponRow.id.equalsValue(id),
+  ).first;
+
+  /// Update all rows in the `bottlePhysicalCoupons` table matching this [Query].
+  ///
+  /// The changes to be applied to each row matching this [Query] are
+  /// defined using the [updateBuilder], which is given an [Expr]
+  /// representation of the row being updated and a `set` function to
+  /// specify which fields should be updated. The result of the `set`
+  /// function should always be returned from the `updateBuilder`.
+  ///
+  /// Returns an [Update] statement on which `.execute()` must be called
+  /// for the rows to be updated.
+  ///
+  /// **Example:** decrementing `1` from the `value` field for each row
+  /// where `value > 0`.
+  /// ```dart
+  /// await db.mytable
+  ///   .where((row) => row.value > toExpr(0))
+  ///   .update((row, set) => set(
+  ///     value: row.value - toExpr(1),
+  ///   ))
+  ///   .execute();
+  /// ```
+  ///
+  /// > [!WARNING]
+  /// > The `updateBuilder` callback does not make the update, it builds
+  /// > the expressions for updating the rows. You should **never** invoke
+  /// > the `set` function more than once, and the result should always
+  /// > be returned immediately.
+  Update<BottlePhysicalCouponRow> update(
+    UpdateSet<BottlePhysicalCouponRow> Function(
+      Expr<BottlePhysicalCouponRow> bottlePhysicalCouponRow,
+      UpdateSet<BottlePhysicalCouponRow> Function({
+        Expr<String> id,
+        Expr<String> code,
+        Expr<String> merchantId,
+        Expr<String> storeId,
+        Expr<int> amount,
+        Expr<String> status,
+        Expr<DateTime?> redeemedAt,
+        Expr<String?> redeemedOrderId,
+        Expr<DateTime> createdAt,
+      })
+      set,
+    )
+    updateBuilder,
+  ) => $ForGeneratedCode.update<BottlePhysicalCouponRow>(
+    this,
+    _$BottlePhysicalCouponRow._$table,
+    (bottlePhysicalCouponRow) => updateBuilder(
+      bottlePhysicalCouponRow,
+      ({
+        Expr<String>? id,
+        Expr<String>? code,
+        Expr<String>? merchantId,
+        Expr<String>? storeId,
+        Expr<int>? amount,
+        Expr<String>? status,
+        Expr<DateTime?>? redeemedAt,
+        Expr<String?>? redeemedOrderId,
+        Expr<DateTime>? createdAt,
+      }) => $ForGeneratedCode.buildUpdate<BottlePhysicalCouponRow>([
+        id,
+        code,
+        merchantId,
+        storeId,
+        amount,
+        status,
+        redeemedAt,
+        redeemedOrderId,
+        createdAt,
+      ]),
+    ),
+  );
+
+  /// Lookup a single row in `bottlePhysicalCoupons` table using the
+  /// `code` field
+  ///
+  /// We know that lookup by the `code` field returns
+  /// at-most one row because the [Unique] annotation in [BottlePhysicalCouponRow].
+  ///
+  /// Returns a [QuerySingle] object, which returns at-most one row,
+  /// when `.fetch()` is called.
+  QuerySingle<(Expr<BottlePhysicalCouponRow>,)> byCode(String code) => where(
+    (bottlePhysicalCouponRow) => bottlePhysicalCouponRow.code.equalsValue(code),
+  ).first;
+
+  /// Delete all rows in the `bottlePhysicalCoupons` table matching this [Query].
+  ///
+  /// Returns a [Delete] statement on which `.execute()` must be called
+  /// for the rows to be deleted.
+  Delete<BottlePhysicalCouponRow> delete() =>
+      $ForGeneratedCode.delete(this, _$BottlePhysicalCouponRow._$table);
+}
+
+/// Extension methods for building point queries against the `bottlePhysicalCoupons` table.
+extension QuerySingleBottlePhysicalCouponRowExt
+    on QuerySingle<(Expr<BottlePhysicalCouponRow>,)> {
+  /// Update the row (if any) in the `bottlePhysicalCoupons` table matching this
+  /// [QuerySingle].
+  ///
+  /// The changes to be applied to the row matching this [QuerySingle] are
+  /// defined using the [updateBuilder], which is given an [Expr]
+  /// representation of the row being updated and a `set` function to
+  /// specify which fields should be updated. The result of the `set`
+  /// function should always be returned from the `updateBuilder`.
+  ///
+  /// Returns an [UpdateSingle] statement on which `.execute()` must be
+  /// called for the row to be updated. The resulting statement will
+  /// **not** fail, if there are no rows matching this query exists.
+  ///
+  /// **Example:** decrementing `1` from the `value` field the row with
+  /// `id = 1`.
+  /// ```dart
+  /// await db.mytable
+  ///   .byKey(1)
+  ///   .update((row, set) => set(
+  ///     value: row.value - toExpr(1),
+  ///   ))
+  ///   .execute();
+  /// ```
+  ///
+  /// > [!WARNING]
+  /// > The `updateBuilder` callback does not make the update, it builds
+  /// > the expressions for updating the rows. You should **never** invoke
+  /// > the `set` function more than once, and the result should always
+  /// > be returned immediately.
+  UpdateSingle<BottlePhysicalCouponRow> update(
+    UpdateSet<BottlePhysicalCouponRow> Function(
+      Expr<BottlePhysicalCouponRow> bottlePhysicalCouponRow,
+      UpdateSet<BottlePhysicalCouponRow> Function({
+        Expr<String> id,
+        Expr<String> code,
+        Expr<String> merchantId,
+        Expr<String> storeId,
+        Expr<int> amount,
+        Expr<String> status,
+        Expr<DateTime?> redeemedAt,
+        Expr<String?> redeemedOrderId,
+        Expr<DateTime> createdAt,
+      })
+      set,
+    )
+    updateBuilder,
+  ) => $ForGeneratedCode.updateSingle<BottlePhysicalCouponRow>(
+    this,
+    _$BottlePhysicalCouponRow._$table,
+    (bottlePhysicalCouponRow) => updateBuilder(
+      bottlePhysicalCouponRow,
+      ({
+        Expr<String>? id,
+        Expr<String>? code,
+        Expr<String>? merchantId,
+        Expr<String>? storeId,
+        Expr<int>? amount,
+        Expr<String>? status,
+        Expr<DateTime?>? redeemedAt,
+        Expr<String?>? redeemedOrderId,
+        Expr<DateTime>? createdAt,
+      }) => $ForGeneratedCode.buildUpdate<BottlePhysicalCouponRow>([
+        id,
+        code,
+        merchantId,
+        storeId,
+        amount,
+        status,
+        redeemedAt,
+        redeemedOrderId,
+        createdAt,
+      ]),
+    ),
+  );
+
+  /// Delete the row (if any) in the `bottlePhysicalCoupons` table matching this [QuerySingle].
+  ///
+  /// Returns a [DeleteSingle] statement on which `.execute()` must be called
+  /// for the row to be deleted. The resulting statement will **not**
+  /// fail, if there are no rows matching this query exists.
+  DeleteSingle<BottlePhysicalCouponRow> delete() =>
+      $ForGeneratedCode.deleteSingle(this, _$BottlePhysicalCouponRow._$table);
+}
+
+/// Extension methods for expressions on a row in the `bottlePhysicalCoupons` table.
+extension ExpressionBottlePhysicalCouponRowExt
+    on Expr<BottlePhysicalCouponRow> {
+  Expr<String> get id =>
+      $ForGeneratedCode.field(this, 0, $ForGeneratedCode.text);
+
+  Expr<String> get code =>
+      $ForGeneratedCode.field(this, 1, $ForGeneratedCode.text);
+
+  Expr<String> get merchantId =>
+      $ForGeneratedCode.field(this, 2, $ForGeneratedCode.text);
+
+  Expr<String> get storeId =>
+      $ForGeneratedCode.field(this, 3, $ForGeneratedCode.text);
+
+  Expr<int> get amount =>
+      $ForGeneratedCode.field(this, 4, $ForGeneratedCode.integer);
+
+  Expr<String> get status =>
+      $ForGeneratedCode.field(this, 5, $ForGeneratedCode.text);
+
+  Expr<DateTime?> get redeemedAt =>
+      $ForGeneratedCode.field(this, 6, $ForGeneratedCode.dateTime);
+
+  Expr<String?> get redeemedOrderId =>
+      $ForGeneratedCode.field(this, 7, $ForGeneratedCode.text);
+
+  Expr<DateTime> get createdAt =>
+      $ForGeneratedCode.field(this, 8, $ForGeneratedCode.dateTime);
+}
+
+extension ExpressionNullableBottlePhysicalCouponRowExt
+    on Expr<BottlePhysicalCouponRow?> {
+  Expr<String?> get id =>
+      $ForGeneratedCode.field(this, 0, $ForGeneratedCode.text);
+
+  Expr<String?> get code =>
+      $ForGeneratedCode.field(this, 1, $ForGeneratedCode.text);
+
+  Expr<String?> get merchantId =>
+      $ForGeneratedCode.field(this, 2, $ForGeneratedCode.text);
+
+  Expr<String?> get storeId =>
+      $ForGeneratedCode.field(this, 3, $ForGeneratedCode.text);
+
+  Expr<int?> get amount =>
+      $ForGeneratedCode.field(this, 4, $ForGeneratedCode.integer);
+
+  Expr<String?> get status =>
+      $ForGeneratedCode.field(this, 5, $ForGeneratedCode.text);
+
+  Expr<DateTime?> get redeemedAt =>
+      $ForGeneratedCode.field(this, 6, $ForGeneratedCode.dateTime);
+
+  Expr<String?> get redeemedOrderId =>
+      $ForGeneratedCode.field(this, 7, $ForGeneratedCode.text);
+
+  Expr<DateTime?> get createdAt =>
+      $ForGeneratedCode.field(this, 8, $ForGeneratedCode.dateTime);
+
+  /// Check if the row is not `NULL`.
+  ///
+  /// This will check if _primary key_ fields in this row are `NULL`.
+  ///
+  /// If this is a reference lookup by subquery it might be more efficient
+  /// to check if the referencing field is `NULL`.
+  Expr<bool> isNotNull() => id.isNotNull();
+
+  /// Check if the row is `NULL`.
+  ///
+  /// This will check if _primary key_ fields in this row are `NULL`.
+  ///
+  /// If this is a reference lookup by subquery it might be more efficient
+  /// to check if the referencing field is `NULL`.
+  Expr<bool> isNull() => isNotNull().not();
+}
+
+/// `Table<BottlePhysicalCouponRow>` conflict targets for use with `.onConflict`.
+enum BottlePhysicalCouponRowConflict {
+  /// Conflict with an existing row that has a matching primary key.
+  ///
+  /// Thus, the other row has matching values for:
+  /// `id`.
+  primaryKey(['id']),
+
+  /// `code` conflict.
+  ///
+  /// Due to violation of the `UNIQUE` constraint on
+  /// `code`.
+  ///
+  /// Thus, the conflicting row has matching values for these fields.
+  code(['code']);
+
+  const BottlePhysicalCouponRowConflict(this._fields);
+
+  final List<String> _fields;
+}
+
+extension InsertBottlePhysicalCouponRowExt on Insert<BottlePhysicalCouponRow> {
+  /// Build an `INSERT` statement with an `ON CONFLICT` clause.
+  ///
+  /// The [target] argument specifies the _conflict target_ to be
+  /// handled. The _conflict target_ is always a `UNIQUE` constraint or
+  /// `PRIMARY KEY` constraint.
+  ///
+  /// If a row to be inserted violates the _conflict target_ constraint,
+  /// then the conflict action is triggered:
+  /// * `.doNothing()` to skip insertion of the new row, and,
+  /// * `.update((bottlePhysicalCouponRow, excluded, set) => set(...))` to
+  ///   update the conflicting row.
+  ///
+  /// If a row to be inserted violates a constraint other than the one
+  /// specified in _conflict target_ then the entire `INSERT` statement
+  /// will fail.
+  ///
+  /// This is equivalent to `INSERT ... ON CONFLICT (...)` in SQL.
+  InsertOnConflict<BottlePhysicalCouponRow> onConflict(
+    BottlePhysicalCouponRowConflict target,
+  ) => $ForGeneratedCode.insertOnConflict(this, target._fields);
+}
+
+extension InsertOnConflictBottlePhysicalCouponRowExt
+    on InsertOnConflict<BottlePhysicalCouponRow> {
+  /// Build an `INSERT` statement an [upsert-clause][1].
+  ///
+  /// When a row to be inserted violates the `UNIQUE` or `PRIMARY KEY`
+  /// constraint previously specified as _conflict target_, the existing
+  /// row is updated using the expressions defined with the
+  /// [updateBuilder]. The [updateBuilder] is given 3 parameters:
+  ///   * `bottlePhysicalCouponRow` an [Expr] representing the existing row in
+  ///     the database,
+  ///   * `excluded` an [Expr] representing the row to be inserted in the
+  ///     database, and,
+  ///   * `set` a function to specify which fields should be updated and
+  ///     build the [UpdateSet].
+  ///
+  /// The result of the `set` function should always be immediately
+  /// returned from the [updateBuilder].
+  ///
+  /// **Example:** Insert a counter with `count = 2` or increment the
+  /// existing row, if a `PRIMARY KEY` conflict occurs.
+  /// ```dart
+  /// await db.counters.insertValue(
+  ///     name: 'my-counter', // primary key
+  ///     count: 2,
+  ///   )
+  ///   .onConflict(.primaryKey)
+  ///   .update((counter, excluded, set) => set(
+  ///     count: counter.count + excluded.count,
+  ///   ))
+  ///   .execute();
+  /// ```
+  ///
+  /// This is equivalent to
+  /// `INSERT ... ON CONFLICT (...) UPDATE SET ...` in SQL.
+  ///
+  /// > [!WARNING]
+  /// > The `updateBuilder` callback does not make the update, it builds
+  /// > the expressions for updating the rows. You should **never** invoke
+  /// > the `set` function more than once, and the result should always
+  /// > be returned immediately.
+  ///
+  /// [1]: https://www.sqlite.org/lang_upsert.html
+  Upsert<BottlePhysicalCouponRow> update(
+    UpdateSet<BottlePhysicalCouponRow> Function(
+      Expr<BottlePhysicalCouponRow> bottlePhysicalCouponRow,
+      Expr<BottlePhysicalCouponRow> excluded,
+      UpdateSet<BottlePhysicalCouponRow> Function({
+        Expr<String> id,
+        Expr<String> code,
+        Expr<String> merchantId,
+        Expr<String> storeId,
+        Expr<int> amount,
+        Expr<String> status,
+        Expr<DateTime?> redeemedAt,
+        Expr<String?> redeemedOrderId,
+        Expr<DateTime> createdAt,
+      })
+      set,
+    )
+    updateBuilder,
+  ) => $ForGeneratedCode.updateOnConflict<BottlePhysicalCouponRow>(
+    this,
+    (bottlePhysicalCouponRow, excluded) => updateBuilder(
+      bottlePhysicalCouponRow,
+      excluded,
+      ({
+        Expr<String>? id,
+        Expr<String>? code,
+        Expr<String>? merchantId,
+        Expr<String>? storeId,
+        Expr<int>? amount,
+        Expr<String>? status,
+        Expr<DateTime?>? redeemedAt,
+        Expr<String?>? redeemedOrderId,
+        Expr<DateTime>? createdAt,
+      }) => $ForGeneratedCode.buildUpdate<BottlePhysicalCouponRow>([
+        id,
+        code,
+        merchantId,
+        storeId,
+        amount,
+        status,
+        redeemedAt,
+        redeemedOrderId,
+        createdAt,
+      ]),
+    ),
+  );
+}
+
+extension InsertSingleBottlePhysicalCouponRowExt
+    on InsertSingle<BottlePhysicalCouponRow> {
+  /// Build an `INSERT` statement with an `ON CONFLICT` clause.
+  ///
+  /// The [target] argument specifies the _conflict target_ to be
+  /// handled. The _conflict target_ is always a `UNIQUE` constraint or
+  /// `PRIMARY KEY` constraint.
+  ///
+  /// If a row to be inserted violates the _conflict target_ constraint,
+  /// then the conflict action is triggered:
+  /// * `.doNothing()` to skip insertion of the new row, and,
+  /// * `.update((bottlePhysicalCouponRow, excluded, set) => set(...))` to
+  ///   update the conflicting row.
+  ///
+  /// If a row to be inserted violates a constraint other than the one
+  /// specified in _conflict target_ then the entire `INSERT` statement
+  /// will fail.
+  ///
+  /// This is equivalent to `INSERT ... ON CONFLICT (...)` in SQL.
+  InsertOnConflictSingle<BottlePhysicalCouponRow> onConflict(
+    BottlePhysicalCouponRowConflict target,
+  ) => $ForGeneratedCode.insertOnConflictSingle(this, target._fields);
+}
+
+extension InsertOnConflictSingleBottlePhysicalCouponRowExt
+    on InsertOnConflictSingle<BottlePhysicalCouponRow> {
+  /// Build an `INSERT` statement an [upsert-clause][1].
+  ///
+  /// When a row to be inserted violates the `UNIQUE` or `PRIMARY KEY`
+  /// constraint previously specified as _conflict target_, the existing
+  /// row is updated using the expressions defined with the
+  /// [updateBuilder]. The [updateBuilder] is given 3 parameters:
+  ///   * `bottlePhysicalCouponRow` an [Expr] representing the existing row in
+  ///     the database,
+  ///   * `excluded` an [Expr] representing the row to be inserted in the
+  ///     database, and,
+  ///   * `set` a function to specify which fields should be updated and
+  ///     build the [UpdateSet].
+  ///
+  /// The result of the `set` function should always be immediately
+  /// returned from the [updateBuilder].
+  ///
+  /// **Example:** Insert a counter with `count = 2` or increment the
+  /// existing row, if a `PRIMARY KEY` conflict occurs.
+  /// ```dart
+  /// await db.counters.insertValue(
+  ///     name: 'my-counter', // primary key
+  ///     count: 2,
+  ///   )
+  ///   .onConflict(.primaryKey)
+  ///   .update((counter, excluded, set) => set(
+  ///     count: counter.count + excluded.count,
+  ///   ))
+  ///   .execute();
+  /// ```
+  ///
+  /// This is equivalent to
+  /// `INSERT ... ON CONFLICT (...) UPDATE SET ...` in SQL.
+  ///
+  /// > [!WARNING]
+  /// > The `updateBuilder` callback does not make the update, it builds
+  /// > the expressions for updating the rows. You should **never** invoke
+  /// > the `set` function more than once, and the result should always
+  /// > be returned immediately.
+  ///
+  /// [1]: https://www.sqlite.org/lang_upsert.html
+  UpsertSingle<BottlePhysicalCouponRow> update(
+    UpdateSet<BottlePhysicalCouponRow> Function(
+      Expr<BottlePhysicalCouponRow> bottlePhysicalCouponRow,
+      Expr<BottlePhysicalCouponRow> excluded,
+      UpdateSet<BottlePhysicalCouponRow> Function({
+        Expr<String> id,
+        Expr<String> code,
+        Expr<String> merchantId,
+        Expr<String> storeId,
+        Expr<int> amount,
+        Expr<String> status,
+        Expr<DateTime?> redeemedAt,
+        Expr<String?> redeemedOrderId,
+        Expr<DateTime> createdAt,
+      })
+      set,
+    )
+    updateBuilder,
+  ) => $ForGeneratedCode.updateOnConflictSingle<BottlePhysicalCouponRow>(
+    this,
+    (bottlePhysicalCouponRow, excluded) => updateBuilder(
+      bottlePhysicalCouponRow,
+      excluded,
+      ({
+        Expr<String>? id,
+        Expr<String>? code,
+        Expr<String>? merchantId,
+        Expr<String>? storeId,
+        Expr<int>? amount,
+        Expr<String>? status,
+        Expr<DateTime?>? redeemedAt,
+        Expr<String?>? redeemedOrderId,
+        Expr<DateTime>? createdAt,
+      }) => $ForGeneratedCode.buildUpdate<BottlePhysicalCouponRow>([
+        id,
+        code,
+        merchantId,
+        storeId,
+        amount,
+        status,
+        redeemedAt,
+        redeemedOrderId,
+        createdAt,
+      ]),
+    ),
+  );
+}
+
 /// Extension methods for building queries projected to a named record.
 extension QueryItemsTotalNamed<A, B>
     on Query<({Expr<A> items, Expr<B> total})> {
@@ -14539,6 +19015,146 @@ extension QueryBalanceTransactionsNamed<A, B>
   /// returned by [conditionBuilder] evaluates to `true`.
   Query<({Expr<A> balance, Expr<B> transactions})> where(
     Expr<bool?> Function(({Expr<A> balance, Expr<B> transactions}) expr)
+    conditionBuilder,
+  ) => _fromPositionalQuery(
+    _asPositionalQuery.where(_wrapBuilder(conditionBuilder)),
+  );
+}
+
+/// Extension methods for building queries projected to a named record.
+extension QueryIsReturnableProductIdQuantityNamed<A, B, C>
+    on Query<({Expr<A> isReturnable, Expr<B> productId, Expr<C> quantity})> {
+  Query<(Expr<A>, Expr<B>, Expr<C>)> get _asPositionalQuery => $ForGeneratedCode
+      .renamedRecord(this, (e) => (e.isReturnable, e.productId, e.quantity));
+
+  static Query<({Expr<A> isReturnable, Expr<B> productId, Expr<C> quantity})>
+  _fromPositionalQuery<A, B, C>(Query<(Expr<A>, Expr<B>, Expr<C>)> query) =>
+      $ForGeneratedCode.renamedRecord(
+        query,
+        (e) => (isReturnable: e.$1, productId: e.$2, quantity: e.$3),
+      );
+
+  static T Function(Expr<A> a, Expr<B> b, Expr<C> c) _wrapBuilder<T, A, B, C>(
+    T Function(({Expr<A> isReturnable, Expr<B> productId, Expr<C> quantity}) e)
+    builder,
+  ) =>
+      (a, b, c) => builder((isReturnable: a, productId: b, quantity: c));
+
+  /// Query the database for rows in this [Query] as a [Stream].
+  Stream<({A isReturnable, B productId, C quantity})> stream() async* {
+    yield* _asPositionalQuery.stream().map(
+      (e) => (isReturnable: e.$1, productId: e.$2, quantity: e.$3),
+    );
+  }
+
+  /// Query the database for rows in this [Query] as a [List].
+  Future<List<({A isReturnable, B productId, C quantity})>> fetch() async =>
+      await stream().toList();
+
+  /// Offset [Query] using `OFFSET` clause.
+  ///
+  /// The resulting [Query] will skip the first [offset] rows.
+  Query<({Expr<A> isReturnable, Expr<B> productId, Expr<C> quantity})> offset(
+    int offset,
+  ) => _fromPositionalQuery(_asPositionalQuery.offset(offset));
+
+  /// Limit [Query] using `LIMIT` clause.
+  ///
+  /// The resulting [Query] will only return the first [limit] rows.
+  Query<({Expr<A> isReturnable, Expr<B> productId, Expr<C> quantity})> limit(
+    int limit,
+  ) => _fromPositionalQuery(_asPositionalQuery.limit(limit));
+
+  /// Create a projection of this [Query] using `SELECT` clause.
+  ///
+  /// The [projectionBuilder] **must** return a [Record] where all the
+  /// values are [Expr] objects. If something else is returned you will
+  /// get a [Query] object which doesn't have any methods!
+  ///
+  /// All methods and properties on [Query<T>] are extension methods and
+  /// they are only defined for records `T` where all the values are
+  /// [Expr] objects.
+  Query<T> select<T extends Record>(
+    T Function(
+      ({Expr<A> isReturnable, Expr<B> productId, Expr<C> quantity}) expr,
+    )
+    projectionBuilder,
+  ) => _asPositionalQuery.select(_wrapBuilder(projectionBuilder));
+
+  /// Filter [Query] using `WHERE` clause.
+  ///
+  /// Returns a [Query] retaining rows from this [Query] where the expression
+  /// returned by [conditionBuilder] evaluates to `true`.
+  Query<({Expr<A> isReturnable, Expr<B> productId, Expr<C> quantity})> where(
+    Expr<bool?> Function(
+      ({Expr<A> isReturnable, Expr<B> productId, Expr<C> quantity}) expr,
+    )
+    conditionBuilder,
+  ) => _fromPositionalQuery(
+    _asPositionalQuery.where(_wrapBuilder(conditionBuilder)),
+  );
+}
+
+/// Extension methods for building queries projected to a named record.
+extension QueryProductIdQuantityNamed<A, B>
+    on Query<({Expr<A> productId, Expr<B> quantity})> {
+  Query<(Expr<A>, Expr<B>)> get _asPositionalQuery =>
+      $ForGeneratedCode.renamedRecord(this, (e) => (e.productId, e.quantity));
+
+  static Query<({Expr<A> productId, Expr<B> quantity})>
+  _fromPositionalQuery<A, B>(Query<(Expr<A>, Expr<B>)> query) =>
+      $ForGeneratedCode.renamedRecord(
+        query,
+        (e) => (productId: e.$1, quantity: e.$2),
+      );
+
+  static T Function(Expr<A> a, Expr<B> b) _wrapBuilder<T, A, B>(
+    T Function(({Expr<A> productId, Expr<B> quantity}) e) builder,
+  ) =>
+      (a, b) => builder((productId: a, quantity: b));
+
+  /// Query the database for rows in this [Query] as a [Stream].
+  Stream<({A productId, B quantity})> stream() async* {
+    yield* _asPositionalQuery.stream().map(
+      (e) => (productId: e.$1, quantity: e.$2),
+    );
+  }
+
+  /// Query the database for rows in this [Query] as a [List].
+  Future<List<({A productId, B quantity})>> fetch() async =>
+      await stream().toList();
+
+  /// Offset [Query] using `OFFSET` clause.
+  ///
+  /// The resulting [Query] will skip the first [offset] rows.
+  Query<({Expr<A> productId, Expr<B> quantity})> offset(int offset) =>
+      _fromPositionalQuery(_asPositionalQuery.offset(offset));
+
+  /// Limit [Query] using `LIMIT` clause.
+  ///
+  /// The resulting [Query] will only return the first [limit] rows.
+  Query<({Expr<A> productId, Expr<B> quantity})> limit(int limit) =>
+      _fromPositionalQuery(_asPositionalQuery.limit(limit));
+
+  /// Create a projection of this [Query] using `SELECT` clause.
+  ///
+  /// The [projectionBuilder] **must** return a [Record] where all the
+  /// values are [Expr] objects. If something else is returned you will
+  /// get a [Query] object which doesn't have any methods!
+  ///
+  /// All methods and properties on [Query<T>] are extension methods and
+  /// they are only defined for records `T` where all the values are
+  /// [Expr] objects.
+  Query<T> select<T extends Record>(
+    T Function(({Expr<A> productId, Expr<B> quantity}) expr) projectionBuilder,
+  ) => _asPositionalQuery.select(_wrapBuilder(projectionBuilder));
+
+  /// Filter [Query] using `WHERE` clause.
+  ///
+  /// Returns a [Query] retaining rows from this [Query] where the expression
+  /// returned by [conditionBuilder] evaluates to `true`.
+  Query<({Expr<A> productId, Expr<B> quantity})> where(
+    Expr<bool?> Function(({Expr<A> productId, Expr<B> quantity}) expr)
     conditionBuilder,
   ) => _fromPositionalQuery(
     _asPositionalQuery.where(_wrapBuilder(conditionBuilder)),

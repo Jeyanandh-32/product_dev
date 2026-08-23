@@ -4,6 +4,7 @@ import 'package:jaspr_lucide/jaspr_lucide.dart' hide List, Map, Router;
 import 'package:jaspr_router/jaspr_router.dart';
 import 'package:models/models.dart';
 
+/// Card component displaying a high-level summary of a customer order.
 class OrderTile extends StatelessComponent {
   final Order order;
   final VoidCallback onShowQr;
@@ -25,9 +26,15 @@ class OrderTile extends StatelessComponent {
     final formattedTime =
         '${createdAt.hour.toString().padLeft(2, '0')}:${createdAt.minute.toString().padLeft(2, '0')}';
 
+    final totalItemsCount = order.items.length;
+    final totalQuantity = order.items.fold<int>(
+      0,
+      (sum, item) => sum + item.quantity,
+    );
+
     return div(
       classes:
-          'bg-white rounded-3xl p-5 border border-gray-200/90 shadow-2xs hover:border-black transition-all flex flex-col justify-between gap-4',
+          'bg-white rounded-3xl p-5 border border-gray-200/90 shadow-2xs hover:border-black transition-all flex flex-col justify-between gap-5',
       [
         // Top Header Row: Order Number & Status Pill
         div(classes: 'flex items-center justify-between gap-2', [
@@ -65,78 +72,57 @@ class OrderTile extends StatelessComponent {
           ),
         ]),
 
-        // Items Summary Box
+        // Order Summary Info Row
         div(
           classes:
-              'bg-gray-50/60 rounded-2xl p-3.5 flex flex-col gap-2 border border-gray-100',
+              'bg-gray-50/60 rounded-2xl px-4 py-3 flex items-center justify-between border border-gray-100 text-xs',
           [
-            for (final item in order.items.take(3))
-              div(
-                classes: 'flex items-center justify-between text-xs font-medium',
-                [
-                  div(classes: 'flex items-center gap-2 text-gray-800', [
-                    span(
-                      classes: 'font-bold text-black min-w-4',
-                      [.text('${item.quantity}×')],
-                    ),
-                    span(
-                      classes: 'text-gray-700 truncate max-w-45 sm:max-w-xs',
-                      [.text(item.product?.name ?? 'Item')],
-                    ),
-                  ]),
-                  span(classes: 'text-gray-500 font-semibold', [
-                    .text(
-                      '₹${(item.unitPrice * item.quantity).toStringAsFixed(2)}',
-                    ),
-                  ]),
-                ],
-              ),
-            if (order.items.length > 3)
-              span(classes: 'text-[11px] font-bold text-gray-400 italic', [
-                .text('+ ${order.items.length - 3} more items'),
+            div(classes: 'flex items-center gap-1.5 text-gray-600 font-medium', [
+              ShoppingBag(classes: 'w-4 h-4 text-gray-400'),
+              span([
+                .text(
+                  '$totalItemsCount ${totalItemsCount == 1 ? 'item' : 'items'} ($totalQuantity ${totalQuantity == 1 ? 'unit' : 'units'})',
+                ),
               ]),
-          ],
-        ),
-
-        // Bottom Tile Row: Total Amount & Equal-Width Action Buttons
-        div(
-          classes:
-              'flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1 border-t border-gray-100',
-          [
+            ]),
             div(classes: 'flex items-center gap-1.5', [
               span(
                 classes: 'text-xs text-gray-500 font-medium',
-                [.text('Total Amount:')],
+                [.text('Total:')],
               ),
-              span(classes: 'text-base font-extrabold text-black', [
+              span(classes: 'text-base font-extrabold text-black font-mono tracking-tight', [
                 .text('₹${order.grandTotal.toStringAsFixed(2)}'),
               ]),
             ]),
+          ],
+        ),
 
-            div(classes: 'flex items-center gap-2 w-full sm:w-auto', [
-              if (showQrButton)
-                button(
-                  classes:
-                      'flex-1 sm:flex-none sm:w-32 justify-center flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition-all cursor-pointer border-0 active:scale-95 shadow-2xs',
-                  onClick: onShowQr,
-                  [
-                    QrCode(classes: 'w-3.5 h-3.5 text-white'),
-                    .text('View QR'),
-                  ],
-                ),
-
+        // Bottom Action Buttons
+        div(
+          classes: 'flex items-center gap-2 w-full pt-1 border-t border-gray-100',
+          [
+            if (showQrButton)
               button(
-                classes: showQrButton
-                    ? 'flex-1 sm:flex-none sm:w-32 justify-center flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gray-100 hover:bg-black hover:text-white text-gray-800 font-bold text-xs transition-all cursor-pointer border-0 active:scale-95'
-                    : 'w-full sm:w-36 justify-center flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gray-100 hover:bg-black hover:text-white text-gray-800 font-bold text-xs transition-all cursor-pointer border-0 active:scale-95',
-                onClick: () => Router.of(
-                  context,
-                ).push('/order/status?reference=${order.orderReference}'),
+                classes:
+                    'flex-1 justify-center flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition-all cursor-pointer border-0 active:scale-95 shadow-2xs',
+                onClick: onShowQr,
                 [
-                  .text('View Details'),
+                  QrCode(classes: 'w-3.5 h-3.5 text-white'),
+                  .text('View QR'),
                 ],
               ),
-            ]),
+
+            button(
+              classes: showQrButton
+                  ? 'flex-1 justify-center flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-black hover:text-white text-gray-800 font-bold text-xs transition-all cursor-pointer border-0 active:scale-95'
+                  : 'w-full justify-center flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-black hover:text-white text-gray-800 font-bold text-xs transition-all cursor-pointer border-0 active:scale-95',
+              onClick: () => Router.of(
+                context,
+              ).push('/order/status?reference=${order.orderReference}'),
+              [
+                .text('View Details'),
+              ],
+            ),
           ],
         ),
       ],

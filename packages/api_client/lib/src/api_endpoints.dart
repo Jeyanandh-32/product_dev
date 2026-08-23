@@ -31,4 +31,23 @@ abstract final class ApiEndpoints {
   static const String profitLoss = '/$version/reports/profit-loss';
   static const String stockSummary = '/$version/reports/stock-summary';
   static const String dashboardReport = '/$version/reports/dashboard';
+
+  // Bottle Returns
+  static const String bottleReturnsConfig = '/$version/bottle-returns/config';
+  static const String bottleReturnsProducts =
+      '/$version/bottle-returns/products';
+  static const String bottleReturnsTokens =
+      '/$version/bottle-returns/generate-tokens';
+  static const String bottleReturnsCreditsBalance =
+      '/$version/bottle-returns/credits/balance';
+  static const String bottleReturnsCreditsApply =
+      '/$version/bottle-returns/credits/apply';
+  static const String bottleReturnsCouponsValidate =
+      '/$version/bottle-returns/coupons/validate';
+  static const String bottleReturnsCouponsRedeem =
+      '/$version/bottle-returns/coupons/redeem';
+  static const String bottleReturnsIotScan =
+      '/$version/bottle-returns/iot/scan-return';
+  static const String bottleReturnsIotDispense =
+      '/$version/bottle-returns/iot/dispense-stickers';
 }

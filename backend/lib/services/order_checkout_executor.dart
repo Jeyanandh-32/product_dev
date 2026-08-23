@@ -5,6 +5,7 @@ import 'package:backend/extensions/order_row_extension.dart';
 import 'package:backend/repositories/order_item_repository.dart';
 import 'package:backend/repositories/order_repository.dart';
 import 'package:backend/repositories/stock_repository.dart';
+import 'package:backend/services/order_bottle_token_helper.dart';
 import 'package:backend/services/order_calculator.dart';
 import 'package:backend/services/order_reference_generator.dart';
 import 'package:models/models.dart';
@@ -99,6 +100,16 @@ class OrderCheckoutExecutor {
             customReason: 'Order #${orderRow.billNo}',
           );
         }
+      }
+
+      if (paymentStatus == PaymentStatus.completed) {
+        await OrderBottleTokenHelper.generateIfApplicable(
+          merchantId: merchantId,
+          storeId: storeId,
+          orderId: orderRow.id,
+          items: totals.items.map((i) => (productId: i.productId, quantity: i.quantity)).toList(),
+          customerId: customerId,
+        );
       }
 
       return orderRow.toOrder(createdItems);

@@ -279,3 +279,81 @@ CREATE TABLE IF NOT EXISTS stock_transactions (
 
 CREATE INDEX IF NOT EXISTS idx_stock_transactions_store_id ON stock_transactions(store_id, created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_stock_transactions_product_store ON stock_transactions(store_id, product_id, created_at DESC);
+
+CREATE TABLE IF NOT EXISTS bottle_return_configs (
+    store_id UUID PRIMARY KEY REFERENCES stores(id) ON DELETE CASCADE,
+    is_enabled BOOLEAN NOT NULL DEFAULT TRUE,
+    reward_amount_in_rupees INT NOT NULL DEFAULT 10,
+    iot_api_key VARCHAR(255),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS bottle_return_products (
+    product_id UUID PRIMARY KEY REFERENCES products (id) ON DELETE CASCADE,
+    store_id UUID NOT NULL REFERENCES stores (id) ON DELETE CASCADE,
+    is_returnable BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_bottle_return_products_store ON bottle_return_products(store_id, is_returnable);
+
+CREATE TABLE IF NOT EXISTS bottle_qr_tokens (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    token VARCHAR(255) UNIQUE NOT NULL,
+    merchant_id UUID NOT NULL REFERENCES merchants(id) ON DELETE CASCADE,
+    store_id UUID NOT NULL REFERENCES stores(id) ON DELETE CASCADE,
+    order_id UUID NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
+    product_id UUID NOT NULL REFERENCES products(id) ON DELETE CASCADE,
+    reward_mode VARCHAR(50) NOT NULL DEFAULT 'digital',
+    customer_phone VARCHAR(20),
+    status VARCHAR(50) NOT NULL DEFAULT 'active',
+    returned_at TIMESTAMPTZ,
+    returned_store_id UUID REFERENCES stores(id) ON DELETE SET NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_bottle_qr_tokens_merchant_status ON bottle_qr_tokens(merchant_id, status);
+CREATE INDEX IF NOT EXISTS idx_bottle_qr_tokens_order ON bottle_qr_tokens(order_id);
+CREATE INDEX IF NOT EXISTS idx_bottle_qr_tokens_phone ON bottle_qr_tokens(customer_phone);
+
+CREATE TABLE IF NOT EXISTS bottle_credits (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    merchant_id UUID NOT NULL REFERENCES merchants(id) ON DELETE CASCADE,
+    customer_phone VARCHAR(20) NOT NULL,
+    balance INT NOT NULL DEFAULT 0,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    CONSTRAINT unique_merchant_customer_phone_credit UNIQUE (merchant_id, customer_phone)
+);
+
+CREATE INDEX IF NOT EXISTS idx_bottle_credits_merchant_phone ON bottle_credits(merchant_id, customer_phone);
+
+CREATE TABLE IF NOT EXISTS bottle_credit_transactions (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    merchant_id UUID NOT NULL REFERENCES merchants(id) ON DELETE CASCADE,
+    customer_phone VARCHAR(20) NOT NULL,
+    amount INT NOT NULL,
+    type VARCHAR(50) NOT NULL,
+    reference_order_id UUID REFERENCES orders(id) ON DELETE SET NULL,
+    store_id UUID REFERENCES stores(id) ON DELETE SET NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_bottle_credit_tx_merchant_phone ON bottle_credit_transactions(merchant_id, customer_phone, created_at DESC);
+
+CREATE TABLE IF NOT EXISTS bottle_physical_coupons (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    code VARCHAR(50) UNIQUE NOT NULL,
+    merchant_id UUID NOT NULL REFERENCES merchants(id) ON DELETE CASCADE,
+    store_id UUID NOT NULL REFERENCES stores(id) ON DELETE CASCADE,
+    amount INT NOT NULL,
+    status VARCHAR(50) NOT NULL DEFAULT 'active',
+    redeemed_at TIMESTAMPTZ,
+    redeemed_order_id UUID REFERENCES orders(id) ON DELETE SET NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_bottle_physical_coupons_code ON bottle_physical_coupons(code);
+CREATE INDEX IF NOT EXISTS idx_bottle_physical_coupons_merchant ON bottle_physical_coupons(merchant_id, status);
+

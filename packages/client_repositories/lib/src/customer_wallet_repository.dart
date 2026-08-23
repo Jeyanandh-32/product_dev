@@ -6,15 +6,19 @@ class CustomerWalletRepository {
   const CustomerWalletRepository._();
 
   static Future<({double balance, List<CustomerWalletTransaction> transactions})>
-  getWalletInfo({required String storeId}) async {
+  getWalletInfo({String? storeId}) async {
     try {
+      final queryParams = <String, dynamic>{};
+      if (storeId != null && storeId.isNotEmpty) {
+        queryParams['storeId'] = storeId;
+      }
       final result = await dio.get(
         ApiEndpoints.customerWallet,
-        queryParameters: {'storeId': storeId},
+        queryParameters: queryParams.isNotEmpty ? queryParams : null,
       );
       final data = result.data['data'] as Map<String, dynamic>;
-      final balance = (data['walletBalance'] as num).toDouble();
-      final txList = data['transactions'] as List<dynamic>;
+      final balance = ((data['balance'] ?? data['walletBalance']) as num?)?.toDouble() ?? 0.0;
+      final txList = data['transactions'] as List<dynamic>? ?? [];
 
       final transactions = txList
           .map((t) => CustomerWalletTransaction.fromJson(t as Map<String, Object?>))

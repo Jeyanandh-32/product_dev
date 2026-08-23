@@ -30,10 +30,18 @@ Future<Response> _onGet(RequestContext context, String id) async {
 
   try {
     final storeRow = await repo.getById(id);
+    if (storeRow == null) {
+      return badRequest(message: 'Store not found.');
+    }
+
+    final btlConfig = await Database.db.bottleReturnConfigs
+        .where((c) => c.storeId.equals(toExpr(id)) & c.isEnabled.equals(toExpr(true)))
+        .first
+        .fetch();
 
     return success(
       data: {
-        'store': storeRow?.toStore(),
+        'store': storeRow.toStore(isBottleReturnEnabled: btlConfig != null),
       },
     );
   } catch (e) {

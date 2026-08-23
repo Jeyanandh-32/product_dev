@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Store {
 
- String get id; String get merchantId; String get name; DateTime get createdAt; DateTime get updatedAt; String? get storeType; bool get isActive; bool get isOnlineEnabled; PaymentProvider? get activePaymentProvider; String? get slug;
+ String get id; String get merchantId; String get name; DateTime get createdAt; DateTime get updatedAt; String? get storeType; bool get isActive; bool get isOnlineEnabled; bool get isBottleReturnEnabled; PaymentProvider? get activePaymentProvider; String? get slug;
 /// Create a copy of Store
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $StoreCopyWith<Store> get copyWith => _$StoreCopyWithImpl<Store>(this as Store, 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Store&&(identical(other.id, id) || other.id == id)&&(identical(other.merchantId, merchantId) || other.merchantId == merchantId)&&(identical(other.name, name) || other.name == name)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.storeType, storeType) || other.storeType == storeType)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.isOnlineEnabled, isOnlineEnabled) || other.isOnlineEnabled == isOnlineEnabled)&&(identical(other.activePaymentProvider, activePaymentProvider) || other.activePaymentProvider == activePaymentProvider)&&(identical(other.slug, slug) || other.slug == slug));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Store&&(identical(other.id, id) || other.id == id)&&(identical(other.merchantId, merchantId) || other.merchantId == merchantId)&&(identical(other.name, name) || other.name == name)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.storeType, storeType) || other.storeType == storeType)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.isOnlineEnabled, isOnlineEnabled) || other.isOnlineEnabled == isOnlineEnabled)&&(identical(other.isBottleReturnEnabled, isBottleReturnEnabled) || other.isBottleReturnEnabled == isBottleReturnEnabled)&&(identical(other.activePaymentProvider, activePaymentProvider) || other.activePaymentProvider == activePaymentProvider)&&(identical(other.slug, slug) || other.slug == slug));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,merchantId,name,createdAt,updatedAt,storeType,isActive,isOnlineEnabled,activePaymentProvider,slug);
+int get hashCode => Object.hash(runtimeType,id,merchantId,name,createdAt,updatedAt,storeType,isActive,isOnlineEnabled,isBottleReturnEnabled,activePaymentProvider,slug);
 
 @override
 String toString() {
-  return 'Store(id: $id, merchantId: $merchantId, name: $name, createdAt: $createdAt, updatedAt: $updatedAt, storeType: $storeType, isActive: $isActive, isOnlineEnabled: $isOnlineEnabled, activePaymentProvider: $activePaymentProvider, slug: $slug)';
+  return 'Store(id: $id, merchantId: $merchantId, name: $name, createdAt: $createdAt, updatedAt: $updatedAt, storeType: $storeType, isActive: $isActive, isOnlineEnabled: $isOnlineEnabled, isBottleReturnEnabled: $isBottleReturnEnabled, activePaymentProvider: $activePaymentProvider, slug: $slug)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $StoreCopyWith<$Res>  {
   factory $StoreCopyWith(Store value, $Res Function(Store) _then) = _$StoreCopyWithImpl;
 @useResult
 $Res call({
- String id, String merchantId, String name, DateTime createdAt, DateTime updatedAt, String? storeType, bool isActive, bool isOnlineEnabled, PaymentProvider? activePaymentProvider, String? slug
+ String id, String merchantId, String name, DateTime createdAt, DateTime updatedAt, String? storeType, bool isActive, bool isOnlineEnabled, bool isBottleReturnEnabled, PaymentProvider? activePaymentProvider, String? slug
 });
 
 
@@ -65,7 +65,7 @@ class _$StoreCopyWithImpl<$Res>
 
 /// Create a copy of Store
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? merchantId = null,Object? name = null,Object? createdAt = null,Object? updatedAt = null,Object? storeType = freezed,Object? isActive = null,Object? isOnlineEnabled = null,Object? activePaymentProvider = freezed,Object? slug = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? merchantId = null,Object? name = null,Object? createdAt = null,Object? updatedAt = null,Object? storeType = freezed,Object? isActive = null,Object? isOnlineEnabled = null,Object? isBottleReturnEnabled = null,Object? activePaymentProvider = freezed,Object? slug = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,merchantId: null == merchantId ? _self.merchantId : merchantId // ignore: cast_nullable_to_non_nullable
@@ -75,6 +75,7 @@ as DateTime,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore
 as DateTime,storeType: freezed == storeType ? _self.storeType : storeType // ignore: cast_nullable_to_non_nullable
 as String?,isActive: null == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
 as bool,isOnlineEnabled: null == isOnlineEnabled ? _self.isOnlineEnabled : isOnlineEnabled // ignore: cast_nullable_to_non_nullable
+as bool,isBottleReturnEnabled: null == isBottleReturnEnabled ? _self.isBottleReturnEnabled : isBottleReturnEnabled // ignore: cast_nullable_to_non_nullable
 as bool,activePaymentProvider: freezed == activePaymentProvider ? _self.activePaymentProvider : activePaymentProvider // ignore: cast_nullable_to_non_nullable
 as PaymentProvider?,slug: freezed == slug ? _self.slug : slug // ignore: cast_nullable_to_non_nullable
 as String?,
@@ -162,10 +163,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String merchantId,  String name,  DateTime createdAt,  DateTime updatedAt,  String? storeType,  bool isActive,  bool isOnlineEnabled,  PaymentProvider? activePaymentProvider,  String? slug)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String merchantId,  String name,  DateTime createdAt,  DateTime updatedAt,  String? storeType,  bool isActive,  bool isOnlineEnabled,  bool isBottleReturnEnabled,  PaymentProvider? activePaymentProvider,  String? slug)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Store() when $default != null:
-return $default(_that.id,_that.merchantId,_that.name,_that.createdAt,_that.updatedAt,_that.storeType,_that.isActive,_that.isOnlineEnabled,_that.activePaymentProvider,_that.slug);case _:
+return $default(_that.id,_that.merchantId,_that.name,_that.createdAt,_that.updatedAt,_that.storeType,_that.isActive,_that.isOnlineEnabled,_that.isBottleReturnEnabled,_that.activePaymentProvider,_that.slug);case _:
   return orElse();
 
 }
@@ -183,10 +184,10 @@ return $default(_that.id,_that.merchantId,_that.name,_that.createdAt,_that.updat
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String merchantId,  String name,  DateTime createdAt,  DateTime updatedAt,  String? storeType,  bool isActive,  bool isOnlineEnabled,  PaymentProvider? activePaymentProvider,  String? slug)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String merchantId,  String name,  DateTime createdAt,  DateTime updatedAt,  String? storeType,  bool isActive,  bool isOnlineEnabled,  bool isBottleReturnEnabled,  PaymentProvider? activePaymentProvider,  String? slug)  $default,) {final _that = this;
 switch (_that) {
 case _Store():
-return $default(_that.id,_that.merchantId,_that.name,_that.createdAt,_that.updatedAt,_that.storeType,_that.isActive,_that.isOnlineEnabled,_that.activePaymentProvider,_that.slug);case _:
+return $default(_that.id,_that.merchantId,_that.name,_that.createdAt,_that.updatedAt,_that.storeType,_that.isActive,_that.isOnlineEnabled,_that.isBottleReturnEnabled,_that.activePaymentProvider,_that.slug);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -203,10 +204,10 @@ return $default(_that.id,_that.merchantId,_that.name,_that.createdAt,_that.updat
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String merchantId,  String name,  DateTime createdAt,  DateTime updatedAt,  String? storeType,  bool isActive,  bool isOnlineEnabled,  PaymentProvider? activePaymentProvider,  String? slug)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String merchantId,  String name,  DateTime createdAt,  DateTime updatedAt,  String? storeType,  bool isActive,  bool isOnlineEnabled,  bool isBottleReturnEnabled,  PaymentProvider? activePaymentProvider,  String? slug)?  $default,) {final _that = this;
 switch (_that) {
 case _Store() when $default != null:
-return $default(_that.id,_that.merchantId,_that.name,_that.createdAt,_that.updatedAt,_that.storeType,_that.isActive,_that.isOnlineEnabled,_that.activePaymentProvider,_that.slug);case _:
+return $default(_that.id,_that.merchantId,_that.name,_that.createdAt,_that.updatedAt,_that.storeType,_that.isActive,_that.isOnlineEnabled,_that.isBottleReturnEnabled,_that.activePaymentProvider,_that.slug);case _:
   return null;
 
 }
@@ -218,7 +219,7 @@ return $default(_that.id,_that.merchantId,_that.name,_that.createdAt,_that.updat
 @JsonSerializable()
 
 class _Store implements Store {
-  const _Store({required this.id, required this.merchantId, required this.name, required this.createdAt, required this.updatedAt, this.storeType, required this.isActive, this.isOnlineEnabled = false, this.activePaymentProvider = PaymentProvider.phonepe, this.slug});
+  const _Store({required this.id, required this.merchantId, required this.name, required this.createdAt, required this.updatedAt, this.storeType, required this.isActive, this.isOnlineEnabled = false, this.isBottleReturnEnabled = false, this.activePaymentProvider = PaymentProvider.phonepe, this.slug});
   factory _Store.fromJson(Map<String, dynamic> json) => _$StoreFromJson(json);
 
 @override final  String id;
@@ -229,6 +230,7 @@ class _Store implements Store {
 @override final  String? storeType;
 @override final  bool isActive;
 @override@JsonKey() final  bool isOnlineEnabled;
+@override@JsonKey() final  bool isBottleReturnEnabled;
 @override@JsonKey() final  PaymentProvider? activePaymentProvider;
 @override final  String? slug;
 
@@ -245,16 +247,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Store&&(identical(other.id, id) || other.id == id)&&(identical(other.merchantId, merchantId) || other.merchantId == merchantId)&&(identical(other.name, name) || other.name == name)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.storeType, storeType) || other.storeType == storeType)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.isOnlineEnabled, isOnlineEnabled) || other.isOnlineEnabled == isOnlineEnabled)&&(identical(other.activePaymentProvider, activePaymentProvider) || other.activePaymentProvider == activePaymentProvider)&&(identical(other.slug, slug) || other.slug == slug));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Store&&(identical(other.id, id) || other.id == id)&&(identical(other.merchantId, merchantId) || other.merchantId == merchantId)&&(identical(other.name, name) || other.name == name)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.storeType, storeType) || other.storeType == storeType)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.isOnlineEnabled, isOnlineEnabled) || other.isOnlineEnabled == isOnlineEnabled)&&(identical(other.isBottleReturnEnabled, isBottleReturnEnabled) || other.isBottleReturnEnabled == isBottleReturnEnabled)&&(identical(other.activePaymentProvider, activePaymentProvider) || other.activePaymentProvider == activePaymentProvider)&&(identical(other.slug, slug) || other.slug == slug));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,merchantId,name,createdAt,updatedAt,storeType,isActive,isOnlineEnabled,activePaymentProvider,slug);
+int get hashCode => Object.hash(runtimeType,id,merchantId,name,createdAt,updatedAt,storeType,isActive,isOnlineEnabled,isBottleReturnEnabled,activePaymentProvider,slug);
 
 @override
 String toString() {
-  return 'Store(id: $id, merchantId: $merchantId, name: $name, createdAt: $createdAt, updatedAt: $updatedAt, storeType: $storeType, isActive: $isActive, isOnlineEnabled: $isOnlineEnabled, activePaymentProvider: $activePaymentProvider, slug: $slug)';
+  return 'Store(id: $id, merchantId: $merchantId, name: $name, createdAt: $createdAt, updatedAt: $updatedAt, storeType: $storeType, isActive: $isActive, isOnlineEnabled: $isOnlineEnabled, isBottleReturnEnabled: $isBottleReturnEnabled, activePaymentProvider: $activePaymentProvider, slug: $slug)';
 }
 
 
@@ -265,7 +267,7 @@ abstract mixin class _$StoreCopyWith<$Res> implements $StoreCopyWith<$Res> {
   factory _$StoreCopyWith(_Store value, $Res Function(_Store) _then) = __$StoreCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String merchantId, String name, DateTime createdAt, DateTime updatedAt, String? storeType, bool isActive, bool isOnlineEnabled, PaymentProvider? activePaymentProvider, String? slug
+ String id, String merchantId, String name, DateTime createdAt, DateTime updatedAt, String? storeType, bool isActive, bool isOnlineEnabled, bool isBottleReturnEnabled, PaymentProvider? activePaymentProvider, String? slug
 });
 
 
@@ -282,7 +284,7 @@ class __$StoreCopyWithImpl<$Res>
 
 /// Create a copy of Store
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? merchantId = null,Object? name = null,Object? createdAt = null,Object? updatedAt = null,Object? storeType = freezed,Object? isActive = null,Object? isOnlineEnabled = null,Object? activePaymentProvider = freezed,Object? slug = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? merchantId = null,Object? name = null,Object? createdAt = null,Object? updatedAt = null,Object? storeType = freezed,Object? isActive = null,Object? isOnlineEnabled = null,Object? isBottleReturnEnabled = null,Object? activePaymentProvider = freezed,Object? slug = freezed,}) {
   return _then(_Store(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,merchantId: null == merchantId ? _self.merchantId : merchantId // ignore: cast_nullable_to_non_nullable
@@ -292,6 +294,7 @@ as DateTime,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore
 as DateTime,storeType: freezed == storeType ? _self.storeType : storeType // ignore: cast_nullable_to_non_nullable
 as String?,isActive: null == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
 as bool,isOnlineEnabled: null == isOnlineEnabled ? _self.isOnlineEnabled : isOnlineEnabled // ignore: cast_nullable_to_non_nullable
+as bool,isBottleReturnEnabled: null == isBottleReturnEnabled ? _self.isBottleReturnEnabled : isBottleReturnEnabled // ignore: cast_nullable_to_non_nullable
 as bool,activePaymentProvider: freezed == activePaymentProvider ? _self.activePaymentProvider : activePaymentProvider // ignore: cast_nullable_to_non_nullable
 as PaymentProvider?,slug: freezed == slug ? _self.slug : slug // ignore: cast_nullable_to_non_nullable
 as String?,

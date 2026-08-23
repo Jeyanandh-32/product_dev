@@ -1,4 +1,5 @@
 import 'package:backend/repositories/customer_repository.dart';
+import 'package:backend/services/online_wallet_deduction_handler.dart';
 import 'package:backend/services/order_service.dart';
 import 'package:backend/services/phonepe_service.dart';
 import 'package:backend/utils/responses.dart';
@@ -32,18 +33,14 @@ class OnlineOrderCheckoutCoordinator {
       customerId: customerId,
     );
 
-    await customerRepo.updateStoreWalletBalance(
-      customerId: customerId,
+    await OnlineWalletDeductionHandler.applyDeduction(
+      customerRepo: customerRepo,
+      merchantId: merchantId,
       storeId: storeId,
-      amountDeltaPaise: -walletDeductionPaise,
-    );
-
-    await customerRepo.createWalletTransaction(
       customerId: customerId,
-      storeId: storeId,
-      amount: walletDeductionPaise,
-      type: WalletTransactionType.orderDebit.name,
-      reference: completedOrder.orderReference,
+      walletDeductionPaise: walletDeductionPaise,
+      orderReference: completedOrder.orderReference,
+      orderId: completedOrder.id,
     );
 
     return success(
@@ -86,18 +83,14 @@ class OnlineOrderCheckoutCoordinator {
     );
 
     if (walletDeductionPaise > 0) {
-      await customerRepo.updateStoreWalletBalance(
-        customerId: customerId,
+      await OnlineWalletDeductionHandler.applyDeduction(
+        customerRepo: customerRepo,
+        merchantId: merchantId,
         storeId: storeId,
-        amountDeltaPaise: -walletDeductionPaise,
-      );
-
-      await customerRepo.createWalletTransaction(
         customerId: customerId,
-        storeId: storeId,
-        amount: walletDeductionPaise,
-        type: WalletTransactionType.orderDebit.name,
-        reference: completeOrder.orderReference,
+        walletDeductionPaise: walletDeductionPaise,
+        orderReference: completeOrder.orderReference,
+        orderId: completeOrder.id,
       );
     }
 

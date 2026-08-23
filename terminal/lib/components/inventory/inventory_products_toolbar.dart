@@ -5,6 +5,8 @@ import 'package:mix/mix.dart';
 import 'package:models/models.dart';
 import 'package:signals_flutter/signals_flutter.dart';
 import 'package:terminal/components/inventory/inventory_filter_bar.dart';
+import 'package:terminal/components/inventory/modals/returnable_products_modal.dart';
+import 'package:terminal/signals/bottle_return_signal.dart';
 import 'package:terminal/signals/categories_signal.dart';
 import 'package:terminal/signals/counters_signal.dart';
 import 'package:terminal/signals/inventory_products_signal.dart';
@@ -37,6 +39,7 @@ class _InventoryProductsToolbarState extends State<InventoryProductsToolbar> {
       builder: (context) {
         final categories = categoriesSignal.value.value ?? <Category>[];
         final counters = countersSignal.value.value ?? <Counter>[];
+        final isBottleEnabled = bottleReturnConfigSignal.value?.isEnabled ?? false;
 
         if (isMobile) {
           return Column(
@@ -46,6 +49,7 @@ class _InventoryProductsToolbarState extends State<InventoryProductsToolbar> {
                 children: [
                   Expanded(child: _buildSearchBox()),
                   const Gap(8),
+                  if (isBottleEnabled) ...[_buildBottleReturnButton(), const Gap(8)],
                   _buildAddButton(),
                 ],
               ),
@@ -59,8 +63,9 @@ class _InventoryProductsToolbarState extends State<InventoryProductsToolbar> {
           children: [
             Expanded(child: InventoryFilterBar(categories: categories, counters: counters)),
             const Gap(16),
-            _buildSearchBox(width: 230),
-            const Gap(10),
+            _buildSearchBox(width: 220),
+            if (isBottleEnabled) ...[const Gap(8), _buildBottleReturnButton()],
+            const Gap(8),
             _buildAddButton(),
           ],
         );
@@ -71,12 +76,7 @@ class _InventoryProductsToolbarState extends State<InventoryProductsToolbar> {
   Widget _buildSearchBox({double? width}) {
     final box = Container(
       height: 36,
-      decoration: BoxDecoration(
-        color: const Color(0xFFFFFFFF),
-        borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: const Color(0xFFE2E8F0)),
-        boxShadow: const [BoxShadow(color: Color(0x06000000), offset: Offset(0, 1), blurRadius: 2)],
-      ),
+      decoration: BoxDecoration(color: const Color(0xFFFFFFFF), borderRadius: BorderRadius.circular(999), border: Border.all(color: const Color(0xFFE2E8F0)), boxShadow: const [BoxShadow(color: Color(0x06000000), offset: Offset(0, 1), blurRadius: 2)]),
       padding: const EdgeInsets.only(left: 12, right: 8),
       child: Row(
         children: [
@@ -91,13 +91,7 @@ class _InventoryProductsToolbarState extends State<InventoryProductsToolbar> {
                 setState(() {});
               },
               style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Color(0xFF0F172A)),
-              decoration: const InputDecoration(
-                hintText: 'Search products...',
-                hintStyle: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: Color(0xFF94A3B8)),
-                border: InputBorder.none,
-                isDense: true,
-                contentPadding: EdgeInsets.zero,
-              ),
+              decoration: const InputDecoration(hintText: 'Search products...', hintStyle: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: Color(0xFF94A3B8)), border: InputBorder.none, isDense: true, contentPadding: EdgeInsets.zero),
             ),
           ),
           if (_searchController.text.isNotEmpty)
@@ -113,23 +107,32 @@ class _InventoryProductsToolbarState extends State<InventoryProductsToolbar> {
         ],
       ),
     );
-    if (width != null) return SizedBox(width: width, child: box);
-    return box;
+    return width != null ? SizedBox(width: width, child: box) : box;
   }
+
+  Widget _buildBottleReturnButton() => MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: PressableBox(
+          onPress: () => ReturnableProductsModal.show(context),
+          style: BoxStyler().height(36).paddingX(12).color(const Color(0xFFF0FDF4)).borderAll(color: const Color(0xFFBBF7D0)).borderRadiusAll(const Radius.circular(999)).alignment(Alignment.center).onHovered(BoxStyler().color(const Color(0xFFDCFCE7))),
+          child: const Row(mainAxisSize: MainAxisSize.min, children: [
+            Icon(FLucideIcons.recycle, size: 14, color: Color(0xFF16A34A)),
+            Gap(6),
+            Text('Bottle Returns', style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700, color: Color(0xFF15803D))),
+          ]),
+        ),
+      );
 
   Widget _buildAddButton() => MouseRegion(
         cursor: SystemMouseCursors.click,
         child: PressableBox(
           onPress: widget.onAddProduct,
           style: BoxStyler().height(36).paddingX(14).color(const Color(0xFF000000)).borderRadiusAll(const Radius.circular(999)).alignment(Alignment.center).onHovered(BoxStyler().color(const Color(0xFF1E293B))),
-          child: const Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(FLucideIcons.plus, size: 15, color: Color(0xFFFFFFFF)),
-              Gap(6),
-              Text('Add Product', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w800, color: Color(0xFFFFFFFF))),
-            ],
-          ),
+          child: const Row(mainAxisSize: MainAxisSize.min, children: [
+            Icon(FLucideIcons.plus, size: 15, color: Color(0xFFFFFFFF)),
+            Gap(6),
+            Text('Add Product', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w800, color: Color(0xFFFFFFFF))),
+          ]),
         ),
       );
 }

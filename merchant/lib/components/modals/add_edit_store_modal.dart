@@ -3,6 +3,7 @@ import 'package:jaspr/jaspr.dart';
 import 'package:merchant/components/fields/form_field.dart';
 import 'package:merchant/components/fields/store_type_selector_field.dart';
 import 'package:merchant/components/modals/modal.dart';
+import 'package:merchant/components/modals/store_bottle_returns_section.dart';
 import 'package:merchant/components/modals/store_online_settings_section.dart';
 import 'package:merchant/signals/navigation_signal.dart';
 import 'package:merchant/signals/stores_signal.dart';
@@ -41,9 +42,11 @@ class _AddEditStoreModalState extends State<AddEditStoreModal> {
     }
   }
 
-  String _toSlug(String input) {
-    return input.toLowerCase().replaceAll(RegExp(r'[^a-z0-9\s-]'), '').replaceAll(RegExp(r'\s+'), '-').replaceAll(RegExp(r'-+'), '-');
-  }
+  String _toSlug(String input) => input
+      .toLowerCase()
+      .replaceAll(RegExp(r'[^a-z0-9\s-]'), '')
+      .replaceAll(RegExp(r'\s+'), '-')
+      .replaceAll(RegExp(r'-+'), '-');
 
   void _onStoreNameChange(String name) {
     _storeName = name;
@@ -78,7 +81,8 @@ class _AddEditStoreModalState extends State<AddEditStoreModal> {
 
   @override
   Component build(BuildContext context) {
-    final isEditing = component.store != null;
+    final store = component.store;
+    final isEditing = store != null;
 
     return Modal(
       title: isEditing ? 'Edit Store' : 'Add Store',
@@ -108,21 +112,18 @@ class _AddEditStoreModalState extends State<AddEditStoreModal> {
             },
             onSlugChanged: (slugVal) => setState(() => _slug = slugVal),
           ),
-          if (isEditing)
+          if (isEditing) ...[
+            StoreBottleReturnsSection(store: store),
             div(classes: 'form-control mb-4 flex flex-row items-center gap-3', [
               p(classes: 'text-[14px] font-semibold text-gray-500', [.text('Active')]),
               input(
                 type: InputType.checkbox,
                 classes: 'toggle ${_isActive ? 'toggle-success' : ''} hover:cursor-pointer',
                 checked: _isActive,
-                events: {
-                  'change': (e) {
-                    final target = e.target as web.HTMLInputElement;
-                    setState(() => _isActive = target.checked);
-                  },
-                },
+                events: {'change': (e) => setState(() => _isActive = (e.target as web.HTMLInputElement).checked)},
               ),
             ]),
+          ],
           div(classes: 'flex justify-end items-center pt-2', [
             button(
               type: ButtonType.submit,

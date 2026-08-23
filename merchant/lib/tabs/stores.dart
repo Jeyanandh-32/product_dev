@@ -4,6 +4,7 @@ import 'package:merchant/components/containers/stores_container.dart';
 import 'package:merchant/components/containers/terminals_container.dart';
 import 'package:merchant/components/modals/add_edit_store_modal.dart';
 import 'package:merchant/components/modals/add_edit_terminal_modal.dart';
+import 'package:merchant/components/modals/bottle_return_modal.dart';
 import 'package:merchant/components/signal_component.dart';
 import 'package:merchant/signals/navigation_signal.dart';
 import 'package:merchant/signals/stores_signal.dart';
@@ -51,6 +52,8 @@ class _StoresState extends SignalState<Stores> {
           const AddEditTerminalModal(),
         if (activeModal == ActiveModal.editTerminal)
           AddEditTerminalModal(terminal: editingTerminal),
+        if (activeModal == ActiveModal.bottleReturns && selectedStore != null)
+          BottleReturnModal(store: selectedStore),
 
         const StoresContainer(),
         const TerminalsContainer(),

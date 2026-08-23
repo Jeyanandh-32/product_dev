@@ -3,6 +3,7 @@ import 'package:forui/forui.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mix/mix.dart';
+import 'package:terminal/components/navigation/terminal_bottle_returns_button.dart';
 import 'package:terminal/components/navigation/terminal_logout_button.dart';
 import 'package:terminal/components/navigation/terminal_navigation_dropdown.dart';
 
@@ -32,6 +33,7 @@ class TerminalAppBar extends StatelessWidget {
                   .color(theme.colors.primary),
             ),
             suffixes: const [
+              TerminalBottleReturnsButton(),
               TerminalNavigationDropdown(),
               Gap(8),
               TerminalLogoutButton(),

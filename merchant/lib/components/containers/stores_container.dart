@@ -7,9 +7,9 @@ import 'package:merchant/components/fields/searchbar.dart';
 import 'package:merchant/components/loading.dart';
 import 'package:merchant/components/signal_component.dart';
 import 'package:merchant/exceptions/api_exception.dart';
+import 'package:merchant/signals/navigation_signal.dart';
 import 'package:merchant/signals/stores_signal.dart';
 import 'package:merchant/signals/terminals_signal.dart';
-import 'package:merchant/signals/navigation_signal.dart';
 
 class StoresContainer extends SignalComponent {
   const StoresContainer({super.key});
@@ -26,12 +26,10 @@ class _StoresContainerState extends SignalState<StoresContainer> {
     final terminalsState = terminalsSignal.value;
 
     return div(
-      classes:
-          'h-[500px] md:flex-1 lg:h-full lg:flex-1 min-h-0 bg-white rounded-2xl border border-border-medium p-6 flex flex-col flex-shrink-0 lg:flex-shrink',
+      classes: 'h-[500px] md:flex-1 lg:h-full lg:flex-1 min-h-0 bg-white rounded-2xl border border-border-medium p-6 flex flex-col flex-shrink-0 lg:flex-shrink',
       [
         div(
-          classes:
-              'flex flex-col sm:flex-row lg:flex-col gap-2 justify-between items-start sm:items-center lg:items-start',
+          classes: 'flex flex-col sm:flex-row lg:flex-col gap-2 justify-between items-start sm:items-center lg:items-start',
           [
             h3(classes: 'text-primary font-semibold text-lg', [
               .text('Stores'),
@@ -54,8 +52,7 @@ class _StoresContainerState extends SignalState<StoresContainer> {
         ),
 
         div(
-          classes:
-              'divider before:h-[0.5px] after:h-[0.5px] before:bg-gray-300 after:bg-gray-300',
+          classes: 'divider before:h-[0.5px] after:h-[0.5px] before:bg-gray-300 after:bg-gray-300',
           [],
         ),
 
@@ -71,8 +68,7 @@ class _StoresContainerState extends SignalState<StoresContainer> {
           CenteredMessage(message: 'No stores were added.')
         else
           div(
-            classes:
-                'grid grid-cols-1 sm:grid-cols-2 lg:flex lg:flex-col gap-4 overflow-y-auto flex-1 pr-2 auto-rows-max',
+            classes: 'grid grid-cols-1 sm:grid-cols-2 lg:flex lg:flex-col gap-4 overflow-y-auto flex-1 pr-2 auto-rows-max',
             [
               for (final store in storesState.value!)
                 StoreCard(
@@ -89,6 +85,10 @@ class _StoresContainerState extends SignalState<StoresContainer> {
                   onEdit: () {
                     editingStoreSignal.value = store;
                     activeModalSignal.value = ActiveModal.editStore;
+                  },
+                  onBottleReturns: () {
+                    selectedTabStoreSignal.value = store;
+                    activeModalSignal.value = ActiveModal.bottleReturns;
                   },
                 ),
             ],

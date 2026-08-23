@@ -15,6 +15,7 @@ _Store _$StoreFromJson(Map<String, dynamic> json) => _Store(
   storeType: json['storeType'] as String?,
   isActive: json['isActive'] as bool,
   isOnlineEnabled: json['isOnlineEnabled'] as bool? ?? false,
+  isBottleReturnEnabled: json['isBottleReturnEnabled'] as bool? ?? false,
   activePaymentProvider:
       $enumDecodeNullable(
         _$PaymentProviderEnumMap,
@@ -33,6 +34,7 @@ Map<String, dynamic> _$StoreToJson(_Store instance) => <String, dynamic>{
   'storeType': instance.storeType,
   'isActive': instance.isActive,
   'isOnlineEnabled': instance.isOnlineEnabled,
+  'isBottleReturnEnabled': instance.isBottleReturnEnabled,
   'activePaymentProvider':
       _$PaymentProviderEnumMap[instance.activePaymentProvider],
   'slug': instance.slug,

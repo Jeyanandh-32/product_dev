@@ -1,21 +1,21 @@
 import 'package:client_repositories/client_repositories.dart';
 import 'package:customer/signals/cart_signal.dart';
 import 'package:customer/signals/customer_auth_signal.dart';
+import 'package:customer/signals/recent_stores_signal.dart';
 import 'package:customer/signals/toast_signal.dart';
 import 'package:customer/utils/phonepe_interop.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:models/models.dart';
 import 'package:signals/signals.dart';
 
+/// Handler for customer wallet and reward balance operations.
 class CustomerWalletHandler {
   const CustomerWalletHandler._();
 
-  /// Loads wallet balance and transaction history for the active store
+  /// Loads wallet balance and transaction history for the active or recent store.
   static Future<({double balance, List<CustomerWalletTransaction> transactions})> loadWalletHistory() async {
-    final storeId = currentCartStoreIdSignal.value;
-    if (storeId == null) {
-      return (balance: 0.0, transactions: const <CustomerWalletTransaction>[]);
-    }
+    final recentStores = recentStoresSignal.value.value ?? const <Store>[];
+    final storeId = currentCartStoreIdSignal.value ?? (recentStores.isNotEmpty ? recentStores.first.id : null);
     try {
       final res = await CustomerWalletRepository.getWalletInfo(storeId: storeId);
       final currentCustomer = customerAuthSignal.value.value;
@@ -30,7 +30,7 @@ class CustomerWalletHandler {
     }
   }
 
-  /// Initiates top-up transaction via payment gateway or direct credit
+  /// Initiates top-up transaction via payment gateway or direct credit.
   static Future<void> initiateTopUp({
     required double amount,
     required VoidCallback onModalClose,

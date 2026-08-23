@@ -1,10 +1,12 @@
 import 'package:customer/components/cart/cart_wallet_toggle_card.dart';
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
-import 'package:jaspr_lucide/jaspr_lucide.dart' hide List;
+import 'package:jaspr_lucide/jaspr_lucide.dart' hide List, Store;
+import 'package:models/models.dart';
 
 /// Cart financial summary card and checkout action button.
 class CartSummaryCard extends StatelessComponent {
+  final Store? currentStore;
   final int totalItemCount;
   final int totalQuantity;
   final double subtotal;
@@ -19,6 +21,7 @@ class CartSummaryCard extends StatelessComponent {
 
   const CartSummaryCard({
     super.key,
+    this.currentStore,
     required this.totalItemCount,
     required this.totalQuantity,
     required this.subtotal,
@@ -86,6 +89,7 @@ class CartSummaryCard extends StatelessComponent {
 
           if (isLoggedIn)
             CartWalletToggleCard(
+              currentStore: currentStore,
               walletBalance: walletBalance,
               useWallet: useWallet,
               walletDeduction: walletDeduction,

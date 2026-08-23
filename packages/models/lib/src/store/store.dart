@@ -15,6 +15,7 @@ abstract class Store with _$Store {
     String? storeType,
     required bool isActive,
     @Default(false) bool isOnlineEnabled,
+    @Default(false) bool isBottleReturnEnabled,
     @Default(PaymentProvider.phonepe) PaymentProvider? activePaymentProvider,
     String? slug,
   }) = _Store;

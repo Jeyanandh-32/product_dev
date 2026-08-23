@@ -76,12 +76,15 @@ class _CountersState extends SignalState<Counters> {
       });
     }
 
-    final isModalActive = activeModalSignal.value == ActiveModal.addCounter || activeModalSignal.value == ActiveModal.editCounter;
+    final isModalActive =
+        activeModalSignal.value == ActiveModal.addCounter ||
+        activeModalSignal.value == ActiveModal.editCounter;
 
     return div(
       classes: 'flex flex-col flex-1 min-h-0 m-4 bg-white rounded-2xl border border-border-medium shadow-xs overflow-hidden',
       [
-        if (isModalActive) const AddEditCounterModal(),
+        if (isModalActive)
+          AddEditCounterModal(counter: editingCounterSignal.value),
         CountersFilterBar(
           entries: entriesSignal.value,
           currentPage: countersPageSignal.value,
@@ -101,11 +104,16 @@ class _CountersState extends SignalState<Counters> {
             countersSignal.value.map(
               data: (data) {
                 if (data.isEmpty) {
-                  return const CenteredMessage(message: 'No Counters found. Add some counters to your store.');
+                  return const CenteredMessage(
+                    message:
+                        'No Counters found. Add some counters to your store.',
+                  );
                 }
                 var filteredList = data;
                 if (_statusFilter != null) {
-                  filteredList = filteredList.where((c) => c.isActive == _statusFilter).toList();
+                  filteredList = filteredList
+                      .where((c) => c.isActive == _statusFilter)
+                      .toList();
                 }
                 return CountersTableView(
                   counters: filteredList,
@@ -115,7 +123,9 @@ class _CountersState extends SignalState<Counters> {
                 );
               },
               error: (err, _) => CenteredMessage(
-                message: (err is ApiException) ? err.message : 'Error loading counters. Something went wrong.',
+                message: (err is ApiException)
+                    ? err.message
+                    : 'Error loading counters. Something went wrong.',
               ),
               loading: () => const Loading(),
             ),

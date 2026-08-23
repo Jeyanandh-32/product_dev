@@ -3,6 +3,7 @@ import 'package:forui/forui.dart';
 import 'package:gap/gap.dart';
 import 'package:mix/mix.dart';
 import 'package:models/models.dart';
+import 'package:terminal/components/cart/cart_bottle_credit_section.dart';
 import 'package:terminal/components/cart/cart_breakdown_popover.dart';
 import 'package:terminal/components/cart/cart_discount_field.dart';
 import 'package:terminal/components/cart/cart_payment_mode_selector.dart';
@@ -28,7 +29,8 @@ class CartTotalsBreakdown extends StatefulWidget {
   State<CartTotalsBreakdown> createState() => _CartTotalsBreakdownState();
 }
 
-class _CartTotalsBreakdownState extends State<CartTotalsBreakdown> with SingleTickerProviderStateMixin {
+class _CartTotalsBreakdownState extends State<CartTotalsBreakdown>
+    with SingleTickerProviderStateMixin {
   late final FPopoverController _controller;
 
   @override
@@ -52,7 +54,13 @@ class _CartTotalsBreakdownState extends State<CartTotalsBreakdown> with SingleTi
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            StyledText('Order Summary', style: TextStyler().fontSize(17.5).fontWeight(.w900).color(const Color(0xFF000000))),
+            StyledText(
+              'Order Summary',
+              style: TextStyler()
+                  .fontSize(17.5)
+                  .fontWeight(.w900)
+                  .color(const Color(0xFF000000)),
+            ),
             FTheme(
               data: TerminalTheme.light(false),
               child: FPopover(
@@ -79,12 +87,23 @@ class _CartTotalsBreakdownState extends State<CartTotalsBreakdown> with SingleTi
                       children: [
                         StyledText(
                           'Details',
-                          style: TextStyler().fontSize(12.5).fontWeight(.w800).color(const Color(0xFF0F172A)).onHovered(TextStyler().color(const Color(0xFFFFFFFF))),
+                          style: TextStyler()
+                              .fontSize(12.5)
+                              .fontWeight(.w800)
+                              .color(const Color(0xFF0F172A))
+                              .onHovered(
+                                TextStyler().color(const Color(0xFFFFFFFF)),
+                              ),
                         ),
                         const Gap(4),
                         StyledIcon(
                           icon: FLucideIcons.chevronUp,
-                          style: IconStyler().size(13.5).color(const Color(0xFF0F172A)).onHovered(IconStyler().color(const Color(0xFFFFFFFF))),
+                          style: IconStyler()
+                              .size(13.5)
+                              .color(const Color(0xFF0F172A))
+                              .onHovered(
+                                IconStyler().color(const Color(0xFFFFFFFF)),
+                              ),
                         ),
                       ],
                     ),
@@ -94,18 +113,24 @@ class _CartTotalsBreakdownState extends State<CartTotalsBreakdown> with SingleTi
             ),
           ],
         ),
-        const Gap(14),
+        const Gap(10),
         if (widget.paymentMode != PaymentMethod.complimentary) ...[
           CartDiscountField(controller: widget.discountController),
-          const Gap(14),
+          const Gap(10),
         ],
+        const CartBottleCreditSection(),
+        const Gap(10),
         CartPaymentModeSelector(selectedMode: widget.paymentMode),
-        const Gap(14),
+        const Gap(10),
         const CartPrintBillToggle(),
-        const Gap(14),
+        const Gap(10),
         const FDivider(),
-        const Gap(14),
-        CartSummaryItemRow(title: 'Grand Total', value: '₹${widget.cart.grandTotal.toStringAsFixed(2)}', isTotal: true),
+        const Gap(10),
+        CartSummaryItemRow(
+          title: 'Grand Total',
+          value: '₹${widget.cart.grandTotal.toStringAsFixed(2)}',
+          isTotal: true,
+        ),
       ],
     );
   }

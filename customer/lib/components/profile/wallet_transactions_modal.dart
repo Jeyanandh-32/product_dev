@@ -5,6 +5,7 @@ import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_lucide/jaspr_lucide.dart' hide List, Map, Router;
 import 'package:models/models.dart';
 
+/// Modal dialog displaying history of earned bottle return rewards and redemptions.
 class WalletTransactionsModal extends StatelessComponent {
   final List<CustomerWalletTransaction> transactions;
   final VoidCallback onClose;
@@ -18,7 +19,7 @@ class WalletTransactionsModal extends StatelessComponent {
   @override
   Component build(BuildContext context) {
     return Modal(
-      title: 'Wallet Transactions History',
+      title: 'Reward & Activity History',
       onClose: onClose,
       child: div(
         classes: 'flex flex-col gap-4 max-h-[60vh] overflow-y-auto pr-1',
@@ -31,7 +32,7 @@ class WalletTransactionsModal extends StatelessComponent {
                 History(classes: 'w-8 h-8 text-gray-300'),
                 span(
                   classes: 'text-sm font-semibold',
-                  [.text('No wallet activity yet.')],
+                  [.text('No reward activity yet.')],
                 ),
               ],
             )
@@ -51,16 +52,14 @@ class WalletTransactionsModal extends StatelessComponent {
     final amountRupees = tx.amount.toStringAsFixed(2);
     final dateFormatted = _formatTxDate(tx.createdAt);
 
-    final title = isTopUp
-        ? 'Wallet Top Up'
-        : isRefund
-        ? 'Order Refund'
-        : 'Order Payment';
+    final title = isRefund
+        ? 'Bottle Return Reward'
+        : isTopUp
+        ? 'Reward Credit'
+        : 'Reward Redemption';
 
-    final icon = isTopUp
-        ? ArrowDownLeft(classes: 'w-4 h-4 text-emerald-600')
-        : isRefund
-        ? RotateCcw(classes: 'w-4 h-4 text-emerald-600')
+    final icon = isPositive
+        ? Sparkles(classes: 'w-4 h-4 text-emerald-600')
         : ArrowUpRight(classes: 'w-4 h-4 text-gray-600');
 
     final iconBg = isPositive ? 'bg-emerald-50' : 'bg-gray-100';

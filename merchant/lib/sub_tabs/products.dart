@@ -90,14 +90,19 @@ class _ProductsState extends SignalState<Products> {
     final categories = categoriesSignal.value.value ?? [];
     final hasCategories = categories.isNotEmpty;
     final isAddCategory = activeModalSignal.value == ActiveModal.addCategory;
-    final isAddEditProd = activeModalSignal.value == ActiveModal.addProduct || activeModalSignal.value == ActiveModal.editProduct;
+    final isAddEditProd =
+        activeModalSignal.value == ActiveModal.addProduct ||
+        activeModalSignal.value == ActiveModal.editProduct;
 
     return div(
       classes: 'flex flex-col flex-1 min-h-0 m-4 bg-white rounded-2xl border border-border-medium shadow-xs overflow-hidden',
       [
-        if (isAddCategory) const AddEditCategoryModal(),
-        if (isAddEditProd) const AddEditProductModal(),
-        if (activeModalSignal.value == ActiveModal.updateStock && editingProductSignal.value != null)
+        if (isAddCategory)
+          AddEditCategoryModal(category: editingCategorySignal.value),
+        if (isAddEditProd)
+          AddEditProductModal(product: editingProductSignal.value),
+        if (activeModalSignal.value == ActiveModal.updateStock &&
+            editingProductSignal.value != null)
           UpdateStockModal(product: editingProductSignal.value!),
         ProductsToolbar(
           entries: entries,
@@ -108,7 +113,8 @@ class _ProductsState extends SignalState<Products> {
           stockMonitorFilter: _stockMonitorFilter,
           onEntryChanged: _changeEntry,
           onStatusFilterChanged: (val) => setState(() => _statusFilter = val),
-          onStockMonitorFilterChanged: (val) => setState(() => _stockMonitorFilter = val),
+          onStockMonitorFilterChanged: (val) =>
+              setState(() => _stockMonitorFilter = val),
           onSearch: (val) {
             productSearchSignal.value = val;
             productsPageSignal.value = 1;
@@ -122,7 +128,9 @@ class _ProductsState extends SignalState<Products> {
           const CenteredMessage(message: 'Create Store to add products.')
         else if (products.hasError)
           CenteredMessage(
-            message: products.error is ApiException ? (products.error as ApiException).message : 'Failed to load products.',
+            message: products.error is ApiException
+                ? (products.error as ApiException).message
+                : 'Failed to load products.',
           )
         else if (products.hasValue && (products.value?.isEmpty ?? true))
           ProductsEmptyState(hasCategories: hasCategories)

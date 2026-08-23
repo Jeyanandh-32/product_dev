@@ -5,13 +5,14 @@ import 'package:backend/database/schema.dart';
 import 'package:backend/repositories/customer_repository.dart';
 import 'package:backend/repositories/order_repository.dart';
 import 'package:backend/repositories/stock_repository.dart';
+import 'package:backend/services/order_bottle_token_helper.dart';
 import 'package:models/models.dart';
 
 /// Handles status transitions and side effects like stock deduction and wallet refunds.
 class OrderStatusManager {
   const OrderStatusManager._();
 
-  /// Deducts inventory when an online payment completes successfully.
+  /// Deducts inventory and generates bottle return tokens when an online payment completes successfully.
   static Future<void> completePayment({
     required OrderRow orderRow,
     required List<OrderItemRow> orderItems,
@@ -45,6 +46,14 @@ class OrderStatusManager {
           );
         }
       }
+
+      await OrderBottleTokenHelper.generateIfApplicable(
+        merchantId: orderRow.merchantId,
+        storeId: orderRow.storeId,
+        orderId: orderRow.id,
+        items: orderItems.map((i) => (productId: i.productId, quantity: i.quantity)).toList(),
+        customerId: orderRow.customerId,
+      );
     });
   }
 

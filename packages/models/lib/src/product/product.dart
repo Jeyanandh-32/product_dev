@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+
 import '../category/category.dart';
 import '../counter/counter.dart';
 import '../stock/stock.dart';

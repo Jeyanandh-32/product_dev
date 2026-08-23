@@ -35,7 +35,6 @@ class _CartPageState extends SignalState<CartPage> {
     if (customer == null) return;
 
     final storeId = currentCartStoreIdSignal.value;
-    if (storeId == null) return;
     try {
       final info = await CustomerWalletRepository.getWalletInfo(
         storeId: storeId,
@@ -105,6 +104,7 @@ class _CartPageState extends SignalState<CartPage> {
             ]),
 
             CartSummaryCard(
+              currentStore: currentStore,
               totalItemCount: items.length,
               totalQuantity: totalQuantity,
               subtotal: subtotal,

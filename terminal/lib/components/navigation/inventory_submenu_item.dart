@@ -1,5 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:forui/forui.dart';
+import 'package:terminal/components/inventory/modals/returnable_products_modal.dart';
+import 'package:terminal/signals/bottle_return_signal.dart';
 import 'package:terminal/signals/navigation_signal.dart';
 import 'package:terminal/utils/responsive_extensions.dart';
 
@@ -29,6 +31,8 @@ class _InventorySubmenuItemState extends State<InventorySubmenuItem> {
   @override
   Widget build(BuildContext context) {
     final isDesktop = context.isDesktop;
+    final isBottleReturnEnabled =
+        bottleReturnConfigSignal.value?.isEnabled ?? false;
 
     if (isDesktop) {
       return FSubmenuItem(
@@ -61,6 +65,15 @@ class _InventorySubmenuItemState extends State<InventorySubmenuItem> {
                   activeTerminalPageSignal.value = TerminalNavPage.inventoryCounters;
                 },
               ),
+              if (isBottleReturnEnabled)
+                FItem(
+                  prefix: const Icon(FLucideIcons.recycle, size: 14),
+                  title: const Text('Bottle Returns'),
+                  onPress: () {
+                    widget.parentController.toggle();
+                    ReturnableProductsModal.show(context);
+                  },
+                ),
             ],
           ),
         ],
@@ -111,6 +124,15 @@ class _InventorySubmenuItemState extends State<InventorySubmenuItem> {
                     activeTerminalPageSignal.value = TerminalNavPage.inventoryCounters;
                   },
                 ),
+                if (isBottleReturnEnabled)
+                  FItem(
+                    prefix: const Icon(FLucideIcons.recycle, size: 13),
+                    title: const Text('Bottle Returns', style: TextStyle(fontSize: 13.5)),
+                    onPress: () {
+                      widget.parentController.toggle();
+                      ReturnableProductsModal.show(context);
+                    },
+                  ),
               ],
             ),
           ),

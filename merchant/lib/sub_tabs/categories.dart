@@ -76,12 +76,15 @@ class _CategoriesState extends SignalState<Categories> {
       });
     }
 
-    final isModalActive = activeModalSignal.value == ActiveModal.addCategory || activeModalSignal.value == ActiveModal.editCategory;
+    final isModalActive =
+        activeModalSignal.value == ActiveModal.addCategory ||
+        activeModalSignal.value == ActiveModal.editCategory;
 
     return div(
       classes: 'flex flex-col flex-1 min-h-0 m-4 bg-white rounded-2xl border border-border-medium shadow-xs overflow-hidden',
       [
-        if (isModalActive) const AddEditCategoryModal(),
+        if (isModalActive)
+          AddEditCategoryModal(category: editingCategorySignal.value),
         CategoriesFilterBar(
           entries: entriesSignal.value,
           currentPage: categoriesPageSignal.value,
@@ -101,11 +104,15 @@ class _CategoriesState extends SignalState<Categories> {
             categoriesSignal.value.map(
               data: (data) {
                 if (data.isEmpty) {
-                  return const CenteredMessage(message: 'No Categories found. Add some categories to your store.');
+                  return const CenteredMessage(
+                    message: 'No Categories found. Add some categories to your store.',
+                  );
                 }
                 var filteredList = data;
                 if (_statusFilter != null) {
-                  filteredList = filteredList.where((c) => c.isActive == _statusFilter).toList();
+                  filteredList = filteredList
+                      .where((c) => c.isActive == _statusFilter)
+                      .toList();
                 }
                 return CategoriesTableView(
                   categories: filteredList,
@@ -115,7 +122,9 @@ class _CategoriesState extends SignalState<Categories> {
                 );
               },
               error: (err, _) => CenteredMessage(
-                message: (err is ApiException) ? err.message : 'Error loading categories. Something went wrong.',
+                message: (err is ApiException)
+                    ? err.message
+                    : 'Error loading categories. Something went wrong.',
               ),
               loading: () => const Loading(),
             ),

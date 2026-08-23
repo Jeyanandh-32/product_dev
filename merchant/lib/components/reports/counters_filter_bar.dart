@@ -4,6 +4,7 @@ import 'package:jaspr_lucide/generated_icons/chevron_down.dart';
 import 'package:merchant/components/buttons/add_button.dart';
 import 'package:merchant/components/fields/searchbar.dart';
 import 'package:merchant/components/reports/report_status_filter.dart';
+import 'package:merchant/signals/counters_signal.dart';
 import 'package:merchant/signals/navigation_signal.dart';
 
 /// Filter, entries per page selector, search bar, and add counter action bar.
@@ -92,8 +93,9 @@ class CountersFilterBar extends StatelessComponent {
               onInput: onSearch,
             ),
             AddButton(
-              name: 'Counter',
+              name: 'Add Counter',
               onClick: () {
+                editingCounterSignal.value = null;
                 activeModalSignal.value = ActiveModal.addCounter;
               },
             ),

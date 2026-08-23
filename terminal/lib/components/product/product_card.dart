@@ -12,18 +12,16 @@ class ProductCard extends StatelessWidget {
   final Product product;
   final bool isMobile;
 
-  const ProductCard({
-    super.key,
-    required this.product,
-    this.isMobile = false,
-  });
+  const ProductCard({super.key, required this.product, this.isMobile = false});
 
   @override
   Widget build(BuildContext context) {
     return RepaintBoundary(
       child: SignalBuilder(
         builder: (context) {
-          final isExisting = cartSignal.value.items.any((i) => i.product.id == product.id);
+          final isExisting = cartSignal.value.items.any(
+            (i) => i.product.id == product.id,
+          );
 
           return Box(
             style: BoxStyler()
@@ -31,11 +29,15 @@ class ProductCard extends StatelessWidget {
                 .paddingAll(14)
                 .borderRadiusAll(const Radius.circular(16))
                 .borderAll(
-                  color: isExisting ? const Color(0xFF000000) : const Color(0xFFE5E7EB),
-                  width: isExisting ? 2.0 : 1.5,
+                  color: isExisting
+                      ? const Color(0xFF000000)
+                      : const Color(0xFFE5E7EB),
+                  width: 2.0,
                 )
                 .shadowOnly(
-                  color: isExisting ? const Color(0x14000000) : const Color(0x08000000),
+                  color: isExisting
+                      ? const Color(0x14000000)
+                      : const Color(0x08000000),
                   offset: const Offset(0, 2),
                   blurRadius: isExisting ? 6 : 4,
                 ),
@@ -63,7 +65,8 @@ class ProductCard extends StatelessWidget {
                             color: Color(0xFF000000),
                           ),
                         ),
-                        if (product.description != null && product.description!.trim().isNotEmpty) ...[
+                        if (product.description != null &&
+                            product.description!.trim().isNotEmpty) ...[
                           const Gap(4),
                           Text(
                             product.description!,

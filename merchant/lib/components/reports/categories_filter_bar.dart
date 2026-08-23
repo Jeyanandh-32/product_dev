@@ -4,6 +4,7 @@ import 'package:jaspr_lucide/generated_icons/chevron_down.dart';
 import 'package:merchant/components/buttons/add_button.dart';
 import 'package:merchant/components/fields/searchbar.dart';
 import 'package:merchant/components/reports/report_status_filter.dart';
+import 'package:merchant/signals/categories_signal.dart';
 import 'package:merchant/signals/navigation_signal.dart';
 
 /// Filter, entries per page selector, search bar, and add category action bar.
@@ -92,8 +93,9 @@ class CategoriesFilterBar extends StatelessComponent {
               onInput: onSearch,
             ),
             AddButton(
-              name: 'Category',
+              name: 'Add Category',
               onClick: () {
+                editingCategorySignal.value = null;
                 activeModalSignal.value = ActiveModal.addCategory;
               },
             ),

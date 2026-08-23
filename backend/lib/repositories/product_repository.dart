@@ -65,21 +65,15 @@ class ProductRepository {
         .update(
           (p, set) => set(
             name: name != null ? ts.toExpr(name) : p.name,
-            categoryId: categoryId != null
-                ? ts.toExpr(categoryId)
-                : p.categoryId,
+            categoryId: categoryId != null ? ts.toExpr(categoryId) : p.categoryId,
             counterId: counterId != null ? ts.toExpr(counterId) : p.counterId,
             isActive: isActive != null ? ts.toExpr(isActive) : p.isActive,
             basePrice: basePrice != null ? ts.toExpr(basePrice) : p.basePrice,
-            sellingPrice: sellingPrice != null
-                ? ts.toExpr(sellingPrice)
-                : p.sellingPrice,
+            sellingPrice: sellingPrice != null ? ts.toExpr(sellingPrice) : p.sellingPrice,
             taxRate: taxRate != null ? ts.toExpr(taxRate) : p.taxRate,
             sku: skuPresent ? ts.toExpr(sku) : p.sku,
             barcode: barcodePresent ? ts.toExpr(barcode) : p.barcode,
-            description: descriptionPresent
-                ? ts.toExpr(description)
-                : p.description,
+            description: descriptionPresent ? ts.toExpr(description) : p.description,
             imageUrl: imageUrlPresent ? ts.toExpr(imageUrl) : p.imageUrl,
             updatedAt: ts.Expr.currentTimestamp,
           ),

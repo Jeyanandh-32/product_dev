@@ -1,12 +1,15 @@
 import 'dart:io';
 
+import 'package:backend/database/schema.dart';
 import 'package:backend/extensions/request_context_extension.dart';
 import 'package:backend/extensions/store_row_extension.dart';
+import 'package:backend/repositories/bottle_return_repository.dart';
 import 'package:backend/repositories/store_repository.dart';
 import 'package:backend/utils/constraint_errors.dart';
 import 'package:backend/utils/responses.dart';
 import 'package:dart_frog/dart_frog.dart';
 import 'package:models/models.dart';
+import 'package:typed_sql/typed_sql.dart' as ts;
 import 'package:validators/validators.dart';
 
 Future<Response> onRequest(RequestContext context) async {
@@ -34,7 +37,24 @@ Future<Response> _onGet(RequestContext context) async {
 
     final (total, storeRows) = await (totalFuture, storeRowsFuture).wait;
 
-    final stores = storeRows.map((s) => s.toStore()).toList();
+    final storeIds = storeRows.map((s) => s.id).toList();
+    var configuredStoreIds = <String>{};
+    try {
+      final bottleRepo = context.read<BottleReturnRepository>();
+      final bottleConfigs = await bottleRepo.db.bottleReturnConfigs
+          .where((c) {
+            if (storeIds.isEmpty) return ts.toExpr(false);
+            var expr = c.storeId.equals(ts.toExpr(storeIds.first));
+            for (var i = 1; i < storeIds.length; i++) {
+              expr = expr.or(c.storeId.equals(ts.toExpr(storeIds[i])));
+            }
+            return expr;
+          })
+          .fetch();
+      configuredStoreIds = bottleConfigs.where((c) => c.isEnabled).map((c) => c.storeId).toSet();
+    } catch (_) {}
+
+    final stores = storeRows.map((s) => s.toStore(isBottleReturnEnabled: configuredStoreIds.contains(s.id))).toList();
     final totalPages = (total / size).ceil();
 
     return success(

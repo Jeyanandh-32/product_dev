@@ -43,6 +43,7 @@ Future<Response> _onGet(RequestContext context) async {
     return success(
       data: {
         'balance': result.balance,
+        'walletBalance': result.balance,
         'transactions': result.transactions,
       },
     );
