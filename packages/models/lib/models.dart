@@ -35,3 +35,4 @@ export 'src/stock_transaction_type.dart';
 export 'src/store/store.dart';
 export 'src/store_type.dart';
 export 'src/terminal/terminal.dart';
+export 'src/terminal/terminal_account.dart';

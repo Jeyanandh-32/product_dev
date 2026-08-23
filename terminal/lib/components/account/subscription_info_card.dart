@@ -1,0 +1,69 @@
+import 'package:flutter/widgets.dart';
+import 'package:forui/forui.dart';
+import 'package:gap/gap.dart';
+import 'package:models/models.dart';
+import 'package:terminal/components/account/account_card_header.dart';
+import 'package:terminal/components/account/account_info_row.dart';
+import 'package:terminal/theme/terminal_colors.dart';
+
+/// Card displaying store subscription and POS license status.
+class SubscriptionInfoCard extends StatelessWidget {
+  final Store? store;
+
+  const SubscriptionInfoCard({super.key, required this.store});
+
+  @override
+  Widget build(BuildContext context) {
+    final isSubActive = store?.isActive ?? false;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: const Color(0xFFFFFFFF),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: TerminalColors.border),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x06000000),
+            blurRadius: 6,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.all(22),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          AccountCardHeader(
+            icon: FLucideIcons.creditCard,
+            title: 'Store Subscription',
+            subtitle: 'Software license & plan status',
+            isActive: isSubActive,
+          ),
+          const Gap(18),
+          Container(height: 1, color: const Color(0xFFF1F5F9)),
+          const Gap(16),
+          const AccountInfoRow(
+            label: 'Plan Tier',
+            value: 'Enterprise POS License',
+          ),
+          const Gap(14),
+          AccountInfoRow(
+            label: 'License Status',
+            value: isSubActive ? 'Active & Operational' : 'Inactive',
+            isSuccess: isSubActive,
+          ),
+          const Gap(14),
+          AccountInfoRow(
+            label: 'Bound Store',
+            value: store?.name ?? 'Unassigned',
+          ),
+          const Gap(14),
+          const AccountInfoRow(
+            label: 'Billing Cycle',
+            value: 'Annual License',
+          ),
+        ],
+      ),
+    );
+  }
+}

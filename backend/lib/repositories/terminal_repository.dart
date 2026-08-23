@@ -67,6 +67,16 @@ class TerminalRepository {
     return _codeCache.getOrFetch(code, () => _db.terminals.byKey(code).fetch());
   }
 
+  /// Retrieves store row by [storeId].
+  Future<StoreRow?> getStoreById(String storeId) {
+    return _db.stores.byKey(storeId).fetch();
+  }
+
+  /// Retrieves merchant row by [merchantId].
+  Future<MerchantRow?> getMerchantById(String merchantId) {
+    return _db.merchants.byKey(merchantId).fetch();
+  }
+
   /// Updates terminal and invalidates cache.
   Future<TerminalRow?> update({
     required String code,

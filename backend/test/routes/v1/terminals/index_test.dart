@@ -12,7 +12,9 @@ import 'package:test/test.dart';
 import '../../../../routes/v1/terminals/index.dart' as route;
 
 class _MockRequestContext extends Mock implements RequestContext {}
+
 class _MockRequest extends Mock implements Request {}
+
 class _MockTerminalRepository extends Mock implements TerminalRepository {}
 
 void main() {
@@ -29,7 +31,8 @@ void main() {
     terminalRepo = _MockTerminalRepository();
 
     when(() => context.request).thenReturn(request);
-    when(() => request.uri).thenReturn(Uri.parse('http://localhost/v1/terminals'));
+    when(() => request.uri)
+        .thenReturn(Uri.parse('http://localhost/v1/terminals'));
     when(() => context.read<TokenPayload>()).thenReturn(merchantToken);
     when(() => context.read<TerminalRepository>()).thenReturn(terminalRepo);
   });
@@ -57,6 +60,10 @@ void main() {
 
         when(() => terminalRepo.getByCode('TERM12345678'))
             .thenAnswer((_) async => terminalRow);
+        when(() => terminalRepo.getStoreById(validStoreId))
+            .thenAnswer((_) async => null);
+        when(() => terminalRepo.getMerchantById('m-1'))
+            .thenAnswer((_) async => null);
 
         final response = await route.onRequest(context);
 
@@ -174,7 +181,9 @@ void main() {
       test('responds with 400 when page parameter is invalid', () async {
         when(() => request.method).thenReturn(.get);
         when(() => request.uri).thenReturn(
-          Uri.parse('http://localhost/v1/terminals?storeId=$validStoreId&page=0'),
+          Uri.parse(
+            'http://localhost/v1/terminals?storeId=$validStoreId&page=0',
+          ),
         );
 
         final response = await route.onRequest(context);
@@ -189,7 +198,9 @@ void main() {
       test('responds with 400 when size parameter is invalid', () async {
         when(() => request.method).thenReturn(.get);
         when(() => request.uri).thenReturn(
-          Uri.parse('http://localhost/v1/terminals?storeId=$validStoreId&size=0'),
+          Uri.parse(
+            'http://localhost/v1/terminals?storeId=$validStoreId&size=0',
+          ),
         );
 
         final response = await route.onRequest(context);

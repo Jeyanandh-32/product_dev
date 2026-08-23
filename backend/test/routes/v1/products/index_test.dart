@@ -14,8 +14,11 @@ import 'package:test/test.dart';
 import '../../../../routes/v1/products/index.dart' as route;
 
 class _MockRequestContext extends Mock implements RequestContext {}
+
 class _MockRequest extends Mock implements Request {}
+
 class _MockProductRepository extends Mock implements ProductRepository {}
+
 class _MockProductService extends Mock implements ProductService {}
 
 void main() {
@@ -51,9 +54,21 @@ void main() {
         name: 'Hot Chocolate',
         storeId: validStoreId,
       );
-      final stockRow = createStockRow(id: 's-1', productId: 'prod-1', storeId: validStoreId);
-      final catRow = createCategoryRow(id: 'cat-2', name: 'Drinks', storeId: validStoreId);
-      final counterRow = createCounterRow(id: 'cnt-1', name: 'Counter 1', storeId: validStoreId);
+      final stockRow = createStockRow(
+        id: 's-1',
+        productId: 'prod-1',
+        storeId: validStoreId,
+      );
+      final catRow = createCategoryRow(
+        id: 'cat-2',
+        name: 'Drinks',
+        storeId: validStoreId,
+      );
+      final counterRow = createCounterRow(
+        id: 'cnt-1',
+        name: 'Counter 1',
+        storeId: validStoreId,
+      );
 
       when(
         () => productRepo.count(
@@ -88,7 +103,10 @@ void main() {
     });
 
     test('GET responds with products for customer role with null merchantId filter', () async {
-      const customerToken = TokenPayload(sub: 'cust-1', role: UserRole.customer);
+      const customerToken = TokenPayload(
+        sub: 'cust-1',
+        role: UserRole.customer,
+      );
       when(() => context.read<TokenPayload>()).thenReturn(customerToken);
 
       when(() => request.method).thenReturn(.get);
@@ -131,7 +149,9 @@ void main() {
     test('GET responds with filtered products on search query', () async {
       when(() => request.method).thenReturn(.get);
       when(() => request.uri).thenReturn(
-        Uri.parse('http://localhost/v1/products?storeId=$validStoreId&search=chocolate'),
+        Uri.parse(
+          'http://localhost/v1/products?storeId=$validStoreId&search=chocolate',
+        ),
       );
 
       final productRow = createProductRow(
@@ -309,20 +329,23 @@ void main() {
       expect(body['message'], equals('Invalid store id.'));
     });
 
-    test('POST responds with 400 when required body fields are missing', () async {
-      when(() => request.method).thenReturn(.post);
-      when(() => request.uri).thenReturn(
-        Uri.parse('http://localhost/v1/products?storeId=$validStoreId'),
-      );
-      when(() => request.json()).thenAnswer((_) async => <String, dynamic>{});
+    test(
+      'POST responds with 400 when required body fields are missing',
+      () async {
+        when(() => request.method).thenReturn(.post);
+        when(() => request.uri).thenReturn(
+          Uri.parse('http://localhost/v1/products?storeId=$validStoreId'),
+        );
+        when(() => request.json()).thenAnswer((_) async => <String, dynamic>{});
 
-      final response = await route.onRequest(context);
+        final response = await route.onRequest(context);
 
-      expect(response.statusCode, equals(HttpStatus.badRequest));
-      final body = jsonDecode(await response.body()) as Map<String, dynamic>;
-      expect(body['status'], equals('error'));
-      expect(body['message'], equals('Name is required.'));
-    });
+        expect(response.statusCode, equals(HttpStatus.badRequest));
+        final body = jsonDecode(await response.body()) as Map<String, dynamic>;
+        expect(body['status'], equals('error'));
+        expect(body['message'], equals('Name is required.'));
+      },
+    );
 
     test('DELETE responds with 405 Method Not Allowed', () async {
       when(() => request.method).thenReturn(.delete);

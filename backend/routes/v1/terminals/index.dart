@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:backend/extensions/request_context_extension.dart';
+import 'package:backend/extensions/store_row_extension.dart';
 import 'package:backend/extensions/terminal_row_extension.dart';
 import 'package:backend/models/token_payload/token_payload.dart';
 import 'package:backend/repositories/terminal_repository.dart';
@@ -45,7 +46,26 @@ Future<Response> _onGetTerminal(RequestContext context, TokenPayload tokenPayloa
     if (terminalRow == null) return badRequest(message: 'Terminal not exists');
     if (!terminalRow.isActive) return forbidden(message: 'This Terminal is deactivated.');
 
-    return success(data: {'terminal': terminalRow.toTerminal()});
+    final storeRow = await repo.getStoreById(terminalRow.storeId);
+    final merchantRow = await repo.getMerchantById(terminalRow.merchantId);
+
+    return success(
+      data: {
+        'terminal': terminalRow.toTerminal().toJson(),
+        'store': storeRow?.toStore().toJson(),
+        'merchant': merchantRow != null
+            ? {
+                'id': merchantRow.id,
+                'name': merchantRow.name,
+                'businessName': merchantRow.businessName,
+                'email': merchantRow.email,
+                'whatsappNumber': merchantRow.whatsappNumber,
+                'createdAt': merchantRow.createdAt.toIso8601String(),
+                'updatedAt': merchantRow.updatedAt.toIso8601String(),
+              }
+            : null,
+      },
+    );
   } catch (e) {
     return error(message: e.toString());
   }
