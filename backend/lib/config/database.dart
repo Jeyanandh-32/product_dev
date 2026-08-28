@@ -71,11 +71,8 @@ class Database {
   }
 
   static Future<void> _executeSqlFiles(Connection connection) async {
-    var dir = Directory('migrations');
-    if (!dir.existsSync()) {
-      dir = Directory('/app/migrations');
-      if (!dir.existsSync()) return;
-    }
+    final dir = Directory('migrations');
+    if (!dir.existsSync()) return;
 
     final files =
         dir
