@@ -56,7 +56,7 @@ jobs:
           mv build /tmp/backend-build
           cd /tmp/backend-build
           dart pub get
-          dart compile exe bin/server.dart -o $GITHUB_WORKSPACE/saas-server
+          dart compile exe bin/server.dart -o $GITHUB_WORKSPACE/pos-server.exe
 
       - name: Package Deployment Artifacts
         run: |
@@ -65,7 +65,7 @@ jobs:
           cp -r customer/build/jaspr/* dist/store/
           cp -r landing/* dist/landing/
           cp -r backend/migrations/* dist/migrations/
-          cp saas-server dist/
+          cp pos-server.exe dist/
           cat << 'EOF' > dist/Caddyfile
           pos.sparrow-x.in {
               tls {
@@ -77,13 +77,15 @@ jobs:
                   reverse_proxy 127.0.0.1:8080
               }
 
-              handle_path /merchant* {
+              redir /merchant /merchant/
+              handle_path /merchant/* {
                   root * /var/www/merchant
                   file_server
                   try_files {path} /index.html
               }
 
-              handle_path /store* {
+              redir /store /store/
+              handle_path /store/* {
                   root * /var/www/store
                   file_server
                   try_files {path} /index.html
@@ -129,15 +131,15 @@ jobs:
           rsync -avz -e "ssh -i ~/.ssh/id_rsa" dist/merchant/ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/var/www/merchant/
           rsync -avz -e "ssh -i ~/.ssh/id_rsa" dist/store/ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/var/www/store/
           rsync -avz -e "ssh -i ~/.ssh/id_rsa" dist/migrations/ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/app/migrations/
-          rsync -avz -e "ssh -i ~/.ssh/id_rsa" dist/saas-server ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/saas-server
+          rsync -avz -e "ssh -i ~/.ssh/id_rsa" dist/pos-server.exe ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/pos-server.exe
           rsync -avz -e "ssh -i ~/.ssh/id_rsa" dist/Caddyfile ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/Caddyfile
 
       - name: Restart Backend & Reload Caddy
         run: |
           ssh -i ~/.ssh/id_rsa ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
-            chmod +x /home/${{ secrets.EC2_USER }}/saas-server
+            chmod +x /home/${{ secrets.EC2_USER }}/pos-server.exe
             sudo cp /home/${{ secrets.EC2_USER }}/Caddyfile /etc/caddy/Caddyfile
             sudo systemctl reload caddy || sudo systemctl restart caddy
-            sudo systemctl restart saas-backend
+            sudo systemctl restart pos-backend
           EOF
 
