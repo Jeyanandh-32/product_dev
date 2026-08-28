@@ -56,7 +56,7 @@ jobs:
           mv build /tmp/backend-build
           cd /tmp/backend-build
           dart pub get
-          dart compile exe bin/server.dart -o $GITHUB_WORKSPACE/pos-server.exe
+          dart compile exe bin/server.dart -o $GITHUB_WORKSPACE/server.exe
 
       - name: Package Deployment Artifacts
         run: |
@@ -65,7 +65,7 @@ jobs:
           cp -r customer/build/jaspr/* dist/store/
           cp -r landing/* dist/landing/
           cp -r backend/migrations/* dist/migrations/
-          cp pos-server.exe dist/
+          cp server.exe dist/
           cat << 'EOF' > dist/Caddyfile
           pos.sparrow-x.in {
               tls {
@@ -131,13 +131,13 @@ jobs:
           rsync -avz -e "ssh -i ~/.ssh/id_rsa" dist/merchant/ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/var/www/merchant/
           rsync -avz -e "ssh -i ~/.ssh/id_rsa" dist/store/ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/var/www/store/
           rsync -avz -e "ssh -i ~/.ssh/id_rsa" dist/migrations/ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/app/migrations/
-          rsync -avz -e "ssh -i ~/.ssh/id_rsa" dist/pos-server.exe ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/pos/pos-server.exe
+          rsync -avz -e "ssh -i ~/.ssh/id_rsa" dist/server.exe ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/pos/server.exe
           rsync -avz -e "ssh -i ~/.ssh/id_rsa" dist/Caddyfile ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/Caddyfile
 
       - name: Restart Backend & Reload Caddy
         run: |
           ssh -i ~/.ssh/id_rsa ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
-            chmod +x /home/${{ secrets.EC2_USER }}/pos/pos-server.exe
+            chmod +x /home/${{ secrets.EC2_USER }}/pos/server.exe
             sudo cp /home/${{ secrets.EC2_USER }}/Caddyfile /etc/caddy/Caddyfile
             sudo systemctl reload caddy || sudo systemctl restart caddy
             sudo systemctl restart pos-backend
