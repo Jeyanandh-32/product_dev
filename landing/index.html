@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sparrow POS — Next-Gen Retail & Store Management</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', -apple-system, sans-serif; }
+        body { background: #0F172A; color: #F8FAFC; min-height: 100vh; display: flex; flex-direction: column; }
+        header { padding: 24px 32px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #1E293B; }
+        .logo { font-size: 20px; font-weight: 800; color: #FFFFFF; display: flex; align-items: center; gap: 8px; }
+        .logo-badge { background: #10B981; color: #022C22; font-size: 11px; padding: 2px 8px; border-radius: 9999px; font-weight: 800; letter-spacing: 0.5px; }
+        main { flex: 1; max-width: 1100px; margin: 0 auto; padding: 64px 24px; display: flex; flex-direction: column; align-items: center; text-align: center; }
+        h1 { font-size: 48px; font-weight: 800; line-height: 1.15; letter-spacing: -1px; margin-bottom: 16px; background: linear-gradient(135deg, #FFFFFF 0%, #94A3B8 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        p.subtitle { font-size: 18px; color: #94A3B8; max-width: 600px; margin-bottom: 48px; line-height: 1.6; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; width: 100%; max-width: 900px; margin-bottom: 48px; }
+        .card { background: #1E293B; border: 1px solid #334155; border-radius: 16px; padding: 32px 24px; text-align: left; transition: transform 0.2s, border-color 0.2s; display: flex; flex-direction: column; justify-content: space-between; }
+        .card:hover { transform: translateY(-4px); border-color: #10B981; }
+        .card h3 { font-size: 20px; font-weight: 700; margin-bottom: 8px; color: #FFFFFF; }
+        .card p { font-size: 14px; color: #94A3B8; margin-bottom: 24px; line-height: 1.5; flex: 1; }
+        .btn { display: inline-flex; align-items: center; justify-content: center; background: #10B981; color: #022C22; font-weight: 700; font-size: 14px; padding: 12px 20px; border-radius: 10px; text-decoration: none; transition: background 0.2s; }
+        .btn:hover { background: #34D399; }
+        .btn-secondary { background: #334155; color: #FFFFFF; }
+        .btn-secondary:hover { background: #475569; }
+        footer { border-top: 1px solid #1E293B; padding: 24px; text-align: center; font-size: 13px; color: #64748B; }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            Sparrow POS
+            <span class="logo-badge">ENTERPRISE</span>
+        </div>
+    </header>
+    <main>
+        <h1>Next-Generation POS & Store Management</h1>
+        <p class="subtitle">Unified retail commerce engine powering multi-counter operations, real-time inventory, customer orders, and desktop billing.</p>
+        
+        <div class="grid">
+            <div class="card">
+                <div>
+                    <h3>Merchant Portal</h3>
+                    <p>Manage stores, live inventory, categories, multi-counter workflows, staff, and financial reports.</p>
+                </div>
+                <a href="/merchant" class="btn">Launch Merchant Portal &rarr;</a>
+            </div>
+            <div class="card">
+                <div>
+                    <h3>Customer Store</h3>
+                    <p>Live storefront catalog for online browsing, direct cart checkout, and digital wallet transactions.</p>
+                </div>
+                <a href="/store" class="btn btn-secondary">Open Customer Store &rarr;</a>
+            </div>
+            <div class="card">
+                <div>
+                    <h3>Desktop Terminal POS</h3>
+                    <p>High-speed cashier POS billing software running on hardware workstations with thermal printing.</p>
+                </div>
+                <a href="#desktop" class="btn btn-secondary">Desktop POS Connected &check;</a>
+            </div>
+        </div>
+    </main>
+    <footer>
+        &copy; 2026 Sparrow Technologies. All rights reserved. Powered by Dart & PostgreSQL.
+    </footer>
+</body>
+</html>
+

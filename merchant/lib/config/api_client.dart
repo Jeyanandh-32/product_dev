@@ -16,8 +16,13 @@ void initMerchantDio() {
   if (envUrl.isNotEmpty) {
     baseUrl = envUrl.replaceAll(RegExp(r'/+$'), '');
   } else {
-    final hostname = web.window.location.hostname;
-    baseUrl = 'http://${hostname.isEmpty ? 'localhost' : hostname}:8080';
+    final origin = web.window.location.origin;
+    if (origin.startsWith('https://')) {
+      baseUrl = origin;
+    } else {
+      final hostname = web.window.location.hostname;
+      baseUrl = 'http://${hostname.isEmpty ? 'localhost' : hostname}:8080';
+    }
   }
 
   initDio(
@@ -31,7 +36,9 @@ void initMerchantDio() {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
-        validateStatus: (status) => status != null && ((status >= 200 && status < 300) || status == 401),
+        validateStatus: (status) =>
+            status != null &&
+            ((status >= 200 && status < 300) || status == 401),
       ),
     ),
   );

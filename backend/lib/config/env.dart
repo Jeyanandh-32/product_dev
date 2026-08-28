@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dotenv/dotenv.dart';
 
 class Env {
@@ -22,7 +24,10 @@ class Env {
 
   static void init() {
     if (_isInitialized) return;
-    _env = DotEnv(includePlatformEnvironment: true)..load();
+    _env = DotEnv(includePlatformEnvironment: true);
+    if (File('.env').existsSync()) {
+      _env.load();
+    }
     _isInitialized = true;
   }
 }

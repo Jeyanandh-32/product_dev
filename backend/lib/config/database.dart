@@ -71,19 +71,26 @@ class Database {
   }
 
   static Future<void> _executeSqlFiles(Connection connection) async {
-    final dir = Directory('migrations');
-    if (!dir.existsSync()) return;
+    var dir = Directory('migrations');
+    if (!dir.existsSync()) {
+      dir = Directory('/app/migrations');
+      if (!dir.existsSync()) return;
+    }
 
-    final files = dir
-        .listSync()
-        .whereType<File>()
-        .where((f) => f.path.endsWith('.sql'))
-        .toList()
-      ..sort((a, b) => a.path.compareTo(b.path));
+    final files =
+        dir
+            .listSync()
+            .whereType<File>()
+            .where((f) => f.path.endsWith('.sql'))
+            .toList()
+          ..sort((a, b) => a.path.compareTo(b.path));
 
     for (final file in files) {
       final content = await file.readAsString();
-      final statements = content.split(';').map((s) => s.trim()).where((s) => s.isNotEmpty);
+      final statements = content
+          .split(';')
+          .map((s) => s.trim())
+          .where((s) => s.isNotEmpty);
 
       for (final statement in statements) {
         if (statement.startsWith('--') && !statement.contains('\n')) continue;

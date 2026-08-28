@@ -1,0 +1,143 @@
+name: Deploy Sparrow POS to AWS EC2
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build Apps & Native Server
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter & Dart SDK
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Install Workspace Dependencies
+        run: |
+          dart pub global activate melos
+          export PATH="$PATH":"$HOME/.pub-cache/bin"
+          melos bootstrap
+
+      - name: Run Static Analysis & Tests
+        run: |
+          export PATH="$PATH":"$HOME/.pub-cache/bin"
+          dart analyze
+          cd backend && dart test
+          cd ../customer && dart test
+          cd ../terminal && flutter test
+
+      - name: Build Merchant Web App (WASM)
+        run: |
+          cd merchant
+          dart pub global activate jaspr_cli
+          export PATH="$PATH":"$HOME/.pub-cache/bin"
+          jaspr build --experimental-wasm --dart-define=API_URL=https://pos.sparrow-x.in
+
+      - name: Build Customer Store Web App (WASM)
+        run: |
+          cd customer
+          export PATH="$PATH":"$HOME/.pub-cache/bin"
+          jaspr build --experimental-wasm --dart-define=API_URL=https://pos.sparrow-x.in
+
+      - name: Build & Compile Native Backend Binary
+        run: |
+          export PATH="$PATH":"$HOME/.pub-cache/bin"
+          dart pub global activate dart_frog_cli
+          cd backend
+          dart pub global run dart_frog_cli:dart_frog build
+          mv build /tmp/backend-build
+          cd /tmp/backend-build
+          dart pub get
+          dart compile exe bin/server.dart -o $GITHUB_WORKSPACE/saas-server
+
+      - name: Package Deployment Artifacts
+        run: |
+          mkdir -p dist/merchant dist/store dist/landing dist/migrations
+          cp -r merchant/build/jaspr/* dist/merchant/
+          cp -r customer/build/jaspr/* dist/store/
+          cp -r landing/* dist/landing/
+          cp -r backend/migrations/* dist/migrations/
+          cp saas-server dist/
+          cat << 'EOF' > dist/Caddyfile
+pos.sparrow-x.in {
+    tls {
+        protocols tls1.2 tls1.3
+    }
+    encode zstd gzip
+
+    handle_path /v1/* {
+        reverse_proxy 127.0.0.1:8080
+    }
+
+    handle_path /merchant* {
+        root * /var/www/merchant
+        file_server
+        try_files {path} /index.html
+    }
+
+    handle_path /store* {
+        root * /var/www/store
+        file_server
+        try_files {path} /index.html
+    }
+
+    handle {
+        root * /var/www/landing
+        file_server
+        try_files {path} /index.html
+    }
+}
+EOF
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-dist
+          path: dist/
+
+  deploy:
+    name: Deploy to EC2
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: release-dist
+          path: dist/
+
+      - name: Setup SSH Key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Deploy Files to EC2 via Rsync
+        run: |
+          rsync -avz -e "ssh -i ~/.ssh/id_rsa" dist/landing/ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/var/www/landing/
+          rsync -avz -e "ssh -i ~/.ssh/id_rsa" dist/merchant/ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/var/www/merchant/
+          rsync -avz -e "ssh -i ~/.ssh/id_rsa" dist/store/ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/var/www/store/
+          rsync -avz -e "ssh -i ~/.ssh/id_rsa" dist/migrations/ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/app/migrations/
+          rsync -avz -e "ssh -i ~/.ssh/id_rsa" dist/saas-server ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/saas-server
+          rsync -avz -e "ssh -i ~/.ssh/id_rsa" dist/Caddyfile ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/Caddyfile
+
+      - name: Restart Backend & Reload Caddy
+        run: |
+          ssh -i ~/.ssh/id_rsa ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+            chmod +x /home/${{ secrets.EC2_USER }}/saas-server
+            sudo cp /home/${{ secrets.EC2_USER }}/Caddyfile /etc/caddy/Caddyfile
+            sudo systemctl reload caddy || sudo systemctl restart caddy
+            sudo systemctl restart saas-backend
+          EOF
+
