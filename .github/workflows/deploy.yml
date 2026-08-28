@@ -5,11 +5,54 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
-jobs:
-  build:
-    name: Build Apps & Native Server
-    runs-on: ubuntu-latest
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
+jobs:
+  changes:
+    name: Detect Changed Components
+    runs-on: ubuntu-latest
+    outputs:
+      backend: ${{ steps.filter.outputs.backend }}
+      merchant: ${{ steps.filter.outputs.merchant }}
+      customer: ${{ steps.filter.outputs.customer }}
+      terminal: ${{ steps.filter.outputs.terminal }}
+      landing: ${{ steps.filter.outputs.landing }}
+      migrations: ${{ steps.filter.outputs.migrations }}
+      workflow: ${{ steps.filter.outputs.workflow }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Filter Changed Paths
+        uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            backend:
+              - 'backend/**'
+              - 'packages/**'
+            merchant:
+              - 'merchant/**'
+              - 'packages/**'
+            customer:
+              - 'customer/**'
+              - 'packages/**'
+            terminal:
+              - 'terminal/**'
+              - 'packages/**'
+            landing:
+              - 'landing/**'
+            migrations:
+              - 'backend/migrations/**'
+            workflow:
+              - '.github/workflows/deploy.yml'
+
+  build:
+    name: Build & Package Changes
+    needs: changes
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -26,15 +69,22 @@ jobs:
           export PATH="$PATH":"$HOME/.pub-cache/bin"
           melos bootstrap
 
-      - name: Run Static Analysis & Tests
+      - name: Run Tests on Changed Packages
         run: |
           export PATH="$PATH":"$HOME/.pub-cache/bin"
           dart analyze
-          cd backend && dart test
-          cd ../customer && dart test
-          cd ../terminal && flutter test
+          if [ "${{ needs.changes.outputs.backend }}" = "true" ] || [ "${{ needs.changes.outputs.workflow }}" = "true" ] || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            cd backend && dart test && cd ..
+          fi
+          if [ "${{ needs.changes.outputs.customer }}" = "true" ] || [ "${{ needs.changes.outputs.workflow }}" = "true" ] || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            cd customer && dart test && cd ..
+          fi
+          if [ "${{ needs.changes.outputs.terminal }}" = "true" ] || [ "${{ needs.changes.outputs.workflow }}" = "true" ] || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            cd terminal && flutter test && cd ..
+          fi
 
       - name: Build Merchant Web App (WASM)
+        if: needs.changes.outputs.merchant == 'true' || needs.changes.outputs.workflow == 'true' || github.event_name == 'workflow_dispatch'
         run: |
           cd merchant
           dart pub global activate jaspr_cli
@@ -42,12 +92,15 @@ jobs:
           jaspr build --experimental-wasm --dart-define=API_URL=https://pos.sparrow-x.in
 
       - name: Build Customer Store Web App (WASM)
+        if: needs.changes.outputs.customer == 'true' || needs.changes.outputs.workflow == 'true' || github.event_name == 'workflow_dispatch'
         run: |
           cd customer
+          dart pub global activate jaspr_cli
           export PATH="$PATH":"$HOME/.pub-cache/bin"
           jaspr build --experimental-wasm --dart-define=API_URL=https://pos.sparrow-x.in
 
       - name: Build & Compile Native Backend Binary
+        if: needs.changes.outputs.backend == 'true' || needs.changes.outputs.workflow == 'true' || github.event_name == 'workflow_dispatch'
         run: |
           export PATH="$PATH":"$HOME/.pub-cache/bin"
           dart pub global activate dart_frog_cli
@@ -58,46 +111,62 @@ jobs:
           dart pub get
           dart compile exe bin/server.dart -o $GITHUB_WORKSPACE/server.exe
 
-      - name: Package Deployment Artifacts
+      - name: Package Changed Artifacts
         run: |
-          mkdir -p dist/merchant dist/store dist/landing dist/migrations
-          cp -r merchant/build/jaspr/* dist/merchant/
-          cp -r customer/build/jaspr/* dist/store/
-          cp -r landing/* dist/landing/
-          cp -r backend/migrations/* dist/migrations/
-          cp server.exe dist/
-          cat << 'EOF' > dist/Caddyfile
-          pos.sparrow-x.in {
-              tls {
-                  protocols tls1.2 tls1.3
-              }
-              encode zstd gzip
+          mkdir -p dist
+          if [ -d "merchant/build/jaspr" ]; then
+            mkdir -p dist/merchant
+            cp -r merchant/build/jaspr/* dist/merchant/
+          fi
+          if [ -d "customer/build/jaspr" ]; then
+            mkdir -p dist/store
+            cp -r customer/build/jaspr/* dist/store/
+          fi
+          if [ "${{ needs.changes.outputs.landing }}" = "true" ] || [ "${{ needs.changes.outputs.workflow }}" = "true" ] || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            mkdir -p dist/landing
+            cp -r landing/* dist/landing/
+          fi
+          if [ "${{ needs.changes.outputs.migrations }}" = "true" ] || [ "${{ needs.changes.outputs.workflow }}" = "true" ] || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            mkdir -p dist/migrations
+            cp -r backend/migrations/* dist/migrations/
+          fi
+          if [ -f "server.exe" ]; then
+            cp server.exe dist/
+          fi
+          if [ "${{ needs.changes.outputs.workflow }}" = "true" ] || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            cat << 'EOF' > dist/Caddyfile
+            pos.sparrow-x.in {
+                tls {
+                    protocols tls1.2 tls1.3
+                }
+                encode zstd gzip
 
-              handle_path /v1/* {
-                  reverse_proxy 127.0.0.1:8080
-              }
+                handle_path /v1/* {
+                    reverse_proxy 127.0.0.1:8080
+                }
 
-              redir /merchant /merchant/
-              handle_path /merchant/* {
-                  root * /var/www/merchant
-                  file_server
-                  try_files {path} /index.html
-              }
+                redir /merchant /merchant/
+                handle_path /merchant/* {
+                    root * /var/www/merchant
+                    file_server
+                    try_files {path} /index.html
+                }
 
-              redir /store /store/
-              handle_path /store/* {
-                  root * /var/www/store
-                  file_server
-                  try_files {path} /index.html
-              }
+                redir /store /store/
+                handle_path /store/* {
+                    root * /var/www/store
+                    file_server
+                    try_files {path} /index.html
+                }
 
-              handle {
-                  root * /var/www/landing
-                  file_server
-                  try_files {path} /index.html
-              }
-          }
-          EOF
+                handle {
+                    root * /var/www/landing
+                    file_server
+                    try_files {path} /index.html
+                }
+            }
+            EOF
+          fi
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
@@ -107,7 +176,7 @@ jobs:
 
   deploy:
     name: Deploy to EC2
-    needs: build
+    needs: [changes, build]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
 
@@ -125,21 +194,38 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
 
-      - name: Deploy Files to EC2 via Rsync
+      - name: Deploy Selective Artifacts via Rsync
         run: |
-          rsync -avz -e "ssh -i ~/.ssh/id_rsa" dist/landing/ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/var/www/landing/
-          rsync -avz -e "ssh -i ~/.ssh/id_rsa" dist/merchant/ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/var/www/merchant/
-          rsync -avz -e "ssh -i ~/.ssh/id_rsa" dist/store/ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/var/www/store/
-          rsync -avz -e "ssh -i ~/.ssh/id_rsa" dist/migrations/ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/pos/migrations/
-          rsync -avz -e "ssh -i ~/.ssh/id_rsa" dist/server.exe ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/pos/server.exe
-          rsync -avz -e "ssh -i ~/.ssh/id_rsa" dist/Caddyfile ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/Caddyfile
+          if [ -d "dist/landing" ]; then
+            rsync -avz -e "ssh -i ~/.ssh/id_rsa" dist/landing/ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/var/www/landing/
+          fi
+          if [ -d "dist/merchant" ]; then
+            rsync -avz -e "ssh -i ~/.ssh/id_rsa" dist/merchant/ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/var/www/merchant/
+          fi
+          if [ -d "dist/store" ]; then
+            rsync -avz -e "ssh -i ~/.ssh/id_rsa" dist/store/ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/var/www/store/
+          fi
+          if [ -d "dist/migrations" ]; then
+            rsync -avz -e "ssh -i ~/.ssh/id_rsa" dist/migrations/ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/pos/migrations/
+          fi
+          if [ -f "dist/server.exe" ]; then
+            rsync -avz -e "ssh -i ~/.ssh/id_rsa" dist/server.exe ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/pos/server.exe
+          fi
+          if [ -f "dist/Caddyfile" ]; then
+            rsync -avz -e "ssh -i ~/.ssh/id_rsa" dist/Caddyfile ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/Caddyfile
+          fi
 
       - name: Restart Backend & Reload Caddy
         run: |
           ssh -i ~/.ssh/id_rsa ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
-            chmod +x /home/${{ secrets.EC2_USER }}/pos/server.exe
-            sudo cp /home/${{ secrets.EC2_USER }}/Caddyfile /etc/caddy/Caddyfile
-            sudo systemctl reload caddy || sudo systemctl restart caddy
-            sudo systemctl restart pos-backend
+            if [ -f "/home/${{ secrets.EC2_USER }}/Caddyfile" ]; then
+              sudo cp /home/${{ secrets.EC2_USER }}/Caddyfile /etc/caddy/Caddyfile
+              sudo systemctl reload caddy || sudo systemctl restart caddy
+              rm -f /home/${{ secrets.EC2_USER }}/Caddyfile
+            fi
+            if [ -f "/home/${{ secrets.EC2_USER }}/pos/server.exe" ]; then
+              chmod +x /home/${{ secrets.EC2_USER }}/pos/server.exe
+              sudo systemctl restart pos-backend
+            fi
           EOF
 
