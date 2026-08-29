@@ -2,7 +2,7 @@ name: Deploy Sparrow POS to AWS EC2
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, stage ]
   workflow_dispatch:
 
 concurrency:
@@ -57,6 +57,14 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      - name: Set Target Environment
+        run: |
+          if [ "${{ github.ref }}" = "refs/heads/stage" ]; then
+            echo "API_DOMAIN=pos-stage.sparrow-x.in" >> $GITHUB_ENV
+          else
+            echo "API_DOMAIN=pos.sparrow-x.in" >> $GITHUB_ENV
+          fi
+
       - name: Setup Flutter & Dart SDK
         uses: subosito/flutter-action@v2
         with:
@@ -89,7 +97,7 @@ jobs:
           cd merchant
           dart pub global activate jaspr_cli
           export PATH="$PATH":"$HOME/.pub-cache/bin"
-          jaspr build --experimental-wasm --dart-define=API_URL=https://pos.sparrow-x.in
+          jaspr build --experimental-wasm --dart-define=API_URL=https://${{ env.API_DOMAIN }}
 
       - name: Build Customer Store Web App (WASM)
         if: needs.changes.outputs.customer == 'true' || needs.changes.outputs.workflow == 'true' || github.event_name == 'workflow_dispatch'
@@ -97,7 +105,7 @@ jobs:
           cd customer
           dart pub global activate jaspr_cli
           export PATH="$PATH":"$HOME/.pub-cache/bin"
-          jaspr build --experimental-wasm --dart-define=API_URL=https://pos.sparrow-x.in
+          jaspr build --experimental-wasm --dart-define=API_URL=https://${{ env.API_DOMAIN }}
 
       - name: Build & Compile Native Backend Binary
         if: needs.changes.outputs.backend == 'true' || needs.changes.outputs.workflow == 'true' || github.event_name == 'workflow_dispatch'
@@ -144,7 +152,7 @@ jobs:
     name: Deploy to EC2
     needs: [changes, build]
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/stage'
 
     steps:
       - name: Download Build Artifacts
@@ -152,6 +160,18 @@ jobs:
         with:
           name: release-dist
           path: dist/
+
+      - name: Set Deployment Destination
+        run: |
+          if [ "${{ github.ref }}" = "refs/heads/stage" ]; then
+            echo "TARGET_WEB_DIR=/var/www/pos-stage" >> $GITHUB_ENV
+            echo "TARGET_APP_DIR=pos-stage" >> $GITHUB_ENV
+            echo "TARGET_SERVICE=pos-stage-backend" >> $GITHUB_ENV
+          else
+            echo "TARGET_WEB_DIR=/var/www" >> $GITHUB_ENV
+            echo "TARGET_APP_DIR=pos" >> $GITHUB_ENV
+            echo "TARGET_SERVICE=pos-backend" >> $GITHUB_ENV
+          fi
 
       - name: Setup SSH Key
         run: |
@@ -163,27 +183,27 @@ jobs:
       - name: Deploy Selective Artifacts via Rsync
         run: |
           if [ -d "dist/landing" ]; then
-            rsync -avz -e "ssh -i ~/.ssh/id_rsa" dist/landing/ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/var/www/landing/
+            rsync -avz -e "ssh -i ~/.ssh/id_rsa" dist/landing/ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:${{ env.TARGET_WEB_DIR }}/landing/
           fi
           if [ -d "dist/merchant" ]; then
-            rsync -avz -e "ssh -i ~/.ssh/id_rsa" dist/merchant/ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/var/www/merchant/
+            rsync -avz -e "ssh -i ~/.ssh/id_rsa" dist/merchant/ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:${{ env.TARGET_WEB_DIR }}/merchant/
           fi
           if [ -d "dist/store" ]; then
-            rsync -avz -e "ssh -i ~/.ssh/id_rsa" dist/store/ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/var/www/store/
+            rsync -avz -e "ssh -i ~/.ssh/id_rsa" dist/store/ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:${{ env.TARGET_WEB_DIR }}/store/
           fi
           if [ -d "dist/migrations" ]; then
-            rsync -avz -e "ssh -i ~/.ssh/id_rsa" dist/migrations/ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/pos/migrations/
+            rsync -avz -e "ssh -i ~/.ssh/id_rsa" dist/migrations/ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/${{ env.TARGET_APP_DIR }}/migrations/
           fi
           if [ -f "dist/server.exe" ]; then
-            rsync -avz -e "ssh -i ~/.ssh/id_rsa" dist/server.exe ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/pos/server.exe
+            rsync -avz -e "ssh -i ~/.ssh/id_rsa" dist/server.exe ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/${{ env.TARGET_APP_DIR }}/server.exe
           fi
 
       - name: Restart Backend Service
         run: |
-          ssh -i ~/.ssh/id_rsa ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
-            if [ -f "/home/${{ secrets.EC2_USER }}/pos/server.exe" ]; then
-              chmod +x /home/${{ secrets.EC2_USER }}/pos/server.exe
-              sudo systemctl restart pos-backend
+          ssh -i ~/.ssh/id_rsa ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << EOF
+            if [ -f "/home/${{ secrets.EC2_USER }}/${{ env.TARGET_APP_DIR }}/server.exe" ]; then
+              chmod +x /home/${{ secrets.EC2_USER }}/${{ env.TARGET_APP_DIR }}/server.exe
+              sudo systemctl restart ${{ env.TARGET_SERVICE }}
             fi
           EOF
 
