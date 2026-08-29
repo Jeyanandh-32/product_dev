@@ -7,6 +7,7 @@ import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_lucide/jaspr_lucide.dart' hide List, Map, Router;
 import 'package:web/web.dart' as web;
 
+/// Header toolbar for the customer orders page including back navigation and store scope indicators.
 class CustomerOrdersHeader extends StatelessComponent {
   final String selectedDate;
   final ValueChanged<String> onDateChanged;
@@ -36,10 +37,10 @@ class CustomerOrdersHeader extends StatelessComponent {
                   'text-2xl sm:text-3xl font-extrabold text-black tracking-tight',
               [.text('My Orders')],
             ),
-            if (currentCartStoreSignal.value != null)
+            if (currentCartStoreSignal.value case final store?)
               span(classes: 'text-xs font-bold text-emerald-700', [
                 .text(
-                  'Showing orders for: ${currentCartStoreSignal.value!.name}',
+                  'Showing orders for: ${store.name}',
                 ),
               ])
             else

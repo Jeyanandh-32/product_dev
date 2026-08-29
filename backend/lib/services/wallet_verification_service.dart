@@ -23,9 +23,10 @@ class WalletVerificationService {
     final db = Database.db;
 
     for (final tx in txRows) {
+      final reference = tx.reference;
       if (tx.status == 'pending' &&
-          tx.reference != null &&
-          tx.reference!.startsWith('TOPUP_')) {
+          reference != null &&
+          reference.startsWith('TOPUP_')) {
         final activeConfigRow = await db.storePhonepeConfigs
             .where(
               (c) =>
@@ -39,7 +40,7 @@ class WalletVerificationService {
           try {
             final statusResult = await phonePeService.checkOrderStatus(
               config: activeConfigRow.toStorePhonePeConfig(),
-              merchantOrderId: tx.reference!,
+              merchantOrderId: reference,
             );
 
             final state = (statusResult['state'] as String?) ??

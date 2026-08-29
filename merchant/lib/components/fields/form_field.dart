@@ -4,7 +4,7 @@ import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_lucide/jaspr_lucide.dart' hide Map;
 import 'package:jaspr_router/jaspr_router.dart';
 import 'package:web/web.dart' as web;
-
+/// Reusable form input component with label, helper text, and validation states.
 class FormField extends StatefulComponent {
   final String id;
   final String labelText;
@@ -14,7 +14,6 @@ class FormField extends StatefulComponent {
   final String? hintText;
   final void Function(dynamic)? onChange;
   final bool enableForgotPassword;
-
   const FormField({
     super.key,
     required this.id,
@@ -26,38 +25,35 @@ class FormField extends StatefulComponent {
     this.onChange,
     this.enableForgotPassword = false,
   });
-
   @override
   State<FormField> createState() => _FormFieldState();
 }
-
 class _FormFieldState extends State<FormField> {
   bool _obscureText = true;
-
   void _handleInput(dynamic eventOrValue) {
-    if (component.onChange == null) return;
+    final onChange = component.onChange;
+    if (onChange == null) return;
     try {
       final event = eventOrValue as web.Event;
       final target = event.target as web.HTMLInputElement?;
       if (target != null) {
-        component.onChange!(target.value);
+        onChange(target.value);
         return;
       }
     } catch (_) {}
     if (eventOrValue is String) {
-      component.onChange!(eventOrValue);
+      onChange(eventOrValue);
       return;
     }
-    component.onChange!(eventOrValue?.toString());
+    onChange(eventOrValue?.toString());
   }
-
   void _handleKeyDown(dynamic eventOrValue) {
     try {
       final event = eventOrValue as web.KeyboardEvent;
       if (event.key == 'Enter') {
         final currentTarget = event.target as web.HTMLInputElement?;
         final form = currentTarget?.form;
-        if (form != null) {
+        if (form != null && currentTarget != null) {
           final elements = form.querySelectorAll(
             'input:not([type="hidden"]):not([disabled])',
           );
@@ -68,7 +64,7 @@ class _FormFieldState extends State<FormField> {
               list.add(item as web.HTMLInputElement);
             }
           }
-          final index = list.indexOf(currentTarget!);
+          final index = list.indexOf(currentTarget);
           if (index != -1 && index < list.length - 1) {
             event.preventDefault();
             list[index + 1].focus();
@@ -77,11 +73,9 @@ class _FormFieldState extends State<FormField> {
       }
     } catch (_) {}
   }
-
   @override
   Component build(BuildContext context) {
     final isPassword = component.type == InputType.password;
-
     return fieldset(classes: 'fieldset w-full mb-4', [
       div(classes: 'flex items-center justify-between', [
         label(

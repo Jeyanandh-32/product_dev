@@ -26,8 +26,7 @@ class WalletTransactionsModal extends StatelessComponent {
         [
           if (transactions.isEmpty)
             div(
-              classes:
-                  'py-8 flex flex-col items-center justify-center gap-2 text-center text-gray-400',
+              classes: 'py-8 flex flex-col items-center justify-center gap-2 text-center text-gray-400',
               [
                 History(classes: 'w-8 h-8 text-gray-300'),
                 span(
@@ -80,11 +79,10 @@ class WalletTransactionsModal extends StatelessComponent {
               classes: 'text-xs font-bold text-black',
               [.text(title)],
             ),
-            if (tx.reference != null)
+            if (tx.reference case final ref? when ref.isNotEmpty)
               span(
-                classes:
-                    'text-[11px] font-medium text-gray-500 font-mono tracking-tight',
-                [.text(tx.reference!)],
+                classes: 'text-[11px] font-medium text-gray-500 font-mono tracking-tight',
+                [.text(ref)],
               ),
             span(
               classes: 'text-[10px] text-gray-400 font-medium',

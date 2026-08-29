@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:backend/database/schema.dart';
 import 'package:backend/enums/user_role.dart';
 import 'package:backend/models/token_payload/token_payload.dart';
 import 'package:backend/repositories/counter_repository.dart';
@@ -10,6 +9,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
 import '../../../../routes/v1/counters/index.dart' as route;
+import '../../../helpers/schema_factories.dart';
 
 class _MockRequestContext extends Mock implements RequestContext {}
 class _MockRequest extends Mock implements Request {}

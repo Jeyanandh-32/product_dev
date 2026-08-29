@@ -30,8 +30,8 @@ class DateRangePicker extends SignalComponent {
 }
 
 class _DateRangePickerState extends SignalState<DateRangePicker> {
-  late String _tempFrom;
-  late String _tempTo;
+  String _tempFrom = '';
+  String _tempTo = '';
 
   void _closeDropdown() {
     final activeElement = web.document.activeElement;
@@ -48,8 +48,9 @@ class _DateRangePickerState extends SignalState<DateRangePicker> {
     final cleanedTo = DateRangeUtils.cleanDate(to);
     final f = cleanedFrom.isEmpty ? null : cleanedFrom;
     final t = cleanedTo.isEmpty ? null : cleanedTo;
-    if (component.onChanged != null) {
-      component.onChanged!(f, t);
+    final onChanged = component.onChanged;
+    if (onChanged != null) {
+      onChanged(f, t);
     } else {
       component.onFromDateChanged?.call(f);
       component.onToDateChanged?.call(t);
@@ -84,8 +85,7 @@ class _DateRangePickerState extends SignalState<DateRangePicker> {
       classes: 'dropdown dropdown-bottom dropdown-start inline-block',
       [
         summary(
-          classes:
-              'btn btn-sm rounded-full border border-border-medium bg-base-100 hover:bg-base-200 text-xs px-3 font-medium flex items-center gap-2 shadow-2xs cursor-pointer list-none select-none',
+          classes: 'btn btn-sm rounded-full border border-border-medium bg-base-100 hover:bg-base-200 text-xs px-3 font-medium flex items-center gap-2 shadow-2xs cursor-pointer list-none select-none',
           [
             Calendar(classes: 'w-3.5 h-3.5 text-primary'),
             span(classes: 'text-xs text-base-content font-medium', [
@@ -95,8 +95,7 @@ class _DateRangePickerState extends SignalState<DateRangePicker> {
           ],
         ),
         div(
-          classes:
-              'dropdown-content menu bg-base-100 rounded-2xl z-30 mt-2 p-3 shadow-xl border border-border-medium w-80 flex flex-col gap-2.5',
+          classes: 'dropdown-content menu bg-base-100 rounded-2xl z-30 mt-2 p-3 shadow-xl border border-border-medium w-80 flex flex-col gap-2.5',
           [
             DatePickerPresetButtons(
               isToday: currentFrom == today && currentTo == today,
@@ -118,18 +117,15 @@ class _DateRangePickerState extends SignalState<DateRangePicker> {
               onToChanged: (val) => _tempTo = DateRangeUtils.cleanDate(val),
             ),
             div(
-              classes:
-                  'flex justify-between items-center mt-0.5 border-t border-border-light pt-2',
+              classes: 'flex justify-between items-center mt-0.5 border-t border-border-light pt-2',
               [
                 button(
-                  classes:
-                      'btn btn-xs btn-ghost text-error rounded-full font-medium',
+                  classes: 'btn btn-xs btn-ghost text-error rounded-full font-medium',
                   onClick: () => _applyRange(today, today),
                   [.text('Reset to Today')],
                 ),
                 button(
-                  classes:
-                      'btn btn-xs btn-primary rounded-full px-4 text-white font-medium',
+                  classes: 'btn btn-xs btn-primary rounded-full px-4 text-white font-medium',
                   onClick: () => _applyRange(_tempFrom, _tempTo),
                   [.text('Apply')],
                 ),

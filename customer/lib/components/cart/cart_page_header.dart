@@ -24,8 +24,7 @@ class CartPageHeader extends StatelessComponent {
       [
         div(classes: 'flex items-center gap-4', [
           button(
-            classes:
-                'w-10 h-10 rounded-full bg-gray-100 hover:bg-black hover:text-white text-black transition-all flex items-center justify-center cursor-pointer border-0',
+            classes: 'w-10 h-10 rounded-full bg-gray-100 hover:bg-black hover:text-white text-black transition-all flex items-center justify-center cursor-pointer border-0',
             onClick: () => navigateToRecentStoreOrAll(context),
             [
               ArrowLeft(classes: 'w-5 h-5'),
@@ -33,8 +32,7 @@ class CartPageHeader extends StatelessComponent {
           ),
           div(classes: 'flex flex-col', [
             h1(
-              classes:
-                  'text-xl md:text-3xl font-extrabold text-black tracking-tight',
+              classes: 'text-xl md:text-3xl font-extrabold text-black tracking-tight',
               [
                 .text('Your Shopping Cart'),
               ],
@@ -48,8 +46,7 @@ class CartPageHeader extends StatelessComponent {
 
         if (hasItems)
           button(
-            classes:
-                'px-3.5 py-1.5 rounded-full bg-red-50 hover:bg-red-600 text-red-600 hover:text-white font-extrabold text-xs flex items-center gap-1.5 transition-all cursor-pointer border border-red-200/80 shadow-2xs active:scale-95 shrink-0',
+            classes: 'px-3.5 py-1.5 rounded-full bg-red-50 hover:bg-red-600 text-red-600 hover:text-white font-extrabold text-xs flex items-center gap-1.5 transition-all cursor-pointer border border-red-200/80 shadow-2xs active:scale-95 shrink-0',
             onClick: clearCart,
             [
               Trash2(classes: 'w-3.5 h-3.5'),

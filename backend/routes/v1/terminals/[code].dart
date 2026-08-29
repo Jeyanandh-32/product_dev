@@ -42,8 +42,8 @@ Future<Response> _onPutOrPatch(RequestContext context, String code) async {
     final input = TerminalUpdate.fromJson(body);
 
     String? passwordHash;
-    if (input.password != null && input.password!.isNotEmpty) {
-      passwordHash = await PasswordService.hash(input.password!);
+    if (input.password case final password? when password.isNotEmpty) {
+      passwordHash = await PasswordService.hash(password);
     }
 
     final terminalRow = await repo.update(

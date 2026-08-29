@@ -69,7 +69,11 @@ class AccountHeroBanner extends StatelessWidget {
                 const Gap(6),
                 Row(
                   children: [
-                    const Icon(FLucideIcons.store, size: 14, color: Color(0xFF64748B)),
+                    const Icon(
+                      FLucideIcons.store,
+                      size: 14,
+                      color: Color(0xFF64748B),
+                    ),
                     const Gap(5),
                     Flexible(
                       child: Text(
@@ -82,15 +86,25 @@ class AccountHeroBanner extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    if (merchant != null) ...[
+                    if (merchant case final merchantObj?) ...[
                       const Gap(8),
-                      const Text('•', style: TextStyle(color: Color(0xFF94A3B8), fontWeight: FontWeight.bold)),
+                      const Text(
+                        '•',
+                        style: TextStyle(
+                          color: Color(0xFF94A3B8),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                       const Gap(8),
-                      const Icon(FLucideIcons.building2, size: 14, color: Color(0xFF64748B)),
+                      const Icon(
+                        FLucideIcons.building2,
+                        size: 14,
+                        color: Color(0xFF64748B),
+                      ),
                       const Gap(5),
                       Flexible(
                         child: Text(
-                          merchant!.businessName,
+                          merchantObj.businessName,
                           style: const TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w500,
@@ -115,6 +129,8 @@ class AccountHeroBanner extends StatelessWidget {
     if (words.length >= 2) {
       return '${words[0][0]}${words[1][0]}'.toUpperCase();
     }
-    return text.length >= 2 ? text.substring(0, 2).toUpperCase() : text.toUpperCase();
+    return text.length >= 2
+        ? text.substring(0, 2).toUpperCase()
+        : text.toUpperCase();
   }
 }

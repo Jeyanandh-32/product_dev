@@ -17,22 +17,39 @@ class InventorySubmenuItem extends StatefulWidget with FItemMixin {
 }
 
 class _InventorySubmenuItemState extends State<InventorySubmenuItem> {
-  late bool _isExpanded;
+  bool _isExpanded = false;
 
   @override
   void initState() {
     super.initState();
     final active = activeTerminalPageSignal.value;
-    _isExpanded = active == TerminalNavPage.inventoryProducts ||
+    _isExpanded =
+        active == TerminalNavPage.inventoryProducts ||
         active == TerminalNavPage.inventoryCategories ||
         active == TerminalNavPage.inventoryCounters;
+  }
+
+  FItem _navItem(
+    IconData icon,
+    String title,
+    VoidCallback onPress, {
+    double size = 14,
+    TextStyle? style,
+  }) {
+    return FItem(
+      prefix: Icon(icon, size: size),
+      title: Text(title, style: style),
+      onPress: () {
+        widget.parentController.toggle();
+        onPress();
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final isDesktop = context.isDesktop;
-    final isBottleReturnEnabled =
-        bottleReturnConfigSignal.value?.isEnabled ?? false;
+    final isBottleReturn = bottleReturnConfigSignal.value?.isEnabled ?? false;
 
     if (isDesktop) {
       return FSubmenuItem(
@@ -41,38 +58,29 @@ class _InventorySubmenuItemState extends State<InventorySubmenuItem> {
         submenu: [
           FItemGroup(
             children: [
-              FItem(
-                prefix: const Icon(FLucideIcons.package, size: 14),
-                title: const Text('Products'),
-                onPress: () {
-                  widget.parentController.toggle();
-                  activeTerminalPageSignal.value = TerminalNavPage.inventoryProducts;
-                },
+              _navItem(
+                FLucideIcons.package,
+                'Products',
+                () => activeTerminalPageSignal.value =
+                    TerminalNavPage.inventoryProducts,
               ),
-              FItem(
-                prefix: const Icon(FLucideIcons.folder, size: 14),
-                title: const Text('Categories'),
-                onPress: () {
-                  widget.parentController.toggle();
-                  activeTerminalPageSignal.value = TerminalNavPage.inventoryCategories;
-                },
+              _navItem(
+                FLucideIcons.folder,
+                'Categories',
+                () => activeTerminalPageSignal.value =
+                    TerminalNavPage.inventoryCategories,
               ),
-              FItem(
-                prefix: const Icon(FLucideIcons.hash, size: 14),
-                title: const Text('Counters'),
-                onPress: () {
-                  widget.parentController.toggle();
-                  activeTerminalPageSignal.value = TerminalNavPage.inventoryCounters;
-                },
+              _navItem(
+                FLucideIcons.hash,
+                'Counters',
+                () => activeTerminalPageSignal.value =
+                    TerminalNavPage.inventoryCounters,
               ),
-              if (isBottleReturnEnabled)
-                FItem(
-                  prefix: const Icon(FLucideIcons.recycle, size: 14),
-                  title: const Text('Bottle Returns'),
-                  onPress: () {
-                    widget.parentController.toggle();
-                    ReturnableProductsModal.show(context);
-                  },
+              if (isBottleReturn)
+                _navItem(
+                  FLucideIcons.recycle,
+                  'Bottle Returns',
+                  () => ReturnableProductsModal.show(context),
                 ),
             ],
           ),
@@ -80,6 +88,7 @@ class _InventorySubmenuItemState extends State<InventorySubmenuItem> {
       );
     }
 
+    const subStyle = TextStyle(fontSize: 13.5);
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -100,38 +109,37 @@ class _InventorySubmenuItemState extends State<InventorySubmenuItem> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                FItem(
-                  prefix: const Icon(FLucideIcons.package, size: 13),
-                  title: const Text('Products', style: TextStyle(fontSize: 13.5)),
-                  onPress: () {
-                    widget.parentController.toggle();
-                    activeTerminalPageSignal.value = TerminalNavPage.inventoryProducts;
-                  },
+                _navItem(
+                  FLucideIcons.package,
+                  'Products',
+                  () => activeTerminalPageSignal.value =
+                      TerminalNavPage.inventoryProducts,
+                  size: 13,
+                  style: subStyle,
                 ),
-                FItem(
-                  prefix: const Icon(FLucideIcons.folder, size: 13),
-                  title: const Text('Categories', style: TextStyle(fontSize: 13.5)),
-                  onPress: () {
-                    widget.parentController.toggle();
-                    activeTerminalPageSignal.value = TerminalNavPage.inventoryCategories;
-                  },
+                _navItem(
+                  FLucideIcons.folder,
+                  'Categories',
+                  () => activeTerminalPageSignal.value =
+                      TerminalNavPage.inventoryCategories,
+                  size: 13,
+                  style: subStyle,
                 ),
-                FItem(
-                  prefix: const Icon(FLucideIcons.hash, size: 13),
-                  title: const Text('Counters', style: TextStyle(fontSize: 13.5)),
-                  onPress: () {
-                    widget.parentController.toggle();
-                    activeTerminalPageSignal.value = TerminalNavPage.inventoryCounters;
-                  },
+                _navItem(
+                  FLucideIcons.hash,
+                  'Counters',
+                  () => activeTerminalPageSignal.value =
+                      TerminalNavPage.inventoryCounters,
+                  size: 13,
+                  style: subStyle,
                 ),
-                if (isBottleReturnEnabled)
-                  FItem(
-                    prefix: const Icon(FLucideIcons.recycle, size: 13),
-                    title: const Text('Bottle Returns', style: TextStyle(fontSize: 13.5)),
-                    onPress: () {
-                      widget.parentController.toggle();
-                      ReturnableProductsModal.show(context);
-                    },
+                if (isBottleReturn)
+                  _navItem(
+                    FLucideIcons.recycle,
+                    'Bottle Returns',
+                    () => ReturnableProductsModal.show(context),
+                    size: 13,
+                    style: subStyle,
                   ),
               ],
             ),

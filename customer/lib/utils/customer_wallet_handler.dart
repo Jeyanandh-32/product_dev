@@ -13,13 +13,21 @@ class CustomerWalletHandler {
   const CustomerWalletHandler._();
 
   /// Loads wallet balance and transaction history for the active or recent store.
-  static Future<({double balance, List<CustomerWalletTransaction> transactions})> loadWalletHistory() async {
+  static Future<
+    ({double balance, List<CustomerWalletTransaction> transactions})
+  >
+  loadWalletHistory() async {
     final recentStores = recentStoresSignal.value.value ?? const <Store>[];
-    final storeId = currentCartStoreIdSignal.value ?? (recentStores.isNotEmpty ? recentStores.first.id : null);
+    final storeId =
+        currentCartStoreIdSignal.value ??
+        (recentStores.isNotEmpty ? recentStores.first.id : null);
     try {
-      final res = await CustomerWalletRepository.getWalletInfo(storeId: storeId);
+      final res = await CustomerWalletRepository.getWalletInfo(
+        storeId: storeId,
+      );
       final currentCustomer = customerAuthSignal.value.value;
-      if (currentCustomer != null && currentCustomer.walletBalance != res.balance) {
+      if (currentCustomer != null &&
+          currentCustomer.walletBalance != res.balance) {
         customerAuthSignal.value = AsyncData(
           currentCustomer.copyWith(walletBalance: res.balance),
         );
@@ -48,12 +56,18 @@ class CustomerWalletHandler {
         storeId: storeId,
       );
 
-      if (res.tokenUrl != null && res.merchantOrderId != null) {
+      final tokenUrl = res.tokenUrl;
+      final merchantOrderId = res.merchantOrderId;
+
+      if (tokenUrl != null &&
+          tokenUrl.isNotEmpty &&
+          merchantOrderId != null &&
+          merchantOrderId.isNotEmpty) {
         onModalClose();
 
         openPhonePeCheckoutModal(
-          tokenUrl: res.tokenUrl!,
-          merchantOrderId: res.merchantOrderId!,
+          tokenUrl: tokenUrl,
+          merchantOrderId: merchantOrderId,
           onComplete: (status) async {
             setLoading(false);
             await onCompleted();

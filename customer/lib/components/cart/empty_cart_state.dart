@@ -3,6 +3,7 @@ import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_lucide/jaspr_lucide.dart' hide List, Router, Store;
 import 'package:models/models.dart';
 
+/// Empty state view presented when no items have been added to the customer shopping cart.
 class EmptyCartState extends StatelessComponent {
   final Store? currentStore;
   final VoidCallback onExplore;
@@ -15,18 +16,18 @@ class EmptyCartState extends StatelessComponent {
 
   @override
   Component build(BuildContext context) {
+    final store = currentStore;
+
     return div(
       classes:
-          'p-16 text-center bg-gray-50/50 rounded-3xl text-gray-400 font-medium border border-dashed border-gray-200 flex flex-col items-center justify-center gap-4',
+          'flex flex-col items-center justify-center py-16 px-4 text-center gap-3 bg-white rounded-3xl border border-dashed border-gray-200',
       [
         div(
           classes:
-              'w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center text-black',
-          [
-            ShoppingBag(classes: 'w-8 h-8'),
-          ],
+              'w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 mb-1',
+          [ShoppingBag(classes: 'w-7 h-7 text-gray-400')],
         ),
-        h3(classes: 'text-lg font-bold text-black', [
+        h2(classes: 'text-xl font-extrabold text-black', [
           .text('Your cart is empty'),
         ]),
         p(classes: 'text-sm text-gray-500 max-w-sm', [
@@ -38,8 +39,8 @@ class EmptyCartState extends StatelessComponent {
           onClick: onExplore,
           [
             .text(
-              currentStore != null
-                  ? 'Back to ${currentStore!.name}'
+              store != null
+                  ? 'Back to ${store.name}'
                   : 'Explore Stores',
             ),
           ],

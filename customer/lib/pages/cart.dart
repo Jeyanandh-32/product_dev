@@ -90,8 +90,8 @@ class _CartPageState extends SignalState<CartPage> {
           EmptyCartState(
             currentStore: currentStore,
             onExplore: () {
-              if (currentStore?.slug != null) {
-                Router.of(context).push('/store/${currentStore!.slug!}');
+              if (currentStore?.slug case final slug? when slug.isNotEmpty) {
+                Router.of(context).push('/store/$slug');
               } else {
                 Router.of(context).push('/');
               }

@@ -59,7 +59,9 @@ class _ModalInputFieldState extends State<ModalInputField> {
           style: TextStyle(
             fontSize: 13.5,
             fontWeight: FontWeight.w600,
-            color: widget.isRequired ? const Color(0xFF0F172A) : const Color(0xFF334155),
+            color: widget.isRequired
+                ? const Color(0xFF0F172A)
+                : const Color(0xFF334155),
           ),
         ),
         const Gap(7),
@@ -71,7 +73,9 @@ class _ModalInputFieldState extends State<ModalInputField> {
             color: const Color(0xFFFFFFFF),
             borderRadius: BorderRadius.circular(10),
             border: Border.all(
-              color: _isFocused ? const Color(0xFF000000) : const Color(0xFFE2E8F0),
+              color: _isFocused
+                  ? const Color(0xFF000000)
+                  : const Color(0xFFE2E8F0),
               width: _isFocused ? 1.5 : 1.0,
             ),
           ),
@@ -79,10 +83,14 @@ class _ModalInputFieldState extends State<ModalInputField> {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              if (widget.prefixText != null) ...[
+              if (widget.prefixText case final prefix?) ...[
                 Text(
-                  widget.prefixText!,
-                  style: const TextStyle(fontSize: 13.5, fontWeight: FontWeight.w600, color: Color(0xFF64748B)),
+                  prefix,
+                  style: const TextStyle(
+                    fontSize: 13.5,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF64748B),
+                  ),
                 ),
                 const Gap(6),
               ],
@@ -92,7 +100,11 @@ class _ModalInputFieldState extends State<ModalInputField> {
                   initialValue: widget.value,
                   keyboardType: widget.keyboardType,
                   onChanged: widget.onChanged,
-                  style: const TextStyle(fontSize: 13.5, fontWeight: FontWeight.w500, color: Color(0xFF0F172A)),
+                  style: const TextStyle(
+                    fontSize: 13.5,
+                    fontWeight: FontWeight.w500,
+                    color: Color(0xFF0F172A),
+                  ),
                   decoration: InputDecoration(
                     isDense: true,
                     contentPadding: EdgeInsets.zero,
@@ -100,7 +112,10 @@ class _ModalInputFieldState extends State<ModalInputField> {
                     enabledBorder: InputBorder.none,
                     focusedBorder: InputBorder.none,
                     hintText: widget.hint,
-                    hintStyle: const TextStyle(fontSize: 13.5, color: Color(0xFF94A3B8)),
+                    hintStyle: const TextStyle(
+                      fontSize: 13.5,
+                      color: Color(0xFF94A3B8),
+                    ),
                   ),
                 ),
               ),

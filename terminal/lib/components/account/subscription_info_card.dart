@@ -9,12 +9,37 @@ import 'package:terminal/theme/terminal_colors.dart';
 /// Card displaying store subscription and POS license status.
 class SubscriptionInfoCard extends StatelessWidget {
   final Store? store;
+  final StoreSubscription? subscription;
 
-  const SubscriptionInfoCard({super.key, required this.store});
+  const SubscriptionInfoCard({
+    super.key,
+    required this.store,
+    this.subscription,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final isSubActive = store?.isActive ?? false;
+    final sub = subscription;
+    final isSubActive = sub != null
+        ? sub.status.isOperational
+        : (store?.isActive ?? false);
+    final statusText = sub != null
+        ? switch (sub.status) {
+            SubscriptionStatus.trial => '14-Day Free Trial',
+            SubscriptionStatus.active => 'Active & Operational',
+            SubscriptionStatus.gracePeriod => 'Grace Period (Renewal Due)',
+            SubscriptionStatus.expired => 'Expired',
+            SubscriptionStatus.canceled => 'Canceled',
+          }
+        : (isSubActive ? 'Active & Operational' : 'Inactive');
+
+    final planTierText = sub != null
+        ? switch (sub.planCode) {
+            SubscriptionPlanCode.trial => '14-Day Free Trial',
+            SubscriptionPlanCode.monthly => 'Pro Monthly (₹299/mo)',
+            SubscriptionPlanCode.yearly => 'Pro Yearly (₹2,999/yr)',
+          }
+        : 'Sparrow POS License';
 
     return Container(
       decoration: BoxDecoration(
@@ -42,14 +67,11 @@ class SubscriptionInfoCard extends StatelessWidget {
           const Gap(18),
           Container(height: 1, color: const Color(0xFFF1F5F9)),
           const Gap(16),
-          const AccountInfoRow(
-            label: 'Plan Tier',
-            value: 'Enterprise POS License',
-          ),
+          AccountInfoRow(label: 'Plan Tier', value: planTierText),
           const Gap(14),
           AccountInfoRow(
             label: 'License Status',
-            value: isSubActive ? 'Active & Operational' : 'Inactive',
+            value: statusText,
             isSuccess: isSubActive,
           ),
           const Gap(14),
@@ -58,9 +80,9 @@ class SubscriptionInfoCard extends StatelessWidget {
             value: store?.name ?? 'Unassigned',
           ),
           const Gap(14),
-          const AccountInfoRow(
-            label: 'Billing Cycle',
-            value: 'Annual License',
+          AccountInfoRow(
+            label: 'Auto Renew',
+            value: sub?.autoRenew ?? true ? 'Enabled' : 'Disabled',
           ),
         ],
       ),

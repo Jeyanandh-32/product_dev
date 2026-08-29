@@ -10,6 +10,7 @@ import 'package:merchant/signals/navigation_signal.dart';
 import 'package:merchant/signals/stores_signal.dart';
 import 'package:merchant/signals/terminals_signal.dart';
 
+/// Main stores management tab rendering store cards, terminal lists, and configuration modals.
 class Stores extends SignalComponent {
   const Stores({super.key});
 
@@ -32,11 +33,11 @@ class _StoresState extends SignalState<Stores> {
     final editingStore = editingStoreSignal.value;
     final editingTerminal = editingTerminalSignal.value;
 
-    if (storesState.hasValue && storesState.value!.isNotEmpty) {
+    if (storesState.value case final storesList? when storesList.isNotEmpty) {
       if (selectedStore == null ||
-          !storesState.value!.any((st) => st.id == selectedStore.id)) {
+          !storesList.any((st) => st.id == selectedStore.id)) {
         Future.microtask(() {
-          selectedTabStoreSignal.value = storesState.value!.first;
+          selectedTabStoreSignal.value = storesList.first;
         });
       }
     }

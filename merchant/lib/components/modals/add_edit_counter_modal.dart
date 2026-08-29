@@ -7,6 +7,7 @@ import 'package:merchant/signals/navigation_signal.dart';
 import 'package:models/models.dart';
 import 'package:web/web.dart';
 
+/// Modal dialog for creating or updating store physical billing counters.
 class AddEditCounterModal extends StatefulComponent {
   const AddEditCounterModal({super.key, this.counter});
 
@@ -17,10 +18,10 @@ class AddEditCounterModal extends StatefulComponent {
 }
 
 class _AddEditCounterModalState extends State<AddEditCounterModal> {
-  late String _counterName;
-  late String _description;
-  late String _imageUrl;
-  late bool _isActive;
+  String _counterName = '';
+  String _description = '';
+  String _imageUrl = '';
+  bool _isActive = true;
 
   @override
   void initState() {
@@ -43,9 +44,10 @@ class _AddEditCounterModalState extends State<AddEditCounterModal> {
 
     activeModalSignal.value = ActiveModal.none;
 
-    if (component.counter != null) {
+    final counter = component.counter;
+    if (counter != null) {
       CountersActions.updateCounter(
-        id: component.counter!.id,
+        id: counter.id,
         name: counterName,
         isActive: isActive,
         description: description,

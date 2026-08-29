@@ -79,8 +79,7 @@ class _OrderStatusPageState extends SignalState<OrderStatusPage> {
   Component buildSignal(BuildContext context) {
     if (_isLoading) {
       return div(
-        classes:
-            'flex-1 min-h-[50vh] flex flex-col items-center justify-center gap-4 text-center my-auto w-full',
+        classes: 'flex-1 min-h-[50vh] flex flex-col items-center justify-center gap-4 text-center my-auto w-full',
         [
           span(classes: 'loading loading-spinner loading-lg text-black', []),
           p(classes: 'text-sm font-semibold text-gray-500', [
@@ -90,19 +89,17 @@ class _OrderStatusPageState extends SignalState<OrderStatusPage> {
       );
     }
 
-    if (_errorMessage != null || _order == null) {
+    final order = _order;
+    if (_errorMessage != null || order == null) {
       return OrderStatusPendingCard(reference: component.reference);
     }
-
-    final order = _order!;
 
     return div(
       classes: 'max-w-3xl mx-auto w-full py-8 px-4 flex flex-col gap-6',
       [
         div(classes: 'flex items-center gap-3', [
           button(
-            classes:
-                'w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 flex items-center justify-center cursor-pointer border-0 transition-all active:scale-95 shrink-0',
+            classes: 'w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 flex items-center justify-center cursor-pointer border-0 transition-all active:scale-95 shrink-0',
             onClick: _onBackNavigation,
             [ArrowLeft(classes: 'w-5 h-5')],
           ),

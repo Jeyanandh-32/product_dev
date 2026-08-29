@@ -5,6 +5,7 @@ import 'package:jaspr_lucide/generated_icons/store.dart' as icon;
 import 'package:jaspr_lucide/jaspr_lucide.dart' hide List, Map, Router, Store;
 import 'package:models/models.dart';
 
+/// Product catalog card component displaying image, pricing, and add-to-cart actions for customers.
 class CustomerProductCard extends StatelessComponent {
   final Store store;
   final Product product;
@@ -31,9 +32,9 @@ class CustomerProductCard extends StatelessComponent {
           classes:
               'w-full h-28 bg-gray-100 rounded-xl flex items-center justify-center relative overflow-hidden group-hover:scale-[1.02] transition-transform',
           [
-            if (product.imageUrl != null && product.imageUrl!.isNotEmpty)
+            if (product.imageUrl case final url? when url.isNotEmpty)
               img(
-                src: product.imageUrl!,
+                src: url,
                 classes: 'w-full h-full object-cover',
               )
             else
@@ -59,9 +60,9 @@ class CustomerProductCard extends StatelessComponent {
               .text(product.name),
             ],
           ),
-          if (product.description != null && product.description!.isNotEmpty)
+          if (product.description case final desc? when desc.isNotEmpty)
             p(classes: 'text-xs text-gray-400 line-clamp-1', [
-              .text(product.description!),
+              .text(desc),
             ]),
         ]),
 

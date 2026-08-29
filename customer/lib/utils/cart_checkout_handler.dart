@@ -47,7 +47,8 @@ class CartCheckoutHandler {
 
       refreshCustomerAuthSignal();
 
-      if (result.isFullyPaidByWallet || result.tokenUrl == null) {
+      final tokenUrl = result.tokenUrl;
+      if (result.isFullyPaidByWallet || tokenUrl == null || tokenUrl.isEmpty) {
         clearCart();
         showCustomerToast(
           'Order paid using Customer Wallet!',
@@ -60,7 +61,7 @@ class CartCheckoutHandler {
       }
 
       openPhonePeCheckoutModal(
-        tokenUrl: result.tokenUrl!,
+        tokenUrl: tokenUrl,
         merchantOrderId: result.merchantOrderId,
         onComplete: (status) async {
           if (status == 'CONCLUDED') {

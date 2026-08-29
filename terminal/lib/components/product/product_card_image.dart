@@ -11,7 +11,8 @@ class ProductCardImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final validUrl = imageUrl != null && imageUrl!.trim().isNotEmpty;
+    final trimmedUrl = imageUrl?.trim();
+    final hasValidUrl = trimmedUrl != null && trimmedUrl.isNotEmpty;
 
     return AspectRatio(
       aspectRatio: 3 / 2,
@@ -19,10 +20,10 @@ class ProductCardImage extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         child: Box(
           style: BoxStyler().color(const Color(0xFFF3F4F6)),
-          child: validUrl
+          child: hasValidUrl
               ? SizedBox.expand(
                   child: CachedNetworkImage(
-                    imageUrl: imageUrl!.trim(),
+                    imageUrl: trimmedUrl,
                     fit: BoxFit.cover,
                     alignment: Alignment.center,
                     memCacheWidth: 320,

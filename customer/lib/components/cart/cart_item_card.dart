@@ -4,6 +4,7 @@ import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_lucide/generated_icons/store.dart' as icon;
 import 'package:jaspr_lucide/jaspr_lucide.dart' hide List, Map, Router, Store;
 
+/// Renders an individual product item row inside the customer cart with quantity controls.
 class CartItemCard extends StatelessComponent {
   final CartItem item;
 
@@ -20,10 +21,9 @@ class CartItemCard extends StatelessComponent {
             classes:
                 'w-16 h-16 bg-gray-100 rounded-xl flex items-center justify-center shrink-0 overflow-hidden border border-gray-100',
             [
-              if (item.product.imageUrl != null &&
-                  item.product.imageUrl!.isNotEmpty)
+              if (item.product.imageUrl case final url? when url.isNotEmpty)
                 img(
-                  src: item.product.imageUrl!,
+                  src: url,
                   classes: 'w-full h-full object-cover',
                 )
               else

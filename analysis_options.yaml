@@ -1,6 +1,8 @@
-# Root analysis options configuration for the workspace
 analyzer:
   exclude:
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+    - "**/.dart_tool/**"
     - build/**
     - android/**
     - ios/**
@@ -8,4 +10,9 @@ analyzer:
     - windows/**
     - macos/**
     - linux/**
-include: package:lints/recommended.yaml
+  errors:
+    avoid_dynamic_calls: ignore
+    invalid_annotation_target: ignore
+    public_member_api_docs: ignore
+    lines_longer_than_80_chars: ignore
+    avoid_redundant_argument_values: ignore

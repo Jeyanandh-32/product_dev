@@ -17,8 +17,8 @@ class ProfileContactFieldsSection extends StatefulComponent {
 
 class _ProfileContactFieldsSectionState
     extends State<ProfileContactFieldsSection> {
-  late String _name;
-  late String _mobileNumber;
+  String _name = '';
+  String _mobileNumber = '';
   String _mobilePin = '';
 
   bool _isEditingName = false;
@@ -93,8 +93,9 @@ class _ProfileContactFieldsSectionState
       ),
       EditableInfoCard(
         title: 'Contact Details',
-        currentValue:
-            _isEditingMobile ? _mobileNumber : component.customer.mobileNumber,
+        currentValue: _isEditingMobile
+            ? _mobileNumber
+            : component.customer.mobileNumber,
         inputLabel: 'Mobile Number',
         inputType: InputType.tel,
         isEditing: _isEditingMobile,

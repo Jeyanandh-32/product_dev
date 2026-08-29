@@ -442,6 +442,176 @@ base class _CounterUpdateTypeFactory extends SchemanticType<CounterUpdate> {
   );
 }
 
+base class CustomerRegister {
+  /// Creates a [CustomerRegister] from a JSON map.
+  factory CustomerRegister.fromJson(Map<String, dynamic> json) =>
+      $schema.parse(json);
+
+  CustomerRegister._(this._json);
+
+  CustomerRegister({
+    required String name,
+    required String mobileNumber,
+    required String pin,
+  }) {
+    _json = {'name': name, 'mobileNumber': mobileNumber, 'pin': pin};
+  }
+
+  late final Map<String, dynamic> _json;
+
+  /// The JSON schema and type descriptor for [CustomerRegister].
+  static const SchemanticType<CustomerRegister> $schema =
+      _CustomerRegisterTypeFactory();
+
+  String get name {
+    return _json['name'] as String;
+  }
+
+  set name(String value) {
+    _json['name'] = value;
+  }
+
+  String get mobileNumber {
+    return _json['mobileNumber'] as String;
+  }
+
+  set mobileNumber(String value) {
+    _json['mobileNumber'] = value;
+  }
+
+  String get pin {
+    return _json['pin'] as String;
+  }
+
+  set pin(String value) {
+    _json['pin'] = value;
+  }
+
+  @override
+  String toString() {
+    return _json.toString();
+  }
+
+  /// Serializes this [CustomerRegister] to a JSON map.
+  Map<String, dynamic> toJson() {
+    return _json;
+  }
+}
+
+base class _CustomerRegisterTypeFactory
+    extends SchemanticType<CustomerRegister> {
+  const _CustomerRegisterTypeFactory();
+
+  @override
+  CustomerRegister parse(Object? json) {
+    return CustomerRegister._(json as Map<String, dynamic>);
+  }
+
+  @override
+  JsonSchemaMetadata get schemaMetadata => JsonSchemaMetadata(
+    name: 'CustomerRegister',
+    definition: $Schema
+        .object(
+          properties: {
+            'name': $Schema.string(
+              description: 'Full Name',
+              minLength: 1,
+              maxLength: 255,
+            ),
+            'mobileNumber': $Schema.string(
+              description: '10-Digit Mobile Number',
+              pattern: r'^[0-9]{10}$',
+            ),
+            'pin': $Schema.string(
+              description: '6-Digit Security PIN',
+              minLength: 6,
+              maxLength: 6,
+              pattern: r'^[0-9]{6}$',
+            ),
+          },
+          required: ['name', 'mobileNumber', 'pin'],
+        )
+        .value,
+    dependencies: [],
+  );
+}
+
+base class CustomerLogin {
+  /// Creates a [CustomerLogin] from a JSON map.
+  factory CustomerLogin.fromJson(Map<String, dynamic> json) =>
+      $schema.parse(json);
+
+  CustomerLogin._(this._json);
+
+  CustomerLogin({required String mobileNumber, required String pin}) {
+    _json = {'mobileNumber': mobileNumber, 'pin': pin};
+  }
+
+  late final Map<String, dynamic> _json;
+
+  /// The JSON schema and type descriptor for [CustomerLogin].
+  static const SchemanticType<CustomerLogin> $schema =
+      _CustomerLoginTypeFactory();
+
+  String get mobileNumber {
+    return _json['mobileNumber'] as String;
+  }
+
+  set mobileNumber(String value) {
+    _json['mobileNumber'] = value;
+  }
+
+  String get pin {
+    return _json['pin'] as String;
+  }
+
+  set pin(String value) {
+    _json['pin'] = value;
+  }
+
+  @override
+  String toString() {
+    return _json.toString();
+  }
+
+  /// Serializes this [CustomerLogin] to a JSON map.
+  Map<String, dynamic> toJson() {
+    return _json;
+  }
+}
+
+base class _CustomerLoginTypeFactory extends SchemanticType<CustomerLogin> {
+  const _CustomerLoginTypeFactory();
+
+  @override
+  CustomerLogin parse(Object? json) {
+    return CustomerLogin._(json as Map<String, dynamic>);
+  }
+
+  @override
+  JsonSchemaMetadata get schemaMetadata => JsonSchemaMetadata(
+    name: 'CustomerLogin',
+    definition: $Schema
+        .object(
+          properties: {
+            'mobileNumber': $Schema.string(
+              description: '10-Digit Mobile Number',
+              pattern: r'^[0-9]{10}$',
+            ),
+            'pin': $Schema.string(
+              description: '6-Digit Security PIN',
+              minLength: 6,
+              maxLength: 6,
+              pattern: r'^[0-9]{6}$',
+            ),
+          },
+          required: ['mobileNumber', 'pin'],
+        )
+        .value,
+    dependencies: [],
+  );
+}
+
 base class MerchantRegister {
   /// Creates a [MerchantRegister] from a JSON map.
   factory MerchantRegister.fromJson(Map<String, dynamic> json) =>
@@ -639,6 +809,265 @@ base class _MerchantLoginTypeFactory extends SchemanticType<MerchantLogin> {
         )
         .value,
     dependencies: [],
+  );
+}
+
+base class OrderProduct {
+  /// Creates a [OrderProduct] from a JSON map.
+  factory OrderProduct.fromJson(Map<String, dynamic> json) =>
+      $schema.parse(json);
+
+  OrderProduct._(this._json);
+
+  OrderProduct({
+    required String productId,
+    required int quantity,
+    double? discount,
+  }) {
+    _json = {
+      'productId': productId,
+      'quantity': quantity,
+      'discount': ?discount,
+    };
+  }
+
+  late final Map<String, dynamic> _json;
+
+  /// The JSON schema and type descriptor for [OrderProduct].
+  static const SchemanticType<OrderProduct> $schema =
+      _OrderProductTypeFactory();
+
+  String get productId {
+    return _json['productId'] as String;
+  }
+
+  set productId(String value) {
+    _json['productId'] = value;
+  }
+
+  int get quantity {
+    return _json['quantity'] as int;
+  }
+
+  set quantity(int value) {
+    _json['quantity'] = value;
+  }
+
+  double? get discount {
+    return (_json['discount'] as num?)?.toDouble();
+  }
+
+  set discount(double? value) {
+    if (value == null) {
+      _json.remove('discount');
+    } else {
+      _json['discount'] = value;
+    }
+  }
+
+  @override
+  String toString() {
+    return _json.toString();
+  }
+
+  /// Serializes this [OrderProduct] to a JSON map.
+  Map<String, dynamic> toJson() {
+    return _json;
+  }
+}
+
+base class _OrderProductTypeFactory extends SchemanticType<OrderProduct> {
+  const _OrderProductTypeFactory();
+
+  @override
+  OrderProduct parse(Object? json) {
+    return OrderProduct._(json as Map<String, dynamic>);
+  }
+
+  @override
+  JsonSchemaMetadata get schemaMetadata => JsonSchemaMetadata(
+    name: 'OrderProduct',
+    definition: $Schema
+        .object(
+          properties: {
+            'productId': $Schema.string(
+              description: 'Product ID',
+              minLength: 1,
+            ),
+            'quantity': $Schema.integer(description: 'Quantity', minimum: 1),
+            'discount': $Schema.number(description: 'Discount', minimum: 0),
+          },
+          required: ['productId', 'quantity'],
+        )
+        .value,
+    dependencies: [],
+  );
+}
+
+base class OrderCreate {
+  /// Creates a [OrderCreate] from a JSON map.
+  factory OrderCreate.fromJson(Map<String, dynamic> json) =>
+      $schema.parse(json);
+
+  OrderCreate._(this._json);
+
+  OrderCreate({
+    String? source,
+    String? type,
+    String? paymentMethod,
+    double? discountTotal,
+    bool? useWallet,
+    double? walletDeduction,
+    required List<OrderProduct> products,
+  }) {
+    _json = {
+      'source': ?source,
+      'type': ?type,
+      'paymentMethod': ?paymentMethod,
+      'discountTotal': ?discountTotal,
+      'useWallet': ?useWallet,
+      'walletDeduction': ?walletDeduction,
+      'products': products.map((e) => e.toJson()).toList(),
+    };
+  }
+
+  late final Map<String, dynamic> _json;
+
+  /// The JSON schema and type descriptor for [OrderCreate].
+  static const SchemanticType<OrderCreate> $schema = _OrderCreateTypeFactory();
+
+  String? get source {
+    return _json['source'] as String?;
+  }
+
+  set source(String? value) {
+    if (value == null) {
+      _json.remove('source');
+    } else {
+      _json['source'] = value;
+    }
+  }
+
+  String? get type {
+    return _json['type'] as String?;
+  }
+
+  set type(String? value) {
+    if (value == null) {
+      _json.remove('type');
+    } else {
+      _json['type'] = value;
+    }
+  }
+
+  String? get paymentMethod {
+    return _json['paymentMethod'] as String?;
+  }
+
+  set paymentMethod(String? value) {
+    if (value == null) {
+      _json.remove('paymentMethod');
+    } else {
+      _json['paymentMethod'] = value;
+    }
+  }
+
+  double? get discountTotal {
+    return (_json['discountTotal'] as num?)?.toDouble();
+  }
+
+  set discountTotal(double? value) {
+    if (value == null) {
+      _json.remove('discountTotal');
+    } else {
+      _json['discountTotal'] = value;
+    }
+  }
+
+  bool? get useWallet {
+    return _json['useWallet'] as bool?;
+  }
+
+  set useWallet(bool? value) {
+    if (value == null) {
+      _json.remove('useWallet');
+    } else {
+      _json['useWallet'] = value;
+    }
+  }
+
+  double? get walletDeduction {
+    return (_json['walletDeduction'] as num?)?.toDouble();
+  }
+
+  set walletDeduction(double? value) {
+    if (value == null) {
+      _json.remove('walletDeduction');
+    } else {
+      _json['walletDeduction'] = value;
+    }
+  }
+
+  List<OrderProduct> get products {
+    return (_json['products'] as List)
+        .map((e) => OrderProduct.fromJson(e as Map<String, dynamic>))
+        .toList();
+  }
+
+  set products(List<OrderProduct> value) {
+    _json['products'] = value.map((e) => e.toJson()).toList();
+  }
+
+  @override
+  String toString() {
+    return _json.toString();
+  }
+
+  /// Serializes this [OrderCreate] to a JSON map.
+  Map<String, dynamic> toJson() {
+    return _json;
+  }
+}
+
+base class _OrderCreateTypeFactory extends SchemanticType<OrderCreate> {
+  const _OrderCreateTypeFactory();
+
+  @override
+  OrderCreate parse(Object? json) {
+    return OrderCreate._(json as Map<String, dynamic>);
+  }
+
+  @override
+  JsonSchemaMetadata get schemaMetadata => JsonSchemaMetadata(
+    name: 'OrderCreate',
+    definition: $Schema
+        .object(
+          properties: {
+            'source': $Schema.string(description: 'Order source'),
+            'type': $Schema.string(description: 'Order type'),
+            'paymentMethod': $Schema.string(
+              description: 'Order payment method',
+            ),
+            'discountTotal': $Schema.number(
+              description: 'Discount total',
+              minimum: 0,
+            ),
+            'useWallet': $Schema.boolean(
+              description: 'Whether to apply customer wallet balance',
+            ),
+            'walletDeduction': $Schema.number(
+              description: 'Wallet deduction amount in rupees',
+              minimum: 0,
+            ),
+            'products': $Schema.list(
+              description: 'Products list',
+              items: $Schema.fromMap({'\$ref': r'#/$defs/OrderProduct'}),
+            ),
+          },
+          required: ['products'],
+        )
+        .value,
+    dependencies: [OrderProduct.$schema],
   );
 }
 
@@ -1079,265 +1508,6 @@ base class _ProductUpdateTypeFactory extends SchemanticType<ProductUpdate> {
         )
         .value,
     dependencies: [],
-  );
-}
-
-base class OrderProduct {
-  /// Creates a [OrderProduct] from a JSON map.
-  factory OrderProduct.fromJson(Map<String, dynamic> json) =>
-      $schema.parse(json);
-
-  OrderProduct._(this._json);
-
-  OrderProduct({
-    required String productId,
-    required int quantity,
-    double? discount,
-  }) {
-    _json = {
-      'productId': productId,
-      'quantity': quantity,
-      'discount': ?discount,
-    };
-  }
-
-  late final Map<String, dynamic> _json;
-
-  /// The JSON schema and type descriptor for [OrderProduct].
-  static const SchemanticType<OrderProduct> $schema =
-      _OrderProductTypeFactory();
-
-  String get productId {
-    return _json['productId'] as String;
-  }
-
-  set productId(String value) {
-    _json['productId'] = value;
-  }
-
-  int get quantity {
-    return _json['quantity'] as int;
-  }
-
-  set quantity(int value) {
-    _json['quantity'] = value;
-  }
-
-  double? get discount {
-    return (_json['discount'] as num?)?.toDouble();
-  }
-
-  set discount(double? value) {
-    if (value == null) {
-      _json.remove('discount');
-    } else {
-      _json['discount'] = value;
-    }
-  }
-
-  @override
-  String toString() {
-    return _json.toString();
-  }
-
-  /// Serializes this [OrderProduct] to a JSON map.
-  Map<String, dynamic> toJson() {
-    return _json;
-  }
-}
-
-base class _OrderProductTypeFactory extends SchemanticType<OrderProduct> {
-  const _OrderProductTypeFactory();
-
-  @override
-  OrderProduct parse(Object? json) {
-    return OrderProduct._(json as Map<String, dynamic>);
-  }
-
-  @override
-  JsonSchemaMetadata get schemaMetadata => JsonSchemaMetadata(
-    name: 'OrderProduct',
-    definition: $Schema
-        .object(
-          properties: {
-            'productId': $Schema.string(
-              description: 'Product ID',
-              minLength: 1,
-            ),
-            'quantity': $Schema.integer(description: 'Quantity', minimum: 1),
-            'discount': $Schema.number(description: 'Discount', minimum: 0),
-          },
-          required: ['productId', 'quantity'],
-        )
-        .value,
-    dependencies: [],
-  );
-}
-
-base class OrderCreate {
-  /// Creates a [OrderCreate] from a JSON map.
-  factory OrderCreate.fromJson(Map<String, dynamic> json) =>
-      $schema.parse(json);
-
-  OrderCreate._(this._json);
-
-  OrderCreate({
-    String? source,
-    String? type,
-    String? paymentMethod,
-    double? discountTotal,
-    bool? useWallet,
-    double? walletDeduction,
-    required List<OrderProduct> products,
-  }) {
-    _json = {
-      'source': ?source,
-      'type': ?type,
-      'paymentMethod': ?paymentMethod,
-      'discountTotal': ?discountTotal,
-      'useWallet': ?useWallet,
-      'walletDeduction': ?walletDeduction,
-      'products': products.map((e) => e.toJson()).toList(),
-    };
-  }
-
-  late final Map<String, dynamic> _json;
-
-  /// The JSON schema and type descriptor for [OrderCreate].
-  static const SchemanticType<OrderCreate> $schema = _OrderCreateTypeFactory();
-
-  String? get source {
-    return _json['source'] as String?;
-  }
-
-  set source(String? value) {
-    if (value == null) {
-      _json.remove('source');
-    } else {
-      _json['source'] = value;
-    }
-  }
-
-  String? get type {
-    return _json['type'] as String?;
-  }
-
-  set type(String? value) {
-    if (value == null) {
-      _json.remove('type');
-    } else {
-      _json['type'] = value;
-    }
-  }
-
-  String? get paymentMethod {
-    return _json['paymentMethod'] as String?;
-  }
-
-  set paymentMethod(String? value) {
-    if (value == null) {
-      _json.remove('paymentMethod');
-    } else {
-      _json['paymentMethod'] = value;
-    }
-  }
-
-  double? get discountTotal {
-    return (_json['discountTotal'] as num?)?.toDouble();
-  }
-
-  set discountTotal(double? value) {
-    if (value == null) {
-      _json.remove('discountTotal');
-    } else {
-      _json['discountTotal'] = value;
-    }
-  }
-
-  bool? get useWallet {
-    return _json['useWallet'] as bool?;
-  }
-
-  set useWallet(bool? value) {
-    if (value == null) {
-      _json.remove('useWallet');
-    } else {
-      _json['useWallet'] = value;
-    }
-  }
-
-  double? get walletDeduction {
-    return (_json['walletDeduction'] as num?)?.toDouble();
-  }
-
-  set walletDeduction(double? value) {
-    if (value == null) {
-      _json.remove('walletDeduction');
-    } else {
-      _json['walletDeduction'] = value;
-    }
-  }
-
-  List<OrderProduct> get products {
-    return (_json['products'] as List)
-        .map((e) => OrderProduct.fromJson(e as Map<String, dynamic>))
-        .toList();
-  }
-
-  set products(List<OrderProduct> value) {
-    _json['products'] = value.toList();
-  }
-
-  @override
-  String toString() {
-    return _json.toString();
-  }
-
-  /// Serializes this [OrderCreate] to a JSON map.
-  Map<String, dynamic> toJson() {
-    return _json;
-  }
-}
-
-base class _OrderCreateTypeFactory extends SchemanticType<OrderCreate> {
-  const _OrderCreateTypeFactory();
-
-  @override
-  OrderCreate parse(Object? json) {
-    return OrderCreate._(json as Map<String, dynamic>);
-  }
-
-  @override
-  JsonSchemaMetadata get schemaMetadata => JsonSchemaMetadata(
-    name: 'OrderCreate',
-    definition: $Schema
-        .object(
-          properties: {
-            'source': $Schema.string(description: 'Order source'),
-            'type': $Schema.string(description: 'Order type'),
-            'paymentMethod': $Schema.string(
-              description: 'Order payment method',
-            ),
-            'discountTotal': $Schema.number(
-              description: 'Discount total',
-              minimum: 0,
-            ),
-            'useWallet': $Schema.boolean(
-              description: 'Whether to apply customer wallet balance',
-            ),
-            'walletDeduction': $Schema.number(
-              description: 'Wallet deduction amount in rupees',
-              minimum: 0,
-            ),
-            'products': $Schema.list(
-              description: 'Products list',
-              items: $Schema.fromMap({'\$ref': r'#/$defs/OrderProduct'}),
-            ),
-          },
-          required: ['products'],
-        )
-        .value,
-    dependencies: [OrderProduct.$schema],
   );
 }
 
@@ -2028,176 +2198,6 @@ base class _TerminalUpdateTypeFactory extends SchemanticType<TerminalUpdate> {
             ),
             'isActive': $Schema.boolean(description: 'Is active status'),
           },
-        )
-        .value,
-    dependencies: [],
-  );
-}
-
-base class CustomerRegister {
-  /// Creates a [CustomerRegister] from a JSON map.
-  factory CustomerRegister.fromJson(Map<String, dynamic> json) =>
-      $schema.parse(json);
-
-  CustomerRegister._(this._json);
-
-  CustomerRegister({
-    required String name,
-    required String mobileNumber,
-    required String pin,
-  }) {
-    _json = {'name': name, 'mobileNumber': mobileNumber, 'pin': pin};
-  }
-
-  late final Map<String, dynamic> _json;
-
-  /// The JSON schema and type descriptor for [CustomerRegister].
-  static const SchemanticType<CustomerRegister> $schema =
-      _CustomerRegisterTypeFactory();
-
-  String get name {
-    return _json['name'] as String;
-  }
-
-  set name(String value) {
-    _json['name'] = value;
-  }
-
-  String get mobileNumber {
-    return _json['mobileNumber'] as String;
-  }
-
-  set mobileNumber(String value) {
-    _json['mobileNumber'] = value;
-  }
-
-  String get pin {
-    return _json['pin'] as String;
-  }
-
-  set pin(String value) {
-    _json['pin'] = value;
-  }
-
-  @override
-  String toString() {
-    return _json.toString();
-  }
-
-  /// Serializes this [CustomerRegister] to a JSON map.
-  Map<String, dynamic> toJson() {
-    return _json;
-  }
-}
-
-base class _CustomerRegisterTypeFactory
-    extends SchemanticType<CustomerRegister> {
-  const _CustomerRegisterTypeFactory();
-
-  @override
-  CustomerRegister parse(Object? json) {
-    return CustomerRegister._(json as Map<String, dynamic>);
-  }
-
-  @override
-  JsonSchemaMetadata get schemaMetadata => JsonSchemaMetadata(
-    name: 'CustomerRegister',
-    definition: $Schema
-        .object(
-          properties: {
-            'name': $Schema.string(
-              description: 'Full Name',
-              minLength: 1,
-              maxLength: 255,
-            ),
-            'mobileNumber': $Schema.string(
-              description: '10-Digit Mobile Number',
-              pattern: r'^[0-9]{10}$',
-            ),
-            'pin': $Schema.string(
-              description: '6-Digit Security PIN',
-              minLength: 6,
-              maxLength: 6,
-              pattern: r'^[0-9]{6}$',
-            ),
-          },
-          required: ['name', 'mobileNumber', 'pin'],
-        )
-        .value,
-    dependencies: [],
-  );
-}
-
-base class CustomerLogin {
-  /// Creates a [CustomerLogin] from a JSON map.
-  factory CustomerLogin.fromJson(Map<String, dynamic> json) =>
-      $schema.parse(json);
-
-  CustomerLogin._(this._json);
-
-  CustomerLogin({required String mobileNumber, required String pin}) {
-    _json = {'mobileNumber': mobileNumber, 'pin': pin};
-  }
-
-  late final Map<String, dynamic> _json;
-
-  /// The JSON schema and type descriptor for [CustomerLogin].
-  static const SchemanticType<CustomerLogin> $schema =
-      _CustomerLoginTypeFactory();
-
-  String get mobileNumber {
-    return _json['mobileNumber'] as String;
-  }
-
-  set mobileNumber(String value) {
-    _json['mobileNumber'] = value;
-  }
-
-  String get pin {
-    return _json['pin'] as String;
-  }
-
-  set pin(String value) {
-    _json['pin'] = value;
-  }
-
-  @override
-  String toString() {
-    return _json.toString();
-  }
-
-  /// Serializes this [CustomerLogin] to a JSON map.
-  Map<String, dynamic> toJson() {
-    return _json;
-  }
-}
-
-base class _CustomerLoginTypeFactory extends SchemanticType<CustomerLogin> {
-  const _CustomerLoginTypeFactory();
-
-  @override
-  CustomerLogin parse(Object? json) {
-    return CustomerLogin._(json as Map<String, dynamic>);
-  }
-
-  @override
-  JsonSchemaMetadata get schemaMetadata => JsonSchemaMetadata(
-    name: 'CustomerLogin',
-    definition: $Schema
-        .object(
-          properties: {
-            'mobileNumber': $Schema.string(
-              description: '10-Digit Mobile Number',
-              pattern: r'^[0-9]{10}$',
-            ),
-            'pin': $Schema.string(
-              description: '6-Digit Security PIN',
-              minLength: 6,
-              maxLength: 6,
-              pattern: r'^[0-9]{6}$',
-            ),
-          },
-          required: ['mobileNumber', 'pin'],
         )
         .value,
     dependencies: [],

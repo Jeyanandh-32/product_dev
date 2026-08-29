@@ -56,9 +56,9 @@ class AccountInfoRow extends StatelessWidget {
                   ),
                 ),
               ),
-              if (trailing != null) ...[
+              if (trailing case final trailingWidget?) ...[
                 const Gap(8),
-                trailing!,
+                trailingWidget,
               ],
             ],
           ),

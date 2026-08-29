@@ -10,8 +10,8 @@ import 'package:jaspr_router/jaspr_router.dart';
 Future<void> navigateToRecentStoreOrAll(BuildContext context) async {
   // 1. Check current active cart store
   final currentStore = currentCartStoreSignal.value;
-  if (currentStore?.slug != null && currentStore!.slug!.isNotEmpty) {
-    Router.of(context).push('/store/${currentStore.slug!}');
+  if (currentStore?.slug case final slug? when slug.isNotEmpty) {
+    Router.of(context).push('/store/$slug');
     return;
   }
 
@@ -19,8 +19,8 @@ Future<void> navigateToRecentStoreOrAll(BuildContext context) async {
   final recentStores = recentStoresSignal.value.value;
   if (recentStores != null && recentStores.isNotEmpty) {
     final firstRecent = recentStores.first;
-    if (firstRecent.slug != null && firstRecent.slug!.isNotEmpty) {
-      Router.of(context).push('/store/${firstRecent.slug!}');
+    if (firstRecent.slug case final slug? when slug.isNotEmpty) {
+      Router.of(context).push('/store/$slug');
       return;
     }
   }
@@ -32,8 +32,8 @@ Future<void> navigateToRecentStoreOrAll(BuildContext context) async {
       final fetched = await CustomerAuthRepository.getRecentStores();
       if (fetched.isNotEmpty) {
         final firstRecent = fetched.first;
-        if (firstRecent.slug != null && firstRecent.slug!.isNotEmpty) {
-          Router.of(context).push('/store/${firstRecent.slug!}');
+        if (firstRecent.slug case final slug? when slug.isNotEmpty) {
+          Router.of(context).push('/store/$slug');
           return;
         }
       }

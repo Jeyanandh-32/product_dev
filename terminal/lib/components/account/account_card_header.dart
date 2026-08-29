@@ -64,11 +64,8 @@ class AccountCardHeader extends StatelessWidget {
             ],
           ),
         ),
-        if (isActive != null)
-          AccountStatusBadge(
-            isActive: isActive!,
-            label: statusLabel,
-          ),
+        if (isActive case final active?)
+          AccountStatusBadge(isActive: active, label: statusLabel),
       ],
     );
   }

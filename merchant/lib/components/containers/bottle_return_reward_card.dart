@@ -4,6 +4,7 @@ import 'package:jaspr_lucide/generated_icons/circle_dollar_sign.dart';
 import 'package:jaspr_lucide/generated_icons/square_pen.dart';
 import 'package:web/web.dart' as web;
 
+/// Configuration card allowing merchants to view and update bottle return reward amounts.
 class BottleReturnRewardCard extends StatefulComponent {
   const BottleReturnRewardCard({
     super.key,
@@ -15,13 +16,12 @@ class BottleReturnRewardCard extends StatefulComponent {
   final ValueChanged<int> onSaveReward;
 
   @override
-  State<BottleReturnRewardCard> createState() =>
-      _BottleReturnRewardCardState();
+  State<BottleReturnRewardCard> createState() => _BottleReturnRewardCardState();
 }
 
 class _BottleReturnRewardCardState extends State<BottleReturnRewardCard> {
   bool _isEditing = false;
-  late int _amount;
+  int _amount = 0;
 
   @override
   void initState() {
@@ -40,13 +40,11 @@ class _BottleReturnRewardCardState extends State<BottleReturnRewardCard> {
   Component build(BuildContext context) {
     if (!_isEditing) {
       return div(
-        classes:
-            'flex items-center justify-between p-3.5 bg-neutral/30 border border-border-medium/60 rounded-xl',
+        classes: 'flex items-center justify-between p-3.5 bg-neutral/30 border border-border-medium/60 rounded-xl',
         [
           div(classes: 'flex items-center gap-3', [
             div(
-              classes:
-                  'w-9 h-9 rounded-lg bg-amber-500/10 flex items-center justify-center text-amber-600 shrink-0',
+              classes: 'w-9 h-9 rounded-lg bg-amber-500/10 flex items-center justify-center text-amber-600 shrink-0',
               [CircleDollarSign(classes: 'w-4.5 h-4.5')],
             ),
             div(classes: 'flex flex-col', [
@@ -59,8 +57,7 @@ class _BottleReturnRewardCardState extends State<BottleReturnRewardCard> {
             ]),
           ]),
           button(
-            classes:
-                'flex items-center gap-1.5 h-9 px-3.5 bg-white hover:bg-neutral border border-border-medium/70 rounded-lg text-xs font-semibold text-primary hover:cursor-pointer transition-colors shadow-2xs',
+            classes: 'flex items-center gap-1.5 h-9 px-3.5 bg-white hover:bg-neutral border border-border-medium/70 rounded-lg text-xs font-semibold text-primary cursor-pointer transition-colors shadow-2xs',
             onClick: () {
               setState(() {
                 _amount = component.rewardAmount;
@@ -77,13 +74,15 @@ class _BottleReturnRewardCardState extends State<BottleReturnRewardCard> {
     }
 
     return div(
-      classes:
-          'flex flex-col gap-3 p-4 bg-neutral/30 border border-border-medium/70 rounded-xl transition-all',
+      classes: 'flex flex-col gap-3 p-4 bg-neutral/30 border border-border-medium/70 rounded-xl transition-all',
       [
         div(classes: 'flex items-center justify-between', [
-          span(classes: 'text-xs font-bold text-primary uppercase tracking-wide', [
-            .text('Set Bottle Deposit Reward'),
-          ]),
+          span(
+            classes: 'text-xs font-bold text-primary uppercase tracking-wide',
+            [
+              .text('Set Bottle Deposit Reward'),
+            ],
+          ),
           span(classes: 'text-xs text-gray-500', [
             .text('Applied to customer wallet on return'),
           ]),
@@ -92,21 +91,18 @@ class _BottleReturnRewardCardState extends State<BottleReturnRewardCard> {
           div(classes: 'flex items-center gap-2', [
             for (final preset in [5, 10, 15, 20])
               button(
-                classes:
-                    'h-9 px-3 text-sm font-semibold rounded-lg border transition-all hover:cursor-pointer ${_amount == preset ? 'bg-primary text-primary-content border-primary shadow-xs' : 'bg-white text-gray-700 border-border-medium hover:bg-neutral/60'}',
+                classes: _presetBtnClasses(_amount == preset),
                 onClick: () => setState(() => _amount = preset),
                 [.text('₹$preset')],
               ),
             div(classes: 'relative', [
               span(
-                classes:
-                    'absolute inset-y-0 left-0 pl-2.5 flex items-center text-xs font-bold text-gray-500 pointer-events-none',
+                classes: 'absolute inset-y-0 left-0 pl-2.5 flex items-center text-xs font-bold text-gray-500 pointer-events-none',
                 [.text('₹')],
               ),
               input(
                 type: InputType.number,
-                classes:
-                    'input input-sm w-20 h-9 pl-6 text-sm font-bold text-primary border border-border-medium rounded-lg focus:border-accent focus:outline-none',
+                classes: 'input input-sm w-20 h-9 pl-6 text-sm font-bold text-primary border border-border-medium rounded-lg focus:border-accent focus:outline-none',
                 value: '$_amount',
                 events: {
                   'input': (e) {
@@ -120,14 +116,12 @@ class _BottleReturnRewardCardState extends State<BottleReturnRewardCard> {
           ]),
           div(classes: 'flex items-center gap-2', [
             button(
-              classes:
-                  'h-9 px-4 text-sm font-semibold text-gray-500 hover:text-gray-800 hover:bg-neutral/60 rounded-lg hover:cursor-pointer transition-colors',
+              classes: 'h-9 px-4 text-sm font-semibold text-gray-500 hover:text-gray-800 hover:bg-neutral/60 rounded-lg cursor-pointer transition-colors',
               onClick: () => setState(() => _isEditing = false),
               [.text('Cancel')],
             ),
             button(
-              classes:
-                  'h-9 px-5 text-sm font-semibold bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg hover:cursor-pointer transition-colors shadow-sm',
+              classes: 'h-9 px-5 text-sm font-semibold bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg cursor-pointer transition-colors shadow-sm',
               onClick: _save,
               [.text('Save Reward')],
             ),
@@ -135,5 +129,12 @@ class _BottleReturnRewardCardState extends State<BottleReturnRewardCard> {
         ]),
       ],
     );
+  }
+
+  String _presetBtnClasses(bool isSelected) {
+    if (isSelected) {
+      return 'h-9 px-3 text-sm font-semibold rounded-lg border transition-all cursor-pointer bg-primary text-primary-content border-primary shadow-xs';
+    }
+    return 'h-9 px-3 text-sm font-semibold rounded-lg border transition-all cursor-pointer bg-white text-gray-700 border-border-medium hover:bg-neutral/60';
   }
 }

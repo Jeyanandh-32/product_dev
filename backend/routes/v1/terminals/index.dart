@@ -42,7 +42,11 @@ Future<Response> _onGetTerminal(RequestContext context, TokenPayload tokenPayloa
   final repo = context.read<TerminalRepository>();
 
   try {
-    final terminalRow = await repo.getByCode(tokenPayload.terminalCode!);
+    final terminalCode = tokenPayload.terminalCode;
+    if (terminalCode == null || terminalCode.isEmpty) {
+      return badRequest(message: 'Terminal not exists');
+    }
+    final terminalRow = await repo.getByCode(terminalCode);
     if (terminalRow == null) return badRequest(message: 'Terminal not exists');
     if (!terminalRow.isActive) return forbidden(message: 'This Terminal is deactivated.');
 

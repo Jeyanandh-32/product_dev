@@ -12,9 +12,9 @@ class PhonePePaymentModeBuilder {
     // UPI
     if (config.enableUpi) {
       final upiObj = <String, dynamic>{'type': 'UPI'};
-      if (config.allowedUpiApps != null &&
-          config.allowedUpiApps!.trim().isNotEmpty) {
-        final apps = config.allowedUpiApps!
+      if (config.allowedUpiApps case final rawApps?
+          when rawApps.trim().isNotEmpty) {
+        final apps = rawApps
             .split(',')
             .map((e) => e.trim().toLowerCase())
             .where((e) => e.isNotEmpty)

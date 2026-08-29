@@ -51,7 +51,9 @@ class OrderStatusManager {
         merchantId: orderRow.merchantId,
         storeId: orderRow.storeId,
         orderId: orderRow.id,
-        items: orderItems.map((i) => (productId: i.productId, quantity: i.quantity)).toList(),
+        items: orderItems
+            .map((i) => (productId: i.productId, quantity: i.quantity))
+            .toList(),
         customerId: orderRow.customerId,
       );
     });
@@ -71,17 +73,18 @@ class OrderStatusManager {
         status: OrderStatus.cancelled,
       );
 
-      if (orderRow.walletDeduction > 0 && orderRow.customerId != null) {
+      final customerId = orderRow.customerId;
+      if (orderRow.walletDeduction > 0 && customerId != null) {
         final customerRepo = CustomerRepository(db: Database.db);
 
         await customerRepo.updateStoreWalletBalance(
-          customerId: orderRow.customerId!,
+          customerId: customerId,
           storeId: orderRow.storeId,
           amountDeltaPaise: orderRow.walletDeduction,
         );
 
         await customerRepo.createWalletTransaction(
-          customerId: orderRow.customerId!,
+          customerId: customerId,
           storeId: orderRow.storeId,
           amount: orderRow.walletDeduction,
           type: WalletTransactionType.refundCredit.name,

@@ -31,6 +31,9 @@ extension DatabaseSchemaSchema on Database<DatabaseSchema> {
     _$BottleCreditRow._$table,
     _$BottleCreditTransactionRow._$table,
     _$BottlePhysicalCouponRow._$table,
+    _$SubscriptionPlanRow._$table,
+    _$StoreSubscriptionRow._$table,
+    _$SubscriptionTransactionRow._$table,
   ];
 
   Table<MerchantRow> get merchants =>
@@ -104,6 +107,18 @@ extension DatabaseSchemaSchema on Database<DatabaseSchema> {
 
   Table<BottlePhysicalCouponRow> get bottlePhysicalCoupons =>
       $ForGeneratedCode.declareTable(this, _$BottlePhysicalCouponRow._$table);
+
+  Table<SubscriptionPlanRow> get subscriptionPlans =>
+      $ForGeneratedCode.declareTable(this, _$SubscriptionPlanRow._$table);
+
+  Table<StoreSubscriptionRow> get storeSubscriptions =>
+      $ForGeneratedCode.declareTable(this, _$StoreSubscriptionRow._$table);
+
+  Table<SubscriptionTransactionRow> get subscriptionTransactions =>
+      $ForGeneratedCode.declareTable(
+        this,
+        _$SubscriptionTransactionRow._$table,
+      );
 
   /// Create tables defined in [DatabaseSchema].
   ///
@@ -17739,6 +17754,2373 @@ extension InsertOnConflictSingleBottlePhysicalCouponRowExt
   );
 }
 
+final class _$SubscriptionPlanRow extends SubscriptionPlanRow {
+  _$SubscriptionPlanRow._(
+    this.code,
+    this.name,
+    this.priceInPaise,
+    this.currency,
+    this.durationDays,
+    this.features,
+    this.createdAt,
+    this.updatedAt,
+  );
+
+  @override
+  final String code;
+
+  @override
+  final String name;
+
+  @override
+  final int priceInPaise;
+
+  @override
+  final String currency;
+
+  @override
+  final int durationDays;
+
+  @override
+  final String features;
+
+  @override
+  final DateTime createdAt;
+
+  @override
+  final DateTime updatedAt;
+
+  static final _$table = $ForGeneratedCode.tableDefinition(
+    tableName: 'subscription_plans',
+    columns: <String>[
+      'code',
+      'name',
+      'price_in_paise',
+      'currency',
+      'duration_days',
+      'features',
+      'created_at',
+      'updated_at',
+    ],
+    columnInfo: [
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: true,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: true,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.integer,
+        isNotNull: true,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: true,
+        defaultValue: (kind: 'raw', value: 'INR'),
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.integer,
+        isNotNull: true,
+        defaultValue: (kind: 'raw', value: 30),
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: true,
+        defaultValue: (kind: 'raw', value: '[]'),
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.dateTime,
+        isNotNull: true,
+        defaultValue: (kind: 'datetime', value: 'now'),
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.dateTime,
+        isNotNull: true,
+        defaultValue: (kind: 'datetime', value: 'now'),
+        autoIncrement: false,
+        overrides: [],
+      ),
+    ],
+    primaryKey: <String>['code'],
+    unique: <List<String>>[],
+    foreignKeys: [],
+    indexes: [],
+    readRow: _$SubscriptionPlanRow._$fromDatabase,
+  );
+
+  static SubscriptionPlanRow? _$fromDatabase(RowReader row) {
+    final code = row.readString();
+    final name = row.readString();
+    final priceInPaise = row.readInt();
+    final currency = row.readString();
+    final durationDays = row.readInt();
+    final features = row.readString();
+    final createdAt = row.readDateTime();
+    final updatedAt = row.readDateTime();
+    if (code == null &&
+        name == null &&
+        priceInPaise == null &&
+        currency == null &&
+        durationDays == null &&
+        features == null &&
+        createdAt == null &&
+        updatedAt == null) {
+      return null;
+    }
+    return _$SubscriptionPlanRow._(
+      code!,
+      name!,
+      priceInPaise!,
+      currency!,
+      durationDays!,
+      features!,
+      createdAt!,
+      updatedAt!,
+    );
+  }
+
+  @override
+  String toString() =>
+      'SubscriptionPlanRow(code: "$code", name: "$name", priceInPaise: "$priceInPaise", currency: "$currency", durationDays: "$durationDays", features: "$features", createdAt: "$createdAt", updatedAt: "$updatedAt")';
+}
+
+/// Extension methods for table defined in [SubscriptionPlanRow].
+extension TableSubscriptionPlanRowExt on Table<SubscriptionPlanRow> {
+  /// Insert row into the `subscriptionPlans` table.
+  ///
+  /// Returns a [InsertSingle] statement on which `.execute` must be
+  /// called for the row to be inserted.
+  InsertSingle<SubscriptionPlanRow> insert({
+    required Expr<String> code,
+    required Expr<String> name,
+    required Expr<int> priceInPaise,
+    Expr<String>? currency,
+    Expr<int>? durationDays,
+    Expr<String>? features,
+    Expr<DateTime>? createdAt,
+    Expr<DateTime>? updatedAt,
+  }) => $ForGeneratedCode.insertInto(
+    table: this,
+    values: [
+      code,
+      name,
+      priceInPaise,
+      currency,
+      durationDays,
+      features,
+      createdAt,
+      updatedAt,
+    ],
+  );
+
+  /// Insert row into the `subscriptionPlans` table.
+  ///
+  /// Returns a [InsertSingle] statement on which `.execute` must be
+  /// called for the row to be inserted.
+  InsertSingle<SubscriptionPlanRow> insertValue({
+    required String code,
+    required String name,
+    required int priceInPaise,
+    String? currency,
+    int? durationDays,
+    String? features,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) => $ForGeneratedCode.insertInto(
+    table: this,
+    values: [
+      code.asExpr,
+      name.asExpr,
+      priceInPaise.asExpr,
+      currency?.asExpr,
+      durationDays?.asExpr,
+      features?.asExpr,
+      createdAt?.asExpr,
+      updatedAt?.asExpr,
+    ],
+  );
+
+  /// Bulk insert rows into the `subscriptionPlans` table.
+  ///
+  /// This method takes an `Iterable<T>` and requires that you provide
+  /// a _mapping function_ from `T` to each column to be inserted.
+  ///
+  /// If a mapping function is omitted, the _default value_ will be
+  /// inserted, or `NULL` if column is nullable and as no default value.
+  /// To explicitely insert `NULL`, use a _mapping function_ that maps
+  /// `T` to `null`.
+  ///
+  /// > [!NOTE]
+  /// > This method aims utilize database specific bulk insertion logic
+  /// > to ensure good performance. Database adapters may pipeline bulk
+  /// > insertions through multiple statements inside a transaction.
+  ///
+  /// Returns a [Insert] statement on which `.execute` must be
+  /// called for the rows to be inserted.
+  Insert<SubscriptionPlanRow> insertValuesMapped<T>(
+    Iterable<T> rows, {
+    required String Function(T row) code,
+    required String Function(T row) name,
+    required int Function(T row) priceInPaise,
+    String Function(T row)? currency,
+    int Function(T row)? durationDays,
+    String Function(T row)? features,
+    DateTime Function(T row)? createdAt,
+    DateTime Function(T row)? updatedAt,
+  }) => $ForGeneratedCode.insertValuesMapped(
+    table: this,
+    rows: rows,
+    mappings: [
+      code,
+      name,
+      priceInPaise,
+      currency,
+      durationDays,
+      features,
+      createdAt,
+      updatedAt,
+    ],
+  );
+
+  /// Delete a single row from the `subscriptionPlans` table, specified by
+  /// _primary key_.
+  ///
+  /// Returns a [DeleteSingle] statement on which `.execute()` must be
+  /// called for the row to be deleted.
+  ///
+  /// To delete multiple rows, using `.where()` to filter which rows
+  /// should be deleted. If you wish to delete all rows, use
+  /// `.where((_) => toExpr(true)).delete()`.
+  DeleteSingle<SubscriptionPlanRow> delete(String code) => $ForGeneratedCode
+      .deleteSingle(byKey(code), _$SubscriptionPlanRow._$table);
+}
+
+/// Extension methods for building queries against the `subscriptionPlans` table.
+extension QuerySubscriptionPlanRowExt on Query<(Expr<SubscriptionPlanRow>,)> {
+  /// Lookup a single row in `subscriptionPlans` table using the _primary key_.
+  ///
+  /// Returns a [QuerySingle] object, which returns at-most one row,
+  /// when `.fetch()` is called.
+  QuerySingle<(Expr<SubscriptionPlanRow>,)> byKey(String code) => where(
+    (subscriptionPlanRow) => subscriptionPlanRow.code.equalsValue(code),
+  ).first;
+
+  /// Update all rows in the `subscriptionPlans` table matching this [Query].
+  ///
+  /// The changes to be applied to each row matching this [Query] are
+  /// defined using the [updateBuilder], which is given an [Expr]
+  /// representation of the row being updated and a `set` function to
+  /// specify which fields should be updated. The result of the `set`
+  /// function should always be returned from the `updateBuilder`.
+  ///
+  /// Returns an [Update] statement on which `.execute()` must be called
+  /// for the rows to be updated.
+  ///
+  /// **Example:** decrementing `1` from the `value` field for each row
+  /// where `value > 0`.
+  /// ```dart
+  /// await db.mytable
+  ///   .where((row) => row.value > toExpr(0))
+  ///   .update((row, set) => set(
+  ///     value: row.value - toExpr(1),
+  ///   ))
+  ///   .execute();
+  /// ```
+  ///
+  /// > [!WARNING]
+  /// > The `updateBuilder` callback does not make the update, it builds
+  /// > the expressions for updating the rows. You should **never** invoke
+  /// > the `set` function more than once, and the result should always
+  /// > be returned immediately.
+  Update<SubscriptionPlanRow> update(
+    UpdateSet<SubscriptionPlanRow> Function(
+      Expr<SubscriptionPlanRow> subscriptionPlanRow,
+      UpdateSet<SubscriptionPlanRow> Function({
+        Expr<String> code,
+        Expr<String> name,
+        Expr<int> priceInPaise,
+        Expr<String> currency,
+        Expr<int> durationDays,
+        Expr<String> features,
+        Expr<DateTime> createdAt,
+        Expr<DateTime> updatedAt,
+      })
+      set,
+    )
+    updateBuilder,
+  ) => $ForGeneratedCode.update<SubscriptionPlanRow>(
+    this,
+    _$SubscriptionPlanRow._$table,
+    (subscriptionPlanRow) => updateBuilder(
+      subscriptionPlanRow,
+      ({
+        Expr<String>? code,
+        Expr<String>? name,
+        Expr<int>? priceInPaise,
+        Expr<String>? currency,
+        Expr<int>? durationDays,
+        Expr<String>? features,
+        Expr<DateTime>? createdAt,
+        Expr<DateTime>? updatedAt,
+      }) => $ForGeneratedCode.buildUpdate<SubscriptionPlanRow>([
+        code,
+        name,
+        priceInPaise,
+        currency,
+        durationDays,
+        features,
+        createdAt,
+        updatedAt,
+      ]),
+    ),
+  );
+
+  /// Delete all rows in the `subscriptionPlans` table matching this [Query].
+  ///
+  /// Returns a [Delete] statement on which `.execute()` must be called
+  /// for the rows to be deleted.
+  Delete<SubscriptionPlanRow> delete() =>
+      $ForGeneratedCode.delete(this, _$SubscriptionPlanRow._$table);
+}
+
+/// Extension methods for building point queries against the `subscriptionPlans` table.
+extension QuerySingleSubscriptionPlanRowExt
+    on QuerySingle<(Expr<SubscriptionPlanRow>,)> {
+  /// Update the row (if any) in the `subscriptionPlans` table matching this
+  /// [QuerySingle].
+  ///
+  /// The changes to be applied to the row matching this [QuerySingle] are
+  /// defined using the [updateBuilder], which is given an [Expr]
+  /// representation of the row being updated and a `set` function to
+  /// specify which fields should be updated. The result of the `set`
+  /// function should always be returned from the `updateBuilder`.
+  ///
+  /// Returns an [UpdateSingle] statement on which `.execute()` must be
+  /// called for the row to be updated. The resulting statement will
+  /// **not** fail, if there are no rows matching this query exists.
+  ///
+  /// **Example:** decrementing `1` from the `value` field the row with
+  /// `id = 1`.
+  /// ```dart
+  /// await db.mytable
+  ///   .byKey(1)
+  ///   .update((row, set) => set(
+  ///     value: row.value - toExpr(1),
+  ///   ))
+  ///   .execute();
+  /// ```
+  ///
+  /// > [!WARNING]
+  /// > The `updateBuilder` callback does not make the update, it builds
+  /// > the expressions for updating the rows. You should **never** invoke
+  /// > the `set` function more than once, and the result should always
+  /// > be returned immediately.
+  UpdateSingle<SubscriptionPlanRow> update(
+    UpdateSet<SubscriptionPlanRow> Function(
+      Expr<SubscriptionPlanRow> subscriptionPlanRow,
+      UpdateSet<SubscriptionPlanRow> Function({
+        Expr<String> code,
+        Expr<String> name,
+        Expr<int> priceInPaise,
+        Expr<String> currency,
+        Expr<int> durationDays,
+        Expr<String> features,
+        Expr<DateTime> createdAt,
+        Expr<DateTime> updatedAt,
+      })
+      set,
+    )
+    updateBuilder,
+  ) => $ForGeneratedCode.updateSingle<SubscriptionPlanRow>(
+    this,
+    _$SubscriptionPlanRow._$table,
+    (subscriptionPlanRow) => updateBuilder(
+      subscriptionPlanRow,
+      ({
+        Expr<String>? code,
+        Expr<String>? name,
+        Expr<int>? priceInPaise,
+        Expr<String>? currency,
+        Expr<int>? durationDays,
+        Expr<String>? features,
+        Expr<DateTime>? createdAt,
+        Expr<DateTime>? updatedAt,
+      }) => $ForGeneratedCode.buildUpdate<SubscriptionPlanRow>([
+        code,
+        name,
+        priceInPaise,
+        currency,
+        durationDays,
+        features,
+        createdAt,
+        updatedAt,
+      ]),
+    ),
+  );
+
+  /// Delete the row (if any) in the `subscriptionPlans` table matching this [QuerySingle].
+  ///
+  /// Returns a [DeleteSingle] statement on which `.execute()` must be called
+  /// for the row to be deleted. The resulting statement will **not**
+  /// fail, if there are no rows matching this query exists.
+  DeleteSingle<SubscriptionPlanRow> delete() =>
+      $ForGeneratedCode.deleteSingle(this, _$SubscriptionPlanRow._$table);
+}
+
+/// Extension methods for expressions on a row in the `subscriptionPlans` table.
+extension ExpressionSubscriptionPlanRowExt on Expr<SubscriptionPlanRow> {
+  Expr<String> get code =>
+      $ForGeneratedCode.field(this, 0, $ForGeneratedCode.text);
+
+  Expr<String> get name =>
+      $ForGeneratedCode.field(this, 1, $ForGeneratedCode.text);
+
+  Expr<int> get priceInPaise =>
+      $ForGeneratedCode.field(this, 2, $ForGeneratedCode.integer);
+
+  Expr<String> get currency =>
+      $ForGeneratedCode.field(this, 3, $ForGeneratedCode.text);
+
+  Expr<int> get durationDays =>
+      $ForGeneratedCode.field(this, 4, $ForGeneratedCode.integer);
+
+  Expr<String> get features =>
+      $ForGeneratedCode.field(this, 5, $ForGeneratedCode.text);
+
+  Expr<DateTime> get createdAt =>
+      $ForGeneratedCode.field(this, 6, $ForGeneratedCode.dateTime);
+
+  Expr<DateTime> get updatedAt =>
+      $ForGeneratedCode.field(this, 7, $ForGeneratedCode.dateTime);
+}
+
+extension ExpressionNullableSubscriptionPlanRowExt
+    on Expr<SubscriptionPlanRow?> {
+  Expr<String?> get code =>
+      $ForGeneratedCode.field(this, 0, $ForGeneratedCode.text);
+
+  Expr<String?> get name =>
+      $ForGeneratedCode.field(this, 1, $ForGeneratedCode.text);
+
+  Expr<int?> get priceInPaise =>
+      $ForGeneratedCode.field(this, 2, $ForGeneratedCode.integer);
+
+  Expr<String?> get currency =>
+      $ForGeneratedCode.field(this, 3, $ForGeneratedCode.text);
+
+  Expr<int?> get durationDays =>
+      $ForGeneratedCode.field(this, 4, $ForGeneratedCode.integer);
+
+  Expr<String?> get features =>
+      $ForGeneratedCode.field(this, 5, $ForGeneratedCode.text);
+
+  Expr<DateTime?> get createdAt =>
+      $ForGeneratedCode.field(this, 6, $ForGeneratedCode.dateTime);
+
+  Expr<DateTime?> get updatedAt =>
+      $ForGeneratedCode.field(this, 7, $ForGeneratedCode.dateTime);
+
+  /// Check if the row is not `NULL`.
+  ///
+  /// This will check if _primary key_ fields in this row are `NULL`.
+  ///
+  /// If this is a reference lookup by subquery it might be more efficient
+  /// to check if the referencing field is `NULL`.
+  Expr<bool> isNotNull() => code.isNotNull();
+
+  /// Check if the row is `NULL`.
+  ///
+  /// This will check if _primary key_ fields in this row are `NULL`.
+  ///
+  /// If this is a reference lookup by subquery it might be more efficient
+  /// to check if the referencing field is `NULL`.
+  Expr<bool> isNull() => isNotNull().not();
+}
+
+/// `Table<SubscriptionPlanRow>` conflict targets for use with `.onConflict`.
+enum SubscriptionPlanRowConflict {
+  /// Conflict with an existing row that has a matching primary key.
+  ///
+  /// Thus, the other row has matching values for:
+  /// `code`.
+  primaryKey(['code']);
+
+  const SubscriptionPlanRowConflict(this._fields);
+
+  final List<String> _fields;
+}
+
+extension InsertSubscriptionPlanRowExt on Insert<SubscriptionPlanRow> {
+  /// Build an `INSERT` statement with an `ON CONFLICT` clause.
+  ///
+  /// The [target] argument specifies the _conflict target_ to be
+  /// handled. The _conflict target_ is always a `UNIQUE` constraint or
+  /// `PRIMARY KEY` constraint.
+  ///
+  /// If a row to be inserted violates the _conflict target_ constraint,
+  /// then the conflict action is triggered:
+  /// * `.doNothing()` to skip insertion of the new row, and,
+  /// * `.update((subscriptionPlanRow, excluded, set) => set(...))` to
+  ///   update the conflicting row.
+  ///
+  /// If a row to be inserted violates a constraint other than the one
+  /// specified in _conflict target_ then the entire `INSERT` statement
+  /// will fail.
+  ///
+  /// This is equivalent to `INSERT ... ON CONFLICT (...)` in SQL.
+  InsertOnConflict<SubscriptionPlanRow> onConflict(
+    SubscriptionPlanRowConflict target,
+  ) => $ForGeneratedCode.insertOnConflict(this, target._fields);
+}
+
+extension InsertOnConflictSubscriptionPlanRowExt
+    on InsertOnConflict<SubscriptionPlanRow> {
+  /// Build an `INSERT` statement an [upsert-clause][1].
+  ///
+  /// When a row to be inserted violates the `UNIQUE` or `PRIMARY KEY`
+  /// constraint previously specified as _conflict target_, the existing
+  /// row is updated using the expressions defined with the
+  /// [updateBuilder]. The [updateBuilder] is given 3 parameters:
+  ///   * `subscriptionPlanRow` an [Expr] representing the existing row in
+  ///     the database,
+  ///   * `excluded` an [Expr] representing the row to be inserted in the
+  ///     database, and,
+  ///   * `set` a function to specify which fields should be updated and
+  ///     build the [UpdateSet].
+  ///
+  /// The result of the `set` function should always be immediately
+  /// returned from the [updateBuilder].
+  ///
+  /// **Example:** Insert a counter with `count = 2` or increment the
+  /// existing row, if a `PRIMARY KEY` conflict occurs.
+  /// ```dart
+  /// await db.counters.insertValue(
+  ///     name: 'my-counter', // primary key
+  ///     count: 2,
+  ///   )
+  ///   .onConflict(.primaryKey)
+  ///   .update((counter, excluded, set) => set(
+  ///     count: counter.count + excluded.count,
+  ///   ))
+  ///   .execute();
+  /// ```
+  ///
+  /// This is equivalent to
+  /// `INSERT ... ON CONFLICT (...) UPDATE SET ...` in SQL.
+  ///
+  /// > [!WARNING]
+  /// > The `updateBuilder` callback does not make the update, it builds
+  /// > the expressions for updating the rows. You should **never** invoke
+  /// > the `set` function more than once, and the result should always
+  /// > be returned immediately.
+  ///
+  /// [1]: https://www.sqlite.org/lang_upsert.html
+  Upsert<SubscriptionPlanRow> update(
+    UpdateSet<SubscriptionPlanRow> Function(
+      Expr<SubscriptionPlanRow> subscriptionPlanRow,
+      Expr<SubscriptionPlanRow> excluded,
+      UpdateSet<SubscriptionPlanRow> Function({
+        Expr<String> code,
+        Expr<String> name,
+        Expr<int> priceInPaise,
+        Expr<String> currency,
+        Expr<int> durationDays,
+        Expr<String> features,
+        Expr<DateTime> createdAt,
+        Expr<DateTime> updatedAt,
+      })
+      set,
+    )
+    updateBuilder,
+  ) => $ForGeneratedCode.updateOnConflict<SubscriptionPlanRow>(
+    this,
+    (subscriptionPlanRow, excluded) => updateBuilder(
+      subscriptionPlanRow,
+      excluded,
+      ({
+        Expr<String>? code,
+        Expr<String>? name,
+        Expr<int>? priceInPaise,
+        Expr<String>? currency,
+        Expr<int>? durationDays,
+        Expr<String>? features,
+        Expr<DateTime>? createdAt,
+        Expr<DateTime>? updatedAt,
+      }) => $ForGeneratedCode.buildUpdate<SubscriptionPlanRow>([
+        code,
+        name,
+        priceInPaise,
+        currency,
+        durationDays,
+        features,
+        createdAt,
+        updatedAt,
+      ]),
+    ),
+  );
+}
+
+extension InsertSingleSubscriptionPlanRowExt
+    on InsertSingle<SubscriptionPlanRow> {
+  /// Build an `INSERT` statement with an `ON CONFLICT` clause.
+  ///
+  /// The [target] argument specifies the _conflict target_ to be
+  /// handled. The _conflict target_ is always a `UNIQUE` constraint or
+  /// `PRIMARY KEY` constraint.
+  ///
+  /// If a row to be inserted violates the _conflict target_ constraint,
+  /// then the conflict action is triggered:
+  /// * `.doNothing()` to skip insertion of the new row, and,
+  /// * `.update((subscriptionPlanRow, excluded, set) => set(...))` to
+  ///   update the conflicting row.
+  ///
+  /// If a row to be inserted violates a constraint other than the one
+  /// specified in _conflict target_ then the entire `INSERT` statement
+  /// will fail.
+  ///
+  /// This is equivalent to `INSERT ... ON CONFLICT (...)` in SQL.
+  InsertOnConflictSingle<SubscriptionPlanRow> onConflict(
+    SubscriptionPlanRowConflict target,
+  ) => $ForGeneratedCode.insertOnConflictSingle(this, target._fields);
+}
+
+extension InsertOnConflictSingleSubscriptionPlanRowExt
+    on InsertOnConflictSingle<SubscriptionPlanRow> {
+  /// Build an `INSERT` statement an [upsert-clause][1].
+  ///
+  /// When a row to be inserted violates the `UNIQUE` or `PRIMARY KEY`
+  /// constraint previously specified as _conflict target_, the existing
+  /// row is updated using the expressions defined with the
+  /// [updateBuilder]. The [updateBuilder] is given 3 parameters:
+  ///   * `subscriptionPlanRow` an [Expr] representing the existing row in
+  ///     the database,
+  ///   * `excluded` an [Expr] representing the row to be inserted in the
+  ///     database, and,
+  ///   * `set` a function to specify which fields should be updated and
+  ///     build the [UpdateSet].
+  ///
+  /// The result of the `set` function should always be immediately
+  /// returned from the [updateBuilder].
+  ///
+  /// **Example:** Insert a counter with `count = 2` or increment the
+  /// existing row, if a `PRIMARY KEY` conflict occurs.
+  /// ```dart
+  /// await db.counters.insertValue(
+  ///     name: 'my-counter', // primary key
+  ///     count: 2,
+  ///   )
+  ///   .onConflict(.primaryKey)
+  ///   .update((counter, excluded, set) => set(
+  ///     count: counter.count + excluded.count,
+  ///   ))
+  ///   .execute();
+  /// ```
+  ///
+  /// This is equivalent to
+  /// `INSERT ... ON CONFLICT (...) UPDATE SET ...` in SQL.
+  ///
+  /// > [!WARNING]
+  /// > The `updateBuilder` callback does not make the update, it builds
+  /// > the expressions for updating the rows. You should **never** invoke
+  /// > the `set` function more than once, and the result should always
+  /// > be returned immediately.
+  ///
+  /// [1]: https://www.sqlite.org/lang_upsert.html
+  UpsertSingle<SubscriptionPlanRow> update(
+    UpdateSet<SubscriptionPlanRow> Function(
+      Expr<SubscriptionPlanRow> subscriptionPlanRow,
+      Expr<SubscriptionPlanRow> excluded,
+      UpdateSet<SubscriptionPlanRow> Function({
+        Expr<String> code,
+        Expr<String> name,
+        Expr<int> priceInPaise,
+        Expr<String> currency,
+        Expr<int> durationDays,
+        Expr<String> features,
+        Expr<DateTime> createdAt,
+        Expr<DateTime> updatedAt,
+      })
+      set,
+    )
+    updateBuilder,
+  ) => $ForGeneratedCode.updateOnConflictSingle<SubscriptionPlanRow>(
+    this,
+    (subscriptionPlanRow, excluded) => updateBuilder(
+      subscriptionPlanRow,
+      excluded,
+      ({
+        Expr<String>? code,
+        Expr<String>? name,
+        Expr<int>? priceInPaise,
+        Expr<String>? currency,
+        Expr<int>? durationDays,
+        Expr<String>? features,
+        Expr<DateTime>? createdAt,
+        Expr<DateTime>? updatedAt,
+      }) => $ForGeneratedCode.buildUpdate<SubscriptionPlanRow>([
+        code,
+        name,
+        priceInPaise,
+        currency,
+        durationDays,
+        features,
+        createdAt,
+        updatedAt,
+      ]),
+    ),
+  );
+}
+
+final class _$StoreSubscriptionRow extends StoreSubscriptionRow {
+  _$StoreSubscriptionRow._(
+    this.id,
+    this.storeId,
+    this.planCode,
+    this.status,
+    this.startsAt,
+    this.endsAt,
+    this.graceEndsAt,
+    this.autoRenew,
+    this.createdAt,
+    this.updatedAt,
+  );
+
+  @override
+  final String id;
+
+  @override
+  final String storeId;
+
+  @override
+  final String planCode;
+
+  @override
+  final String status;
+
+  @override
+  final DateTime startsAt;
+
+  @override
+  final DateTime endsAt;
+
+  @override
+  final DateTime? graceEndsAt;
+
+  @override
+  final bool autoRenew;
+
+  @override
+  final DateTime createdAt;
+
+  @override
+  final DateTime updatedAt;
+
+  static final _$table = $ForGeneratedCode.tableDefinition(
+    tableName: 'store_subscriptions',
+    columns: <String>[
+      'id',
+      'store_id',
+      'plan_code',
+      'status',
+      'starts_at',
+      'ends_at',
+      'grace_ends_at',
+      'auto_renew',
+      'created_at',
+      'updated_at',
+    ],
+    columnInfo: [
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: true,
+        defaultValue: (kind: 'raw', value: 'gen_random_uuid()'),
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: true,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: true,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: true,
+        defaultValue: (kind: 'raw', value: 'trial'),
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.dateTime,
+        isNotNull: true,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.dateTime,
+        isNotNull: true,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.dateTime,
+        isNotNull: false,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.boolean,
+        isNotNull: true,
+        defaultValue: (kind: 'raw', value: true),
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.dateTime,
+        isNotNull: true,
+        defaultValue: (kind: 'datetime', value: 'now'),
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.dateTime,
+        isNotNull: true,
+        defaultValue: (kind: 'datetime', value: 'now'),
+        autoIncrement: false,
+        overrides: [],
+      ),
+    ],
+    primaryKey: <String>['id'],
+    unique: <List<String>>[],
+    foreignKeys: [
+      $ForGeneratedCode.foreignKeyDefinition(
+        name: 'null',
+        columns: ['store_id'],
+        referencedTable: 'stores',
+        referencedColumns: ['id'],
+        onDelete: .cascade,
+        onUpdate: .noAction,
+      ),
+      $ForGeneratedCode.foreignKeyDefinition(
+        name: 'null',
+        columns: ['plan_code'],
+        referencedTable: 'subscription_plans',
+        referencedColumns: ['code'],
+        onDelete: .noAction,
+        onUpdate: .noAction,
+      ),
+    ],
+    indexes: [],
+    readRow: _$StoreSubscriptionRow._$fromDatabase,
+  );
+
+  static StoreSubscriptionRow? _$fromDatabase(RowReader row) {
+    final id = row.readString();
+    final storeId = row.readString();
+    final planCode = row.readString();
+    final status = row.readString();
+    final startsAt = row.readDateTime();
+    final endsAt = row.readDateTime();
+    final graceEndsAt = row.readDateTime();
+    final autoRenew = row.readBool();
+    final createdAt = row.readDateTime();
+    final updatedAt = row.readDateTime();
+    if (id == null &&
+        storeId == null &&
+        planCode == null &&
+        status == null &&
+        startsAt == null &&
+        endsAt == null &&
+        graceEndsAt == null &&
+        autoRenew == null &&
+        createdAt == null &&
+        updatedAt == null) {
+      return null;
+    }
+    return _$StoreSubscriptionRow._(
+      id!,
+      storeId!,
+      planCode!,
+      status!,
+      startsAt!,
+      endsAt!,
+      graceEndsAt,
+      autoRenew!,
+      createdAt!,
+      updatedAt!,
+    );
+  }
+
+  @override
+  String toString() =>
+      'StoreSubscriptionRow(id: "$id", storeId: "$storeId", planCode: "$planCode", status: "$status", startsAt: "$startsAt", endsAt: "$endsAt", graceEndsAt: "$graceEndsAt", autoRenew: "$autoRenew", createdAt: "$createdAt", updatedAt: "$updatedAt")';
+}
+
+/// Extension methods for table defined in [StoreSubscriptionRow].
+extension TableStoreSubscriptionRowExt on Table<StoreSubscriptionRow> {
+  /// Insert row into the `storeSubscriptions` table.
+  ///
+  /// Returns a [InsertSingle] statement on which `.execute` must be
+  /// called for the row to be inserted.
+  InsertSingle<StoreSubscriptionRow> insert({
+    Expr<String>? id,
+    required Expr<String> storeId,
+    required Expr<String> planCode,
+    Expr<String>? status,
+    required Expr<DateTime> startsAt,
+    required Expr<DateTime> endsAt,
+    Expr<DateTime?>? graceEndsAt,
+    Expr<bool>? autoRenew,
+    Expr<DateTime>? createdAt,
+    Expr<DateTime>? updatedAt,
+  }) => $ForGeneratedCode.insertInto(
+    table: this,
+    values: [
+      id,
+      storeId,
+      planCode,
+      status,
+      startsAt,
+      endsAt,
+      graceEndsAt,
+      autoRenew,
+      createdAt,
+      updatedAt,
+    ],
+  );
+
+  /// Insert row into the `storeSubscriptions` table.
+  ///
+  /// Returns a [InsertSingle] statement on which `.execute` must be
+  /// called for the row to be inserted.
+  InsertSingle<StoreSubscriptionRow> insertValue({
+    String? id,
+    required String storeId,
+    required String planCode,
+    String? status,
+    required DateTime startsAt,
+    required DateTime endsAt,
+    DateTime? graceEndsAt,
+    bool? autoRenew,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) => $ForGeneratedCode.insertInto(
+    table: this,
+    values: [
+      id?.asExpr,
+      storeId.asExpr,
+      planCode.asExpr,
+      status?.asExpr,
+      startsAt.asExpr,
+      endsAt.asExpr,
+      graceEndsAt.asExpr,
+      autoRenew?.asExpr,
+      createdAt?.asExpr,
+      updatedAt?.asExpr,
+    ],
+  );
+
+  /// Bulk insert rows into the `storeSubscriptions` table.
+  ///
+  /// This method takes an `Iterable<T>` and requires that you provide
+  /// a _mapping function_ from `T` to each column to be inserted.
+  ///
+  /// If a mapping function is omitted, the _default value_ will be
+  /// inserted, or `NULL` if column is nullable and as no default value.
+  /// To explicitely insert `NULL`, use a _mapping function_ that maps
+  /// `T` to `null`.
+  ///
+  /// > [!NOTE]
+  /// > This method aims utilize database specific bulk insertion logic
+  /// > to ensure good performance. Database adapters may pipeline bulk
+  /// > insertions through multiple statements inside a transaction.
+  ///
+  /// Returns a [Insert] statement on which `.execute` must be
+  /// called for the rows to be inserted.
+  Insert<StoreSubscriptionRow> insertValuesMapped<T>(
+    Iterable<T> rows, {
+    String Function(T row)? id,
+    required String Function(T row) storeId,
+    required String Function(T row) planCode,
+    String Function(T row)? status,
+    required DateTime Function(T row) startsAt,
+    required DateTime Function(T row) endsAt,
+    DateTime? Function(T row)? graceEndsAt,
+    bool Function(T row)? autoRenew,
+    DateTime Function(T row)? createdAt,
+    DateTime Function(T row)? updatedAt,
+  }) => $ForGeneratedCode.insertValuesMapped(
+    table: this,
+    rows: rows,
+    mappings: [
+      id,
+      storeId,
+      planCode,
+      status,
+      startsAt,
+      endsAt,
+      graceEndsAt,
+      autoRenew,
+      createdAt,
+      updatedAt,
+    ],
+  );
+
+  /// Delete a single row from the `storeSubscriptions` table, specified by
+  /// _primary key_.
+  ///
+  /// Returns a [DeleteSingle] statement on which `.execute()` must be
+  /// called for the row to be deleted.
+  ///
+  /// To delete multiple rows, using `.where()` to filter which rows
+  /// should be deleted. If you wish to delete all rows, use
+  /// `.where((_) => toExpr(true)).delete()`.
+  DeleteSingle<StoreSubscriptionRow> delete(String id) =>
+      $ForGeneratedCode.deleteSingle(byKey(id), _$StoreSubscriptionRow._$table);
+}
+
+/// Extension methods for building queries against the `storeSubscriptions` table.
+extension QueryStoreSubscriptionRowExt on Query<(Expr<StoreSubscriptionRow>,)> {
+  /// Lookup a single row in `storeSubscriptions` table using the _primary key_.
+  ///
+  /// Returns a [QuerySingle] object, which returns at-most one row,
+  /// when `.fetch()` is called.
+  QuerySingle<(Expr<StoreSubscriptionRow>,)> byKey(String id) => where(
+    (storeSubscriptionRow) => storeSubscriptionRow.id.equalsValue(id),
+  ).first;
+
+  /// Update all rows in the `storeSubscriptions` table matching this [Query].
+  ///
+  /// The changes to be applied to each row matching this [Query] are
+  /// defined using the [updateBuilder], which is given an [Expr]
+  /// representation of the row being updated and a `set` function to
+  /// specify which fields should be updated. The result of the `set`
+  /// function should always be returned from the `updateBuilder`.
+  ///
+  /// Returns an [Update] statement on which `.execute()` must be called
+  /// for the rows to be updated.
+  ///
+  /// **Example:** decrementing `1` from the `value` field for each row
+  /// where `value > 0`.
+  /// ```dart
+  /// await db.mytable
+  ///   .where((row) => row.value > toExpr(0))
+  ///   .update((row, set) => set(
+  ///     value: row.value - toExpr(1),
+  ///   ))
+  ///   .execute();
+  /// ```
+  ///
+  /// > [!WARNING]
+  /// > The `updateBuilder` callback does not make the update, it builds
+  /// > the expressions for updating the rows. You should **never** invoke
+  /// > the `set` function more than once, and the result should always
+  /// > be returned immediately.
+  Update<StoreSubscriptionRow> update(
+    UpdateSet<StoreSubscriptionRow> Function(
+      Expr<StoreSubscriptionRow> storeSubscriptionRow,
+      UpdateSet<StoreSubscriptionRow> Function({
+        Expr<String> id,
+        Expr<String> storeId,
+        Expr<String> planCode,
+        Expr<String> status,
+        Expr<DateTime> startsAt,
+        Expr<DateTime> endsAt,
+        Expr<DateTime?> graceEndsAt,
+        Expr<bool> autoRenew,
+        Expr<DateTime> createdAt,
+        Expr<DateTime> updatedAt,
+      })
+      set,
+    )
+    updateBuilder,
+  ) => $ForGeneratedCode.update<StoreSubscriptionRow>(
+    this,
+    _$StoreSubscriptionRow._$table,
+    (storeSubscriptionRow) => updateBuilder(
+      storeSubscriptionRow,
+      ({
+        Expr<String>? id,
+        Expr<String>? storeId,
+        Expr<String>? planCode,
+        Expr<String>? status,
+        Expr<DateTime>? startsAt,
+        Expr<DateTime>? endsAt,
+        Expr<DateTime?>? graceEndsAt,
+        Expr<bool>? autoRenew,
+        Expr<DateTime>? createdAt,
+        Expr<DateTime>? updatedAt,
+      }) => $ForGeneratedCode.buildUpdate<StoreSubscriptionRow>([
+        id,
+        storeId,
+        planCode,
+        status,
+        startsAt,
+        endsAt,
+        graceEndsAt,
+        autoRenew,
+        createdAt,
+        updatedAt,
+      ]),
+    ),
+  );
+
+  /// Delete all rows in the `storeSubscriptions` table matching this [Query].
+  ///
+  /// Returns a [Delete] statement on which `.execute()` must be called
+  /// for the rows to be deleted.
+  Delete<StoreSubscriptionRow> delete() =>
+      $ForGeneratedCode.delete(this, _$StoreSubscriptionRow._$table);
+}
+
+/// Extension methods for building point queries against the `storeSubscriptions` table.
+extension QuerySingleStoreSubscriptionRowExt
+    on QuerySingle<(Expr<StoreSubscriptionRow>,)> {
+  /// Update the row (if any) in the `storeSubscriptions` table matching this
+  /// [QuerySingle].
+  ///
+  /// The changes to be applied to the row matching this [QuerySingle] are
+  /// defined using the [updateBuilder], which is given an [Expr]
+  /// representation of the row being updated and a `set` function to
+  /// specify which fields should be updated. The result of the `set`
+  /// function should always be returned from the `updateBuilder`.
+  ///
+  /// Returns an [UpdateSingle] statement on which `.execute()` must be
+  /// called for the row to be updated. The resulting statement will
+  /// **not** fail, if there are no rows matching this query exists.
+  ///
+  /// **Example:** decrementing `1` from the `value` field the row with
+  /// `id = 1`.
+  /// ```dart
+  /// await db.mytable
+  ///   .byKey(1)
+  ///   .update((row, set) => set(
+  ///     value: row.value - toExpr(1),
+  ///   ))
+  ///   .execute();
+  /// ```
+  ///
+  /// > [!WARNING]
+  /// > The `updateBuilder` callback does not make the update, it builds
+  /// > the expressions for updating the rows. You should **never** invoke
+  /// > the `set` function more than once, and the result should always
+  /// > be returned immediately.
+  UpdateSingle<StoreSubscriptionRow> update(
+    UpdateSet<StoreSubscriptionRow> Function(
+      Expr<StoreSubscriptionRow> storeSubscriptionRow,
+      UpdateSet<StoreSubscriptionRow> Function({
+        Expr<String> id,
+        Expr<String> storeId,
+        Expr<String> planCode,
+        Expr<String> status,
+        Expr<DateTime> startsAt,
+        Expr<DateTime> endsAt,
+        Expr<DateTime?> graceEndsAt,
+        Expr<bool> autoRenew,
+        Expr<DateTime> createdAt,
+        Expr<DateTime> updatedAt,
+      })
+      set,
+    )
+    updateBuilder,
+  ) => $ForGeneratedCode.updateSingle<StoreSubscriptionRow>(
+    this,
+    _$StoreSubscriptionRow._$table,
+    (storeSubscriptionRow) => updateBuilder(
+      storeSubscriptionRow,
+      ({
+        Expr<String>? id,
+        Expr<String>? storeId,
+        Expr<String>? planCode,
+        Expr<String>? status,
+        Expr<DateTime>? startsAt,
+        Expr<DateTime>? endsAt,
+        Expr<DateTime?>? graceEndsAt,
+        Expr<bool>? autoRenew,
+        Expr<DateTime>? createdAt,
+        Expr<DateTime>? updatedAt,
+      }) => $ForGeneratedCode.buildUpdate<StoreSubscriptionRow>([
+        id,
+        storeId,
+        planCode,
+        status,
+        startsAt,
+        endsAt,
+        graceEndsAt,
+        autoRenew,
+        createdAt,
+        updatedAt,
+      ]),
+    ),
+  );
+
+  /// Delete the row (if any) in the `storeSubscriptions` table matching this [QuerySingle].
+  ///
+  /// Returns a [DeleteSingle] statement on which `.execute()` must be called
+  /// for the row to be deleted. The resulting statement will **not**
+  /// fail, if there are no rows matching this query exists.
+  DeleteSingle<StoreSubscriptionRow> delete() =>
+      $ForGeneratedCode.deleteSingle(this, _$StoreSubscriptionRow._$table);
+}
+
+/// Extension methods for expressions on a row in the `storeSubscriptions` table.
+extension ExpressionStoreSubscriptionRowExt on Expr<StoreSubscriptionRow> {
+  Expr<String> get id =>
+      $ForGeneratedCode.field(this, 0, $ForGeneratedCode.text);
+
+  Expr<String> get storeId =>
+      $ForGeneratedCode.field(this, 1, $ForGeneratedCode.text);
+
+  Expr<String> get planCode =>
+      $ForGeneratedCode.field(this, 2, $ForGeneratedCode.text);
+
+  Expr<String> get status =>
+      $ForGeneratedCode.field(this, 3, $ForGeneratedCode.text);
+
+  Expr<DateTime> get startsAt =>
+      $ForGeneratedCode.field(this, 4, $ForGeneratedCode.dateTime);
+
+  Expr<DateTime> get endsAt =>
+      $ForGeneratedCode.field(this, 5, $ForGeneratedCode.dateTime);
+
+  Expr<DateTime?> get graceEndsAt =>
+      $ForGeneratedCode.field(this, 6, $ForGeneratedCode.dateTime);
+
+  Expr<bool> get autoRenew =>
+      $ForGeneratedCode.field(this, 7, $ForGeneratedCode.boolean);
+
+  Expr<DateTime> get createdAt =>
+      $ForGeneratedCode.field(this, 8, $ForGeneratedCode.dateTime);
+
+  Expr<DateTime> get updatedAt =>
+      $ForGeneratedCode.field(this, 9, $ForGeneratedCode.dateTime);
+}
+
+extension ExpressionNullableStoreSubscriptionRowExt
+    on Expr<StoreSubscriptionRow?> {
+  Expr<String?> get id =>
+      $ForGeneratedCode.field(this, 0, $ForGeneratedCode.text);
+
+  Expr<String?> get storeId =>
+      $ForGeneratedCode.field(this, 1, $ForGeneratedCode.text);
+
+  Expr<String?> get planCode =>
+      $ForGeneratedCode.field(this, 2, $ForGeneratedCode.text);
+
+  Expr<String?> get status =>
+      $ForGeneratedCode.field(this, 3, $ForGeneratedCode.text);
+
+  Expr<DateTime?> get startsAt =>
+      $ForGeneratedCode.field(this, 4, $ForGeneratedCode.dateTime);
+
+  Expr<DateTime?> get endsAt =>
+      $ForGeneratedCode.field(this, 5, $ForGeneratedCode.dateTime);
+
+  Expr<DateTime?> get graceEndsAt =>
+      $ForGeneratedCode.field(this, 6, $ForGeneratedCode.dateTime);
+
+  Expr<bool?> get autoRenew =>
+      $ForGeneratedCode.field(this, 7, $ForGeneratedCode.boolean);
+
+  Expr<DateTime?> get createdAt =>
+      $ForGeneratedCode.field(this, 8, $ForGeneratedCode.dateTime);
+
+  Expr<DateTime?> get updatedAt =>
+      $ForGeneratedCode.field(this, 9, $ForGeneratedCode.dateTime);
+
+  /// Check if the row is not `NULL`.
+  ///
+  /// This will check if _primary key_ fields in this row are `NULL`.
+  ///
+  /// If this is a reference lookup by subquery it might be more efficient
+  /// to check if the referencing field is `NULL`.
+  Expr<bool> isNotNull() => id.isNotNull();
+
+  /// Check if the row is `NULL`.
+  ///
+  /// This will check if _primary key_ fields in this row are `NULL`.
+  ///
+  /// If this is a reference lookup by subquery it might be more efficient
+  /// to check if the referencing field is `NULL`.
+  Expr<bool> isNull() => isNotNull().not();
+}
+
+/// `Table<StoreSubscriptionRow>` conflict targets for use with `.onConflict`.
+enum StoreSubscriptionRowConflict {
+  /// Conflict with an existing row that has a matching primary key.
+  ///
+  /// Thus, the other row has matching values for:
+  /// `id`.
+  primaryKey(['id']);
+
+  const StoreSubscriptionRowConflict(this._fields);
+
+  final List<String> _fields;
+}
+
+extension InsertStoreSubscriptionRowExt on Insert<StoreSubscriptionRow> {
+  /// Build an `INSERT` statement with an `ON CONFLICT` clause.
+  ///
+  /// The [target] argument specifies the _conflict target_ to be
+  /// handled. The _conflict target_ is always a `UNIQUE` constraint or
+  /// `PRIMARY KEY` constraint.
+  ///
+  /// If a row to be inserted violates the _conflict target_ constraint,
+  /// then the conflict action is triggered:
+  /// * `.doNothing()` to skip insertion of the new row, and,
+  /// * `.update((storeSubscriptionRow, excluded, set) => set(...))` to
+  ///   update the conflicting row.
+  ///
+  /// If a row to be inserted violates a constraint other than the one
+  /// specified in _conflict target_ then the entire `INSERT` statement
+  /// will fail.
+  ///
+  /// This is equivalent to `INSERT ... ON CONFLICT (...)` in SQL.
+  InsertOnConflict<StoreSubscriptionRow> onConflict(
+    StoreSubscriptionRowConflict target,
+  ) => $ForGeneratedCode.insertOnConflict(this, target._fields);
+}
+
+extension InsertOnConflictStoreSubscriptionRowExt
+    on InsertOnConflict<StoreSubscriptionRow> {
+  /// Build an `INSERT` statement an [upsert-clause][1].
+  ///
+  /// When a row to be inserted violates the `UNIQUE` or `PRIMARY KEY`
+  /// constraint previously specified as _conflict target_, the existing
+  /// row is updated using the expressions defined with the
+  /// [updateBuilder]. The [updateBuilder] is given 3 parameters:
+  ///   * `storeSubscriptionRow` an [Expr] representing the existing row in
+  ///     the database,
+  ///   * `excluded` an [Expr] representing the row to be inserted in the
+  ///     database, and,
+  ///   * `set` a function to specify which fields should be updated and
+  ///     build the [UpdateSet].
+  ///
+  /// The result of the `set` function should always be immediately
+  /// returned from the [updateBuilder].
+  ///
+  /// **Example:** Insert a counter with `count = 2` or increment the
+  /// existing row, if a `PRIMARY KEY` conflict occurs.
+  /// ```dart
+  /// await db.counters.insertValue(
+  ///     name: 'my-counter', // primary key
+  ///     count: 2,
+  ///   )
+  ///   .onConflict(.primaryKey)
+  ///   .update((counter, excluded, set) => set(
+  ///     count: counter.count + excluded.count,
+  ///   ))
+  ///   .execute();
+  /// ```
+  ///
+  /// This is equivalent to
+  /// `INSERT ... ON CONFLICT (...) UPDATE SET ...` in SQL.
+  ///
+  /// > [!WARNING]
+  /// > The `updateBuilder` callback does not make the update, it builds
+  /// > the expressions for updating the rows. You should **never** invoke
+  /// > the `set` function more than once, and the result should always
+  /// > be returned immediately.
+  ///
+  /// [1]: https://www.sqlite.org/lang_upsert.html
+  Upsert<StoreSubscriptionRow> update(
+    UpdateSet<StoreSubscriptionRow> Function(
+      Expr<StoreSubscriptionRow> storeSubscriptionRow,
+      Expr<StoreSubscriptionRow> excluded,
+      UpdateSet<StoreSubscriptionRow> Function({
+        Expr<String> id,
+        Expr<String> storeId,
+        Expr<String> planCode,
+        Expr<String> status,
+        Expr<DateTime> startsAt,
+        Expr<DateTime> endsAt,
+        Expr<DateTime?> graceEndsAt,
+        Expr<bool> autoRenew,
+        Expr<DateTime> createdAt,
+        Expr<DateTime> updatedAt,
+      })
+      set,
+    )
+    updateBuilder,
+  ) => $ForGeneratedCode.updateOnConflict<StoreSubscriptionRow>(
+    this,
+    (storeSubscriptionRow, excluded) => updateBuilder(
+      storeSubscriptionRow,
+      excluded,
+      ({
+        Expr<String>? id,
+        Expr<String>? storeId,
+        Expr<String>? planCode,
+        Expr<String>? status,
+        Expr<DateTime>? startsAt,
+        Expr<DateTime>? endsAt,
+        Expr<DateTime?>? graceEndsAt,
+        Expr<bool>? autoRenew,
+        Expr<DateTime>? createdAt,
+        Expr<DateTime>? updatedAt,
+      }) => $ForGeneratedCode.buildUpdate<StoreSubscriptionRow>([
+        id,
+        storeId,
+        planCode,
+        status,
+        startsAt,
+        endsAt,
+        graceEndsAt,
+        autoRenew,
+        createdAt,
+        updatedAt,
+      ]),
+    ),
+  );
+}
+
+extension InsertSingleStoreSubscriptionRowExt
+    on InsertSingle<StoreSubscriptionRow> {
+  /// Build an `INSERT` statement with an `ON CONFLICT` clause.
+  ///
+  /// The [target] argument specifies the _conflict target_ to be
+  /// handled. The _conflict target_ is always a `UNIQUE` constraint or
+  /// `PRIMARY KEY` constraint.
+  ///
+  /// If a row to be inserted violates the _conflict target_ constraint,
+  /// then the conflict action is triggered:
+  /// * `.doNothing()` to skip insertion of the new row, and,
+  /// * `.update((storeSubscriptionRow, excluded, set) => set(...))` to
+  ///   update the conflicting row.
+  ///
+  /// If a row to be inserted violates a constraint other than the one
+  /// specified in _conflict target_ then the entire `INSERT` statement
+  /// will fail.
+  ///
+  /// This is equivalent to `INSERT ... ON CONFLICT (...)` in SQL.
+  InsertOnConflictSingle<StoreSubscriptionRow> onConflict(
+    StoreSubscriptionRowConflict target,
+  ) => $ForGeneratedCode.insertOnConflictSingle(this, target._fields);
+}
+
+extension InsertOnConflictSingleStoreSubscriptionRowExt
+    on InsertOnConflictSingle<StoreSubscriptionRow> {
+  /// Build an `INSERT` statement an [upsert-clause][1].
+  ///
+  /// When a row to be inserted violates the `UNIQUE` or `PRIMARY KEY`
+  /// constraint previously specified as _conflict target_, the existing
+  /// row is updated using the expressions defined with the
+  /// [updateBuilder]. The [updateBuilder] is given 3 parameters:
+  ///   * `storeSubscriptionRow` an [Expr] representing the existing row in
+  ///     the database,
+  ///   * `excluded` an [Expr] representing the row to be inserted in the
+  ///     database, and,
+  ///   * `set` a function to specify which fields should be updated and
+  ///     build the [UpdateSet].
+  ///
+  /// The result of the `set` function should always be immediately
+  /// returned from the [updateBuilder].
+  ///
+  /// **Example:** Insert a counter with `count = 2` or increment the
+  /// existing row, if a `PRIMARY KEY` conflict occurs.
+  /// ```dart
+  /// await db.counters.insertValue(
+  ///     name: 'my-counter', // primary key
+  ///     count: 2,
+  ///   )
+  ///   .onConflict(.primaryKey)
+  ///   .update((counter, excluded, set) => set(
+  ///     count: counter.count + excluded.count,
+  ///   ))
+  ///   .execute();
+  /// ```
+  ///
+  /// This is equivalent to
+  /// `INSERT ... ON CONFLICT (...) UPDATE SET ...` in SQL.
+  ///
+  /// > [!WARNING]
+  /// > The `updateBuilder` callback does not make the update, it builds
+  /// > the expressions for updating the rows. You should **never** invoke
+  /// > the `set` function more than once, and the result should always
+  /// > be returned immediately.
+  ///
+  /// [1]: https://www.sqlite.org/lang_upsert.html
+  UpsertSingle<StoreSubscriptionRow> update(
+    UpdateSet<StoreSubscriptionRow> Function(
+      Expr<StoreSubscriptionRow> storeSubscriptionRow,
+      Expr<StoreSubscriptionRow> excluded,
+      UpdateSet<StoreSubscriptionRow> Function({
+        Expr<String> id,
+        Expr<String> storeId,
+        Expr<String> planCode,
+        Expr<String> status,
+        Expr<DateTime> startsAt,
+        Expr<DateTime> endsAt,
+        Expr<DateTime?> graceEndsAt,
+        Expr<bool> autoRenew,
+        Expr<DateTime> createdAt,
+        Expr<DateTime> updatedAt,
+      })
+      set,
+    )
+    updateBuilder,
+  ) => $ForGeneratedCode.updateOnConflictSingle<StoreSubscriptionRow>(
+    this,
+    (storeSubscriptionRow, excluded) => updateBuilder(
+      storeSubscriptionRow,
+      excluded,
+      ({
+        Expr<String>? id,
+        Expr<String>? storeId,
+        Expr<String>? planCode,
+        Expr<String>? status,
+        Expr<DateTime>? startsAt,
+        Expr<DateTime>? endsAt,
+        Expr<DateTime?>? graceEndsAt,
+        Expr<bool>? autoRenew,
+        Expr<DateTime>? createdAt,
+        Expr<DateTime>? updatedAt,
+      }) => $ForGeneratedCode.buildUpdate<StoreSubscriptionRow>([
+        id,
+        storeId,
+        planCode,
+        status,
+        startsAt,
+        endsAt,
+        graceEndsAt,
+        autoRenew,
+        createdAt,
+        updatedAt,
+      ]),
+    ),
+  );
+}
+
+final class _$SubscriptionTransactionRow extends SubscriptionTransactionRow {
+  _$SubscriptionTransactionRow._(
+    this.id,
+    this.storeId,
+    this.planCode,
+    this.amountInPaise,
+    this.currency,
+    this.paymentMethod,
+    this.status,
+    this.reference,
+    this.createdAt,
+  );
+
+  @override
+  final String id;
+
+  @override
+  final String storeId;
+
+  @override
+  final String planCode;
+
+  @override
+  final int amountInPaise;
+
+  @override
+  final String currency;
+
+  @override
+  final String paymentMethod;
+
+  @override
+  final String status;
+
+  @override
+  final String? reference;
+
+  @override
+  final DateTime createdAt;
+
+  static final _$table = $ForGeneratedCode.tableDefinition(
+    tableName: 'subscription_transactions',
+    columns: <String>[
+      'id',
+      'store_id',
+      'plan_code',
+      'amount_in_paise',
+      'currency',
+      'payment_method',
+      'status',
+      'reference',
+      'created_at',
+    ],
+    columnInfo: [
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: true,
+        defaultValue: (kind: 'raw', value: 'gen_random_uuid()'),
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: true,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: true,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.integer,
+        isNotNull: true,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: true,
+        defaultValue: (kind: 'raw', value: 'INR'),
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: true,
+        defaultValue: (kind: 'raw', value: 'simulated'),
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: true,
+        defaultValue: (kind: 'raw', value: 'completed'),
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: false,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.dateTime,
+        isNotNull: true,
+        defaultValue: (kind: 'datetime', value: 'now'),
+        autoIncrement: false,
+        overrides: [],
+      ),
+    ],
+    primaryKey: <String>['id'],
+    unique: <List<String>>[],
+    foreignKeys: [
+      $ForGeneratedCode.foreignKeyDefinition(
+        name: 'null',
+        columns: ['store_id'],
+        referencedTable: 'stores',
+        referencedColumns: ['id'],
+        onDelete: .cascade,
+        onUpdate: .noAction,
+      ),
+      $ForGeneratedCode.foreignKeyDefinition(
+        name: 'null',
+        columns: ['plan_code'],
+        referencedTable: 'subscription_plans',
+        referencedColumns: ['code'],
+        onDelete: .noAction,
+        onUpdate: .noAction,
+      ),
+    ],
+    indexes: [],
+    readRow: _$SubscriptionTransactionRow._$fromDatabase,
+  );
+
+  static SubscriptionTransactionRow? _$fromDatabase(RowReader row) {
+    final id = row.readString();
+    final storeId = row.readString();
+    final planCode = row.readString();
+    final amountInPaise = row.readInt();
+    final currency = row.readString();
+    final paymentMethod = row.readString();
+    final status = row.readString();
+    final reference = row.readString();
+    final createdAt = row.readDateTime();
+    if (id == null &&
+        storeId == null &&
+        planCode == null &&
+        amountInPaise == null &&
+        currency == null &&
+        paymentMethod == null &&
+        status == null &&
+        reference == null &&
+        createdAt == null) {
+      return null;
+    }
+    return _$SubscriptionTransactionRow._(
+      id!,
+      storeId!,
+      planCode!,
+      amountInPaise!,
+      currency!,
+      paymentMethod!,
+      status!,
+      reference,
+      createdAt!,
+    );
+  }
+
+  @override
+  String toString() =>
+      'SubscriptionTransactionRow(id: "$id", storeId: "$storeId", planCode: "$planCode", amountInPaise: "$amountInPaise", currency: "$currency", paymentMethod: "$paymentMethod", status: "$status", reference: "$reference", createdAt: "$createdAt")';
+}
+
+/// Extension methods for table defined in [SubscriptionTransactionRow].
+extension TableSubscriptionTransactionRowExt
+    on Table<SubscriptionTransactionRow> {
+  /// Insert row into the `subscriptionTransactions` table.
+  ///
+  /// Returns a [InsertSingle] statement on which `.execute` must be
+  /// called for the row to be inserted.
+  InsertSingle<SubscriptionTransactionRow> insert({
+    Expr<String>? id,
+    required Expr<String> storeId,
+    required Expr<String> planCode,
+    required Expr<int> amountInPaise,
+    Expr<String>? currency,
+    Expr<String>? paymentMethod,
+    Expr<String>? status,
+    Expr<String?>? reference,
+    Expr<DateTime>? createdAt,
+  }) => $ForGeneratedCode.insertInto(
+    table: this,
+    values: [
+      id,
+      storeId,
+      planCode,
+      amountInPaise,
+      currency,
+      paymentMethod,
+      status,
+      reference,
+      createdAt,
+    ],
+  );
+
+  /// Insert row into the `subscriptionTransactions` table.
+  ///
+  /// Returns a [InsertSingle] statement on which `.execute` must be
+  /// called for the row to be inserted.
+  InsertSingle<SubscriptionTransactionRow> insertValue({
+    String? id,
+    required String storeId,
+    required String planCode,
+    required int amountInPaise,
+    String? currency,
+    String? paymentMethod,
+    String? status,
+    String? reference,
+    DateTime? createdAt,
+  }) => $ForGeneratedCode.insertInto(
+    table: this,
+    values: [
+      id?.asExpr,
+      storeId.asExpr,
+      planCode.asExpr,
+      amountInPaise.asExpr,
+      currency?.asExpr,
+      paymentMethod?.asExpr,
+      status?.asExpr,
+      reference.asExpr,
+      createdAt?.asExpr,
+    ],
+  );
+
+  /// Bulk insert rows into the `subscriptionTransactions` table.
+  ///
+  /// This method takes an `Iterable<T>` and requires that you provide
+  /// a _mapping function_ from `T` to each column to be inserted.
+  ///
+  /// If a mapping function is omitted, the _default value_ will be
+  /// inserted, or `NULL` if column is nullable and as no default value.
+  /// To explicitely insert `NULL`, use a _mapping function_ that maps
+  /// `T` to `null`.
+  ///
+  /// > [!NOTE]
+  /// > This method aims utilize database specific bulk insertion logic
+  /// > to ensure good performance. Database adapters may pipeline bulk
+  /// > insertions through multiple statements inside a transaction.
+  ///
+  /// Returns a [Insert] statement on which `.execute` must be
+  /// called for the rows to be inserted.
+  Insert<SubscriptionTransactionRow> insertValuesMapped<T>(
+    Iterable<T> rows, {
+    String Function(T row)? id,
+    required String Function(T row) storeId,
+    required String Function(T row) planCode,
+    required int Function(T row) amountInPaise,
+    String Function(T row)? currency,
+    String Function(T row)? paymentMethod,
+    String Function(T row)? status,
+    String? Function(T row)? reference,
+    DateTime Function(T row)? createdAt,
+  }) => $ForGeneratedCode.insertValuesMapped(
+    table: this,
+    rows: rows,
+    mappings: [
+      id,
+      storeId,
+      planCode,
+      amountInPaise,
+      currency,
+      paymentMethod,
+      status,
+      reference,
+      createdAt,
+    ],
+  );
+
+  /// Delete a single row from the `subscriptionTransactions` table, specified by
+  /// _primary key_.
+  ///
+  /// Returns a [DeleteSingle] statement on which `.execute()` must be
+  /// called for the row to be deleted.
+  ///
+  /// To delete multiple rows, using `.where()` to filter which rows
+  /// should be deleted. If you wish to delete all rows, use
+  /// `.where((_) => toExpr(true)).delete()`.
+  DeleteSingle<SubscriptionTransactionRow> delete(String id) =>
+      $ForGeneratedCode.deleteSingle(
+        byKey(id),
+        _$SubscriptionTransactionRow._$table,
+      );
+}
+
+/// Extension methods for building queries against the `subscriptionTransactions` table.
+extension QuerySubscriptionTransactionRowExt
+    on Query<(Expr<SubscriptionTransactionRow>,)> {
+  /// Lookup a single row in `subscriptionTransactions` table using the _primary key_.
+  ///
+  /// Returns a [QuerySingle] object, which returns at-most one row,
+  /// when `.fetch()` is called.
+  QuerySingle<(Expr<SubscriptionTransactionRow>,)> byKey(String id) => where(
+    (subscriptionTransactionRow) =>
+        subscriptionTransactionRow.id.equalsValue(id),
+  ).first;
+
+  /// Update all rows in the `subscriptionTransactions` table matching this [Query].
+  ///
+  /// The changes to be applied to each row matching this [Query] are
+  /// defined using the [updateBuilder], which is given an [Expr]
+  /// representation of the row being updated and a `set` function to
+  /// specify which fields should be updated. The result of the `set`
+  /// function should always be returned from the `updateBuilder`.
+  ///
+  /// Returns an [Update] statement on which `.execute()` must be called
+  /// for the rows to be updated.
+  ///
+  /// **Example:** decrementing `1` from the `value` field for each row
+  /// where `value > 0`.
+  /// ```dart
+  /// await db.mytable
+  ///   .where((row) => row.value > toExpr(0))
+  ///   .update((row, set) => set(
+  ///     value: row.value - toExpr(1),
+  ///   ))
+  ///   .execute();
+  /// ```
+  ///
+  /// > [!WARNING]
+  /// > The `updateBuilder` callback does not make the update, it builds
+  /// > the expressions for updating the rows. You should **never** invoke
+  /// > the `set` function more than once, and the result should always
+  /// > be returned immediately.
+  Update<SubscriptionTransactionRow> update(
+    UpdateSet<SubscriptionTransactionRow> Function(
+      Expr<SubscriptionTransactionRow> subscriptionTransactionRow,
+      UpdateSet<SubscriptionTransactionRow> Function({
+        Expr<String> id,
+        Expr<String> storeId,
+        Expr<String> planCode,
+        Expr<int> amountInPaise,
+        Expr<String> currency,
+        Expr<String> paymentMethod,
+        Expr<String> status,
+        Expr<String?> reference,
+        Expr<DateTime> createdAt,
+      })
+      set,
+    )
+    updateBuilder,
+  ) => $ForGeneratedCode.update<SubscriptionTransactionRow>(
+    this,
+    _$SubscriptionTransactionRow._$table,
+    (subscriptionTransactionRow) => updateBuilder(
+      subscriptionTransactionRow,
+      ({
+        Expr<String>? id,
+        Expr<String>? storeId,
+        Expr<String>? planCode,
+        Expr<int>? amountInPaise,
+        Expr<String>? currency,
+        Expr<String>? paymentMethod,
+        Expr<String>? status,
+        Expr<String?>? reference,
+        Expr<DateTime>? createdAt,
+      }) => $ForGeneratedCode.buildUpdate<SubscriptionTransactionRow>([
+        id,
+        storeId,
+        planCode,
+        amountInPaise,
+        currency,
+        paymentMethod,
+        status,
+        reference,
+        createdAt,
+      ]),
+    ),
+  );
+
+  /// Delete all rows in the `subscriptionTransactions` table matching this [Query].
+  ///
+  /// Returns a [Delete] statement on which `.execute()` must be called
+  /// for the rows to be deleted.
+  Delete<SubscriptionTransactionRow> delete() =>
+      $ForGeneratedCode.delete(this, _$SubscriptionTransactionRow._$table);
+}
+
+/// Extension methods for building point queries against the `subscriptionTransactions` table.
+extension QuerySingleSubscriptionTransactionRowExt
+    on QuerySingle<(Expr<SubscriptionTransactionRow>,)> {
+  /// Update the row (if any) in the `subscriptionTransactions` table matching this
+  /// [QuerySingle].
+  ///
+  /// The changes to be applied to the row matching this [QuerySingle] are
+  /// defined using the [updateBuilder], which is given an [Expr]
+  /// representation of the row being updated and a `set` function to
+  /// specify which fields should be updated. The result of the `set`
+  /// function should always be returned from the `updateBuilder`.
+  ///
+  /// Returns an [UpdateSingle] statement on which `.execute()` must be
+  /// called for the row to be updated. The resulting statement will
+  /// **not** fail, if there are no rows matching this query exists.
+  ///
+  /// **Example:** decrementing `1` from the `value` field the row with
+  /// `id = 1`.
+  /// ```dart
+  /// await db.mytable
+  ///   .byKey(1)
+  ///   .update((row, set) => set(
+  ///     value: row.value - toExpr(1),
+  ///   ))
+  ///   .execute();
+  /// ```
+  ///
+  /// > [!WARNING]
+  /// > The `updateBuilder` callback does not make the update, it builds
+  /// > the expressions for updating the rows. You should **never** invoke
+  /// > the `set` function more than once, and the result should always
+  /// > be returned immediately.
+  UpdateSingle<SubscriptionTransactionRow> update(
+    UpdateSet<SubscriptionTransactionRow> Function(
+      Expr<SubscriptionTransactionRow> subscriptionTransactionRow,
+      UpdateSet<SubscriptionTransactionRow> Function({
+        Expr<String> id,
+        Expr<String> storeId,
+        Expr<String> planCode,
+        Expr<int> amountInPaise,
+        Expr<String> currency,
+        Expr<String> paymentMethod,
+        Expr<String> status,
+        Expr<String?> reference,
+        Expr<DateTime> createdAt,
+      })
+      set,
+    )
+    updateBuilder,
+  ) => $ForGeneratedCode.updateSingle<SubscriptionTransactionRow>(
+    this,
+    _$SubscriptionTransactionRow._$table,
+    (subscriptionTransactionRow) => updateBuilder(
+      subscriptionTransactionRow,
+      ({
+        Expr<String>? id,
+        Expr<String>? storeId,
+        Expr<String>? planCode,
+        Expr<int>? amountInPaise,
+        Expr<String>? currency,
+        Expr<String>? paymentMethod,
+        Expr<String>? status,
+        Expr<String?>? reference,
+        Expr<DateTime>? createdAt,
+      }) => $ForGeneratedCode.buildUpdate<SubscriptionTransactionRow>([
+        id,
+        storeId,
+        planCode,
+        amountInPaise,
+        currency,
+        paymentMethod,
+        status,
+        reference,
+        createdAt,
+      ]),
+    ),
+  );
+
+  /// Delete the row (if any) in the `subscriptionTransactions` table matching this [QuerySingle].
+  ///
+  /// Returns a [DeleteSingle] statement on which `.execute()` must be called
+  /// for the row to be deleted. The resulting statement will **not**
+  /// fail, if there are no rows matching this query exists.
+  DeleteSingle<SubscriptionTransactionRow> delete() => $ForGeneratedCode
+      .deleteSingle(this, _$SubscriptionTransactionRow._$table);
+}
+
+/// Extension methods for expressions on a row in the `subscriptionTransactions` table.
+extension ExpressionSubscriptionTransactionRowExt
+    on Expr<SubscriptionTransactionRow> {
+  Expr<String> get id =>
+      $ForGeneratedCode.field(this, 0, $ForGeneratedCode.text);
+
+  Expr<String> get storeId =>
+      $ForGeneratedCode.field(this, 1, $ForGeneratedCode.text);
+
+  Expr<String> get planCode =>
+      $ForGeneratedCode.field(this, 2, $ForGeneratedCode.text);
+
+  Expr<int> get amountInPaise =>
+      $ForGeneratedCode.field(this, 3, $ForGeneratedCode.integer);
+
+  Expr<String> get currency =>
+      $ForGeneratedCode.field(this, 4, $ForGeneratedCode.text);
+
+  Expr<String> get paymentMethod =>
+      $ForGeneratedCode.field(this, 5, $ForGeneratedCode.text);
+
+  Expr<String> get status =>
+      $ForGeneratedCode.field(this, 6, $ForGeneratedCode.text);
+
+  Expr<String?> get reference =>
+      $ForGeneratedCode.field(this, 7, $ForGeneratedCode.text);
+
+  Expr<DateTime> get createdAt =>
+      $ForGeneratedCode.field(this, 8, $ForGeneratedCode.dateTime);
+}
+
+extension ExpressionNullableSubscriptionTransactionRowExt
+    on Expr<SubscriptionTransactionRow?> {
+  Expr<String?> get id =>
+      $ForGeneratedCode.field(this, 0, $ForGeneratedCode.text);
+
+  Expr<String?> get storeId =>
+      $ForGeneratedCode.field(this, 1, $ForGeneratedCode.text);
+
+  Expr<String?> get planCode =>
+      $ForGeneratedCode.field(this, 2, $ForGeneratedCode.text);
+
+  Expr<int?> get amountInPaise =>
+      $ForGeneratedCode.field(this, 3, $ForGeneratedCode.integer);
+
+  Expr<String?> get currency =>
+      $ForGeneratedCode.field(this, 4, $ForGeneratedCode.text);
+
+  Expr<String?> get paymentMethod =>
+      $ForGeneratedCode.field(this, 5, $ForGeneratedCode.text);
+
+  Expr<String?> get status =>
+      $ForGeneratedCode.field(this, 6, $ForGeneratedCode.text);
+
+  Expr<String?> get reference =>
+      $ForGeneratedCode.field(this, 7, $ForGeneratedCode.text);
+
+  Expr<DateTime?> get createdAt =>
+      $ForGeneratedCode.field(this, 8, $ForGeneratedCode.dateTime);
+
+  /// Check if the row is not `NULL`.
+  ///
+  /// This will check if _primary key_ fields in this row are `NULL`.
+  ///
+  /// If this is a reference lookup by subquery it might be more efficient
+  /// to check if the referencing field is `NULL`.
+  Expr<bool> isNotNull() => id.isNotNull();
+
+  /// Check if the row is `NULL`.
+  ///
+  /// This will check if _primary key_ fields in this row are `NULL`.
+  ///
+  /// If this is a reference lookup by subquery it might be more efficient
+  /// to check if the referencing field is `NULL`.
+  Expr<bool> isNull() => isNotNull().not();
+}
+
+/// `Table<SubscriptionTransactionRow>` conflict targets for use with `.onConflict`.
+enum SubscriptionTransactionRowConflict {
+  /// Conflict with an existing row that has a matching primary key.
+  ///
+  /// Thus, the other row has matching values for:
+  /// `id`.
+  primaryKey(['id']);
+
+  const SubscriptionTransactionRowConflict(this._fields);
+
+  final List<String> _fields;
+}
+
+extension InsertSubscriptionTransactionRowExt
+    on Insert<SubscriptionTransactionRow> {
+  /// Build an `INSERT` statement with an `ON CONFLICT` clause.
+  ///
+  /// The [target] argument specifies the _conflict target_ to be
+  /// handled. The _conflict target_ is always a `UNIQUE` constraint or
+  /// `PRIMARY KEY` constraint.
+  ///
+  /// If a row to be inserted violates the _conflict target_ constraint,
+  /// then the conflict action is triggered:
+  /// * `.doNothing()` to skip insertion of the new row, and,
+  /// * `.update((subscriptionTransactionRow, excluded, set) => set(...))` to
+  ///   update the conflicting row.
+  ///
+  /// If a row to be inserted violates a constraint other than the one
+  /// specified in _conflict target_ then the entire `INSERT` statement
+  /// will fail.
+  ///
+  /// This is equivalent to `INSERT ... ON CONFLICT (...)` in SQL.
+  InsertOnConflict<SubscriptionTransactionRow> onConflict(
+    SubscriptionTransactionRowConflict target,
+  ) => $ForGeneratedCode.insertOnConflict(this, target._fields);
+}
+
+extension InsertOnConflictSubscriptionTransactionRowExt
+    on InsertOnConflict<SubscriptionTransactionRow> {
+  /// Build an `INSERT` statement an [upsert-clause][1].
+  ///
+  /// When a row to be inserted violates the `UNIQUE` or `PRIMARY KEY`
+  /// constraint previously specified as _conflict target_, the existing
+  /// row is updated using the expressions defined with the
+  /// [updateBuilder]. The [updateBuilder] is given 3 parameters:
+  ///   * `subscriptionTransactionRow` an [Expr] representing the existing row in
+  ///     the database,
+  ///   * `excluded` an [Expr] representing the row to be inserted in the
+  ///     database, and,
+  ///   * `set` a function to specify which fields should be updated and
+  ///     build the [UpdateSet].
+  ///
+  /// The result of the `set` function should always be immediately
+  /// returned from the [updateBuilder].
+  ///
+  /// **Example:** Insert a counter with `count = 2` or increment the
+  /// existing row, if a `PRIMARY KEY` conflict occurs.
+  /// ```dart
+  /// await db.counters.insertValue(
+  ///     name: 'my-counter', // primary key
+  ///     count: 2,
+  ///   )
+  ///   .onConflict(.primaryKey)
+  ///   .update((counter, excluded, set) => set(
+  ///     count: counter.count + excluded.count,
+  ///   ))
+  ///   .execute();
+  /// ```
+  ///
+  /// This is equivalent to
+  /// `INSERT ... ON CONFLICT (...) UPDATE SET ...` in SQL.
+  ///
+  /// > [!WARNING]
+  /// > The `updateBuilder` callback does not make the update, it builds
+  /// > the expressions for updating the rows. You should **never** invoke
+  /// > the `set` function more than once, and the result should always
+  /// > be returned immediately.
+  ///
+  /// [1]: https://www.sqlite.org/lang_upsert.html
+  Upsert<SubscriptionTransactionRow> update(
+    UpdateSet<SubscriptionTransactionRow> Function(
+      Expr<SubscriptionTransactionRow> subscriptionTransactionRow,
+      Expr<SubscriptionTransactionRow> excluded,
+      UpdateSet<SubscriptionTransactionRow> Function({
+        Expr<String> id,
+        Expr<String> storeId,
+        Expr<String> planCode,
+        Expr<int> amountInPaise,
+        Expr<String> currency,
+        Expr<String> paymentMethod,
+        Expr<String> status,
+        Expr<String?> reference,
+        Expr<DateTime> createdAt,
+      })
+      set,
+    )
+    updateBuilder,
+  ) => $ForGeneratedCode.updateOnConflict<SubscriptionTransactionRow>(
+    this,
+    (subscriptionTransactionRow, excluded) => updateBuilder(
+      subscriptionTransactionRow,
+      excluded,
+      ({
+        Expr<String>? id,
+        Expr<String>? storeId,
+        Expr<String>? planCode,
+        Expr<int>? amountInPaise,
+        Expr<String>? currency,
+        Expr<String>? paymentMethod,
+        Expr<String>? status,
+        Expr<String?>? reference,
+        Expr<DateTime>? createdAt,
+      }) => $ForGeneratedCode.buildUpdate<SubscriptionTransactionRow>([
+        id,
+        storeId,
+        planCode,
+        amountInPaise,
+        currency,
+        paymentMethod,
+        status,
+        reference,
+        createdAt,
+      ]),
+    ),
+  );
+}
+
+extension InsertSingleSubscriptionTransactionRowExt
+    on InsertSingle<SubscriptionTransactionRow> {
+  /// Build an `INSERT` statement with an `ON CONFLICT` clause.
+  ///
+  /// The [target] argument specifies the _conflict target_ to be
+  /// handled. The _conflict target_ is always a `UNIQUE` constraint or
+  /// `PRIMARY KEY` constraint.
+  ///
+  /// If a row to be inserted violates the _conflict target_ constraint,
+  /// then the conflict action is triggered:
+  /// * `.doNothing()` to skip insertion of the new row, and,
+  /// * `.update((subscriptionTransactionRow, excluded, set) => set(...))` to
+  ///   update the conflicting row.
+  ///
+  /// If a row to be inserted violates a constraint other than the one
+  /// specified in _conflict target_ then the entire `INSERT` statement
+  /// will fail.
+  ///
+  /// This is equivalent to `INSERT ... ON CONFLICT (...)` in SQL.
+  InsertOnConflictSingle<SubscriptionTransactionRow> onConflict(
+    SubscriptionTransactionRowConflict target,
+  ) => $ForGeneratedCode.insertOnConflictSingle(this, target._fields);
+}
+
+extension InsertOnConflictSingleSubscriptionTransactionRowExt
+    on InsertOnConflictSingle<SubscriptionTransactionRow> {
+  /// Build an `INSERT` statement an [upsert-clause][1].
+  ///
+  /// When a row to be inserted violates the `UNIQUE` or `PRIMARY KEY`
+  /// constraint previously specified as _conflict target_, the existing
+  /// row is updated using the expressions defined with the
+  /// [updateBuilder]. The [updateBuilder] is given 3 parameters:
+  ///   * `subscriptionTransactionRow` an [Expr] representing the existing row in
+  ///     the database,
+  ///   * `excluded` an [Expr] representing the row to be inserted in the
+  ///     database, and,
+  ///   * `set` a function to specify which fields should be updated and
+  ///     build the [UpdateSet].
+  ///
+  /// The result of the `set` function should always be immediately
+  /// returned from the [updateBuilder].
+  ///
+  /// **Example:** Insert a counter with `count = 2` or increment the
+  /// existing row, if a `PRIMARY KEY` conflict occurs.
+  /// ```dart
+  /// await db.counters.insertValue(
+  ///     name: 'my-counter', // primary key
+  ///     count: 2,
+  ///   )
+  ///   .onConflict(.primaryKey)
+  ///   .update((counter, excluded, set) => set(
+  ///     count: counter.count + excluded.count,
+  ///   ))
+  ///   .execute();
+  /// ```
+  ///
+  /// This is equivalent to
+  /// `INSERT ... ON CONFLICT (...) UPDATE SET ...` in SQL.
+  ///
+  /// > [!WARNING]
+  /// > The `updateBuilder` callback does not make the update, it builds
+  /// > the expressions for updating the rows. You should **never** invoke
+  /// > the `set` function more than once, and the result should always
+  /// > be returned immediately.
+  ///
+  /// [1]: https://www.sqlite.org/lang_upsert.html
+  UpsertSingle<SubscriptionTransactionRow> update(
+    UpdateSet<SubscriptionTransactionRow> Function(
+      Expr<SubscriptionTransactionRow> subscriptionTransactionRow,
+      Expr<SubscriptionTransactionRow> excluded,
+      UpdateSet<SubscriptionTransactionRow> Function({
+        Expr<String> id,
+        Expr<String> storeId,
+        Expr<String> planCode,
+        Expr<int> amountInPaise,
+        Expr<String> currency,
+        Expr<String> paymentMethod,
+        Expr<String> status,
+        Expr<String?> reference,
+        Expr<DateTime> createdAt,
+      })
+      set,
+    )
+    updateBuilder,
+  ) => $ForGeneratedCode.updateOnConflictSingle<SubscriptionTransactionRow>(
+    this,
+    (subscriptionTransactionRow, excluded) => updateBuilder(
+      subscriptionTransactionRow,
+      excluded,
+      ({
+        Expr<String>? id,
+        Expr<String>? storeId,
+        Expr<String>? planCode,
+        Expr<int>? amountInPaise,
+        Expr<String>? currency,
+        Expr<String>? paymentMethod,
+        Expr<String>? status,
+        Expr<String?>? reference,
+        Expr<DateTime>? createdAt,
+      }) => $ForGeneratedCode.buildUpdate<SubscriptionTransactionRow>([
+        id,
+        storeId,
+        planCode,
+        amountInPaise,
+        currency,
+        paymentMethod,
+        status,
+        reference,
+        createdAt,
+      ]),
+    ),
+  );
+}
+
 /// Extension methods for building queries projected to a named record.
 extension QueryItemsTotalNamed<A, B>
     on Query<({Expr<A> items, Expr<B> total})> {
@@ -19015,6 +21397,165 @@ extension QueryBalanceTransactionsNamed<A, B>
   /// returned by [conditionBuilder] evaluates to `true`.
   Query<({Expr<A> balance, Expr<B> transactions})> where(
     Expr<bool?> Function(({Expr<A> balance, Expr<B> transactions}) expr)
+    conditionBuilder,
+  ) => _fromPositionalQuery(
+    _asPositionalQuery.where(_wrapBuilder(conditionBuilder)),
+  );
+}
+
+/// Extension methods for building queries projected to a named record.
+extension QueryActualWalletDeductionPaiseRemainingPayablePaiseTotalAmountPaiseNamed<
+  A,
+  B,
+  C
+>
+    on
+        Query<
+          ({
+            Expr<A> actualWalletDeductionPaise,
+            Expr<B> remainingPayablePaise,
+            Expr<C> totalAmountPaise,
+          })
+        > {
+  Query<(Expr<A>, Expr<B>, Expr<C>)> get _asPositionalQuery =>
+      $ForGeneratedCode.renamedRecord(
+        this,
+        (e) => (
+          e.actualWalletDeductionPaise,
+          e.remainingPayablePaise,
+          e.totalAmountPaise,
+        ),
+      );
+
+  static Query<
+    ({
+      Expr<A> actualWalletDeductionPaise,
+      Expr<B> remainingPayablePaise,
+      Expr<C> totalAmountPaise,
+    })
+  >
+  _fromPositionalQuery<A, B, C>(Query<(Expr<A>, Expr<B>, Expr<C>)> query) =>
+      $ForGeneratedCode.renamedRecord(
+        query,
+        (e) => (
+          actualWalletDeductionPaise: e.$1,
+          remainingPayablePaise: e.$2,
+          totalAmountPaise: e.$3,
+        ),
+      );
+
+  static T Function(Expr<A> a, Expr<B> b, Expr<C> c) _wrapBuilder<T, A, B, C>(
+    T Function(
+      ({
+        Expr<A> actualWalletDeductionPaise,
+        Expr<B> remainingPayablePaise,
+        Expr<C> totalAmountPaise,
+      })
+      e,
+    )
+    builder,
+  ) =>
+      (a, b, c) => builder((
+        actualWalletDeductionPaise: a,
+        remainingPayablePaise: b,
+        totalAmountPaise: c,
+      ));
+
+  /// Query the database for rows in this [Query] as a [Stream].
+  Stream<
+    ({
+      A actualWalletDeductionPaise,
+      B remainingPayablePaise,
+      C totalAmountPaise,
+    })
+  >
+  stream() async* {
+    yield* _asPositionalQuery.stream().map(
+      (e) => (
+        actualWalletDeductionPaise: e.$1,
+        remainingPayablePaise: e.$2,
+        totalAmountPaise: e.$3,
+      ),
+    );
+  }
+
+  /// Query the database for rows in this [Query] as a [List].
+  Future<
+    List<
+      ({
+        A actualWalletDeductionPaise,
+        B remainingPayablePaise,
+        C totalAmountPaise,
+      })
+    >
+  >
+  fetch() async => await stream().toList();
+
+  /// Offset [Query] using `OFFSET` clause.
+  ///
+  /// The resulting [Query] will skip the first [offset] rows.
+  Query<
+    ({
+      Expr<A> actualWalletDeductionPaise,
+      Expr<B> remainingPayablePaise,
+      Expr<C> totalAmountPaise,
+    })
+  >
+  offset(int offset) => _fromPositionalQuery(_asPositionalQuery.offset(offset));
+
+  /// Limit [Query] using `LIMIT` clause.
+  ///
+  /// The resulting [Query] will only return the first [limit] rows.
+  Query<
+    ({
+      Expr<A> actualWalletDeductionPaise,
+      Expr<B> remainingPayablePaise,
+      Expr<C> totalAmountPaise,
+    })
+  >
+  limit(int limit) => _fromPositionalQuery(_asPositionalQuery.limit(limit));
+
+  /// Create a projection of this [Query] using `SELECT` clause.
+  ///
+  /// The [projectionBuilder] **must** return a [Record] where all the
+  /// values are [Expr] objects. If something else is returned you will
+  /// get a [Query] object which doesn't have any methods!
+  ///
+  /// All methods and properties on [Query<T>] are extension methods and
+  /// they are only defined for records `T` where all the values are
+  /// [Expr] objects.
+  Query<T> select<T extends Record>(
+    T Function(
+      ({
+        Expr<A> actualWalletDeductionPaise,
+        Expr<B> remainingPayablePaise,
+        Expr<C> totalAmountPaise,
+      })
+      expr,
+    )
+    projectionBuilder,
+  ) => _asPositionalQuery.select(_wrapBuilder(projectionBuilder));
+
+  /// Filter [Query] using `WHERE` clause.
+  ///
+  /// Returns a [Query] retaining rows from this [Query] where the expression
+  /// returned by [conditionBuilder] evaluates to `true`.
+  Query<
+    ({
+      Expr<A> actualWalletDeductionPaise,
+      Expr<B> remainingPayablePaise,
+      Expr<C> totalAmountPaise,
+    })
+  >
+  where(
+    Expr<bool?> Function(
+      ({
+        Expr<A> actualWalletDeductionPaise,
+        Expr<B> remainingPayablePaise,
+        Expr<C> totalAmountPaise,
+      })
+      expr,
+    )
     conditionBuilder,
   ) => _fromPositionalQuery(
     _asPositionalQuery.where(_wrapBuilder(conditionBuilder)),

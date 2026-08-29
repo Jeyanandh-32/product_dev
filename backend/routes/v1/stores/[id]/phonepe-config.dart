@@ -73,7 +73,7 @@ Future<Response> _onPutOrPatch(RequestContext context, String storeId) async {
         .first
         .fetch();
 
-    final StorePhonePeConfigRow savedRow;
+    final StorePhonePeConfigRow? savedRow;
 
     if (existing == null) {
       savedRow = await db.storePhonepeConfigs
@@ -98,15 +98,19 @@ Future<Response> _onPutOrPatch(RequestContext context, String storeId) async {
           .returnInserted()
           .executeAndFetch();
     } else {
-      final updated = await db.storePhonepeConfigs
+      savedRow = await db.storePhonepeConfigs
           .byKey(existing.id)
           .update(
             (c, set) => set(
               isEnabled: toExpr(isEnabled),
               env: toExpr(env),
               clientId: clientId != null ? toExpr(clientId) : c.clientId,
-              clientVersion: clientVersion != null ? toExpr(clientVersion) : c.clientVersion,
-              clientSecret: clientSecret != null ? toExpr(clientSecret) : c.clientSecret,
+              clientVersion: clientVersion != null
+                  ? toExpr(clientVersion)
+                  : c.clientVersion,
+              clientSecret: clientSecret != null
+                  ? toExpr(clientSecret)
+                  : c.clientSecret,
               saltKey: saltKey != null ? toExpr(saltKey) : c.saltKey,
               saltIndex: saltIndex != null ? toExpr(saltIndex) : c.saltIndex,
               enableUpi: toExpr(enableUpi),
@@ -114,17 +118,21 @@ Future<Response> _onPutOrPatch(RequestContext context, String storeId) async {
               enableNetBanking: toExpr(enableNetBanking),
               enableEmi: toExpr(enableEmi),
               enableWallets: toExpr(enableWallets),
-              allowedUpiApps: allowedUpiApps != null ? toExpr(allowedUpiApps) : c.allowedUpiApps,
+              allowedUpiApps: allowedUpiApps != null
+                  ? toExpr(allowedUpiApps)
+                  : c.allowedUpiApps,
               webhookAuthType: toExpr(webhookAuthType),
-              webhookSecretKey: webhookSecretKey != null ? toExpr(webhookSecretKey) : c.webhookSecretKey,
+              webhookSecretKey: webhookSecretKey != null
+                  ? toExpr(webhookSecretKey)
+                  : c.webhookSecretKey,
               updatedAt: Expr.currentTimestamp,
             ),
           )
           .returnUpdated()
           .executeAndFetch();
-      savedRow = updated!;
     }
 
+    if (savedRow == null) return error(message: 'Failed to update config');
     return success(data: {'config': savedRow.toStorePhonePeConfig()});
   } catch (e) {
     return error(message: e.toString());

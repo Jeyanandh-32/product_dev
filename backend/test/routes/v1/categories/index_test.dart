@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:backend/database/schema.dart';
 import 'package:backend/enums/user_role.dart';
 import 'package:backend/models/token_payload/token_payload.dart';
 import 'package:backend/repositories/category_repository.dart';
@@ -11,6 +10,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
 import '../../../../routes/v1/categories/index.dart' as route;
+import '../../../helpers/schema_factories.dart';
 
 class _MockRequestContext extends Mock implements RequestContext {}
 class _MockRequest extends Mock implements Request {}
@@ -44,7 +44,7 @@ void main() {
       when(() => request.uri).thenReturn(Uri.parse('http://localhost/v1/categories?storeId=$validStoreId'));
 
       final storeRow = createStoreRow(id: validStoreId);
-      final catRows = [createCategoryRow(name: 'Drinks', storeId: validStoreId)];
+      final catRows = [createCategoryRow(storeId: validStoreId)];
 
       when(() => storeRepo.getById(validStoreId)).thenAnswer((_) async => storeRow);
       when(() => catRepo.getAll(merchantId: 'm-1', storeId: validStoreId, limit: 50, offset: 0))

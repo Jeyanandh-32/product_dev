@@ -22,7 +22,8 @@ class StoreWalletCard extends StatelessComponent {
 
   @override
   Component build(BuildContext context) {
-    final isBottleStore = currentStore?.isBottleReturnEnabled == true ||
+    final isBottleStore =
+        currentStore?.isBottleReturnEnabled == true ||
         currentStore?.storeType?.toLowerCase() == 'liquor';
 
     final title = isBottleStore ? 'Bottle Return Rewards' : 'Store Wallet';
@@ -32,8 +33,7 @@ class StoreWalletCard extends StatelessComponent {
     final historyBtnLabel = isBottleStore ? 'Reward History' : 'Transactions';
 
     return div(
-      classes:
-          'bg-white rounded-3xl border border-gray-200/90 p-6 sm:p-8 shadow-xs flex flex-col gap-6',
+      classes: 'bg-white rounded-3xl border border-gray-200/90 p-6 sm:p-8 shadow-xs flex flex-col gap-6',
       [
         div(
           classes:
@@ -48,19 +48,17 @@ class StoreWalletCard extends StatelessComponent {
                 .text(title),
               ]),
             ]),
-            if (currentStore != null)
+            if (currentStore case final store?)
               span(
-                classes:
-                    'text-xs font-bold px-3 py-1 rounded-full border bg-emerald-50 text-emerald-700 border-emerald-200',
-                [.text(currentStore!.name)],
+                classes: 'text-xs font-bold px-3 py-1 rounded-full border bg-emerald-50 text-emerald-700 border-emerald-200',
+                [.text(store.name)],
               ),
           ],
         ),
 
         if (storeId != null)
           div(
-            classes:
-                'flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-1',
+            classes: 'flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-1',
             [
               div(classes: 'flex flex-col gap-1', [
                 div(classes: 'flex items-baseline gap-1', [
@@ -69,8 +67,7 @@ class StoreWalletCard extends StatelessComponent {
                     [.text('₹')],
                   ),
                   span(
-                    classes:
-                        'text-2xl sm:text-3xl font-extrabold text-black tracking-tight',
+                    classes: 'text-2xl sm:text-3xl font-extrabold text-black tracking-tight',
                     [
                       .text(walletBalance.toStringAsFixed(2)),
                     ],
@@ -84,8 +81,7 @@ class StoreWalletCard extends StatelessComponent {
               div(classes: 'flex items-center gap-2.5', [
                 if (!isBottleStore)
                   button(
-                    classes:
-                        'flex-1 sm:flex-none justify-center flex items-center gap-1.5 px-4 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition-all border-0 cursor-pointer active:scale-95 shadow-xs',
+                    classes: 'flex-1 sm:flex-none justify-center flex items-center gap-1.5 px-4 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition-all border-0 cursor-pointer active:scale-95 shadow-xs',
                     onClick: onAddMoney,
                     [
                       Plus(classes: 'w-4 h-4 text-white'),
@@ -93,8 +89,7 @@ class StoreWalletCard extends StatelessComponent {
                     ],
                   ),
                 button(
-                  classes:
-                      'flex-1 sm:flex-none justify-center flex items-center gap-1.5 px-4 py-2.5 rounded-2xl bg-black hover:bg-gray-800 text-white font-bold text-xs transition-all border-0 cursor-pointer active:scale-95 shadow-xs',
+                  classes: 'flex-1 sm:flex-none justify-center flex items-center gap-1.5 px-4 py-2.5 rounded-2xl bg-black hover:bg-gray-800 text-white font-bold text-xs transition-all border-0 cursor-pointer active:scale-95 shadow-xs',
                   onClick: onViewTransactions,
                   [
                     History(classes: 'w-4 h-4 text-white'),
@@ -106,12 +101,10 @@ class StoreWalletCard extends StatelessComponent {
           )
         else
           div(
-            classes:
-                'flex flex-col items-center justify-center py-6 text-center gap-3',
+            classes: 'flex flex-col items-center justify-center py-6 text-center gap-3',
             [
               div(
-                classes:
-                    'w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center text-gray-400',
+                classes: 'w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center text-gray-400',
                 [Building2(classes: 'w-6 h-6')],
               ),
               div(classes: 'flex flex-col gap-1', [
@@ -127,8 +120,7 @@ class StoreWalletCard extends StatelessComponent {
               ]),
               a(
                 href: '/',
-                classes:
-                    'mt-2 inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-black text-white font-bold text-xs hover:bg-gray-800 transition-all no-underline',
+                classes: 'mt-2 inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-black text-white font-bold text-xs hover:bg-gray-800 transition-all no-underline',
                 [
                   ShoppingBag(classes: 'w-3.5 h-3.5 text-white'),
                   .text('Explore Stores'),

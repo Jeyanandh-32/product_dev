@@ -2,6 +2,7 @@ analyzer:
   exclude:
     - "**/*.g.dart"
     - "**/*.freezed.dart"
+    - "**/.dart_frog/**"
     - build/**
     - android/**
     - ios/**
@@ -13,4 +14,8 @@ analyzer:
     invalid_annotation_target: ignore
     lines_longer_than_80_chars: ignore
     public_member_api_docs: ignore
+    avoid_dynamic_calls: ignore
+    inference_failure_on_untyped_parameter: ignore
+    inference_failure_on_function_invocation: ignore
+    inference_failure_on_instance_creation: ignore
 include: package:dart_frog_lint/recommended.yaml

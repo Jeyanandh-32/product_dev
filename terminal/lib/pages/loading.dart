@@ -24,10 +24,10 @@ class Loading extends StatelessWidget {
               ),
             ),
           ),
-          if (message != null) ...[
+          if (message case final msg?) ...[
             const Gap(14),
             Text(
-              message!,
+              msg,
               style: const TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w700,

@@ -31,8 +31,7 @@ class SecurityPinCard extends StatelessComponent {
   @override
   Component build(BuildContext context) {
     return div(
-      classes:
-          'bg-white rounded-3xl border border-gray-200/90 p-6 sm:p-8 shadow-xs flex flex-col gap-6',
+      classes: 'bg-white rounded-3xl border border-gray-200/90 p-6 sm:p-8 shadow-xs flex flex-col gap-6',
       [
         div(
           classes:
@@ -46,8 +45,7 @@ class SecurityPinCard extends StatelessComponent {
             ]),
             if (!isEditing)
               button(
-                classes:
-                    'flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gray-100 hover:bg-black hover:text-white text-gray-700 font-bold text-xs transition-all border-0 cursor-pointer active:scale-95',
+                classes: 'flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gray-100 hover:bg-black hover:text-white text-gray-700 font-bold text-xs transition-all border-0 cursor-pointer active:scale-95',
                 onClick: onStartEdit,
                 [
                   KeyRound(classes: 'w-3.5 h-3.5'),
@@ -65,21 +63,19 @@ class SecurityPinCard extends StatelessComponent {
               onConfirmPinChanged: onConfirmPinChanged,
             ),
 
-            if (error != null)
+            if (error case final msg? when msg.isNotEmpty)
               p(classes: 'text-xs text-red-600 font-semibold mt-0.5', [
-                .text(error!),
+                .text(msg),
               ]),
 
             div(classes: 'flex items-center justify-end gap-2 pt-2', [
               button(
-                classes:
-                    'px-4 py-2 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs transition-all border-0 cursor-pointer',
+                classes: 'px-4 py-2 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs transition-all border-0 cursor-pointer',
                 onClick: onCancel,
                 [.text('Cancel')],
               ),
               button(
-                classes:
-                    'px-5 py-2 rounded-xl bg-black text-white hover:bg-gray-800 font-bold text-xs transition-all border-0 cursor-pointer shadow-2xs flex items-center gap-1.5',
+                classes: 'px-5 py-2 rounded-xl bg-black text-white hover:bg-gray-800 font-bold text-xs transition-all border-0 cursor-pointer shadow-2xs flex items-center gap-1.5',
                 onClick: isSaving ? null : onSave,
                 [
                   if (isSaving)

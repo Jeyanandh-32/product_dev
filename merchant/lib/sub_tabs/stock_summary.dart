@@ -79,8 +79,7 @@ class _StockSummaryState extends SignalState<StockSummary> {
     final totalItems = reportState.value?.totalItems ?? 0;
 
     return div(
-      classes:
-          'flex flex-col flex-1 min-h-0 m-4 bg-white rounded-2xl border border-border-medium shadow-xs overflow-hidden',
+      classes: 'flex flex-col flex-1 min-h-0 m-4 bg-white rounded-2xl border border-border-medium shadow-xs overflow-hidden',
       [
         StockSummaryToolbar(
           entries: entries,
@@ -94,15 +93,14 @@ class _StockSummaryState extends SignalState<StockSummary> {
           },
         ),
 
-        if (showReportsStatsSignal.value &&
-            reportState.hasValue &&
-            reportState.value != null)
-          StockSummaryCards(
-            totalIn: reportState.value!.totalIn,
-            totalOut: reportState.value!.totalOut,
-            totalWastage: reportState.value!.totalWastage,
-            totalAdjustment: reportState.value!.totalAdjustment,
-          ),
+        if (showReportsStatsSignal.value)
+          if (reportState.value case final reportSummary?)
+            StockSummaryCards(
+              totalIn: reportSummary.totalIn,
+              totalOut: reportSummary.totalOut,
+              totalWastage: reportSummary.totalWastage,
+              totalAdjustment: reportSummary.totalAdjustment,
+            ),
 
         if (storesSignal.value.isLoading || reportState.isLoading)
           Loading(text: 'Loading stock summary...', fullScreen: false)
@@ -114,7 +112,7 @@ class _StockSummaryState extends SignalState<StockSummary> {
                 ? (reportState.error as ApiException).message
                 : 'Failed to load stock summary. Please try again.',
           )
-        else if (reportState.hasValue && reportState.value!.items.isEmpty)
+        else if (reportState.value?.items.isEmpty ?? true)
           CenteredMessage(message: 'No Stock Summary data found.')
         else
           StockSummaryTableView(

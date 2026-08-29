@@ -12,7 +12,7 @@ class Database {
   static bool _warmedUp = false;
 
   static Pool<Object> get pool {
-    _pool ??= Pool.withEndpoints(
+    return _pool ??= Pool.withEndpoints(
       [
         Endpoint(
           host: Env.dbHost,
@@ -27,7 +27,6 @@ class Database {
         maxConnectionCount: Env.dbMaxConnections,
       ),
     );
-    return _pool!;
   }
 
   static final db = ts.Database<DatabaseSchema>(

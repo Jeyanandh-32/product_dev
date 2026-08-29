@@ -2,10 +2,8 @@ import 'package:jaspr/client.dart';
 import 'package:jaspr/dom.dart';
 import 'package:merchant/components/centered_message.dart';
 import 'package:merchant/components/loading.dart';
-import 'package:merchant/components/modals/add_edit_category_modal.dart';
-import 'package:merchant/components/modals/add_edit_product_modal.dart';
-import 'package:merchant/components/modals/update_stock_modal.dart';
 import 'package:merchant/components/reports/products_empty_state.dart';
+import 'package:merchant/components/reports/products_modals_host.dart';
 import 'package:merchant/components/reports/products_table_header.dart';
 import 'package:merchant/components/reports/products_table_view.dart';
 import 'package:merchant/components/reports/products_toolbar.dart';
@@ -34,9 +32,8 @@ class _ProductsState extends SignalState<Products> {
   bool? _statusFilter;
   bool? _stockMonitorFilter;
 
-  void _onSort(ProductSortKey key) {
-    setState(() => _sortState = _sortState.toggle(key));
-  }
+  void _onSort(ProductSortKey key) =>
+      setState(() => _sortState = _sortState.toggle(key));
 
   @override
   void initState() {
@@ -89,21 +86,11 @@ class _ProductsState extends SignalState<Products> {
     final products = productsSignal.value;
     final categories = categoriesSignal.value.value ?? [];
     final hasCategories = categories.isNotEmpty;
-    final isAddCategory = activeModalSignal.value == ActiveModal.addCategory;
-    final isAddEditProd =
-        activeModalSignal.value == ActiveModal.addProduct ||
-        activeModalSignal.value == ActiveModal.editProduct;
 
     return div(
       classes: 'flex flex-col flex-1 min-h-0 m-4 bg-white rounded-2xl border border-border-medium shadow-xs overflow-hidden',
       [
-        if (isAddCategory)
-          AddEditCategoryModal(category: editingCategorySignal.value),
-        if (isAddEditProd)
-          AddEditProductModal(product: editingProductSignal.value),
-        if (activeModalSignal.value == ActiveModal.updateStock &&
-            editingProductSignal.value != null)
-          UpdateStockModal(product: editingProductSignal.value!),
+        const ProductsModalsHost(),
         ProductsToolbar(
           entries: entries,
           currentPage: productsPageSignal.value,

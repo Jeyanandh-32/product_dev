@@ -2,6 +2,7 @@ import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_lucide/jaspr_lucide.dart' hide List;
 
+/// Direction options for table column sorting.
 enum SortDirection {
   asc,
   desc,
@@ -14,6 +15,7 @@ enum SortDirection {
   };
 }
 
+/// Represents current sort key and direction state.
 class SortState<K extends Enum> {
   const SortState({this.key, this.direction = SortDirection.none});
 
@@ -31,6 +33,7 @@ class SortState<K extends Enum> {
   }
 }
 
+/// Clickable sort header widget with directional arrow indicators.
 class SortableHeader<K extends Enum> extends StatelessComponent {
   const SortableHeader({
     super.key,
@@ -58,8 +61,7 @@ class SortableHeader<K extends Enum> extends StatelessComponent {
       .asc => ArrowUp(classes: 'w-3.5 h-3.5 text-primary ml-1.5 shrink-0'),
       .desc => ArrowDown(classes: 'w-3.5 h-3.5 text-primary ml-1.5 shrink-0'),
       .none => ArrowUpDown(
-        classes:
-            'w-3.5 h-3.5 text-gray-400 group-hover:text-gray-600 ml-1.5 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity',
+        classes: 'w-3.5 h-3.5 text-gray-400 group-hover:text-gray-600 ml-1.5 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity',
       ),
     };
 
@@ -95,12 +97,12 @@ List<T> sortItems<T, K extends Enum>({
   required SortState<K> sortState,
   required Comparable<dynamic>? Function(T item, K key) getSortValue,
 }) {
-  if (sortState.key == null || sortState.direction == SortDirection.none) {
+  final key = sortState.key;
+  if (key == null || sortState.direction == SortDirection.none) {
     return items;
   }
 
   final sorted = List<T>.from(items);
-  final key = sortState.key!;
   final isAsc = sortState.direction == SortDirection.asc;
 
   sorted.sort((itemA, itemB) {

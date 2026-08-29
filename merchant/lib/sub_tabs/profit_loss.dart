@@ -79,8 +79,7 @@ class _ProfitLossState extends SignalState<ProfitLoss> {
     final totalItems = reportState.value?.totalItems ?? 0;
 
     return div(
-      classes:
-          'flex flex-col flex-1 min-h-0 m-4 bg-white rounded-2xl border border-border-medium shadow-xs overflow-hidden',
+      classes: 'flex flex-col flex-1 min-h-0 m-4 bg-white rounded-2xl border border-border-medium shadow-xs overflow-hidden',
       [
         ProfitLossToolbar(
           entries: entries,
@@ -94,15 +93,14 @@ class _ProfitLossState extends SignalState<ProfitLoss> {
           },
         ),
 
-        if (showReportsStatsSignal.value &&
-            reportState.hasValue &&
-            reportState.value != null)
-          ProfitLossSummaryCards(
-            totalCostPrice: reportState.value!.totalCostPrice,
-            totalCollectedPrice: reportState.value!.totalCollectedPrice,
-            totalProfit: reportState.value!.totalProfit,
-            totalMarginPercentage: reportState.value!.totalMarginPercentage,
-          ),
+        if (showReportsStatsSignal.value)
+          if (reportState.value case final reportSummary?)
+            ProfitLossSummaryCards(
+              totalCostPrice: reportSummary.totalCostPrice,
+              totalCollectedPrice: reportSummary.totalCollectedPrice,
+              totalProfit: reportSummary.totalProfit,
+              totalMarginPercentage: reportSummary.totalMarginPercentage,
+            ),
 
         if (storesSignal.value.isLoading || reportState.isLoading)
           Loading(text: 'Loading profit & loss report...', fullScreen: false)
@@ -114,7 +112,7 @@ class _ProfitLossState extends SignalState<ProfitLoss> {
                 ? (reportState.error as ApiException).message
                 : 'Failed to load report. Please try again.',
           )
-        else if (reportState.hasValue && reportState.value!.items.isEmpty)
+        else if (reportState.value?.items.isEmpty ?? true)
           CenteredMessage(message: 'No Profit & Loss data found.')
         else
           ProfitLossTableView(

@@ -24,33 +24,116 @@ import 'package:typed_sql/typed_sql.dart' as ts;
 Middleware providerMiddleware() {
   return (handler) {
     return handler
-        .use(provider<ProductService>((c) => ProductService(
+        .use(
+          provider<ProductService>(
+            (c) => ProductService(
               productRepo: c.read<ProductRepository>(),
               stockRepo: c.read<StockRepository>(),
               categoryRepo: c.read<CategoryRepository>(),
               counterRepo: c.read<CounterRepository>(),
-            )))
-        .use(provider<OrderService>((c) => OrderService(
+            ),
+          ),
+        )
+        .use(
+          provider<OrderService>(
+            (c) => OrderService(
               orderRepo: c.read<OrderRepository>(),
               orderItemRepo: c.read<OrderItemRepository>(),
               productRepo: c.read<ProductRepository>(),
               stockRepo: c.read<StockRepository>(),
-            )))
-        .use(provider<BottleReturnDispenserHandler>((c) => BottleReturnDispenserHandler(db: c.read<ts.Database<DatabaseSchema>>())))
-        .use(provider<BottleReturnProductHandler>((c) => BottleReturnProductHandler(db: c.read<ts.Database<DatabaseSchema>>())))
-        .use(provider<BottleReturnSessionHandler>((c) => BottleReturnSessionHandler(db: c.read<ts.Database<DatabaseSchema>>())))
-        .use(provider<BottleReturnRepository>((c) => BottleReturnRepository(db: c.read<ts.Database<DatabaseSchema>>())))
-        .use(provider<OrderRepository>((c) => OrderRepository(db: c.read<ts.Database<DatabaseSchema>>())))
-        .use(provider<OrderItemRepository>((c) => OrderItemRepository(db: c.read<ts.Database<DatabaseSchema>>())))
-        .use(provider<ProductRepository>((c) => ProductRepository(db: c.read<ts.Database<DatabaseSchema>>())))
-        .use(provider<StockRepository>((c) => StockRepository(db: c.read<ts.Database<DatabaseSchema>>())))
-        .use(provider<CategoryRepository>((c) => CategoryRepository(db: c.read<ts.Database<DatabaseSchema>>())))
-        .use(provider<CounterRepository>((c) => CounterRepository(db: c.read<ts.Database<DatabaseSchema>>())))
-        .use(provider<TerminalRepository>((c) => TerminalRepository(db: c.read<ts.Database<DatabaseSchema>>())))
-        .use(provider<StoreRepository>((c) => StoreRepository(db: c.read<ts.Database<DatabaseSchema>>())))
-        .use(provider<MerchantSettingsRepository>((c) => MerchantSettingsRepository(db: c.read<ts.Database<DatabaseSchema>>())))
-        .use(provider<CustomerRepository>((c) => CustomerRepository(db: c.read<ts.Database<DatabaseSchema>>())))
-        .use(provider<MerchantRepository>((c) => MerchantRepository(db: c.read<ts.Database<DatabaseSchema>>())))
+            ),
+          ),
+        )
+        .use(
+          provider<BottleReturnDispenserHandler>(
+            (c) => BottleReturnDispenserHandler(
+              db: c.read<ts.Database<DatabaseSchema>>(),
+            ),
+          ),
+        )
+        .use(
+          provider<BottleReturnProductHandler>(
+            (c) => BottleReturnProductHandler(
+              db: c.read<ts.Database<DatabaseSchema>>(),
+            ),
+          ),
+        )
+        .use(
+          provider<BottleReturnSessionHandler>(
+            (c) => BottleReturnSessionHandler(
+              db: c.read<ts.Database<DatabaseSchema>>(),
+            ),
+          ),
+        )
+        .use(
+          provider<BottleReturnRepository>(
+            (c) => BottleReturnRepository(
+              db: c.read<ts.Database<DatabaseSchema>>(),
+            ),
+          ),
+        )
+        .use(
+          provider<OrderRepository>(
+            (c) => OrderRepository(db: c.read<ts.Database<DatabaseSchema>>()),
+          ),
+        )
+        .use(
+          provider<OrderItemRepository>(
+            (c) =>
+                OrderItemRepository(db: c.read<ts.Database<DatabaseSchema>>()),
+          ),
+        )
+        .use(
+          provider<ProductRepository>(
+            (c) => ProductRepository(db: c.read<ts.Database<DatabaseSchema>>()),
+          ),
+        )
+        .use(
+          provider<StockRepository>(
+            (c) => StockRepository(db: c.read<ts.Database<DatabaseSchema>>()),
+          ),
+        )
+        .use(
+          provider<CategoryRepository>(
+            (c) =>
+                CategoryRepository(db: c.read<ts.Database<DatabaseSchema>>()),
+          ),
+        )
+        .use(
+          provider<CounterRepository>(
+            (c) => CounterRepository(db: c.read<ts.Database<DatabaseSchema>>()),
+          ),
+        )
+        .use(
+          provider<TerminalRepository>(
+            (c) =>
+                TerminalRepository(db: c.read<ts.Database<DatabaseSchema>>()),
+          ),
+        )
+        .use(
+          provider<StoreRepository>(
+            (c) => StoreRepository(db: c.read<ts.Database<DatabaseSchema>>()),
+          ),
+        )
+        .use(
+          provider<MerchantSettingsRepository>(
+            (c) => MerchantSettingsRepository(
+              db: c.read<ts.Database<DatabaseSchema>>(),
+            ),
+          ),
+        )
+        .use(
+          provider<CustomerRepository>(
+            (c) =>
+                CustomerRepository(db: c.read<ts.Database<DatabaseSchema>>()),
+          ),
+        )
+        .use(
+          provider<MerchantRepository>(
+            (c) =>
+                MerchantRepository(db: c.read<ts.Database<DatabaseSchema>>()),
+          ),
+        )
         .use(provider<ts.Database<DatabaseSchema>>((_) => Database.db));
   };
 }

@@ -4,6 +4,7 @@ import 'package:jaspr_lucide/generated_icons/store.dart' as icon;
 import 'package:jaspr_lucide/jaspr_lucide.dart' hide List, Map, Router, Store;
 import 'package:models/models.dart';
 
+/// Search input and filter controls for discovering stores.
 class StoreSearchRow extends StatelessComponent {
   final Store store;
   final VoidCallback onOpen;
@@ -40,9 +41,9 @@ class StoreSearchRow extends StatelessComponent {
                 classes:
                     'flex items-center gap-2 text-xs text-gray-400 font-medium truncate',
                 [
-                  if (store.storeType != null)
+                  if (store.storeType case final type? when type.isNotEmpty)
                     span(classes: 'truncate', [
-                      .text(store.storeType!),
+                      .text(type),
                     ]),
                   if (store.slug != null) ...[
                     span([.text('•')]),

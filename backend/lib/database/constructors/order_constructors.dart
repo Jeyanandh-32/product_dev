@@ -1,0 +1,36 @@
+part of '../schema.dart';
+
+/// Constructs a [OrderRow] instance.
+OrderRow constructOrderRow({
+  required String id,
+  required String merchantId,
+  required String storeId,
+  required String orderReference,
+  required int billNo,
+  required String source,
+  required String type,
+  required String status,
+  required String paymentStatus,
+  required String paymentMethod,
+  required int subtotal,
+  required int taxTotal,
+  required int grandTotal,
+  required DateTime createdAt,
+  required DateTime updatedAt,
+  required int discountTotal,
+  required int walletDeduction,
+  String? terminalCode,
+  String? customerId,
+}) => _$OrderRow._(id, merchantId, storeId, orderReference, billNo, source, type, status, paymentStatus, paymentMethod, subtotal, taxTotal, grandTotal, terminalCode, createdAt, updatedAt, discountTotal, walletDeduction, customerId);
+
+/// Constructs a [OrderItemRow] instance.
+OrderItemRow constructOrderItemRow({
+  required String id,
+  required String orderId,
+  required String productId,
+  required String storeId,
+  required int quantity,
+  required int unitPrice,
+  required double taxRate,
+  required int discount,
+}) => _$OrderItemRow._(id, orderId, productId, storeId, quantity, unitPrice, taxRate, discount);

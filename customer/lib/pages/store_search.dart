@@ -46,10 +46,9 @@ class _StoreSearchPageState extends SignalState<StoreSearchPage> {
         final recentStores = await CustomerAuthRepository.getRecentStores();
         if (recentStores.isNotEmpty && mounted) {
           final lastStore = recentStores.first;
-          if (lastStore.slug != null &&
-              lastStore.slug!.isNotEmpty &&
-              lastStore.isOnlineEnabled) {
-            Router.of(context).replace('/store/${lastStore.slug!}');
+          if (lastStore.slug case final slug?
+              when slug.isNotEmpty && lastStore.isOnlineEnabled) {
+            Router.of(context).replace('/store/$slug');
             return;
           }
         }
@@ -62,8 +61,8 @@ class _StoreSearchPageState extends SignalState<StoreSearchPage> {
   }
 
   void _navigateToStore(m.Store store) {
-    if (store.slug != null && store.slug!.isNotEmpty) {
-      Router.of(context).push('/store/${store.slug!}');
+    if (store.slug case final slug? when slug.isNotEmpty) {
+      Router.of(context).push('/store/$slug');
     }
   }
 
@@ -98,8 +97,7 @@ class _StoreSearchPageState extends SignalState<StoreSearchPage> {
             'flex items-center justify-between border-t border-gray-200 pt-5',
         [
           h2(
-            classes:
-                'text-base sm:text-lg font-bold text-black tracking-tight',
+            classes: 'text-base sm:text-lg font-bold text-black tracking-tight',
             [
               .text(
                 _searchQuery.isEmpty ? 'All Online Stores' : 'Search Results',
@@ -116,8 +114,7 @@ class _StoreSearchPageState extends SignalState<StoreSearchPage> {
           onSelectStore: _navigateToStore,
         ),
         AsyncError() => div(
-          classes:
-              'p-6 bg-red-50 text-red-600 rounded-2xl text-center font-semibold border border-red-100 text-xs',
+          classes: 'p-6 bg-red-50 text-red-600 rounded-2xl text-center font-semibold border border-red-100 text-xs',
           [
             .text('Failed to load stores from server.'),
           ],

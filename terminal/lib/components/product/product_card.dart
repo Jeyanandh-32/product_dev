@@ -65,11 +65,11 @@ class ProductCard extends StatelessWidget {
                             color: Color(0xFF000000),
                           ),
                         ),
-                        if (product.description != null &&
-                            product.description!.trim().isNotEmpty) ...[
+                        if (product.description?.trim() case final desc?
+                            when desc.isNotEmpty) ...[
                           const Gap(4),
                           Text(
-                            product.description!,
+                            desc,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(

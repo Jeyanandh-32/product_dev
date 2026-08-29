@@ -2,6 +2,7 @@ import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:models/models.dart';
 
+/// Category filter pills row enabling customer catalog filtering.
 class StoreCategoryFilters extends StatelessComponent {
   final List<Category> categories;
   final String? selectedCategoryId;
@@ -41,9 +42,9 @@ class StoreCategoryFilters extends StatelessComponent {
                 : 'bg-gray-100 hover:bg-gray-200 text-black font-extrabold text-sm sm:text-base py-1.5 pl-1.5 pr-4 rounded-full cursor-pointer border-0 transition-all flex items-center gap-2.5 shrink-0',
             onClick: () => onSelectCategory(cat.id),
             [
-              if (cat.imageUrl != null && cat.imageUrl!.trim().isNotEmpty)
+              if (cat.imageUrl?.trim() case final url? when url.isNotEmpty)
                 img(
-                  src: cat.imageUrl!,
+                  src: url,
                   classes:
                       'w-8 h-8 rounded-full object-cover shrink-0 border border-black/10 shadow-2xs',
                 )

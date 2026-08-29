@@ -11,25 +11,22 @@ class CartItemThumbnail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final validUrl = imageUrl != null && imageUrl!.trim().isNotEmpty;
+    final trimmedUrl = imageUrl?.trim();
+    final hasValidUrl = trimmedUrl != null && trimmedUrl.isNotEmpty;
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(12),
       child: Box(
-        style: BoxStyler()
-            .width(56)
-            .height(56)
-            .color(const Color(0xFFF3F4F6)),
-        child: validUrl
+        style: BoxStyler().width(56).height(56).color(const Color(0xFFF3F4F6)),
+        child: hasValidUrl
             ? CachedNetworkImage(
-                imageUrl: imageUrl!.trim(),
+                imageUrl: trimmedUrl,
                 fit: BoxFit.cover,
                 memCacheWidth: 120,
                 memCacheHeight: 120,
                 fadeInDuration: const Duration(milliseconds: 150),
                 placeholder: (context, url) => const _PlaceholderIcon(),
-                errorWidget: (context, url, error) =>
-                    const _PlaceholderIcon(),
+                errorWidget: (context, url, error) => const _PlaceholderIcon(),
               )
             : const _PlaceholderIcon(),
       ),
@@ -43,11 +40,7 @@ class _PlaceholderIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Center(
-      child: Icon(
-        FLucideIcons.store,
-        size: 20,
-        color: Color(0xFF9CA3AF),
-      ),
+      child: Icon(FLucideIcons.store, size: 20, color: Color(0xFF9CA3AF)),
     );
   }
 }

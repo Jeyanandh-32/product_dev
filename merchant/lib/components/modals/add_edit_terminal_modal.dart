@@ -8,6 +8,7 @@ import 'package:models/models.dart';
 import 'package:validators/validators.dart';
 import 'package:web/web.dart';
 
+/// Modal dialog for creating or updating POS terminal accounts.
 class AddEditTerminalModal extends StatefulComponent {
   const AddEditTerminalModal({super.key, this.terminal});
 
@@ -18,9 +19,9 @@ class AddEditTerminalModal extends StatefulComponent {
 }
 
 class _AddEditTerminalModalState extends State<AddEditTerminalModal> {
-  late String _name;
-  late String _password;
-  late bool _isActive;
+  String _name = '';
+  String _password = '';
+  bool _isActive = true;
 
   @override
   void initState() {
@@ -39,9 +40,10 @@ class _AddEditTerminalModalState extends State<AddEditTerminalModal> {
 
     activeModalSignal.value = ActiveModal.none;
 
-    if (component.terminal != null) {
+    final terminal = component.terminal;
+    if (terminal != null) {
       TerminalsActions.updateTerminal(
-        code: component.terminal!.code,
+        code: terminal.code,
         name: name,
         password: password.isEmpty ? null : password,
         isActive: isActive,

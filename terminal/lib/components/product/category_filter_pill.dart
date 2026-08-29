@@ -33,14 +33,15 @@ class _CategoryFilterPillState extends State<CategoryFilterPill> {
   Widget build(BuildContext context) {
     final isDark = widget.isSelected || _isHovered;
     final bgColor = isDark ? const Color(0xFF000000) : const Color(0xFFFFFFFF);
-    final borderColor =
-        isDark ? const Color(0xFF000000) : const Color(0xFFE5E7EB);
+    final borderColor = isDark
+        ? const Color(0xFF000000)
+        : const Color(0xFFE5E7EB);
     final fgColor = isDark ? const Color(0xFFFFFFFF) : const Color(0xFF1F2937);
     final avatarBg = isDark ? const Color(0x33FFFFFF) : const Color(0xFFF3F4F6);
     final avatarFg = isDark ? const Color(0xFFFFFFFF) : const Color(0xFF000000);
 
-    final hasImage =
-        widget.imageUrl != null && widget.imageUrl!.trim().isNotEmpty;
+    final trimmedImageUrl = widget.imageUrl?.trim();
+    final hasImage = trimmedImageUrl != null && trimmedImageUrl.isNotEmpty;
 
     return MouseRegion(
       cursor: SystemMouseCursors.click,
@@ -68,17 +69,13 @@ class _CategoryFilterPillState extends State<CategoryFilterPill> {
             ClipRRect(
               borderRadius: BorderRadius.circular(999),
               child: Box(
-                style: BoxStyler()
-                    .width(28)
-                    .height(28)
-                    .color(avatarBg),
+                style: BoxStyler().width(28).height(28).color(avatarBg),
                 child: hasImage
                     ? CachedNetworkImage(
-                        imageUrl: widget.imageUrl!.trim(),
+                        imageUrl: trimmedImageUrl,
                         fit: BoxFit.cover,
                         memCacheWidth: 80,
-                        placeholder: (context, url) =>
-                            _buildFallback(avatarFg),
+                        placeholder: (context, url) => _buildFallback(avatarFg),
                         errorWidget: (context, url, error) =>
                             _buildFallback(avatarFg),
                       )

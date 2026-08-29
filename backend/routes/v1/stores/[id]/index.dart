@@ -62,11 +62,12 @@ Future<Response> _onPutOrPatch(RequestContext context, String id) async {
           .first
           .fetch();
 
-      if (configRow == null ||
-          configRow.clientId == null ||
-          configRow.clientId!.trim().isEmpty ||
-          configRow.clientSecret == null ||
-          configRow.clientSecret!.trim().isEmpty) {
+      final clientId = configRow?.clientId?.trim();
+      final clientSecret = configRow?.clientSecret?.trim();
+      if (clientId == null ||
+          clientId.isEmpty ||
+          clientSecret == null ||
+          clientSecret.isEmpty) {
         return badRequest(
           message:
               'Cannot enable online ordering for this store. Please contact system administrator.',

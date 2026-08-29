@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:backend/config/env.dart';
-import 'package:backend/database/schema.dart';
 import 'package:backend/repositories/merchant_repository.dart';
 import 'package:backend/services/auth_service.dart';
 import 'package:dart_frog/dart_frog.dart';
@@ -10,6 +9,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
 import '../../../../../routes/v1/auth/merchant/login.dart' as route;
+import '../../../../helpers/schema_factories.dart';
 
 class _MockRequestContext extends Mock implements RequestContext {}
 class _MockRequest extends Mock implements Request {}

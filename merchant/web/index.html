@@ -6,7 +6,13 @@
         <meta name="scaffolded-by" content="https://github.com/schultek/jaspr">
 
         <title>merchant</title>
-        <base href="/merchant/">
+        <script>
+            (function() {
+                var p = window.location.pathname;
+                var base = p.startsWith('/merchant') ? '/merchant/' : '/';
+                document.write('<base href="' + base + '">');
+            })();
+        </script>
 
         <!-- Google Fonts: Arizonia & Manrope -->
         <link rel="preconnect" href="https://fonts.googleapis.com">

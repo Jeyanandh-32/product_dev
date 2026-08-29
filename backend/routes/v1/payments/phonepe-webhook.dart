@@ -49,15 +49,14 @@ Future<Response> _onPost(RequestContext context) async {
           .first
           .fetch();
 
-      if (configRow != null &&
-          configRow.webhookSecretKey != null &&
-          configRow.webhookSecretKey!.isNotEmpty) {
+      if (configRow?.webhookSecretKey case final secretKey?
+          when secretKey.isNotEmpty) {
         final signatureHeader =
             context.request.headers['x-phonepe-checksum-signature'] ?? '';
         final isValid = phonePeService.verifyWebhookHmac(
           rawRequestBody: rawBody,
           signatureHeader: signatureHeader,
-          secretKey: configRow.webhookSecretKey!,
+          secretKey: secretKey,
         );
         if (!isValid) {
           return error(message: 'Invalid webhook signature', statusCode: 401);

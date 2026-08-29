@@ -2360,11 +2360,11 @@
   .min-w-6 {
     min-width: calc(var(--spacing) * 6);
   }
+  .min-w-50 {
+    min-width: calc(var(--spacing) * 50);
+  }
   .min-w-\[16px\] {
     min-width: 16px;
-  }
-  .min-w-\[200px\] {
-    min-width: 200px;
   }
   .min-w-\[220px\] {
     min-width: 220px;
@@ -2796,6 +2796,9 @@
   }
   .py-8 {
     padding-block: calc(var(--spacing) * 8);
+  }
+  .py-16 {
+    padding-block: calc(var(--spacing) * 16);
   }
   .pt-1 {
     padding-top: calc(var(--spacing) * 1);
@@ -3506,9 +3509,9 @@
       width: auto;
     }
   }
-  .sm\:min-w-\[240px\] {
+  .sm\:min-w-60 {
     @media (width >= 40rem) {
-      min-width: 240px;
+      min-width: calc(var(--spacing) * 60);
     }
   }
   .sm\:flex-none {

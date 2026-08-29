@@ -59,12 +59,15 @@ class BottleReturnDispenserHandler {
       return const DispenserOrderCancelled();
     }
 
-    await db.orders.byKey(orderRow.id).update(
-      (o, set) => set(
-        status: ts.toExpr(OrderStatus.completed.name),
-        updatedAt: ts.Expr.currentTimestamp,
-      ),
-    ).execute();
+    await db.orders
+        .byKey(orderRow.id)
+        .update(
+          (o, set) => set(
+            status: ts.toExpr(OrderStatus.completed.name),
+            updatedAt: ts.Expr.currentTimestamp,
+          ),
+        )
+        .execute();
 
     final updatedOrderRows = await db.orders.byKey(orderRow.id).fetch();
     final currentOrderRow = updatedOrderRows ?? orderRow;
@@ -85,8 +88,8 @@ class BottleReturnDispenserHandler {
     final productMap = {for (final p in productRows) p.id: p};
 
     CustomerRow? customerRow;
-    if (currentOrderRow.customerId != null) {
-      customerRow = await db.customers.byKey(currentOrderRow.customerId!).fetch();
+    if (currentOrderRow.customerId case final customerId?) {
+      customerRow = await db.customers.byKey(customerId).fetch();
     }
 
     final order = currentOrderRow.toOrder(

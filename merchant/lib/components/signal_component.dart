@@ -1,6 +1,7 @@
 import 'package:jaspr/jaspr.dart';
 import 'package:signals/signals.dart';
 
+/// Base stateful Jaspr component with automated signal reactivity lifecycle bindings.
 abstract class SignalComponent extends StatefulComponent {
   const SignalComponent({super.key});
 
@@ -8,6 +9,7 @@ abstract class SignalComponent extends StatefulComponent {
   SignalState createState();
 }
 
+/// Reactive state container that automatically rebuilds when accessed signals update.
 abstract class SignalState<T extends SignalComponent> extends State<T> {
   void Function()? _disposer;
   Component? _cachedBuild;
@@ -25,7 +27,7 @@ abstract class SignalState<T extends SignalComponent> extends State<T> {
         setState(() {});
       }
     });
-    return _cachedBuild!;
+    return _cachedBuild ?? buildSignal(context);
   }
 
   Component buildSignal(BuildContext context);

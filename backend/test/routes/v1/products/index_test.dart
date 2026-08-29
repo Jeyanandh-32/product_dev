@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:backend/database/schema.dart';
 import 'package:backend/enums/user_role.dart';
 import 'package:backend/models/token_payload/token_payload.dart';
 import 'package:backend/repositories/product_repository.dart';
@@ -12,6 +11,7 @@ import 'package:models/models.dart';
 import 'package:test/test.dart';
 
 import '../../../../routes/v1/products/index.dart' as route;
+import '../../../helpers/schema_factories.dart';
 
 class _MockRequestContext extends Mock implements RequestContext {}
 
@@ -50,23 +50,19 @@ void main() {
       );
 
       final productRow = createProductRow(
-        id: 'prod-1',
         name: 'Hot Chocolate',
         storeId: validStoreId,
       );
       final stockRow = createStockRow(
         id: 's-1',
-        productId: 'prod-1',
         storeId: validStoreId,
       );
       final catRow = createCategoryRow(
         id: 'cat-2',
-        name: 'Drinks',
         storeId: validStoreId,
       );
       final counterRow = createCounterRow(
         id: 'cnt-1',
-        name: 'Counter 1',
         storeId: validStoreId,
       );
 
@@ -115,7 +111,6 @@ void main() {
       );
 
       final productRow = createProductRow(
-        id: 'prod-1',
         name: 'Hot Chocolate',
         storeId: validStoreId,
       );
@@ -155,7 +150,6 @@ void main() {
       );
 
       final productRow = createProductRow(
-        id: 'prod-1',
         name: 'Hot Chocolate',
         storeId: validStoreId,
       );

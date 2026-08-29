@@ -78,8 +78,7 @@ class _OrdersState extends SignalState<Orders> {
     final totalPages = ordersTotalPagesSignal.value;
 
     return div(
-      classes:
-          'flex flex-col flex-1 min-h-0 m-4 bg-white rounded-2xl border border-border-medium shadow-xs overflow-hidden',
+      classes: 'flex flex-col flex-1 min-h-0 m-4 bg-white rounded-2xl border border-border-medium shadow-xs overflow-hidden',
       [
         if (activeModalSignal.value == ActiveModal.orderDetails)
           OrderDetailsModal(state: selectedOrderSignal.value),
@@ -96,9 +95,7 @@ class _OrdersState extends SignalState<Orders> {
           },
         ),
 
-        if (showReportsStatsSignal.value &&
-            orders.hasValue &&
-            orders.value!.isNotEmpty)
+        if (showReportsStatsSignal.value && (orders.value?.isNotEmpty ?? false))
           OrderSummaryCards(
             totalOrders: ordersSummarySignal.value.totalOrders,
             grossSubtotal: ordersSummarySignal.value.grossSubtotal,
@@ -116,7 +113,7 @@ class _OrdersState extends SignalState<Orders> {
                 ? (orders.error as ApiException).message
                 : 'Failed to load orders. Please try again.',
           )
-        else if (orders.hasValue && orders.value!.isEmpty)
+        else if (orders.value?.isEmpty ?? true)
           CenteredMessage(message: 'No Orders found.')
         else
           OrdersTableView(

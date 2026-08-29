@@ -11,6 +11,7 @@ final profitLossSignal = asyncSignal<ProfitLossReportResponse>(
   const AsyncLoading(),
 );
 
+/// Resets all profit & loss report signals to their initial default states.
 void resetProfitLossSignal() {
   profitLossPageSignal.value = 1;
   profitLossSearchSignal.value = '';
@@ -27,6 +28,7 @@ void resetProfitLossSignal() {
   ));
 }
 
+/// Fetches and updates profit & loss analytics signals for the active store and date filters.
 Future<void> refreshProfitLossSignal() async {
   final currentStore = storeSignal.value;
   if (currentStore == null) {
@@ -49,15 +51,14 @@ Future<void> refreshProfitLossSignal() async {
   try {
     final search = profitLossSearchSignal.value.trim();
 
-    final fromDate =
-        reportsFromDateSignal.value != null &&
-            reportsFromDateSignal.value!.isNotEmpty
-        ? DateTime.tryParse(reportsFromDateSignal.value!)
+    final rawFrom = reportsFromDateSignal.value;
+    final fromDate = (rawFrom != null && rawFrom.isNotEmpty)
+        ? DateTime.tryParse(rawFrom)
         : null;
-    final toDate =
-        reportsToDateSignal.value != null &&
-            reportsToDateSignal.value!.isNotEmpty
-        ? DateTime.tryParse(reportsToDateSignal.value!)
+
+    final rawTo = reportsToDateSignal.value;
+    final toDate = (rawTo != null && rawTo.isNotEmpty)
+        ? DateTime.tryParse(rawTo)
         : null;
 
     final result = await ReportsRepository.getProfitLoss(

@@ -20,8 +20,7 @@ class StoreSelectorDropdown extends StatelessComponent {
   Component build(BuildContext context) {
     return div(classes: 'dropdown dropdown-bottom dropdown-end shrink-0', [
       div(
-        classes:
-            'btn rounded-full border border-border-medium px-2.5 sm:px-4 bg-white hover:bg-base-200 text-xs sm:text-sm h-8 min-h-0 flex items-center gap-1 max-w-32.5 sm:max-w-none',
+        classes: 'btn rounded-full border border-border-medium px-2.5 sm:px-4 bg-white hover:bg-base-200 text-xs sm:text-sm h-8 min-h-0 flex items-center gap-1 max-w-32.5 sm:max-w-none',
         attributes: {
           'tabindex': '0',
           'role': 'button',
@@ -36,11 +35,10 @@ class StoreSelectorDropdown extends StatelessComponent {
 
       ul(
         attributes: {'tabindex': '-1'},
-        classes:
-            'dropdown-content menu bg-base-100 rounded-box z-10 mt-2.5 w-52 p-2 shadow-sm border border-border-light',
+        classes: 'dropdown-content menu bg-base-100 rounded-box z-10 mt-2.5 w-52 p-2 shadow-sm border border-border-light',
         [
-          if (stores != null)
-            for (final s in stores!)
+          if (stores case final storeList?)
+            for (final s in storeList)
               li([
                 a(
                   href: '#',

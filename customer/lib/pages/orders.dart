@@ -24,13 +24,14 @@ class _CustomerOrdersPageState extends SignalState<CustomerOrdersPage> {
     const AsyncLoading(),
   );
 
-  late String _selectedDate = _formatDate(DateTime.now());
+  String _selectedDate = '';
   String _selectedTab = 'pending';
   Order? _qrModalOrder;
 
   @override
   void initState() {
     super.initState();
+    _selectedDate = _formatDate(DateTime.now());
     _fetchOrders();
   }
 
@@ -89,8 +90,7 @@ class _CustomerOrdersPageState extends SignalState<CustomerOrdersPage> {
             onShowQr: _onShowQr,
           ),
           AsyncError() => div(
-            classes:
-                'flex-1 min-h-[30vh] bg-red-50 text-red-600 rounded-2xl text-center font-semibold border border-red-100 text-xs flex flex-col items-center justify-center gap-2 p-6',
+            classes: 'flex-1 min-h-[30vh] bg-red-50 text-red-600 rounded-2xl text-center font-semibold border border-red-100 text-xs flex flex-col items-center justify-center gap-2 p-6',
             [
               .text('Failed to load your orders.'),
               button(
@@ -101,8 +101,7 @@ class _CustomerOrdersPageState extends SignalState<CustomerOrdersPage> {
             ],
           ),
           _ => div(
-            classes:
-                'flex-1 min-h-[40vh] flex flex-col items-center justify-center gap-3 text-center my-auto',
+            classes: 'flex-1 min-h-[40vh] flex flex-col items-center justify-center gap-3 text-center my-auto',
             [
               span(
                 classes: 'loading loading-spinner loading-lg text-black',
@@ -115,10 +114,10 @@ class _CustomerOrdersPageState extends SignalState<CustomerOrdersPage> {
           ),
         },
 
-        if (_qrModalOrder != null)
+        if (_qrModalOrder case final qrOrder?)
           OrderQrModal(
-            orderReference: _qrModalOrder!.orderReference,
-            billNo: _qrModalOrder!.billNo,
+            orderReference: qrOrder.orderReference,
+            billNo: qrOrder.billNo,
             onClose: () => setState(() => _qrModalOrder = null),
           ),
       ],
