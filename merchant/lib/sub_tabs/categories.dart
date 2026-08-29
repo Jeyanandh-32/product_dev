@@ -80,8 +80,11 @@ class _CategoriesState extends SignalState<Categories> {
         activeModalSignal.value == ActiveModal.addCategory ||
         activeModalSignal.value == ActiveModal.editCategory;
 
+    final categoriesAsync = categoriesSignal.value;
+
     return div(
-      classes: 'flex flex-col flex-1 min-h-0 m-4 bg-white rounded-2xl border border-border-medium shadow-xs overflow-hidden',
+      classes:
+          'flex flex-col flex-1 min-h-0 m-4 bg-white rounded-2xl border border-border-medium shadow-xs overflow-hidden',
       [
         if (isModalActive)
           AddEditCategoryModal(category: editingCategorySignal.value),
@@ -98,38 +101,31 @@ class _CategoriesState extends SignalState<Categories> {
             refreshCategoriesSignal();
           },
         ),
-        div(
-          classes: 'flex-1 overflow-auto min-h-0',
-          [
-            categoriesSignal.value.map(
-              data: (data) {
-                if (data.isEmpty) {
-                  return const CenteredMessage(
-                    message: 'No Categories found. Add some categories to your store.',
-                  );
-                }
-                var filteredList = data;
-                if (_statusFilter != null) {
-                  filteredList = filteredList
-                      .where((c) => c.isActive == _statusFilter)
-                      .toList();
-                }
-                return CategoriesTableView(
-                  categories: filteredList,
-                  sortState: _sortState,
-                  onSort: _onSort,
-                  getAssociatedCount: _getAssociatedCount,
-                );
-              },
-              error: (err, _) => CenteredMessage(
-                message: (err is ApiException)
-                    ? err.message
-                    : 'Error loading categories. Something went wrong.',
-              ),
-              loading: () => const Loading(),
-            ),
-          ],
-        ),
+        if (storesSignal.value.isLoading || categoriesAsync.isLoading)
+          const Loading(text: 'Loading categories...', fullScreen: false)
+        else if (store == null)
+          const CenteredMessage(message: 'Create Store to view categories.')
+        else if (categoriesAsync.hasError)
+          CenteredMessage(
+            message: (categoriesAsync.error is ApiException)
+                ? (categoriesAsync.error as ApiException).message
+                : 'Error loading categories. Something went wrong.',
+          )
+        else if (categoriesAsync.value?.isEmpty ?? true)
+          const CenteredMessage(
+            message: 'No Categories found. Add some categories to your store.',
+          )
+        else
+          CategoriesTableView(
+            categories: _statusFilter == null
+                ? (categoriesAsync.value ?? [])
+                : (categoriesAsync.value ?? [])
+                    .where((c) => c.isActive == _statusFilter)
+                    .toList(),
+            sortState: _sortState,
+            onSort: _onSort,
+            getAssociatedCount: _getAssociatedCount,
+          ),
         TablePagination(
           currentPage: categoriesPageSignal.value,
           totalPages: categoriesTotalPagesSignal.value,

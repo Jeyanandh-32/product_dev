@@ -2,7 +2,7 @@ import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:merchant/components/account/notification_settings_card.dart';
 import 'package:merchant/components/account/store_subscriptions_card.dart';
-import 'package:merchant/signals/toast_signal.dart';
+import 'package:merchant/signals/subscription_signal.dart';
 import 'package:models/models.dart';
 
 /// Side column component for account subscriptions and notification settings.
@@ -20,16 +20,20 @@ class AccountSideColumn extends StatelessComponent {
   final bool waNotifications;
   final bool lowStockAlerts;
   final bool dailyReports;
-  final void Function({bool? waNotifications, bool? lowStockAlerts, bool? dailyReports})
-      onNotificationSettingChanged;
+  final void Function({
+    bool? waNotifications,
+    bool? lowStockAlerts,
+    bool? dailyReports,
+  })
+  onNotificationSettingChanged;
 
   @override
   Component build(BuildContext context) {
     return div(classes: 'space-y-4', [
       StoreSubscriptionsCard(
         stores: stores,
-        onManageSubscription: (st) =>
-            showToast('Subscription for "${st.name}" is active.'),
+        subscriptions: subscriptionsSignal.value,
+        onManageSubscription: SubscriptionActions.openManageSubscription,
       ),
       NotificationSettingsCard(
         waNotifications: waNotifications,

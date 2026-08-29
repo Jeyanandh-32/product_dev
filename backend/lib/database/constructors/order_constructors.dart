@@ -19,9 +19,10 @@ OrderRow constructOrderRow({
   required DateTime updatedAt,
   required int discountTotal,
   required int walletDeduction,
+  int platformFee = 0,
   String? terminalCode,
   String? customerId,
-}) => _$OrderRow._(id, merchantId, storeId, orderReference, billNo, source, type, status, paymentStatus, paymentMethod, subtotal, taxTotal, grandTotal, terminalCode, createdAt, updatedAt, discountTotal, walletDeduction, customerId);
+}) => _$OrderRow._(id, merchantId, storeId, orderReference, billNo, source, type, status, paymentStatus, paymentMethod, subtotal, taxTotal, grandTotal, terminalCode, createdAt, updatedAt, discountTotal, walletDeduction, platformFee, customerId);
 
 /// Constructs a [OrderItemRow] instance.
 OrderItemRow constructOrderItemRow({

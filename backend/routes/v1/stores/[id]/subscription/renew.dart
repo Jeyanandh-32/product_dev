@@ -22,13 +22,17 @@ Future<Response> _onPost(RequestContext context, String storeId) async {
 
   final rawJson = await context.request.json();
   final body = (rawJson as Map).cast<String, dynamic>();
-  final rawPlanCode = body['plan_code'] as String?;
-  final rawPaymentMethod = (body['payment_method'] as String?) ?? 'simulated';
+  final rawPlanCode = (body['plan_code'] ?? body['planCode']) as String?;
+  final rawPaymentMethod =
+      (body['payment_method'] ?? body['paymentMethod'] ?? 'simulated')
+          as String;
   final reference = body['reference'] as String?;
 
   final planCode = SubscriptionPlanCode.tryParse(rawPlanCode);
-  if (planCode == null) {
-    return badRequest(message: 'Invalid plan code "$rawPlanCode".');
+  if (planCode == null || planCode == SubscriptionPlanCode.trial) {
+    return badRequest(
+      message: 'Invalid plan code or trial cannot be selected.',
+    );
   }
 
   final subRepo = context.read<SubscriptionRepository>();

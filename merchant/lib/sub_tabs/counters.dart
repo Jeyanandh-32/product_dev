@@ -80,8 +80,11 @@ class _CountersState extends SignalState<Counters> {
         activeModalSignal.value == ActiveModal.addCounter ||
         activeModalSignal.value == ActiveModal.editCounter;
 
+    final countersAsync = countersSignal.value;
+
     return div(
-      classes: 'flex flex-col flex-1 min-h-0 m-4 bg-white rounded-2xl border border-border-medium shadow-xs overflow-hidden',
+      classes:
+          'flex flex-col flex-1 min-h-0 m-4 bg-white rounded-2xl border border-border-medium shadow-xs overflow-hidden',
       [
         if (isModalActive)
           AddEditCounterModal(counter: editingCounterSignal.value),
@@ -98,39 +101,31 @@ class _CountersState extends SignalState<Counters> {
             refreshCountersSignal();
           },
         ),
-        div(
-          classes: 'flex-1 overflow-auto min-h-0',
-          [
-            countersSignal.value.map(
-              data: (data) {
-                if (data.isEmpty) {
-                  return const CenteredMessage(
-                    message:
-                        'No Counters found. Add some counters to your store.',
-                  );
-                }
-                var filteredList = data;
-                if (_statusFilter != null) {
-                  filteredList = filteredList
-                      .where((c) => c.isActive == _statusFilter)
-                      .toList();
-                }
-                return CountersTableView(
-                  counters: filteredList,
-                  sortState: _sortState,
-                  onSort: _onSort,
-                  getAssociatedCount: _getAssociatedCount,
-                );
-              },
-              error: (err, _) => CenteredMessage(
-                message: (err is ApiException)
-                    ? err.message
-                    : 'Error loading counters. Something went wrong.',
-              ),
-              loading: () => const Loading(),
-            ),
-          ],
-        ),
+        if (storesSignal.value.isLoading || countersAsync.isLoading)
+          const Loading(text: 'Loading counters...', fullScreen: false)
+        else if (store == null)
+          const CenteredMessage(message: 'Create Store to view counters.')
+        else if (countersAsync.hasError)
+          CenteredMessage(
+            message: (countersAsync.error is ApiException)
+                ? (countersAsync.error as ApiException).message
+                : 'Error loading counters. Something went wrong.',
+          )
+        else if (countersAsync.value?.isEmpty ?? true)
+          const CenteredMessage(
+            message: 'No Counters found. Add some counters to your store.',
+          )
+        else
+          CountersTableView(
+            counters: _statusFilter == null
+                ? (countersAsync.value ?? [])
+                : (countersAsync.value ?? [])
+                    .where((c) => c.isActive == _statusFilter)
+                    .toList(),
+            sortState: _sortState,
+            onSort: _onSort,
+            getAssociatedCount: _getAssociatedCount,
+          ),
         TablePagination(
           currentPage: countersPageSignal.value,
           totalPages: countersTotalPagesSignal.value,

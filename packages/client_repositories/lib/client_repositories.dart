@@ -14,4 +14,5 @@ export 'src/product_repository.dart';
 export 'src/reports_repository.dart';
 export 'src/stock_repository.dart';
 export 'src/store_repository.dart';
+export 'src/subscription_client_repository.dart';
 export 'src/terminal_repository.dart';

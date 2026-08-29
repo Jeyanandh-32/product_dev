@@ -17,6 +17,9 @@ class DashboardOrderAggregator {
     var freePaise = 0;
     var paidCount = 0;
     var freeCount = 0;
+    var onlinePaise = 0;
+    var inStorePaise = 0;
+    var platformFeePaise = 0;
 
     final hourlyCounts = List<int>.filled(8, 0);
 
@@ -42,8 +45,7 @@ class DashboardOrderAggregator {
 
       final method = o.paymentMethod.toLowerCase();
       final pStatus = o.paymentStatus.toLowerCase();
-      final isPaid =
-          pStatus == PaymentStatus.completed.name || pStatus == 'paid';
+      final isPaid = pStatus == PaymentStatus.completed.name || pStatus == 'paid';
       final isComplimentary = method == PaymentMethod.complimentary.name;
 
       if (isComplimentary) {
@@ -53,6 +55,13 @@ class DashboardOrderAggregator {
         totalRevenuePaise += o.grandTotal;
         paidPaise += o.grandTotal;
         paidCount++;
+        platformFeePaise += o.platformFee;
+
+        if (o.source == OrderSource.web.name) {
+          onlinePaise += o.grandTotal;
+        } else {
+          inStorePaise += o.grandTotal;
+        }
 
         if (method == PaymentMethod.upi.name) {
           upiPaise += o.grandTotal;
@@ -77,6 +86,10 @@ class DashboardOrderAggregator {
       paidCount: paidCount,
       freeCount: freeCount,
       hourlyCounts: hourlyCounts,
+      onlineTotal: onlinePaise / 100.0,
+      inStoreTotal: inStorePaise / 100.0,
+      platformFeeTotal: platformFeePaise / 100.0,
+      netRevenue: (totalRevenuePaise - platformFeePaise) / 100.0,
     );
   }
 

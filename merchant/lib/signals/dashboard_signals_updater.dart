@@ -71,6 +71,10 @@ class DashboardSignalsUpdater {
         revenueGrowth: (analytics['revenueGrowth'] as num?)?.toDouble() ?? 0.0,
         ordersGrowth: (analytics['ordersGrowth'] as num?)?.toDouble() ?? 0.0,
         aovGrowth: (analytics['aovGrowth'] as num?)?.toDouble() ?? 0.0,
+        onlineTotal: (analytics['onlineTotal'] as num?)?.toDouble() ?? 0.0,
+        inStoreTotal: (analytics['inStoreTotal'] as num?)?.toDouble() ?? 0.0,
+        platformFeeTotal: (analytics['platformFeeTotal'] as num?)?.toDouble() ?? 0.0,
+        netRevenue: (analytics['netRevenue'] as num?)?.toDouble() ?? totalRevenue,
       );
       dashboardPaymentMethodsSignal.value = (
         upiTotal: upiTotal,

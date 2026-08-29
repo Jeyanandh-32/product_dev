@@ -47,8 +47,7 @@ class StoreSubscriptionsCard extends StatelessComponent {
 
         if (stores.isEmpty)
           p(
-            classes:
-                'text-xs sm:text-sm text-gray-400 font-medium text-center py-3',
+            classes: 'text-xs sm:text-sm text-gray-400 font-medium text-center py-3',
             [.text('No stores created yet.')],
           )
         else
@@ -64,13 +63,21 @@ class StoreSubscriptionsCard extends StatelessComponent {
     final isOperational = sub != null ? sub.status.isOperational : st.isActive;
     final statusBadge = sub != null
         ? switch (sub.status) {
-            SubscriptionStatus.trial => '14-Day Trial',
-            SubscriptionStatus.active => 'Active Plan',
+            SubscriptionStatus.trial => 'Trial',
+            SubscriptionStatus.active => 'Active',
             SubscriptionStatus.gracePeriod => 'Grace Period',
             SubscriptionStatus.expired => 'Expired',
             SubscriptionStatus.canceled => 'Canceled',
           }
-        : (st.isActive ? 'Active Store' : 'Inactive Store');
+        : (st.isActive ? 'Active' : 'Inactive');
+
+    final currentPlan = sub != null
+        ? switch (sub.planCode) {
+            SubscriptionPlanCode.yearly => 'Yearly Plan (₹2,999/yr)',
+            SubscriptionPlanCode.monthly => 'Monthly Plan (₹299/mo)',
+            SubscriptionPlanCode.trial => '14-Day Free Trial',
+          }
+        : 'Yearly Plan';
 
     return div(
       classes: 'p-3.5 rounded-lg border border-border-medium bg-neutral/20 space-y-2.5',
@@ -96,18 +103,14 @@ class StoreSubscriptionsCard extends StatelessComponent {
           [
             span(
               classes: isOperational
-                  ? 'flex items-center gap-1 text-emerald-700 font-bold'
-                  : 'flex items-center gap-1 text-red-600 font-bold',
+                  ? 'flex items-center gap-1.5 text-gray-800 font-bold'
+                  : 'flex items-center gap-1.5 text-red-600 font-bold',
               [
                 if (isOperational)
-                  CircleCheck(classes: 'w-3.5 h-3.5')
+                  Sparkles(classes: 'w-3.5 h-3.5 text-primary')
                 else
-                  CircleAlert(classes: 'w-3.5 h-3.5'),
-                .text(
-                  isOperational
-                      ? 'Subscription Operational'
-                      : 'Renewal Required',
-                ),
+                  CircleAlert(classes: 'w-3.5 h-3.5 text-red-600'),
+                .text(currentPlan),
               ],
             ),
             span(classes: 'text-gray-500 font-medium', [
@@ -125,6 +128,7 @@ class StoreSubscriptionsCard extends StatelessComponent {
           events: {
             'click': (e) => onManageSubscription(st),
           },
+          classes: 'btn btn-sm w-full rounded-lg border border-border-medium bg-white hover:bg-neutral text-gray-800 font-semibold text-xs flex items-center justify-center gap-1.5 shadow-2xs transition-all cursor-pointer hover:border-gray-400',
           [
             Sparkles(classes: 'w-3.5 h-3.5 text-primary'),
             .text('Manage Subscription'),

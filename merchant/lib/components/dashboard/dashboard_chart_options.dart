@@ -7,6 +7,10 @@ typedef DashboardSummaryData = ({
   double revenueGrowth,
   double ordersGrowth,
   double aovGrowth,
+  double onlineTotal,
+  double inStoreTotal,
+  double platformFeeTotal,
+  double netRevenue,
 });
 
 typedef DashboardCategorySalesData = ({

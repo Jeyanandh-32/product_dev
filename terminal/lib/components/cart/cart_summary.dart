@@ -8,6 +8,7 @@ import 'package:terminal/components/cart/cart_totals_breakdown.dart';
 import 'package:terminal/components/inventory/modals/bottle_reward_mode_dialog.dart';
 import 'package:terminal/exceptions/api_exception.dart';
 import 'package:terminal/services/terminal_checkout_handler.dart';
+import 'package:terminal/signals/account_signal.dart';
 import 'package:terminal/signals/auth_signal.dart';
 import 'package:terminal/signals/bottle_return_signal.dart';
 import 'package:terminal/signals/cart_signal.dart';
@@ -31,15 +32,22 @@ class _CartSummaryState extends State<CartSummary> {
     super.dispose();
   }
 
-  Future<void> _handleCheckout(Terminal terminal, PaymentMethod paymentMode) async {
+  Future<void> _handleCheckout(
+    Terminal terminal,
+    PaymentMethod paymentMode,
+  ) async {
     FocusManager.instance.primaryFocus?.unfocus();
-    final isBottleReturnStore = bottleReturnConfigSignal.value?.isEnabled ?? false;
+    final isBottleReturnStore =
+        bottleReturnConfigSignal.value?.isEnabled ?? false;
     var rewardMode = BottleRewardMode.digital;
     String? customerPhone;
 
     if (isBottleReturnStore) {
       final defaultPhone = activeCustomerPhoneSignal.value;
-      final rewardSelection = await BottleRewardModeDialog.show(context, initialPhone: defaultPhone);
+      final rewardSelection = await BottleRewardModeDialog.show(
+        context,
+        initialPhone: defaultPhone,
+      );
       if (rewardSelection == null) return;
       rewardMode = rewardSelection.mode;
       customerPhone = rewardSelection.phone;
@@ -60,13 +68,20 @@ class _CartSummaryState extends State<CartSummary> {
       TerminalToast.showSuccess(
         context: context,
         title: 'Order Placed Successfully',
-        description: 'Bill No: #${order.billNo} • Payment: ${paymentMode.name.toUpperCase()}',
+        description:
+            'Bill No: #${order.billNo} • Payment: ${paymentMode.name.toUpperCase()}',
         duration: const Duration(seconds: 4),
       );
     } catch (e) {
       if (!mounted) return;
-      final message = e is ApiException ? e.message : 'Failed to place order. Please try again.';
-      TerminalToast.showError(context: context, title: 'Order Error', description: message);
+      final message = e is ApiException
+          ? e.message
+          : 'Failed to place order. Please try again.';
+      TerminalToast.showError(
+        context: context,
+        title: 'Order Error',
+        description: message,
+      );
     } finally {
       if (mounted) setState(() => _isCheckingOut = false);
     }
@@ -79,7 +94,17 @@ class _CartSummaryState extends State<CartSummary> {
         final cart = cartSignal.value;
         final paymentMode = paymentModeSignal.value;
         final terminal = authSignal.value.value;
-        final canCheckout = !_isCheckingOut && cart.items.isNotEmpty && terminal != null;
+        final accountData = terminalAccountSignal.value.value;
+        final sub = accountData?.subscription;
+        final isExpired =
+            sub != null &&
+            (sub.status == SubscriptionStatus.expired ||
+                sub.status == SubscriptionStatus.canceled);
+        final canCheckout =
+            !_isCheckingOut &&
+            cart.items.isNotEmpty &&
+            terminal != null &&
+            !isExpired;
 
         return Box(
           style: BoxStyler()
@@ -88,12 +113,20 @@ class _CartSummaryState extends State<CartSummary> {
               .color(const Color(0xFFFFFFFF))
               .borderRadiusAll(const Radius.circular(20))
               .borderAll(color: const Color(0xFFE5E7EB))
-              .shadowOnly(color: const Color(0x08000000), offset: const Offset(0, 2), blurRadius: 4),
+              .shadowOnly(
+                color: const Color(0x08000000),
+                offset: const Offset(0, 2),
+                blurRadius: 4,
+              ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              CartTotalsBreakdown(cart: cart, paymentMode: paymentMode, discountController: _discountController),
+              CartTotalsBreakdown(
+                cart: cart,
+                paymentMode: paymentMode,
+                discountController: _discountController,
+              ),
               const Gap(12),
               CartCheckoutButton(
                 canCheckout: canCheckout,

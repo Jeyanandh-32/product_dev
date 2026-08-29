@@ -2,6 +2,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../merchant/merchant.dart';
 import '../store/store.dart';
+import '../subscription/store_subscription.dart';
 import 'terminal.dart';
 
 part 'terminal_account.freezed.dart';
@@ -14,6 +15,7 @@ abstract class TerminalAccount with _$TerminalAccount {
     required Terminal terminal,
     Store? store,
     Merchant? merchant,
+    StoreSubscription? subscription,
   }) = _TerminalAccount;
 
   factory TerminalAccount.fromJson(Map<String, Object?> json) =>

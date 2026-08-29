@@ -15,6 +15,11 @@ _TerminalAccount _$TerminalAccountFromJson(Map<String, dynamic> json) =>
       merchant: json['merchant'] == null
           ? null
           : Merchant.fromJson(json['merchant'] as Map<String, dynamic>),
+      subscription: json['subscription'] == null
+          ? null
+          : StoreSubscription.fromJson(
+              json['subscription'] as Map<String, dynamic>,
+            ),
     );
 
 Map<String, dynamic> _$TerminalAccountToJson(_TerminalAccount instance) =>
@@ -22,4 +27,5 @@ Map<String, dynamic> _$TerminalAccountToJson(_TerminalAccount instance) =>
       'terminal': instance.terminal,
       'store': instance.store,
       'merchant': instance.merchant,
+      'subscription': instance.subscription,
     };

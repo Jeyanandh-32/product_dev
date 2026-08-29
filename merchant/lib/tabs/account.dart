@@ -4,9 +4,11 @@ import 'package:jaspr/dom.dart';
 import 'package:merchant/components/account/account_banner.dart';
 import 'package:merchant/components/account/account_side_column.dart';
 import 'package:merchant/components/account/merchant_profile_security_section.dart';
+import 'package:merchant/components/modals/subscription/manage_subscription_modal.dart';
 import 'package:merchant/components/signal_component.dart';
 import 'package:merchant/signals/auth_signal.dart';
 import 'package:merchant/signals/stores_signal.dart';
+import 'package:merchant/signals/subscription_signal.dart';
 import 'package:merchant/utils/merchant_account_handler.dart';
 import 'package:web/web.dart' hide Lock;
 
@@ -23,14 +25,8 @@ class _AccountState extends SignalState<Account> {
   String _businessName = 'Retail & POS Enterprise';
   String _whatsappNumber = '+91 98765 43210';
   String _email = 'merchant@store.com';
-
-  String _currentPassword = '';
-  String _newPassword = '';
-  String _confirmPassword = '';
-
-  bool _waNotifications = true;
-  bool _lowStockAlerts = true;
-  bool _dailyReports = true;
+  String _currentPassword = '', _newPassword = '', _confirmPassword = '';
+  bool _waNotifications = true, _lowStockAlerts = true, _dailyReports = true;
 
   @override
   void initState() {
@@ -43,15 +39,17 @@ class _AccountState extends SignalState<Account> {
       _email = merchant.email;
     }
     _fetchNotificationSettings();
+    final stores = storesSignal.value.value ?? [];
+    if (stores.isNotEmpty) SubscriptionActions.fetchSubscriptionsForStores(stores);
   }
 
   Future<void> _fetchNotificationSettings() async {
-    final settings = await MerchantSettingsRepository.getSettings();
-    if (settings != null) {
+    final s = await MerchantSettingsRepository.getSettings();
+    if (s != null) {
       setState(() {
-        _waNotifications = settings.waNotifications;
-        _lowStockAlerts = settings.lowStockAlerts;
-        _dailyReports = settings.dailyReports;
+        _waNotifications = s.waNotifications;
+        _lowStockAlerts = s.lowStockAlerts;
+        _dailyReports = s.dailyReports;
       });
     }
   }
@@ -79,15 +77,17 @@ class _AccountState extends SignalState<Account> {
     }
   }
 
-  Future<void> _onNotificationSettingChanged({bool? waNotifications, bool? lowStockAlerts, bool? dailyReports}) async {
-    final updated = await MerchantAccountHandler.updateNotifications(
+  Future<void> _onNotificationSettingChanged({
+    bool? waNotifications, bool? lowStockAlerts, bool? dailyReports,
+  }) async {
+    final u = await MerchantAccountHandler.updateNotifications(
       waNotifications: waNotifications, lowStockAlerts: lowStockAlerts, dailyReports: dailyReports,
     );
-    if (updated != null) {
+    if (u != null) {
       setState(() {
-        _waNotifications = updated.waNotifications;
-        _lowStockAlerts = updated.lowStockAlerts;
-        _dailyReports = updated.dailyReports;
+        _waNotifications = u.waNotifications;
+        _lowStockAlerts = u.lowStockAlerts;
+        _dailyReports = u.dailyReports;
       });
     }
   }
@@ -97,6 +97,11 @@ class _AccountState extends SignalState<Account> {
     final merchant = authSignal.value.value;
     final stores = storesSignal.value.value ?? [];
     final activeStoreCount = stores.where((st) => st.isActive).length;
+
+    final unLoaded = stores.where((st) => !subscriptionsSignal.value.containsKey(st.id)).toList();
+    if (unLoaded.isNotEmpty) {
+      Future.microtask(() => SubscriptionActions.fetchSubscriptionsForStores(unLoaded));
+    }
 
     final displayName = merchant?.name ?? _name;
     final displayBusiness = merchant?.businessName ?? _businessName;
@@ -114,12 +119,12 @@ class _AccountState extends SignalState<Account> {
         div(classes: 'grid grid-cols-1 lg:grid-cols-3 gap-4', [
           MerchantProfileSecuritySection(
             name: _name, businessName: _businessName, email: _email, whatsappNumber: _whatsappNumber,
-            onNameChanged: (val) => _name = val, onBusinessNameChanged: (val) => _businessName = val,
-            onEmailChanged: (val) => _email = val, onWhatsappChanged: (val) => _whatsappNumber = val,
+            onNameChanged: (v) => _name = v, onBusinessNameChanged: (v) => _businessName = v,
+            onEmailChanged: (v) => _email = v, onWhatsappChanged: (v) => _whatsappNumber = v,
             onSaveProfile: _onSaveProfile, currentPassword: _currentPassword, newPassword: _newPassword,
-            confirmPassword: _confirmPassword, onCurrentPasswordChanged: (val) => setState(() => _currentPassword = val),
-            onNewPasswordChanged: (val) => setState(() => _newPassword = val),
-            onConfirmPasswordChanged: (val) => setState(() => _confirmPassword = val),
+            confirmPassword: _confirmPassword, onCurrentPasswordChanged: (v) => setState(() => _currentPassword = v),
+            onNewPasswordChanged: (v) => setState(() => _newPassword = v),
+            onConfirmPasswordChanged: (v) => setState(() => _confirmPassword = v),
             onUpdatePassword: _onUpdatePassword,
           ),
           AccountSideColumn(
@@ -127,6 +132,8 @@ class _AccountState extends SignalState<Account> {
             dailyReports: _dailyReports, onNotificationSettingChanged: _onNotificationSettingChanged,
           ),
         ]),
+        if (activeSubscriptionModalStoreSignal.value != null)
+          ManageSubscriptionModal(store: activeSubscriptionModalStoreSignal.value!),
       ],
     );
   }

@@ -11,6 +11,10 @@ class DashboardOrderMetrics {
     required this.paidCount,
     required this.freeCount,
     required this.hourlyCounts,
+    this.onlineTotal = 0.0,
+    this.inStoreTotal = 0.0,
+    this.platformFeeTotal = 0.0,
+    this.netRevenue = 0.0,
   });
 
   final double totalRevenue;
@@ -23,6 +27,10 @@ class DashboardOrderMetrics {
   final int paidCount;
   final int freeCount;
   final List<int> hourlyCounts;
+  final double onlineTotal;
+  final double inStoreTotal;
+  final double platformFeeTotal;
+  final double netRevenue;
 }
 
 /// Aggregated period-over-period growth metrics.

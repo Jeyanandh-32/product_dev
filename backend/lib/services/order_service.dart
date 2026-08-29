@@ -29,7 +29,16 @@ class OrderService {
     double discountTotalInput = 0.0,
     bool isComplimentary = false,
   }) async {
-    final resolvedItems = <({String productId, int quantity, int sellingPrice, double taxRate, double discount})>[];
+    final resolvedItems =
+        <
+          ({
+            String productId,
+            int quantity,
+            int sellingPrice,
+            double taxRate,
+            double discount,
+          })
+        >[];
 
     for (final p in productsInput) {
       final productId = p['productId'] as String;

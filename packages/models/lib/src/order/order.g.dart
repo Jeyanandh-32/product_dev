@@ -26,6 +26,7 @@ _Order _$OrderFromJson(Map<String, dynamic> json) => _Order(
   walletDeduction: (json['walletDeduction'] as num?)?.toDouble() ?? 0.0,
   taxTotal: (json['taxTotal'] as num).toDouble(),
   grandTotal: (json['grandTotal'] as num).toDouble(),
+  platformFee: (json['platformFee'] as num?)?.toDouble() ?? 0.0,
   terminalCode: json['terminalCode'] as String?,
   customer: json['customer'] == null
       ? null
@@ -53,6 +54,7 @@ Map<String, dynamic> _$OrderToJson(_Order instance) => <String, dynamic>{
   'walletDeduction': instance.walletDeduction,
   'taxTotal': instance.taxTotal,
   'grandTotal': instance.grandTotal,
+  'platformFee': instance.platformFee,
   'terminalCode': instance.terminalCode,
   'customer': instance.customer,
   'items': instance.items,

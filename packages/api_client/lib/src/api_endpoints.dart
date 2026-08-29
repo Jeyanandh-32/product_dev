@@ -32,6 +32,13 @@ abstract final class ApiEndpoints {
   static const String stockSummary = '/$version/reports/stock-summary';
   static const String dashboardReport = '/$version/reports/dashboard';
 
+  // Subscriptions
+  static const String subscriptionPlans = '/$version/subscriptions/plans';
+  static String storeSubscription(String storeId) =>
+      '/$version/stores/$storeId/subscription';
+  static String storeSubscriptionRenew(String storeId) =>
+      '/$version/stores/$storeId/subscription/renew';
+
   // Bottle Returns
   static const String bottleReturnsConfig = '/$version/bottle-returns/config';
   static const String bottleReturnsProducts =

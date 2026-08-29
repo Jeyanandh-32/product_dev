@@ -25,12 +25,11 @@ CREATE TABLE IF NOT EXISTS merchant_settings (
 
 CREATE TABLE IF NOT EXISTS subscription_plans (
     code VARCHAR(50) PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
+    name VARCHAR(100) NOT NULL,
     price_in_paise INT NOT NULL,
-    currency VARCHAR(3) NOT NULL DEFAULT 'INR',
-    max_terminals INT NOT NULL DEFAULT 5,
-    max_inventory_items INT NOT NULL DEFAULT 50,
-    features JSONB NOT NULL DEFAULT '{}',
+    currency VARCHAR(10) NOT NULL DEFAULT 'INR',
+    duration_days INT NOT NULL DEFAULT 30,
+    features TEXT NOT NULL DEFAULT '[]',
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -124,18 +123,35 @@ CREATE TABLE IF NOT EXISTS store_phonepe_configs (
 );
 
 CREATE TABLE IF NOT EXISTS store_subscriptions (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
-    store_id UUID NOT NULL REFERENCES stores (id) ON DELETE CASCADE,
-    plan_code VARCHAR(50) NOT NULL REFERENCES subscription_plans (code),
-    status VARCHAR(20) NOT NULL DEFAULT 'active',
-    starts_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    ends_at TIMESTAMPTZ,
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    store_id UUID NOT NULL REFERENCES stores(id) ON DELETE CASCADE,
+    plan_code VARCHAR(50) NOT NULL REFERENCES subscription_plans(code),
+    status VARCHAR(50) NOT NULL DEFAULT 'trial',
+    starts_at TIMESTAMPTZ NOT NULL,
+    ends_at TIMESTAMPTZ NOT NULL,
+    grace_ends_at TIMESTAMPTZ,
     auto_renew BOOLEAN NOT NULL DEFAULT TRUE,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    CONSTRAINT unique_store_subscription UNIQUE (store_id)
 );
 
-CREATE INDEX IF NOT EXISTS idx_store_subscriptions_store ON store_subscriptions (store_id, status);
+CREATE INDEX IF NOT EXISTS idx_store_subscriptions_store_id ON store_subscriptions(store_id);
+CREATE INDEX IF NOT EXISTS idx_store_subscriptions_status ON store_subscriptions(status);
+
+CREATE TABLE IF NOT EXISTS subscription_transactions (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    store_id UUID NOT NULL REFERENCES stores(id) ON DELETE CASCADE,
+    plan_code VARCHAR(50) NOT NULL REFERENCES subscription_plans(code),
+    amount_in_paise INT NOT NULL,
+    currency VARCHAR(10) NOT NULL DEFAULT 'INR',
+    payment_method VARCHAR(50) NOT NULL DEFAULT 'simulated',
+    status VARCHAR(50) NOT NULL DEFAULT 'completed',
+    reference VARCHAR(255),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_subscription_tx_store_id ON subscription_transactions(store_id, created_at DESC);
 
 CREATE TABLE IF NOT EXISTS terminals (
     code VARCHAR(12) PRIMARY KEY,
@@ -356,4 +372,18 @@ CREATE TABLE IF NOT EXISTS bottle_physical_coupons (
 
 CREATE INDEX IF NOT EXISTS idx_bottle_physical_coupons_code ON bottle_physical_coupons(code);
 CREATE INDEX IF NOT EXISTS idx_bottle_physical_coupons_merchant ON bottle_physical_coupons(merchant_id, status);
+
+-- Seed initial subscription plans
+INSERT INTO subscription_plans (code, name, price_in_paise, currency, duration_days, features)
+VALUES 
+    ('trial', '14-Day Free Trial', 0, 'INR', 14, '["Unlimited POS Billing Terminals", "Unlimited Inventory & Products", "Full Analytics & Reports", "WhatsApp Alerts & Daily Reports", "Zero Hardware Lock"]'),
+    ('monthly', 'Pro Monthly', 29900, 'INR', 30, '["Unlimited POS Billing Terminals", "Unlimited Inventory & Products", "Full Analytics & Reports", "WhatsApp Alerts & Daily Reports", "3-Day Renewal Grace Period", "Priority Support"]'),
+    ('yearly', 'Pro Yearly', 299900, 'INR', 365, '["Unlimited POS Billing Terminals", "Unlimited Inventory & Products", "Full Analytics & Reports", "WhatsApp Alerts & Daily Reports", "2 Months Free (Save ₹589)", "3-Day Renewal Grace Period", "Priority VIP Support"]')
+ON CONFLICT (code) DO UPDATE SET
+    name = EXCLUDED.name,
+    price_in_paise = EXCLUDED.price_in_paise,
+    currency = EXCLUDED.currency,
+    duration_days = EXCLUDED.duration_days,
+    features = EXCLUDED.features,
+    updated_at = NOW();
 

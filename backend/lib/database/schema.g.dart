@@ -11349,6 +11349,7 @@ final class _$OrderRow extends OrderRow {
     this.updatedAt,
     this.discountTotal,
     this.walletDeduction,
+    this.platformFee,
     this.customerId,
   );
 
@@ -11407,6 +11408,9 @@ final class _$OrderRow extends OrderRow {
   final int walletDeduction;
 
   @override
+  final int platformFee;
+
+  @override
   final String? customerId;
 
   static final _$table = $ForGeneratedCode.tableDefinition(
@@ -11430,6 +11434,7 @@ final class _$OrderRow extends OrderRow {
       'updated_at',
       'discount_total',
       'wallet_deduction',
+      'platform_fee',
       'customer_id',
     ],
     columnInfo: [
@@ -11560,6 +11565,13 @@ final class _$OrderRow extends OrderRow {
         overrides: [],
       ),
       $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.integer,
+        isNotNull: true,
+        defaultValue: (kind: 'raw', value: 0),
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
         type: $ForGeneratedCode.text,
         isNotNull: false,
         defaultValue: null,
@@ -11628,6 +11640,7 @@ final class _$OrderRow extends OrderRow {
     final updatedAt = row.readDateTime();
     final discountTotal = row.readInt();
     final walletDeduction = row.readInt();
+    final platformFee = row.readInt();
     final customerId = row.readString();
     if (id == null &&
         merchantId == null &&
@@ -11647,6 +11660,7 @@ final class _$OrderRow extends OrderRow {
         updatedAt == null &&
         discountTotal == null &&
         walletDeduction == null &&
+        platformFee == null &&
         customerId == null) {
       return null;
     }
@@ -11669,13 +11683,14 @@ final class _$OrderRow extends OrderRow {
       updatedAt!,
       discountTotal!,
       walletDeduction!,
+      platformFee!,
       customerId,
     );
   }
 
   @override
   String toString() =>
-      'OrderRow(id: "$id", merchantId: "$merchantId", storeId: "$storeId", orderReference: "$orderReference", billNo: "$billNo", source: "$source", type: "$type", status: "$status", paymentStatus: "$paymentStatus", paymentMethod: "$paymentMethod", subtotal: "$subtotal", taxTotal: "$taxTotal", grandTotal: "$grandTotal", terminalCode: "$terminalCode", createdAt: "$createdAt", updatedAt: "$updatedAt", discountTotal: "$discountTotal", walletDeduction: "$walletDeduction", customerId: "$customerId")';
+      'OrderRow(id: "$id", merchantId: "$merchantId", storeId: "$storeId", orderReference: "$orderReference", billNo: "$billNo", source: "$source", type: "$type", status: "$status", paymentStatus: "$paymentStatus", paymentMethod: "$paymentMethod", subtotal: "$subtotal", taxTotal: "$taxTotal", grandTotal: "$grandTotal", terminalCode: "$terminalCode", createdAt: "$createdAt", updatedAt: "$updatedAt", discountTotal: "$discountTotal", walletDeduction: "$walletDeduction", platformFee: "$platformFee", customerId: "$customerId")';
 }
 
 /// Extension methods for table defined in [OrderRow].
@@ -11703,6 +11718,7 @@ extension TableOrderRowExt on Table<OrderRow> {
     Expr<DateTime>? updatedAt,
     Expr<int>? discountTotal,
     Expr<int>? walletDeduction,
+    Expr<int>? platformFee,
     Expr<String?>? customerId,
   }) => $ForGeneratedCode.insertInto(
     table: this,
@@ -11725,6 +11741,7 @@ extension TableOrderRowExt on Table<OrderRow> {
       updatedAt,
       discountTotal,
       walletDeduction,
+      platformFee,
       customerId,
     ],
   );
@@ -11752,6 +11769,7 @@ extension TableOrderRowExt on Table<OrderRow> {
     DateTime? updatedAt,
     int? discountTotal,
     int? walletDeduction,
+    int? platformFee,
     String? customerId,
   }) => $ForGeneratedCode.insertInto(
     table: this,
@@ -11774,6 +11792,7 @@ extension TableOrderRowExt on Table<OrderRow> {
       updatedAt?.asExpr,
       discountTotal?.asExpr,
       walletDeduction?.asExpr,
+      platformFee?.asExpr,
       customerId.asExpr,
     ],
   );
@@ -11815,6 +11834,7 @@ extension TableOrderRowExt on Table<OrderRow> {
     DateTime Function(T row)? updatedAt,
     int Function(T row)? discountTotal,
     int Function(T row)? walletDeduction,
+    int Function(T row)? platformFee,
     String? Function(T row)? customerId,
   }) => $ForGeneratedCode.insertValuesMapped(
     table: this,
@@ -11838,6 +11858,7 @@ extension TableOrderRowExt on Table<OrderRow> {
       updatedAt,
       discountTotal,
       walletDeduction,
+      platformFee,
       customerId,
     ],
   );
@@ -11913,6 +11934,7 @@ extension QueryOrderRowExt on Query<(Expr<OrderRow>,)> {
         Expr<DateTime> updatedAt,
         Expr<int> discountTotal,
         Expr<int> walletDeduction,
+        Expr<int> platformFee,
         Expr<String?> customerId,
       })
       set,
@@ -11942,6 +11964,7 @@ extension QueryOrderRowExt on Query<(Expr<OrderRow>,)> {
         Expr<DateTime>? updatedAt,
         Expr<int>? discountTotal,
         Expr<int>? walletDeduction,
+        Expr<int>? platformFee,
         Expr<String?>? customerId,
       }) => $ForGeneratedCode.buildUpdate<OrderRow>([
         id,
@@ -11962,6 +11985,7 @@ extension QueryOrderRowExt on Query<(Expr<OrderRow>,)> {
         updatedAt,
         discountTotal,
         walletDeduction,
+        platformFee,
         customerId,
       ]),
     ),
@@ -12041,6 +12065,7 @@ extension QuerySingleOrderRowExt on QuerySingle<(Expr<OrderRow>,)> {
         Expr<DateTime> updatedAt,
         Expr<int> discountTotal,
         Expr<int> walletDeduction,
+        Expr<int> platformFee,
         Expr<String?> customerId,
       })
       set,
@@ -12070,6 +12095,7 @@ extension QuerySingleOrderRowExt on QuerySingle<(Expr<OrderRow>,)> {
         Expr<DateTime>? updatedAt,
         Expr<int>? discountTotal,
         Expr<int>? walletDeduction,
+        Expr<int>? platformFee,
         Expr<String?>? customerId,
       }) => $ForGeneratedCode.buildUpdate<OrderRow>([
         id,
@@ -12090,6 +12116,7 @@ extension QuerySingleOrderRowExt on QuerySingle<(Expr<OrderRow>,)> {
         updatedAt,
         discountTotal,
         walletDeduction,
+        platformFee,
         customerId,
       ]),
     ),
@@ -12160,8 +12187,11 @@ extension ExpressionOrderRowExt on Expr<OrderRow> {
   Expr<int> get walletDeduction =>
       $ForGeneratedCode.field(this, 17, $ForGeneratedCode.integer);
 
+  Expr<int> get platformFee =>
+      $ForGeneratedCode.field(this, 18, $ForGeneratedCode.integer);
+
   Expr<String?> get customerId =>
-      $ForGeneratedCode.field(this, 18, $ForGeneratedCode.text);
+      $ForGeneratedCode.field(this, 19, $ForGeneratedCode.text);
 }
 
 extension ExpressionNullableOrderRowExt on Expr<OrderRow?> {
@@ -12219,8 +12249,11 @@ extension ExpressionNullableOrderRowExt on Expr<OrderRow?> {
   Expr<int?> get walletDeduction =>
       $ForGeneratedCode.field(this, 17, $ForGeneratedCode.integer);
 
+  Expr<int?> get platformFee =>
+      $ForGeneratedCode.field(this, 18, $ForGeneratedCode.integer);
+
   Expr<String?> get customerId =>
-      $ForGeneratedCode.field(this, 18, $ForGeneratedCode.text);
+      $ForGeneratedCode.field(this, 19, $ForGeneratedCode.text);
 
   /// Check if the row is not `NULL`.
   ///
@@ -12346,6 +12379,7 @@ extension InsertOnConflictOrderRowExt on InsertOnConflict<OrderRow> {
         Expr<DateTime> updatedAt,
         Expr<int> discountTotal,
         Expr<int> walletDeduction,
+        Expr<int> platformFee,
         Expr<String?> customerId,
       })
       set,
@@ -12375,6 +12409,7 @@ extension InsertOnConflictOrderRowExt on InsertOnConflict<OrderRow> {
         Expr<DateTime>? updatedAt,
         Expr<int>? discountTotal,
         Expr<int>? walletDeduction,
+        Expr<int>? platformFee,
         Expr<String?>? customerId,
       }) => $ForGeneratedCode.buildUpdate<OrderRow>([
         id,
@@ -12395,6 +12430,7 @@ extension InsertOnConflictOrderRowExt on InsertOnConflict<OrderRow> {
         updatedAt,
         discountTotal,
         walletDeduction,
+        platformFee,
         customerId,
       ]),
     ),
@@ -12488,6 +12524,7 @@ extension InsertOnConflictSingleOrderRowExt
         Expr<DateTime> updatedAt,
         Expr<int> discountTotal,
         Expr<int> walletDeduction,
+        Expr<int> platformFee,
         Expr<String?> customerId,
       })
       set,
@@ -12517,6 +12554,7 @@ extension InsertOnConflictSingleOrderRowExt
         Expr<DateTime>? updatedAt,
         Expr<int>? discountTotal,
         Expr<int>? walletDeduction,
+        Expr<int>? platformFee,
         Expr<String?>? customerId,
       }) => $ForGeneratedCode.buildUpdate<OrderRow>([
         id,
@@ -12537,6 +12575,7 @@ extension InsertOnConflictSingleOrderRowExt
         updatedAt,
         discountTotal,
         walletDeduction,
+        platformFee,
         customerId,
       ]),
     ),

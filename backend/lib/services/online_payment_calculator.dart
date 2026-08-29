@@ -7,7 +7,14 @@ import 'package:typed_sql/typed_sql.dart';
 class OnlinePaymentCalculator {
   const OnlinePaymentCalculator._();
 
-  static Future<({int totalAmountPaise, int actualWalletDeductionPaise, int remainingPayablePaise})> computeAmounts({
+  static Future<
+    ({
+      int totalAmountPaise,
+      int actualWalletDeductionPaise,
+      int remainingPayablePaise,
+    })
+  >
+  computeAmounts({
     required OrderService orderService,
     required CustomerRepository customerRepo,
     required String customerId,
@@ -22,10 +29,16 @@ class OnlinePaymentCalculator {
     );
 
     final customer = await customerRepo.getById(customerId);
-    final storeRows = await customerRepo.db.stores.where((s) => s.id.equals(toExpr(storeId))).fetch();
+    final storeRows = await customerRepo.db.stores
+        .where((s) => s.id.equals(toExpr(storeId)))
+        .fetch();
     if (customer != null && storeRows.isNotEmpty) {
       final bottleCredits = await customerRepo.db.bottleCredits
-          .where((c) => c.merchantId.equals(toExpr(storeRows.first.merchantId)) & c.customerPhone.equals(toExpr(customer.mobileNumber)))
+          .where(
+            (c) =>
+                c.merchantId.equals(toExpr(storeRows.first.merchantId)) &
+                c.customerPhone.equals(toExpr(customer.mobileNumber)),
+          )
           .fetch();
       if (bottleCredits.isNotEmpty) {
         totalWalletAvailablePaise += bottleCredits.first.balance * 100;
@@ -43,7 +56,9 @@ class OnlinePaymentCalculator {
     var remainingPayablePaise = totalAmountPaise;
 
     if (useWallet && totalWalletAvailablePaise > 0) {
-      actualWalletDeductionPaise = totalWalletAvailablePaise >= totalAmountPaise ? totalAmountPaise : totalWalletAvailablePaise;
+      actualWalletDeductionPaise = totalWalletAvailablePaise >= totalAmountPaise
+          ? totalAmountPaise
+          : totalWalletAvailablePaise;
       remainingPayablePaise = totalAmountPaise - actualWalletDeductionPaise;
     }
 

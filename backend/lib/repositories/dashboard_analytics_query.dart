@@ -21,27 +21,26 @@ class DashboardAnalyticsQuery {
         .where((o) => o.merchantId.equals(ts.toExpr(merchantId)))
         .where((o) => o.storeId.equals(ts.toExpr(storeId)));
 
-    if (fromDate != null) query = query.where((o) => o.createdAt.isAfterValue(fromDate));
-    if (toDate != null) query = query.where((o) => o.createdAt.isBeforeValue(toDate));
+    if (fromDate != null) {
+      query = query.where((o) => o.createdAt.isAfterValue(fromDate));
+    }
+    if (toDate != null) {
+      query = query.where((o) => o.createdAt.isBeforeValue(toDate));
+    }
 
     final ordersFuture = query.orderBy((o) => [(o.createdAt, ts.Order.descending)]).fetch();
     final stocksFuture = db.stocks.where((s) => s.storeId.equals(ts.toExpr(storeId))).fetch();
 
     final productsFuture = db.products
-        .leftJoin(db.stocks)
-        .on((p, s) => p.id.equals(s.productId))
-        .leftJoin(db.categories)
-        .on((p, s, c) => p.categoryId.equals(c.id))
+        .leftJoin(db.stocks).on((p, s) => p.id.equals(s.productId))
+        .leftJoin(db.categories).on((p, s, c) => p.categoryId.equals(c.id))
         .where((p, s, c) => p.storeId.equals(ts.toExpr(storeId)))
         .fetch();
 
     final orderItemsFuture = db.orderItems
-        .leftJoin(db.orders)
-        .on((item, o) => item.orderId.equals(o.id))
-        .leftJoin(db.products)
-        .on((item, o, p) => item.productId.equals(p.id))
-        .leftJoin(db.categories)
-        .on((item, o, p, c) => p.categoryId.equals(c.id))
+        .leftJoin(db.orders).on((item, o) => item.orderId.equals(o.id))
+        .leftJoin(db.products).on((item, o, p) => item.productId.equals(p.id))
+        .leftJoin(db.categories).on((item, o, p, c) => p.categoryId.equals(c.id))
         .where((item, o, p, c) => item.storeId.equals(ts.toExpr(storeId)))
         .fetch();
 
@@ -59,10 +58,7 @@ class DashboardAnalyticsQuery {
     }
 
     final (orderRows, stocks, productRows, orderItemTuples) = await (
-      ordersFuture,
-      stocksFuture,
-      productsFuture,
-      orderItemsFuture,
+      ordersFuture, stocksFuture, productsFuture, orderItemsFuture,
     ).wait;
 
     final orderMetrics = DashboardOrderAggregator.aggregateOrders(orderRows);
@@ -91,6 +87,10 @@ class DashboardAnalyticsQuery {
       'totalRevenue': orderMetrics.totalRevenue,
       'totalOrders': orderMetrics.totalOrders,
       'aov': orderMetrics.aov,
+      'onlineTotal': orderMetrics.onlineTotal,
+      'inStoreTotal': orderMetrics.inStoreTotal,
+      'platformFeeTotal': orderMetrics.platformFeeTotal,
+      'netRevenue': orderMetrics.netRevenue,
       'lowStockCount': lowStockCount,
       'revenueGrowth': growth.revenueGrowth,
       'ordersGrowth': growth.ordersGrowth,

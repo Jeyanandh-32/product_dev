@@ -14,6 +14,10 @@ final dashboardSummarySignal =
         double revenueGrowth,
         double ordersGrowth,
         double aovGrowth,
+        double onlineTotal,
+        double inStoreTotal,
+        double platformFeeTotal,
+        double netRevenue,
       })
     >((
       totalRevenue: 0.0,
@@ -23,6 +27,10 @@ final dashboardSummarySignal =
       revenueGrowth: 0.0,
       ordersGrowth: 0.0,
       aovGrowth: 0.0,
+      onlineTotal: 0.0,
+      inStoreTotal: 0.0,
+      platformFeeTotal: 0.0,
+      netRevenue: 0.0,
     ));
 
 final dashboardPaymentMethodsSignal =

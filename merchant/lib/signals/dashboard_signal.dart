@@ -18,6 +18,10 @@ void resetDashboardSignal() {
     revenueGrowth: 0.0,
     ordersGrowth: 0.0,
     aovGrowth: 0.0,
+    onlineTotal: 0.0,
+    inStoreTotal: 0.0,
+    platformFeeTotal: 0.0,
+    netRevenue: 0.0,
   );
   dashboardRevenueTrendsSignal.value = (
     labels: const ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],

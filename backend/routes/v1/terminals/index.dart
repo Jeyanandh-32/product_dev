@@ -3,8 +3,10 @@ import 'dart:math';
 
 import 'package:backend/extensions/request_context_extension.dart';
 import 'package:backend/extensions/store_row_extension.dart';
+import 'package:backend/extensions/subscription_row_extension.dart';
 import 'package:backend/extensions/terminal_row_extension.dart';
 import 'package:backend/models/token_payload/token_payload.dart';
+import 'package:backend/repositories/subscription_repository.dart';
 import 'package:backend/repositories/terminal_repository.dart';
 import 'package:backend/services/auth_service.dart';
 import 'package:backend/utils/constraint_errors.dart';
@@ -40,6 +42,7 @@ Future<Response> onRequest(RequestContext context) async {
 
 Future<Response> _onGetTerminal(RequestContext context, TokenPayload tokenPayload) async {
   final repo = context.read<TerminalRepository>();
+  final subRepo = context.read<SubscriptionRepository>();
 
   try {
     final terminalCode = tokenPayload.terminalCode;
@@ -52,11 +55,13 @@ Future<Response> _onGetTerminal(RequestContext context, TokenPayload tokenPayloa
 
     final storeRow = await repo.getStoreById(terminalRow.storeId);
     final merchantRow = await repo.getMerchantById(terminalRow.merchantId);
+    final subRow = await subRepo.getStoreSubscription(terminalRow.storeId);
 
     return success(
       data: {
         'terminal': terminalRow.toTerminal().toJson(),
         'store': storeRow?.toStore().toJson(),
+        'subscription': subRow?.toStoreSubscription().toJson(),
         'merchant': merchantRow != null
             ? {
                 'id': merchantRow.id,
@@ -78,7 +83,6 @@ Future<Response> _onGetTerminal(RequestContext context, TokenPayload tokenPayloa
 Future<Response> _onGet(RequestContext context, String? storeId) async {
   final (pageError, page) = context.parsePage();
   if (pageError != null) return pageError;
-
   final (sizeError, size) = context.parseSize();
   if (sizeError != null) return sizeError;
 
@@ -87,21 +91,18 @@ Future<Response> _onGet(RequestContext context, String? storeId) async {
 
   try {
     final offset = (page - 1) * size;
-    final totalFuture = repo.count(merchantId: tokenPayload.sub, storeId: storeId);
-    final terminalRowsFuture = repo.getAll(storeId: storeId, merchantId: tokenPayload.sub, limit: size, offset: offset);
-
-    final (total, terminalRows) = await (totalFuture, terminalRowsFuture).wait;
-
-    final terminals = terminalRows.map((s) => s.toTerminal()).toList();
-    final totalPages = (total / size).ceil();
+    final (total, terminalRows) = await (
+      repo.count(merchantId: tokenPayload.sub, storeId: storeId),
+      repo.getAll(storeId: storeId, merchantId: tokenPayload.sub, limit: size, offset: offset),
+    ).wait;
 
     return success(
       data: {
         'currentPage': page,
         'pageSize': size,
         'totalItems': total,
-        'totalPages': totalPages,
-        'terminals': terminals,
+        'totalPages': (total / size).ceil(),
+        'terminals': terminalRows.map((s) => s.toTerminal()).toList(),
       },
     );
   } catch (e) {

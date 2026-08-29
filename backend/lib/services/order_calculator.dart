@@ -13,6 +13,7 @@ typedef CalculatedOrderSummary = ({
   int taxTotal,
   int grandTotal,
   int discountTotal,
+  int platformFee,
   List<CalculatedOrderItem> items,
 });
 
@@ -24,6 +25,7 @@ class OrderCalculator {
     required List<({String productId, int quantity, int sellingPrice, double taxRate, double discount})> lineItems,
     double discountTotalInput = 0.0,
     bool isComplimentary = false,
+    bool isOnline = false,
   }) {
     var subtotal = 0;
     var taxTotal = 0;
@@ -55,12 +57,14 @@ class OrderCalculator {
         : min(maxAllowedDiscountPaise, overallDiscountPaise);
 
     final grandTotal = max(0, subtotal + taxTotal - discountTotal);
+    final platformFee = isOnline ? (grandTotal * 0.0199).round() : 0;
 
     return (
       subtotal: subtotal,
       taxTotal: taxTotal,
       grandTotal: grandTotal,
       discountTotal: discountTotal,
+      platformFee: platformFee,
       items: items,
     );
   }

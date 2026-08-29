@@ -47,6 +47,9 @@ abstract final class OrderRow extends Row {
   @DefaultValue(0)
   int get walletDeduction;
 
+  @DefaultValue(0)
+  int get platformFee;
+
   @References(table: 'customers', field: 'id', onDelete: .setNull)
   String? get customerId;
 }

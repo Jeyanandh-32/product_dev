@@ -1,4 +1,5 @@
 import 'dart:math';
+
 import 'package:backend/config/database.dart';
 import 'package:backend/database/schema.dart';
 import 'package:backend/extensions/order_row_extension.dart';
@@ -107,7 +108,9 @@ class OrderCheckoutExecutor {
           merchantId: merchantId,
           storeId: storeId,
           orderId: orderRow.id,
-          items: totals.items.map((i) => (productId: i.productId, quantity: i.quantity)).toList(),
+          items: totals.items
+              .map((i) => (productId: i.productId, quantity: i.quantity))
+              .toList(),
           customerId: customerId,
         );
       }

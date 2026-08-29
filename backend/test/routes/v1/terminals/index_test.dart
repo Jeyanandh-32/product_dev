@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:backend/enums/user_role.dart';
 import 'package:backend/models/token_payload/token_payload.dart';
+import 'package:backend/repositories/subscription_repository.dart';
 import 'package:backend/repositories/terminal_repository.dart';
 import 'package:dart_frog/dart_frog.dart';
 import 'package:mocktail/mocktail.dart';
@@ -17,10 +18,14 @@ class _MockRequest extends Mock implements Request {}
 
 class _MockTerminalRepository extends Mock implements TerminalRepository {}
 
+class _MockSubscriptionRepository extends Mock
+    implements SubscriptionRepository {}
+
 void main() {
   late _MockRequestContext context;
   late _MockRequest request;
   late _MockTerminalRepository terminalRepo;
+  late _MockSubscriptionRepository subRepo;
 
   const validStoreId = '11111111-1111-1111-1111-111111111111';
   const merchantToken = TokenPayload(sub: 'm-1', role: UserRole.merchant);
@@ -29,12 +34,16 @@ void main() {
     context = _MockRequestContext();
     request = _MockRequest();
     terminalRepo = _MockTerminalRepository();
+    subRepo = _MockSubscriptionRepository();
 
     when(() => context.request).thenReturn(request);
     when(() => request.uri)
         .thenReturn(Uri.parse('http://localhost/v1/terminals'));
     when(() => context.read<TokenPayload>()).thenReturn(merchantToken);
     when(() => context.read<TerminalRepository>()).thenReturn(terminalRepo);
+    when(() => context.read<SubscriptionRepository>()).thenReturn(subRepo);
+    when(() => subRepo.getStoreSubscription(any()))
+        .thenAnswer((_) async => null);
   });
 
   group('/v1/terminals', () {

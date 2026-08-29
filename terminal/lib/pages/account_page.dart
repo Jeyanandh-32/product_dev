@@ -26,6 +26,7 @@ class AccountPage extends StatelessWidget {
 
         final store = accountData?.store;
         final merchant = accountData?.merchant;
+        final subscription = accountData?.subscription;
 
         return Container(
           color: const Color(0xFFF8FAFC),
@@ -58,7 +59,10 @@ class AccountPage extends StatelessWidget {
                         Expanded(
                           child: Column(
                             children: [
-                              SubscriptionInfoCard(store: store),
+                              SubscriptionInfoCard(
+                                store: store,
+                                subscription: subscription,
+                              ),
                               const Gap(16),
                               MerchantInfoCard(merchant: merchant),
                             ],
@@ -74,7 +78,10 @@ class AccountPage extends StatelessWidget {
                       const Gap(16),
                       StoreInfoCard(store: store),
                       const Gap(16),
-                      SubscriptionInfoCard(store: store),
+                      SubscriptionInfoCard(
+                        store: store,
+                        subscription: subscription,
+                      ),
                       const Gap(16),
                       MerchantInfoCard(merchant: merchant),
                     ],

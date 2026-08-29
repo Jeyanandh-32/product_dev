@@ -22,8 +22,18 @@ class DashboardOrdersFallback {
     var freeTotal = 0.0;
     var paidCount = 0;
     var freeCount = 0;
+    var onlineTotal = 0.0;
+    var inStoreTotal = 0.0;
+    var platformFeeTotal = 0.0;
 
     for (final o in result.items) {
+      if (o.source == OrderSource.web) {
+        onlineTotal += o.grandTotal;
+      } else {
+        inStoreTotal += o.grandTotal;
+      }
+      platformFeeTotal += o.platformFee;
+
       if (o.paymentMethod == PaymentMethod.upi) {
         upiTotal += o.grandTotal;
       } else if (o.paymentMethod == PaymentMethod.cash) {
@@ -56,6 +66,10 @@ class DashboardOrdersFallback {
         revenueGrowth: 0.0,
         ordersGrowth: 0.0,
         aovGrowth: 0.0,
+        onlineTotal: onlineTotal,
+        inStoreTotal: inStoreTotal,
+        platformFeeTotal: platformFeeTotal,
+        netRevenue: totalRevenue - platformFeeTotal,
       );
       dashboardPaymentMethodsSignal.value = (
         upiTotal: upiTotal,

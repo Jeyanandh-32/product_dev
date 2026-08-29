@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$TerminalAccount {
 
- Terminal get terminal; Store? get store; Merchant? get merchant;
+ Terminal get terminal; Store? get store; Merchant? get merchant; StoreSubscription? get subscription;
 /// Create a copy of TerminalAccount
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $TerminalAccountCopyWith<TerminalAccount> get copyWith => _$TerminalAccountCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TerminalAccount&&(identical(other.terminal, terminal) || other.terminal == terminal)&&(identical(other.store, store) || other.store == store)&&(identical(other.merchant, merchant) || other.merchant == merchant));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TerminalAccount&&(identical(other.terminal, terminal) || other.terminal == terminal)&&(identical(other.store, store) || other.store == store)&&(identical(other.merchant, merchant) || other.merchant == merchant)&&(identical(other.subscription, subscription) || other.subscription == subscription));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,terminal,store,merchant);
+int get hashCode => Object.hash(runtimeType,terminal,store,merchant,subscription);
 
 @override
 String toString() {
-  return 'TerminalAccount(terminal: $terminal, store: $store, merchant: $merchant)';
+  return 'TerminalAccount(terminal: $terminal, store: $store, merchant: $merchant, subscription: $subscription)';
 }
 
 
@@ -48,11 +48,11 @@ abstract mixin class $TerminalAccountCopyWith<$Res>  {
   factory $TerminalAccountCopyWith(TerminalAccount value, $Res Function(TerminalAccount) _then) = _$TerminalAccountCopyWithImpl;
 @useResult
 $Res call({
- Terminal terminal, Store? store, Merchant? merchant
+ Terminal terminal, Store? store, Merchant? merchant, StoreSubscription? subscription
 });
 
 
-$TerminalCopyWith<$Res> get terminal;$StoreCopyWith<$Res>? get store;$MerchantCopyWith<$Res>? get merchant;
+$TerminalCopyWith<$Res> get terminal;$StoreCopyWith<$Res>? get store;$MerchantCopyWith<$Res>? get merchant;$StoreSubscriptionCopyWith<$Res>? get subscription;
 
 }
 /// @nodoc
@@ -65,12 +65,13 @@ class _$TerminalAccountCopyWithImpl<$Res>
 
 /// Create a copy of TerminalAccount
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? terminal = null,Object? store = freezed,Object? merchant = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? terminal = null,Object? store = freezed,Object? merchant = freezed,Object? subscription = freezed,}) {
   return _then(_self.copyWith(
 terminal: null == terminal ? _self.terminal : terminal // ignore: cast_nullable_to_non_nullable
 as Terminal,store: freezed == store ? _self.store : store // ignore: cast_nullable_to_non_nullable
 as Store?,merchant: freezed == merchant ? _self.merchant : merchant // ignore: cast_nullable_to_non_nullable
-as Merchant?,
+as Merchant?,subscription: freezed == subscription ? _self.subscription : subscription // ignore: cast_nullable_to_non_nullable
+as StoreSubscription?,
   ));
 }
 /// Create a copy of TerminalAccount
@@ -105,6 +106,18 @@ $MerchantCopyWith<$Res>? get merchant {
 
   return $MerchantCopyWith<$Res>(_self.merchant!, (value) {
     return _then(_self.copyWith(merchant: value));
+  });
+}/// Create a copy of TerminalAccount
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$StoreSubscriptionCopyWith<$Res>? get subscription {
+    if (_self.subscription == null) {
+    return null;
+  }
+
+  return $StoreSubscriptionCopyWith<$Res>(_self.subscription!, (value) {
+    return _then(_self.copyWith(subscription: value));
   });
 }
 }
@@ -188,10 +201,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( Terminal terminal,  Store? store,  Merchant? merchant)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( Terminal terminal,  Store? store,  Merchant? merchant,  StoreSubscription? subscription)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _TerminalAccount() when $default != null:
-return $default(_that.terminal,_that.store,_that.merchant);case _:
+return $default(_that.terminal,_that.store,_that.merchant,_that.subscription);case _:
   return orElse();
 
 }
@@ -209,10 +222,10 @@ return $default(_that.terminal,_that.store,_that.merchant);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( Terminal terminal,  Store? store,  Merchant? merchant)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( Terminal terminal,  Store? store,  Merchant? merchant,  StoreSubscription? subscription)  $default,) {final _that = this;
 switch (_that) {
 case _TerminalAccount():
-return $default(_that.terminal,_that.store,_that.merchant);case _:
+return $default(_that.terminal,_that.store,_that.merchant,_that.subscription);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -229,10 +242,10 @@ return $default(_that.terminal,_that.store,_that.merchant);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( Terminal terminal,  Store? store,  Merchant? merchant)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( Terminal terminal,  Store? store,  Merchant? merchant,  StoreSubscription? subscription)?  $default,) {final _that = this;
 switch (_that) {
 case _TerminalAccount() when $default != null:
-return $default(_that.terminal,_that.store,_that.merchant);case _:
+return $default(_that.terminal,_that.store,_that.merchant,_that.subscription);case _:
   return null;
 
 }
@@ -244,12 +257,13 @@ return $default(_that.terminal,_that.store,_that.merchant);case _:
 @JsonSerializable()
 
 class _TerminalAccount implements TerminalAccount {
-  const _TerminalAccount({required this.terminal, this.store, this.merchant});
+  const _TerminalAccount({required this.terminal, this.store, this.merchant, this.subscription});
   factory _TerminalAccount.fromJson(Map<String, dynamic> json) => _$TerminalAccountFromJson(json);
 
 @override final  Terminal terminal;
 @override final  Store? store;
 @override final  Merchant? merchant;
+@override final  StoreSubscription? subscription;
 
 /// Create a copy of TerminalAccount
 /// with the given fields replaced by the non-null parameter values.
@@ -264,16 +278,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TerminalAccount&&(identical(other.terminal, terminal) || other.terminal == terminal)&&(identical(other.store, store) || other.store == store)&&(identical(other.merchant, merchant) || other.merchant == merchant));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TerminalAccount&&(identical(other.terminal, terminal) || other.terminal == terminal)&&(identical(other.store, store) || other.store == store)&&(identical(other.merchant, merchant) || other.merchant == merchant)&&(identical(other.subscription, subscription) || other.subscription == subscription));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,terminal,store,merchant);
+int get hashCode => Object.hash(runtimeType,terminal,store,merchant,subscription);
 
 @override
 String toString() {
-  return 'TerminalAccount(terminal: $terminal, store: $store, merchant: $merchant)';
+  return 'TerminalAccount(terminal: $terminal, store: $store, merchant: $merchant, subscription: $subscription)';
 }
 
 
@@ -284,11 +298,11 @@ abstract mixin class _$TerminalAccountCopyWith<$Res> implements $TerminalAccount
   factory _$TerminalAccountCopyWith(_TerminalAccount value, $Res Function(_TerminalAccount) _then) = __$TerminalAccountCopyWithImpl;
 @override @useResult
 $Res call({
- Terminal terminal, Store? store, Merchant? merchant
+ Terminal terminal, Store? store, Merchant? merchant, StoreSubscription? subscription
 });
 
 
-@override $TerminalCopyWith<$Res> get terminal;@override $StoreCopyWith<$Res>? get store;@override $MerchantCopyWith<$Res>? get merchant;
+@override $TerminalCopyWith<$Res> get terminal;@override $StoreCopyWith<$Res>? get store;@override $MerchantCopyWith<$Res>? get merchant;@override $StoreSubscriptionCopyWith<$Res>? get subscription;
 
 }
 /// @nodoc
@@ -301,12 +315,13 @@ class __$TerminalAccountCopyWithImpl<$Res>
 
 /// Create a copy of TerminalAccount
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? terminal = null,Object? store = freezed,Object? merchant = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? terminal = null,Object? store = freezed,Object? merchant = freezed,Object? subscription = freezed,}) {
   return _then(_TerminalAccount(
 terminal: null == terminal ? _self.terminal : terminal // ignore: cast_nullable_to_non_nullable
 as Terminal,store: freezed == store ? _self.store : store // ignore: cast_nullable_to_non_nullable
 as Store?,merchant: freezed == merchant ? _self.merchant : merchant // ignore: cast_nullable_to_non_nullable
-as Merchant?,
+as Merchant?,subscription: freezed == subscription ? _self.subscription : subscription // ignore: cast_nullable_to_non_nullable
+as StoreSubscription?,
   ));
 }
 
@@ -342,6 +357,18 @@ $MerchantCopyWith<$Res>? get merchant {
 
   return $MerchantCopyWith<$Res>(_self.merchant!, (value) {
     return _then(_self.copyWith(merchant: value));
+  });
+}/// Create a copy of TerminalAccount
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$StoreSubscriptionCopyWith<$Res>? get subscription {
+    if (_self.subscription == null) {
+    return null;
+  }
+
+  return $StoreSubscriptionCopyWith<$Res>(_self.subscription!, (value) {
+    return _then(_self.copyWith(subscription: value));
   });
 }
 }
