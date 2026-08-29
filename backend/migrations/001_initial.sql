@@ -23,6 +23,38 @@ CREATE TABLE IF NOT EXISTS merchant_settings (
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+CREATE TABLE IF NOT EXISTS subscription_plans (
+    code VARCHAR(50) PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    price_in_paise INT NOT NULL,
+    currency VARCHAR(3) NOT NULL DEFAULT 'INR',
+    max_terminals INT NOT NULL DEFAULT 5,
+    max_inventory_items INT NOT NULL DEFAULT 50,
+    features JSONB NOT NULL DEFAULT '{}',
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS stores (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
+    merchant_id UUID NOT NULL REFERENCES merchants (id) ON DELETE CASCADE,
+    name VARCHAR(255) NOT NULL,
+    store_type VARCHAR(255),
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
+    is_online_enabled BOOLEAN NOT NULL DEFAULT FALSE,
+    active_payment_provider VARCHAR(50) DEFAULT 'phonepe',
+    slug VARCHAR(255) UNIQUE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    CONSTRAINT unique_merchant_store_name UNIQUE (merchant_id, name),
+    CONSTRAINT check_online_slug CHECK (
+        (is_online_enabled = FALSE) OR (is_online_enabled = TRUE AND slug IS NOT NULL AND slug != '')
+    )
+);
+
+CREATE INDEX IF NOT EXISTS idx_stores_merchant_active ON stores (merchant_id, is_active);
+CREATE INDEX IF NOT EXISTS idx_stores_online_slug ON stores (is_online_enabled, slug);
+
 CREATE TABLE IF NOT EXISTS customers (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
     name VARCHAR(255) NOT NULL,
@@ -68,38 +100,6 @@ CREATE TABLE IF NOT EXISTS customer_recent_stores (
 );
 
 CREATE INDEX IF NOT EXISTS idx_customer_recent_stores ON customer_recent_stores (customer_id, last_visited_at DESC);
-
-CREATE TABLE IF NOT EXISTS subscription_plans (
-    code VARCHAR(50) PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    price_in_paise INT NOT NULL,
-    currency VARCHAR(3) NOT NULL DEFAULT 'INR',
-    max_terminals INT NOT NULL DEFAULT 5,
-    max_inventory_items INT NOT NULL DEFAULT 50,
-    features JSONB NOT NULL DEFAULT '{}',
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
-
-CREATE TABLE IF NOT EXISTS stores (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
-    merchant_id UUID NOT NULL REFERENCES merchants (id) ON DELETE CASCADE,
-    name VARCHAR(255) NOT NULL,
-    store_type VARCHAR(255),
-    is_active BOOLEAN NOT NULL DEFAULT TRUE,
-    is_online_enabled BOOLEAN NOT NULL DEFAULT FALSE,
-    active_payment_provider VARCHAR(50) DEFAULT 'phonepe',
-    slug VARCHAR(255) UNIQUE,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    CONSTRAINT unique_merchant_store_name UNIQUE (merchant_id, name),
-    CONSTRAINT check_online_slug CHECK (
-        (is_online_enabled = FALSE) OR (is_online_enabled = TRUE AND slug IS NOT NULL AND slug != '')
-    )
-);
-
-CREATE INDEX IF NOT EXISTS idx_stores_merchant_active ON stores (merchant_id, is_active);
-CREATE INDEX IF NOT EXISTS idx_stores_online_slug ON stores (is_online_enabled, slug);
 
 CREATE TABLE IF NOT EXISTS store_phonepe_configs (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid (),

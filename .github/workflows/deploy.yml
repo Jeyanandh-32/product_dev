@@ -97,7 +97,7 @@ jobs:
           cd merchant
           dart pub global activate jaspr_cli
           export PATH="$PATH":"$HOME/.pub-cache/bin"
-          jaspr build --experimental-wasm --dart-define=API_URL=https://${{ env.API_DOMAIN }}
+          jaspr build --experimental-wasm
 
       - name: Build Customer Store Web App (WASM)
         if: needs.changes.outputs.customer == 'true' || needs.changes.outputs.workflow == 'true' || github.event_name == 'workflow_dispatch'
@@ -105,7 +105,7 @@ jobs:
           cd customer
           dart pub global activate jaspr_cli
           export PATH="$PATH":"$HOME/.pub-cache/bin"
-          jaspr build --experimental-wasm --dart-define=API_URL=https://${{ env.API_DOMAIN }}
+          jaspr build --experimental-wasm
 
       - name: Build & Compile Native Backend Binary
         if: needs.changes.outputs.backend == 'true' || needs.changes.outputs.workflow == 'true' || github.event_name == 'workflow_dispatch'
@@ -164,12 +164,12 @@ jobs:
       - name: Set Deployment Destination
         run: |
           if [ "${{ github.ref }}" = "refs/heads/stage" ]; then
-            echo "TARGET_WEB_DIR=/var/www/pos-stage" >> $GITHUB_ENV
-            echo "TARGET_APP_DIR=pos-stage" >> $GITHUB_ENV
+            echo "TARGET_WEB_DIR=/var/www/pos/stage" >> $GITHUB_ENV
+            echo "TARGET_APP_DIR=pos/stage" >> $GITHUB_ENV
             echo "TARGET_SERVICE=pos-stage-backend" >> $GITHUB_ENV
           else
-            echo "TARGET_WEB_DIR=/var/www" >> $GITHUB_ENV
-            echo "TARGET_APP_DIR=pos" >> $GITHUB_ENV
+            echo "TARGET_WEB_DIR=/var/www/pos/main" >> $GITHUB_ENV
+            echo "TARGET_APP_DIR=pos/main" >> $GITHUB_ENV
             echo "TARGET_SERVICE=pos-backend" >> $GITHUB_ENV
           fi
 
