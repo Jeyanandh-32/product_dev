@@ -15,3 +15,6 @@ dependencies:
   dio: ^5.9.2
   models:
     path: ../models
+
+dev_dependencies:
+  test: ^1.25.6

@@ -8,14 +8,13 @@ import 'package:terminal/components/orders/calendar_grid_card.dart';
 import 'package:terminal/signals/orders_signal.dart';
 import 'package:terminal/theme.dart';
 
-const _months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
 /// Compact inline calendar popover displaying the active selected date range reactively.
 class OrdersDatePickerPopover extends StatefulWidget {
   const OrdersDatePickerPopover({super.key});
 
   @override
-  State<OrdersDatePickerPopover> createState() => _OrdersDatePickerPopoverState();
+  State<OrdersDatePickerPopover> createState() =>
+      _OrdersDatePickerPopoverState();
 }
 
 class _OrdersDatePickerPopoverState extends State<OrdersDatePickerPopover>
@@ -42,9 +41,15 @@ class _OrdersDatePickerPopoverState extends State<OrdersDatePickerPopover>
         final isCustomActive = customRange != null;
         final label = _formatLabel(customRange);
 
-        final bgColor = isCustomActive ? const Color(0xFF0F172A) : const Color(0xFFFFFFFF);
-        final fgColor = isCustomActive ? const Color(0xFFFFFFFF) : const Color(0xFF0F172A);
-        final borderColor = isCustomActive ? const Color(0xFF0F172A) : const Color(0xFFE2E8F0);
+        final bgColor = isCustomActive
+            ? const Color(0xFF0F172A)
+            : const Color(0xFFFFFFFF);
+        final fgColor = isCustomActive
+            ? const Color(0xFFFFFFFF)
+            : const Color(0xFF0F172A);
+        final borderColor = isCustomActive
+            ? const Color(0xFF0F172A)
+            : const Color(0xFFE2E8F0);
 
         return FTheme(
           data: TerminalTheme.light(false),
@@ -71,12 +76,18 @@ class _OrdersDatePickerPopoverState extends State<OrdersDatePickerPopover>
                     .paddingX(14)
                     .borderRadiusAll(const Radius.circular(999))
                     .borderAll(color: borderColor)
-                    .shadowOnly(color: const Color(0x08000000), offset: const Offset(0, 1), blurRadius: 2)
+                    .shadowOnly(
+                      color: const Color(0x08000000),
+                      offset: const Offset(0, 1),
+                      blurRadius: 2,
+                    )
                     .alignment(Alignment.center)
                     .onHovered(
                       isCustomActive
                           ? BoxStyler()
-                          : BoxStyler().color(const Color(0xFFF8FAFC)).borderAll(color: const Color(0xFFCBD5E1)),
+                          : BoxStyler()
+                                .color(const Color(0xFFF8FAFC))
+                                .borderAll(color: const Color(0xFFCBD5E1)),
                     ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -101,7 +112,11 @@ class _OrdersDatePickerPopoverState extends State<OrdersDatePickerPopover>
                             orderDatePresetSignal.value = OrderDatePreset.today;
                             orderCurrentPageSignal.value = 1;
                           },
-                          child: Icon(FLucideIcons.x, size: 13.5, color: fgColor),
+                          child: Icon(
+                            FLucideIcons.x,
+                            size: 13.5,
+                            color: fgColor,
+                          ),
                         ),
                       ),
                     ],
@@ -117,8 +132,12 @@ class _OrdersDatePickerPopoverState extends State<OrdersDatePickerPopover>
 
   String _formatLabel(DateTimeRange? range) {
     if (range == null) return 'Pick Date';
-    final startStr = '${range.start.day} ${_months[range.start.month - 1]}';
-    final endStr = '${range.end.day} ${_months[range.end.month - 1]}';
+    final sDay = range.start.day.toString().padLeft(2, '0');
+    final sMonth = range.start.month.toString().padLeft(2, '0');
+    final startStr = '$sDay/$sMonth/${range.start.year}';
+    final eDay = range.end.day.toString().padLeft(2, '0');
+    final eMonth = range.end.month.toString().padLeft(2, '0');
+    final endStr = '$eDay/$eMonth/${range.end.year}';
     return startStr == endStr ? startStr : '$startStr – $endStr';
   }
 }

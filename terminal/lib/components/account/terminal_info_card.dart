@@ -51,10 +51,7 @@ class TerminalInfoCard extends StatelessWidget {
           const Gap(18),
           Container(height: 1, color: const Color(0xFFF1F5F9)),
           const Gap(16),
-          AccountInfoRow(
-            label: 'Terminal Name',
-            value: terminal.name,
-          ),
+          AccountInfoRow(label: 'Terminal Name', value: terminal.name),
           const Gap(14),
           AccountInfoRow(
             label: 'Terminal Code',
@@ -69,7 +66,11 @@ class TerminalInfoCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(6),
                   border: Border.all(color: const Color(0xFFE2E8F0)),
                 ),
-                child: const Icon(FLucideIcons.copy, size: 12, color: Color(0xFF64748B)),
+                child: const Icon(
+                  FLucideIcons.copy,
+                  size: 12,
+                  color: Color(0xFF64748B),
+                ),
               ),
             ),
           ),
@@ -90,6 +91,6 @@ class TerminalInfoCard extends StatelessWidget {
   }
 
   String _formatDate(DateTime dt) {
-    return '${dt.day.toString().padLeft(2, '0')}-${dt.month.toString().padLeft(2, '0')}-${dt.year}';
+    return '${dt.day.toString().padLeft(2, '0')}/${dt.month.toString().padLeft(2, '0')}/${dt.year}';
   }
 }

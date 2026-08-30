@@ -108,6 +108,8 @@ class WalletTransactionsModal extends StatelessComponent {
   }
 
   String _formatTxDate(DateTime dt) {
-    return '${dt.day}/${dt.month}/${dt.year}';
+    final d = dt.day.toString().padLeft(2, '0');
+    final m = dt.month.toString().padLeft(2, '0');
+    return '$d/$m/${dt.year}';
   }
 }

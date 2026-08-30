@@ -76,5 +76,47 @@ void main() {
       expect(reconstructed.amountInPaise, tx.amountInPaise);
       expect(reconstructed.reference, 'REF-123');
     });
+
+    test(
+      'SubscriptionPaymentSession JSON serialization and deserialization',
+      () {
+        final session = SubscriptionPaymentSession(
+          storeId: 'store-1',
+          planCode: 'monthly',
+          merchantTransactionId: 'SUB_1_123',
+          amountInPaise: 29900,
+          tokenUrl: 'https://phonepe.com/pay',
+        );
+
+        final json = session.toJson();
+        expect(json['storeId'], 'store-1');
+        expect(json['merchantTransactionId'], 'SUB_1_123');
+
+        final reconstructed = SubscriptionPaymentSession.fromJson(json);
+        expect(reconstructed.storeId, session.storeId);
+        expect(
+          reconstructed.merchantTransactionId,
+          session.merchantTransactionId,
+        );
+        expect(reconstructed.tokenUrl, session.tokenUrl);
+      },
+    );
+
+    test('PlatformPhonePeConfig model and adapter conversion', () {
+      final config = PlatformPhonePeConfig(
+        id: 'cfg-1',
+        isEnabled: true,
+        env: PaymentGatewayEnv.uat,
+        clientId: 'PGTESTPAYUAT',
+        createdAt: DateTime.utc(2026, 1, 1),
+        updatedAt: DateTime.utc(2026, 1, 1),
+      );
+
+      final storeConfig = config.toStorePhonePeConfig(storeId: 'store-1');
+      expect(storeConfig.id, 'cfg-1');
+      expect(storeConfig.storeId, 'store-1');
+      expect(storeConfig.clientId, 'PGTESTPAYUAT');
+      expect(storeConfig.enableCards, isTrue);
+    });
   });
 }

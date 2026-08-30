@@ -2,6 +2,7 @@ import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_lucide/jaspr_lucide.dart' hide List, Store;
 import 'package:merchant/components/modals/subscription/plan_tier_card.dart';
+import 'package:merchant/components/modals/subscription/renew_subscription_button.dart';
 import 'package:merchant/components/modals/subscription/subscription_status_banner.dart';
 import 'package:merchant/components/modals/subscription/transaction_history_table.dart';
 import 'package:merchant/components/signal_component.dart';
@@ -32,15 +33,13 @@ class _ManageSubscriptionModalState
   }
 
   Future<void> _handleRenew() async {
-    setState(() => _isLoading = true);
-    final ok = await SubscriptionActions.renewSubscription(
+    await SubscriptionActions.payAndRenewWithPhonePe(
       storeId: component.store.id,
       planCode: _selectedPlanCode,
+      setSubmitting: (submitting) {
+        if (mounted) setState(() => _isLoading = submitting);
+      },
     );
-    if (mounted) {
-      setState(() => _isLoading = false);
-      if (ok) SubscriptionActions.closeManageSubscription();
-    }
   }
 
   @override
@@ -53,14 +52,13 @@ class _ManageSubscriptionModalState
     final details = detailsAsync.value;
     final sub = details?.subscription;
     final isActive = sub?.status == SubscriptionStatus.active;
-    final isBlocked = isActive && sub?.planCode == _selectedPlanCode;
 
     return div(
       classes: 'fixed inset-0 bg-black/40 z-50 flex items-center justify-center px-4',
       events: {'click': (_) => SubscriptionActions.closeManageSubscription()},
       [
         div(
-          classes: 'bg-white w-full max-w-lg rounded-2xl shadow-xl p-6 flex flex-col gap-5 max-h-[90vh] overflow-y-auto',
+          classes: 'bg-white w-full max-w-lg rounded-2xl shadow-xl p-6 sm:p-7 flex flex-col gap-6 max-h-[90vh] overflow-y-auto',
           events: {'click': (e) => e.stopPropagation()},
           [
             _buildHeader(),
@@ -69,7 +67,12 @@ class _ManageSubscriptionModalState
             else ...[
               SubscriptionStatusBanner(subscription: sub, plan: details?.plan),
               _buildPlanSelector(paidPlans, sub, isActive),
-              _buildRenewButton(sub, isBlocked),
+              RenewSubscriptionButton(
+                selectedPlanCode: _selectedPlanCode,
+                subscription: sub,
+                isLoading: _isLoading,
+                onRenew: _handleRenew,
+              ),
               TransactionHistoryTable(
                 transactions: details?.transactions ?? [],
               ),
@@ -94,7 +97,7 @@ class _ManageSubscriptionModalState
           h2(classes: 'text-lg font-bold text-gray-900', [
             .text('Manage Subscription'),
           ]),
-          p(classes: 'text-xs text-gray-500 font-medium', [
+          p(classes: 'text-xs text-gray-500 font-medium mt-0.5', [
             .text('Store: ${component.store.name}'),
           ]),
         ]),
@@ -110,54 +113,23 @@ class _ManageSubscriptionModalState
     StoreSubscription? sub,
     bool isActive,
   ) => div(
-    classes: 'space-y-2.5',
+    classes: 'flex flex-col gap-3',
     [
       h4(classes: 'text-xs font-bold uppercase tracking-wider text-gray-500', [
         .text('Choose a Subscription Plan'),
       ]),
-      for (final plan in plans)
-        PlanTierCard(
-          plan: plan,
-          isSelected: _selectedPlanCode == plan.code,
-          isCurrentPlan: isActive && sub?.planCode == plan.code,
-          onSelect: () => setState(() => _selectedPlanCode = plan.code),
-        ),
+      div(
+        classes: 'flex flex-col gap-3.5 pt-1',
+        [
+          for (final plan in plans)
+            PlanTierCard(
+              plan: plan,
+              isSelected: _selectedPlanCode == plan.code,
+              isCurrentPlan: isActive && sub?.planCode == plan.code,
+              onSelect: () => setState(() => _selectedPlanCode = plan.code),
+            ),
+        ],
+      ),
     ],
   );
-
-  Component _buildRenewButton(StoreSubscription? sub, bool isBlocked) {
-    final isYearly = _selectedPlanCode == SubscriptionPlanCode.yearly;
-    final planTitle = isYearly ? 'Yearly' : 'Monthly';
-    final txt = _isLoading
-        ? 'Processing...'
-        : isBlocked
-        ? 'Current Active Plan'
-        : (sub?.status == SubscriptionStatus.gracePeriod ||
-              sub?.status == SubscriptionStatus.expired)
-        ? 'Renew $planTitle Plan'
-        : sub?.planCode == SubscriptionPlanCode.monthly && isYearly
-        ? 'Upgrade to Yearly Plan'
-        : sub?.planCode == SubscriptionPlanCode.trial || sub == null
-        ? 'Activate $planTitle Plan'
-        : 'Switch to $planTitle Plan';
-
-    final cls = isBlocked || _isLoading
-        ? 'w-full py-3 px-4 rounded-xl font-bold text-sm bg-gray-200 text-gray-400 cursor-not-allowed flex items-center justify-center gap-2'
-        : 'w-full py-3 px-4 rounded-xl font-bold text-sm bg-primary text-white hover:bg-primary-hover transition-all flex items-center justify-center gap-2 cursor-pointer';
-
-    return button(
-      type: .button,
-      onClick: (isBlocked || _isLoading) ? null : _handleRenew,
-      classes: cls,
-      [
-        if (_isLoading)
-          span(classes: 'loading loading-spinner loading-xs text-white', [])
-        else if (isBlocked)
-          Check(classes: 'w-4 h-4 text-emerald-600')
-        else
-          Sparkles(classes: 'w-4 h-4'),
-        .text(txt),
-      ],
-    );
-  }
 }

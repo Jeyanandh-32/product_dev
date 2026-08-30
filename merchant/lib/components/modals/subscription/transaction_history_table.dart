@@ -31,25 +31,34 @@ class TransactionHistoryTable extends StatelessComponent {
         [
           for (final tx in transactions)
             div(
-              classes:
-                  'flex items-center justify-between p-2.5 border-b border-border-light last:border-b-0',
+              classes: 'flex items-center justify-between p-2.5 border-b border-border-light last:border-b-0',
               [
-                div(classes: 'flex items-center gap-2', [
-                  CircleCheck(classes: 'w-3.5 h-3.5 text-emerald-600'),
-                  div([
-                    span(classes: 'font-bold text-gray-800', [
-                      .text('₹${(tx.amountInPaise / 100).toStringAsFixed(0)}'),
+                div(classes: 'flex items-center gap-2.5', [
+                  CircleCheck(
+                    classes: 'w-4 h-4 text-emerald-600 shrink-0',
+                  ),
+                  div(classes: 'flex flex-col', [
+                    div(classes: 'flex items-center gap-1.5', [
+                      span(classes: 'font-bold text-gray-800 text-xs', [
+                        .text(
+                          '₹${(tx.amountInPaise / 100).toStringAsFixed(0)}',
+                        ),
+                      ]),
+                      span(classes: 'text-[11px] text-gray-500 capitalize', [
+                        .text('• ${tx.planCode.name}'),
+                      ]),
                     ]),
-                    span(classes: 'text-[10px] text-gray-400 ml-1.5', [
-                      .text(tx.createdAt != null
-                          ? '${tx.createdAt!.year}-${tx.createdAt!.month.toString().padLeft(2, '0')}-${tx.createdAt!.day.toString().padLeft(2, '0')}'
-                          : ''),
+                    span(classes: 'text-[10px] text-gray-400', [
+                      .text(
+                        tx.createdAt != null
+                            ? '${tx.createdAt?.day.toString().padLeft(2, '0')}/${tx.createdAt?.month.toString().padLeft(2, '0')}/${tx.createdAt?.year}'
+                            : '',
+                      ),
                     ]),
                   ]),
                 ]),
                 span(
-                  classes:
-                      'text-[10px] font-bold uppercase px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700',
+                  classes: 'text-[10px] font-bold uppercase px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700',
                   [.text(tx.status.name)],
                 ),
               ],

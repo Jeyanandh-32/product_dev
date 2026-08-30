@@ -19,7 +19,8 @@ class SubscriptionStatusBanner extends StatelessComponent {
     final sub = subscription;
     final statusText = sub != null ? sub.status.name.toUpperCase() : 'NO PLAN';
     final isOperational = sub?.status.isOperational ?? false;
-    final planName = plan?.name ??
+    final planName =
+        plan?.name ??
         (sub != null
             ? switch (sub.planCode) {
                 SubscriptionPlanCode.yearly => 'Pro Yearly (₹2,999/yr)',
@@ -28,9 +29,12 @@ class SubscriptionStatusBanner extends StatelessComponent {
               }
             : 'No Active Plan');
 
+    final badgeClasses = isOperational
+        ? 'text-[10px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider bg-emerald-50 text-emerald-700 border border-emerald-200'
+        : 'text-[10px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider bg-red-50 text-red-600 border border-red-200';
+
     return div(
-      classes:
-          'p-3.5 rounded-xl border border-border-medium bg-neutral/30 flex items-center justify-between',
+      classes: 'p-3.5 rounded-xl border border-border-medium bg-neutral/30 flex items-center justify-between',
       [
         div(classes: 'flex items-center gap-2.5', [
           CreditCard(classes: 'w-4 h-4 text-primary'),
@@ -41,15 +45,14 @@ class SubscriptionStatusBanner extends StatelessComponent {
                 [.text(planName)],
               ),
               span(
-                classes:
-                    'text-[10px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider ${isOperational ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-red-50 text-red-600 border border-red-200'}',
+                classes: badgeClasses,
                 [.text(statusText)],
               ),
             ]),
             if (sub != null)
               p(classes: 'text-[11px] text-gray-500', [
                 .text(
-                  'Valid until: ${sub.endsAt.year}-${sub.endsAt.month.toString().padLeft(2, '0')}-${sub.endsAt.day.toString().padLeft(2, '0')}',
+                  'Valid until: ${sub.endsAt.day.toString().padLeft(2, '0')}/${sub.endsAt.month.toString().padLeft(2, '0')}/${sub.endsAt.year}',
                 ),
               ]),
           ]),

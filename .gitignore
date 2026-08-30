@@ -17,3 +17,5 @@ AGENTS.md
 build/
 *.exe
 DEPRECATION_PLAN_BOTTLE_RETURN.md
+.env
+*.env

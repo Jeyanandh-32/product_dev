@@ -16,7 +16,7 @@ class DatePickerHelper {
     final cleaned = cleanDate(dateStr);
     final dt = DateTime.tryParse(cleaned);
     if (dt == null) return cleaned;
-    return df.formatDate(dt.toLocal(), [df.dd, ' ', df.M, ' ', df.yyyy]);
+    return df.formatDate(dt.toLocal(), [df.dd, '/', df.mm, '/', df.yyyy]);
   }
 
   static String getTodayString() => df.formatDate(DateTime.now().toLocal(), [

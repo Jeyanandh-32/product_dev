@@ -38,6 +38,10 @@ abstract final class ApiEndpoints {
       '/$version/stores/$storeId/subscription';
   static String storeSubscriptionRenew(String storeId) =>
       '/$version/stores/$storeId/subscription/renew';
+  static String storeSubscriptionInitiatePayment(String storeId) =>
+      '/$version/stores/$storeId/subscription/initiate-payment';
+  static String storeSubscriptionVerifyPayment(String storeId) =>
+      '/$version/stores/$storeId/subscription/verify-payment';
 
   // Bottle Returns
   static const String bottleReturnsConfig = '/$version/bottle-returns/config';

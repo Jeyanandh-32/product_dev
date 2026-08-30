@@ -22,6 +22,7 @@ abstract class Order with _$Order {
     @Default(0.0) double discountTotal,
     @Default(0.0) double walletDeduction,
     required double taxTotal,
+    @Default(0.0) double platformFee,
     required double grandTotal,
     String? terminalCode,
     Customer? customer,

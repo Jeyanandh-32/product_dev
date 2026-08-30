@@ -8,9 +8,10 @@ abstract final class SubscriptionClientRepository {
   static Future<List<SubscriptionPlan>> getPlans() async {
     try {
       final result = await dio.get(ApiEndpoints.subscriptionPlans);
-      final list = result.data['data']['plans'] as List<dynamic>;
+      final rawData = result.data['data'] as Map;
+      final list = (rawData['plans'] as List).cast<Map>();
       return list
-          .map((p) => SubscriptionPlan.fromJson(p as Map<String, Object?>))
+          .map((p) => SubscriptionPlan.fromJson(Map<String, dynamic>.from(p)))
           .toList();
     } on DioException catch (e) {
       handleDioError(e, 'Failed to fetch subscription plans.');
@@ -28,22 +29,24 @@ abstract final class SubscriptionClientRepository {
   getStoreSubscription(String storeId) async {
     try {
       final result = await dio.get(ApiEndpoints.storeSubscription(storeId));
-      final data = result.data['data'] as Map<String, dynamic>;
+      final rawData = result.data['data'] as Map;
+      final data = Map<String, dynamic>.from(rawData);
 
-      final rawSub = data['subscription'];
+      final rawSub = data['subscription'] as Map?;
       final subscription = rawSub != null
-          ? StoreSubscription.fromJson(rawSub as Map<String, Object?>)
+          ? StoreSubscription.fromJson(Map<String, dynamic>.from(rawSub))
           : null;
 
-      final rawPlan = data['plan'];
+      final rawPlan = data['plan'] as Map?;
       final plan = rawPlan != null
-          ? SubscriptionPlan.fromJson(rawPlan as Map<String, Object?>)
+          ? SubscriptionPlan.fromJson(Map<String, dynamic>.from(rawPlan))
           : null;
 
-      final rawTxList = data['transactions'] as List<dynamic>? ?? [];
+      final rawTxList = (data['transactions'] as List?)?.cast<Map>() ?? [];
       final transactions = rawTxList
           .map(
-            (t) => SubscriptionTransaction.fromJson(t as Map<String, Object?>),
+            (t) =>
+                SubscriptionTransaction.fromJson(Map<String, dynamic>.from(t)),
           )
           .toList();
 
@@ -54,6 +57,50 @@ abstract final class SubscriptionClientRepository {
       );
     } on DioException catch (e) {
       handleDioError(e, 'Failed to fetch store subscription.');
+    }
+  }
+
+  /// Initiates PhonePe checkout session for store subscription.
+  static Future<SubscriptionPaymentSession> initiateSubscriptionPayment({
+    required String storeId,
+    required SubscriptionPlanCode planCode,
+  }) async {
+    try {
+      final result = await dio.post(
+        ApiEndpoints.storeSubscriptionInitiatePayment(storeId),
+        data: {'planCode': planCode.name},
+      );
+      final rawData = result.data['data'] as Map;
+      final data = Map<String, dynamic>.from(rawData);
+      return SubscriptionPaymentSession.fromJson(data);
+    } on DioException catch (e) {
+      handleDioError(e, 'Failed to initiate subscription payment.');
+    }
+  }
+
+  /// Verifies subscription payment with backend after PhonePe checkout.
+  static Future<({StoreSubscription subscription, SubscriptionPlan plan})>
+  verifySubscriptionPayment({
+    required String storeId,
+    required String merchantTransactionId,
+  }) async {
+    try {
+      final result = await dio.post(
+        ApiEndpoints.storeSubscriptionVerifyPayment(storeId),
+        data: {'merchantTransactionId': merchantTransactionId},
+      );
+      final rawData = result.data['data'] as Map;
+      final data = Map<String, dynamic>.from(rawData);
+      return (
+        subscription: StoreSubscription.fromJson(
+          Map<String, dynamic>.from(data['subscription'] as Map),
+        ),
+        plan: SubscriptionPlan.fromJson(
+          Map<String, dynamic>.from(data['plan'] as Map),
+        ),
+      );
+    } on DioException catch (e) {
+      handleDioError(e, 'Failed to verify subscription payment.');
     }
   }
 
@@ -77,16 +124,17 @@ abstract final class SubscriptionClientRepository {
           if (reference != null) 'reference': reference,
         },
       );
-      final data = result.data['data'] as Map<String, dynamic>;
+      final rawData = result.data['data'] as Map;
+      final data = Map<String, dynamic>.from(rawData);
 
-      final subscription = StoreSubscription.fromJson(
-        data['subscription'] as Map<String, Object?>,
+      return (
+        subscription: StoreSubscription.fromJson(
+          Map<String, dynamic>.from(data['subscription'] as Map),
+        ),
+        plan: SubscriptionPlan.fromJson(
+          Map<String, dynamic>.from(data['plan'] as Map),
+        ),
       );
-      final plan = SubscriptionPlan.fromJson(
-        data['plan'] as Map<String, Object?>,
-      );
-
-      return (subscription: subscription, plan: plan);
     } on DioException catch (e) {
       handleDioError(e, 'Failed to renew store subscription.');
     }

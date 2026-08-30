@@ -1,3 +1,4 @@
+import 'package:date_format/date_format.dart' as df;
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:merchant/components/reports/order_table_row.dart';
@@ -6,7 +7,6 @@ import 'package:merchant/components/sortable_header.dart';
 import 'package:merchant/signals/orders_signal.dart';
 import 'package:merchant/utils/payment_formatter.dart';
 import 'package:models/models.dart';
-import 'package:date_format/date_format.dart' as df;
 
 /// Scrollable orders table view with column sorting and row interactions.
 class OrdersTableView extends StatelessComponent {
@@ -22,7 +22,7 @@ class OrdersTableView extends StatelessComponent {
   });
 
   String _formatDate(DateTime dt) =>
-      df.formatDate(dt.toLocal(), [df.dd, '-', df.M, '-', df.yyyy]);
+      df.formatDate(dt.toLocal(), [df.dd, '/', df.mm, '/', df.yyyy]);
 
   String _formatOrderStatus(OrderStatus status) {
     return switch (status) {

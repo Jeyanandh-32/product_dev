@@ -59,10 +59,7 @@ class StoreInfoCard extends StatelessWidget {
           const Gap(18),
           Container(height: 1, color: const Color(0xFFF1F5F9)),
           const Gap(16),
-          AccountInfoRow(
-            label: 'Store Name',
-            value: storeData.name,
-          ),
+          AccountInfoRow(label: 'Store Name', value: storeData.name),
           const Gap(14),
           AccountInfoRow(
             label: 'Store Category',
@@ -71,7 +68,9 @@ class StoreInfoCard extends StatelessWidget {
           const Gap(14),
           AccountInfoRow(
             label: 'Online Ordering',
-            value: storeData.isOnlineEnabled ? 'Enabled & Accepting Orders' : 'Disabled',
+            value: storeData.isOnlineEnabled
+                ? 'Enabled & Accepting Orders'
+                : 'Disabled',
             isSuccess: storeData.isOnlineEnabled,
           ),
           const Gap(14),
@@ -91,6 +90,6 @@ class StoreInfoCard extends StatelessWidget {
   }
 
   String _formatDate(DateTime dt) {
-    return '${dt.day.toString().padLeft(2, '0')}-${dt.month.toString().padLeft(2, '0')}-${dt.year}';
+    return '${dt.day.toString().padLeft(2, '0')}/${dt.month.toString().padLeft(2, '0')}/${dt.year}';
   }
 }

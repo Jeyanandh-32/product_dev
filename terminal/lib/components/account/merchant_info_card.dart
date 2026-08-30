@@ -63,15 +63,9 @@ class MerchantInfoCard extends StatelessWidget {
             value: merchantData.businessName,
           ),
           const Gap(14),
-          AccountInfoRow(
-            label: 'Owner Name',
-            value: merchantData.name,
-          ),
+          AccountInfoRow(label: 'Owner Name', value: merchantData.name),
           const Gap(14),
-          AccountInfoRow(
-            label: 'Contact Email',
-            value: merchantData.email,
-          ),
+          AccountInfoRow(label: 'Contact Email', value: merchantData.email),
           const Gap(14),
           AccountInfoRow(
             label: 'WhatsApp Phone',
@@ -88,6 +82,6 @@ class MerchantInfoCard extends StatelessWidget {
   }
 
   String _formatDate(DateTime dt) {
-    return '${dt.day.toString().padLeft(2, '0')}-${dt.month.toString().padLeft(2, '0')}-${dt.year}';
+    return '${dt.day.toString().padLeft(2, '0')}/${dt.month.toString().padLeft(2, '0')}/${dt.year}';
   }
 }

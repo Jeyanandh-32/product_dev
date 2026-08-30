@@ -5,7 +5,10 @@ import 'package:dart_frog/dart_frog.dart';
 Handler middleware(Handler handler) {
   return handler.use(
     merchantTerminalAuthMiddleware(
-      publicPaths: ['/v1/payments/phonepe-webhook'],
+      publicPaths: [
+        '/v1/payments/phonepe-webhook',
+        '/v1/payments/subscription-phonepe-webhook',
+      ],
     ),
   );
 }

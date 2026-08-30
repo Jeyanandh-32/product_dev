@@ -29,6 +29,18 @@
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 
+        <!-- PhonePe Checkout JS Bundle -->
+        <script src="https://mercury.phonepe.com/web/bundle/checkout.js" defer></script>
+        <script>
+            window.phonePeTransact = function(tokenUrl, type, callback) {
+                if (window.PhonePeCheckout && window.PhonePeCheckout.transact) {
+                    window.PhonePeCheckout.transact({ tokenUrl: tokenUrl, callback: callback, type: type || 'IFRAME' });
+                } else {
+                    console.error('PhonePeCheckout SDK is not loaded yet');
+                }
+            };
+        </script>
+
         <!-- Loads and runs the compiled 'main.client.dart' file. -->
         <script defer src="main.client.dart.js"></script>
 

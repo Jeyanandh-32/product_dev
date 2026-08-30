@@ -4,21 +4,6 @@ import 'package:gap/gap.dart';
 import 'package:mix/mix.dart';
 import 'package:models/models.dart';
 
-const _months = [
-  'Jan',
-  'Feb',
-  'Mar',
-  'Apr',
-  'May',
-  'Jun',
-  'Jul',
-  'Aug',
-  'Sep',
-  'Oct',
-  'Nov',
-  'Dec',
-];
-
 /// Date, item count, and price footer for order cards.
 class OrderCardFooter extends StatelessWidget {
   const OrderCardFooter({super.key, required this.order});
@@ -31,8 +16,10 @@ class OrderCardFooter extends StatelessWidget {
     final period = rawHour >= 12 ? 'PM' : 'AM';
     final hour12 = rawHour % 12 == 0 ? 12 : rawHour % 12;
     final min = order.createdAt.minute.toString().padLeft(2, '0');
+    final day = order.createdAt.day.toString().padLeft(2, '0');
+    final month = order.createdAt.month.toString().padLeft(2, '0');
     final dateTimeStr =
-        '${order.createdAt.day} ${_months[order.createdAt.month - 1]}, $hour12:$min $period';
+        '$day/$month/${order.createdAt.year}, $hour12:$min $period';
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
