@@ -22,9 +22,7 @@ class StoreWalletCard extends StatelessComponent {
 
   @override
   Component build(BuildContext context) {
-    final isBottleStore =
-        currentStore?.isBottleReturnEnabled == true ||
-        currentStore?.storeType?.toLowerCase() == 'liquor';
+    final isBottleStore = currentStore?.isBottleReturnEnabled == true;
 
     final title = isBottleStore ? 'Bottle Return Rewards' : 'Store Wallet';
     final subtitle = isBottleStore

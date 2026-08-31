@@ -38,7 +38,13 @@ class _StoreDetailPageState extends SignalState<StoreDetailPage> {
   @override
   void didUpdateComponent(StoreDetailPage oldComponent) {
     super.didUpdateComponent(oldComponent);
-    if (oldComponent.slug != component.slug) _fetch();
+    if (oldComponent.slug != component.slug) {
+      setState(() {
+        _searchQuery = '';
+        _selectedCategoryId = null;
+      });
+      _fetch();
+    }
   }
 
   void _fetch() {
@@ -81,6 +87,7 @@ class _StoreDetailPageState extends SignalState<StoreDetailPage> {
     final totalCartCount = cartItems.values.fold<int>(0, (sum, item) => sum + item.quantity);
     final totalCartPrice = cartItems.values.fold<double>(0.0, (sum, item) => sum + (item.product.sellingPrice * item.quantity));
     final categories = categoriesState.value ?? [];
+    final activeCategoryId = categories.any((c) => c.id == _selectedCategoryId) ? _selectedCategoryId : null;
 
     return div(
       classes: 'flex flex-col gap-6 max-w-4xl w-full mx-auto ${totalCartCount > 0 ? 'pb-24' : 'pb-2'}',
@@ -91,7 +98,7 @@ class _StoreDetailPageState extends SignalState<StoreDetailPage> {
           if (categories.isNotEmpty)
             StoreCategoryFilters(
               categories: categories,
-              selectedCategoryId: _selectedCategoryId,
+              selectedCategoryId: activeCategoryId,
               onSelectCategory: (catId) => setState(() => _selectedCategoryId = catId),
             ),
         ]),
@@ -105,7 +112,7 @@ class _StoreDetailPageState extends SignalState<StoreDetailPage> {
             currentStore: store,
             cartItems: cartItems,
             searchQuery: _searchQuery,
-            selectedCategoryId: _selectedCategoryId,
+            selectedCategoryId: activeCategoryId,
           ),
           AsyncError() => div(
             classes: 'p-6 bg-red-50 text-red-600 rounded-2xl text-center font-semibold border border-red-100 text-xs',

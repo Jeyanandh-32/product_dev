@@ -1,4 +1,5 @@
 import 'package:backend/database/schema.dart';
+import 'package:models/models.dart';
 import 'package:typed_sql/typed_sql.dart' as ts;
 
 /// Helper handler for recording and normalizing stock inventory audit transactions.
@@ -20,20 +21,25 @@ class StockTransactionLogger {
     var actualType = transactionType;
     var actualAmount = amount;
 
-    if (transactionType == 'set' && targetQuantity != null) {
+    if (transactionType == StockTransactionType.set.name &&
+        targetQuantity != null) {
       final delta = targetQuantity - stockRow.quantity;
       if (delta > 0) {
-        actualType = 'add';
+        actualType = StockTransactionType.add.name;
         actualAmount = delta;
       } else if (delta < 0) {
-        actualType = 'reduce';
+        actualType = StockTransactionType.reduce.name;
         actualAmount = delta.abs();
       } else {
         actualAmount = 0;
       }
     }
 
-    final actualReason = reason ?? (actualType == 'add' ? 'restock' : 'adjustment');
+    final actualReason =
+        reason ??
+        (actualType == StockTransactionType.add.name
+            ? StockTransactionReason.restock.name
+            : StockTransactionReason.adjustment.name);
 
     if (actualAmount > 0) {
       await db.stockTransactions

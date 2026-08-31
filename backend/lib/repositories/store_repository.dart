@@ -37,7 +37,11 @@ class StoreRepository {
   }
 
   /// Retrieves paginated list of stores.
-  Future<List<StoreRow>> getAll({required String merchantId, int? limit, int? offset}) async {
+  Future<List<StoreRow>> getAll({
+    required String merchantId,
+    int? limit,
+    int? offset,
+  }) async {
     var query = _db.stores.where((s) => s.merchantId.equalsValue(merchantId));
     if (offset != null) query = query.offset(offset);
     if (limit != null) query = query.limit(limit);
@@ -46,7 +50,9 @@ class StoreRepository {
 
   /// Retrieves list of stores enabled for online ordering.
   Future<List<StoreRow>> getOnlineStores({int? limit, int? offset}) async {
-    var query = _db.stores.where((s) => s.isActive.equalsValue(true) & s.isOnlineEnabled.equalsValue(true));
+    var query = _db.stores.where(
+      (s) => s.isActive.equalsValue(true) & s.isOnlineEnabled.equalsValue(true),
+    );
     if (offset != null) query = query.offset(offset);
     if (limit != null) query = query.limit(limit);
     return query.fetch();
@@ -54,7 +60,9 @@ class StoreRepository {
 
   /// Counts total online-enabled stores.
   Future<int> countOnlineStores() async {
-    final query = _db.stores.where((s) => s.isActive.equalsValue(true) & s.isOnlineEnabled.equalsValue(true));
+    final query = _db.stores.where(
+      (s) => s.isActive.equalsValue(true) & s.isOnlineEnabled.equalsValue(true),
+    );
     return (await query.count().fetch()) ?? 0;
   }
 
@@ -64,7 +72,9 @@ class StoreRepository {
     if (cached != null) return cached;
 
     final row = await _db.stores
-        .where((s) => s.slug.equalsValue(slug) & s.isActive.equalsValue(true) & s.isOnlineEnabled.equalsValue(true))
+        .where(
+          (s) => s.slug.equalsValue(slug) & s.isActive.equalsValue(true),
+        )
         .first
         .fetch();
 
@@ -104,9 +114,13 @@ class StoreRepository {
         .update(
           (s, set) => set(
             name: name != null ? ts.toExpr(name) : s.name,
-            storeType: updateStoreType ? ts.toExpr(storeType?.name) : s.storeType,
+            storeType: updateStoreType
+                ? ts.toExpr(storeType?.name)
+                : s.storeType,
             isActive: isActive != null ? ts.toExpr(isActive) : s.isActive,
-            isOnlineEnabled: isOnlineEnabled != null ? ts.toExpr(isOnlineEnabled) : s.isOnlineEnabled,
+            isOnlineEnabled: isOnlineEnabled != null
+                ? ts.toExpr(isOnlineEnabled)
+                : s.isOnlineEnabled,
             slug: updateSlug ? ts.toExpr(slug) : s.slug,
             updatedAt: ts.Expr.currentTimestamp,
           ),

@@ -1,7 +1,9 @@
 library;
 
+export 'src/bottle_return/bottle_coupon_status.dart';
 export 'src/bottle_return/bottle_credit.dart';
 export 'src/bottle_return/bottle_credit_transaction.dart';
+export 'src/bottle_return/bottle_credit_transaction_type.dart';
 export 'src/bottle_return/bottle_physical_coupon.dart';
 export 'src/bottle_return/bottle_qr_token.dart';
 export 'src/bottle_return/bottle_return_config.dart';

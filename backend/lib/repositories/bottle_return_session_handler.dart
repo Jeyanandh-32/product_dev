@@ -49,9 +49,9 @@ class BottleReturnSessionHandler {
 
     final totalCount = validMatching.length;
     final totalReward = totalCount * rewardRate;
-    final primaryMode = validMatching.first.rewardMode == 'digital'
-        ? BottleRewardMode.digital
-        : BottleRewardMode.physical;
+    final primaryMode = BottleRewardMode.fromString(
+      validMatching.first.rewardMode,
+    );
     final customerPhone = validMatching.first.customerPhone;
 
     for (final tok in validMatching) {
@@ -59,7 +59,7 @@ class BottleReturnSessionHandler {
           .where((t) => t.id.equals(ts.toExpr(tok.id)))
           .update(
             (t, set) => set(
-              status: ts.toExpr('returned'),
+              status: ts.toExpr(BottleTokenStatus.returned.name),
               returnedAt: ts.Expr.currentTimestamp,
               returnedStoreId: ts.toExpr(storeId),
             ),
@@ -101,7 +101,7 @@ class BottleReturnSessionHandler {
             merchantId: merchantId,
             customerPhone: customerPhone,
             amount: totalReward,
-            type: 'credit',
+            type: BottleCreditTransactionType.credit.name,
             storeId: storeId,
           )
           .execute();
@@ -122,7 +122,7 @@ class BottleReturnSessionHandler {
           merchantId: merchantId,
           storeId: storeId,
           amount: totalReward,
-          status: 'active',
+          status: BottleCouponStatus.active.name,
         )
         .returnInserted()
         .executeAndFetch();

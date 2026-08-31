@@ -24,11 +24,12 @@ class CartWalletToggleCard extends StatelessComponent {
 
   @override
   Component build(BuildContext context) {
-    final isBottleStore = currentStore?.isBottleReturnEnabled == true ||
-        currentStore?.storeType?.toLowerCase() == 'liquor';
+    final isBottleStore = currentStore?.isBottleReturnEnabled == true;
     final hasBalance = walletBalance > 0;
     final title = isBottleStore ? 'Bottle Return Rewards' : 'Store Wallet';
-    final deductionLabel = isBottleStore ? 'Reward Deduction' : 'Wallet Deduction';
+    final deductionLabel = isBottleStore
+        ? 'Reward Deduction'
+        : 'Wallet Deduction';
 
     final containerStateClasses = hasBalance
         ? 'bg-gray-50 border-gray-200/80 cursor-pointer hover:bg-gray-100/80 active:scale-99'
@@ -94,8 +95,7 @@ class CartWalletToggleCard extends StatelessComponent {
             ],
           ),
         div(
-          classes:
-              'border-t border-dashed border-gray-200 pt-3 mt-1 flex justify-between items-center text-base font-extrabold text-black',
+          classes: 'border-t border-dashed border-gray-200 pt-3 mt-1 flex justify-between items-center text-base font-extrabold text-black',
           [
             span([.text('To Pay')]),
             span(classes: 'text-emerald-700', [

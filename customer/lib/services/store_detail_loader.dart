@@ -14,18 +14,32 @@ class StoreDetailLoader {
     required AsyncSignal<List<Product>> productsSignal,
     required AsyncSignal<List<Category>> categoriesSignal,
   }) async {
+    storeSignal.value = const AsyncLoading();
+    productsSignal.value = const AsyncLoading();
+    categoriesSignal.value = const AsyncLoading();
+
     try {
       final store = await StoreRepository.getBySlug(slug);
-      storeSignal.value = AsyncData(store);
-
       if (store != null) {
         setActiveStore(store);
         recordStoreVisitSignal(store.id);
-        await Future.wait([
-          loadCategories(store.id, categoriesSignal),
-          loadProducts(store.id, productsSignal),
-        ]);
+        storeSignal.value = AsyncData(store);
+
+        final categoriesFuture = CategoryRepository.getAll(
+          storeId: store.id,
+          size: 100,
+        ).then((res) => res.items).catchError((_) => <Category>[]);
+
+        final productsFuture = ProductRepository.getAll(
+          storeId: store.id,
+          size: 200,
+        ).then((res) => res.items).catchError((_) => <Product>[]);
+
+        final (cats, prods) = await (categoriesFuture, productsFuture).wait;
+        categoriesSignal.value = AsyncData(cats);
+        productsSignal.value = AsyncData(prods);
       } else {
+        storeSignal.value = const AsyncData(null);
         productsSignal.value = const AsyncData([]);
         categoriesSignal.value = const AsyncData([]);
       }
@@ -33,36 +47,6 @@ class StoreDetailLoader {
       storeSignal.value = AsyncError(e, stack);
       productsSignal.value = AsyncError(e, stack);
       categoriesSignal.value = AsyncError(e, stack);
-    }
-  }
-
-  static Future<void> loadCategories(
-    String storeId,
-    AsyncSignal<List<Category>> categoriesSignal,
-  ) async {
-    try {
-      final categoriesRes = await CategoryRepository.getAll(
-        storeId: storeId,
-        size: 100,
-      );
-      categoriesSignal.value = AsyncData(categoriesRes.items);
-    } catch (e, stack) {
-      categoriesSignal.value = AsyncError(e, stack);
-    }
-  }
-
-  static Future<void> loadProducts(
-    String storeId,
-    AsyncSignal<List<Product>> productsSignal,
-  ) async {
-    try {
-      final productsRes = await ProductRepository.getAll(
-        storeId: storeId,
-        size: 200,
-      );
-      productsSignal.value = AsyncData(productsRes.items);
-    } catch (e, stack) {
-      productsSignal.value = AsyncError(e, stack);
     }
   }
 }

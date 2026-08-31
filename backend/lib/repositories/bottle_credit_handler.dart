@@ -54,7 +54,7 @@ class BottleCreditHandler {
           merchantId: merchantId,
           customerPhone: customerPhone,
           amount: amount,
-          type: 'debit',
+          type: BottleCreditTransactionType.debit.name,
           referenceOrderId: orderId,
           storeId: storeId,
         )
@@ -75,7 +75,9 @@ class BottleCreditHandler {
               c.code.equals(ts.toExpr(code.trim().toUpperCase())),
         )
         .fetch();
-    if (rows.isEmpty || rows.first.status != 'active') return null;
+    if (rows.isEmpty || rows.first.status != BottleCouponStatus.active.name) {
+      return null;
+    }
     return rows.first.toModel();
   }
 
@@ -93,12 +95,14 @@ class BottleCreditHandler {
               c.code.equals(ts.toExpr(code.trim().toUpperCase())),
         )
         .fetch();
-    if (rows.isEmpty || rows.first.status != 'active') return false;
+    if (rows.isEmpty || rows.first.status != BottleCouponStatus.active.name) {
+      return false;
+    }
     await db.bottlePhysicalCoupons
         .where((c) => c.id.equals(ts.toExpr(rows.first.id)))
         .update(
           (c, set) => set(
-            status: ts.toExpr('redeemed'),
+            status: ts.toExpr(BottleCouponStatus.redeemed.name),
             redeemedAt: ts.Expr.currentTimestamp,
             redeemedOrderId: ts.toExpr(orderId),
           ),

@@ -51,11 +51,12 @@ class WalletTransactionsModal extends StatelessComponent {
     final amountRupees = tx.amount.toStringAsFixed(2);
     final dateFormatted = _formatTxDate(tx.createdAt);
 
-    final title = isRefund
-        ? 'Bottle Return Reward'
-        : isTopUp
-        ? 'Reward Credit'
-        : 'Reward Redemption';
+    final isBottleReturn = tx.reference?.contains('Bottle Return') == true;
+    final title = isBottleReturn
+        ? (isRefund ? 'Bottle Return Reward' : 'Reward Redemption')
+        : (isTopUp
+              ? 'Wallet Top-Up'
+              : (isRefund ? 'Refund Credit' : 'Order Payment'));
 
     final icon = isPositive
         ? Sparkles(classes: 'w-4 h-4 text-emerald-600')

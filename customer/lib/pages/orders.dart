@@ -1,6 +1,7 @@
 import 'package:api_client/api_client.dart';
 import 'package:client_repositories/client_repositories.dart';
 import 'package:customer/components/orders/customer_order_status_tabs.dart';
+import 'package:customer/components/orders/customer_order_tab.dart';
 import 'package:customer/components/orders/customer_orders_header.dart';
 import 'package:customer/components/orders/customer_orders_list.dart';
 import 'package:customer/components/orders/order_qr_modal.dart';
@@ -25,7 +26,7 @@ class _CustomerOrdersPageState extends SignalState<CustomerOrdersPage> {
   );
 
   String _selectedDate = '';
-  String _selectedTab = 'pending';
+  CustomerOrderTab _selectedTab = CustomerOrderTab.pending;
   Order? _qrModalOrder;
 
   @override

@@ -1,3 +1,4 @@
+import 'package:customer/components/orders/customer_order_tab.dart';
 import 'package:customer/components/orders/order_tile.dart';
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
@@ -8,7 +9,7 @@ import 'package:models/models.dart';
 /// Grid displaying customer order tiles or an empty state when none match.
 class CustomerOrdersList extends StatelessComponent {
   final List<Order> orders;
-  final String selectedTab;
+  final CustomerOrderTab selectedTab;
   final ValueChanged<Order> onShowQr;
 
   const CustomerOrdersList({
@@ -21,7 +22,7 @@ class CustomerOrdersList extends StatelessComponent {
   @override
   Component build(BuildContext context) {
     final filteredOrders = orders.where((order) {
-      if (selectedTab == 'pending') {
+      if (selectedTab == CustomerOrderTab.pending) {
         return order.status == OrderStatus.pending ||
             order.status == OrderStatus.preparing;
       } else {
@@ -31,7 +32,7 @@ class CustomerOrdersList extends StatelessComponent {
     }).toList();
 
     if (filteredOrders.isEmpty) {
-      final emptyMsg = selectedTab == 'pending'
+      final emptyMsg = selectedTab == CustomerOrderTab.pending
           ? 'No active orders waiting for pickup or preparation.'
           : 'No past orders recorded for this date.';
 
@@ -47,7 +48,7 @@ class CustomerOrdersList extends StatelessComponent {
             ],
           ),
           h3(classes: 'text-sm font-bold text-gray-900', [
-            .text('No ${selectedTab.toUpperCase()} orders'),
+            .text('No ${selectedTab.name.toUpperCase()} orders'),
           ]),
           p(classes: 'text-xs text-gray-400 max-w-sm', [
             .text(emptyMsg),

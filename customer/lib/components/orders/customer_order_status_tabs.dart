@@ -1,10 +1,11 @@
+import 'package:customer/components/orders/customer_order_tab.dart';
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 
 /// Segmented tab toggle for switching between Pending and Completed customer order views.
 class CustomerOrderStatusTabs extends StatelessComponent {
-  final String selectedTab;
-  final ValueChanged<String> onTabSelected;
+  final CustomerOrderTab selectedTab;
+  final ValueChanged<CustomerOrderTab> onTabSelected;
 
   const CustomerOrderStatusTabs({
     super.key,
@@ -19,17 +20,17 @@ class CustomerOrderStatusTabs extends StatelessComponent {
           'flex items-center p-1 bg-gray-100 rounded-2xl max-w-sm w-full gap-1 border border-gray-200/80 mx-auto',
       [
         button(
-          classes: selectedTab == 'pending'
+          classes: selectedTab == CustomerOrderTab.pending
               ? 'flex-1 py-2 px-4 rounded-xl bg-white text-black font-extrabold text-xs shadow-2xs transition-all border-0 cursor-pointer text-center'
               : 'flex-1 py-2 px-4 rounded-xl text-gray-500 hover:text-black font-bold text-xs transition-all border-0 cursor-pointer text-center',
-          onClick: () => onTabSelected('pending'),
+          onClick: () => onTabSelected(CustomerOrderTab.pending),
           [.text('Pending')],
         ),
         button(
-          classes: selectedTab == 'completed'
+          classes: selectedTab == CustomerOrderTab.completed
               ? 'flex-1 py-2 px-4 rounded-xl bg-white text-black font-extrabold text-xs shadow-2xs transition-all border-0 cursor-pointer text-center'
               : 'flex-1 py-2 px-4 rounded-xl text-gray-500 hover:text-black font-bold text-xs transition-all border-0 cursor-pointer text-center',
-          onClick: () => onTabSelected('completed'),
+          onClick: () => onTabSelected(CustomerOrderTab.completed),
           [.text('Completed')],
         ),
       ],

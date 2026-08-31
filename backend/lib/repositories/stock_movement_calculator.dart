@@ -32,11 +32,12 @@ class StockMovementCalculator {
           (toDate == null || !txDate.isAfter(toDate));
 
       var change = 0;
-      if (reason == 'restock' || type == 'add') {
+      if (reason == StockTransactionReason.restock.name ||
+          type == StockTransactionType.add.name) {
         change = tx.quantity;
-      } else if (reason == 'sale' ||
-          reason == 'wastage' ||
-          type == 'reduce') {
+      } else if (reason == StockTransactionReason.sale.name ||
+          reason == StockTransactionReason.wastage.name ||
+          type == StockTransactionType.reduce.name) {
         change = -tx.quantity;
       }
 
@@ -45,24 +46,24 @@ class StockMovementCalculator {
       }
 
       if (isInRange) {
-        if (reason == 'restock') {
+        if (reason == StockTransactionReason.restock.name) {
           inQty += tx.quantity;
-        } else if (reason == 'sale') {
+        } else if (reason == StockTransactionReason.sale.name) {
           outQty += tx.quantity;
-        } else if (reason == 'wastage') {
+        } else if (reason == StockTransactionReason.wastage.name) {
           wastageQty += tx.quantity;
-        } else if (reason == 'adjustment') {
-          if (type == 'add') {
+        } else if (reason == StockTransactionReason.adjustment.name) {
+          if (type == StockTransactionType.add.name) {
             adjQty += tx.quantity;
-          } else if (type == 'reduce') {
+          } else if (type == StockTransactionType.reduce.name) {
             adjQty -= tx.quantity;
           } else {
             adjQty += tx.quantity;
           }
         } else {
-          if (type == 'add') {
+          if (type == StockTransactionType.add.name) {
             inQty += tx.quantity;
-          } else if (type == 'reduce') {
+          } else if (type == StockTransactionType.reduce.name) {
             outQty += tx.quantity;
           }
         }
