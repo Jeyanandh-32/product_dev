@@ -6,6 +6,7 @@ import 'package:backend/repositories/product_repository.dart';
 import 'package:backend/utils/responses.dart';
 import 'package:dart_frog/dart_frog.dart';
 import 'package:models/models.dart';
+import 'package:validators/validators.dart';
 
 Future<Response> onRequest(RequestContext context, String id) async {
   return switch (context.request.method) {
@@ -51,14 +52,25 @@ Future<Response> _onPatch(RequestContext context, String id) async {
     final orderRow = await orderRepo.getByIdOrBillNo(id, context.storeId);
     if (orderRow == null) return notFound(message: 'Order not found.');
 
-    final body = await context.request.json() as Map<String, dynamic>;
-    final statusStr = body['status'] as String?;
-    final paymentStatusStr = body['paymentStatus'] as String?;
-    final paymentMethodStr = body['paymentMethod'] as String?;
+    final body = await context.validateBody(OrderValidator.update);
+    final input = OrderUpdate.fromJson(body);
+    final statusStr = input.status;
+    final paymentStatusStr = input.paymentStatus;
+    final paymentMethodStr = input.paymentMethod;
 
-    final status = statusStr != null ? OrderStatus.values.where((e) => e.name == statusStr).firstOrNull : null;
-    final paymentStatus = paymentStatusStr != null ? PaymentStatus.values.where((e) => e.name == paymentStatusStr).firstOrNull : null;
-    final paymentMethod = paymentMethodStr != null ? PaymentMethod.values.where((e) => e.name == paymentMethodStr).firstOrNull : null;
+    final status = statusStr != null
+        ? OrderStatus.values.where((e) => e.name == statusStr).firstOrNull
+        : null;
+    final paymentStatus = paymentStatusStr != null
+        ? PaymentStatus.values
+              .where((e) => e.name == paymentStatusStr)
+              .firstOrNull
+        : null;
+    final paymentMethod = paymentMethodStr != null
+        ? PaymentMethod.values
+              .where((e) => e.name == paymentMethodStr)
+              .firstOrNull
+        : null;
 
     final updatedRow = await orderRepo.update(
       id: orderRow.id,
@@ -76,6 +88,8 @@ Future<Response> _onPatch(RequestContext context, String id) async {
 
     final order = updatedRow.toOrder(itemRows, productRows: productRowsMap);
     return success(data: {'order': order.toJson()});
+  } on ResponseException catch (e) {
+    return e.response;
   } catch (e) {
     return error(message: e.toString());
   }

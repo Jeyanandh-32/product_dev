@@ -35,18 +35,14 @@ Future<Response> _onPatch(RequestContext context) async {
   final tokenPayload = context.tokenPayload;
 
   try {
-    Map<String, dynamic> body;
-    try {
-      body = (await context.request.json()) as Map<String, dynamic>;
-    } catch (_) {
-      return invalidBody();
-    }
-    final name = body['name'] as String?;
-    final businessName = body['businessName'] as String?;
-    final whatsappNumber = body['whatsappNumber'] as String?;
-    final email = body['email'] as String?;
-    final currentPassword = body['currentPassword'] as String?;
-    final newPassword = body['newPassword'] as String?;
+    final body = await context.validateBody(MerchantValidator.update);
+    final input = MerchantUpdate.fromJson(body);
+    final name = input.name;
+    final businessName = input.businessName;
+    final whatsappNumber = input.whatsappNumber;
+    final email = input.email;
+    final currentPassword = input.currentPassword;
+    final newPassword = input.newPassword;
 
     final merchant = await repo.getById(tokenPayload.sub);
     if (merchant == null) {
@@ -67,8 +63,7 @@ Future<Response> _onPatch(RequestContext context) async {
       }
       if (!RegExp(ValidationPatterns.password).hasMatch(newPassword)) {
         return badRequest(
-          message:
-              'New password must be 6+ characters with a number, lowercase, and uppercase.',
+          message: 'New password must be 6+ characters with a number, lowercase, and uppercase.',
         );
       }
       newPasswordHash = await PasswordService.hash(newPassword);
@@ -88,6 +83,8 @@ Future<Response> _onPatch(RequestContext context) async {
     }
 
     return success(data: {'merchant': updated.toMerchant()});
+  } on ResponseException catch (e) {
+    return e.response;
   } on Exception catch (e) {
     return error(message: e.toString());
   }

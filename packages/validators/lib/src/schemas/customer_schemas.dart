@@ -36,3 +36,33 @@ abstract class $CustomerLogin {
   )
   String get pin;
 }
+
+@Schema()
+abstract class $CustomerRecentStoresUpdate {
+  @StringField(minLength: 1, description: 'Store ID')
+  String get storeId;
+}
+
+@Schema()
+abstract class $CustomerWalletTopUp {
+  @DoubleField(minimum: 1, description: 'Top-up amount in rupees')
+  double get amount;
+
+  @StringField(minLength: 1, description: 'Store ID')
+  String get storeId;
+}
+
+@Schema()
+abstract class $CustomerUpdate {
+  @StringField(description: 'Full Name')
+  String? get name;
+
+  @StringField(description: '10-Digit Mobile Number')
+  String? get mobileNumber;
+
+  @StringField(description: 'New PIN')
+  String? get pin;
+
+  @StringField(description: 'Current PIN')
+  String? get currentPin;
+}

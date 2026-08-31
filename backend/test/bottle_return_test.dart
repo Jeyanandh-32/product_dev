@@ -84,8 +84,8 @@ void main() {
       expect(cfg['rewardAmountInRupees'], equals(10));
     });
 
-    test('POST /v1/bottle-returns/config saves store config', () async {
-      when(() => request.method).thenReturn(HttpMethod.post);
+    test('PUT /v1/bottle-returns/config updates store config', () async {
+      when(() => request.method).thenReturn(HttpMethod.put);
       when(() => request.json()).thenAnswer(
         (_) async => {
           'storeId': 's-1',
@@ -99,6 +99,7 @@ void main() {
         createdAt: DateTime.now(),
         updatedAt: DateTime.now(),
       );
+      when(() => repo.getConfig('s-1')).thenAnswer((_) async => config);
       when(
         () => repo.saveConfig(
           storeId: 's-1',
@@ -116,6 +117,37 @@ void main() {
         equals(15),
       );
     });
+
+    test(
+      'PUT /v1/bottle-returns/config rejects unprovisioned stores with 403',
+      () async {
+        when(() => request.method).thenReturn(HttpMethod.put);
+        when(() => request.json()).thenAnswer(
+          (_) async => {
+            'storeId': 's-unprovisioned',
+            'isEnabled': true,
+            'rewardAmountInRupees': 10,
+          },
+        );
+        when(() => repo.getConfig('s-unprovisioned'))
+            .thenAnswer((_) async => null);
+
+        final response = await config_route.onRequest(context);
+        expect(response.statusCode, equals(HttpStatus.forbidden));
+        final body = jsonDecode(await response.body()) as Map<String, dynamic>;
+        expect(body['success'], isFalse);
+        expect(body['message'], contains('not provisioned'));
+      },
+    );
+
+    test(
+      'POST /v1/bottle-returns/config returns 405 Method Not Allowed',
+      () async {
+        when(() => request.method).thenReturn(HttpMethod.post);
+        final response = await config_route.onRequest(context);
+        expect(response.statusCode, equals(HttpStatus.methodNotAllowed));
+      },
+    );
 
     test(
       'GET /v1/bottle-returns/credits/balance returns phone balance',
@@ -374,6 +406,12 @@ void main() {
       when(() => request.uri).thenReturn(
         Uri.parse('http://localhost/v1/bottle-returns/products?storeId=s-1'),
       );
+      final config = BottleReturnConfig(
+        storeId: 's-1',
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
+      );
+      when(() => repo.getConfig('s-1')).thenAnswer((_) async => config);
       when(() => productHandler.getProductsForStore('s-1')).thenAnswer(
         (_) async => [
           const ReturnableProductItem(
@@ -393,6 +431,22 @@ void main() {
       expect(data.length, equals(1));
     });
 
+    test('GET /v1/bottle-returns/products rejects unprovisioned stores with 403', () async {
+      when(() => request.method).thenReturn(HttpMethod.get);
+      when(() => request.uri).thenReturn(
+        Uri.parse(
+          'http://localhost/v1/bottle-returns/products?storeId=s-unprovisioned',
+        ),
+      );
+      when(() => repo.getConfig('s-unprovisioned'))
+          .thenAnswer((_) async => null);
+
+      final response = await products_route.onRequest(context);
+      expect(response.statusCode, equals(HttpStatus.forbidden));
+      final body = jsonDecode(await response.body()) as Map<String, dynamic>;
+      expect(body['success'], isFalse);
+    });
+
     test('POST /v1/bottle-returns/products updates product status', () async {
       when(() => request.method).thenReturn(HttpMethod.post);
       when(() => request.json()).thenAnswer(
@@ -402,6 +456,12 @@ void main() {
           'isReturnable': true,
         },
       );
+      final config = BottleReturnConfig(
+        storeId: 's-1',
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
+      );
+      when(() => repo.getConfig('s-1')).thenAnswer((_) async => config);
       when(
         () => productHandler.setProductReturnable(
           storeId: 's-1',
@@ -415,5 +475,26 @@ void main() {
       final body = jsonDecode(await response.body()) as Map<String, dynamic>;
       expect(body['success'], isTrue);
     });
+
+    test(
+      'POST /v1/bottle-returns/products rejects unprovisioned stores with 403',
+      () async {
+        when(() => request.method).thenReturn(HttpMethod.post);
+        when(() => request.json()).thenAnswer(
+          (_) async => {
+            'storeId': 's-unprovisioned',
+            'productId': 'p-1',
+            'isReturnable': true,
+          },
+        );
+        when(() => repo.getConfig('s-unprovisioned'))
+            .thenAnswer((_) async => null);
+
+        final response = await products_route.onRequest(context);
+        expect(response.statusCode, equals(HttpStatus.forbidden));
+        final body = jsonDecode(await response.body()) as Map<String, dynamic>;
+        expect(body['success'], isFalse);
+      },
+    );
   });
 }

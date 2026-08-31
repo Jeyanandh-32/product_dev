@@ -35,7 +35,7 @@ Future<Response> _onGet(RequestContext context, String id) async {
     }
 
     final btlConfig = await Database.db.bottleReturnConfigs
-        .where((c) => c.storeId.equals(toExpr(id)) & c.isEnabled.equals(toExpr(true)))
+        .where((c) => c.storeId.equals(toExpr(id)))
         .first
         .fetch();
 
@@ -58,7 +58,10 @@ Future<Response> _onPutOrPatch(RequestContext context, String id) async {
 
     if (input.isOnlineEnabled ?? false) {
       final configRow = await Database.db.storePhonepeConfigs
-          .where((c) => c.storeId.equals(toExpr(id)) & c.isEnabled.equals(toExpr(true)))
+          .where(
+            (c) =>
+                c.storeId.equals(toExpr(id)) & c.isEnabled.equals(toExpr(true)),
+          )
           .first
           .fetch();
 
@@ -94,9 +97,14 @@ Future<Response> _onPutOrPatch(RequestContext context, String id) async {
       updateSlug: body.containsKey('slug'),
     );
 
+    final btlConfig = await Database.db.bottleReturnConfigs
+        .where((c) => c.storeId.equals(toExpr(id)))
+        .first
+        .fetch();
+
     return success(
       data: {
-        'store': storeRow?.toStore(),
+        'store': storeRow?.toStore(isBottleReturnEnabled: btlConfig != null),
       },
     );
   } on ResponseException catch (e) {

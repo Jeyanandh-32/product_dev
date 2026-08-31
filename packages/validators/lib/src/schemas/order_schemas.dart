@@ -35,3 +35,15 @@ abstract class $OrderCreate {
   @Field(description: 'Products list')
   List<$OrderProduct> get products;
 }
+
+@Schema()
+abstract class $OrderUpdate {
+  @StringField(description: 'Order status')
+  String? get status;
+
+  @StringField(description: 'Payment status')
+  String? get paymentStatus;
+
+  @StringField(description: 'Payment method')
+  String? get paymentMethod;
+}

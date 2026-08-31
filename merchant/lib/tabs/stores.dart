@@ -43,8 +43,7 @@ class _StoresState extends SignalState<Stores> {
     }
 
     return div(
-      classes:
-          'w-full flex-1 min-h-0 p-4 flex flex-col lg:flex-row gap-4 overflow-y-auto lg:overflow-hidden',
+      classes: 'w-full flex-1 min-h-0 p-4 flex flex-col lg:flex-row gap-4 overflow-y-auto lg:overflow-hidden',
       [
         if (activeModal == ActiveModal.addStore) const AddEditStoreModal(),
         if (activeModal == ActiveModal.editStore)
@@ -53,7 +52,9 @@ class _StoresState extends SignalState<Stores> {
           const AddEditTerminalModal(),
         if (activeModal == ActiveModal.editTerminal)
           AddEditTerminalModal(terminal: editingTerminal),
-        if (activeModal == ActiveModal.bottleReturns && selectedStore != null)
+        if (activeModal == ActiveModal.bottleReturns &&
+            selectedStore != null &&
+            selectedStore.isBottleReturnEnabled)
           BottleReturnModal(store: selectedStore),
 
         const StoresContainer(),

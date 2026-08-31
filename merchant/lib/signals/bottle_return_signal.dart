@@ -38,7 +38,7 @@ abstract final class BottleReturnActions {
   }) async {
     final prev = bottleReturnConfigSignal.value;
     try {
-      final res = await dio.post(
+      final res = await dio.put(
         ApiEndpoints.bottleReturnsConfig,
         data: {
           'storeId': storeId,

@@ -9,6 +9,7 @@ import 'package:backend/utils/responses.dart';
 import 'package:dart_frog/dart_frog.dart';
 import 'package:models/models.dart';
 import 'package:typed_sql/typed_sql.dart' hide Database;
+import 'package:validators/validators.dart';
 
 /// Endpoint for customer wallet balance retrieval, PhonePe top-up initiation, and verification.
 Future<Response> onRequest(RequestContext context) async {
@@ -59,17 +60,10 @@ Future<Response> _onPost(RequestContext context) async {
   final phonePeService = PhonePeService();
 
   try {
-    final body = await context.request.json() as Map<String, dynamic>;
-    final amountDouble = (body['amount'] as num?)?.toDouble();
-    final storeId = body['storeId'] as String?;
-
-    if (amountDouble == null || amountDouble <= 0) {
-      return badRequest(message: 'Invalid top up amount.');
-    }
-
-    if (storeId == null || storeId.isEmpty) {
-      return badRequest(message: 'storeId is required for wallet top-up.');
-    }
+    final body = await context.validateBody(CustomerValidator.topUpWallet);
+    final input = CustomerWalletTopUp.fromJson(body);
+    final amountDouble = input.amount;
+    final storeId = input.storeId;
 
     final amountPaise = (amountDouble * 100).round();
     final topUpRef = 'TOPUP_${DateTime.now().millisecondsSinceEpoch}';
@@ -119,6 +113,8 @@ Future<Response> _onPost(RequestContext context) async {
         'transaction': CustomerWalletHandler.formatTransactionJson(tx),
       },
     );
+  } on ResponseException catch (e) {
+    return e.response;
   } on Exception catch (e) {
     return error(message: e.toString());
   }

@@ -1,49 +1,30 @@
 import 'package:validators/src/schemas.dart';
 import 'package:validators/src/validation_utils.dart';
-import 'package:schemantic/schemantic.dart';
 
+/// Validator for stock endpoints.
 class StockValidator {
   const StockValidator._();
 
   static final _createSchema = StockCreate.$schema;
   static final _updateSchema = StockUpdate.$schema;
 
+  /// Validates stock creation payload.
   static Future<String?> create(Map<String, dynamic> json) async {
     return validateSchema(
       schema: _createSchema,
       json: json,
-      mapError: (error, path, type) {
-        if (type == ValidationErrorType.requiredPropertyMissing) {
-          if (error.details?.contains('"productId"') == true) {
-            return 'Product ID is required.';
-          }
-          if (error.details?.contains('"storeId"') == true) {
-            return 'Store ID is required.';
-          }
-        }
-        if (path.contains('productId') &&
-            (type == ValidationErrorType.typeMismatch ||
-                type == ValidationErrorType.minLengthNotMet)) {
-          return 'Product ID is required.';
-        }
-        if (path.contains('storeId') &&
-            (type == ValidationErrorType.typeMismatch ||
-                type == ValidationErrorType.minLengthNotMet)) {
-          return 'Store ID is required.';
-        }
-        if (path.contains('quantity') &&
-            type == ValidationErrorType.minimumNotMet) {
-          return 'Quantity cannot be negative.';
-        }
-        if (path.contains('lowStockThreshold') &&
-            type == ValidationErrorType.minimumNotMet) {
-          return 'Low stock threshold cannot be negative.';
-        }
-        return null;
-      },
+      rules: [
+        Rule.required('productId', 'Product ID is required.'),
+        Rule.type('productId', 'Product ID is required.'),
+        Rule.required('storeId', 'Store ID is required.'),
+        Rule.type('storeId', 'Store ID is required.'),
+        Rule.min('quantity', 'Quantity cannot be negative.'),
+        Rule.min('lowStockThreshold', 'Low stock threshold cannot be negative.'),
+      ],
     );
   }
 
+  /// Validates stock update payload.
   static Future<String?> update(Map<String, dynamic> json) async {
     if (json.isEmpty) {
       return 'At least one field is required to update.';
@@ -51,17 +32,10 @@ class StockValidator {
     return validateSchema(
       schema: _updateSchema,
       json: json,
-      mapError: (error, path, type) {
-        if (path.contains('quantity') &&
-            type == ValidationErrorType.minimumNotMet) {
-          return 'Quantity cannot be negative.';
-        }
-        if (path.contains('lowStockThreshold') &&
-            type == ValidationErrorType.minimumNotMet) {
-          return 'Low stock threshold cannot be negative.';
-        }
-        return null;
-      },
+      rules: [
+        Rule.min('quantity', 'Quantity cannot be negative.'),
+        Rule.min('lowStockThreshold', 'Low stock threshold cannot be negative.'),
+      ],
     );
   }
 }

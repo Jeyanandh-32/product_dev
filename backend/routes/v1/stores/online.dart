@@ -31,10 +31,16 @@ Future<Response> _onGet(RequestContext context) async {
         return badRequest(message: 'Online store not found.');
       }
       final btlConfig = await Database.db.bottleReturnConfigs
-          .where((c) => c.storeId.equals(toExpr(storeRow.id)) & c.isEnabled.equals(toExpr(true)))
+          .where((c) => c.storeId.equals(toExpr(storeRow.id)))
           .first
           .fetch();
-      return success(data: {'store': storeRow.toStore(isBottleReturnEnabled: btlConfig != null).toJson()});
+      return success(
+        data: {
+          'store': storeRow
+              .toStore(isBottleReturnEnabled: btlConfig != null)
+              .toJson(),
+        },
+      );
     }
 
     final offset = (page - 1) * size;
@@ -44,12 +50,16 @@ Future<Response> _onGet(RequestContext context) async {
     final (total, storeRows) = await (totalFuture, storeRowsFuture).wait;
 
     final btlConfigs = await Database.db.bottleReturnConfigs
-        .where((c) => c.isEnabled.equals(toExpr(true)))
+        .where((c) => toExpr(true))
         .fetch();
     final configuredStoreIds = btlConfigs.map((c) => c.storeId).toSet();
 
     final stores = storeRows
-        .map((s) => s.toStore(isBottleReturnEnabled: configuredStoreIds.contains(s.id)).toJson())
+        .map(
+          (s) => s
+              .toStore(isBottleReturnEnabled: configuredStoreIds.contains(s.id))
+              .toJson(),
+        )
         .toList();
     final totalPages = (total / size).ceil();
 

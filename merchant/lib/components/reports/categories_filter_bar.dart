@@ -6,12 +6,14 @@ import 'package:merchant/components/fields/searchbar.dart';
 import 'package:merchant/components/reports/report_status_filter.dart';
 import 'package:merchant/signals/categories_signal.dart';
 import 'package:merchant/signals/navigation_signal.dart';
+import 'package:models/models.dart';
 
 /// Filter, entries per page selector, search bar, and add category action bar.
 class CategoriesFilterBar extends StatelessComponent {
   final int entries;
   final int currentPage;
   final int totalCount;
+  final Store? store;
   final bool? statusFilter;
   final ValueChanged<int> onEntryChanged;
   final ValueChanged<bool?> onStatusChanged;
@@ -22,6 +24,7 @@ class CategoriesFilterBar extends StatelessComponent {
     required this.entries,
     required this.currentPage,
     required this.totalCount,
+    this.store,
     required this.statusFilter,
     required this.onEntryChanged,
     required this.onStatusChanged,
@@ -31,21 +34,18 @@ class CategoriesFilterBar extends StatelessComponent {
   @override
   Component build(BuildContext context) {
     return div(
-      classes:
-          'flex flex-col md:items-center md:flex-row md:justify-between w-full border-b border-border-medium p-4 gap-4',
+      classes: 'flex flex-col md:items-center md:flex-row md:justify-between w-full border-b border-border-medium p-4 gap-4',
       [
         div(
           classes: 'flex flex-wrap items-center gap-3 text-sm font-medium',
           [
             span(
-              classes:
-                  'flex gap-2 items-center text-sm font-medium whitespace-nowrap',
+              classes: 'flex gap-2 items-center text-sm font-medium whitespace-nowrap',
               [
                 .text('Show'),
                 div(classes: 'dropdown dropdown-bottom dropdown-center', [
                   div(
-                    classes:
-                        'btn rounded-full border border-border-medium bg-white hover:bg-base-200 text-sm h-8 min-h-0',
+                    classes: 'btn rounded-full border border-border-medium bg-white hover:bg-base-200 text-sm h-8 min-h-0',
                     attributes: {
                       'tabindex': '0',
                       'role': 'button',
@@ -57,8 +57,7 @@ class CategoriesFilterBar extends StatelessComponent {
                   ),
                   ul(
                     attributes: {'tabindex': '-1'},
-                    classes:
-                        'dropdown-content menu bg-base-100 rounded-box z-10 mt-2.5 p-2 shadow-sm border border-border-light',
+                    classes: 'dropdown-content menu bg-base-100 rounded-box z-10 mt-2.5 p-2 shadow-sm border border-border-light',
                     [
                       for (final count in [10, 25, 50, 100])
                         li([
@@ -92,13 +91,14 @@ class CategoriesFilterBar extends StatelessComponent {
               classes: 'flex-1 sm:flex-none sm:w-64',
               onInput: onSearch,
             ),
-            AddButton(
-              name: 'Add Category',
-              onClick: () {
-                editingCategorySignal.value = null;
-                activeModalSignal.value = ActiveModal.addCategory;
-              },
-            ),
+            if (store != null)
+              AddButton(
+                name: 'Add Category',
+                onClick: () {
+                  editingCategorySignal.value = null;
+                  activeModalSignal.value = ActiveModal.addCategory;
+                },
+              ),
           ],
         ),
       ],

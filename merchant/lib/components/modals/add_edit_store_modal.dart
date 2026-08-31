@@ -34,7 +34,10 @@ class _AddEditStoreModalState extends State<AddEditStoreModal> {
     if (s != null) {
       _storeName = s.name;
       _storeType = s.storeType != null
-          ? StoreType.values.firstWhere((t) => t.name == s.storeType?.toLowerCase(), orElse: () => StoreType.other)
+          ? StoreType.values.firstWhere(
+              (t) => t.name == s.storeType?.toLowerCase(),
+              orElse: () => StoreType.other,
+            )
           : null;
       _isActive = s.isActive;
       _isOnlineEnabled = s.isOnlineEnabled;
@@ -93,7 +96,11 @@ class _AddEditStoreModalState extends State<AddEditStoreModal> {
             id: 'name',
             labelText: 'Store Name',
             type: InputType.text,
-            attributes: {'placeholder': "Jack Dev's Cafe", 'required': '', 'value': _storeName},
+            attributes: {
+              'placeholder': "Jack Dev's Cafe",
+              'required': '',
+              'value': _storeName,
+            },
             hintText: 'Store name is required.',
             onChange: (value) => _onStoreNameChange(value as String),
           ),
@@ -101,26 +108,35 @@ class _AddEditStoreModalState extends State<AddEditStoreModal> {
             selectedType: _storeType,
             onTypeSelected: (type) => setState(() => _storeType = type),
           ),
-          StoreOnlineSettingsSection(
-            isOnlineEnabled: _isOnlineEnabled,
-            slug: _slug,
-            onToggleOnline: (enabled) {
-              setState(() {
-                _isOnlineEnabled = enabled;
-                if (_isOnlineEnabled && _slug.isEmpty) _slug = _toSlug(_storeName);
-              });
-            },
-            onSlugChanged: (slugVal) => setState(() => _slug = slugVal),
-          ),
           if (isEditing) ...[
-            StoreBottleReturnsSection(store: store),
+            StoreOnlineSettingsSection(
+              isOnlineEnabled: _isOnlineEnabled,
+              slug: _slug,
+              onToggleOnline: (enabled) => setState(() {
+                _isOnlineEnabled = enabled;
+                if (_isOnlineEnabled && _slug.isEmpty) {
+                  _slug = _toSlug(_storeName);
+                }
+              }),
+              onSlugChanged: (slugVal) => setState(() => _slug = slugVal),
+            ),
+            if (store.isBottleReturnEnabled)
+              StoreBottleReturnsSection(store: store),
             div(classes: 'form-control mb-4 flex flex-row items-center gap-3', [
-              p(classes: 'text-[14px] font-semibold text-gray-500', [.text('Active')]),
+              p(classes: 'text-[14px] font-semibold text-gray-500', [
+                .text('Active'),
+              ]),
               input(
                 type: InputType.checkbox,
-                classes: 'toggle ${_isActive ? 'toggle-success' : ''} hover:cursor-pointer',
+                classes:
+                    'toggle ${_isActive ? 'toggle-success' : ''} hover:cursor-pointer',
                 checked: _isActive,
-                events: {'change': (e) => setState(() => _isActive = (e.target as web.HTMLInputElement).checked)},
+                events: {
+                  'change': (e) => setState(
+                    () =>
+                        _isActive = (e.target as web.HTMLInputElement).checked,
+                  ),
+                },
               ),
             ]),
           ],

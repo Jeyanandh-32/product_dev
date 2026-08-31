@@ -1,3 +1,4 @@
+import 'package:backend/extensions/request_context_extension.dart';
 import 'package:backend/repositories/platform_phonepe_config_repository.dart';
 import 'package:backend/repositories/store_repository.dart';
 import 'package:backend/repositories/subscription_repository.dart';
@@ -5,6 +6,7 @@ import 'package:backend/services/phonepe_service.dart';
 import 'package:backend/utils/responses.dart';
 import 'package:dart_frog/dart_frog.dart';
 import 'package:models/models.dart';
+import 'package:validators/validators.dart';
 
 /// Initiates a PhonePe checkout payment session for a store subscription.
 Future<Response> onRequest(RequestContext context, String id) async {
@@ -16,11 +18,10 @@ Future<Response> onRequest(RequestContext context, String id) async {
 
 Future<Response> _onPost(RequestContext context, String storeId) async {
   try {
-    final body = await context.request.json() as Map<String, dynamic>;
+    final body = await context.validateBody(
+      StoreValidator.initiateSubscription,
+    );
     final planCodeStr = (body['plan_code'] ?? body['planCode']) as String?;
-    if (planCodeStr == null) {
-      return badRequest(message: 'planCode is required');
-    }
 
     final planCode = SubscriptionPlanCode.values
         .where((c) => c.name == planCodeStr)
@@ -81,6 +82,8 @@ Future<Response> _onPost(RequestContext context, String storeId) async {
         'orderId': paymentSession.orderId,
       },
     );
+  } on ResponseException catch (e) {
+    return e.response;
   } catch (e) {
     final msg = e.toString().startsWith('Exception: ')
         ? e.toString().substring(11)

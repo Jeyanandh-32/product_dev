@@ -1,4 +1,5 @@
 import 'package:backend/database/schema.dart';
+import 'package:backend/extensions/request_context_extension.dart';
 import 'package:backend/extensions/store_phonepe_config_row_extension.dart';
 import 'package:backend/utils/responses.dart';
 import 'package:dart_frog/dart_frog.dart';
@@ -40,19 +41,14 @@ Future<Response> _onPutOrPatch(RequestContext context, String storeId) async {
   final db = context.read<DatabaseSchema>();
 
   try {
-    Map<String, dynamic> body;
-    try {
-      body = await context.request.json() as Map<String, dynamic>;
-    } catch (_) {
-      return invalidBody();
-    }
-
+    final body = await context.validateBody(StoreValidator.updatePhonePeConfig);
+    final input = StorePhonePeConfigUpdate.fromJson(body);
     final merchantId = (body['merchantId'] as String?)?.trim() ?? '';
-    final isEnabled = body['isEnabled'] as bool? ?? true;
+    final isEnabled = input.isEnabled ?? true;
     final env = (body['env'] as String?)?.trim().toUpperCase() ?? 'UAT';
-    final clientId = body['clientId'] as String?;
+    final clientId = input.clientId;
     final clientVersion = body['clientVersion'] as String?;
-    final clientSecret = body['clientSecret'] as String?;
+    final clientSecret = input.clientSecret;
     final saltKey = body['saltKey'] as String?;
     final saltIndex = body['saltIndex'] as int?;
     final enableUpi = body['enableUpi'] as bool? ?? true;
@@ -104,13 +100,11 @@ Future<Response> _onPutOrPatch(RequestContext context, String storeId) async {
             (c, set) => set(
               isEnabled: toExpr(isEnabled),
               env: toExpr(env),
-              clientId: clientId != null ? toExpr(clientId) : c.clientId,
+              clientId: toExpr(clientId),
               clientVersion: clientVersion != null
                   ? toExpr(clientVersion)
                   : c.clientVersion,
-              clientSecret: clientSecret != null
-                  ? toExpr(clientSecret)
-                  : c.clientSecret,
+              clientSecret: toExpr(clientSecret),
               saltKey: saltKey != null ? toExpr(saltKey) : c.saltKey,
               saltIndex: saltIndex != null ? toExpr(saltIndex) : c.saltIndex,
               enableUpi: toExpr(enableUpi),
@@ -134,6 +128,8 @@ Future<Response> _onPutOrPatch(RequestContext context, String storeId) async {
 
     if (savedRow == null) return error(message: 'Failed to update config');
     return success(data: {'config': savedRow.toStorePhonePeConfig()});
+  } on ResponseException catch (e) {
+    return e.response;
   } catch (e) {
     return error(message: e.toString());
   }

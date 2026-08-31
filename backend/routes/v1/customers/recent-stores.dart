@@ -37,15 +37,13 @@ Future<Response> _onPost(RequestContext context) async {
   final tokenPayload = context.tokenPayload;
 
   try {
-    Map<String, dynamic> json;
-    try {
-      json = await context.request.json() as Map<String, dynamic>;
-    } catch (_) {
-      return invalidBody();
-    }
-    final storeId = json['storeId'] as String?;
+    final body = await context.validateBody(
+      CustomerValidator.updateRecentStores,
+    );
+    final input = CustomerRecentStoresUpdate.fromJson(body);
+    final storeId = input.storeId;
 
-    if (storeId == null || !storeId.isUUID()) {
+    if (!storeId.isUUID()) {
       return badRequest(message: 'Invalid store id.');
     }
 
@@ -55,6 +53,8 @@ Future<Response> _onPost(RequestContext context) async {
     );
 
     return success(data: {'recorded': true});
+  } on ResponseException catch (e) {
+    return e.response;
   } catch (e) {
     return error(message: e.toString());
   }

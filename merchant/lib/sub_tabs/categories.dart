@@ -83,8 +83,7 @@ class _CategoriesState extends SignalState<Categories> {
     final categoriesAsync = categoriesSignal.value;
 
     return div(
-      classes:
-          'flex flex-col flex-1 min-h-0 m-4 bg-white rounded-2xl border border-border-medium shadow-xs overflow-hidden',
+      classes: 'flex flex-col flex-1 min-h-0 m-4 bg-white rounded-2xl border border-border-medium shadow-xs overflow-hidden',
       [
         if (isModalActive)
           AddEditCategoryModal(category: editingCategorySignal.value),
@@ -92,6 +91,7 @@ class _CategoriesState extends SignalState<Categories> {
           entries: entriesSignal.value,
           currentPage: categoriesPageSignal.value,
           totalCount: categoriesTotalSignal.value,
+          store: store,
           statusFilter: _statusFilter,
           onEntryChanged: _changeEntry,
           onStatusChanged: (val) => setState(() => _statusFilter = val),
@@ -120,8 +120,8 @@ class _CategoriesState extends SignalState<Categories> {
             categories: _statusFilter == null
                 ? (categoriesAsync.value ?? [])
                 : (categoriesAsync.value ?? [])
-                    .where((c) => c.isActive == _statusFilter)
-                    .toList(),
+                      .where((c) => c.isActive == _statusFilter)
+                      .toList(),
             sortState: _sortState,
             onSort: _onSort,
             getAssociatedCount: _getAssociatedCount,

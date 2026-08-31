@@ -1,6 +1,9 @@
 import 'dart:io';
+
+import 'package:backend/extensions/request_context_extension.dart';
 import 'package:backend/repositories/bottle_return_session_handler.dart';
 import 'package:dart_frog/dart_frog.dart';
+import 'package:validators/validators.dart';
 
 /// POST /v1/bottle-returns/iot/scan-return
 Future<Response> onRequest(RequestContext context) async {
@@ -8,26 +11,13 @@ Future<Response> onRequest(RequestContext context) async {
     return Response(statusCode: HttpStatus.methodNotAllowed);
   }
 
-  final body = await context.request.json() as Map<String, dynamic>;
-  final tokenStrings =
-      (body['tokenStrings'] as List<dynamic>?)?.cast<String>();
-  final storeId = body['storeId'] as String?;
-  final merchantId = body['merchantId'] as String?;
-
-  if (tokenStrings == null ||
-      tokenStrings.isEmpty ||
-      storeId == null ||
-      merchantId == null) {
-    return Response.json(
-      statusCode: HttpStatus.badRequest,
-      body: {
-        'success': false,
-        'message': 'Missing tokenStrings, storeId, or merchantId in payload.',
-      },
-    );
-  }
-
   try {
+    final body = await context.validateBody(BottleReturnValidator.scanReturn);
+    final input = BottleReturnIotScan.fromJson(body);
+    final tokenStrings = input.tokenStrings;
+    final storeId = input.storeId;
+    final merchantId = input.merchantId;
+
     final handler = context.read<BottleReturnSessionHandler>();
     final result = await handler.processReturnBatch(
       tokenStrings: tokenStrings,
@@ -41,6 +31,8 @@ Future<Response> onRequest(RequestContext context) async {
         'data': {'result': result.toJson()},
       },
     );
+  } on ResponseException catch (e) {
+    return e.response;
   } catch (e) {
     final message = e is ArgumentError
         ? (e.message?.toString() ?? e.toString())

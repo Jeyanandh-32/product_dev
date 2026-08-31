@@ -1,5 +1,6 @@
 import 'package:backend/config/database.dart';
 import 'package:backend/database/schema.dart';
+import 'package:backend/extensions/request_context_extension.dart';
 import 'package:backend/extensions/subscription_row_extension.dart';
 import 'package:backend/repositories/platform_phonepe_config_repository.dart';
 import 'package:backend/repositories/subscription_repository.dart';
@@ -8,6 +9,7 @@ import 'package:backend/utils/responses.dart';
 import 'package:dart_frog/dart_frog.dart';
 import 'package:models/models.dart';
 import 'package:typed_sql/typed_sql.dart' hide Database;
+import 'package:validators/validators.dart';
 
 /// Verifies PhonePe payment status and activates/renews the store subscription.
 Future<Response> onRequest(RequestContext context, String id) async {
@@ -19,16 +21,9 @@ Future<Response> onRequest(RequestContext context, String id) async {
 
 Future<Response> _onPost(RequestContext context, String storeId) async {
   try {
-    final body = await context.request.json() as Map<String, dynamic>;
-    final merchantTxId =
-        (body['merchant_transaction_id'] ??
-                body['merchantTransactionId'] ??
-                body['reference'])
-            as String?;
-
-    if (merchantTxId == null || merchantTxId.isEmpty) {
-      return badRequest(message: 'merchantTransactionId is required');
-    }
+    final body = await context.validateBody(StoreValidator.verifySubscription);
+    final input = StoreSubscriptionVerify.fromJson(body);
+    final merchantTxId = input.merchantTransactionId;
 
     final db = Database.db;
     final subRepo = context.read<SubscriptionRepository>();
@@ -99,6 +94,8 @@ Future<Response> _onPost(RequestContext context, String storeId) async {
     }
 
     return badRequest(message: 'Payment verification is still pending');
+  } on ResponseException catch (e) {
+    return e.response;
   } catch (e) {
     return error(message: e.toString());
   }

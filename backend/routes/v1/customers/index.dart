@@ -4,6 +4,7 @@ import 'package:backend/repositories/customer_repository.dart';
 import 'package:backend/services/auth/password_service.dart';
 import 'package:backend/utils/responses.dart';
 import 'package:dart_frog/dart_frog.dart';
+import 'package:validators/validators.dart';
 
 Future<Response> onRequest(RequestContext context) async {
   return switch (context.request.method) {
@@ -34,11 +35,12 @@ Future<Response> _onPatch(RequestContext context) async {
   final tokenPayload = context.tokenPayload;
 
   try {
-    final body = await context.request.json() as Map<String, dynamic>;
-    final name = body['name'] as String?;
-    final mobileNumber = body['mobileNumber'] as String?;
-    final pin = body['pin'] as String?;
-    final currentPin = body['currentPin'] as String?;
+    final body = await context.validateBody(CustomerValidator.update);
+    final input = CustomerUpdate.fromJson(body);
+    final name = input.name;
+    final mobileNumber = input.mobileNumber;
+    final pin = input.pin;
+    final currentPin = input.currentPin;
 
     final customerRow = await repo.getById(tokenPayload.sub);
     if (customerRow == null) {
@@ -51,7 +53,9 @@ Future<Response> _onPatch(RequestContext context) async {
       newMobile = mobileNumber.trim();
       if (newMobile != customerRow.mobileNumber) {
         if (currentPin == null || currentPin.trim().isEmpty) {
-          return badRequest(message: 'Security PIN is required to change mobile number.');
+          return badRequest(
+            message: 'Security PIN is required to change mobile number.',
+          );
         }
         final isCurrentValid = await PasswordService.verify(
           currentPin.trim(),
@@ -95,6 +99,8 @@ Future<Response> _onPatch(RequestContext context) async {
     }
 
     return success(data: {'customer': updated.toCustomer()});
+  } on ResponseException catch (e) {
+    return e.response;
   } on Exception catch (e) {
     return error(message: e.toString());
   }

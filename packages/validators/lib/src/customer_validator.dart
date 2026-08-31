@@ -1,105 +1,79 @@
-import 'package:schemantic/schemantic.dart';
 import 'package:validators/src/schemas.dart';
 import 'package:validators/src/validation_utils.dart';
 
+/// Validator for customer endpoints.
 class CustomerValidator {
   const CustomerValidator._();
 
+  static const _pinPatternMessage = 'Must be a 6-digit numeric PIN.';
+  static const _phonePatternMessage = 'Mobile Number must be 10 digits.';
+
+  /// Validates customer registration payload.
   static Future<String?> register(Map<String, dynamic> json) async {
     return validateSchema(
       schema: CustomerRegister.$schema,
       json: json,
-      mapError: _mapRegisterError,
+      rules: [
+        Rule.required('name', 'Full Name is required.'),
+        Rule.required('mobileNumber', 'Mobile Number is required.'),
+        Rule.pattern('mobileNumber', _phonePatternMessage),
+        Rule.required('pin', '6-Digit Security PIN is required.'),
+        Rule.min('pin', _pinPatternMessage),
+        Rule.max('pin', _pinPatternMessage),
+        Rule.pattern('pin', _pinPatternMessage),
+      ],
     );
   }
 
+  /// Validates customer login payload.
   static Future<String?> login(Map<String, dynamic> json) async {
     return validateSchema(
       schema: CustomerLogin.$schema,
       json: json,
-      mapError: _mapLoginError,
+      rules: [
+        Rule.required('mobileNumber', 'Mobile Number is required.'),
+        Rule.pattern('mobileNumber', _phonePatternMessage),
+        Rule.required('pin', '6-Digit Security PIN is required.'),
+        Rule.min('pin', _pinPatternMessage),
+        Rule.max('pin', _pinPatternMessage),
+        Rule.pattern('pin', _pinPatternMessage),
+      ],
     );
   }
 
-  static String? _mapRegisterError(
-    ValidationError error,
-    List<String> path,
-    ValidationErrorType type,
-  ) {
-    if (type == ValidationErrorType.requiredPropertyMissing) {
-      final details = error.details ?? '';
-      if (details.contains('"name"')) {
-        return 'Full Name is required.';
-      }
-      if (details.contains('"mobileNumber"')) {
-        return 'Mobile Number is required.';
-      }
-      if (details.contains('"pin"')) {
-        return '6-Digit Security PIN is required.';
-      }
-    }
-
-    if (path.contains('name') &&
-        (type == ValidationErrorType.typeMismatch ||
-            type == ValidationErrorType.minLengthNotMet)) {
-      return 'Full Name is required.';
-    }
-    if (path.contains('mobileNumber')) {
-      if (type == ValidationErrorType.typeMismatch) {
-        return 'Mobile Number is required.';
-      }
-      if (type == ValidationErrorType.patternMismatch) {
-        return 'Mobile Number must be 10 digits.';
-      }
-    }
-    if (path.contains('pin')) {
-      if (type == ValidationErrorType.typeMismatch) {
-        return '6-Digit Security PIN is required.';
-      }
-      if (type == ValidationErrorType.patternMismatch ||
-          type == ValidationErrorType.minLengthNotMet ||
-          type == ValidationErrorType.maxLengthExceeded) {
-        return 'Must be a 6-digit numeric PIN.';
-      }
-    }
-
-    return null;
+  /// Validates customer profile update payload.
+  static Future<String?> update(Map<String, dynamic> json) async {
+    return validateSchema(
+      schema: CustomerUpdate.$schema,
+      json: json,
+    );
   }
 
-  static String? _mapLoginError(
-    ValidationError error,
-    List<String> path,
-    ValidationErrorType type,
-  ) {
-    if (type == ValidationErrorType.requiredPropertyMissing) {
-      final details = error.details ?? '';
-      if (details.contains('"mobileNumber"')) {
-        return 'Mobile Number is required.';
-      }
-      if (details.contains('"pin"')) {
-        return '6-Digit Security PIN is required.';
-      }
-    }
+  /// Validates recent stores payload.
+  static Future<String?> updateRecentStores(Map<String, dynamic> json) async {
+    return validateSchema(
+      schema: CustomerRecentStoresUpdate.$schema,
+      json: json,
+      rules: [
+        Rule.required('storeId', 'Invalid store id.'),
+        Rule.min('storeId', 'Invalid store id.'),
+      ],
+    );
+  }
 
-    if (path.contains('mobileNumber')) {
-      if (type == ValidationErrorType.typeMismatch) {
-        return 'Mobile Number is required.';
-      }
-      if (type == ValidationErrorType.patternMismatch) {
-        return 'Mobile Number must be 10 digits.';
-      }
-    }
-    if (path.contains('pin')) {
-      if (type == ValidationErrorType.typeMismatch) {
-        return '6-Digit Security PIN is required.';
-      }
-      if (type == ValidationErrorType.patternMismatch ||
-          type == ValidationErrorType.minLengthNotMet ||
-          type == ValidationErrorType.maxLengthExceeded) {
-        return 'Must be a 6-digit numeric PIN.';
-      }
-    }
-
-    return null;
+  /// Validates wallet top-up payload.
+  static Future<String?> topUpWallet(Map<String, dynamic> json) async {
+    return validateSchema(
+      schema: CustomerWalletTopUp.$schema,
+      json: json,
+      rules: [
+        Rule.required('amount', 'Invalid top up amount.'),
+        Rule.min('amount', 'Invalid top up amount.'),
+        Rule.type('amount', 'Invalid top up amount.'),
+        Rule.required('storeId', 'storeId is required for wallet top-up.'),
+        Rule.min('storeId', 'storeId is required for wallet top-up.'),
+        Rule.type('storeId', 'storeId is required for wallet top-up.'),
+      ],
+    );
   }
 }

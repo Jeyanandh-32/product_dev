@@ -2,6 +2,7 @@ import 'package:schemantic/schemantic.dart';
 import 'package:validators/src/validation_patterns.dart';
 
 part 'schemas.g.dart';
+part 'schemas/bottle_return_schemas.dart';
 part 'schemas/category_schemas.dart';
 part 'schemas/counter_schemas.dart';
 part 'schemas/customer_schemas.dart';

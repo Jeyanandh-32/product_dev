@@ -1,6 +1,9 @@
 import 'dart:io';
+
+import 'package:backend/extensions/request_context_extension.dart';
 import 'package:backend/repositories/bottle_return_repository.dart';
 import 'package:dart_frog/dart_frog.dart';
+import 'package:validators/validators.dart';
 
 /// POST /v1/bottle-returns/coupons/validate
 Future<Response> onRequest(RequestContext context) async {
@@ -8,36 +11,39 @@ Future<Response> onRequest(RequestContext context) async {
     return Response(statusCode: HttpStatus.methodNotAllowed);
   }
 
-  final body = await context.request.json() as Map<String, dynamic>;
-  final merchantId = body['merchantId'] as String?;
-  final code = body['code'] as String?;
-  final storeId = body['storeId'] as String?;
-
-  if (merchantId == null || code == null || storeId == null) {
-    return Response.json(
-      statusCode: HttpStatus.badRequest,
-      body: {'success': false, 'message': 'Missing required fields for coupon validation.'},
+  try {
+    final body = await context.validateBody(
+      BottleReturnValidator.validateCoupon,
     );
-  }
+    final input = BottleReturnCouponValidate.fromJson(body);
+    final merchantId = input.merchantId;
+    final code = input.code;
+    final storeId = input.storeId;
 
-  final repo = context.read<BottleReturnRepository>();
-  final coupon = await repo.validatePhysicalCoupon(
-    merchantId: merchantId,
-    code: code,
-    storeId: storeId,
-  );
-
-  if (coupon == null) {
-    return Response.json(
-      statusCode: HttpStatus.badRequest,
-      body: {'success': false, 'message': 'Coupon is invalid, expired, or already redeemed.'},
+    final repo = context.read<BottleReturnRepository>();
+    final coupon = await repo.validatePhysicalCoupon(
+      merchantId: merchantId,
+      code: code,
+      storeId: storeId,
     );
-  }
 
-  return Response.json(
-    body: {
-      'success': true,
-      'data': {'coupon': coupon.toJson()},
-    },
-  );
+    if (coupon == null) {
+      return Response.json(
+        statusCode: HttpStatus.badRequest,
+        body: {
+          'success': false,
+          'message': 'Coupon is invalid, expired, or already redeemed.',
+        },
+      );
+    }
+
+    return Response.json(
+      body: {
+        'success': true,
+        'data': {'coupon': coupon.toJson()},
+      },
+    );
+  } on ResponseException catch (e) {
+    return e.response;
+  }
 }

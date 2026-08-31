@@ -40,3 +40,39 @@ abstract class $StoreUpdate {
   )
   String? get slug;
 }
+
+@Schema()
+abstract class $StorePhonePeConfigUpdate {
+  @StringField(minLength: 1, description: 'PhonePe Client ID')
+  String get clientId;
+
+  @StringField(minLength: 1, description: 'PhonePe Client Secret')
+  String get clientSecret;
+
+  @Field(description: 'Is enabled')
+  bool? get isEnabled;
+}
+
+@Schema()
+abstract class $StoreSubscriptionInitiate {
+  @StringField(minLength: 1, description: 'Plan code')
+  String get planCode;
+}
+
+@Schema()
+abstract class $StoreSubscriptionVerify {
+  @StringField(minLength: 1, description: 'Merchant transaction ID')
+  String get merchantTransactionId;
+}
+
+@Schema()
+abstract class $StoreSubscriptionRenew {
+  @StringField(minLength: 1, description: 'Plan code')
+  String get planCode;
+
+  @StringField(description: 'Payment method')
+  String? get paymentMethod;
+
+  @StringField(description: 'Payment reference')
+  String? get reference;
+}

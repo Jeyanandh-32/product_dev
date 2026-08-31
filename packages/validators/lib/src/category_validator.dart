@@ -1,37 +1,24 @@
 import 'package:validators/src/schemas.dart';
 import 'package:validators/src/validation_utils.dart';
-import 'package:schemantic/schemantic.dart';
 
+/// Validator for category endpoints.
 class CategoryValidator {
   const CategoryValidator._();
 
+  /// Validates category creation payload.
   static Future<String?> create(Map<String, dynamic> json) async {
     return validateSchema(
       schema: CategoryCreate.$schema,
       json: json,
-      mapError: (error, path, type) {
-        if (type == ValidationErrorType.requiredPropertyMissing &&
-            (error.details?.contains('"name"') == true)) {
-          return 'Name is required.';
-        }
-        if (path.contains('name') &&
-            (type == ValidationErrorType.typeMismatch ||
-                type == ValidationErrorType.minLengthNotMet)) {
-          return 'Name is required.';
-        }
-        if (path.contains('description') &&
-            type == ValidationErrorType.maxLengthExceeded) {
-          return 'Description must be 255 characters or fewer.';
-        }
-        if (path.contains('imageUrl') &&
-            type == ValidationErrorType.maxLengthExceeded) {
-          return 'Image URL must be 255 characters or fewer.';
-        }
-        return null;
-      },
+      rules: [
+        Rule.required('name', 'Name is required.'),
+        Rule.max('description', 'Description must be 255 characters or fewer.'),
+        Rule.max('imageUrl', 'Image URL must be 255 characters or fewer.'),
+      ],
     );
   }
 
+  /// Validates category update payload.
   static Future<String?> update(Map<String, dynamic> json) async {
     if (json.isEmpty) {
       return 'At least one field is required to update.';
@@ -39,22 +26,12 @@ class CategoryValidator {
     return validateSchema(
       schema: CategoryUpdate.$schema,
       json: json,
-      mapError: (error, path, type) {
-        if (path.contains('name') &&
-            (type == ValidationErrorType.typeMismatch ||
-                type == ValidationErrorType.minLengthNotMet)) {
-          return 'Name cannot be empty.';
-        }
-        if (path.contains('description') &&
-            type == ValidationErrorType.maxLengthExceeded) {
-          return 'Description must be 255 characters or fewer.';
-        }
-        if (path.contains('imageUrl') &&
-            type == ValidationErrorType.maxLengthExceeded) {
-          return 'Image URL must be 255 characters or fewer.';
-        }
-        return null;
-      },
+      rules: [
+        Rule.min('name', 'Name cannot be empty.'),
+        Rule.type('name', 'Name cannot be empty.'),
+        Rule.max('description', 'Description must be 255 characters or fewer.'),
+        Rule.max('imageUrl', 'Image URL must be 255 characters or fewer.'),
+      ],
     );
   }
 }

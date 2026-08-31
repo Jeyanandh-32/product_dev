@@ -1,8 +1,8 @@
 import 'package:backend/extensions/request_context_extension.dart';
-
 import 'package:backend/repositories/merchant_settings_repository.dart';
 import 'package:backend/utils/responses.dart';
 import 'package:dart_frog/dart_frog.dart';
+import 'package:validators/validators.dart';
 
 Future<Response> onRequest(RequestContext context) async {
   return switch (context.request.method) {
@@ -31,15 +31,11 @@ Future<Response> _onPatch(RequestContext context) async {
   final tokenPayload = context.tokenPayload;
 
   try {
-    Map<String, dynamic> body;
-    try {
-      body = (await context.request.json()) as Map<String, dynamic>;
-    } catch (_) {
-      return invalidBody();
-    }
-    final waNotifications = body['waNotifications'] as bool?;
-    final lowStockAlerts = body['lowStockAlerts'] as bool?;
-    final dailyReports = body['dailyReports'] as bool?;
+    final body = await context.validateBody(MerchantValidator.updateSettings);
+    final input = MerchantSettingsUpdate.fromJson(body);
+    final waNotifications = input.waNotifications;
+    final lowStockAlerts = input.lowStockAlerts;
+    final dailyReports = input.dailyReports;
 
     final updatedSettings = await repo.updateSettings(
       merchantId: tokenPayload.sub,
@@ -51,6 +47,8 @@ Future<Response> _onPatch(RequestContext context) async {
     return success(
       data: {'settings': updatedSettings},
     );
+  } on ResponseException catch (e) {
+    return e.response;
   } on Exception catch (e) {
     return error(message: e.toString());
   }

@@ -83,8 +83,7 @@ class _CountersState extends SignalState<Counters> {
     final countersAsync = countersSignal.value;
 
     return div(
-      classes:
-          'flex flex-col flex-1 min-h-0 m-4 bg-white rounded-2xl border border-border-medium shadow-xs overflow-hidden',
+      classes: 'flex flex-col flex-1 min-h-0 m-4 bg-white rounded-2xl border border-border-medium shadow-xs overflow-hidden',
       [
         if (isModalActive)
           AddEditCounterModal(counter: editingCounterSignal.value),
@@ -92,6 +91,7 @@ class _CountersState extends SignalState<Counters> {
           entries: entriesSignal.value,
           currentPage: countersPageSignal.value,
           totalCount: countersTotalSignal.value,
+          store: store,
           statusFilter: _statusFilter,
           onEntryChanged: _changeEntry,
           onStatusChanged: (val) => setState(() => _statusFilter = val),
@@ -120,8 +120,8 @@ class _CountersState extends SignalState<Counters> {
             counters: _statusFilter == null
                 ? (countersAsync.value ?? [])
                 : (countersAsync.value ?? [])
-                    .where((c) => c.isActive == _statusFilter)
-                    .toList(),
+                      .where((c) => c.isActive == _statusFilter)
+                      .toList(),
             sortState: _sortState,
             onSort: _onSort,
             getAssociatedCount: _getAssociatedCount,

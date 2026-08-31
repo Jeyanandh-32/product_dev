@@ -1,5 +1,6 @@
 import 'package:merchant/components/modals/update_stock_handler.dart';
 import 'package:merchant/components/reports/products_empty_state.dart';
+import 'package:merchant/components/reports/products_modals_host.dart';
 import 'package:merchant/signals/categories_signal.dart';
 import 'package:merchant/signals/navigation_signal.dart';
 import 'package:merchant/signals/products_signal.dart';
@@ -32,6 +33,11 @@ void main() {
       activeModalSignal.value = ActiveModal.addProduct;
       expect(activeModalSignal.value, ActiveModal.addProduct);
     });
+
+    test('ProductsModalsHost can be instantiated as SignalComponent', () {
+      const host = ProductsModalsHost();
+      expect(host, isNotNull);
+    });
   });
 
   group('UpdateStockHandler Tests', () {
@@ -57,20 +63,23 @@ void main() {
       ),
     );
 
-    test('submitStockUpdate with empty amount updates settings only without error', () {
-      activeModalSignal.value = ActiveModal.updateStock;
+    test(
+      'submitStockUpdate with empty amount updates settings only without error',
+      () {
+        activeModalSignal.value = ActiveModal.updateStock;
 
-      UpdateStockHandler.submitStockUpdate(
-        product: sampleProduct,
-        transactionType: StockTransactionType.add,
-        amountStr: '',
-        lowStockThresholdStr: '10',
-        stockMonitor: true,
-        reason: StockTransactionReason.adjustment,
-        customReason: '',
-      );
+        UpdateStockHandler.submitStockUpdate(
+          product: sampleProduct,
+          transactionType: StockTransactionType.add,
+          amountStr: '',
+          lowStockThresholdStr: '10',
+          stockMonitor: true,
+          reason: StockTransactionReason.adjustment,
+          customReason: '',
+        );
 
-      expect(activeModalSignal.value, ActiveModal.none);
-    });
+        expect(activeModalSignal.value, ActiveModal.none);
+      },
+    );
   });
 }

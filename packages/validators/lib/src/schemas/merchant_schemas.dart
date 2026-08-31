@@ -35,3 +35,42 @@ abstract class $MerchantLogin {
   @StringField(pattern: ValidationPatterns.password, description: 'Password')
   String get password;
 }
+
+@Schema()
+abstract class $MerchantSettingsUpdate {
+  @Field(description: 'WhatsApp notifications enabled')
+  bool? get waNotifications;
+
+  @Field(description: 'Low stock alerts enabled')
+  bool? get lowStockAlerts;
+
+  @Field(description: 'Daily reports enabled')
+  bool? get dailyReports;
+}
+
+@Schema()
+abstract class $MerchantUpdate {
+  @StringField(description: 'Merchant name')
+  String? get name;
+
+  @StringField(description: 'Business name')
+  String? get businessName;
+
+  @StringField(
+    pattern: ValidationPatterns.whatsapp,
+    description: 'Whatsapp number',
+  )
+  String? get whatsappNumber;
+
+  @StringField(
+    pattern: r'^[^@\s]+@[^@\s]+\.[^@\s]+$',
+    description: 'Email address',
+  )
+  String? get email;
+
+  @StringField(description: 'Current password')
+  String? get currentPassword;
+
+  @StringField(description: 'New password')
+  String? get newPassword;
+}

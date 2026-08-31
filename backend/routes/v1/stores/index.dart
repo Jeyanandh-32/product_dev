@@ -33,28 +33,28 @@ Future<Response> _onGet(RequestContext context) async {
   try {
     final offset = (page - 1) * size;
     final totalFuture = repo.count(merchantId: tokenPayload.sub);
-    final storeRowsFuture = repo.getAll(merchantId: tokenPayload.sub, limit: size, offset: offset);
+    final storeRowsFuture = repo.getAll(
+      merchantId: tokenPayload.sub,
+      limit: size,
+      offset: offset,
+    );
 
     final (total, storeRows) = await (totalFuture, storeRowsFuture).wait;
 
-    final storeIds = storeRows.map((s) => s.id).toList();
     var configuredStoreIds = <String>{};
     try {
       final bottleRepo = context.read<BottleReturnRepository>();
       final bottleConfigs = await bottleRepo.db.bottleReturnConfigs
-          .where((c) {
-            if (storeIds.isEmpty) return ts.toExpr(false);
-            var expr = c.storeId.equals(ts.toExpr(storeIds.first));
-            for (var i = 1; i < storeIds.length; i++) {
-              expr = expr.or(c.storeId.equals(ts.toExpr(storeIds[i])));
-            }
-            return expr;
-          })
+          .where((c) => ts.toExpr(true))
           .fetch();
-      configuredStoreIds = bottleConfigs.where((c) => c.isEnabled).map((c) => c.storeId).toSet();
+      configuredStoreIds = bottleConfigs.map((c) => c.storeId).toSet();
     } catch (_) {}
 
-    final stores = storeRows.map((s) => s.toStore(isBottleReturnEnabled: configuredStoreIds.contains(s.id))).toList();
+    final stores = storeRows
+        .map((s) => s.toStore(
+              isBottleReturnEnabled: configuredStoreIds.contains(s.id),
+            ))
+        .toList();
     final totalPages = (total / size).ceil();
 
     return success(
@@ -80,12 +80,18 @@ Future<Response> _onPost(RequestContext context) async {
     final input = StoreCreate.fromJson(body);
 
     if (input.isOnlineEnabled ?? false) {
-      return badRequest(message: 'Cannot create a store with online ordering enabled. Please contact system administrator.');
+      return badRequest(
+        message:
+            'Cannot create a store with online ordering enabled. Please contact system administrator.',
+      );
     }
 
     final rawStoreType = input.storeType?.trim();
     final storeTypeEnum = rawStoreType != null && rawStoreType.isNotEmpty
-        ? StoreType.values.firstWhere((t) => t.name == rawStoreType, orElse: () => StoreType.other)
+        ? StoreType.values.firstWhere(
+            (t) => t.name == rawStoreType,
+            orElse: () => StoreType.other,
+          )
         : null;
 
     final storeRow = await repo.create(
@@ -95,7 +101,10 @@ Future<Response> _onPost(RequestContext context) async {
       slug: input.slug?.trim().toLowerCase(),
     );
 
-    return success(statusCode: HttpStatus.created, data: {'store': storeRow.toStore()});
+    return success(
+      statusCode: HttpStatus.created,
+      data: {'store': storeRow.toStore()},
+    );
   } on ResponseException catch (e) {
     return e.response;
   } catch (e) {

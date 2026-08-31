@@ -1,7 +1,9 @@
 import 'dart:io';
 
+import 'package:backend/extensions/request_context_extension.dart';
 import 'package:backend/repositories/bottle_return_repository.dart';
 import 'package:dart_frog/dart_frog.dart';
+import 'package:validators/validators.dart';
 
 /// POST /v1/bottle-returns/coupons/redeem
 Future<Response> onRequest(RequestContext context) async {
@@ -9,47 +11,39 @@ Future<Response> onRequest(RequestContext context) async {
     return Response(statusCode: HttpStatus.methodNotAllowed);
   }
 
-  final body = await context.request.json() as Map<String, dynamic>;
-  final merchantId = body['merchantId'] as String?;
-  final code = body['code'] as String?;
-  final storeId = body['storeId'] as String?;
-  final orderId = body['orderId'] as String?;
+  try {
+    final body = await context.validateBody(BottleReturnValidator.redeemCoupon);
+    final input = BottleReturnCouponRedeem.fromJson(body);
+    final merchantId = input.merchantId;
+    final code = input.code;
+    final storeId = input.storeId;
+    final orderId = input.orderId;
 
-  if (merchantId == null ||
-      code == null ||
-      storeId == null ||
-      orderId == null) {
+    final repo = context.read<BottleReturnRepository>();
+    final success = await repo.redeemPhysicalCoupon(
+      merchantId: merchantId,
+      code: code,
+      storeId: storeId,
+      orderId: orderId,
+    );
+
+    if (!success) {
+      return Response.json(
+        statusCode: HttpStatus.badRequest,
+        body: {
+          'success': false,
+          'message': 'Coupon cannot be redeemed (invalid, expired, or already redeemed).',
+        },
+      );
+    }
+
     return Response.json(
-      statusCode: HttpStatus.badRequest,
       body: {
-        'success': false,
-        'message': 'Missing required fields for coupon redemption.',
+        'success': true,
+        'data': {'success': true},
       },
     );
+  } on ResponseException catch (e) {
+    return e.response;
   }
-
-  final repo = context.read<BottleReturnRepository>();
-  final success = await repo.redeemPhysicalCoupon(
-    merchantId: merchantId,
-    code: code,
-    storeId: storeId,
-    orderId: orderId,
-  );
-
-  if (!success) {
-    return Response.json(
-      statusCode: HttpStatus.badRequest,
-      body: {
-        'success': false,
-        'message': 'Coupon cannot be redeemed (invalid, expired, or already redeemed).',
-      },
-    );
-  }
-
-  return Response.json(
-    body: {
-      'success': true,
-      'data': {'success': true},
-    },
-  );
 }
