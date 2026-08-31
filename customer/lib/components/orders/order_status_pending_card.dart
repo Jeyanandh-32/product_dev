@@ -11,12 +11,10 @@ class OrderStatusPendingCard extends StatelessComponent {
   @override
   Component build(BuildContext context) {
     return div(
-      classes:
-          'min-h-[60vh] flex flex-col items-center justify-center gap-4 text-center px-4',
+      classes: 'min-h-[60vh] flex flex-col items-center justify-center gap-4 text-center px-4',
       [
         div(
-          classes:
-              'w-16 h-16 rounded-full bg-red-50 text-red-500 flex items-center justify-center text-2xl font-bold',
+          classes: 'w-16 h-16 rounded-full bg-red-50 text-red-500 flex items-center justify-center text-2xl font-bold',
           [
             .text('⚠️'),
           ],
@@ -26,12 +24,11 @@ class OrderStatusPendingCard extends StatelessComponent {
         ]),
         p(classes: 'text-sm text-gray-500 max-w-md', [
           .text(
-            'We are verifying your transaction with PhonePe. Reference: $reference',
+            'We are verifying your transaction. Reference: $reference',
           ),
         ]),
         button(
-          classes:
-              'mt-4 px-6 py-3 rounded-xl bg-black text-white text-sm font-bold cursor-pointer border-0',
+          classes: 'mt-4 px-6 py-3 rounded-xl bg-black text-white text-sm font-bold cursor-pointer border-0',
           onClick: () => Router.of(context).push('/'),
           [
             .text('Return to Store Menu'),

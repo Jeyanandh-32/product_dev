@@ -62,7 +62,7 @@ abstract final class SubscriptionActions {
     activeStoreSubscriptionDetailsSignal.value = const AsyncData(null);
   }
 
-  /// Initiates PhonePe payment session and opens checkout modal for subscription renewal.
+  /// Initiates payment session and opens checkout modal for subscription renewal.
   static Future<void> payAndRenewWithPhonePe({
     required String storeId,
     required SubscriptionPlanCode planCode,
@@ -91,7 +91,7 @@ abstract final class SubscriptionActions {
                 storeId: result.subscription,
               };
               showToast(
-                'Subscription activated successfully via PhonePe!',
+                'Subscription activated successfully!',
                 type: ToastType.success,
               );
               await fetchStoreSubscription(storeId);
@@ -107,7 +107,7 @@ abstract final class SubscriptionActions {
     } catch (e) {
       setSubmitting(false);
       final rawMsg = e is ApiException ? e.message : e.toString().replaceFirst('Exception: ', '');
-      showToast(rawMsg.isEmpty ? 'Failed to initiate PhonePe payment.' : rawMsg);
+      showToast(rawMsg.isEmpty ? 'Failed to initiate payment.' : rawMsg);
     }
   }
 

@@ -3,7 +3,7 @@ import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_lucide/jaspr_lucide.dart';
 import 'package:models/models.dart';
 
-/// Action button for renewing, upgrading, or activating a store subscription via PhonePe.
+/// Action button for renewing, upgrading, or activating a store subscription.
 class RenewSubscriptionButton extends StatelessComponent {
   const RenewSubscriptionButton({
     super.key,
@@ -24,7 +24,8 @@ class RenewSubscriptionButton extends StatelessComponent {
     final planTitle = isYearly ? 'Yearly' : 'Monthly';
     final sub = subscription;
     final isBlocked =
-        sub?.status == SubscriptionStatus.active && sub?.planCode == selectedPlanCode;
+        sub?.status == SubscriptionStatus.active &&
+        sub?.planCode == selectedPlanCode;
 
     final txt = isLoading
         ? 'Processing Payment...'
@@ -32,12 +33,12 @@ class RenewSubscriptionButton extends StatelessComponent {
         ? 'Current Active Plan'
         : (sub?.status == SubscriptionStatus.gracePeriod ||
               sub?.status == SubscriptionStatus.expired)
-        ? 'Renew $planTitle Plan (PhonePe)'
+        ? 'Renew $planTitle Plan'
         : sub?.planCode == SubscriptionPlanCode.monthly && isYearly
-        ? 'Upgrade to Yearly Plan (PhonePe)'
+        ? 'Upgrade to Yearly Plan'
         : sub?.planCode == SubscriptionPlanCode.trial || sub == null
-        ? 'Pay & Activate $planTitle (PhonePe)'
-        : 'Switch to $planTitle Plan (PhonePe)';
+        ? 'Pay & Activate $planTitle'
+        : 'Switch to $planTitle Plan';
 
     final cls = isBlocked || isLoading
         ? 'w-full py-3 px-4 rounded-xl font-bold text-sm bg-gray-200 text-gray-400 cursor-not-allowed flex items-center justify-center gap-2'
