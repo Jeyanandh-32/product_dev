@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:backend/config/env.dart';
 import 'package:backend/enums/user_role.dart';
 import 'package:backend/models/token_payload/token_payload.dart';
+import 'package:backend/repositories/subscription_repository.dart';
 import 'package:backend/services/order_service.dart';
 import 'package:dart_frog/dart_frog.dart';
 import 'package:mocktail/mocktail.dart';
@@ -18,10 +19,14 @@ class _MockRequest extends Mock implements Request {}
 
 class _MockOrderService extends Mock implements OrderService {}
 
+class _MockSubscriptionRepository extends Mock
+    implements SubscriptionRepository {}
+
 void main() {
   late _MockRequestContext context;
   late _MockRequest request;
   late _MockOrderService orderService;
+  late _MockSubscriptionRepository subscriptionRepo;
 
   const testMerchantId = 'm-1';
   const testStoreId = '11111111-1111-1111-1111-111111111111';
@@ -45,27 +50,63 @@ void main() {
     context = _MockRequestContext();
     request = _MockRequest();
     orderService = _MockOrderService();
+    subscriptionRepo = _MockSubscriptionRepository();
 
     when(() => context.request).thenReturn(request);
     when(() => context.read<TokenPayload>()).thenReturn(tokenPayload);
     when(() => context.read<OrderService>()).thenReturn(orderService);
+    when(
+      () => context.read<SubscriptionRepository>(),
+    ).thenReturn(subscriptionRepo);
+    when(
+      () => subscriptionRepo.isStoreOperational(any()),
+    ).thenAnswer((_) async => true);
   });
 
   group('POST /v1/orders', () {
-    test('responds with 400 when storeId is missing from query parameters', () async {
-      when(() => request.method).thenReturn(.post);
-      when(() => request.uri).thenReturn(Uri.parse('http://localhost/v1/orders'));
+    test(
+      'responds with 400 when store subscription is expired',
+      () async {
+        when(
+          () => subscriptionRepo.isStoreOperational(testStoreId),
+        ).thenAnswer((_) async => false);
+        when(() => request.method).thenReturn(.post);
+        when(
+          () => request.uri,
+        ).thenReturn(
+          Uri.parse('http://localhost/v1/orders?storeId=$testStoreId'),
+        );
 
-      final response = await route.onRequest(context);
+        final response = await route.onRequest(context);
 
-      expect(response.statusCode, equals(HttpStatus.badRequest));
-      final body = jsonDecode(await response.body()) as Map<String, dynamic>;
-      expect(body['message'], equals('Store ID is required.'));
-    });
+        expect(response.statusCode, equals(HttpStatus.badRequest));
+        final body = jsonDecode(await response.body()) as Map<String, dynamic>;
+        expect(
+          body['message'],
+          equals('Store subscription is expired. Ordering is disabled.'),
+        );
+      },
+    );
+    test(
+      'responds with 400 when storeId is missing from query parameters',
+      () async {
+        when(() => request.method).thenReturn(.post);
+        when(() => request.uri)
+            .thenReturn(Uri.parse('http://localhost/v1/orders'));
+
+        final response = await route.onRequest(context);
+
+        expect(response.statusCode, equals(HttpStatus.badRequest));
+        final body = jsonDecode(await response.body()) as Map<String, dynamic>;
+        expect(body['message'], equals('Store ID is required.'));
+      },
+    );
 
     test('responds with 400 when storeId is not a valid UUID', () async {
       when(() => request.method).thenReturn(.post);
-      when(() => request.uri).thenReturn(Uri.parse('http://localhost/v1/orders?storeId=not-a-uuid'));
+      when(
+        () => request.uri,
+      ).thenReturn(Uri.parse('http://localhost/v1/orders?storeId=not-a-uuid'));
 
       final response = await route.onRequest(context);
 
@@ -79,7 +120,8 @@ void main() {
       when(() => request.uri).thenReturn(
         Uri.parse('http://localhost/v1/orders?storeId=$testStoreId'),
       );
-      when(() => request.json()).thenThrow(const FormatException('Malformed JSON'));
+      when(() => request.json())
+          .thenThrow(const FormatException('Malformed JSON'));
 
       final response = await route.onRequest(context);
 
@@ -91,7 +133,8 @@ void main() {
       when(() => request.uri).thenReturn(
         Uri.parse('http://localhost/v1/orders?storeId=$testStoreId'),
       );
-      when(() => request.json()).thenAnswer((_) async => {'products': <dynamic>[]});
+      when(() => request.json())
+          .thenAnswer((_) async => {'products': <dynamic>[]});
 
       final response = await route.onRequest(context);
 
@@ -112,7 +155,7 @@ void main() {
             'productId': testProductId,
             'quantity': 2,
             'discount': 5.0,
-          }
+          },
         ],
         'source': 'terminal',
         'type': 'dineIn',
@@ -163,7 +206,7 @@ void main() {
               'productId': testProductId,
               'quantity': 2,
               'discount': 5.0,
-            }
+            },
           ],
           source: OrderSource.terminal,
           type: OrderType.dineIn,
@@ -199,47 +242,51 @@ void main() {
       ).called(1);
     });
 
-    test('responds with 500 when orderService throws unexpected exception', () async {
-      when(() => request.method).thenReturn(.post);
-      when(() => request.uri).thenReturn(
-        Uri.parse('http://localhost/v1/orders?storeId=$testStoreId'),
-      );
+    test(
+      'responds with 500 when orderService throws unexpected exception',
+      () async {
+        when(() => request.method).thenReturn(.post);
+        when(() => request.uri).thenReturn(
+          Uri.parse('http://localhost/v1/orders?storeId=$testStoreId'),
+        );
 
-      final orderInputJson = {
-        'products': [
-          {
-            'productId': testProductId,
-            'quantity': 1,
-          }
-        ],
-      };
-      when(() => request.json()).thenAnswer((_) async => orderInputJson);
+        final orderInputJson = {
+          'products': [
+            {
+              'productId': testProductId,
+              'quantity': 1,
+            },
+          ],
+        };
+        when(() => request.json()).thenAnswer((_) async => orderInputJson);
 
-      when(
-        () => orderService.checkout(
-          merchantId: any(named: 'merchantId'),
-          storeId: any(named: 'storeId'),
-          productsInput: any(named: 'productsInput'),
-          source: any(named: 'source'),
-          type: any(named: 'type'),
-          paymentMethod: any(named: 'paymentMethod'),
-          discountTotalInput: any(named: 'discountTotalInput'),
-          terminalCode: any(named: 'terminalCode'),
-        ),
-      ).thenThrow(Exception('Stock allocation failed'));
+        when(
+          () => orderService.checkout(
+            merchantId: any(named: 'merchantId'),
+            storeId: any(named: 'storeId'),
+            productsInput: any(named: 'productsInput'),
+            source: any(named: 'source'),
+            type: any(named: 'type'),
+            paymentMethod: any(named: 'paymentMethod'),
+            discountTotalInput: any(named: 'discountTotalInput'),
+            terminalCode: any(named: 'terminalCode'),
+          ),
+        ).thenThrow(Exception('Stock allocation failed'));
 
-      final response = await route.onRequest(context);
+        final response = await route.onRequest(context);
 
-      expect(response.statusCode, equals(HttpStatus.internalServerError));
-      final body = jsonDecode(await response.body()) as Map<String, dynamic>;
-      expect(body['status'], equals('error'));
-    });
+        expect(response.statusCode, equals(HttpStatus.internalServerError));
+        final body = jsonDecode(await response.body()) as Map<String, dynamic>;
+        expect(body['status'], equals('error'));
+      },
+    );
   });
 
   group('GET /v1/orders', () {
     test('responds with 400 for GET when storeId is missing', () async {
       when(() => request.method).thenReturn(.get);
-      when(() => request.uri).thenReturn(Uri.parse('http://localhost/v1/orders'));
+      when(() => request.uri)
+          .thenReturn(Uri.parse('http://localhost/v1/orders'));
 
       final response = await route.onRequest(context);
 

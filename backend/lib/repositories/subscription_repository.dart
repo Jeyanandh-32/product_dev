@@ -1,6 +1,6 @@
 import 'package:backend/database/schema.dart';
-import 'package:backend/exceptions/subscription_exceptions.dart';
 import 'package:backend/repositories/subscription_lifecycle.dart';
+import 'package:backend/repositories/subscription_renewal_executor.dart';
 import 'package:backend/repositories/subscription_storage_helper.dart';
 import 'package:backend/repositories/subscription_transaction_repository.dart';
 import 'package:models/models.dart';
@@ -18,19 +18,29 @@ class SubscriptionRepository {
   Future<List<SubscriptionPlanRow>> getPlans() => db.subscriptionPlans.fetch();
 
   /// Fetches the subscription plan by [planCode].
-  Future<SubscriptionPlanRow?> getPlanByCode(SubscriptionPlanCode planCode) async {
-    final list = await db.subscriptionPlans.where((p) => p.code.equalsValue(planCode.name)).fetch();
+  Future<SubscriptionPlanRow?> getPlanByCode(
+    SubscriptionPlanCode planCode,
+  ) async {
+    final list = await db.subscriptionPlans
+        .where((p) => p.code.equalsValue(planCode.name))
+        .fetch();
     return list.firstOrNull;
   }
 
   /// Fetches current subscription for a store and computes live lifecycle status.
   Future<StoreSubscriptionRow?> getStoreSubscription(String storeId) async {
-    final list = await db.storeSubscriptions.where((s) => s.storeId.equalsValue(storeId)).fetch();
+    final list = await db.storeSubscriptions
+        .where((s) => s.storeId.equalsValue(storeId))
+        .fetch();
     final sub = list.firstOrNull;
     if (sub == null) return null;
 
     final currentStatus = SubscriptionStatus.values
-            .where((s) => s.name == sub.status || s.name == sub.status.replaceAll('_', ''))
+            .where(
+              (s) =>
+                  s.name == sub.status ||
+                  s.name == sub.status.replaceAll('_', ''),
+            )
             .firstOrNull ??
         SubscriptionStatus.active;
 
@@ -42,14 +52,37 @@ class SubscriptionRepository {
     );
 
     if (evaluatedStatus != currentStatus) {
-      return SubscriptionStorageHelper.updateStatus(db: db, id: sub.id, status: evaluatedStatus);
+      return SubscriptionStorageHelper.updateStatus(
+        db: db,
+        id: sub.id,
+        status: evaluatedStatus,
+      );
     }
     return sub;
   }
 
+  /// Checks whether the store subscription is operational (trial, active, or in grace period).
+  Future<bool> isStoreOperational(String storeId) async {
+    final sub = await getStoreSubscription(storeId);
+    if (sub == null) return false;
+
+    final currentStatus = SubscriptionStatus.values
+            .where(
+              (s) =>
+                  s.name == sub.status ||
+                  s.name == sub.status.replaceAll('_', ''),
+            )
+            .firstOrNull ??
+        SubscriptionStatus.expired;
+
+    return currentStatus.isOperational;
+  }
+
   /// Provisions a 14-day free trial for a newly created store.
   Future<StoreSubscriptionRow> provisionTrial(String storeId) async {
-    final existing = await db.storeSubscriptions.where((s) => s.storeId.equalsValue(storeId)).fetch();
+    final existing = await db.storeSubscriptions
+        .where((s) => s.storeId.equalsValue(storeId))
+        .fetch();
     if (existing.isNotEmpty) return existing.first;
 
     final (endsAt, graceEndsAt) = SubscriptionLifecycle.computeRenewalDates(
@@ -74,7 +107,8 @@ class SubscriptionRepository {
     required int amountInPaise,
     required String currency,
     required String reference,
-    SubscriptionPaymentMethod paymentMethod = SubscriptionPaymentMethod.phonepe,
+    SubscriptionPaymentMethod paymentMethod =
+        SubscriptionPaymentMethod.phonepe,
   }) => _transactionRepo.recordPending(
     storeId: storeId,
     planCode: planCode,
@@ -88,51 +122,22 @@ class SubscriptionRepository {
   Future<StoreSubscriptionRow> renewSubscription({
     required String storeId,
     required SubscriptionPlanCode planCode,
-    SubscriptionPaymentMethod paymentMethod = SubscriptionPaymentMethod.simulated,
+    SubscriptionPaymentMethod paymentMethod =
+        SubscriptionPaymentMethod.simulated,
     String? reference,
   }) async {
     final plan = await getPlanByCode(planCode);
-    if (plan == null) throw SubscriptionPlanNotFoundException(planCode.name);
-
     final currentSub = await getStoreSubscription(storeId);
-    final now = DateTime.now();
-    final (endsAt, graceEndsAt) = SubscriptionLifecycle.computeRenewalDates(
-      existingEndsAt: currentSub?.endsAt,
-      planDurationDays: plan.durationDays,
-      now: now,
+    return SubscriptionRenewalExecutor.execute(
+      db: db,
+      transactionRepo: _transactionRepo,
+      storeId: storeId,
+      plan: plan,
+      currentSub: currentSub,
+      planCode: planCode,
+      paymentMethod: paymentMethod,
+      reference: reference,
     );
-
-    if (reference != null) {
-      await _transactionRepo.recordCompleted(
-        storeId: storeId,
-        planCode: planCode,
-        amountInPaise: plan.priceInPaise,
-        currency: plan.currency,
-        paymentMethod: paymentMethod,
-        reference: reference,
-      );
-    }
-
-    if (currentSub == null) {
-      return SubscriptionStorageHelper.insert(
-        db: db,
-        storeId: storeId,
-        planCode: planCode.name,
-        status: SubscriptionStatus.active.name,
-        endsAt: endsAt,
-        graceEndsAt: graceEndsAt,
-      );
-    }
-
-    return (await db.storeSubscriptions.byKey(currentSub.id).update((s, set) => set(
-              planCode: ts.toExpr(planCode.name),
-              status: ts.toExpr(SubscriptionStatus.active.name),
-              endsAt: ts.toExpr(endsAt),
-              graceEndsAt: ts.toExpr(graceEndsAt),
-              updatedAt: ts.Expr.currentTimestamp,
-            )).returnUpdated().executeAndFetch()) ??
-        (await getStoreSubscription(storeId)) ??
-        (throw SubscriptionNotFoundException(storeId));
   }
 
   /// Fetches completed transaction history for a store.

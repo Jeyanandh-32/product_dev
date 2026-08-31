@@ -3,6 +3,7 @@ import 'package:backend/database/schema.dart';
 import 'package:backend/extensions/request_context_extension.dart';
 import 'package:backend/extensions/store_row_extension.dart';
 import 'package:backend/repositories/store_repository.dart';
+import 'package:backend/repositories/subscription_repository.dart';
 import 'package:backend/utils/constraint_errors.dart';
 import 'package:backend/utils/responses.dart';
 import 'package:dart_frog/dart_frog.dart';
@@ -39,9 +40,16 @@ Future<Response> _onGet(RequestContext context, String id) async {
         .first
         .fetch();
 
+    final isOperational = await context
+        .read<SubscriptionRepository>()
+        .isStoreOperational(id);
+
     return success(
       data: {
-        'store': storeRow.toStore(isBottleReturnEnabled: btlConfig != null),
+        'store': storeRow.toStore(
+          isBottleReturnEnabled: btlConfig != null,
+          isOperational: isOperational,
+        ),
       },
     );
   } catch (e) {
@@ -72,8 +80,7 @@ Future<Response> _onPutOrPatch(RequestContext context, String id) async {
           clientSecret == null ||
           clientSecret.isEmpty) {
         return badRequest(
-          message:
-              'Cannot enable online ordering for this store. Please contact system administrator.',
+          message: 'Cannot enable online ordering for this store. Please contact system administrator.',
         );
       }
     }

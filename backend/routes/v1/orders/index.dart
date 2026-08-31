@@ -1,4 +1,5 @@
 import 'package:backend/extensions/request_context_extension.dart';
+import 'package:backend/repositories/subscription_repository.dart';
 import 'package:backend/services/order_query_helper.dart';
 import 'package:backend/services/order_service.dart';
 import 'package:backend/utils/responses.dart';
@@ -19,6 +20,14 @@ Future<Response> _onPost(RequestContext context) async {
   if (storeIdError != null) return storeIdError;
 
   try {
+    final subRepo = context.read<SubscriptionRepository>();
+    final isOperational = await subRepo.isStoreOperational(context.storeId);
+    if (!isOperational) {
+      return badRequest(
+        message: 'Store subscription is expired. Ordering is disabled.',
+      );
+    }
+
     final body = await context.validateBody(OrderValidator.create);
     final input = OrderCreate.fromJson(body);
     final tokenPayload = context.tokenPayload;

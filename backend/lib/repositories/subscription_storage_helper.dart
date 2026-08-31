@@ -40,4 +40,25 @@ abstract final class SubscriptionStorageHelper {
       )
       .returnUpdated()
       .executeAndFetch();
+
+  /// Updates renewal details for an existing subscription.
+  static Future<StoreSubscriptionRow?> updateRenewal({
+    required ts.Database<DatabaseSchema> db,
+    required String id,
+    required String planCode,
+    required DateTime endsAt,
+    required DateTime graceEndsAt,
+  }) => db.storeSubscriptions
+      .byKey(id)
+      .update(
+        (s, set) => set(
+          planCode: ts.toExpr(planCode),
+          status: ts.toExpr(SubscriptionStatus.active.name),
+          endsAt: ts.toExpr(endsAt),
+          graceEndsAt: ts.toExpr(graceEndsAt),
+          updatedAt: ts.Expr.currentTimestamp,
+        ),
+      )
+      .returnUpdated()
+      .executeAndFetch();
 }

@@ -3,6 +3,7 @@ import 'package:backend/database/schema.dart';
 import 'package:backend/extensions/request_context_extension.dart';
 import 'package:backend/extensions/store_phonepe_config_row_extension.dart';
 import 'package:backend/repositories/customer_repository.dart';
+import 'package:backend/repositories/subscription_repository.dart';
 import 'package:backend/services/online_order_checkout_coordinator.dart';
 import 'package:backend/services/online_payment_calculator.dart';
 import 'package:backend/services/order_service.dart';
@@ -33,26 +34,54 @@ Future<Response> _onPost(RequestContext context) async {
     final db = Database.db;
     final phonePeService = PhonePeService();
 
-    final storeFuture = db.stores.where((s) => s.id.equals(toExpr(context.storeId))).first.fetch();
+    final subRepo = context.read<SubscriptionRepository>();
+    final isOperational = await subRepo.isStoreOperational(context.storeId);
+    if (!isOperational) {
+      return badRequest(
+        message: 'Online ordering is currently unavailable because the store subscription has expired.',
+      );
+    }
+
+    final storeFuture = db.stores
+        .where((s) => s.id.equals(toExpr(context.storeId)))
+        .first
+        .fetch();
     final phonePeFuture = db.storePhonepeConfigs
-        .where((c) => c.storeId.equals(toExpr(context.storeId)) & c.isEnabled.equals(toExpr(true)))
+        .where(
+          (c) =>
+              c.storeId.equals(toExpr(context.storeId)) &
+              c.isEnabled.equals(toExpr(true)),
+        )
         .first
         .fetch();
 
-    final (storeRow, phonePeConfigRow) = await (storeFuture, phonePeFuture).wait;
+    final (storeRow, phonePeConfigRow) = await (
+      storeFuture,
+      phonePeFuture,
+    ).wait;
 
     if (storeRow == null || !storeRow.isOnlineEnabled) {
-      return badRequest(message: 'Online ordering is currently disabled for this store.');
+      return badRequest(
+        message: 'Online ordering is currently disabled for this store.',
+      );
     }
 
     if (phonePeConfigRow == null) {
-      return badRequest(message: 'Online checkout configuration is incomplete for this store.');
+      return badRequest(
+        message: 'Online checkout configuration is incomplete for this store.',
+      );
     }
 
     final phonePeConfig = phonePeConfigRow.toStorePhonePeConfig();
 
     final productsList = input.products
-        .map((p) => {'productId': p.productId, 'quantity': p.quantity, 'discount': p.discount})
+        .map(
+          (p) => {
+            'productId': p.productId,
+            'quantity': p.quantity,
+            'discount': p.discount,
+          },
+        )
         .toList();
 
     final calc = await OnlinePaymentCalculator.computeAmounts(

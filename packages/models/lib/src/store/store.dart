@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+
 import '../payment_gateway/payment_gateway_enums.dart';
 
 part 'store.freezed.dart';
@@ -16,6 +17,7 @@ abstract class Store with _$Store {
     required bool isActive,
     @Default(false) bool isOnlineEnabled,
     @Default(false) bool isBottleReturnEnabled,
+    @Default(true) bool isOperational,
     @Default(PaymentProvider.phonepe) PaymentProvider? activePaymentProvider,
     String? slug,
   }) = _Store;

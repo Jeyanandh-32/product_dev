@@ -2,7 +2,10 @@ import 'package:backend/database/schema.dart';
 import 'package:models/models.dart';
 
 extension StoreRowExtension on StoreRow {
-  Store toStore({bool isBottleReturnEnabled = false}) => Store(
+  Store toStore({
+    bool isBottleReturnEnabled = false,
+    bool isOperational = true,
+  }) => Store(
     id: id,
     merchantId: merchantId,
     name: name,
@@ -10,6 +13,7 @@ extension StoreRowExtension on StoreRow {
     isActive: isActive,
     isOnlineEnabled: isOnlineEnabled,
     isBottleReturnEnabled: isBottleReturnEnabled,
+    isOperational: isOperational,
     activePaymentProvider: activePaymentProvider != null
         ? PaymentProvider.values.firstWhere(
             (p) => p.name == activePaymentProvider,

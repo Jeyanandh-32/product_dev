@@ -43,13 +43,19 @@ class CartSummaryCard extends StatelessComponent {
         : 0.0;
     final finalPayable = grandTotal - walletDeduction;
 
+    final isStoreOrderingActive =
+        currentStore == null ||
+        (currentStore!.isOperational && currentStore!.isOnlineEnabled);
+
+    final buttonClasses = isStoreOrderingActive
+        ? 'w-full py-4 rounded-2xl bg-black hover:bg-gray-800 text-white font-bold text-sm flex items-center justify-center gap-2 cursor-pointer transition-all shadow-sm border-0 active:scale-98'
+        : 'w-full py-4 rounded-2xl bg-gray-300 text-gray-500 font-bold text-sm flex items-center justify-center gap-2 cursor-not-allowed border-0 shadow-none';
+
     return div(
-      classes:
-          'bg-white rounded-3xl p-6 border border-gray-200/80 shadow-sm flex flex-col gap-6 sticky top-24',
+      classes: 'bg-white rounded-3xl p-6 border border-gray-200/80 shadow-sm flex flex-col gap-6 sticky top-24',
       [
         h2(
-          classes:
-              'text-lg font-extrabold text-black tracking-tight border-b border-gray-100 pb-4',
+          classes: 'text-lg font-extrabold text-black tracking-tight border-b border-gray-100 pb-4',
           [
             .text('Order Summary'),
           ],
@@ -98,8 +104,7 @@ class CartSummaryCard extends StatelessComponent {
             )
           else
             div(
-              classes:
-                  'border-t border-dashed border-gray-200 pt-3 mt-1 flex justify-between items-center text-base font-extrabold text-black',
+              classes: 'border-t border-dashed border-gray-200 pt-3 mt-1 flex justify-between items-center text-base font-extrabold text-black',
               [
                 span([.text('Total Amount')]),
                 span([.text('₹${grandTotal.toStringAsFixed(2)}')]),
@@ -108,12 +113,14 @@ class CartSummaryCard extends StatelessComponent {
         ]),
 
         button(
-          classes:
-              'w-full py-4 rounded-2xl bg-black hover:bg-gray-800 text-white font-bold text-sm flex items-center justify-center gap-2 cursor-pointer transition-all shadow-sm border-0 active:scale-98',
-          onClick: onCheckout,
+          classes: buttonClasses,
+          disabled: !isStoreOrderingActive || isSubmitting,
+          onClick: isStoreOrderingActive ? onCheckout : null,
           [
             if (isSubmitting)
               span(classes: 'loading loading-spinner loading-sm', [])
+            else if (!isStoreOrderingActive)
+              .text('Online Ordering Paused')
             else if (!isLoggedIn) ...[
               .text('Sign In to Place Order'),
               ArrowRight(classes: 'w-4 h-4'),

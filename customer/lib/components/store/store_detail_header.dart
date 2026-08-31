@@ -30,7 +30,7 @@ class StoreDetailHeader extends StatelessComponent {
             ]),
         ]),
       ]),
-      if (!store.isOnlineEnabled)
+      if (!store.isOnlineEnabled || !store.isOperational)
         div(
           classes: 'w-full bg-amber-50 border border-amber-200 text-amber-900 rounded-2xl p-4 flex items-center gap-3 text-sm font-semibold shadow-2xs',
           [

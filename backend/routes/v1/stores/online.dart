@@ -3,6 +3,7 @@ import 'package:backend/database/schema.dart';
 import 'package:backend/extensions/request_context_extension.dart';
 import 'package:backend/extensions/store_row_extension.dart';
 import 'package:backend/repositories/store_repository.dart';
+import 'package:backend/repositories/subscription_repository.dart';
 import 'package:backend/utils/responses.dart';
 import 'package:dart_frog/dart_frog.dart';
 import 'package:typed_sql/typed_sql.dart' hide Database;
@@ -22,6 +23,7 @@ Future<Response> _onGet(RequestContext context) async {
   if (sizeError != null) return sizeError;
 
   final repo = context.read<StoreRepository>();
+  final subRepo = context.read<SubscriptionRepository>();
 
   try {
     final slug = context.request.uri.queryParameters['slug'];
@@ -34,10 +36,14 @@ Future<Response> _onGet(RequestContext context) async {
           .where((c) => c.storeId.equals(toExpr(storeRow.id)))
           .first
           .fetch();
+      final isOperational = await subRepo.isStoreOperational(storeRow.id);
       return success(
         data: {
           'store': storeRow
-              .toStore(isBottleReturnEnabled: btlConfig != null)
+              .toStore(
+                isBottleReturnEnabled: btlConfig != null,
+                isOperational: isOperational,
+              )
               .toJson(),
         },
       );
@@ -54,13 +60,17 @@ Future<Response> _onGet(RequestContext context) async {
         .fetch();
     final configuredStoreIds = btlConfigs.map((c) => c.storeId).toSet();
 
-    final stores = storeRows
-        .map(
-          (s) => s
-              .toStore(isBottleReturnEnabled: configuredStoreIds.contains(s.id))
-              .toJson(),
-        )
-        .toList();
+    final stores = await Future.wait(
+      storeRows.map((s) async {
+        final isOp = await subRepo.isStoreOperational(s.id);
+        return s
+            .toStore(
+              isBottleReturnEnabled: configuredStoreIds.contains(s.id),
+              isOperational: isOp,
+            )
+            .toJson();
+      }),
+    );
     final totalPages = (total / size).ceil();
 
     return success(
