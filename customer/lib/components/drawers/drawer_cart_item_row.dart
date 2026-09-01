@@ -54,12 +54,11 @@ class DrawerCartItemRow extends StatelessComponent {
               [Minus(classes: 'w-3.5 h-3.5')],
             ),
             span(
-              classes:
-                  'font-bold text-xs min-w-4 text-center text-gray-900',
+              classes: 'font-bold text-xs min-w-4 text-center text-gray-900',
               [.text('${item.quantity}')],
             ),
             button(
-              classes: 'w-7 h-7 rounded-lg bg-emerald-50 hover:bg-emerald-600 text-emerald-700 hover:text-white border border-emerald-200/60 flex items-center justify-center cursor-pointer transition-all active:scale-95 shadow-2xs',
+              classes: 'w-7 h-7 rounded-lg bg-emerald-50 hover:bg-emerald-600 text-emerald-700 hover:text-white border border-emerald-200/60 hover:border-emerald-600 flex items-center justify-center cursor-pointer transition-all active:scale-95 shadow-2xs',
               onClick: () => addToCart(
                 currentCartStoreIdSignal.value ?? '',
                 item.product,

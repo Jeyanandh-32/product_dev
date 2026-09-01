@@ -71,7 +71,7 @@ class CartDrawerFooter extends StatelessComponent {
           ),
         ]),
         button(
-          classes: 'w-full py-4 rounded-2xl bg-emerald-50 hover:bg-emerald-600 text-emerald-700 hover:text-white border border-emerald-200/60 font-bold text-base flex items-center justify-center gap-2 cursor-pointer transition-all shadow-xs active:scale-98',
+          classes: 'w-full py-4 rounded-2xl bg-emerald-50 hover:bg-emerald-600 text-emerald-700 hover:text-white border border-emerald-200/60 hover:border-emerald-600 font-bold text-base flex items-center justify-center gap-2 cursor-pointer transition-all shadow-xs active:scale-98',
           onClick: onCheckout,
           [
             if (isSubmitting)

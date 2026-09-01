@@ -107,7 +107,7 @@ class OrderStatusCard extends StatelessComponent {
         ),
         if (isCompleted && order.status != OrderStatus.completed) ...[
           button(
-            classes: 'w-full mt-2 py-3.5 rounded-2xl bg-emerald-50 hover:bg-emerald-600 text-emerald-700 hover:text-white border border-emerald-200/60 font-bold text-sm flex items-center justify-center gap-2 cursor-pointer transition-all shadow-xs active:scale-98',
+            classes: 'w-full mt-2 py-3.5 rounded-2xl bg-emerald-50 hover:bg-emerald-600 text-emerald-700 hover:text-white border border-emerald-200/60 hover:border-emerald-600 font-bold text-sm flex items-center justify-center gap-2 cursor-pointer transition-all shadow-xs active:scale-98',
             onClick: onShowQr,
             [QrCode(classes: 'w-4 h-4'), .text('Display Order QR')],
           ),

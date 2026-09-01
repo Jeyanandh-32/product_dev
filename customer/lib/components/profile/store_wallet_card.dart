@@ -78,7 +78,7 @@ class StoreWalletCard extends StatelessComponent {
 
               div(classes: 'flex items-center gap-2.5', [
                 button(
-                  classes: 'flex-1 sm:flex-none justify-center flex items-center gap-1.5 px-4 py-2.5 rounded-2xl bg-emerald-50 hover:bg-emerald-600 text-emerald-700 hover:text-white border border-emerald-200/60 font-bold text-xs transition-all cursor-pointer active:scale-95 shadow-2xs',
+                  classes: 'flex-1 sm:flex-none justify-center flex items-center gap-1.5 px-4 py-2.5 rounded-2xl bg-emerald-50 hover:bg-emerald-600 text-emerald-700 hover:text-white border border-emerald-200/60 hover:border-emerald-600 font-bold text-xs transition-all cursor-pointer active:scale-95 shadow-2xs',
                   onClick: onAddMoney,
                   [
                     Plus(classes: 'w-4 h-4'),

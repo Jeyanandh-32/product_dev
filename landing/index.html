@@ -3,168 +3,690 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sparrow POS</title>
+    <title>Sparrow POS — Store Billing & QR Ordering Platform</title>
+    <meta name="description" content="Fast counter billing for your staff, easy QR phone ordering for your customers, and a clear view of your daily sales.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        * { -webkit-font-smoothing: antialiased; }
-        body {
-            background-color: #FFFFFF;
-            color: #18181B;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'glow-emerald': '0 0 50px -10px rgba(16, 185, 129, 0.25)',
+                        'glow-subtle': '0 20px 80px -20px rgba(0, 0, 0, 0.08)',
+                        'card': '0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.03)',
+                        'card-hover': '0 20px 30px -10px rgba(0, 0, 0, 0.08), 0 8px 12px -4px rgba(0, 0, 0, 0.03)',
+                        'inner-glow': 'inset 0 1px 1px 0 rgba(255, 255, 255, 0.8)',
+                    }
+                }
+            }
         }
+    </script>
+    <style>
+        * { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+        
+        /* Subtle Dot Grid Background */
+        .bg-grid-pattern {
+            background-image: radial-gradient(#e4e4e7 1.2px, transparent 1.2px);
+            background-size: 24px 24px;
+        }
+        
+        /* Custom details arrow rotation */
+        details summary::-webkit-details-marker { display: none; }
+        details[open] summary svg.chevron { transform: rotate(180deg); }
     </style>
 </head>
-<body class="min-h-screen flex flex-col bg-white text-zinc-900 selection:bg-black selection:text-white">
+<body class="min-h-screen flex flex-col bg-[#FAFAFB] text-zinc-900 selection:bg-zinc-950 selection:text-white font-sans antialiased relative overflow-x-hidden">
 
-    <!-- Navigation -->
-    <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-zinc-200">
-        <div class="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
-            <a href="/" class="flex items-center gap-2.5">
-                <div class="w-7 h-7 bg-black text-white font-bold text-sm flex items-center justify-center rounded">
+    <!-- Ambient Mesh Glow Background -->
+    <div class="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[600px] bg-gradient-to-b from-emerald-100/40 via-emerald-50/10 to-transparent blur-[120px] pointer-events-none -z-10"></div>
+    <div class="fixed inset-0 bg-grid-pattern opacity-40 pointer-events-none -z-10 [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]"></div>
+
+    <!-- Announcement Bar -->
+    <div class="bg-zinc-950 text-zinc-300 text-xs py-2 px-4 text-center border-b border-zinc-800/80 flex items-center justify-center gap-2 relative z-50">
+        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">Free Trial</span>
+        <span class="font-medium text-zinc-300">Start using Sparrow POS for your store free for 14 days.</span>
+        <a href="/merchant" class="text-white font-bold hover:text-emerald-400 transition-colors ml-1 inline-flex items-center gap-1">
+            <span>Get Started</span>
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+    </div>
+
+    <!-- Sticky Glassmorphic Header -->
+    <header class="sticky top-0 z-40 bg-white/80 backdrop-blur-xl border-b border-zinc-200/80 transition-all">
+        <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+            <a href="/" class="flex items-center gap-3 group">
+                <div class="w-8 h-8 bg-zinc-950 text-white flex items-center justify-center rounded-xl font-black text-sm shadow-xs group-hover:bg-zinc-800 transition-colors">
                     S
                 </div>
-                <span class="font-bold text-base text-zinc-900 tracking-tight">Sparrow POS</span>
+                <div class="flex flex-col">
+                    <span class="font-black text-base tracking-tight text-zinc-950 leading-none">Sparrow POS</span>
+                    <span class="text-[10px] font-semibold text-zinc-400 tracking-wider uppercase mt-0.5">Retail Platform</span>
+                </div>
             </a>
-            <div class="flex items-center gap-4">
-                <a href="#features" class="hidden sm:inline-block text-xs font-medium text-zinc-500 hover:text-black transition-colors">
-                    Features
-                </a>
-                <a href="/store" class="text-xs font-medium text-zinc-600 hover:text-black px-3 py-1.5 rounded border border-zinc-200 hover:border-zinc-300 transition-colors">
+
+            <nav class="hidden md:flex items-center gap-8 text-xs font-bold text-zinc-600">
+                <a href="#how-it-works" class="hover:text-zinc-950 transition-colors">How It Works</a>
+                <a href="#features" class="hover:text-zinc-950 transition-colors">Features</a>
+                <a href="#pricing" class="hover:text-zinc-950 transition-colors">Pricing</a>
+                <a href="#faq" class="hover:text-zinc-950 transition-colors">FAQ</a>
+            </nav>
+
+            <div class="flex items-center gap-3">
+                <a href="/store" class="text-xs font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-600 hover:text-white px-3.5 py-2 rounded-xl border border-emerald-200/60 hover:border-emerald-600 transition-all active:scale-95 shadow-2xs">
                     Customer Store
                 </a>
-                <a href="/merchant" class="text-xs font-medium text-white bg-black hover:bg-zinc-800 px-3.5 py-1.5 rounded transition-colors">
-                    Merchant Portal &rarr;
+                <a href="/merchant" class="text-xs font-bold text-white bg-zinc-950 hover:bg-zinc-800 px-4 py-2 rounded-xl transition-all active:scale-95 flex items-center gap-1.5 shadow-xs">
+                    <span>Merchant Login</span>
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 12h14M12 5l7 7-7 7"/></svg>
                 </a>
             </div>
         </div>
     </header>
 
     <!-- Main Content -->
-    <main class="max-w-5xl mx-auto px-6 py-16 sm:py-20 w-full flex-1">
+    <main class="w-full flex-1">
+
         <!-- Hero Section -->
-        <section class="max-w-2xl mb-16">
-            <h1 class="text-4xl sm:text-5xl font-bold tracking-tight text-zinc-900 mb-4 leading-tight">
-                Point of sale and online ordering.
+        <section class="max-w-5xl mx-auto px-6 pt-16 pb-20 sm:pt-24 sm:pb-28 text-center relative">
+            
+            <!-- Hero Pill Badge -->
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/90 backdrop-blur-md text-zinc-800 text-xs font-bold border border-zinc-200/90 shadow-card mb-8">
+                <span class="flex h-2 w-2 relative">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                </span>
+                <span>Simple Counter Billing & QR Ordering</span>
+            </div>
+
+            <!-- Headline -->
+            <h1 class="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-zinc-950 max-w-3xl mx-auto leading-[1.08] mb-6">
+                Billing made simple <br class="hidden sm:inline">
+                for your store.
             </h1>
-            <p class="text-base sm:text-lg text-zinc-600 leading-relaxed">
-                Fast billing at your counter, easy ordering from customer phones.
+
+            <!-- Subtitle -->
+            <p class="text-base sm:text-lg md:text-xl text-zinc-600 max-w-2xl mx-auto leading-relaxed mb-10 font-normal">
+                Fast counter billing for your staff, easy phone ordering for your customers, and a clear view of your daily sales.
             </p>
+
+            <!-- Call to Actions -->
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-3.5 max-w-md mx-auto mb-16">
+                <a href="/merchant" class="w-full sm:w-auto px-8 py-4 rounded-2xl bg-zinc-950 hover:bg-zinc-800 text-white font-bold text-xs sm:text-sm transition-all active:scale-95 flex items-center justify-center gap-2 shadow-md hover:shadow-lg">
+                    <span>Open Merchant Portal</span>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </a>
+                <a href="/store" class="w-full sm:w-auto px-8 py-4 rounded-2xl bg-emerald-50 hover:bg-emerald-600 text-emerald-700 hover:text-white border border-emerald-200/60 hover:border-emerald-600 font-bold text-xs sm:text-sm transition-all active:scale-95 flex items-center justify-center gap-2 shadow-card">
+                    <span>Visit Customer Store</span>
+                </a>
+            </div>
+
+            <!-- 4 Core Trust Highlights -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 text-left max-w-4xl mx-auto">
+                <div class="p-5 rounded-2xl bg-white/90 backdrop-blur-sm border border-zinc-200/80 shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-3.5 border border-emerald-100/60">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                    </div>
+                    <div class="text-sm font-bold text-zinc-950">Fast Billing</div>
+                    <div class="text-xs text-zinc-500 mt-1 font-normal leading-normal">Bill counter customers in seconds with Cash or UPI</div>
+                </div>
+
+                <div class="p-5 rounded-2xl bg-white/90 backdrop-blur-sm border border-zinc-200/80 shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-3.5 border border-emerald-100/60">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1Zm12 0h2a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1ZM5 20h2a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1Z"/></svg>
+                    </div>
+                    <div class="text-sm font-bold text-zinc-950">QR Phone Menu</div>
+                    <div class="text-xs text-zinc-500 mt-1 font-normal leading-normal">Customers browse and order directly from mobile</div>
+                </div>
+
+                <div class="p-5 rounded-2xl bg-white/90 backdrop-blur-sm border border-zinc-200/80 shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-3.5 border border-emerald-100/60">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg>
+                    </div>
+                    <div class="text-sm font-bold text-zinc-950">Store Wallet</div>
+                    <div class="text-xs text-zinc-500 mt-1 font-normal leading-normal">Pre-funded store balance for instant 1-tap checkout</div>
+                </div>
+
+                <div class="p-5 rounded-2xl bg-white/90 backdrop-blur-sm border border-zinc-200/80 shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-3.5 border border-emerald-100/60">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 20V10M12 20V4M6 20v-6"/></svg>
+                    </div>
+                    <div class="text-sm font-bold text-zinc-950">Daily Sales</div>
+                    <div class="text-xs text-zinc-500 mt-1 font-normal leading-normal">Track daily revenue, Cash vs UPI, and best-sellers</div>
+                </div>
+            </div>
         </section>
 
-        <!-- Two Main Portals -->
-        <section class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-20">
-            <!-- Merchant -->
-            <a href="/merchant" class="group block p-8 rounded-xl border border-zinc-200 hover:border-zinc-400 bg-zinc-50/50 hover:bg-zinc-50 transition-all">
-                <div class="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2">For Shop Owners</div>
-                <h2 class="text-xl font-bold text-zinc-900 group-hover:text-black mb-2 flex items-center justify-between">
-                    <span>Merchant Portal</span>
-                    <span class="text-zinc-400 group-hover:text-black transition-transform group-hover:translate-x-1">&rarr;</span>
-                </h2>
-                <p class="text-sm text-zinc-600 leading-relaxed mb-6">
-                    Add products, keep track of inventory, manage billing counters, and view daily sales.
-                </p>
-                <span class="inline-block text-xs font-semibold text-white bg-black group-hover:bg-zinc-800 px-4 py-2 rounded transition-colors">
-                    Open Merchant Portal
-                </span>
-            </a>
+        <!-- Dual Screen Mockup Section -->
+        <section class="max-w-6xl mx-auto px-6 pb-24">
+            <div class="rounded-3xl bg-zinc-950 p-2 sm:p-3.5 shadow-2xl border border-zinc-800">
+                
+                <!-- Browser Bar -->
+                <div class="px-4 py-2.5 flex items-center justify-between border-b border-zinc-800/80 mb-2">
+                    <div class="flex items-center gap-2">
+                        <div class="w-3 h-3 rounded-full bg-zinc-700"></div>
+                        <div class="w-3 h-3 rounded-full bg-zinc-700"></div>
+                        <div class="w-3 h-3 rounded-full bg-zinc-700"></div>
+                    </div>
+                    <div class="text-[11px] font-mono font-bold text-zinc-400 bg-zinc-900 px-4 py-1 rounded-full border border-zinc-800 flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                        <span>app.sparrow-x.in</span>
+                    </div>
+                    <div class="text-xs text-zinc-500 font-semibold hidden sm:block">Store Counter & Mobile View</div>
+                </div>
 
-            <!-- Customer -->
-            <a href="/store" class="group block p-8 rounded-xl border border-zinc-200 hover:border-zinc-400 bg-zinc-50/50 hover:bg-zinc-50 transition-all">
-                <div class="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2">For Shoppers</div>
-                <h2 class="text-xl font-bold text-zinc-900 group-hover:text-black mb-2 flex items-center justify-between">
-                    <span>Customer Store</span>
-                    <span class="text-zinc-400 group-hover:text-black transition-transform group-hover:translate-x-1">&rarr;</span>
-                </h2>
-                <p class="text-sm text-zinc-600 leading-relaxed mb-6">
-                    Browse store menus, order ahead for quick pickup, and pay with UPI or wallet.
-                </p>
-                <span class="inline-block text-xs font-semibold text-zinc-800 bg-white border border-zinc-300 group-hover:border-zinc-400 px-4 py-2 rounded transition-colors">
-                    Browse Online Store
-                </span>
-            </a>
+                <!-- Dual Application Screen Frame -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-3 bg-zinc-900/90 rounded-2xl p-4 sm:p-6 border border-zinc-800/60">
+                    
+                    <!-- Left: Merchant POS Counter View (7 Cols) -->
+                    <div class="lg:col-span-7 bg-white rounded-2xl p-5 border border-zinc-200/80 shadow-card flex flex-col justify-between">
+                        <div>
+                            <!-- Header -->
+                            <div class="flex items-center justify-between pb-3 border-b border-zinc-100 mb-4">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-7 h-7 rounded-lg bg-zinc-950 text-white flex items-center justify-center text-xs font-black">POS</div>
+                                    <div>
+                                        <div class="text-xs font-bold text-zinc-950">Counter 1 &bull; Greenfield Mart</div>
+                                        <div class="text-[10px] text-zinc-400">Cashier: Active Session</div>
+                                    </div>
+                                </div>
+                                <span class="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/60">Ready to Bill</span>
+                            </div>
+
+                            <!-- Cart Items List -->
+                            <div class="space-y-2 mb-4">
+                                <div class="text-[11px] font-bold text-zinc-400 uppercase tracking-wider">Current Bill (3 items)</div>
+                                <div class="p-2.5 rounded-xl bg-zinc-50 border border-zinc-100 flex items-center justify-between text-xs">
+                                    <div>
+                                        <span class="font-bold text-zinc-900">Organic Whole Milk (1L)</span>
+                                        <span class="text-zinc-400 ml-1.5">&times; 2</span>
+                                    </div>
+                                    <span class="font-extrabold text-zinc-900">₹120.00</span>
+                                </div>
+                                <div class="p-2.5 rounded-xl bg-zinc-50 border border-zinc-100 flex items-center justify-between text-xs">
+                                    <div>
+                                        <span class="font-bold text-zinc-900">Artisan Sourdough Loaf</span>
+                                        <span class="text-zinc-400 ml-1.5">&times; 1</span>
+                                    </div>
+                                    <span class="font-extrabold text-zinc-900">₹45.00</span>
+                                </div>
+                                <div class="p-2.5 rounded-xl bg-zinc-50 border border-zinc-100 flex items-center justify-between text-xs">
+                                    <div>
+                                        <span class="font-bold text-zinc-900">Roasted Arabica Beans (250g)</span>
+                                        <span class="text-zinc-400 ml-1.5">&times; 1</span>
+                                    </div>
+                                    <span class="font-extrabold text-zinc-900">₹255.00</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Bill Totals & Payment Modes -->
+                        <div class="pt-3 border-t border-zinc-100">
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="text-xs font-bold text-zinc-500">Total Bill Amount</span>
+                                <span class="text-lg font-black text-zinc-950">₹420.00</span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div class="py-2.5 rounded-xl bg-zinc-950 text-white font-extrabold text-xs text-center cursor-pointer shadow-xs flex items-center justify-center gap-1.5">
+                                    <span>💵 Pay with Cash</span>
+                                </div>
+                                <div class="py-2.5 rounded-xl bg-zinc-100 hover:bg-zinc-200 text-zinc-900 font-extrabold text-xs text-center cursor-pointer border border-zinc-200 flex items-center justify-center gap-1.5">
+                                    <span>📱 Pay with UPI</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Customer Mobile Store View (5 Cols - Crisp White Card) -->
+                    <div class="lg:col-span-5 bg-white text-zinc-900 rounded-2xl p-5 border border-zinc-200/80 shadow-card flex flex-col justify-between relative overflow-hidden">
+                        <div>
+                            <!-- Mobile Header -->
+                            <div class="flex items-center justify-between pb-3 border-b border-zinc-100 mb-4">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-6 h-6 rounded-md bg-emerald-600 text-white flex items-center justify-center text-[10px] font-black">QR</div>
+                                    <span class="text-xs font-bold text-zinc-950">Customer Store View</span>
+                                </div>
+                                <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/60">Phone Menu</span>
+                            </div>
+
+                            <!-- Customer Store Wallet Card -->
+                            <div class="p-3.5 rounded-xl bg-emerald-50/50 border border-emerald-200/60 mb-3">
+                                <div class="flex items-center justify-between">
+                                    <div class="text-[11px] font-bold text-zinc-700">Store Wallet Balance</div>
+                                    <span class="text-xs font-black text-emerald-700">₹500.00</span>
+                                </div>
+                                <p class="text-[10px] text-emerald-800/70 mt-1 font-medium">Pre-funded balance &bull; 1-tap checkout enabled</p>
+                            </div>
+
+                            <!-- Customer Order Pass -->
+                            <div class="p-3.5 rounded-xl bg-zinc-50 border border-zinc-200/80 mb-2">
+                                <div class="flex items-center justify-between text-xs">
+                                    <span class="font-bold text-zinc-950">Pickup Pass</span>
+                                    <span class="font-mono font-bold text-zinc-900">#ORD-8492</span>
+                                </div>
+                                <div class="text-[11px] text-zinc-500 mt-1 font-medium">
+                                    Show order QR pass at counter for instant pickup.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- CTA -->
+                        <div class="pt-3 border-t border-zinc-100">
+                            <a href="/store" class="w-full py-2.5 rounded-xl bg-emerald-50 hover:bg-emerald-600 text-emerald-700 hover:text-white border border-emerald-200/60 hover:border-emerald-600 font-bold text-xs text-center transition-all flex items-center justify-center gap-1.5 shadow-2xs">
+                                <span>Try Customer Store</span>
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 12h14M12 5l7 7-7 7"/></svg>
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
         </section>
 
-        <!-- Features Grid -->
-        <section id="features" class="pt-12 border-t border-zinc-200">
-            <div class="max-w-xl mb-10">
-                <div class="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2">Features</div>
-                <h2 class="text-2xl font-bold text-zinc-900 mb-2">Simple tools to run your store.</h2>
-                <p class="text-sm text-zinc-600">Everything needed to sell at the counter and take orders online.</p>
+        <!-- 3-Step Setup Section -->
+        <section class="max-w-5xl mx-auto px-6 py-20 border-t border-zinc-200">
+            <div class="text-center max-w-md mx-auto mb-14">
+                <div class="text-xs font-bold text-emerald-700 uppercase tracking-wider mb-2">Easy Setup</div>
+                <h2 class="text-3xl font-extrabold text-zinc-950 tracking-tight">Up and Running in 3 Minutes</h2>
+                <p class="text-sm text-zinc-600 mt-2 font-normal">Start billing immediately with zero hardware setup.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Step 1 -->
+                <div class="p-6 rounded-3xl bg-white border border-zinc-200/80 shadow-card relative">
+                    <div class="w-8 h-8 rounded-full bg-zinc-950 text-white font-black text-xs flex items-center justify-center mb-4">
+                        1
+                    </div>
+                    <h3 class="text-base font-extrabold text-zinc-950 mb-2">Create Your Store</h3>
+                    <p class="text-xs sm:text-sm text-zinc-600 leading-relaxed font-normal">
+                        Sign up in 30 seconds and add your products, categories, selling prices, and stock numbers.
+                    </p>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="p-6 rounded-3xl bg-white border border-zinc-200/80 shadow-card relative">
+                    <div class="w-8 h-8 rounded-full bg-emerald-600 text-white font-black text-xs flex items-center justify-center mb-4">
+                        2
+                    </div>
+                    <h3 class="text-base font-extrabold text-zinc-950 mb-2">Set Up Your Counters</h3>
+                    <p class="text-xs sm:text-sm text-zinc-600 leading-relaxed font-normal">
+                        Create billing counters and share your store QR code on tables or at your checkout counter.
+                    </p>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="p-6 rounded-3xl bg-white border border-zinc-200/80 shadow-card relative">
+                    <div class="w-8 h-8 rounded-full bg-zinc-950 text-white font-black text-xs flex items-center justify-center mb-4">
+                        3
+                    </div>
+                    <h3 class="text-base font-extrabold text-zinc-950 mb-2">Start Selling</h3>
+                    <p class="text-xs sm:text-sm text-zinc-600 leading-relaxed font-normal">
+                        Ring up in-store sales in seconds or take customer phone orders with instant pickup passes.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Two Dedicated Portals Section -->
+        <section id="how-it-works" class="max-w-5xl mx-auto px-6 py-20 border-t border-zinc-200">
+            <div class="text-center max-w-md mx-auto mb-14">
+                <div class="text-xs font-bold text-emerald-700 uppercase tracking-wider mb-2">Two Portals</div>
+                <h2 class="text-3xl font-extrabold text-zinc-950 tracking-tight">Built for Both Sides of Your Store</h2>
+                <p class="text-sm text-zinc-600 mt-2 font-normal">One portal for store management, one for shoppers.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- For Store Owners -->
+                <div class="p-8 rounded-3xl bg-white border border-zinc-200/90 shadow-card hover:shadow-card-hover transition-all flex flex-col justify-between">
+                    <div>
+                        <div class="w-12 h-12 rounded-2xl bg-zinc-950 text-white flex items-center justify-center mb-6 shadow-xs">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2 7h20"/></svg>
+                        </div>
+                        <div class="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-1">For Shop Owners</div>
+                        <h3 class="text-xl font-extrabold text-zinc-950 mb-3">Merchant Portal</h3>
+                        <p class="text-xs sm:text-sm text-zinc-600 leading-relaxed mb-6 font-normal">
+                            Add items, set prices, create billing counters for your staff, and check your daily sales summary.
+                        </p>
+                        <ul class="space-y-3 text-xs sm:text-sm font-semibold text-zinc-700 mb-8">
+                            <li class="flex items-center gap-2.5">
+                                <span class="w-4 h-4 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                                </span>
+                                <span>Add products, categories, and stock quantities</span>
+                            </li>
+                            <li class="flex items-center gap-2.5">
+                                <span class="w-4 h-4 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                                </span>
+                                <span>Set up multiple billing counters</span>
+                            </li>
+                            <li class="flex items-center gap-2.5">
+                                <span class="w-4 h-4 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                                </span>
+                                <span>See today's revenue and best-selling items</span>
+                            </li>
+                            <li class="flex items-center gap-2.5">
+                                <span class="w-4 h-4 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                                </span>
+                                <span>Get alerts when products are running low</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <a href="/merchant" class="w-full py-3.5 rounded-xl bg-zinc-950 hover:bg-zinc-800 text-white font-bold text-xs sm:text-sm text-center transition-all shadow-xs flex items-center justify-center gap-2">
+                        <span>Open Merchant Portal</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </a>
+                </div>
+
+                <!-- For Customers -->
+                <div class="p-8 rounded-3xl bg-white border border-zinc-200/90 shadow-card hover:shadow-card-hover transition-all flex flex-col justify-between">
+                    <div>
+                        <div class="w-12 h-12 rounded-2xl bg-emerald-600 text-white flex items-center justify-center mb-6 shadow-xs">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 0 0-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+                        </div>
+                        <div class="text-xs font-bold text-emerald-700 uppercase tracking-wider mb-1">For Customers</div>
+                        <h3 class="text-xl font-extrabold text-zinc-950 mb-3">Customer Store</h3>
+                        <p class="text-xs sm:text-sm text-zinc-600 leading-relaxed mb-6 font-normal">
+                            Customers scan your store QR code with their phone, choose items, pay online, and pick up quickly.
+                        </p>
+                        <ul class="space-y-3 text-xs sm:text-sm font-semibold text-zinc-700 mb-8">
+                            <li class="flex items-center gap-2.5">
+                                <span class="w-4 h-4 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                                </span>
+                                <span>Scan QR code to view the shop catalog</span>
+                            </li>
+                            <li class="flex items-center gap-2.5">
+                                <span class="w-4 h-4 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                                </span>
+                                <span>Pay online with UPI (Google Pay, PhonePe)</span>
+                            </li>
+                            <li class="flex items-center gap-2.5">
+                                <span class="w-4 h-4 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                                </span>
+                                <span>1-tap checkout with pre-loaded Store Wallet</span>
+                            </li>
+                            <li class="flex items-center gap-2.5">
+                                <span class="w-4 h-4 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                                </span>
+                                <span>Show order pickup QR code at the counter</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <a href="/store" class="w-full py-3.5 rounded-xl bg-emerald-50 hover:bg-emerald-600 text-emerald-700 hover:text-white border border-emerald-200/60 hover:border-emerald-600 font-bold text-xs sm:text-sm text-center transition-all shadow-2xs flex items-center justify-center gap-2">
+                        <span>Visit Customer Store</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Bento Grid -->
+        <section id="features" class="max-w-5xl mx-auto px-6 py-20 border-t border-zinc-200">
+            <div class="max-w-md mb-14">
+                <div class="text-xs font-bold text-emerald-700 uppercase tracking-wider mb-2">Features</div>
+                <h2 class="text-3xl font-extrabold text-zinc-950 tracking-tight">Built for Everyday Sales</h2>
+                <p class="text-sm text-zinc-600 mt-2 font-normal">Everything you need to run your store smoothly.</p>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 <!-- Feature 1 -->
-                <div class="p-6 rounded-lg border border-zinc-200 bg-white">
-                    <h3 class="text-sm font-bold text-zinc-900 mb-2">Quick Billing</h3>
-                    <p class="text-xs text-zinc-600 leading-relaxed">
-                        Add items with a tap, apply discounts, and accept cash or UPI in seconds.
+                <div class="p-6 rounded-3xl border border-zinc-200/90 bg-white shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all">
+                    <div class="w-10 h-10 rounded-xl bg-zinc-100 text-zinc-900 flex items-center justify-center mb-4">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                    </div>
+                    <h3 class="text-sm font-extrabold text-zinc-950 mb-1.5">Fast Counter Billing</h3>
+                    <p class="text-xs text-zinc-600 leading-relaxed font-normal">
+                        Add items to cart quickly. Accept payments by Cash or UPI without keeping people waiting.
                     </p>
                 </div>
 
                 <!-- Feature 2 -->
-                <div class="p-6 rounded-lg border border-zinc-200 bg-white">
-                    <h3 class="text-sm font-bold text-zinc-900 mb-2">Track Stock</h3>
-                    <p class="text-xs text-zinc-600 leading-relaxed">
-                        Keep count of your items automatically and get alerts before things run out.
+                <div class="p-6 rounded-3xl border border-zinc-200/90 bg-white shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all">
+                    <div class="w-10 h-10 rounded-xl bg-zinc-100 text-zinc-900 flex items-center justify-center mb-4">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1Zm12 0h2a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1ZM5 20h2a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1Z"/></svg>
+                    </div>
+                    <h3 class="text-sm font-extrabold text-zinc-950 mb-1.5">QR Phone Ordering</h3>
+                    <p class="text-xs text-zinc-600 leading-relaxed font-normal">
+                        Place a QR code at your shop. Customers scan with their phone, place orders, and pay right from their screen.
                     </p>
                 </div>
 
                 <!-- Feature 3 -->
-                <div class="p-6 rounded-lg border border-zinc-200 bg-white">
-                    <h3 class="text-sm font-bold text-zinc-900 mb-2">Customer Wallet</h3>
-                    <p class="text-xs text-zinc-600 leading-relaxed">
-                        Let regular customers keep a wallet balance and pay easily using their phone number.
+                <div class="p-6 rounded-3xl border border-zinc-200/90 bg-white shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all">
+                    <div class="w-10 h-10 rounded-xl bg-zinc-100 text-zinc-900 flex items-center justify-center mb-4">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg>
+                    </div>
+                    <h3 class="text-sm font-extrabold text-zinc-950 mb-1.5">Store Wallet</h3>
+                    <p class="text-xs text-zinc-600 leading-relaxed font-normal">
+                        Regular buyers can add money to their store wallet with UPI and pay in 1 tap at checkout.
                     </p>
                 </div>
 
                 <!-- Feature 4 -->
-                <div class="p-6 rounded-lg border border-zinc-200 bg-white">
-                    <h3 class="text-sm font-bold text-zinc-900 mb-2">Online Menu</h3>
-                    <p class="text-xs text-zinc-600 leading-relaxed">
-                        Share your shop link so customers can view your catalog and order ahead from their phone.
+                <div class="p-6 rounded-3xl border border-zinc-200/90 bg-white shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all">
+                    <div class="w-10 h-10 rounded-xl bg-zinc-100 text-zinc-900 flex items-center justify-center mb-4">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 20V10M12 20V4M6 20v-6"/></svg>
+                    </div>
+                    <h3 class="text-sm font-extrabold text-zinc-950 mb-1.5">Daily Sales & Earnings</h3>
+                    <p class="text-xs text-zinc-600 leading-relaxed font-normal">
+                        See how much money you made today, total cash collected vs UPI, and your most popular items.
                     </p>
                 </div>
 
                 <!-- Feature 5 -->
-                <div class="p-6 rounded-lg border border-zinc-200 bg-white">
-                    <h3 class="text-sm font-bold text-zinc-900 mb-2">Multiple Counters</h3>
-                    <p class="text-xs text-zinc-600 leading-relaxed">
-                        Set up multiple billing counters and shop locations under one simple account.
+                <div class="p-6 rounded-3xl border border-zinc-200/90 bg-white shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all">
+                    <div class="w-10 h-10 rounded-xl bg-zinc-100 text-zinc-900 flex items-center justify-center mb-4">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m7.5 4.27 9 5.15M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m3.3 7 8.7 5 8.7-5M12 22V12"/></svg>
+                    </div>
+                    <h3 class="text-sm font-extrabold text-zinc-950 mb-1.5">Stock Alerts</h3>
+                    <p class="text-xs text-zinc-600 leading-relaxed font-normal">
+                        Item counts update automatically as you sell, so you know what is running low before you run out.
                     </p>
                 </div>
 
                 <!-- Feature 6 -->
-                <div class="p-6 rounded-lg border border-zinc-200 bg-white">
-                    <h3 class="text-sm font-bold text-zinc-900 mb-2">Daily Reports</h3>
-                    <p class="text-xs text-zinc-600 leading-relaxed">
-                        See your total earnings, most popular items, and profits at a glance anytime.
+                <div class="p-6 rounded-3xl border border-zinc-200/90 bg-white shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all">
+                    <div class="w-10 h-10 rounded-xl bg-zinc-100 text-zinc-900 flex items-center justify-center mb-4">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2 7h20"/></svg>
+                    </div>
+                    <h3 class="text-sm font-extrabold text-zinc-950 mb-1.5">Multiple Counters</h3>
+                    <p class="text-xs text-zinc-600 leading-relaxed font-normal">
+                        Have more than one billing counter or branch? Manage all of them easily from one single login.
                     </p>
                 </div>
             </div>
         </section>
+
+        <!-- Pricing Section -->
+        <section id="pricing" class="max-w-5xl mx-auto px-6 py-20 border-t border-zinc-200">
+            <div class="text-center max-w-md mx-auto mb-14">
+                <div class="text-xs font-bold text-emerald-700 uppercase tracking-wider mb-2">Pricing</div>
+                <h2 class="text-3xl font-extrabold text-zinc-950 tracking-tight">Simple, Clear Pricing</h2>
+                <p class="text-sm text-zinc-600 mt-2 font-normal">Start free. Upgrade whenever you are ready.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+                <!-- 14-Day Free Trial -->
+                <div class="p-8 rounded-3xl bg-white border border-zinc-200/90 shadow-card hover:shadow-card-hover transition-all flex flex-col justify-between">
+                    <div>
+                        <div class="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-2">Free Trial</div>
+                        <h3 class="text-xl font-extrabold text-zinc-950">14-Day Trial</h3>
+                        <div class="my-4">
+                            <span class="text-4xl font-black text-zinc-950 tracking-tight">₹0</span>
+                            <span class="text-xs text-zinc-500 font-medium ml-1">/ 14 days</span>
+                        </div>
+                        <p class="text-xs text-zinc-600 mb-6 font-normal leading-relaxed">
+                            Full access to set up your store, items, and billing counters.
+                        </p>
+                        <ul class="space-y-3 text-xs font-semibold text-zinc-700 mb-8 border-t border-zinc-100 pt-5">
+                            <li class="flex items-center gap-2"><span class="text-emerald-600">✓</span> Unlimited products & billing</li>
+                            <li class="flex items-center gap-2"><span class="text-emerald-600">✓</span> Daily sales summaries</li>
+                            <li class="flex items-center gap-2"><span class="text-emerald-600">✓</span> Customer QR ordering</li>
+                        </ul>
+                    </div>
+                    <a href="/merchant" class="w-full py-3.5 rounded-xl bg-zinc-100 hover:bg-zinc-200 text-zinc-900 font-bold text-xs text-center transition-all shadow-2xs">
+                        Start Free Trial
+                    </a>
+                </div>
+
+                <!-- Pro Monthly (Highlighted) -->
+                <div class="p-8 rounded-3xl bg-zinc-950 text-white shadow-2xl flex flex-col justify-between border-2 border-emerald-500 relative transform md:-translate-y-2">
+                    <div class="absolute -top-3 right-6 px-3 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-500 text-zinc-950 shadow-xs">
+                        Popular
+                    </div>
+                    <div>
+                        <div class="text-xs font-bold text-emerald-400 uppercase tracking-wider mb-2">Monthly Plan</div>
+                        <h3 class="text-xl font-extrabold text-white">Pro Monthly</h3>
+                        <div class="my-4">
+                            <span class="text-4xl font-black text-white tracking-tight">₹299</span>
+                            <span class="text-xs text-zinc-400 font-medium ml-1">/ month per store</span>
+                        </div>
+                        <p class="text-xs text-zinc-400 mb-6 font-normal leading-relaxed">
+                            Everything you need to run your shop with simple monthly renewal.
+                        </p>
+                        <ul class="space-y-3 text-xs font-semibold text-zinc-300 mb-8 border-t border-zinc-800 pt-5">
+                            <li class="flex items-center gap-2"><span class="text-emerald-400">✓</span> Unlimited billing & products</li>
+                            <li class="flex items-center gap-2"><span class="text-emerald-400">✓</span> Multiple counters & staff</li>
+                            <li class="flex items-center gap-2"><span class="text-emerald-400">✓</span> Customer store wallet</li>
+                            <li class="flex items-center gap-2"><span class="text-emerald-400">✓</span> 3-day grace period on renewal</li>
+                        </ul>
+                    </div>
+                    <a href="/merchant" class="w-full py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black text-xs text-center transition-all shadow-xs flex items-center justify-center gap-1.5">
+                        <span>Subscribe Monthly</span>
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </a>
+                </div>
+
+                <!-- Yearly Plan -->
+                <div class="p-8 rounded-3xl bg-white border border-zinc-200/90 shadow-card hover:shadow-card-hover transition-all flex flex-col justify-between">
+                    <div>
+                        <div class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-extrabold mb-2 border border-emerald-200/60">
+                            Save ₹589 (2 Months Free)
+                        </div>
+                        <h3 class="text-xl font-extrabold text-zinc-950">Pro Yearly</h3>
+                        <div class="my-4">
+                            <span class="text-4xl font-black text-zinc-950 tracking-tight">₹2,999</span>
+                            <span class="text-xs text-zinc-500 font-medium ml-1">/ year per store</span>
+                        </div>
+                        <p class="text-xs text-zinc-600 mb-6 font-normal leading-relaxed">
+                            Best value for regular shops. Pay once for a full year of billing.
+                        </p>
+                        <ul class="space-y-3 text-xs font-semibold text-zinc-700 mb-8 border-t border-zinc-100 pt-5">
+                            <li class="flex items-center gap-2"><span class="text-emerald-600">✓</span> Everything in Monthly plan</li>
+                            <li class="flex items-center gap-2"><span class="text-emerald-600">✓</span> 2 months free included</li>
+                            <li class="flex items-center gap-2"><span class="text-emerald-600">✓</span> Priority shop support</li>
+                        </ul>
+                    </div>
+                    <a href="/merchant" class="w-full py-3.5 rounded-xl bg-zinc-950 hover:bg-zinc-800 text-white font-bold text-xs text-center transition-all shadow-xs">
+                        Subscribe Yearly &rarr;
+                    </a>
+                </div>
+            </div>
+
+            <!-- Fee Transparency Note -->
+            <div class="max-w-2xl mx-auto mt-10 p-4 rounded-2xl bg-emerald-50/80 border border-emerald-200/60 text-center text-xs text-emerald-950 font-medium">
+                <span class="font-bold text-emerald-950">Honest Fees:</span> 0% fee on in-store counter billing. A small 1.99% fee applies only when customers order online from their phone.
+            </div>
+        </section>
+
+        <!-- Interactive FAQ Section with Smooth Accordions -->
+        <section id="faq" class="max-w-3xl mx-auto px-6 py-20 border-t border-zinc-200">
+            <div class="text-center max-w-md mx-auto mb-14">
+                <div class="text-xs font-bold text-emerald-700 uppercase tracking-wider mb-2">FAQ</div>
+                <h2 class="text-3xl font-extrabold text-zinc-950 tracking-tight">Frequently Asked Questions</h2>
+            </div>
+
+            <div class="space-y-4">
+                <!-- Question 1 -->
+                <details class="group p-6 rounded-3xl bg-white border border-zinc-200/90 shadow-card transition-all" open>
+                    <summary class="flex items-center justify-between font-bold text-sm text-zinc-950 cursor-pointer list-none select-none">
+                        <span>What do I need to get started?</span>
+                        <svg class="chevron w-4 h-4 text-zinc-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </summary>
+                    <p class="text-xs sm:text-sm text-zinc-600 leading-relaxed font-normal mt-3 pt-3 border-t border-zinc-100">
+                        Just an internet connection and any phone, tablet, or laptop you already have. No special equipment is required.
+                    </p>
+                </details>
+
+                <!-- Question 2 -->
+                <details class="group p-6 rounded-3xl bg-white border border-zinc-200/90 shadow-card transition-all">
+                    <summary class="flex items-center justify-between font-bold text-sm text-zinc-950 cursor-pointer list-none select-none">
+                        <span>How do customers pay?</span>
+                        <svg class="chevron w-4 h-4 text-zinc-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </summary>
+                    <p class="text-xs sm:text-sm text-zinc-600 leading-relaxed font-normal mt-3 pt-3 border-t border-zinc-100">
+                        At your physical shop counter, staff can accept Cash or UPI. When customers order online from their phone, they pay using UPI (PhonePe, Google Pay) or their pre-loaded Store Wallet.
+                    </p>
+                </details>
+
+                <!-- Question 3 -->
+                <details class="group p-6 rounded-3xl bg-white border border-zinc-200/90 shadow-card transition-all">
+                    <summary class="flex items-center justify-between font-bold text-sm text-zinc-950 cursor-pointer list-none select-none">
+                        <span>How does the 14-day free trial work?</span>
+                        <svg class="chevron w-4 h-4 text-zinc-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </summary>
+                    <p class="text-xs sm:text-sm text-zinc-600 leading-relaxed font-normal mt-3 pt-3 border-t border-zinc-100">
+                        When you sign up, your store is automatically on the 14-day free trial. You can test all features with zero payment upfront.
+                    </p>
+                </details>
+            </div>
+        </section>
+
+        <!-- High-Impact Bottom Call to Action -->
+        <section class="max-w-5xl mx-auto px-6 py-16 text-center">
+            <div class="p-10 sm:p-16 rounded-3xl bg-zinc-950 text-white shadow-2xl relative overflow-hidden border border-zinc-800">
+                <div class="absolute -right-20 -top-20 w-80 h-80 bg-emerald-500/20 rounded-full blur-[100px] pointer-events-none"></div>
+                <div class="relative z-10">
+                    <h2 class="text-3xl sm:text-5xl font-extrabold mb-4 tracking-tight">
+                        Start billing with Sparrow POS today
+                    </h2>
+                    <p class="text-sm sm:text-base text-zinc-400 max-w-md mx-auto mb-8 font-normal leading-relaxed">
+                        Sign up to create your store and start billing counters in minutes.
+                    </p>
+                    <div class="flex flex-col sm:flex-row items-center justify-center gap-3.5">
+                        <a href="/merchant" class="w-full sm:w-auto px-8 py-4 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black text-xs sm:text-sm transition-all active:scale-95 shadow-md flex items-center justify-center gap-2">
+                            <span>Open Merchant Portal</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 12h14M12 5l7 7-7 7"/></svg>
+                        </a>
+                        <a href="/store" class="w-full sm:w-auto px-8 py-4 rounded-2xl bg-zinc-900 hover:bg-zinc-800 text-white font-bold text-xs sm:text-sm border border-zinc-800 transition-all active:scale-95">
+                            Visit Customer Store
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
     </main>
 
-    <!-- Footer -->
-    <footer class="border-t border-zinc-200 py-6 text-xs text-zinc-500 bg-white">
-        <div class="max-w-5xl mx-auto px-6 flex items-center justify-between">
-            <div>Sparrow POS &copy; 2026</div>
-            <div class="flex gap-4">
-                <a href="#features" class="hover:text-black transition-colors">Features</a>
-                <a href="/merchant" class="hover:text-black transition-colors">Merchant Portal</a>
-                <a href="/store" class="hover:text-black transition-colors">Customer Store</a>
+    <!-- Refined Footer -->
+    <footer class="border-t border-zinc-200/80 py-12 text-xs text-zinc-500 bg-white">
+        <div class="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-6">
+            <div class="flex items-center gap-3">
+                <div class="w-6 h-6 bg-zinc-950 text-white font-black text-xs flex items-center justify-center rounded-lg">
+                    S
+                </div>
+                <span class="font-bold text-zinc-800">Sparrow POS &copy; 2026.</span>
+            </div>
+            <div class="flex flex-wrap gap-7 font-semibold text-zinc-600">
+                <a href="#how-it-works" class="hover:text-zinc-950 transition-colors">How It Works</a>
+                <a href="#features" class="hover:text-zinc-950 transition-colors">Features</a>
+                <a href="#pricing" class="hover:text-zinc-950 transition-colors">Pricing</a>
+                <a href="/merchant" class="hover:text-zinc-950 transition-colors">Merchant Portal</a>
+                <a href="/store" class="hover:text-zinc-950 transition-colors">Customer Store</a>
             </div>
         </div>
     </footer>
 
 </body>
 </html>
-
-
-
-
-
-
-
