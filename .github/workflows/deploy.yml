@@ -20,7 +20,6 @@ jobs:
       terminal: ${{ steps.filter.outputs.terminal }}
       landing: ${{ steps.filter.outputs.landing }}
       migrations: ${{ steps.filter.outputs.migrations }}
-      workflow: ${{ steps.filter.outputs.workflow }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -46,8 +45,6 @@ jobs:
               - 'landing/**'
             migrations:
               - 'backend/migrations/**'
-            workflow:
-              - '.github/workflows/deploy.yml'
 
   build:
     name: Build & Package Changes
@@ -81,18 +78,18 @@ jobs:
         run: |
           export PATH="$PATH":"$HOME/.pub-cache/bin"
           dart analyze
-          if [ "${{ needs.changes.outputs.backend }}" = "true" ] || [ "${{ needs.changes.outputs.workflow }}" = "true" ] || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+          if [ "${{ needs.changes.outputs.backend }}" = "true" ] || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             cd backend && dart test && cd ..
           fi
-          if [ "${{ needs.changes.outputs.customer }}" = "true" ] || [ "${{ needs.changes.outputs.workflow }}" = "true" ] || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+          if [ "${{ needs.changes.outputs.customer }}" = "true" ] || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             cd customer && dart test && cd ..
           fi
-          if [ "${{ needs.changes.outputs.terminal }}" = "true" ] || [ "${{ needs.changes.outputs.workflow }}" = "true" ] || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+          if [ "${{ needs.changes.outputs.terminal }}" = "true" ] || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             cd terminal && flutter test && cd ..
           fi
 
       - name: Build Merchant Web App (WASM)
-        if: needs.changes.outputs.merchant == 'true' || needs.changes.outputs.workflow == 'true' || github.event_name == 'workflow_dispatch'
+        if: needs.changes.outputs.merchant == 'true' || github.event_name == 'workflow_dispatch'
         run: |
           cd merchant
           dart pub global activate jaspr_cli
@@ -100,7 +97,7 @@ jobs:
           jaspr build --experimental-wasm
 
       - name: Build Customer Store Web App (WASM)
-        if: needs.changes.outputs.customer == 'true' || needs.changes.outputs.workflow == 'true' || github.event_name == 'workflow_dispatch'
+        if: needs.changes.outputs.customer == 'true' || github.event_name == 'workflow_dispatch'
         run: |
           cd customer
           dart pub global activate jaspr_cli
@@ -108,7 +105,7 @@ jobs:
           jaspr build --experimental-wasm
 
       - name: Build & Compile Native Backend Binary
-        if: needs.changes.outputs.backend == 'true' || needs.changes.outputs.workflow == 'true' || github.event_name == 'workflow_dispatch'
+        if: needs.changes.outputs.backend == 'true' || github.event_name == 'workflow_dispatch'
         run: |
           export PATH="$PATH":"$HOME/.pub-cache/bin"
           dart pub global activate dart_frog_cli
@@ -130,11 +127,11 @@ jobs:
             mkdir -p dist/store
             cp -r customer/build/jaspr/* dist/store/
           fi
-          if [ "${{ needs.changes.outputs.landing }}" = "true" ] || [ "${{ needs.changes.outputs.workflow }}" = "true" ] || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+          if [ "${{ needs.changes.outputs.landing }}" = "true" ] || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             mkdir -p dist/landing
             cp -r landing/* dist/landing/
           fi
-          if [ "${{ needs.changes.outputs.migrations }}" = "true" ] || [ "${{ needs.changes.outputs.workflow }}" = "true" ] || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+          if [ "${{ needs.changes.outputs.migrations }}" = "true" ] || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             mkdir -p dist/migrations
             cp -r backend/migrations/* dist/migrations/
           fi
@@ -199,7 +196,7 @@ jobs:
           fi
 
       - name: Restart Backend Service
-        if: needs.changes.outputs.backend == 'true' || needs.changes.outputs.migrations == 'true' || needs.changes.outputs.workflow == 'true' || github.event_name == 'workflow_dispatch'
+        if: needs.changes.outputs.backend == 'true' || needs.changes.outputs.migrations == 'true' || github.event_name == 'workflow_dispatch'
         run: |
           ssh -i ~/.ssh/id_rsa ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << EOF
             if [ -f "/home/${{ secrets.EC2_USER }}/${{ env.TARGET_APP_DIR }}/server.exe" ]; then
