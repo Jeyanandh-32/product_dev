@@ -72,7 +72,9 @@ class _CartPageState extends SignalState<CartPage> {
         return sum + (itemPrice * (taxRate / 100.0));
       },
     );
-    final grandTotal = subtotal + totalTax;
+    final netTotal = subtotal + totalTax;
+    final platformFee = netTotal * 0.0199;
+    final grandTotal = netTotal + platformFee;
     final totalQuantity = items.fold<int>(
       0,
       (sum, item) => sum + item.quantity,
@@ -109,6 +111,7 @@ class _CartPageState extends SignalState<CartPage> {
               totalQuantity: totalQuantity,
               subtotal: subtotal,
               totalTax: totalTax,
+              platformFee: platformFee,
               grandTotal: grandTotal,
               isLoggedIn: customerAuthSignal.value.value != null,
               walletBalance: _storeWalletBalance,

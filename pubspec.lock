@@ -949,6 +949,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.19.0"
+  migrant:
+    dependency: transitive
+    description:
+      name: migrant
+      sha256: "3e9b0e84e75d12ad3aa9777495a6029321457fb23a3f07a78450a92f917cbcdf"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.3.0"
+  migrant_db_postgresql:
+    dependency: transitive
+    description:
+      name: migrant_db_postgresql
+      sha256: "4e76918e96049adcdfbd534ac8244deaf2109afd64d7c6420560a3d60c75f099"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.3.0"
   mime:
     dependency: transitive
     description:

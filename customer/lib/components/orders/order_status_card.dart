@@ -1,3 +1,4 @@
+import 'package:customer/components/orders/order_status_payment_summary.dart';
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_lucide/jaspr_lucide.dart' hide List, Map, Router, Store;
@@ -99,32 +100,16 @@ class OrderStatusCard extends StatelessComponent {
           ),
         ]),
         div(classes: 'w-full border-t border-dashed border-gray-200 my-2', []),
-        div(classes: 'w-full flex flex-col gap-2 text-sm', [
-          div(classes: 'flex justify-between text-gray-500', [
-            span([.text('Payment Method')]),
-            span(classes: 'font-semibold text-black', [
-              .text(_paymentMethodLabel),
-            ]),
-          ]),
-          div(classes: 'flex justify-between text-gray-500', [
-            span([.text('Payment Status')]),
-            span(classes: statusTextClass, [
-              .text(order.paymentStatus.name.toUpperCase()),
-            ]),
-          ]),
-          div(
-            classes: 'flex justify-between text-base font-extrabold text-black pt-2 border-t border-gray-100',
-            [
-              span([.text('Total Amount')]),
-              span([.text('₹${order.grandTotal.toStringAsFixed(2)}')]),
-            ],
-          ),
-        ]),
+        OrderStatusPaymentSummary(
+          order: order,
+          paymentMethodLabel: _paymentMethodLabel,
+          statusTextClass: statusTextClass,
+        ),
         if (isCompleted && order.status != OrderStatus.completed) ...[
           button(
-            classes: 'w-full mt-2 py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm flex items-center justify-center gap-2 cursor-pointer transition-all border-0 shadow-sm active:scale-98',
+            classes: 'w-full mt-2 py-3.5 rounded-2xl bg-emerald-50 hover:bg-emerald-600 text-emerald-700 hover:text-white border border-emerald-200/60 font-bold text-sm flex items-center justify-center gap-2 cursor-pointer transition-all shadow-xs active:scale-98',
             onClick: onShowQr,
-            [QrCode(classes: 'w-4 h-4 text-white'), .text('Display Order QR')],
+            [QrCode(classes: 'w-4 h-4'), .text('Display Order QR')],
           ),
         ],
         button(

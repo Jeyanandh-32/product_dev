@@ -9,6 +9,7 @@ class OrderTableRow extends StatelessComponent {
   final String orderId;
   final double grossAmount;
   final double discountAmount;
+  final double platformFee;
   final double walletAmount;
   final double netAmount;
   final String paymentType;
@@ -23,6 +24,7 @@ class OrderTableRow extends StatelessComponent {
     required this.orderId,
     required this.grossAmount,
     required this.discountAmount,
+    this.platformFee = 0.0,
     required this.walletAmount,
     required this.netAmount,
     required this.paymentType,
@@ -43,8 +45,7 @@ class OrderTableRow extends StatelessComponent {
       [
         th([]),
         th(
-          classes:
-              'font-mono text-xs font-semibold text-black no-underline whitespace-nowrap',
+          classes: 'font-mono text-xs font-semibold text-black no-underline whitespace-nowrap',
           [
             .text(orderReference),
           ],
@@ -56,6 +57,14 @@ class OrderTableRow extends StatelessComponent {
           if (discountAmount > 0)
             span(classes: 'text-rose-600 font-medium', [
               .text('-${discountAmount.toStringAsFixed(2)}'),
+            ])
+          else
+            .text('-'),
+        ]),
+        td([
+          if (platformFee > 0)
+            span(classes: 'text-gray-700 font-medium', [
+              .text(platformFee.toStringAsFixed(2)),
             ])
           else
             .text('-'),
@@ -83,12 +92,9 @@ class OrderTableRow extends StatelessComponent {
         td([
           div(
             classes: switch (paymentStatus) {
-              PaymentStatus.completed =>
-                'bg-soft-green text-soft-green-content rounded-full px-3 py-1 text-center text-xs font-semibold inline-block',
-              PaymentStatus.pending =>
-                'bg-soft-yellow text-soft-yellow-content rounded-full px-3 py-1 text-center text-xs font-semibold inline-block',
-              PaymentStatus.failed =>
-                'bg-soft-red text-soft-red-content rounded-full px-3 py-1 text-center text-xs font-semibold inline-block',
+              PaymentStatus.completed => 'bg-soft-green text-soft-green-content rounded-full px-3 py-1 text-center text-xs font-semibold inline-block',
+              PaymentStatus.pending => 'bg-soft-yellow text-soft-yellow-content rounded-full px-3 py-1 text-center text-xs font-semibold inline-block',
+              PaymentStatus.failed => 'bg-soft-red text-soft-red-content rounded-full px-3 py-1 text-center text-xs font-semibold inline-block',
             },
             [
               .text(paymentStatus.name.toUpperCase()),
@@ -98,12 +104,9 @@ class OrderTableRow extends StatelessComponent {
         td([
           div(
             classes: switch (status) {
-              'COMPLETED' =>
-                'bg-soft-green text-soft-green-content rounded-full px-3 py-1 text-center text-xs font-semibold inline-block',
-              'CANCELLED' =>
-                'bg-soft-red text-soft-red-content rounded-full px-3 py-1 text-center text-xs font-semibold inline-block',
-              _ =>
-                'bg-soft-yellow text-soft-yellow-content rounded-full px-3 py-1 text-center text-xs font-semibold inline-block',
+              'COMPLETED' => 'bg-soft-green text-soft-green-content rounded-full px-3 py-1 text-center text-xs font-semibold inline-block',
+              'CANCELLED' => 'bg-soft-red text-soft-red-content rounded-full px-3 py-1 text-center text-xs font-semibold inline-block',
+              _ => 'bg-soft-yellow text-soft-yellow-content rounded-full px-3 py-1 text-center text-xs font-semibold inline-block',
             },
             [
               .text(status),

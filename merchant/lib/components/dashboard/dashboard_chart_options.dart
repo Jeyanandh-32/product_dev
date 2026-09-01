@@ -9,7 +9,6 @@ typedef DashboardSummaryData = ({
   double aovGrowth,
   double onlineTotal,
   double inStoreTotal,
-  double platformFeeTotal,
   double netRevenue,
 });
 

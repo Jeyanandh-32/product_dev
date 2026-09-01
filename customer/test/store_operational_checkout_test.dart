@@ -40,5 +40,19 @@ void main() {
           pausedStore.isOperational && pausedStore.isOnlineEnabled;
       expect(isStoreOrderingActive, isFalse);
     });
+
+    test(
+      'Customer online platform fee calculates 1.99% on net order total',
+      () {
+        const subtotal = 100.0;
+        const totalTax = 5.0;
+        const netTotal = subtotal + totalTax;
+        final platformFee = netTotal * 0.0199;
+        final grandTotal = netTotal + platformFee;
+
+        expect(platformFee, closeTo(2.0895, 0.001));
+        expect(grandTotal, closeTo(107.0895, 0.001));
+      },
+    );
   });
 }

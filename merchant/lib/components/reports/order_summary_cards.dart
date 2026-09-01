@@ -6,6 +6,7 @@ class OrderSummaryCards extends StatelessComponent {
   final int totalOrders;
   final double grossSubtotal;
   final double totalDiscount;
+  final double platformFeeTotal;
   final double netRevenue;
   final double cashCollected;
   final double upiCollected;
@@ -17,6 +18,7 @@ class OrderSummaryCards extends StatelessComponent {
     required this.totalOrders,
     required this.grossSubtotal,
     required this.totalDiscount,
+    this.platformFeeTotal = 0.0,
     required this.netRevenue,
     this.cashCollected = 0.0,
     this.upiCollected = 0.0,
@@ -47,7 +49,7 @@ class OrderSummaryCards extends StatelessComponent {
             textColor: 'text-rose-600',
           ),
           _summaryCard(
-            title: 'Net Revenue',
+            title: 'Net Sales (Revenue)',
             value: '₹${netRevenue.toStringAsFixed(2)}',
             textColor: 'text-emerald-600',
           ),
@@ -64,14 +66,14 @@ class OrderSummaryCards extends StatelessComponent {
             textColor: 'text-purple-600',
           ),
           _summaryCard(
+            title: 'Platform Fee (Customer Paid)',
+            value: '₹${platformFeeTotal.toStringAsFixed(2)}',
+            textColor: 'text-gray-700',
+          ),
+          _summaryCard(
             title: 'Wallet Paid',
             value: '₹${walletCollected.toStringAsFixed(2)}',
             textColor: 'text-amber-600',
-          ),
-          _summaryCard(
-            title: 'Complimentary',
-            value: '₹${freeTotal.toStringAsFixed(2)}',
-            textColor: 'text-gray-500',
           ),
         ]),
       ],
@@ -84,8 +86,7 @@ class OrderSummaryCards extends StatelessComponent {
     required String textColor,
   }) {
     return div(
-      classes:
-          'flex flex-col gap-1 p-3 bg-white rounded-xl border border-border-medium shadow-2xs',
+      classes: 'flex flex-col gap-1 p-3 bg-white rounded-xl border border-border-medium shadow-2xs',
       [
         span(classes: 'text-xs text-gray-500 font-medium', [.text(title)]),
         span(classes: 'text-base font-bold $textColor', [.text(value)]),

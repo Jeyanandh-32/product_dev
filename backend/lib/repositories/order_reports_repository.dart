@@ -17,6 +17,7 @@ class OrderReportsRepository {
       int totalOrders,
       double grossSubtotal,
       double totalDiscount,
+      double platformFeeTotal,
       double netRevenue,
       double cashCollected,
       double upiCollected,
@@ -78,16 +79,15 @@ class OrderReportsRepository {
     String? searchQuery,
     int limit = 10,
     int offset = 0,
-  }) =>
-      ProfitLossReportQuery(db: db).execute(
-        merchantId: merchantId,
-        storeId: storeId,
-        fromDate: fromDate,
-        toDate: toDate,
-        searchQuery: searchQuery,
-        limit: limit,
-        offset: offset,
-      );
+  }) => ProfitLossReportQuery(db: db).execute(
+    merchantId: merchantId,
+    storeId: storeId,
+    fromDate: fromDate,
+    toDate: toDate,
+    searchQuery: searchQuery,
+    limit: limit,
+    offset: offset,
+  );
 
   /// Computes aggregated live dashboard metrics using [DashboardAnalyticsQuery].
   Future<Map<String, dynamic>> getDashboardAnalytics({
@@ -95,11 +95,10 @@ class OrderReportsRepository {
     required String storeId,
     DateTime? fromDate,
     DateTime? toDate,
-  }) =>
-      DashboardAnalyticsQuery(db: db).execute(
-        merchantId: merchantId,
-        storeId: storeId,
-        fromDate: fromDate,
-        toDate: toDate,
-      );
+  }) => DashboardAnalyticsQuery(db: db).execute(
+    merchantId: merchantId,
+    storeId: storeId,
+    fromDate: fromDate,
+    toDate: toDate,
+  );
 }

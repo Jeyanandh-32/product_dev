@@ -243,6 +243,7 @@ void main() {
           totalOrders: 3,
           grossSubtotal: 450.0,
           totalDiscount: 0.0,
+          platformFeeTotal: 0.0,
           netRevenue: 425.0, // ₹315.00 + ₹110.00 = ₹425.00
           cashCollected: 110.0,
           upiCollected: 315.0,

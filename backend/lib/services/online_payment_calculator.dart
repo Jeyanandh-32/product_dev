@@ -49,6 +49,7 @@ class OnlinePaymentCalculator {
       storeId: storeId,
       productsInput: productsList,
       discountTotalInput: discountTotal,
+      isOnline: true,
     );
 
     final totalAmountPaise = calculated.grandTotal;

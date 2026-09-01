@@ -11,6 +11,7 @@ class CartSummaryCard extends StatelessComponent {
   final int totalQuantity;
   final double subtotal;
   final double totalTax;
+  final double platformFee;
   final double grandTotal;
   final bool isLoggedIn;
   final double walletBalance;
@@ -26,6 +27,7 @@ class CartSummaryCard extends StatelessComponent {
     required this.totalQuantity,
     required this.subtotal,
     required this.totalTax,
+    this.platformFee = 0.0,
     required this.grandTotal,
     required this.isLoggedIn,
     required this.walletBalance,
@@ -48,8 +50,8 @@ class CartSummaryCard extends StatelessComponent {
         (currentStore!.isOperational && currentStore!.isOnlineEnabled);
 
     final buttonClasses = isStoreOrderingActive
-        ? 'w-full py-4 rounded-2xl bg-black hover:bg-gray-800 text-white font-bold text-sm flex items-center justify-center gap-2 cursor-pointer transition-all shadow-sm border-0 active:scale-98'
-        : 'w-full py-4 rounded-2xl bg-gray-300 text-gray-500 font-bold text-sm flex items-center justify-center gap-2 cursor-not-allowed border-0 shadow-none';
+        ? 'w-full py-4 rounded-2xl bg-emerald-50 hover:bg-emerald-600 text-emerald-700 hover:text-white border border-emerald-200/60 hover:border-emerald-600 font-bold text-sm flex items-center justify-center gap-2 cursor-pointer transition-all shadow-xs active:scale-98'
+        : 'w-full py-4 rounded-2xl bg-gray-300 text-gray-500 font-bold text-sm flex items-center justify-center gap-2 cursor-not-allowed border border-transparent shadow-none';
 
     return div(
       classes: 'bg-white rounded-3xl p-6 border border-gray-200/80 shadow-sm flex flex-col gap-6 sticky top-24',
@@ -75,23 +77,32 @@ class CartSummaryCard extends StatelessComponent {
             ]),
           ]),
           div(classes: 'flex justify-between items-center text-gray-500', [
-            span([.text('Order Summary')]),
+            span([.text('Items Subtotal')]),
             span(classes: 'font-semibold text-black', [
               .text('₹${subtotal.toStringAsFixed(2)}'),
             ]),
           ]),
-          div(classes: 'flex justify-between items-center text-gray-500', [
-            span([.text('Gateway Charges')]),
-            span(classes: 'font-semibold text-emerald-600', [
-              .text('₹0.00 (Free)'),
+          if (totalTax > 0)
+            div(classes: 'flex justify-between items-center text-gray-500', [
+              span([.text('Taxes & Charges')]),
+              span(classes: 'font-semibold text-black', [
+                .text('₹${totalTax.toStringAsFixed(2)}'),
+              ]),
             ]),
-          ]),
-          div(classes: 'flex justify-between items-center text-gray-500', [
-            span([.text('Total Tax')]),
-            span(classes: 'font-semibold text-black', [
-              .text('₹${totalTax.toStringAsFixed(2)}'),
+          if (platformFee > 0)
+            div(classes: 'flex justify-between items-center text-gray-500', [
+              span([.text('Platform Fee (1.99%)')]),
+              span(classes: 'font-semibold text-black', [
+                .text('₹${platformFee.toStringAsFixed(2)}'),
+              ]),
             ]),
-          ]),
+          div(
+            classes: 'border-t border-dashed border-gray-200 pt-2 flex justify-between items-center text-sm font-bold text-black',
+            [
+              span([.text('Order Total')]),
+              span([.text('₹${grandTotal.toStringAsFixed(2)}')]),
+            ],
+          ),
 
           if (isLoggedIn)
             CartWalletToggleCard(
@@ -101,14 +112,6 @@ class CartSummaryCard extends StatelessComponent {
               walletDeduction: walletDeduction,
               finalPayable: finalPayable,
               onToggleWallet: onToggleWallet,
-            )
-          else
-            div(
-              classes: 'border-t border-dashed border-gray-200 pt-3 mt-1 flex justify-between items-center text-base font-extrabold text-black',
-              [
-                span([.text('Total Amount')]),
-                span([.text('₹${grandTotal.toStringAsFixed(2)}')]),
-              ],
             ),
         ]),
 

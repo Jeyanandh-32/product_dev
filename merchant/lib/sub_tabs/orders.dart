@@ -100,6 +100,7 @@ class _OrdersState extends SignalState<Orders> {
             totalOrders: ordersSummarySignal.value.totalOrders,
             grossSubtotal: ordersSummarySignal.value.grossSubtotal,
             totalDiscount: ordersSummarySignal.value.totalDiscount,
+            platformFeeTotal: ordersSummarySignal.value.platformFeeTotal,
             netRevenue: ordersSummarySignal.value.netRevenue,
           ),
 

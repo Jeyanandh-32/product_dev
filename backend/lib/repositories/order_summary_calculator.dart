@@ -12,6 +12,7 @@ class OrderSummaryCalculator {
       int totalOrders,
       double grossSubtotal,
       double totalDiscount,
+      double platformFeeTotal,
       double netRevenue,
       double cashCollected,
       double upiCollected,
@@ -45,6 +46,7 @@ class OrderSummaryCalculator {
     var validOrderCount = 0;
     var grossSubtotalPaise = 0;
     var totalDiscountPaise = 0;
+    var platformFeePaise = 0;
     var netRevenuePaise = 0;
     var cashPaise = 0;
     var upiPaise = 0;
@@ -67,16 +69,17 @@ class OrderSummaryCalculator {
         validOrderCount++;
         grossSubtotalPaise += row.subtotal;
         totalDiscountPaise += row.discountTotal;
-        netRevenuePaise += row.grandTotal;
+        platformFeePaise += row.platformFee;
+        netRevenuePaise += row.grandTotal - row.platformFee;
 
         if (row.walletDeduction > 0) {
           walletPaise += row.walletDeduction;
         }
 
         if (method == PaymentMethod.cash.name) {
-          cashPaise += row.grandTotal;
+          cashPaise += row.grandTotal - row.platformFee;
         } else if (method == PaymentMethod.upi.name) {
-          upiPaise += row.grandTotal;
+          upiPaise += row.grandTotal - row.platformFee;
         } else if (method == PaymentMethod.complimentary.name) {
           freePaise += row.subtotal + row.taxTotal;
         }
@@ -87,6 +90,7 @@ class OrderSummaryCalculator {
       totalOrders: validOrderCount,
       grossSubtotal: grossSubtotalPaise / 100.0,
       totalDiscount: totalDiscountPaise / 100.0,
+      platformFeeTotal: platformFeePaise / 100.0,
       netRevenue: netRevenuePaise / 100.0,
       cashCollected: cashPaise / 100.0,
       upiCollected: upiPaise / 100.0,

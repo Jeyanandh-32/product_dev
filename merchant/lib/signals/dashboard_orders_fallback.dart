@@ -24,27 +24,26 @@ class DashboardOrdersFallback {
     var freeCount = 0;
     var onlineTotal = 0.0;
     var inStoreTotal = 0.0;
-    var platformFeeTotal = 0.0;
 
     for (final o in result.items) {
+      final merchantOrderRevenue = o.grandTotal - (o.platformFee / 100.0);
       if (o.source == OrderSource.web) {
-        onlineTotal += o.grandTotal;
+        onlineTotal += merchantOrderRevenue;
       } else {
-        inStoreTotal += o.grandTotal;
+        inStoreTotal += merchantOrderRevenue;
       }
-      platformFeeTotal += o.platformFee;
 
       if (o.paymentMethod == PaymentMethod.upi) {
-        upiTotal += o.grandTotal;
+        upiTotal += merchantOrderRevenue;
       } else if (o.paymentMethod == PaymentMethod.cash) {
-        cashTotal += o.grandTotal;
+        cashTotal += merchantOrderRevenue;
       }
 
       if (o.paymentMethod == PaymentMethod.complimentary) {
         freeTotal += o.subtotal > 0 ? o.subtotal : 1.0;
         freeCount++;
       } else {
-        paidTotal += o.grandTotal;
+        paidTotal += merchantOrderRevenue;
         paidCount++;
       }
     }
@@ -68,8 +67,7 @@ class DashboardOrdersFallback {
         aovGrowth: 0.0,
         onlineTotal: onlineTotal,
         inStoreTotal: inStoreTotal,
-        platformFeeTotal: platformFeeTotal,
-        netRevenue: totalRevenue - platformFeeTotal,
+        netRevenue: totalRevenue,
       );
       dashboardPaymentMethodsSignal.value = (
         upiTotal: upiTotal,

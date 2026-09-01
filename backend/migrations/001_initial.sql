@@ -274,6 +274,7 @@ CREATE TABLE IF NOT EXISTS orders (
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     discount_total INT NOT NULL DEFAULT 0,
     wallet_deduction INT NOT NULL DEFAULT 0,
+    platform_fee INT NOT NULL DEFAULT 0,
     customer_id UUID REFERENCES customers(id) ON DELETE SET NULL
 );
 
@@ -407,5 +408,6 @@ ON CONFLICT (code) DO UPDATE SET
     duration_days = EXCLUDED.duration_days,
     features = EXCLUDED.features,
     updated_at = NOW();
+
 
 

@@ -13,7 +13,6 @@ class DashboardOrderMetrics {
     required this.hourlyCounts,
     this.onlineTotal = 0.0,
     this.inStoreTotal = 0.0,
-    this.platformFeeTotal = 0.0,
     this.netRevenue = 0.0,
   });
 
@@ -29,7 +28,6 @@ class DashboardOrderMetrics {
   final List<int> hourlyCounts;
   final double onlineTotal;
   final double inStoreTotal;
-  final double platformFeeTotal;
   final double netRevenue;
 }
 

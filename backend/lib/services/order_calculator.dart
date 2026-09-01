@@ -22,7 +22,16 @@ class OrderCalculator {
 
   /// Calculates line item price, tax, and order totals with zero complex tricks.
   static CalculatedOrderSummary calculate({
-    required List<({String productId, int quantity, int sellingPrice, double taxRate, double discount})> lineItems,
+    required List<
+      ({
+        String productId,
+        int quantity,
+        int sellingPrice,
+        double taxRate,
+        double discount,
+      })
+    >
+    lineItems,
     double discountTotalInput = 0.0,
     bool isComplimentary = false,
     bool isOnline = false,
@@ -56,8 +65,9 @@ class OrderCalculator {
         ? maxAllowedDiscountPaise
         : min(maxAllowedDiscountPaise, overallDiscountPaise);
 
-    final grandTotal = max(0, subtotal + taxTotal - discountTotal);
-    final platformFee = isOnline ? (grandTotal * 0.0199).round() : 0;
+    final netOrderTotalPaise = max(0, subtotal + taxTotal - discountTotal);
+    final platformFee = isOnline ? (netOrderTotalPaise * 0.0199).round() : 0;
+    final grandTotal = netOrderTotalPaise + platformFee;
 
     return (
       subtotal: subtotal,

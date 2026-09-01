@@ -32,12 +32,22 @@ class OrderQueryHelper {
     final statusStr = queryParams['status'];
     final paymentStatusStr = queryParams['paymentStatus'];
 
-    final fromDate = fromDateStr != null && fromDateStr.isNotEmpty ? DateTime.tryParse(fromDateStr)?.toUtc() : null;
+    final fromDate = fromDateStr != null && fromDateStr.isNotEmpty
+        ? DateTime.tryParse(fromDateStr)?.toUtc()
+        : null;
     DateTime? toDate;
     if (toDateStr != null && toDateStr.isNotEmpty) {
       final parsed = DateTime.tryParse(toDateStr);
       if (parsed != null) {
-        toDate = DateTime.utc(parsed.year, parsed.month, parsed.day, 23, 59, 59, 999);
+        toDate = DateTime.utc(
+          parsed.year,
+          parsed.month,
+          parsed.day,
+          23,
+          59,
+          59,
+          999,
+        );
       }
     }
 
@@ -82,7 +92,11 @@ class OrderQueryHelper {
         toDate: toDate,
       );
 
-      final (total, orderRows, orderSummary) = await (totalFuture, orderRowsFuture, orderSummaryFuture).wait;
+      final (total, orderRows, orderSummary) = await (
+        totalFuture,
+        orderRowsFuture,
+        orderSummaryFuture,
+      ).wait;
 
       final orderIds = orderRows.map((o) => o.id).toList();
       final allItems = await itemRepo.getAllForOrders(orderIds);
@@ -97,15 +111,29 @@ class OrderQueryHelper {
       final productRowsList = await productRepo.getByIds(productIds.toList());
       final productRowsMap = {for (final p in productRowsList) p.id: p};
 
-      final customerIds = orderRows.map((o) => o.customerId).whereType<String>().toSet().toList();
+      final customerIds = orderRows
+          .map((o) => o.customerId)
+          .whereType<String>()
+          .toSet()
+          .toList();
       final customerRowsList = await customerRepo.getByIds(customerIds);
       final customerRowsMap = {for (final c in customerRowsList) c.id: c};
 
       final orders = <Map<String, dynamic>>[];
       for (final orderRow in orderRows) {
         final itemRows = itemsByOrderId[orderRow.id] ?? const [];
-        final customerRow = orderRow.customerId != null ? customerRowsMap[orderRow.customerId] : null;
-        orders.add(orderRow.toOrder(itemRows, productRows: productRowsMap, customerRow: customerRow).toJson());
+        final customerRow = orderRow.customerId != null
+            ? customerRowsMap[orderRow.customerId]
+            : null;
+        orders.add(
+          orderRow
+              .toOrder(
+                itemRows,
+                productRows: productRowsMap,
+                customerRow: customerRow,
+              )
+              .toJson(),
+        );
       }
 
       final totalPages = (total / size).ceil();
@@ -120,6 +148,7 @@ class OrderQueryHelper {
             'totalOrders': orderSummary.totalOrders,
             'grossSubtotal': orderSummary.grossSubtotal,
             'totalDiscount': orderSummary.totalDiscount,
+            'platformFeeTotal': orderSummary.platformFeeTotal,
             'netRevenue': orderSummary.netRevenue,
             'cashCollected': orderSummary.cashCollected,
             'upiCollected': orderSummary.upiCollected,

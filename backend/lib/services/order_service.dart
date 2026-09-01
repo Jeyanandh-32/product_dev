@@ -28,6 +28,7 @@ class OrderService {
     required List<Map<String, dynamic>> productsInput,
     double discountTotalInput = 0.0,
     bool isComplimentary = false,
+    bool isOnline = false,
   }) async {
     final resolvedItems =
         <
@@ -75,6 +76,7 @@ class OrderService {
       lineItems: resolvedItems,
       discountTotalInput: discountTotalInput,
       isComplimentary: isComplimentary,
+      isOnline: isOnline,
     );
   }
 
@@ -94,12 +96,15 @@ class OrderService {
     String? customerId,
   }) async {
     final isComplimentary = paymentMethod == PaymentMethod.complimentary;
+    final isOnline =
+        source == OrderSource.web || source == OrderSource.mobileApp;
 
     final totals = await calculateOrderTotals(
       storeId: storeId,
       productsInput: productsInput,
       discountTotalInput: discountTotalInput,
       isComplimentary: isComplimentary,
+      isOnline: isOnline,
     );
 
     return OrderCheckoutExecutor.execute(

@@ -33,8 +33,7 @@ class OrderTile extends StatelessComponent {
     );
 
     return div(
-      classes:
-          'bg-white rounded-3xl p-5 border border-gray-200/90 shadow-2xs hover:border-black transition-all flex flex-col justify-between gap-5',
+      classes: 'bg-white rounded-3xl p-5 border border-gray-200/90 shadow-2xs hover:border-black transition-all flex flex-col justify-between gap-5',
       [
         // Top Header Row: Order Number & Status Pill
         div(classes: 'flex items-center justify-between gap-2', [
@@ -74,8 +73,7 @@ class OrderTile extends StatelessComponent {
 
         // Order Summary Info Row
         div(
-          classes:
-              'bg-gray-50/60 rounded-2xl px-4 py-3 flex items-center justify-between border border-gray-100 text-xs',
+          classes: 'bg-gray-50/60 rounded-2xl px-4 py-3 flex items-center justify-between border border-gray-100 text-xs',
           [
             div(classes: 'flex items-center gap-1.5 text-gray-600 font-medium', [
               ShoppingBag(classes: 'w-4 h-4 text-gray-400'),
@@ -90,27 +88,29 @@ class OrderTile extends StatelessComponent {
                 classes: 'text-xs text-gray-500 font-medium',
                 [.text('Total:')],
               ),
-              span(classes: 'text-base font-extrabold text-black font-mono tracking-tight', [
-                .text('₹${order.grandTotal.toStringAsFixed(2)}'),
-              ]),
+              span(
+                classes: 'text-base font-extrabold text-black font-mono tracking-tight',
+                [
+                  .text('₹${order.grandTotal.toStringAsFixed(2)}'),
+                ],
+              ),
             ]),
           ],
         ),
 
         // Bottom Action Buttons
         div(
-          classes: 'flex items-center gap-2 w-full pt-1 border-t border-gray-100',
+          classes:
+              'flex items-center gap-2 w-full pt-1 border-t border-gray-100',
           [
-            if (showQrButton)
-              button(
-                classes:
-                    'flex-1 justify-center flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition-all cursor-pointer border-0 active:scale-95 shadow-2xs',
-                onClick: onShowQr,
-                [
-                  QrCode(classes: 'w-3.5 h-3.5 text-white'),
-                  .text('View QR'),
-                ],
-              ),
+            button(
+              classes: 'flex-1 justify-center flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-emerald-50 hover:bg-emerald-600 text-emerald-700 hover:text-white border border-emerald-200/60 font-bold text-xs transition-all cursor-pointer active:scale-95 shadow-2xs',
+              onClick: onShowQr,
+              [
+                QrCode(classes: 'w-3.5 h-3.5'),
+                .text('View QR'),
+              ],
+            ),
 
             button(
               classes: showQrButton

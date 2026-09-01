@@ -38,6 +38,7 @@ extension OrderRowExtension on OrderRow {
     discountTotal: discountTotal / 100,
     walletDeduction: walletDeduction / 100,
     taxTotal: taxTotal / 100,
+    platformFee: platformFee / 100,
     grandTotal: grandTotal / 100,
     terminalCode: terminalCode,
     customer: customerRow?.toCustomer(),

@@ -77,20 +77,19 @@ class StoreWalletCard extends StatelessComponent {
               ]),
 
               div(classes: 'flex items-center gap-2.5', [
-                if (!isBottleStore)
-                  button(
-                    classes: 'flex-1 sm:flex-none justify-center flex items-center gap-1.5 px-4 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition-all border-0 cursor-pointer active:scale-95 shadow-xs',
-                    onClick: onAddMoney,
-                    [
-                      Plus(classes: 'w-4 h-4 text-white'),
-                      .text('Add Money'),
-                    ],
-                  ),
                 button(
-                  classes: 'flex-1 sm:flex-none justify-center flex items-center gap-1.5 px-4 py-2.5 rounded-2xl bg-black hover:bg-gray-800 text-white font-bold text-xs transition-all border-0 cursor-pointer active:scale-95 shadow-xs',
+                  classes: 'flex-1 sm:flex-none justify-center flex items-center gap-1.5 px-4 py-2.5 rounded-2xl bg-emerald-50 hover:bg-emerald-600 text-emerald-700 hover:text-white border border-emerald-200/60 font-bold text-xs transition-all cursor-pointer active:scale-95 shadow-2xs',
+                  onClick: onAddMoney,
+                  [
+                    Plus(classes: 'w-4 h-4'),
+                    .text('Add Money'),
+                  ],
+                ),
+                button(
+                  classes: 'flex-1 sm:flex-none justify-center flex items-center gap-1.5 px-4 py-2.5 rounded-2xl bg-gray-100 hover:bg-gray-200 text-gray-900 font-bold text-xs transition-all border-0 cursor-pointer active:scale-95',
                   onClick: onViewTransactions,
                   [
-                    History(classes: 'w-4 h-4 text-white'),
+                    History(classes: 'w-4 h-4 text-gray-700'),
                     .text(historyBtnLabel),
                   ],
                 ),

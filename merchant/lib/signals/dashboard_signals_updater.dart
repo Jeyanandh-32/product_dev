@@ -18,7 +18,8 @@ class DashboardSignalsUpdater {
     final aov = (analytics['aov'] as num?)?.toDouble() ?? 0.0;
     final lowStockCount = analytics['lowStockCount'] as int? ?? 0;
 
-    final pMethods = (analytics['paymentMethods'] as Map<String, dynamic>?) ?? {};
+    final pMethods =
+        (analytics['paymentMethods'] as Map<String, dynamic>?) ?? {};
     final upiTotal = (pMethods['upiTotal'] as num?)?.toDouble() ?? 0.0;
     final cashTotal = (pMethods['cashTotal'] as num?)?.toDouble() ?? 0.0;
     final pSum = upiTotal + cashTotal;
@@ -42,22 +43,28 @@ class DashboardSignalsUpdater {
       storeId,
     );
 
-    final catSalesMap = (analytics['categorySales'] as Map<String, dynamic>?) ?? {};
-    final catLabels = (catSalesMap['labels'] as List<dynamic>?)
+    final catSalesMap =
+        (analytics['categorySales'] as Map<String, dynamic>?) ?? {};
+    final catLabels =
+        (catSalesMap['labels'] as List<dynamic>?)
             ?.map((e) => e.toString())
             .toList() ??
         [];
-    final catData = (catSalesMap['data'] as List<dynamic>?)
+    final catData =
+        (catSalesMap['data'] as List<dynamic>?)
             ?.map((e) => (e as num).toDouble())
             .toList() ??
         [];
 
-    final hourlyMap = (analytics['hourlyTraffic'] as Map<String, dynamic>?) ?? {};
-    final hourlyLabels = (hourlyMap['labels'] as List<dynamic>?)
+    final hourlyMap =
+        (analytics['hourlyTraffic'] as Map<String, dynamic>?) ?? {};
+    final hourlyLabels =
+        (hourlyMap['labels'] as List<dynamic>?)
             ?.map((e) => e.toString())
             .toList() ??
         [];
-    final hourlyData = (hourlyMap['data'] as List<dynamic>?)
+    final hourlyData =
+        (hourlyMap['data'] as List<dynamic>?)
             ?.map((e) => (e as num).toInt())
             .toList() ??
         [];
@@ -73,8 +80,8 @@ class DashboardSignalsUpdater {
         aovGrowth: (analytics['aovGrowth'] as num?)?.toDouble() ?? 0.0,
         onlineTotal: (analytics['onlineTotal'] as num?)?.toDouble() ?? 0.0,
         inStoreTotal: (analytics['inStoreTotal'] as num?)?.toDouble() ?? 0.0,
-        platformFeeTotal: (analytics['platformFeeTotal'] as num?)?.toDouble() ?? 0.0,
-        netRevenue: (analytics['netRevenue'] as num?)?.toDouble() ?? totalRevenue,
+        netRevenue:
+            (analytics['netRevenue'] as num?)?.toDouble() ?? totalRevenue,
       );
       dashboardPaymentMethodsSignal.value = (
         upiTotal: upiTotal,

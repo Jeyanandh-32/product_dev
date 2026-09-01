@@ -13,13 +13,11 @@ class DrawerCartItemRow extends StatelessComponent {
   @override
   Component build(BuildContext context) {
     return div(
-      classes:
-          'bg-neutral/40 rounded-2xl p-4 flex items-center justify-between gap-4 border-0',
+      classes: 'bg-neutral/40 rounded-2xl p-4 flex items-center justify-between gap-4 border-0',
       [
         div(classes: 'flex items-center gap-3 min-w-0', [
           div(
-            classes:
-                'w-14 h-14 bg-white rounded-xl flex items-center justify-center shrink-0 overflow-hidden shadow-2xs',
+            classes: 'w-14 h-14 bg-white rounded-xl flex items-center justify-center shrink-0 overflow-hidden shadow-2xs',
             [
               if (item.product.imageUrl case final url? when url.isNotEmpty)
                 img(
@@ -48,23 +46,20 @@ class DrawerCartItemRow extends StatelessComponent {
 
         // Quantity Modifier Controls
         div(
-          classes:
-              'flex items-center gap-2 bg-white rounded-xl p-1 shadow-2xs border-0 shrink-0',
+          classes: 'flex items-center gap-2 bg-white rounded-xl p-1 shadow-2xs border-0 shrink-0',
           [
             button(
-              classes:
-                  'w-7 h-7 rounded-lg bg-gray-50 hover:bg-gray-100 flex items-center justify-center text-gray-700 cursor-pointer border-0',
+              classes: 'w-7 h-7 rounded-lg bg-gray-50 hover:bg-gray-100 flex items-center justify-center text-gray-700 cursor-pointer border-0',
               onClick: () => removeFromCart(item.product),
               [Minus(classes: 'w-3.5 h-3.5')],
             ),
             span(
               classes:
-                  'font-bold text-xs min-w-[16px] text-center text-gray-900',
+                  'font-bold text-xs min-w-4 text-center text-gray-900',
               [.text('${item.quantity}')],
             ),
             button(
-              classes:
-                  'w-7 h-7 rounded-lg bg-emerald-accent hover:bg-emerald-dark text-white flex items-center justify-center cursor-pointer border-0 shadow-2xs',
+              classes: 'w-7 h-7 rounded-lg bg-emerald-50 hover:bg-emerald-600 text-emerald-700 hover:text-white border border-emerald-200/60 flex items-center justify-center cursor-pointer transition-all active:scale-95 shadow-2xs',
               onClick: () => addToCart(
                 currentCartStoreIdSignal.value ?? '',
                 item.product,
