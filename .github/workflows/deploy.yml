@@ -23,6 +23,8 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Filter Changed Paths
         uses: dorny/paths-filter@v3
@@ -50,31 +52,28 @@ jobs:
     name: Build & Package Changes
     needs: changes
     runs-on: ubuntu-latest
+    env:
+      API_DOMAIN: ${{ github.ref == 'refs/heads/stage' && 'pos-stage.sparrow-x.in' || 'pos.sparrow-x.in' }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Set Target Environment
-        run: |
-          if [ "${{ github.ref }}" = "refs/heads/stage" ]; then
-            echo "API_DOMAIN=pos-stage.sparrow-x.in" >> $GITHUB_ENV
-          else
-            echo "API_DOMAIN=pos.sparrow-x.in" >> $GITHUB_ENV
-          fi
-
       - name: Setup Flutter & Dart SDK
+        if: needs.changes.outputs.backend == 'true' || needs.changes.outputs.merchant == 'true' || needs.changes.outputs.customer == 'true' || needs.changes.outputs.terminal == 'true' || github.event_name == 'workflow_dispatch'
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
           cache: true
 
       - name: Install Workspace Dependencies
+        if: needs.changes.outputs.backend == 'true' || needs.changes.outputs.merchant == 'true' || needs.changes.outputs.customer == 'true' || needs.changes.outputs.terminal == 'true' || github.event_name == 'workflow_dispatch'
         run: |
           dart pub global activate melos
           export PATH="$PATH":"$HOME/.pub-cache/bin"
           melos bootstrap
 
       - name: Run Tests on Changed Packages
+        if: needs.changes.outputs.backend == 'true' || needs.changes.outputs.customer == 'true' || needs.changes.outputs.terminal == 'true' || github.event_name == 'workflow_dispatch'
         run: |
           export PATH="$PATH":"$HOME/.pub-cache/bin"
           dart analyze
@@ -150,6 +149,10 @@ jobs:
     needs: [changes, build]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/stage'
+    env:
+      TARGET_WEB_DIR: ${{ github.ref == 'refs/heads/stage' && '/var/www/pos/stage' || '/var/www/pos/main' }}
+      TARGET_APP_DIR: ${{ github.ref == 'refs/heads/stage' && 'pos/stage' || 'pos/main' }}
+      TARGET_SERVICE: ${{ github.ref == 'refs/heads/stage' && 'pos-stage-backend' || 'pos-backend' }}
 
     steps:
       - name: Download Build Artifacts
@@ -157,18 +160,6 @@ jobs:
         with:
           name: release-dist
           path: dist/
-
-      - name: Set Deployment Destination
-        run: |
-          if [ "${{ github.ref }}" = "refs/heads/stage" ]; then
-            echo "TARGET_WEB_DIR=/var/www/pos/stage" >> $GITHUB_ENV
-            echo "TARGET_APP_DIR=pos/stage" >> $GITHUB_ENV
-            echo "TARGET_SERVICE=pos-stage-backend" >> $GITHUB_ENV
-          else
-            echo "TARGET_WEB_DIR=/var/www/pos/main" >> $GITHUB_ENV
-            echo "TARGET_APP_DIR=pos/main" >> $GITHUB_ENV
-            echo "TARGET_SERVICE=pos-backend" >> $GITHUB_ENV
-          fi
 
       - name: Setup SSH Key
         run: |
