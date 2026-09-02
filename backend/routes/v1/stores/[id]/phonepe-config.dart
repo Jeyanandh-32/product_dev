@@ -19,7 +19,7 @@ Future<Response> onRequest(RequestContext context, String storeId) async {
 }
 
 Future<Response> _onGet(RequestContext context, String storeId) async {
-  final db = context.read<DatabaseSchema>();
+  final db = context.db;
 
   try {
     final row = await db.storePhonepeConfigs
@@ -38,7 +38,7 @@ Future<Response> _onGet(RequestContext context, String storeId) async {
 }
 
 Future<Response> _onPutOrPatch(RequestContext context, String storeId) async {
-  final db = context.read<DatabaseSchema>();
+  final db = context.db;
 
   try {
     final body = await context.validateBody(StoreValidator.updatePhonePeConfig);

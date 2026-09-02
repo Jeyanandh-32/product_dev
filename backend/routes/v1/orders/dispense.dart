@@ -19,7 +19,7 @@ Future<Response> onRequest(RequestContext context) async {
     final input = BottleReturnIotDispense.fromJson(body);
     final orderReference = input.orderReference;
 
-    final handler = context.read<BottleReturnDispenserHandler>();
+    final handler = context.bottleReturnDispenserHandler;
     final result = await handler.getDispenserOrderPayload(orderReference);
 
     return switch (result) {

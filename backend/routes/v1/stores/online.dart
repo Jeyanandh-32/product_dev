@@ -2,8 +2,6 @@ import 'package:backend/config/database.dart';
 import 'package:backend/database/schema.dart';
 import 'package:backend/extensions/request_context_extension.dart';
 import 'package:backend/extensions/store_row_extension.dart';
-import 'package:backend/repositories/store_repository.dart';
-import 'package:backend/repositories/subscription_repository.dart';
 import 'package:backend/utils/responses.dart';
 import 'package:dart_frog/dart_frog.dart';
 import 'package:typed_sql/typed_sql.dart' hide Database;
@@ -22,8 +20,8 @@ Future<Response> _onGet(RequestContext context) async {
   final (sizeError, size) = context.parseSize();
   if (sizeError != null) return sizeError;
 
-  final repo = context.read<StoreRepository>();
-  final subRepo = context.read<SubscriptionRepository>();
+  final repo = context.storeRepo;
+  final subRepo = context.subscriptionRepo;
 
   try {
     final slug = context.request.uri.queryParameters['slug'];
@@ -32,7 +30,7 @@ Future<Response> _onGet(RequestContext context) async {
       if (storeRow == null) {
         return badRequest(message: 'Online store not found.');
       }
-      final btlConfig = await Database.db.bottleReturnConfigs
+      final btlConfig = await context.db.bottleReturnConfigs
           .where((c) => c.storeId.equals(toExpr(storeRow.id)))
           .first
           .fetch();

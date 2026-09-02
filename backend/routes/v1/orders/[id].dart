@@ -1,8 +1,5 @@
 import 'package:backend/extensions/order_row_extension.dart';
 import 'package:backend/extensions/request_context_extension.dart';
-import 'package:backend/repositories/order_item_repository.dart';
-import 'package:backend/repositories/order_repository.dart';
-import 'package:backend/repositories/product_repository.dart';
 import 'package:backend/utils/responses.dart';
 import 'package:dart_frog/dart_frog.dart';
 import 'package:models/models.dart';
@@ -20,9 +17,9 @@ Future<Response> _onGet(RequestContext context, String id) async {
   final storeIdError = context.validateStoreId();
   if (storeIdError != null) return storeIdError;
 
-  final orderRepo = context.read<OrderRepository>();
-  final orderItemRepo = context.read<OrderItemRepository>();
-  final productRepo = context.read<ProductRepository>();
+  final orderRepo = context.orderRepo;
+  final orderItemRepo = context.orderItemRepo;
+  final productRepo = context.productRepo;
 
   try {
     final orderRow = await orderRepo.getByIdOrBillNo(id, context.storeId);
@@ -44,9 +41,9 @@ Future<Response> _onPatch(RequestContext context, String id) async {
   final storeIdError = context.validateStoreId();
   if (storeIdError != null) return storeIdError;
 
-  final orderRepo = context.read<OrderRepository>();
-  final orderItemRepo = context.read<OrderItemRepository>();
-  final productRepo = context.read<ProductRepository>();
+  final orderRepo = context.orderRepo;
+  final orderItemRepo = context.orderItemRepo;
+  final productRepo = context.productRepo;
 
   try {
     final orderRow = await orderRepo.getByIdOrBillNo(id, context.storeId);

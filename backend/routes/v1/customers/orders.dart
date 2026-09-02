@@ -1,5 +1,4 @@
 import 'package:backend/extensions/request_context_extension.dart';
-import 'package:backend/repositories/order_repository.dart';
 import 'package:backend/utils/responses.dart';
 import 'package:dart_frog/dart_frog.dart';
 import 'package:models/models.dart';
@@ -21,11 +20,11 @@ Future<Response> _onGet(RequestContext context) async {
 
   final date = context.request.uri.queryParameters['date'];
   final storeId = context.request.uri.queryParameters['storeId'];
-  final db = context.read<OrderRepository>();
+  final orderRepo = context.orderRepo;
   final offset = (page - 1) * size;
 
   try {
-    final result = await db.getCustomerOrders(
+    final result = await orderRepo.getCustomerOrders(
       customerId: tokenPayload.sub,
       storeId: storeId,
       date: date,

@@ -1,10 +1,6 @@
 import 'package:backend/database/schema.dart';
 import 'package:backend/extensions/order_row_extension.dart';
 import 'package:backend/extensions/request_context_extension.dart';
-import 'package:backend/repositories/customer_repository.dart';
-import 'package:backend/repositories/order_item_repository.dart';
-import 'package:backend/repositories/order_repository.dart';
-import 'package:backend/repositories/product_repository.dart';
 import 'package:backend/utils/responses.dart';
 import 'package:dart_frog/dart_frog.dart';
 
@@ -51,10 +47,10 @@ class OrderQueryHelper {
       }
     }
 
-    final orderRepo = context.read<OrderRepository>();
-    final itemRepo = context.read<OrderItemRepository>();
-    final productRepo = context.read<ProductRepository>();
-    final customerRepo = context.read<CustomerRepository>();
+    final orderRepo = context.orderRepo;
+    final itemRepo = context.orderItemRepo;
+    final productRepo = context.productRepo;
+    final customerRepo = context.customerRepo;
     final tokenPayload = context.tokenPayload;
 
     try {

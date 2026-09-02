@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:backend/extensions/request_context_extension.dart';
-import 'package:backend/repositories/bottle_return_session_handler.dart';
 import 'package:dart_frog/dart_frog.dart';
 import 'package:validators/validators.dart';
 
@@ -18,7 +17,7 @@ Future<Response> onRequest(RequestContext context) async {
     final storeId = input.storeId;
     final merchantId = input.merchantId;
 
-    final handler = context.read<BottleReturnSessionHandler>();
+    final handler = context.bottleReturnSessionHandler;
     final result = await handler.processReturnBatch(
       tokenStrings: tokenStrings,
       storeId: storeId,

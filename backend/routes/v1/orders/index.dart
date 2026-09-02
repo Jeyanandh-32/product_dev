@@ -1,7 +1,5 @@
 import 'package:backend/extensions/request_context_extension.dart';
-import 'package:backend/repositories/subscription_repository.dart';
 import 'package:backend/services/order_query_helper.dart';
-import 'package:backend/services/order_service.dart';
 import 'package:backend/utils/responses.dart';
 import 'package:dart_frog/dart_frog.dart';
 import 'package:models/models.dart';
@@ -20,7 +18,7 @@ Future<Response> _onPost(RequestContext context) async {
   if (storeIdError != null) return storeIdError;
 
   try {
-    final subRepo = context.read<SubscriptionRepository>();
+    final subRepo = context.subscriptionRepo;
     final isOperational = await subRepo.isStoreOperational(context.storeId);
     if (!isOperational) {
       return badRequest(
@@ -31,7 +29,7 @@ Future<Response> _onPost(RequestContext context) async {
     final body = await context.validateBody(OrderValidator.create);
     final input = OrderCreate.fromJson(body);
     final tokenPayload = context.tokenPayload;
-    final orderService = context.read<OrderService>();
+    final orderService = context.orderService;
 
     final productsList = input.products
         .map(

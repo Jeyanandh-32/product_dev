@@ -3,8 +3,6 @@ import 'dart:io';
 import 'package:backend/database/schema.dart';
 import 'package:backend/extensions/request_context_extension.dart';
 import 'package:backend/extensions/store_row_extension.dart';
-import 'package:backend/repositories/bottle_return_repository.dart';
-import 'package:backend/repositories/store_repository.dart';
 import 'package:backend/utils/constraint_errors.dart';
 import 'package:backend/utils/responses.dart';
 import 'package:dart_frog/dart_frog.dart';
@@ -27,7 +25,7 @@ Future<Response> _onGet(RequestContext context) async {
   final (sizeError, size) = context.parseSize();
   if (sizeError != null) return sizeError;
 
-  final repo = context.read<StoreRepository>();
+  final repo = context.storeRepo;
   final tokenPayload = context.tokenPayload;
 
   try {
@@ -43,7 +41,7 @@ Future<Response> _onGet(RequestContext context) async {
 
     var configuredStoreIds = <String>{};
     try {
-      final bottleRepo = context.read<BottleReturnRepository>();
+      final bottleRepo = context.bottleReturnRepo;
       final bottleConfigs = await bottleRepo.db.bottleReturnConfigs
           .where((c) => ts.toExpr(true))
           .fetch();
@@ -72,7 +70,7 @@ Future<Response> _onGet(RequestContext context) async {
 }
 
 Future<Response> _onPost(RequestContext context) async {
-  final repo = context.read<StoreRepository>();
+  final repo = context.storeRepo;
   final tokenPayload = context.tokenPayload;
 
   try {

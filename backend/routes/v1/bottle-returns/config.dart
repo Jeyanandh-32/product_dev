@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:backend/extensions/request_context_extension.dart';
-import 'package:backend/repositories/bottle_return_repository.dart';
 import 'package:dart_frog/dart_frog.dart';
 import 'package:validators/validators.dart';
 
@@ -23,7 +22,7 @@ Future<Response> _handleGet(RequestContext context) async {
     );
   }
 
-  final repo = context.read<BottleReturnRepository>();
+  final repo = context.bottleReturnRepo;
   final config = await repo.getConfig(storeId.trim());
 
   return Response.json(
@@ -42,7 +41,7 @@ Future<Response> _handlePutOrPatch(RequestContext context) async {
     final isEnabled = input.isEnabled ?? true;
     final rewardAmount = input.rewardAmountInRupees ?? 10;
 
-    final repo = context.read<BottleReturnRepository>();
+    final repo = context.bottleReturnRepo;
     final existing = await repo.getConfig(storeId.trim());
     if (existing == null) {
       return Response.json(

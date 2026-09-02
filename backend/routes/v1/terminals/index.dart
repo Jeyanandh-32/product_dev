@@ -6,8 +6,6 @@ import 'package:backend/extensions/store_row_extension.dart';
 import 'package:backend/extensions/subscription_row_extension.dart';
 import 'package:backend/extensions/terminal_row_extension.dart';
 import 'package:backend/models/token_payload/token_payload.dart';
-import 'package:backend/repositories/subscription_repository.dart';
-import 'package:backend/repositories/terminal_repository.dart';
 import 'package:backend/services/auth_service.dart';
 import 'package:backend/utils/constraint_errors.dart';
 import 'package:backend/utils/responses.dart';
@@ -41,8 +39,8 @@ Future<Response> onRequest(RequestContext context) async {
 }
 
 Future<Response> _onGetTerminal(RequestContext context, TokenPayload tokenPayload) async {
-  final repo = context.read<TerminalRepository>();
-  final subRepo = context.read<SubscriptionRepository>();
+  final repo = context.terminalRepo;
+  final subRepo = context.subscriptionRepo;
 
   try {
     final terminalCode = tokenPayload.terminalCode;
@@ -86,7 +84,7 @@ Future<Response> _onGet(RequestContext context, String? storeId) async {
   final (sizeError, size) = context.parseSize();
   if (sizeError != null) return sizeError;
 
-  final repo = context.read<TerminalRepository>();
+  final repo = context.terminalRepo;
   final tokenPayload = context.tokenPayload;
 
   try {
@@ -111,7 +109,7 @@ Future<Response> _onGet(RequestContext context, String? storeId) async {
 }
 
 Future<Response> _onPost(RequestContext context, String storeId) async {
-  final repo = context.read<TerminalRepository>();
+  final repo = context.terminalRepo;
   final tokenPayload = context.tokenPayload;
 
   try {

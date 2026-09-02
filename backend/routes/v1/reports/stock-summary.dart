@@ -1,5 +1,4 @@
 import 'package:backend/extensions/request_context_extension.dart';
-import 'package:backend/repositories/stock_repository.dart';
 import 'package:backend/utils/responses.dart';
 import 'package:dart_frog/dart_frog.dart';
 
@@ -59,7 +58,7 @@ Future<Response> _onGet(RequestContext context) async {
     );
   }
 
-  final stockRepo = context.read<StockRepository>();
+  final stockRepo = context.stockRepo;
   final tokenPayload = context.tokenPayload;
 
   try {

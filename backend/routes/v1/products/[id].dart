@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:backend/extensions/product_row_extension.dart';
 import 'package:backend/extensions/request_context_extension.dart';
-import 'package:backend/repositories/product_repository.dart';
 import 'package:backend/utils/constraint_errors.dart';
 import 'package:backend/utils/responses.dart';
 import 'package:dart_frog/dart_frog.dart';
@@ -24,7 +23,7 @@ Future<Response> onRequest(
 }
 
 Future<Response> _onGet(RequestContext context, String id) async {
-  final repo = context.read<ProductRepository>();
+  final repo = context.productRepo;
 
   try {
     final productRow = await repo.getById(id);
@@ -46,7 +45,7 @@ Future<Response> _onGet(RequestContext context, String id) async {
 }
 
 Future<Response> _onPutOrPatch(RequestContext context, String id) async {
-  final repo = context.read<ProductRepository>();
+  final repo = context.productRepo;
 
   try {
     final body = await context.validateBody(ProductValidator.update);

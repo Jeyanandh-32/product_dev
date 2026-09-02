@@ -1,6 +1,5 @@
 import 'package:backend/extensions/request_context_extension.dart';
 import 'package:backend/extensions/terminal_row_extension.dart';
-import 'package:backend/repositories/terminal_repository.dart';
 import 'package:backend/services/auth_service.dart';
 import 'package:backend/utils/constraint_errors.dart';
 import 'package:backend/utils/responses.dart';
@@ -19,7 +18,7 @@ Future<Response> onRequest(
 }
 
 Future<Response> _onGet(RequestContext context, String code) async {
-  final repo = context.read<TerminalRepository>();
+  final repo = context.terminalRepo;
 
   try {
     final terminalRow = await repo.getByCode(code);
@@ -35,7 +34,7 @@ Future<Response> _onGet(RequestContext context, String code) async {
 }
 
 Future<Response> _onPutOrPatch(RequestContext context, String code) async {
-  final repo = context.read<TerminalRepository>();
+  final repo = context.terminalRepo;
 
   try {
     final body = await context.validateBody(TerminalValidator.update);

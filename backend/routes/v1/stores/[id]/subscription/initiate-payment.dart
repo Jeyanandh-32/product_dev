@@ -1,7 +1,4 @@
 import 'package:backend/extensions/request_context_extension.dart';
-import 'package:backend/repositories/platform_phonepe_config_repository.dart';
-import 'package:backend/repositories/store_repository.dart';
-import 'package:backend/repositories/subscription_repository.dart';
 import 'package:backend/services/phonepe_service.dart';
 import 'package:backend/utils/responses.dart';
 import 'package:dart_frog/dart_frog.dart';
@@ -30,19 +27,19 @@ Future<Response> _onPost(RequestContext context, String storeId) async {
       return badRequest(message: 'Invalid plan code "$planCodeStr"');
     }
 
-    final storeRepo = context.read<StoreRepository>();
+    final storeRepo = context.storeRepo;
     final store = await storeRepo.getById(storeId);
     if (store == null) {
       return notFound(message: 'Store not found');
     }
 
-    final subRepo = context.read<SubscriptionRepository>();
+    final subRepo = context.subscriptionRepo;
     final plan = await subRepo.getPlanByCode(planCode);
     if (plan == null) {
       return notFound(message: 'Plan not found');
     }
 
-    final platformConfigRepo = context.read<PlatformPhonePeConfigRepository>();
+    final platformConfigRepo = context.platformPhonePeConfigRepo;
     final platformConfig = platformConfigRepo.getConfig();
     if (platformConfig == null || !platformConfig.isEnabled) {
       return badRequest(message: 'Platform PhonePe gateway is not configured');

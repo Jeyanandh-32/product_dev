@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:backend/enums/user_role.dart';
 import 'package:backend/extensions/counter_row_extension.dart';
 import 'package:backend/extensions/request_context_extension.dart';
-import 'package:backend/repositories/counter_repository.dart';
 import 'package:backend/utils/constraint_errors.dart';
 import 'package:backend/utils/responses.dart';
 import 'package:dart_frog/dart_frog.dart';
@@ -29,7 +28,7 @@ Future<Response> _onGet(RequestContext context) async {
   final (sizeError, size) = context.parseSize();
   if (sizeError != null) return sizeError;
 
-  final repo = context.read<CounterRepository>();
+  final repo = context.counterRepo;
   final tokenPayload = context.optionalTokenPayload;
 
   try {
@@ -63,7 +62,7 @@ Future<Response> _onPost(RequestContext context) async {
   final storeIdError = context.validateStoreId();
   if (storeIdError != null) return storeIdError;
 
-  final repo = context.read<CounterRepository>();
+  final repo = context.counterRepo;
   final tokenPayload = context.tokenPayload;
 
   try {

@@ -5,21 +5,30 @@ import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_lucide/jaspr_lucide.dart' hide List, Map, Router;
 import 'package:models/models.dart';
 
-/// Modal dialog displaying history of earned bottle return rewards and redemptions.
+/// Modal dialog displaying history of wallet transactions or earned bottle return rewards.
 class WalletTransactionsModal extends StatelessComponent {
   final List<CustomerWalletTransaction> transactions;
   final VoidCallback onClose;
+  final bool isBottleReturnStore;
 
   const WalletTransactionsModal({
     super.key,
     required this.transactions,
     required this.onClose,
+    this.isBottleReturnStore = false,
   });
 
   @override
   Component build(BuildContext context) {
+    final title = isBottleReturnStore
+        ? 'Reward & Activity History'
+        : 'Wallet Transactions';
+    final emptyText = isBottleReturnStore
+        ? 'No reward activity yet.'
+        : 'No wallet transactions yet.';
+
     return Modal(
-      title: 'Reward & Activity History',
+      title: title,
       onClose: onClose,
       child: div(
         classes: 'flex flex-col gap-4 max-h-[60vh] overflow-y-auto pr-1',
@@ -31,7 +40,7 @@ class WalletTransactionsModal extends StatelessComponent {
                 History(classes: 'w-8 h-8 text-gray-300'),
                 span(
                   classes: 'text-sm font-semibold',
-                  [.text('No reward activity yet.')],
+                  [.text(emptyText)],
                 ),
               ],
             )

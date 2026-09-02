@@ -3,6 +3,8 @@ import 'package:backend/utils/responses.dart';
 import 'package:dart_frog/dart_frog.dart';
 import 'package:validators/validators.dart';
 
+export 'package:backend/extensions/request_context_database_extension.dart';
+
 class ResponseException implements Exception {
   const ResponseException(this.response);
   final Response response;
@@ -77,7 +79,10 @@ extension RequestContextExtension on RequestContext {
     if (sizeStr == null || sizeStr.isEmpty) return (null, defaultSize);
     final size = int.tryParse(sizeStr);
     if (size == null || size <= 0) {
-      return (badRequest(message: 'size must be a positive integer >= 1.'), defaultSize);
+      return (
+        badRequest(message: 'size must be a positive integer >= 1.'),
+        defaultSize,
+      );
     }
     return (null, size);
   }

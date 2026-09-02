@@ -1,8 +1,6 @@
 import 'dart:io';
 
 import 'package:backend/extensions/request_context_extension.dart';
-import 'package:backend/repositories/bottle_return_product_handler.dart';
-import 'package:backend/repositories/bottle_return_repository.dart';
 import 'package:dart_frog/dart_frog.dart';
 import 'package:validators/validators.dart';
 
@@ -24,7 +22,7 @@ Future<Response> _handleGet(RequestContext context) async {
     );
   }
 
-  final repo = context.read<BottleReturnRepository>();
+  final repo = context.bottleReturnRepo;
   final config = await repo.getConfig(storeId.trim());
   if (config == null) {
     return Response.json(
@@ -36,7 +34,7 @@ Future<Response> _handleGet(RequestContext context) async {
     );
   }
 
-  final handler = context.read<BottleReturnProductHandler>();
+  final handler = context.bottleReturnProductHandler;
   final items = await handler.getProductsForStore(storeId.trim());
 
   return Response.json(
@@ -58,7 +56,7 @@ Future<Response> _handlePost(RequestContext context) async {
     final productIds = input.productIds;
     final isReturnable = input.isReturnable ?? true;
 
-    final repo = context.read<BottleReturnRepository>();
+    final repo = context.bottleReturnRepo;
     final config = await repo.getConfig(storeId.trim());
     if (config == null) {
       return Response.json(
@@ -70,7 +68,7 @@ Future<Response> _handlePost(RequestContext context) async {
       );
     }
 
-    final handler = context.read<BottleReturnProductHandler>();
+    final handler = context.bottleReturnProductHandler;
 
     if (productIds != null && productIds.isNotEmpty) {
       await handler.bulkSetProductsReturnable(

@@ -2,8 +2,6 @@ import 'package:backend/config/database.dart';
 import 'package:backend/database/schema.dart';
 import 'package:backend/extensions/request_context_extension.dart';
 import 'package:backend/extensions/store_row_extension.dart';
-import 'package:backend/repositories/store_repository.dart';
-import 'package:backend/repositories/subscription_repository.dart';
 import 'package:backend/utils/constraint_errors.dart';
 import 'package:backend/utils/responses.dart';
 import 'package:dart_frog/dart_frog.dart';
@@ -27,7 +25,7 @@ Future<Response> onRequest(
 }
 
 Future<Response> _onGet(RequestContext context, String id) async {
-  final repo = context.read<StoreRepository>();
+  final repo = context.storeRepo;
 
   try {
     final storeRow = await repo.getById(id);
@@ -35,14 +33,12 @@ Future<Response> _onGet(RequestContext context, String id) async {
       return badRequest(message: 'Store not found.');
     }
 
-    final btlConfig = await Database.db.bottleReturnConfigs
+    final btlConfig = await context.db.bottleReturnConfigs
         .where((c) => c.storeId.equals(toExpr(id)))
         .first
         .fetch();
 
-    final isOperational = await context
-        .read<SubscriptionRepository>()
-        .isStoreOperational(id);
+    final isOperational = await context.subscriptionRepo.isStoreOperational(id);
 
     return success(
       data: {
@@ -58,7 +54,7 @@ Future<Response> _onGet(RequestContext context, String id) async {
 }
 
 Future<Response> _onPutOrPatch(RequestContext context, String id) async {
-  final repo = context.read<StoreRepository>();
+  final repo = context.storeRepo;
 
   try {
     final body = await context.validateBody(StoreValidator.update);

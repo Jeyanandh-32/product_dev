@@ -1,5 +1,4 @@
 import 'package:backend/extensions/request_context_extension.dart';
-import 'package:backend/repositories/merchant_settings_repository.dart';
 import 'package:backend/utils/responses.dart';
 import 'package:dart_frog/dart_frog.dart';
 import 'package:validators/validators.dart';
@@ -13,7 +12,7 @@ Future<Response> onRequest(RequestContext context) async {
 }
 
 Future<Response> _onGet(RequestContext context) async {
-  final repo = context.read<MerchantSettingsRepository>();
+  final repo = context.merchantSettingsRepo;
   final tokenPayload = context.tokenPayload;
 
   try {
@@ -27,7 +26,7 @@ Future<Response> _onGet(RequestContext context) async {
 }
 
 Future<Response> _onPatch(RequestContext context) async {
-  final repo = context.read<MerchantSettingsRepository>();
+  final repo = context.merchantSettingsRepo;
   final tokenPayload = context.tokenPayload;
 
   try {

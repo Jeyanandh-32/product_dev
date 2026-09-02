@@ -1,7 +1,5 @@
 import 'package:backend/extensions/request_context_extension.dart';
 import 'package:backend/extensions/subscription_row_extension.dart';
-import 'package:backend/repositories/store_repository.dart';
-import 'package:backend/repositories/subscription_repository.dart';
 import 'package:backend/utils/responses.dart';
 import 'package:dart_frog/dart_frog.dart';
 import 'package:models/models.dart';
@@ -16,7 +14,7 @@ Future<Response> onRequest(RequestContext context, String id) async {
 }
 
 Future<Response> _onPost(RequestContext context, String storeId) async {
-  final storeRepo = context.read<StoreRepository>();
+  final storeRepo = context.storeRepo;
   final store = await storeRepo.getById(storeId);
   if (store == null) {
     return notFound(message: 'Store not found.');
@@ -37,7 +35,7 @@ Future<Response> _onPost(RequestContext context, String storeId) async {
       );
     }
 
-    final subRepo = context.read<SubscriptionRepository>();
+    final subRepo = context.subscriptionRepo;
     final plan = await subRepo.getPlanByCode(planCode);
     if (plan == null) {
       return badRequest(message: 'Subscription plan not found.');

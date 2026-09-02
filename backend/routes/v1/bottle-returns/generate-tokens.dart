@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:backend/extensions/request_context_extension.dart';
-import 'package:backend/repositories/bottle_return_repository.dart';
 import 'package:dart_frog/dart_frog.dart';
 import 'package:models/models.dart';
 import 'package:validators/validators.dart';
@@ -31,7 +30,7 @@ Future<Response> onRequest(RequestContext context) async {
       );
     }).toList();
 
-    final repo = context.read<BottleReturnRepository>();
+    final repo = context.bottleReturnRepo;
     final tokens = await repo.generateTokensForOrder(
       merchantId: merchantId,
       storeId: storeId,

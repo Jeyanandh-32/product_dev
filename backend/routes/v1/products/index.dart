@@ -3,8 +3,6 @@ import 'dart:io';
 import 'package:backend/enums/user_role.dart';
 import 'package:backend/extensions/product_row_extension.dart';
 import 'package:backend/extensions/request_context_extension.dart';
-import 'package:backend/repositories/product_repository.dart';
-import 'package:backend/services/product_service.dart';
 import 'package:backend/utils/constraint_errors.dart';
 import 'package:backend/utils/responses.dart';
 import 'package:dart_frog/dart_frog.dart';
@@ -28,7 +26,7 @@ Future<Response> _onGet(RequestContext context) async {
   final (sizeError, size) = context.parseSize();
   if (sizeError != null) return sizeError;
 
-  final repo = context.read<ProductRepository>();
+  final repo = context.productRepo;
   final tokenPayload = context.optionalTokenPayload;
 
   try {
@@ -78,7 +76,7 @@ Future<Response> _onPost(RequestContext context) async {
   try {
     final body = await context.validateBody(ProductValidator.create);
     final input = ProductCreate.fromJson(body);
-    final productService = context.read<ProductService>();
+    final productService = context.productService;
     final tokenPayload = context.tokenPayload;
 
     final completeProduct = await productService.create(

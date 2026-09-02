@@ -1,6 +1,5 @@
 import 'package:backend/extensions/customer_row_extension.dart';
 import 'package:backend/extensions/request_context_extension.dart';
-import 'package:backend/repositories/customer_repository.dart';
 import 'package:backend/services/auth/password_service.dart';
 import 'package:backend/utils/responses.dart';
 import 'package:dart_frog/dart_frog.dart';
@@ -15,7 +14,7 @@ Future<Response> onRequest(RequestContext context) async {
 }
 
 Future<Response> _onGet(RequestContext context) async {
-  final repo = context.read<CustomerRepository>();
+  final repo = context.customerRepo;
   final tokenPayload = context.tokenPayload;
 
   try {
@@ -31,7 +30,7 @@ Future<Response> _onGet(RequestContext context) async {
 }
 
 Future<Response> _onPatch(RequestContext context) async {
-  final repo = context.read<CustomerRepository>();
+  final repo = context.customerRepo;
   final tokenPayload = context.tokenPayload;
 
   try {

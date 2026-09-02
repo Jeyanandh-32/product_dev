@@ -1,4 +1,5 @@
 import 'package:backend/database/schema.dart';
+import 'package:backend/extensions/request_context_extension.dart';
 import 'package:backend/models/token_payload/token_payload.dart';
 import 'package:backend/services/auth_service.dart';
 import 'package:backend/utils/responses.dart';
@@ -15,7 +16,7 @@ Handler middleware(Handler handler) {
     final bearerToken = CookieService.extractBearerToken(authorization);
 
     if (apiKey != null && apiKey.isNotEmpty) {
-      final db = context.read<ts.Database<DatabaseSchema>>();
+      final db = context.db;
       final configs = await db.bottleReturnConfigs
           .where(
             (c) =>

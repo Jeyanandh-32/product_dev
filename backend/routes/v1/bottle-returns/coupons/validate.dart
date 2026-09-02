@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:backend/extensions/request_context_extension.dart';
-import 'package:backend/repositories/bottle_return_repository.dart';
 import 'package:dart_frog/dart_frog.dart';
 import 'package:validators/validators.dart';
 
@@ -20,7 +19,7 @@ Future<Response> onRequest(RequestContext context) async {
     final code = input.code;
     final storeId = input.storeId;
 
-    final repo = context.read<BottleReturnRepository>();
+    final repo = context.bottleReturnRepo;
     final coupon = await repo.validatePhysicalCoupon(
       merchantId: merchantId,
       code: code,

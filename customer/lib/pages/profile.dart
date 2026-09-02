@@ -69,13 +69,13 @@ class _CustomerProfilePageState extends SignalState<CustomerProfilePage> {
     return div(classes: 'flex flex-col gap-6 max-w-2xl w-full mx-auto pb-12', [
       div(classes: 'flex items-center gap-3', [
         button(
-          classes:
-              'w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 flex items-center justify-center cursor-pointer border-0 transition-all active:scale-95 shrink-0',
+          classes: 'w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 flex items-center justify-center cursor-pointer border-0 transition-all active:scale-95 shrink-0',
           onClick: () => navigateToRecentStoreOrAll(context),
           [ArrowLeft(classes: 'w-5 h-5')],
         ),
         h1(
-          classes: 'text-2xl sm:text-3xl font-extrabold text-black tracking-tight',
+          classes:
+              'text-2xl sm:text-3xl font-extrabold text-black tracking-tight',
           [.text('Profile')],
         ),
       ]),
@@ -87,7 +87,8 @@ class _CustomerProfilePageState extends SignalState<CustomerProfilePage> {
         storeId: currentCartStoreIdSignal.value,
         walletBalance: _storeWalletBalance,
         onAddMoney: () => setState(() => _isTopUpModalOpen = true),
-        onViewTransactions: () => setState(() => _isTransactionsModalOpen = true),
+        onViewTransactions: () =>
+            setState(() => _isTransactionsModalOpen = true),
       ),
 
       ProfileFormsSection(customer: customer),
@@ -105,6 +106,8 @@ class _CustomerProfilePageState extends SignalState<CustomerProfilePage> {
       if (_isTransactionsModalOpen)
         WalletTransactionsModal(
           transactions: _transactions,
+          isBottleReturnStore:
+              currentCartStoreSignal.value?.isBottleReturnEnabled == true,
           onClose: () => setState(() => _isTransactionsModalOpen = false),
         ),
     ]);

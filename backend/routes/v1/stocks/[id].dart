@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:backend/extensions/request_context_extension.dart';
 import 'package:backend/extensions/stock_row_extension.dart';
-import 'package:backend/repositories/stock_repository.dart';
 import 'package:backend/utils/responses.dart';
 import 'package:dart_frog/dart_frog.dart';
 import 'package:validators/validators.dart';
@@ -22,7 +21,7 @@ Future<Response> onRequest(
 }
 
 Future<Response> _onPutOrPatch(RequestContext context, String id) async {
-  final repo = context.read<StockRepository>();
+  final repo = context.stockRepo;
 
   try {
     final body = await context.validateBody(StockValidator.update);

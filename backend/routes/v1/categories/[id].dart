@@ -1,6 +1,5 @@
 import 'package:backend/extensions/category_row_extension.dart';
 import 'package:backend/extensions/request_context_extension.dart';
-import 'package:backend/repositories/category_repository.dart';
 import 'package:backend/utils/constraint_errors.dart';
 import 'package:backend/utils/responses.dart';
 import 'package:dart_frog/dart_frog.dart';
@@ -22,7 +21,7 @@ Future<Response> onRequest(
 }
 
 Future<Response> _onGet(RequestContext context, String id) async {
-  final repo = context.read<CategoryRepository>();
+  final repo = context.categoryRepo;
 
   try {
     final categoryRow = await repo.getById(id);
@@ -38,7 +37,7 @@ Future<Response> _onGet(RequestContext context, String id) async {
 }
 
 Future<Response> _onPutOrPatch(RequestContext context, String id) async {
-  final repo = context.read<CategoryRepository>();
+  final repo = context.categoryRepo;
 
   try {
     final body = await context.validateBody(CategoryValidator.update);

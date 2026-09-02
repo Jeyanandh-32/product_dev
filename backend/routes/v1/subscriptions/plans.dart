@@ -1,5 +1,5 @@
+import 'package:backend/extensions/request_context_extension.dart';
 import 'package:backend/extensions/subscription_row_extension.dart';
-import 'package:backend/repositories/subscription_repository.dart';
 import 'package:backend/utils/responses.dart';
 import 'package:dart_frog/dart_frog.dart';
 
@@ -12,7 +12,7 @@ Future<Response> onRequest(RequestContext context) async {
 }
 
 Future<Response> _onGet(RequestContext context) async {
-  final repo = context.read<SubscriptionRepository>();
+  final repo = context.subscriptionRepo;
   final rows = await repo.getPlans();
   final plans = rows.map((r) => r.toSubscriptionPlan().toJson()).toList();
 

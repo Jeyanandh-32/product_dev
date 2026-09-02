@@ -11,6 +11,7 @@ class ProfileWalletModals extends StatelessComponent {
   final double topUpAmount;
   final bool isTopUpLoading;
   final List<CustomerWalletTransaction> transactions;
+  final bool isBottleReturnStore;
   final ValueChanged<double> onAmountChanged;
   final VoidCallback onCloseTopUp;
   final VoidCallback onProceedTopUp;
@@ -23,6 +24,7 @@ class ProfileWalletModals extends StatelessComponent {
     required this.topUpAmount,
     required this.isTopUpLoading,
     required this.transactions,
+    this.isBottleReturnStore = false,
     required this.onAmountChanged,
     required this.onCloseTopUp,
     required this.onProceedTopUp,
@@ -43,6 +45,7 @@ class ProfileWalletModals extends StatelessComponent {
       if (isTransactionsModalOpen)
         WalletTransactionsModal(
           transactions: transactions,
+          isBottleReturnStore: isBottleReturnStore,
           onClose: onCloseTransactions,
         ),
     ]);

@@ -1,8 +1,6 @@
-import 'package:backend/config/database.dart';
 import 'package:backend/database/schema.dart';
 import 'package:backend/extensions/request_context_extension.dart';
 import 'package:backend/extensions/store_phonepe_config_row_extension.dart';
-import 'package:backend/repositories/customer_repository.dart';
 import 'package:backend/services/customer_wallet_handler.dart';
 import 'package:backend/services/phonepe_service.dart';
 import 'package:backend/utils/responses.dart';
@@ -21,7 +19,7 @@ Future<Response> onRequest(RequestContext context) async {
 }
 
 Future<Response> _onGet(RequestContext context) async {
-  final repo = context.read<CustomerRepository>();
+  final repo = context.customerRepo;
   final tokenPayload = context.tokenPayload;
   final storeId = context.request.uri.queryParameters['storeId'];
 
@@ -54,9 +52,9 @@ Future<Response> _onGet(RequestContext context) async {
 }
 
 Future<Response> _onPost(RequestContext context) async {
-  final repo = context.read<CustomerRepository>();
+  final repo = context.customerRepo;
   final tokenPayload = context.tokenPayload;
-  final db = Database.db;
+  final db = context.db;
   final phonePeService = PhonePeService();
 
   try {

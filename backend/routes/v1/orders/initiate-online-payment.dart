@@ -1,12 +1,8 @@
-import 'package:backend/config/database.dart';
 import 'package:backend/database/schema.dart';
 import 'package:backend/extensions/request_context_extension.dart';
 import 'package:backend/extensions/store_phonepe_config_row_extension.dart';
-import 'package:backend/repositories/customer_repository.dart';
-import 'package:backend/repositories/subscription_repository.dart';
 import 'package:backend/services/online_order_checkout_coordinator.dart';
 import 'package:backend/services/online_payment_calculator.dart';
-import 'package:backend/services/order_service.dart';
 import 'package:backend/services/phonepe_service.dart';
 import 'package:backend/utils/responses.dart';
 import 'package:dart_frog/dart_frog.dart';
@@ -28,13 +24,13 @@ Future<Response> _onPost(RequestContext context) async {
   try {
     final body = await context.validateBody(OrderValidator.create);
     final input = OrderCreate.fromJson(body);
-    final orderService = context.read<OrderService>();
-    final customerRepo = context.read<CustomerRepository>();
+    final orderService = context.orderService;
+    final customerRepo = context.customerRepo;
     final tokenPayload = context.tokenPayload;
-    final db = Database.db;
+    final db = context.db;
     final phonePeService = PhonePeService();
 
-    final subRepo = context.read<SubscriptionRepository>();
+    final subRepo = context.subscriptionRepo;
     final isOperational = await subRepo.isStoreOperational(context.storeId);
     if (!isOperational) {
       return badRequest(

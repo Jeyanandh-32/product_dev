@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:backend/extensions/merchant_row_extension.dart';
 import 'package:backend/extensions/request_context_extension.dart';
-import 'package:backend/repositories/merchant_repository.dart';
 import 'package:backend/services/auth_service.dart';
 import 'package:backend/utils/constraint_errors.dart';
 import 'package:backend/utils/responses.dart';
@@ -17,7 +16,7 @@ Future<Response> onRequest(RequestContext context) async {
 }
 
 Future<Response> _onPost(RequestContext context) async {
-  final repo = context.read<MerchantRepository>();
+  final repo = context.merchantRepo;
 
   try {
     final body = await context.validateBody(MerchantValidator.register);

@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:backend/enums/user_role.dart';
 import 'package:backend/extensions/customer_row_extension.dart';
 import 'package:backend/extensions/request_context_extension.dart';
-import 'package:backend/repositories/customer_repository.dart';
 import 'package:backend/services/auth/cookie_service.dart';
 import 'package:backend/services/auth/jwt_service.dart';
 import 'package:backend/services/auth/password_service.dart';
@@ -19,7 +18,7 @@ Future<Response> onRequest(RequestContext context) async {
 }
 
 Future<Response> _onPost(RequestContext context) async {
-  final repo = context.read<CustomerRepository>();
+  final repo = context.customerRepo;
 
   try {
     final body = await context.validateBody(CustomerValidator.login);

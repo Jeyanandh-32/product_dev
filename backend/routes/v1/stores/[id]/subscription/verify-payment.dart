@@ -1,9 +1,6 @@
-import 'package:backend/config/database.dart';
 import 'package:backend/database/schema.dart';
 import 'package:backend/extensions/request_context_extension.dart';
 import 'package:backend/extensions/subscription_row_extension.dart';
-import 'package:backend/repositories/platform_phonepe_config_repository.dart';
-import 'package:backend/repositories/subscription_repository.dart';
 import 'package:backend/services/phonepe_service.dart';
 import 'package:backend/utils/responses.dart';
 import 'package:dart_frog/dart_frog.dart';
@@ -25,8 +22,8 @@ Future<Response> _onPost(RequestContext context, String storeId) async {
     final input = StoreSubscriptionVerify.fromJson(body);
     final merchantTxId = input.merchantTransactionId;
 
-    final db = Database.db;
-    final subRepo = context.read<SubscriptionRepository>();
+    final db = context.db;
+    final subRepo = context.subscriptionRepo;
     final txList = await db.subscriptionTransactions
         .where((t) => t.reference.equals(toExpr(merchantTxId)))
         .fetch();
@@ -53,7 +50,7 @@ Future<Response> _onPost(RequestContext context, String storeId) async {
       );
     }
 
-    final platformConfigRepo = context.read<PlatformPhonePeConfigRepository>();
+    final platformConfigRepo = context.platformPhonePeConfigRepo;
     final platformConfig = platformConfigRepo.getConfig();
     if (platformConfig != null && platformConfig.isEnabled) {
       final phonePeService = PhonePeService();
