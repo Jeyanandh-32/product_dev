@@ -24,7 +24,13 @@ CustomerStoreWalletRow constructCustomerStoreWalletRow({
   required int walletBalance,
   required DateTime createdAt,
   required DateTime updatedAt,
-}) => _$CustomerStoreWalletRow._(customerId, storeId, walletBalance, createdAt, updatedAt);
+}) => _$CustomerStoreWalletRow._(
+  customerId,
+  storeId,
+  walletBalance,
+  createdAt,
+  updatedAt,
+);
 
 /// Constructs a [CustomerWalletTransactionRow] instance.
 CustomerWalletTransactionRow constructCustomerWalletTransactionRow({
@@ -36,4 +42,17 @@ CustomerWalletTransactionRow constructCustomerWalletTransactionRow({
   required String status,
   required DateTime createdAt,
   String? reference,
-}) => _$CustomerWalletTransactionRow._(id, customerId, storeId, amount, type, reference, status, createdAt);
+  int platformFee = 0,
+  int gatewayCharges = 0,
+}) => _$CustomerWalletTransactionRow._(
+  id,
+  customerId,
+  storeId,
+  amount,
+  type,
+  reference,
+  status,
+  platformFee,
+  gatewayCharges,
+  createdAt,
+);

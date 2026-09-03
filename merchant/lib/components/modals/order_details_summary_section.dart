@@ -35,6 +35,15 @@ class OrderDetailsSummarySection extends StatelessComponent {
             .text('Rs. ${formatAmount(order.platformFee)}'),
           ]),
         ]),
+      if (order.gatewayCharges > 0)
+        div(classes: 'flex justify-between items-center text-gray-600', [
+          span(classes: 'font-normal', [
+            .text('Gateway Charges (Paid by Customer)'),
+          ]),
+          span(classes: 'font-medium text-gray-900', [
+            .text('Rs. ${formatAmount(order.gatewayCharges)}'),
+          ]),
+        ]),
       _row(
         'Ordering Channel',
         order.source.name == 'web' ? 'Online (Customer App)' : 'POS Terminal',

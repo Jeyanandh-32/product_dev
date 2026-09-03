@@ -15,6 +15,8 @@ _CustomerWalletTransaction _$CustomerWalletTransactionFromJson(
   type: $enumDecode(_$WalletTransactionTypeEnumMap, json['type']),
   reference: json['reference'] as String?,
   status: json['status'] as String,
+  platformFee: (json['platformFee'] as num?)?.toDouble() ?? 0.0,
+  gatewayCharges: (json['gatewayCharges'] as num?)?.toDouble() ?? 0.0,
   createdAt: DateTime.parse(json['createdAt'] as String),
 );
 
@@ -27,6 +29,8 @@ Map<String, dynamic> _$CustomerWalletTransactionToJson(
   'type': _$WalletTransactionTypeEnumMap[instance.type]!,
   'reference': instance.reference,
   'status': instance.status,
+  'platformFee': instance.platformFee,
+  'gatewayCharges': instance.gatewayCharges,
   'createdAt': instance.createdAt.toIso8601String(),
 };
 

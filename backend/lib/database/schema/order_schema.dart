@@ -50,8 +50,17 @@ abstract final class OrderRow extends Row {
   @DefaultValue(0)
   int get platformFee;
 
+  @DefaultValue(0)
+  int get gatewayCharges;
+
   @References(table: 'customers', field: 'id', onDelete: .setNull)
   String? get customerId;
+
+  @DefaultValue(false)
+  bool get platformFeeSettled;
+
+  @References(table: 'platformFeeSettlements', field: 'id', onDelete: .setNull)
+  String? get platformFeeSettlementId;
 }
 
 @PrimaryKey(['id'])

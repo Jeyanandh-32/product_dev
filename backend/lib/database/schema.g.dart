@@ -23,6 +23,7 @@ extension DatabaseSchemaSchema on Database<DatabaseSchema> {
     _$CustomerRecentStoresRow._$table,
     _$CustomerStoreWalletRow._$table,
     _$CustomerWalletTransactionRow._$table,
+    _$PlatformFeeSettlementRow._$table,
     _$OrderRow._$table,
     _$OrderItemRow._$table,
     _$BottleReturnConfigRow._$table,
@@ -80,6 +81,9 @@ extension DatabaseSchemaSchema on Database<DatabaseSchema> {
         this,
         _$CustomerWalletTransactionRow._$table,
       );
+
+  Table<PlatformFeeSettlementRow> get platformFeeSettlements =>
+      $ForGeneratedCode.declareTable(this, _$PlatformFeeSettlementRow._$table);
 
   Table<OrderRow> get orders =>
       $ForGeneratedCode.declareTable(this, _$OrderRow._$table);
@@ -10577,6 +10581,8 @@ final class _$CustomerWalletTransactionRow
     this.type,
     this.reference,
     this.status,
+    this.platformFee,
+    this.gatewayCharges,
     this.createdAt,
   );
 
@@ -10602,6 +10608,12 @@ final class _$CustomerWalletTransactionRow
   final String status;
 
   @override
+  final int platformFee;
+
+  @override
+  final int gatewayCharges;
+
+  @override
   final DateTime createdAt;
 
   static final _$table = $ForGeneratedCode.tableDefinition(
@@ -10614,6 +10626,8 @@ final class _$CustomerWalletTransactionRow
       'type',
       'reference',
       'status',
+      'platform_fee',
+      'gateway_charges',
       'created_at',
     ],
     columnInfo: [
@@ -10667,6 +10681,20 @@ final class _$CustomerWalletTransactionRow
         overrides: [],
       ),
       $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.integer,
+        isNotNull: true,
+        defaultValue: (kind: 'raw', value: 0),
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.integer,
+        isNotNull: true,
+        defaultValue: (kind: 'raw', value: 0),
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
         type: $ForGeneratedCode.dateTime,
         isNotNull: true,
         defaultValue: (kind: 'datetime', value: 'now'),
@@ -10706,6 +10734,8 @@ final class _$CustomerWalletTransactionRow
     final type = row.readString();
     final reference = row.readString();
     final status = row.readString();
+    final platformFee = row.readInt();
+    final gatewayCharges = row.readInt();
     final createdAt = row.readDateTime();
     if (id == null &&
         customerId == null &&
@@ -10714,6 +10744,8 @@ final class _$CustomerWalletTransactionRow
         type == null &&
         reference == null &&
         status == null &&
+        platformFee == null &&
+        gatewayCharges == null &&
         createdAt == null) {
       return null;
     }
@@ -10725,13 +10757,15 @@ final class _$CustomerWalletTransactionRow
       type!,
       reference,
       status!,
+      platformFee!,
+      gatewayCharges!,
       createdAt!,
     );
   }
 
   @override
   String toString() =>
-      'CustomerWalletTransactionRow(id: "$id", customerId: "$customerId", storeId: "$storeId", amount: "$amount", type: "$type", reference: "$reference", status: "$status", createdAt: "$createdAt")';
+      'CustomerWalletTransactionRow(id: "$id", customerId: "$customerId", storeId: "$storeId", amount: "$amount", type: "$type", reference: "$reference", status: "$status", platformFee: "$platformFee", gatewayCharges: "$gatewayCharges", createdAt: "$createdAt")';
 }
 
 /// Extension methods for table defined in [CustomerWalletTransactionRow].
@@ -10749,6 +10783,8 @@ extension TableCustomerWalletTransactionRowExt
     required Expr<String> type,
     Expr<String?>? reference,
     Expr<String>? status,
+    Expr<int>? platformFee,
+    Expr<int>? gatewayCharges,
     Expr<DateTime>? createdAt,
   }) => $ForGeneratedCode.insertInto(
     table: this,
@@ -10760,6 +10796,8 @@ extension TableCustomerWalletTransactionRowExt
       type,
       reference,
       status,
+      platformFee,
+      gatewayCharges,
       createdAt,
     ],
   );
@@ -10776,6 +10814,8 @@ extension TableCustomerWalletTransactionRowExt
     required String type,
     String? reference,
     String? status,
+    int? platformFee,
+    int? gatewayCharges,
     DateTime? createdAt,
   }) => $ForGeneratedCode.insertInto(
     table: this,
@@ -10787,6 +10827,8 @@ extension TableCustomerWalletTransactionRowExt
       type.asExpr,
       reference.asExpr,
       status?.asExpr,
+      platformFee?.asExpr,
+      gatewayCharges?.asExpr,
       createdAt?.asExpr,
     ],
   );
@@ -10817,6 +10859,8 @@ extension TableCustomerWalletTransactionRowExt
     required String Function(T row) type,
     String? Function(T row)? reference,
     String Function(T row)? status,
+    int Function(T row)? platformFee,
+    int Function(T row)? gatewayCharges,
     DateTime Function(T row)? createdAt,
   }) => $ForGeneratedCode.insertValuesMapped(
     table: this,
@@ -10829,6 +10873,8 @@ extension TableCustomerWalletTransactionRowExt
       type,
       reference,
       status,
+      platformFee,
+      gatewayCharges,
       createdAt,
     ],
   );
@@ -10899,6 +10945,8 @@ extension QueryCustomerWalletTransactionRowExt
         Expr<String> type,
         Expr<String?> reference,
         Expr<String> status,
+        Expr<int> platformFee,
+        Expr<int> gatewayCharges,
         Expr<DateTime> createdAt,
       })
       set,
@@ -10917,6 +10965,8 @@ extension QueryCustomerWalletTransactionRowExt
         Expr<String>? type,
         Expr<String?>? reference,
         Expr<String>? status,
+        Expr<int>? platformFee,
+        Expr<int>? gatewayCharges,
         Expr<DateTime>? createdAt,
       }) => $ForGeneratedCode.buildUpdate<CustomerWalletTransactionRow>([
         id,
@@ -10926,6 +10976,8 @@ extension QueryCustomerWalletTransactionRowExt
         type,
         reference,
         status,
+        platformFee,
+        gatewayCharges,
         createdAt,
       ]),
     ),
@@ -10982,6 +11034,8 @@ extension QuerySingleCustomerWalletTransactionRowExt
         Expr<String> type,
         Expr<String?> reference,
         Expr<String> status,
+        Expr<int> platformFee,
+        Expr<int> gatewayCharges,
         Expr<DateTime> createdAt,
       })
       set,
@@ -11000,6 +11054,8 @@ extension QuerySingleCustomerWalletTransactionRowExt
         Expr<String>? type,
         Expr<String?>? reference,
         Expr<String>? status,
+        Expr<int>? platformFee,
+        Expr<int>? gatewayCharges,
         Expr<DateTime>? createdAt,
       }) => $ForGeneratedCode.buildUpdate<CustomerWalletTransactionRow>([
         id,
@@ -11009,6 +11065,8 @@ extension QuerySingleCustomerWalletTransactionRowExt
         type,
         reference,
         status,
+        platformFee,
+        gatewayCharges,
         createdAt,
       ]),
     ),
@@ -11047,8 +11105,14 @@ extension ExpressionCustomerWalletTransactionRowExt
   Expr<String> get status =>
       $ForGeneratedCode.field(this, 6, $ForGeneratedCode.text);
 
+  Expr<int> get platformFee =>
+      $ForGeneratedCode.field(this, 7, $ForGeneratedCode.integer);
+
+  Expr<int> get gatewayCharges =>
+      $ForGeneratedCode.field(this, 8, $ForGeneratedCode.integer);
+
   Expr<DateTime> get createdAt =>
-      $ForGeneratedCode.field(this, 7, $ForGeneratedCode.dateTime);
+      $ForGeneratedCode.field(this, 9, $ForGeneratedCode.dateTime);
 }
 
 extension ExpressionNullableCustomerWalletTransactionRowExt
@@ -11074,8 +11138,14 @@ extension ExpressionNullableCustomerWalletTransactionRowExt
   Expr<String?> get status =>
       $ForGeneratedCode.field(this, 6, $ForGeneratedCode.text);
 
+  Expr<int?> get platformFee =>
+      $ForGeneratedCode.field(this, 7, $ForGeneratedCode.integer);
+
+  Expr<int?> get gatewayCharges =>
+      $ForGeneratedCode.field(this, 8, $ForGeneratedCode.integer);
+
   Expr<DateTime?> get createdAt =>
-      $ForGeneratedCode.field(this, 7, $ForGeneratedCode.dateTime);
+      $ForGeneratedCode.field(this, 9, $ForGeneratedCode.dateTime);
 
   /// Check if the row is not `NULL`.
   ///
@@ -11185,6 +11255,8 @@ extension InsertOnConflictCustomerWalletTransactionRowExt
         Expr<String> type,
         Expr<String?> reference,
         Expr<String> status,
+        Expr<int> platformFee,
+        Expr<int> gatewayCharges,
         Expr<DateTime> createdAt,
       })
       set,
@@ -11203,6 +11275,8 @@ extension InsertOnConflictCustomerWalletTransactionRowExt
         Expr<String>? type,
         Expr<String?>? reference,
         Expr<String>? status,
+        Expr<int>? platformFee,
+        Expr<int>? gatewayCharges,
         Expr<DateTime>? createdAt,
       }) => $ForGeneratedCode.buildUpdate<CustomerWalletTransactionRow>([
         id,
@@ -11212,6 +11286,8 @@ extension InsertOnConflictCustomerWalletTransactionRowExt
         type,
         reference,
         status,
+        platformFee,
+        gatewayCharges,
         createdAt,
       ]),
     ),
@@ -11296,6 +11372,8 @@ extension InsertOnConflictSingleCustomerWalletTransactionRowExt
         Expr<String> type,
         Expr<String?> reference,
         Expr<String> status,
+        Expr<int> platformFee,
+        Expr<int> gatewayCharges,
         Expr<DateTime> createdAt,
       })
       set,
@@ -11314,6 +11392,8 @@ extension InsertOnConflictSingleCustomerWalletTransactionRowExt
         Expr<String>? type,
         Expr<String?>? reference,
         Expr<String>? status,
+        Expr<int>? platformFee,
+        Expr<int>? gatewayCharges,
         Expr<DateTime>? createdAt,
       }) => $ForGeneratedCode.buildUpdate<CustomerWalletTransactionRow>([
         id,
@@ -11323,7 +11403,796 @@ extension InsertOnConflictSingleCustomerWalletTransactionRowExt
         type,
         reference,
         status,
+        platformFee,
+        gatewayCharges,
         createdAt,
+      ]),
+    ),
+  );
+}
+
+final class _$PlatformFeeSettlementRow extends PlatformFeeSettlementRow {
+  _$PlatformFeeSettlementRow._(
+    this.id,
+    this.merchantId,
+    this.amountInPaise,
+    this.ordersCount,
+    this.paymentGateway,
+    this.paymentTransactionId,
+    this.status,
+    this.createdAt,
+    this.settledAt,
+  );
+
+  @override
+  final String id;
+
+  @override
+  final String merchantId;
+
+  @override
+  final int amountInPaise;
+
+  @override
+  final int ordersCount;
+
+  @override
+  final String paymentGateway;
+
+  @override
+  final String? paymentTransactionId;
+
+  @override
+  final String status;
+
+  @override
+  final DateTime createdAt;
+
+  @override
+  final DateTime? settledAt;
+
+  static final _$table = $ForGeneratedCode.tableDefinition(
+    tableName: 'platform_fee_settlements',
+    columns: <String>[
+      'id',
+      'merchant_id',
+      'amount_in_paise',
+      'orders_count',
+      'payment_gateway',
+      'payment_transaction_id',
+      'status',
+      'created_at',
+      'settled_at',
+    ],
+    columnInfo: [
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: true,
+        defaultValue: (kind: 'raw', value: 'gen_random_uuid()'),
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: true,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.integer,
+        isNotNull: true,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.integer,
+        isNotNull: true,
+        defaultValue: (kind: 'raw', value: 0),
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: true,
+        defaultValue: (kind: 'raw', value: 'phonepe'),
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: false,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: true,
+        defaultValue: (kind: 'raw', value: 'pending'),
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.dateTime,
+        isNotNull: true,
+        defaultValue: (kind: 'datetime', value: 'now'),
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.dateTime,
+        isNotNull: false,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+    ],
+    primaryKey: <String>['id'],
+    unique: <List<String>>[],
+    foreignKeys: [
+      $ForGeneratedCode.foreignKeyDefinition(
+        name: 'null',
+        columns: ['merchant_id'],
+        referencedTable: 'merchants',
+        referencedColumns: ['id'],
+        onDelete: .cascade,
+        onUpdate: .noAction,
+      ),
+    ],
+    indexes: [],
+    readRow: _$PlatformFeeSettlementRow._$fromDatabase,
+  );
+
+  static PlatformFeeSettlementRow? _$fromDatabase(RowReader row) {
+    final id = row.readString();
+    final merchantId = row.readString();
+    final amountInPaise = row.readInt();
+    final ordersCount = row.readInt();
+    final paymentGateway = row.readString();
+    final paymentTransactionId = row.readString();
+    final status = row.readString();
+    final createdAt = row.readDateTime();
+    final settledAt = row.readDateTime();
+    if (id == null &&
+        merchantId == null &&
+        amountInPaise == null &&
+        ordersCount == null &&
+        paymentGateway == null &&
+        paymentTransactionId == null &&
+        status == null &&
+        createdAt == null &&
+        settledAt == null) {
+      return null;
+    }
+    return _$PlatformFeeSettlementRow._(
+      id!,
+      merchantId!,
+      amountInPaise!,
+      ordersCount!,
+      paymentGateway!,
+      paymentTransactionId,
+      status!,
+      createdAt!,
+      settledAt,
+    );
+  }
+
+  @override
+  String toString() =>
+      'PlatformFeeSettlementRow(id: "$id", merchantId: "$merchantId", amountInPaise: "$amountInPaise", ordersCount: "$ordersCount", paymentGateway: "$paymentGateway", paymentTransactionId: "$paymentTransactionId", status: "$status", createdAt: "$createdAt", settledAt: "$settledAt")';
+}
+
+/// Extension methods for table defined in [PlatformFeeSettlementRow].
+extension TablePlatformFeeSettlementRowExt on Table<PlatformFeeSettlementRow> {
+  /// Insert row into the `platformFeeSettlements` table.
+  ///
+  /// Returns a [InsertSingle] statement on which `.execute` must be
+  /// called for the row to be inserted.
+  InsertSingle<PlatformFeeSettlementRow> insert({
+    Expr<String>? id,
+    required Expr<String> merchantId,
+    required Expr<int> amountInPaise,
+    Expr<int>? ordersCount,
+    Expr<String>? paymentGateway,
+    Expr<String?>? paymentTransactionId,
+    Expr<String>? status,
+    Expr<DateTime>? createdAt,
+    Expr<DateTime?>? settledAt,
+  }) => $ForGeneratedCode.insertInto(
+    table: this,
+    values: [
+      id,
+      merchantId,
+      amountInPaise,
+      ordersCount,
+      paymentGateway,
+      paymentTransactionId,
+      status,
+      createdAt,
+      settledAt,
+    ],
+  );
+
+  /// Insert row into the `platformFeeSettlements` table.
+  ///
+  /// Returns a [InsertSingle] statement on which `.execute` must be
+  /// called for the row to be inserted.
+  InsertSingle<PlatformFeeSettlementRow> insertValue({
+    String? id,
+    required String merchantId,
+    required int amountInPaise,
+    int? ordersCount,
+    String? paymentGateway,
+    String? paymentTransactionId,
+    String? status,
+    DateTime? createdAt,
+    DateTime? settledAt,
+  }) => $ForGeneratedCode.insertInto(
+    table: this,
+    values: [
+      id?.asExpr,
+      merchantId.asExpr,
+      amountInPaise.asExpr,
+      ordersCount?.asExpr,
+      paymentGateway?.asExpr,
+      paymentTransactionId.asExpr,
+      status?.asExpr,
+      createdAt?.asExpr,
+      settledAt.asExpr,
+    ],
+  );
+
+  /// Bulk insert rows into the `platformFeeSettlements` table.
+  ///
+  /// This method takes an `Iterable<T>` and requires that you provide
+  /// a _mapping function_ from `T` to each column to be inserted.
+  ///
+  /// If a mapping function is omitted, the _default value_ will be
+  /// inserted, or `NULL` if column is nullable and as no default value.
+  /// To explicitely insert `NULL`, use a _mapping function_ that maps
+  /// `T` to `null`.
+  ///
+  /// > [!NOTE]
+  /// > This method aims utilize database specific bulk insertion logic
+  /// > to ensure good performance. Database adapters may pipeline bulk
+  /// > insertions through multiple statements inside a transaction.
+  ///
+  /// Returns a [Insert] statement on which `.execute` must be
+  /// called for the rows to be inserted.
+  Insert<PlatformFeeSettlementRow> insertValuesMapped<T>(
+    Iterable<T> rows, {
+    String Function(T row)? id,
+    required String Function(T row) merchantId,
+    required int Function(T row) amountInPaise,
+    int Function(T row)? ordersCount,
+    String Function(T row)? paymentGateway,
+    String? Function(T row)? paymentTransactionId,
+    String Function(T row)? status,
+    DateTime Function(T row)? createdAt,
+    DateTime? Function(T row)? settledAt,
+  }) => $ForGeneratedCode.insertValuesMapped(
+    table: this,
+    rows: rows,
+    mappings: [
+      id,
+      merchantId,
+      amountInPaise,
+      ordersCount,
+      paymentGateway,
+      paymentTransactionId,
+      status,
+      createdAt,
+      settledAt,
+    ],
+  );
+
+  /// Delete a single row from the `platformFeeSettlements` table, specified by
+  /// _primary key_.
+  ///
+  /// Returns a [DeleteSingle] statement on which `.execute()` must be
+  /// called for the row to be deleted.
+  ///
+  /// To delete multiple rows, using `.where()` to filter which rows
+  /// should be deleted. If you wish to delete all rows, use
+  /// `.where((_) => toExpr(true)).delete()`.
+  DeleteSingle<PlatformFeeSettlementRow> delete(String id) => $ForGeneratedCode
+      .deleteSingle(byKey(id), _$PlatformFeeSettlementRow._$table);
+}
+
+/// Extension methods for building queries against the `platformFeeSettlements` table.
+extension QueryPlatformFeeSettlementRowExt
+    on Query<(Expr<PlatformFeeSettlementRow>,)> {
+  /// Lookup a single row in `platformFeeSettlements` table using the _primary key_.
+  ///
+  /// Returns a [QuerySingle] object, which returns at-most one row,
+  /// when `.fetch()` is called.
+  QuerySingle<(Expr<PlatformFeeSettlementRow>,)> byKey(String id) => where(
+    (platformFeeSettlementRow) => platformFeeSettlementRow.id.equalsValue(id),
+  ).first;
+
+  /// Update all rows in the `platformFeeSettlements` table matching this [Query].
+  ///
+  /// The changes to be applied to each row matching this [Query] are
+  /// defined using the [updateBuilder], which is given an [Expr]
+  /// representation of the row being updated and a `set` function to
+  /// specify which fields should be updated. The result of the `set`
+  /// function should always be returned from the `updateBuilder`.
+  ///
+  /// Returns an [Update] statement on which `.execute()` must be called
+  /// for the rows to be updated.
+  ///
+  /// **Example:** decrementing `1` from the `value` field for each row
+  /// where `value > 0`.
+  /// ```dart
+  /// await db.mytable
+  ///   .where((row) => row.value > toExpr(0))
+  ///   .update((row, set) => set(
+  ///     value: row.value - toExpr(1),
+  ///   ))
+  ///   .execute();
+  /// ```
+  ///
+  /// > [!WARNING]
+  /// > The `updateBuilder` callback does not make the update, it builds
+  /// > the expressions for updating the rows. You should **never** invoke
+  /// > the `set` function more than once, and the result should always
+  /// > be returned immediately.
+  Update<PlatformFeeSettlementRow> update(
+    UpdateSet<PlatformFeeSettlementRow> Function(
+      Expr<PlatformFeeSettlementRow> platformFeeSettlementRow,
+      UpdateSet<PlatformFeeSettlementRow> Function({
+        Expr<String> id,
+        Expr<String> merchantId,
+        Expr<int> amountInPaise,
+        Expr<int> ordersCount,
+        Expr<String> paymentGateway,
+        Expr<String?> paymentTransactionId,
+        Expr<String> status,
+        Expr<DateTime> createdAt,
+        Expr<DateTime?> settledAt,
+      })
+      set,
+    )
+    updateBuilder,
+  ) => $ForGeneratedCode.update<PlatformFeeSettlementRow>(
+    this,
+    _$PlatformFeeSettlementRow._$table,
+    (platformFeeSettlementRow) => updateBuilder(
+      platformFeeSettlementRow,
+      ({
+        Expr<String>? id,
+        Expr<String>? merchantId,
+        Expr<int>? amountInPaise,
+        Expr<int>? ordersCount,
+        Expr<String>? paymentGateway,
+        Expr<String?>? paymentTransactionId,
+        Expr<String>? status,
+        Expr<DateTime>? createdAt,
+        Expr<DateTime?>? settledAt,
+      }) => $ForGeneratedCode.buildUpdate<PlatformFeeSettlementRow>([
+        id,
+        merchantId,
+        amountInPaise,
+        ordersCount,
+        paymentGateway,
+        paymentTransactionId,
+        status,
+        createdAt,
+        settledAt,
+      ]),
+    ),
+  );
+
+  /// Delete all rows in the `platformFeeSettlements` table matching this [Query].
+  ///
+  /// Returns a [Delete] statement on which `.execute()` must be called
+  /// for the rows to be deleted.
+  Delete<PlatformFeeSettlementRow> delete() =>
+      $ForGeneratedCode.delete(this, _$PlatformFeeSettlementRow._$table);
+}
+
+/// Extension methods for building point queries against the `platformFeeSettlements` table.
+extension QuerySinglePlatformFeeSettlementRowExt
+    on QuerySingle<(Expr<PlatformFeeSettlementRow>,)> {
+  /// Update the row (if any) in the `platformFeeSettlements` table matching this
+  /// [QuerySingle].
+  ///
+  /// The changes to be applied to the row matching this [QuerySingle] are
+  /// defined using the [updateBuilder], which is given an [Expr]
+  /// representation of the row being updated and a `set` function to
+  /// specify which fields should be updated. The result of the `set`
+  /// function should always be returned from the `updateBuilder`.
+  ///
+  /// Returns an [UpdateSingle] statement on which `.execute()` must be
+  /// called for the row to be updated. The resulting statement will
+  /// **not** fail, if there are no rows matching this query exists.
+  ///
+  /// **Example:** decrementing `1` from the `value` field the row with
+  /// `id = 1`.
+  /// ```dart
+  /// await db.mytable
+  ///   .byKey(1)
+  ///   .update((row, set) => set(
+  ///     value: row.value - toExpr(1),
+  ///   ))
+  ///   .execute();
+  /// ```
+  ///
+  /// > [!WARNING]
+  /// > The `updateBuilder` callback does not make the update, it builds
+  /// > the expressions for updating the rows. You should **never** invoke
+  /// > the `set` function more than once, and the result should always
+  /// > be returned immediately.
+  UpdateSingle<PlatformFeeSettlementRow> update(
+    UpdateSet<PlatformFeeSettlementRow> Function(
+      Expr<PlatformFeeSettlementRow> platformFeeSettlementRow,
+      UpdateSet<PlatformFeeSettlementRow> Function({
+        Expr<String> id,
+        Expr<String> merchantId,
+        Expr<int> amountInPaise,
+        Expr<int> ordersCount,
+        Expr<String> paymentGateway,
+        Expr<String?> paymentTransactionId,
+        Expr<String> status,
+        Expr<DateTime> createdAt,
+        Expr<DateTime?> settledAt,
+      })
+      set,
+    )
+    updateBuilder,
+  ) => $ForGeneratedCode.updateSingle<PlatformFeeSettlementRow>(
+    this,
+    _$PlatformFeeSettlementRow._$table,
+    (platformFeeSettlementRow) => updateBuilder(
+      platformFeeSettlementRow,
+      ({
+        Expr<String>? id,
+        Expr<String>? merchantId,
+        Expr<int>? amountInPaise,
+        Expr<int>? ordersCount,
+        Expr<String>? paymentGateway,
+        Expr<String?>? paymentTransactionId,
+        Expr<String>? status,
+        Expr<DateTime>? createdAt,
+        Expr<DateTime?>? settledAt,
+      }) => $ForGeneratedCode.buildUpdate<PlatformFeeSettlementRow>([
+        id,
+        merchantId,
+        amountInPaise,
+        ordersCount,
+        paymentGateway,
+        paymentTransactionId,
+        status,
+        createdAt,
+        settledAt,
+      ]),
+    ),
+  );
+
+  /// Delete the row (if any) in the `platformFeeSettlements` table matching this [QuerySingle].
+  ///
+  /// Returns a [DeleteSingle] statement on which `.execute()` must be called
+  /// for the row to be deleted. The resulting statement will **not**
+  /// fail, if there are no rows matching this query exists.
+  DeleteSingle<PlatformFeeSettlementRow> delete() =>
+      $ForGeneratedCode.deleteSingle(this, _$PlatformFeeSettlementRow._$table);
+}
+
+/// Extension methods for expressions on a row in the `platformFeeSettlements` table.
+extension ExpressionPlatformFeeSettlementRowExt
+    on Expr<PlatformFeeSettlementRow> {
+  Expr<String> get id =>
+      $ForGeneratedCode.field(this, 0, $ForGeneratedCode.text);
+
+  Expr<String> get merchantId =>
+      $ForGeneratedCode.field(this, 1, $ForGeneratedCode.text);
+
+  Expr<int> get amountInPaise =>
+      $ForGeneratedCode.field(this, 2, $ForGeneratedCode.integer);
+
+  Expr<int> get ordersCount =>
+      $ForGeneratedCode.field(this, 3, $ForGeneratedCode.integer);
+
+  Expr<String> get paymentGateway =>
+      $ForGeneratedCode.field(this, 4, $ForGeneratedCode.text);
+
+  Expr<String?> get paymentTransactionId =>
+      $ForGeneratedCode.field(this, 5, $ForGeneratedCode.text);
+
+  Expr<String> get status =>
+      $ForGeneratedCode.field(this, 6, $ForGeneratedCode.text);
+
+  Expr<DateTime> get createdAt =>
+      $ForGeneratedCode.field(this, 7, $ForGeneratedCode.dateTime);
+
+  Expr<DateTime?> get settledAt =>
+      $ForGeneratedCode.field(this, 8, $ForGeneratedCode.dateTime);
+}
+
+extension ExpressionNullablePlatformFeeSettlementRowExt
+    on Expr<PlatformFeeSettlementRow?> {
+  Expr<String?> get id =>
+      $ForGeneratedCode.field(this, 0, $ForGeneratedCode.text);
+
+  Expr<String?> get merchantId =>
+      $ForGeneratedCode.field(this, 1, $ForGeneratedCode.text);
+
+  Expr<int?> get amountInPaise =>
+      $ForGeneratedCode.field(this, 2, $ForGeneratedCode.integer);
+
+  Expr<int?> get ordersCount =>
+      $ForGeneratedCode.field(this, 3, $ForGeneratedCode.integer);
+
+  Expr<String?> get paymentGateway =>
+      $ForGeneratedCode.field(this, 4, $ForGeneratedCode.text);
+
+  Expr<String?> get paymentTransactionId =>
+      $ForGeneratedCode.field(this, 5, $ForGeneratedCode.text);
+
+  Expr<String?> get status =>
+      $ForGeneratedCode.field(this, 6, $ForGeneratedCode.text);
+
+  Expr<DateTime?> get createdAt =>
+      $ForGeneratedCode.field(this, 7, $ForGeneratedCode.dateTime);
+
+  Expr<DateTime?> get settledAt =>
+      $ForGeneratedCode.field(this, 8, $ForGeneratedCode.dateTime);
+
+  /// Check if the row is not `NULL`.
+  ///
+  /// This will check if _primary key_ fields in this row are `NULL`.
+  ///
+  /// If this is a reference lookup by subquery it might be more efficient
+  /// to check if the referencing field is `NULL`.
+  Expr<bool> isNotNull() => id.isNotNull();
+
+  /// Check if the row is `NULL`.
+  ///
+  /// This will check if _primary key_ fields in this row are `NULL`.
+  ///
+  /// If this is a reference lookup by subquery it might be more efficient
+  /// to check if the referencing field is `NULL`.
+  Expr<bool> isNull() => isNotNull().not();
+}
+
+/// `Table<PlatformFeeSettlementRow>` conflict targets for use with `.onConflict`.
+enum PlatformFeeSettlementRowConflict {
+  /// Conflict with an existing row that has a matching primary key.
+  ///
+  /// Thus, the other row has matching values for:
+  /// `id`.
+  primaryKey(['id']);
+
+  const PlatformFeeSettlementRowConflict(this._fields);
+
+  final List<String> _fields;
+}
+
+extension InsertPlatformFeeSettlementRowExt
+    on Insert<PlatformFeeSettlementRow> {
+  /// Build an `INSERT` statement with an `ON CONFLICT` clause.
+  ///
+  /// The [target] argument specifies the _conflict target_ to be
+  /// handled. The _conflict target_ is always a `UNIQUE` constraint or
+  /// `PRIMARY KEY` constraint.
+  ///
+  /// If a row to be inserted violates the _conflict target_ constraint,
+  /// then the conflict action is triggered:
+  /// * `.doNothing()` to skip insertion of the new row, and,
+  /// * `.update((platformFeeSettlementRow, excluded, set) => set(...))` to
+  ///   update the conflicting row.
+  ///
+  /// If a row to be inserted violates a constraint other than the one
+  /// specified in _conflict target_ then the entire `INSERT` statement
+  /// will fail.
+  ///
+  /// This is equivalent to `INSERT ... ON CONFLICT (...)` in SQL.
+  InsertOnConflict<PlatformFeeSettlementRow> onConflict(
+    PlatformFeeSettlementRowConflict target,
+  ) => $ForGeneratedCode.insertOnConflict(this, target._fields);
+}
+
+extension InsertOnConflictPlatformFeeSettlementRowExt
+    on InsertOnConflict<PlatformFeeSettlementRow> {
+  /// Build an `INSERT` statement an [upsert-clause][1].
+  ///
+  /// When a row to be inserted violates the `UNIQUE` or `PRIMARY KEY`
+  /// constraint previously specified as _conflict target_, the existing
+  /// row is updated using the expressions defined with the
+  /// [updateBuilder]. The [updateBuilder] is given 3 parameters:
+  ///   * `platformFeeSettlementRow` an [Expr] representing the existing row in
+  ///     the database,
+  ///   * `excluded` an [Expr] representing the row to be inserted in the
+  ///     database, and,
+  ///   * `set` a function to specify which fields should be updated and
+  ///     build the [UpdateSet].
+  ///
+  /// The result of the `set` function should always be immediately
+  /// returned from the [updateBuilder].
+  ///
+  /// **Example:** Insert a counter with `count = 2` or increment the
+  /// existing row, if a `PRIMARY KEY` conflict occurs.
+  /// ```dart
+  /// await db.counters.insertValue(
+  ///     name: 'my-counter', // primary key
+  ///     count: 2,
+  ///   )
+  ///   .onConflict(.primaryKey)
+  ///   .update((counter, excluded, set) => set(
+  ///     count: counter.count + excluded.count,
+  ///   ))
+  ///   .execute();
+  /// ```
+  ///
+  /// This is equivalent to
+  /// `INSERT ... ON CONFLICT (...) UPDATE SET ...` in SQL.
+  ///
+  /// > [!WARNING]
+  /// > The `updateBuilder` callback does not make the update, it builds
+  /// > the expressions for updating the rows. You should **never** invoke
+  /// > the `set` function more than once, and the result should always
+  /// > be returned immediately.
+  ///
+  /// [1]: https://www.sqlite.org/lang_upsert.html
+  Upsert<PlatformFeeSettlementRow> update(
+    UpdateSet<PlatformFeeSettlementRow> Function(
+      Expr<PlatformFeeSettlementRow> platformFeeSettlementRow,
+      Expr<PlatformFeeSettlementRow> excluded,
+      UpdateSet<PlatformFeeSettlementRow> Function({
+        Expr<String> id,
+        Expr<String> merchantId,
+        Expr<int> amountInPaise,
+        Expr<int> ordersCount,
+        Expr<String> paymentGateway,
+        Expr<String?> paymentTransactionId,
+        Expr<String> status,
+        Expr<DateTime> createdAt,
+        Expr<DateTime?> settledAt,
+      })
+      set,
+    )
+    updateBuilder,
+  ) => $ForGeneratedCode.updateOnConflict<PlatformFeeSettlementRow>(
+    this,
+    (platformFeeSettlementRow, excluded) => updateBuilder(
+      platformFeeSettlementRow,
+      excluded,
+      ({
+        Expr<String>? id,
+        Expr<String>? merchantId,
+        Expr<int>? amountInPaise,
+        Expr<int>? ordersCount,
+        Expr<String>? paymentGateway,
+        Expr<String?>? paymentTransactionId,
+        Expr<String>? status,
+        Expr<DateTime>? createdAt,
+        Expr<DateTime?>? settledAt,
+      }) => $ForGeneratedCode.buildUpdate<PlatformFeeSettlementRow>([
+        id,
+        merchantId,
+        amountInPaise,
+        ordersCount,
+        paymentGateway,
+        paymentTransactionId,
+        status,
+        createdAt,
+        settledAt,
+      ]),
+    ),
+  );
+}
+
+extension InsertSinglePlatformFeeSettlementRowExt
+    on InsertSingle<PlatformFeeSettlementRow> {
+  /// Build an `INSERT` statement with an `ON CONFLICT` clause.
+  ///
+  /// The [target] argument specifies the _conflict target_ to be
+  /// handled. The _conflict target_ is always a `UNIQUE` constraint or
+  /// `PRIMARY KEY` constraint.
+  ///
+  /// If a row to be inserted violates the _conflict target_ constraint,
+  /// then the conflict action is triggered:
+  /// * `.doNothing()` to skip insertion of the new row, and,
+  /// * `.update((platformFeeSettlementRow, excluded, set) => set(...))` to
+  ///   update the conflicting row.
+  ///
+  /// If a row to be inserted violates a constraint other than the one
+  /// specified in _conflict target_ then the entire `INSERT` statement
+  /// will fail.
+  ///
+  /// This is equivalent to `INSERT ... ON CONFLICT (...)` in SQL.
+  InsertOnConflictSingle<PlatformFeeSettlementRow> onConflict(
+    PlatformFeeSettlementRowConflict target,
+  ) => $ForGeneratedCode.insertOnConflictSingle(this, target._fields);
+}
+
+extension InsertOnConflictSinglePlatformFeeSettlementRowExt
+    on InsertOnConflictSingle<PlatformFeeSettlementRow> {
+  /// Build an `INSERT` statement an [upsert-clause][1].
+  ///
+  /// When a row to be inserted violates the `UNIQUE` or `PRIMARY KEY`
+  /// constraint previously specified as _conflict target_, the existing
+  /// row is updated using the expressions defined with the
+  /// [updateBuilder]. The [updateBuilder] is given 3 parameters:
+  ///   * `platformFeeSettlementRow` an [Expr] representing the existing row in
+  ///     the database,
+  ///   * `excluded` an [Expr] representing the row to be inserted in the
+  ///     database, and,
+  ///   * `set` a function to specify which fields should be updated and
+  ///     build the [UpdateSet].
+  ///
+  /// The result of the `set` function should always be immediately
+  /// returned from the [updateBuilder].
+  ///
+  /// **Example:** Insert a counter with `count = 2` or increment the
+  /// existing row, if a `PRIMARY KEY` conflict occurs.
+  /// ```dart
+  /// await db.counters.insertValue(
+  ///     name: 'my-counter', // primary key
+  ///     count: 2,
+  ///   )
+  ///   .onConflict(.primaryKey)
+  ///   .update((counter, excluded, set) => set(
+  ///     count: counter.count + excluded.count,
+  ///   ))
+  ///   .execute();
+  /// ```
+  ///
+  /// This is equivalent to
+  /// `INSERT ... ON CONFLICT (...) UPDATE SET ...` in SQL.
+  ///
+  /// > [!WARNING]
+  /// > The `updateBuilder` callback does not make the update, it builds
+  /// > the expressions for updating the rows. You should **never** invoke
+  /// > the `set` function more than once, and the result should always
+  /// > be returned immediately.
+  ///
+  /// [1]: https://www.sqlite.org/lang_upsert.html
+  UpsertSingle<PlatformFeeSettlementRow> update(
+    UpdateSet<PlatformFeeSettlementRow> Function(
+      Expr<PlatformFeeSettlementRow> platformFeeSettlementRow,
+      Expr<PlatformFeeSettlementRow> excluded,
+      UpdateSet<PlatformFeeSettlementRow> Function({
+        Expr<String> id,
+        Expr<String> merchantId,
+        Expr<int> amountInPaise,
+        Expr<int> ordersCount,
+        Expr<String> paymentGateway,
+        Expr<String?> paymentTransactionId,
+        Expr<String> status,
+        Expr<DateTime> createdAt,
+        Expr<DateTime?> settledAt,
+      })
+      set,
+    )
+    updateBuilder,
+  ) => $ForGeneratedCode.updateOnConflictSingle<PlatformFeeSettlementRow>(
+    this,
+    (platformFeeSettlementRow, excluded) => updateBuilder(
+      platformFeeSettlementRow,
+      excluded,
+      ({
+        Expr<String>? id,
+        Expr<String>? merchantId,
+        Expr<int>? amountInPaise,
+        Expr<int>? ordersCount,
+        Expr<String>? paymentGateway,
+        Expr<String?>? paymentTransactionId,
+        Expr<String>? status,
+        Expr<DateTime>? createdAt,
+        Expr<DateTime?>? settledAt,
+      }) => $ForGeneratedCode.buildUpdate<PlatformFeeSettlementRow>([
+        id,
+        merchantId,
+        amountInPaise,
+        ordersCount,
+        paymentGateway,
+        paymentTransactionId,
+        status,
+        createdAt,
+        settledAt,
       ]),
     ),
   );
@@ -11350,7 +12219,10 @@ final class _$OrderRow extends OrderRow {
     this.discountTotal,
     this.walletDeduction,
     this.platformFee,
+    this.gatewayCharges,
     this.customerId,
+    this.platformFeeSettled,
+    this.platformFeeSettlementId,
   );
 
   @override
@@ -11411,7 +12283,16 @@ final class _$OrderRow extends OrderRow {
   final int platformFee;
 
   @override
+  final int gatewayCharges;
+
+  @override
   final String? customerId;
+
+  @override
+  final bool platformFeeSettled;
+
+  @override
+  final String? platformFeeSettlementId;
 
   static final _$table = $ForGeneratedCode.tableDefinition(
     tableName: 'orders',
@@ -11435,7 +12316,10 @@ final class _$OrderRow extends OrderRow {
       'discount_total',
       'wallet_deduction',
       'platform_fee',
+      'gateway_charges',
       'customer_id',
+      'platform_fee_settled',
+      'platform_fee_settlement_id',
     ],
     columnInfo: [
       $ForGeneratedCode.columnDefinition(
@@ -11572,6 +12456,27 @@ final class _$OrderRow extends OrderRow {
         overrides: [],
       ),
       $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.integer,
+        isNotNull: true,
+        defaultValue: (kind: 'raw', value: 0),
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.text,
+        isNotNull: false,
+        defaultValue: null,
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
+        type: $ForGeneratedCode.boolean,
+        isNotNull: true,
+        defaultValue: (kind: 'raw', value: false),
+        autoIncrement: false,
+        overrides: [],
+      ),
+      $ForGeneratedCode.columnDefinition(
         type: $ForGeneratedCode.text,
         isNotNull: false,
         defaultValue: null,
@@ -11616,6 +12521,14 @@ final class _$OrderRow extends OrderRow {
         onDelete: .setNull,
         onUpdate: .noAction,
       ),
+      $ForGeneratedCode.foreignKeyDefinition(
+        name: 'null',
+        columns: ['platform_fee_settlement_id'],
+        referencedTable: 'platform_fee_settlements',
+        referencedColumns: ['id'],
+        onDelete: .setNull,
+        onUpdate: .noAction,
+      ),
     ],
     indexes: [],
     readRow: _$OrderRow._$fromDatabase,
@@ -11641,7 +12554,10 @@ final class _$OrderRow extends OrderRow {
     final discountTotal = row.readInt();
     final walletDeduction = row.readInt();
     final platformFee = row.readInt();
+    final gatewayCharges = row.readInt();
     final customerId = row.readString();
+    final platformFeeSettled = row.readBool();
+    final platformFeeSettlementId = row.readString();
     if (id == null &&
         merchantId == null &&
         storeId == null &&
@@ -11661,7 +12577,10 @@ final class _$OrderRow extends OrderRow {
         discountTotal == null &&
         walletDeduction == null &&
         platformFee == null &&
-        customerId == null) {
+        gatewayCharges == null &&
+        customerId == null &&
+        platformFeeSettled == null &&
+        platformFeeSettlementId == null) {
       return null;
     }
     return _$OrderRow._(
@@ -11684,13 +12603,16 @@ final class _$OrderRow extends OrderRow {
       discountTotal!,
       walletDeduction!,
       platformFee!,
+      gatewayCharges!,
       customerId,
+      platformFeeSettled!,
+      platformFeeSettlementId,
     );
   }
 
   @override
   String toString() =>
-      'OrderRow(id: "$id", merchantId: "$merchantId", storeId: "$storeId", orderReference: "$orderReference", billNo: "$billNo", source: "$source", type: "$type", status: "$status", paymentStatus: "$paymentStatus", paymentMethod: "$paymentMethod", subtotal: "$subtotal", taxTotal: "$taxTotal", grandTotal: "$grandTotal", terminalCode: "$terminalCode", createdAt: "$createdAt", updatedAt: "$updatedAt", discountTotal: "$discountTotal", walletDeduction: "$walletDeduction", platformFee: "$platformFee", customerId: "$customerId")';
+      'OrderRow(id: "$id", merchantId: "$merchantId", storeId: "$storeId", orderReference: "$orderReference", billNo: "$billNo", source: "$source", type: "$type", status: "$status", paymentStatus: "$paymentStatus", paymentMethod: "$paymentMethod", subtotal: "$subtotal", taxTotal: "$taxTotal", grandTotal: "$grandTotal", terminalCode: "$terminalCode", createdAt: "$createdAt", updatedAt: "$updatedAt", discountTotal: "$discountTotal", walletDeduction: "$walletDeduction", platformFee: "$platformFee", gatewayCharges: "$gatewayCharges", customerId: "$customerId", platformFeeSettled: "$platformFeeSettled", platformFeeSettlementId: "$platformFeeSettlementId")';
 }
 
 /// Extension methods for table defined in [OrderRow].
@@ -11719,7 +12641,10 @@ extension TableOrderRowExt on Table<OrderRow> {
     Expr<int>? discountTotal,
     Expr<int>? walletDeduction,
     Expr<int>? platformFee,
+    Expr<int>? gatewayCharges,
     Expr<String?>? customerId,
+    Expr<bool>? platformFeeSettled,
+    Expr<String?>? platformFeeSettlementId,
   }) => $ForGeneratedCode.insertInto(
     table: this,
     values: [
@@ -11742,7 +12667,10 @@ extension TableOrderRowExt on Table<OrderRow> {
       discountTotal,
       walletDeduction,
       platformFee,
+      gatewayCharges,
       customerId,
+      platformFeeSettled,
+      platformFeeSettlementId,
     ],
   );
 
@@ -11770,7 +12698,10 @@ extension TableOrderRowExt on Table<OrderRow> {
     int? discountTotal,
     int? walletDeduction,
     int? platformFee,
+    int? gatewayCharges,
     String? customerId,
+    bool? platformFeeSettled,
+    String? platformFeeSettlementId,
   }) => $ForGeneratedCode.insertInto(
     table: this,
     values: [
@@ -11793,7 +12724,10 @@ extension TableOrderRowExt on Table<OrderRow> {
       discountTotal?.asExpr,
       walletDeduction?.asExpr,
       platformFee?.asExpr,
+      gatewayCharges?.asExpr,
       customerId.asExpr,
+      platformFeeSettled?.asExpr,
+      platformFeeSettlementId.asExpr,
     ],
   );
 
@@ -11835,7 +12769,10 @@ extension TableOrderRowExt on Table<OrderRow> {
     int Function(T row)? discountTotal,
     int Function(T row)? walletDeduction,
     int Function(T row)? platformFee,
+    int Function(T row)? gatewayCharges,
     String? Function(T row)? customerId,
+    bool Function(T row)? platformFeeSettled,
+    String? Function(T row)? platformFeeSettlementId,
   }) => $ForGeneratedCode.insertValuesMapped(
     table: this,
     rows: rows,
@@ -11859,7 +12796,10 @@ extension TableOrderRowExt on Table<OrderRow> {
       discountTotal,
       walletDeduction,
       platformFee,
+      gatewayCharges,
       customerId,
+      platformFeeSettled,
+      platformFeeSettlementId,
     ],
   );
 
@@ -11935,7 +12875,10 @@ extension QueryOrderRowExt on Query<(Expr<OrderRow>,)> {
         Expr<int> discountTotal,
         Expr<int> walletDeduction,
         Expr<int> platformFee,
+        Expr<int> gatewayCharges,
         Expr<String?> customerId,
+        Expr<bool> platformFeeSettled,
+        Expr<String?> platformFeeSettlementId,
       })
       set,
     )
@@ -11965,7 +12908,10 @@ extension QueryOrderRowExt on Query<(Expr<OrderRow>,)> {
         Expr<int>? discountTotal,
         Expr<int>? walletDeduction,
         Expr<int>? platformFee,
+        Expr<int>? gatewayCharges,
         Expr<String?>? customerId,
+        Expr<bool>? platformFeeSettled,
+        Expr<String?>? platformFeeSettlementId,
       }) => $ForGeneratedCode.buildUpdate<OrderRow>([
         id,
         merchantId,
@@ -11986,7 +12932,10 @@ extension QueryOrderRowExt on Query<(Expr<OrderRow>,)> {
         discountTotal,
         walletDeduction,
         platformFee,
+        gatewayCharges,
         customerId,
+        platformFeeSettled,
+        platformFeeSettlementId,
       ]),
     ),
   );
@@ -12066,7 +13015,10 @@ extension QuerySingleOrderRowExt on QuerySingle<(Expr<OrderRow>,)> {
         Expr<int> discountTotal,
         Expr<int> walletDeduction,
         Expr<int> platformFee,
+        Expr<int> gatewayCharges,
         Expr<String?> customerId,
+        Expr<bool> platformFeeSettled,
+        Expr<String?> platformFeeSettlementId,
       })
       set,
     )
@@ -12096,7 +13048,10 @@ extension QuerySingleOrderRowExt on QuerySingle<(Expr<OrderRow>,)> {
         Expr<int>? discountTotal,
         Expr<int>? walletDeduction,
         Expr<int>? platformFee,
+        Expr<int>? gatewayCharges,
         Expr<String?>? customerId,
+        Expr<bool>? platformFeeSettled,
+        Expr<String?>? platformFeeSettlementId,
       }) => $ForGeneratedCode.buildUpdate<OrderRow>([
         id,
         merchantId,
@@ -12117,7 +13072,10 @@ extension QuerySingleOrderRowExt on QuerySingle<(Expr<OrderRow>,)> {
         discountTotal,
         walletDeduction,
         platformFee,
+        gatewayCharges,
         customerId,
+        platformFeeSettled,
+        platformFeeSettlementId,
       ]),
     ),
   );
@@ -12190,8 +13148,17 @@ extension ExpressionOrderRowExt on Expr<OrderRow> {
   Expr<int> get platformFee =>
       $ForGeneratedCode.field(this, 18, $ForGeneratedCode.integer);
 
+  Expr<int> get gatewayCharges =>
+      $ForGeneratedCode.field(this, 19, $ForGeneratedCode.integer);
+
   Expr<String?> get customerId =>
-      $ForGeneratedCode.field(this, 19, $ForGeneratedCode.text);
+      $ForGeneratedCode.field(this, 20, $ForGeneratedCode.text);
+
+  Expr<bool> get platformFeeSettled =>
+      $ForGeneratedCode.field(this, 21, $ForGeneratedCode.boolean);
+
+  Expr<String?> get platformFeeSettlementId =>
+      $ForGeneratedCode.field(this, 22, $ForGeneratedCode.text);
 }
 
 extension ExpressionNullableOrderRowExt on Expr<OrderRow?> {
@@ -12252,8 +13219,17 @@ extension ExpressionNullableOrderRowExt on Expr<OrderRow?> {
   Expr<int?> get platformFee =>
       $ForGeneratedCode.field(this, 18, $ForGeneratedCode.integer);
 
+  Expr<int?> get gatewayCharges =>
+      $ForGeneratedCode.field(this, 19, $ForGeneratedCode.integer);
+
   Expr<String?> get customerId =>
-      $ForGeneratedCode.field(this, 19, $ForGeneratedCode.text);
+      $ForGeneratedCode.field(this, 20, $ForGeneratedCode.text);
+
+  Expr<bool?> get platformFeeSettled =>
+      $ForGeneratedCode.field(this, 21, $ForGeneratedCode.boolean);
+
+  Expr<String?> get platformFeeSettlementId =>
+      $ForGeneratedCode.field(this, 22, $ForGeneratedCode.text);
 
   /// Check if the row is not `NULL`.
   ///
@@ -12380,7 +13356,10 @@ extension InsertOnConflictOrderRowExt on InsertOnConflict<OrderRow> {
         Expr<int> discountTotal,
         Expr<int> walletDeduction,
         Expr<int> platformFee,
+        Expr<int> gatewayCharges,
         Expr<String?> customerId,
+        Expr<bool> platformFeeSettled,
+        Expr<String?> platformFeeSettlementId,
       })
       set,
     )
@@ -12410,7 +13389,10 @@ extension InsertOnConflictOrderRowExt on InsertOnConflict<OrderRow> {
         Expr<int>? discountTotal,
         Expr<int>? walletDeduction,
         Expr<int>? platformFee,
+        Expr<int>? gatewayCharges,
         Expr<String?>? customerId,
+        Expr<bool>? platformFeeSettled,
+        Expr<String?>? platformFeeSettlementId,
       }) => $ForGeneratedCode.buildUpdate<OrderRow>([
         id,
         merchantId,
@@ -12431,7 +13413,10 @@ extension InsertOnConflictOrderRowExt on InsertOnConflict<OrderRow> {
         discountTotal,
         walletDeduction,
         platformFee,
+        gatewayCharges,
         customerId,
+        platformFeeSettled,
+        platformFeeSettlementId,
       ]),
     ),
   );
@@ -12525,7 +13510,10 @@ extension InsertOnConflictSingleOrderRowExt
         Expr<int> discountTotal,
         Expr<int> walletDeduction,
         Expr<int> platformFee,
+        Expr<int> gatewayCharges,
         Expr<String?> customerId,
+        Expr<bool> platformFeeSettled,
+        Expr<String?> platformFeeSettlementId,
       })
       set,
     )
@@ -12555,7 +13543,10 @@ extension InsertOnConflictSingleOrderRowExt
         Expr<int>? discountTotal,
         Expr<int>? walletDeduction,
         Expr<int>? platformFee,
+        Expr<int>? gatewayCharges,
         Expr<String?>? customerId,
+        Expr<bool>? platformFeeSettled,
+        Expr<String?>? platformFeeSettlementId,
       }) => $ForGeneratedCode.buildUpdate<OrderRow>([
         id,
         merchantId,
@@ -12576,7 +13567,10 @@ extension InsertOnConflictSingleOrderRowExt
         discountTotal,
         walletDeduction,
         platformFee,
+        gatewayCharges,
         customerId,
+        platformFeeSettled,
+        platformFeeSettlementId,
       ]),
     ),
   );
@@ -20439,256 +21433,6 @@ extension QueryCategorySalesTopProductsNamed<A, B>
 }
 
 /// Extension methods for building queries projected to a named record.
-extension QueryCashCollectedFreeTotalGrossSubtotalNetRevenueTotalDiscountTotalOrdersUpiCollectedWalletCollectedNamed<
-  A,
-  B,
-  C,
-  D,
-  E,
-  F,
-  G,
-  H
->
-    on
-        Query<
-          ({
-            Expr<A> cashCollected,
-            Expr<B> freeTotal,
-            Expr<C> grossSubtotal,
-            Expr<D> netRevenue,
-            Expr<E> totalDiscount,
-            Expr<F> totalOrders,
-            Expr<G> upiCollected,
-            Expr<H> walletCollected,
-          })
-        > {
-  Query<
-    (Expr<A>, Expr<B>, Expr<C>, Expr<D>, Expr<E>, Expr<F>, Expr<G>, Expr<H>)
-  >
-  get _asPositionalQuery => $ForGeneratedCode.renamedRecord(
-    this,
-    (e) => (
-      e.cashCollected,
-      e.freeTotal,
-      e.grossSubtotal,
-      e.netRevenue,
-      e.totalDiscount,
-      e.totalOrders,
-      e.upiCollected,
-      e.walletCollected,
-    ),
-  );
-
-  static Query<
-    ({
-      Expr<A> cashCollected,
-      Expr<B> freeTotal,
-      Expr<C> grossSubtotal,
-      Expr<D> netRevenue,
-      Expr<E> totalDiscount,
-      Expr<F> totalOrders,
-      Expr<G> upiCollected,
-      Expr<H> walletCollected,
-    })
-  >
-  _fromPositionalQuery<A, B, C, D, E, F, G, H>(
-    Query<
-      (Expr<A>, Expr<B>, Expr<C>, Expr<D>, Expr<E>, Expr<F>, Expr<G>, Expr<H>)
-    >
-    query,
-  ) => $ForGeneratedCode.renamedRecord(
-    query,
-    (e) => (
-      cashCollected: e.$1,
-      freeTotal: e.$2,
-      grossSubtotal: e.$3,
-      netRevenue: e.$4,
-      totalDiscount: e.$5,
-      totalOrders: e.$6,
-      upiCollected: e.$7,
-      walletCollected: e.$8,
-    ),
-  );
-
-  static T Function(
-    Expr<A> a,
-    Expr<B> b,
-    Expr<C> c,
-    Expr<D> d,
-    Expr<E> e,
-    Expr<F> f,
-    Expr<G> g,
-    Expr<H> h,
-  )
-  _wrapBuilder<T, A, B, C, D, E, F, G, H>(
-    T Function(
-      ({
-        Expr<A> cashCollected,
-        Expr<B> freeTotal,
-        Expr<C> grossSubtotal,
-        Expr<D> netRevenue,
-        Expr<E> totalDiscount,
-        Expr<F> totalOrders,
-        Expr<G> upiCollected,
-        Expr<H> walletCollected,
-      })
-      e,
-    )
-    builder,
-  ) =>
-      (a, b, c, d, e, f, g, h) => builder((
-        cashCollected: a,
-        freeTotal: b,
-        grossSubtotal: c,
-        netRevenue: d,
-        totalDiscount: e,
-        totalOrders: f,
-        upiCollected: g,
-        walletCollected: h,
-      ));
-
-  /// Query the database for rows in this [Query] as a [Stream].
-  Stream<
-    ({
-      A cashCollected,
-      B freeTotal,
-      C grossSubtotal,
-      D netRevenue,
-      E totalDiscount,
-      F totalOrders,
-      G upiCollected,
-      H walletCollected,
-    })
-  >
-  stream() async* {
-    yield* _asPositionalQuery.stream().map(
-      (e) => (
-        cashCollected: e.$1,
-        freeTotal: e.$2,
-        grossSubtotal: e.$3,
-        netRevenue: e.$4,
-        totalDiscount: e.$5,
-        totalOrders: e.$6,
-        upiCollected: e.$7,
-        walletCollected: e.$8,
-      ),
-    );
-  }
-
-  /// Query the database for rows in this [Query] as a [List].
-  Future<
-    List<
-      ({
-        A cashCollected,
-        B freeTotal,
-        C grossSubtotal,
-        D netRevenue,
-        E totalDiscount,
-        F totalOrders,
-        G upiCollected,
-        H walletCollected,
-      })
-    >
-  >
-  fetch() async => await stream().toList();
-
-  /// Offset [Query] using `OFFSET` clause.
-  ///
-  /// The resulting [Query] will skip the first [offset] rows.
-  Query<
-    ({
-      Expr<A> cashCollected,
-      Expr<B> freeTotal,
-      Expr<C> grossSubtotal,
-      Expr<D> netRevenue,
-      Expr<E> totalDiscount,
-      Expr<F> totalOrders,
-      Expr<G> upiCollected,
-      Expr<H> walletCollected,
-    })
-  >
-  offset(int offset) => _fromPositionalQuery(_asPositionalQuery.offset(offset));
-
-  /// Limit [Query] using `LIMIT` clause.
-  ///
-  /// The resulting [Query] will only return the first [limit] rows.
-  Query<
-    ({
-      Expr<A> cashCollected,
-      Expr<B> freeTotal,
-      Expr<C> grossSubtotal,
-      Expr<D> netRevenue,
-      Expr<E> totalDiscount,
-      Expr<F> totalOrders,
-      Expr<G> upiCollected,
-      Expr<H> walletCollected,
-    })
-  >
-  limit(int limit) => _fromPositionalQuery(_asPositionalQuery.limit(limit));
-
-  /// Create a projection of this [Query] using `SELECT` clause.
-  ///
-  /// The [projectionBuilder] **must** return a [Record] where all the
-  /// values are [Expr] objects. If something else is returned you will
-  /// get a [Query] object which doesn't have any methods!
-  ///
-  /// All methods and properties on [Query<T>] are extension methods and
-  /// they are only defined for records `T` where all the values are
-  /// [Expr] objects.
-  Query<T> select<T extends Record>(
-    T Function(
-      ({
-        Expr<A> cashCollected,
-        Expr<B> freeTotal,
-        Expr<C> grossSubtotal,
-        Expr<D> netRevenue,
-        Expr<E> totalDiscount,
-        Expr<F> totalOrders,
-        Expr<G> upiCollected,
-        Expr<H> walletCollected,
-      })
-      expr,
-    )
-    projectionBuilder,
-  ) => _asPositionalQuery.select(_wrapBuilder(projectionBuilder));
-
-  /// Filter [Query] using `WHERE` clause.
-  ///
-  /// Returns a [Query] retaining rows from this [Query] where the expression
-  /// returned by [conditionBuilder] evaluates to `true`.
-  Query<
-    ({
-      Expr<A> cashCollected,
-      Expr<B> freeTotal,
-      Expr<C> grossSubtotal,
-      Expr<D> netRevenue,
-      Expr<E> totalDiscount,
-      Expr<F> totalOrders,
-      Expr<G> upiCollected,
-      Expr<H> walletCollected,
-    })
-  >
-  where(
-    Expr<bool?> Function(
-      ({
-        Expr<A> cashCollected,
-        Expr<B> freeTotal,
-        Expr<C> grossSubtotal,
-        Expr<D> netRevenue,
-        Expr<E> totalDiscount,
-        Expr<F> totalOrders,
-        Expr<G> upiCollected,
-        Expr<H> walletCollected,
-      })
-      expr,
-    )
-    conditionBuilder,
-  ) => _fromPositionalQuery(
-    _asPositionalQuery.where(_wrapBuilder(conditionBuilder)),
-  );
-}
-
-/// Extension methods for building queries projected to a named record.
 extension QueryCashCollectedFreeTotalTotalCollectedUpiCollectedNamed<A, B, C, D>
     on
         Query<
@@ -21443,77 +22187,113 @@ extension QueryBalanceTransactionsNamed<A, B>
 }
 
 /// Extension methods for building queries projected to a named record.
-extension QueryActualWalletDeductionPaiseRemainingPayablePaiseTotalAmountPaiseNamed<
+extension QueryActualWalletDeductionPaiseGatewayChargesPaiseMerchantSharePaisePlatformSharePaiseRemainingPayablePaiseTotalAmountPaiseNamed<
   A,
   B,
-  C
+  C,
+  D,
+  E,
+  F
 >
     on
         Query<
           ({
             Expr<A> actualWalletDeductionPaise,
-            Expr<B> remainingPayablePaise,
-            Expr<C> totalAmountPaise,
+            Expr<B> gatewayChargesPaise,
+            Expr<C> merchantSharePaise,
+            Expr<D> platformSharePaise,
+            Expr<E> remainingPayablePaise,
+            Expr<F> totalAmountPaise,
           })
         > {
-  Query<(Expr<A>, Expr<B>, Expr<C>)> get _asPositionalQuery =>
-      $ForGeneratedCode.renamedRecord(
-        this,
-        (e) => (
-          e.actualWalletDeductionPaise,
-          e.remainingPayablePaise,
-          e.totalAmountPaise,
-        ),
-      );
+  Query<(Expr<A>, Expr<B>, Expr<C>, Expr<D>, Expr<E>, Expr<F>)>
+  get _asPositionalQuery => $ForGeneratedCode.renamedRecord(
+    this,
+    (e) => (
+      e.actualWalletDeductionPaise,
+      e.gatewayChargesPaise,
+      e.merchantSharePaise,
+      e.platformSharePaise,
+      e.remainingPayablePaise,
+      e.totalAmountPaise,
+    ),
+  );
 
   static Query<
     ({
       Expr<A> actualWalletDeductionPaise,
-      Expr<B> remainingPayablePaise,
-      Expr<C> totalAmountPaise,
+      Expr<B> gatewayChargesPaise,
+      Expr<C> merchantSharePaise,
+      Expr<D> platformSharePaise,
+      Expr<E> remainingPayablePaise,
+      Expr<F> totalAmountPaise,
     })
   >
-  _fromPositionalQuery<A, B, C>(Query<(Expr<A>, Expr<B>, Expr<C>)> query) =>
-      $ForGeneratedCode.renamedRecord(
-        query,
-        (e) => (
-          actualWalletDeductionPaise: e.$1,
-          remainingPayablePaise: e.$2,
-          totalAmountPaise: e.$3,
-        ),
-      );
+  _fromPositionalQuery<A, B, C, D, E, F>(
+    Query<(Expr<A>, Expr<B>, Expr<C>, Expr<D>, Expr<E>, Expr<F>)> query,
+  ) => $ForGeneratedCode.renamedRecord(
+    query,
+    (e) => (
+      actualWalletDeductionPaise: e.$1,
+      gatewayChargesPaise: e.$2,
+      merchantSharePaise: e.$3,
+      platformSharePaise: e.$4,
+      remainingPayablePaise: e.$5,
+      totalAmountPaise: e.$6,
+    ),
+  );
 
-  static T Function(Expr<A> a, Expr<B> b, Expr<C> c) _wrapBuilder<T, A, B, C>(
+  static T Function(
+    Expr<A> a,
+    Expr<B> b,
+    Expr<C> c,
+    Expr<D> d,
+    Expr<E> e,
+    Expr<F> f,
+  )
+  _wrapBuilder<T, A, B, C, D, E, F>(
     T Function(
       ({
         Expr<A> actualWalletDeductionPaise,
-        Expr<B> remainingPayablePaise,
-        Expr<C> totalAmountPaise,
+        Expr<B> gatewayChargesPaise,
+        Expr<C> merchantSharePaise,
+        Expr<D> platformSharePaise,
+        Expr<E> remainingPayablePaise,
+        Expr<F> totalAmountPaise,
       })
       e,
     )
     builder,
   ) =>
-      (a, b, c) => builder((
+      (a, b, c, d, e, f) => builder((
         actualWalletDeductionPaise: a,
-        remainingPayablePaise: b,
-        totalAmountPaise: c,
+        gatewayChargesPaise: b,
+        merchantSharePaise: c,
+        platformSharePaise: d,
+        remainingPayablePaise: e,
+        totalAmountPaise: f,
       ));
 
   /// Query the database for rows in this [Query] as a [Stream].
   Stream<
     ({
       A actualWalletDeductionPaise,
-      B remainingPayablePaise,
-      C totalAmountPaise,
+      B gatewayChargesPaise,
+      C merchantSharePaise,
+      D platformSharePaise,
+      E remainingPayablePaise,
+      F totalAmountPaise,
     })
   >
   stream() async* {
     yield* _asPositionalQuery.stream().map(
       (e) => (
         actualWalletDeductionPaise: e.$1,
-        remainingPayablePaise: e.$2,
-        totalAmountPaise: e.$3,
+        gatewayChargesPaise: e.$2,
+        merchantSharePaise: e.$3,
+        platformSharePaise: e.$4,
+        remainingPayablePaise: e.$5,
+        totalAmountPaise: e.$6,
       ),
     );
   }
@@ -21523,8 +22303,11 @@ extension QueryActualWalletDeductionPaiseRemainingPayablePaiseTotalAmountPaiseNa
     List<
       ({
         A actualWalletDeductionPaise,
-        B remainingPayablePaise,
-        C totalAmountPaise,
+        B gatewayChargesPaise,
+        C merchantSharePaise,
+        D platformSharePaise,
+        E remainingPayablePaise,
+        F totalAmountPaise,
       })
     >
   >
@@ -21536,8 +22319,11 @@ extension QueryActualWalletDeductionPaiseRemainingPayablePaiseTotalAmountPaiseNa
   Query<
     ({
       Expr<A> actualWalletDeductionPaise,
-      Expr<B> remainingPayablePaise,
-      Expr<C> totalAmountPaise,
+      Expr<B> gatewayChargesPaise,
+      Expr<C> merchantSharePaise,
+      Expr<D> platformSharePaise,
+      Expr<E> remainingPayablePaise,
+      Expr<F> totalAmountPaise,
     })
   >
   offset(int offset) => _fromPositionalQuery(_asPositionalQuery.offset(offset));
@@ -21548,8 +22334,11 @@ extension QueryActualWalletDeductionPaiseRemainingPayablePaiseTotalAmountPaiseNa
   Query<
     ({
       Expr<A> actualWalletDeductionPaise,
-      Expr<B> remainingPayablePaise,
-      Expr<C> totalAmountPaise,
+      Expr<B> gatewayChargesPaise,
+      Expr<C> merchantSharePaise,
+      Expr<D> platformSharePaise,
+      Expr<E> remainingPayablePaise,
+      Expr<F> totalAmountPaise,
     })
   >
   limit(int limit) => _fromPositionalQuery(_asPositionalQuery.limit(limit));
@@ -21567,8 +22356,11 @@ extension QueryActualWalletDeductionPaiseRemainingPayablePaiseTotalAmountPaiseNa
     T Function(
       ({
         Expr<A> actualWalletDeductionPaise,
-        Expr<B> remainingPayablePaise,
-        Expr<C> totalAmountPaise,
+        Expr<B> gatewayChargesPaise,
+        Expr<C> merchantSharePaise,
+        Expr<D> platformSharePaise,
+        Expr<E> remainingPayablePaise,
+        Expr<F> totalAmountPaise,
       })
       expr,
     )
@@ -21582,16 +22374,22 @@ extension QueryActualWalletDeductionPaiseRemainingPayablePaiseTotalAmountPaiseNa
   Query<
     ({
       Expr<A> actualWalletDeductionPaise,
-      Expr<B> remainingPayablePaise,
-      Expr<C> totalAmountPaise,
+      Expr<B> gatewayChargesPaise,
+      Expr<C> merchantSharePaise,
+      Expr<D> platformSharePaise,
+      Expr<E> remainingPayablePaise,
+      Expr<F> totalAmountPaise,
     })
   >
   where(
     Expr<bool?> Function(
       ({
         Expr<A> actualWalletDeductionPaise,
-        Expr<B> remainingPayablePaise,
-        Expr<C> totalAmountPaise,
+        Expr<B> gatewayChargesPaise,
+        Expr<C> merchantSharePaise,
+        Expr<D> platformSharePaise,
+        Expr<E> remainingPayablePaise,
+        Expr<F> totalAmountPaise,
       })
       expr,
     )

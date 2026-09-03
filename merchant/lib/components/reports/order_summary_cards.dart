@@ -7,6 +7,7 @@ class OrderSummaryCards extends StatelessComponent {
   final double grossSubtotal;
   final double totalDiscount;
   final double platformFeeTotal;
+  final double gatewayChargesTotal;
   final double netRevenue;
   final double cashCollected;
   final double upiCollected;
@@ -19,6 +20,7 @@ class OrderSummaryCards extends StatelessComponent {
     required this.grossSubtotal,
     required this.totalDiscount,
     this.platformFeeTotal = 0.0,
+    this.gatewayChargesTotal = 0.0,
     required this.netRevenue,
     this.cashCollected = 0.0,
     this.upiCollected = 0.0,

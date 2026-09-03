@@ -62,6 +62,7 @@ class OrderCheckoutExecutor {
         discountTotal: totals.discountTotal,
         taxTotal: totals.taxTotal,
         platformFee: totals.platformFee,
+        gatewayCharges: totals.gatewayCharges,
         grandTotal: totals.grandTotal,
         walletDeduction: (walletDeductionInput * 100).round(),
         terminalCode: terminalCode,

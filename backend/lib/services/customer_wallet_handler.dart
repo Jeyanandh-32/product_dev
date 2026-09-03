@@ -92,6 +92,8 @@ class CustomerWalletHandler {
         type: txType,
         reference: row.reference,
         status: row.status,
+        platformFee: row.platformFee / 100.0,
+        gatewayCharges: row.gatewayCharges / 100.0,
         createdAt: row.createdAt,
       );
     }).toList();
@@ -113,6 +115,8 @@ class CustomerWalletHandler {
       type: WalletTransactionType.topUp,
       reference: tx.reference,
       status: tx.status,
+      platformFee: tx.platformFee / 100.0,
+      gatewayCharges: tx.gatewayCharges / 100.0,
       createdAt: tx.createdAt,
     ).toJson();
   }

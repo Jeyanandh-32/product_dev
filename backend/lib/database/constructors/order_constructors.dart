@@ -20,9 +20,36 @@ OrderRow constructOrderRow({
   required int discountTotal,
   required int walletDeduction,
   int platformFee = 0,
+  int gatewayCharges = 0,
+  bool platformFeeSettled = false,
   String? terminalCode,
   String? customerId,
-}) => _$OrderRow._(id, merchantId, storeId, orderReference, billNo, source, type, status, paymentStatus, paymentMethod, subtotal, taxTotal, grandTotal, terminalCode, createdAt, updatedAt, discountTotal, walletDeduction, platformFee, customerId);
+  String? platformFeeSettlementId,
+}) => _$OrderRow._(
+  id,
+  merchantId,
+  storeId,
+  orderReference,
+  billNo,
+  source,
+  type,
+  status,
+  paymentStatus,
+  paymentMethod,
+  subtotal,
+  taxTotal,
+  grandTotal,
+  terminalCode,
+  createdAt,
+  updatedAt,
+  discountTotal,
+  walletDeduction,
+  platformFee,
+  gatewayCharges,
+  customerId,
+  platformFeeSettled,
+  platformFeeSettlementId,
+);
 
 /// Constructs a [OrderItemRow] instance.
 OrderItemRow constructOrderItemRow({
@@ -34,4 +61,13 @@ OrderItemRow constructOrderItemRow({
   required int unitPrice,
   required double taxRate,
   required int discount,
-}) => _$OrderItemRow._(id, orderId, productId, storeId, quantity, unitPrice, taxRate, discount);
+}) => _$OrderItemRow._(
+  id,
+  orderId,
+  productId,
+  storeId,
+  quantity,
+  unitPrice,
+  taxRate,
+  discount,
+);

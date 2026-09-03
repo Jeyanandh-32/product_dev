@@ -2,6 +2,7 @@ import 'package:backend/database/schema.dart';
 import 'package:backend/extensions/request_context_extension.dart';
 import 'package:backend/extensions/store_phonepe_config_row_extension.dart';
 import 'package:backend/services/customer_wallet_handler.dart';
+import 'package:backend/services/payment_gateway_fee_calculator.dart';
 import 'package:backend/services/phonepe_service.dart';
 import 'package:backend/utils/responses.dart';
 import 'package:dart_frog/dart_frog.dart';
@@ -64,6 +65,13 @@ Future<Response> _onPost(RequestContext context) async {
     final storeId = input.storeId;
 
     final amountPaise = (amountDouble * 100).round();
+    const platformFeePaise = 0;
+    final gatewayCalc = PaymentGatewayFeeCalculator.calculate(
+      provider: 'phonepe',
+      amountInPaisa: amountPaise,
+    );
+    final gatewayChargesPaise = gatewayCalc.gatewayChargesPaise;
+    final totalPayablePaise = amountPaise + gatewayChargesPaise;
     final topUpRef = 'TOPUP_${DateTime.now().millisecondsSinceEpoch}';
 
     final tx = await repo.createWalletTransaction(
@@ -73,6 +81,7 @@ Future<Response> _onPost(RequestContext context) async {
       type: WalletTransactionType.topUp.name,
       reference: topUpRef,
       status: 'pending',
+      gatewayCharges: gatewayChargesPaise,
     );
 
     final phonePeConfigRow = await db.storePhonepeConfigs
@@ -97,7 +106,7 @@ Future<Response> _onPost(RequestContext context) async {
     final paymentSession = await phonePeService.initiatePayment(
       config: phonePeConfig,
       merchantOrderId: topUpRef,
-      amountInPaisa: amountPaise,
+      amountInPaisa: totalPayablePaise,
       redirectUrl: redirectUrl,
       customerId: tokenPayload.sub,
     );
@@ -108,6 +117,9 @@ Future<Response> _onPost(RequestContext context) async {
         'merchantOrderId': topUpRef,
         'phonePeOrderId': paymentSession.orderId,
         'isPendingPayment': true,
+        'platformFee': platformFeePaise / 100.0,
+        'gatewayCharges': gatewayChargesPaise / 100.0,
+        'totalPayable': totalPayablePaise / 100.0,
         'transaction': CustomerWalletHandler.formatTransactionJson(tx),
       },
     );

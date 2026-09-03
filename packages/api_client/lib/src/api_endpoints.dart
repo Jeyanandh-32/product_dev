@@ -61,4 +61,12 @@ abstract final class ApiEndpoints {
       '/$version/bottle-returns/iot/scan-return';
   static const String bottleReturnsIotDispense =
       '/$version/bottle-returns/iot/dispense-stickers';
+
+  // Platform Fees
+  static const String merchantPlatformFees =
+      '/$version/merchants/platform-fees';
+  static const String merchantPlatformFeesInitiatePayment =
+      '/$version/merchants/platform-fees/initiate-payment';
+  static const String merchantPlatformFeesVerifyPayment =
+      '/$version/merchants/platform-fees/verify-payment';
 }

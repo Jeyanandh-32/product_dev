@@ -20,47 +20,114 @@ class OrderRepository {
 
   /// Inserts a new order row.
   Future<OrderRow> create({
-    required String merchantId, required String storeId, required String orderReference, required int billNo,
-    required OrderSource source, required OrderType type, required OrderStatus status,
-    required PaymentStatus paymentStatus, required PaymentMethod paymentMethod,
-    required int subtotal, required int discountTotal, required int taxTotal, required int grandTotal,
-    int walletDeduction = 0, int platformFee = 0, String? terminalCode, String? customerId,
+    required String merchantId,
+    required String storeId,
+    required String orderReference,
+    required int billNo,
+    required OrderSource source,
+    required OrderType type,
+    required OrderStatus status,
+    required PaymentStatus paymentStatus,
+    required PaymentMethod paymentMethod,
+    required int subtotal,
+    required int discountTotal,
+    required int taxTotal,
+    required int grandTotal,
+    int walletDeduction = 0,
+    int platformFee = 0,
+    int gatewayCharges = 0,
+    String? terminalCode,
+    String? customerId,
   }) => _mutations.create(
-    merchantId: merchantId, storeId: storeId, orderReference: orderReference, billNo: billNo,
-    source: source, type: type, status: status, paymentStatus: paymentStatus, paymentMethod: paymentMethod,
-    subtotal: subtotal, discountTotal: discountTotal, taxTotal: taxTotal, grandTotal: grandTotal,
-    walletDeduction: walletDeduction, platformFee: platformFee, terminalCode: terminalCode, customerId: customerId,
+    merchantId: merchantId,
+    storeId: storeId,
+    orderReference: orderReference,
+    billNo: billNo,
+    source: source,
+    type: type,
+    status: status,
+    paymentStatus: paymentStatus,
+    paymentMethod: paymentMethod,
+    subtotal: subtotal,
+    discountTotal: discountTotal,
+    taxTotal: taxTotal,
+    grandTotal: grandTotal,
+    walletDeduction: walletDeduction,
+    platformFee: platformFee,
+    gatewayCharges: gatewayCharges,
+    terminalCode: terminalCode,
+    customerId: customerId,
   );
 
   /// Returns the next daily bill number for a store.
-  Future<int> getNextBillNo(String storeId) => _mutations.getNextBillNo(storeId);
+  Future<int> getNextBillNo(String storeId) =>
+      _mutations.getNextBillNo(storeId);
 
   /// Updates existing order state.
   Future<OrderRow?> update({
-    required String id, OrderStatus? status, PaymentStatus? paymentStatus,
-    PaymentMethod? paymentMethod, String? terminalCode,
+    required String id,
+    OrderStatus? status,
+    PaymentStatus? paymentStatus,
+    PaymentMethod? paymentMethod,
+    String? terminalCode,
   }) => _mutations.update(
-    id: id, status: status, paymentStatus: paymentStatus, paymentMethod: paymentMethod, terminalCode: terminalCode,
+    id: id,
+    status: status,
+    paymentStatus: paymentStatus,
+    paymentMethod: paymentMethod,
+    terminalCode: terminalCode,
   );
 
   /// Fetches orders filtered by criteria.
   Future<List<OrderRow>> getAll({
-    required String merchantId, String? storeId, String? source, String? terminalCode,
-    DateTime? fromDate, DateTime? toDate, String? paymentMethod, String? status,
-    String? paymentStatus, int? limit, int? offset,
+    required String merchantId,
+    String? storeId,
+    String? source,
+    String? terminalCode,
+    DateTime? fromDate,
+    DateTime? toDate,
+    String? paymentMethod,
+    String? status,
+    String? paymentStatus,
+    int? limit,
+    int? offset,
   }) => OrderQueryBuilder.getAll(
-    db: _db, merchantId: merchantId, storeId: storeId, source: source, terminalCode: terminalCode,
-    fromDate: fromDate, toDate: toDate, paymentMethod: paymentMethod, status: status,
-    paymentStatus: paymentStatus, limit: limit, offset: offset,
+    db: _db,
+    merchantId: merchantId,
+    storeId: storeId,
+    source: source,
+    terminalCode: terminalCode,
+    fromDate: fromDate,
+    toDate: toDate,
+    paymentMethod: paymentMethod,
+    status: status,
+    paymentStatus: paymentStatus,
+    limit: limit,
+    offset: offset,
   );
 
   /// Counts total orders matching filter criteria.
   Future<int> count({
-    required String merchantId, String? storeId, String? source, String? terminalCode,
-    DateTime? fromDate, DateTime? toDate, String? paymentMethod, String? status, String? paymentStatus,
+    required String merchantId,
+    String? storeId,
+    String? source,
+    String? terminalCode,
+    DateTime? fromDate,
+    DateTime? toDate,
+    String? paymentMethod,
+    String? status,
+    String? paymentStatus,
   }) => OrderQueryBuilder.count(
-    db: _db, merchantId: merchantId, storeId: storeId, source: source, terminalCode: terminalCode,
-    fromDate: fromDate, toDate: toDate, paymentMethod: paymentMethod, status: status, paymentStatus: paymentStatus,
+    db: _db,
+    merchantId: merchantId,
+    storeId: storeId,
+    source: source,
+    terminalCode: terminalCode,
+    fromDate: fromDate,
+    toDate: toDate,
+    paymentMethod: paymentMethod,
+    status: status,
+    paymentStatus: paymentStatus,
   );
 
   /// Fetches order row by UUID.
@@ -69,40 +136,89 @@ class OrderRepository {
 
   /// Fetches order row by bill number or UUID.
   Future<OrderRow?> getByIdOrBillNo(String idOrBillNo, String storeId) =>
-      OrderQueryBuilder.getByIdOrBillNo(db: _db, idOrBillNo: idOrBillNo, storeId: storeId);
+      OrderQueryBuilder.getByIdOrBillNo(
+        db: _db,
+        idOrBillNo: idOrBillNo,
+        storeId: storeId,
+      );
 
   /// Fetches order row by reference code.
-  Future<OrderRow?> getByReference(String reference) =>
-      _db.orders.where((o) => o.orderReference.equals(ts.toExpr(reference))).first.fetch();
+  Future<OrderRow?> getByReference(String reference) => _db.orders
+      .where((o) => o.orderReference.equals(ts.toExpr(reference)))
+      .first
+      .fetch();
 
   /// Computes order summary totals.
   Future<OrderSummaryResult> getOrderSummary({
-    required String merchantId, String? storeId, DateTime? fromDate, DateTime? toDate,
-  }) => _reports.getOrderSummary(merchantId: merchantId, storeId: storeId, fromDate: fromDate, toDate: toDate);
+    required String merchantId,
+    String? storeId,
+    DateTime? fromDate,
+    DateTime? toDate,
+  }) => _reports.getOrderSummary(
+    merchantId: merchantId,
+    storeId: storeId,
+    fromDate: fromDate,
+    toDate: toDate,
+  );
 
   /// Computes payment breakdown summary.
   Future<PaymentSummaryResult> getPaymentSummary({
-    required String merchantId, String? storeId, DateTime? fromDate, DateTime? toDate,
-  }) => _reports.getPaymentSummary(merchantId: merchantId, storeId: storeId, fromDate: fromDate, toDate: toDate);
+    required String merchantId,
+    String? storeId,
+    DateTime? fromDate,
+    DateTime? toDate,
+  }) => _reports.getPaymentSummary(
+    merchantId: merchantId,
+    storeId: storeId,
+    fromDate: fromDate,
+    toDate: toDate,
+  );
 
   /// Computes Profit & Loss analytics report.
   Future<ProfitLossReportResult> getProfitLossReport({
-    required String merchantId, required String storeId, DateTime? fromDate, DateTime? toDate,
-    String? searchQuery, int limit = 10, int offset = 0,
+    required String merchantId,
+    required String storeId,
+    DateTime? fromDate,
+    DateTime? toDate,
+    String? searchQuery,
+    int limit = 10,
+    int offset = 0,
   }) => _reports.getProfitLossReport(
-    merchantId: merchantId, storeId: storeId, fromDate: fromDate, toDate: toDate,
-    searchQuery: searchQuery, limit: limit, offset: offset,
+    merchantId: merchantId,
+    storeId: storeId,
+    fromDate: fromDate,
+    toDate: toDate,
+    searchQuery: searchQuery,
+    limit: limit,
+    offset: offset,
   );
 
   /// Computes live dashboard metrics.
   Future<Map<String, dynamic>> getDashboardAnalytics({
-    required String merchantId, required String storeId, DateTime? fromDate, DateTime? toDate,
-  }) => _reports.getDashboardAnalytics(merchantId: merchantId, storeId: storeId, fromDate: fromDate, toDate: toDate);
+    required String merchantId,
+    required String storeId,
+    DateTime? fromDate,
+    DateTime? toDate,
+  }) => _reports.getDashboardAnalytics(
+    merchantId: merchantId,
+    storeId: storeId,
+    fromDate: fromDate,
+    toDate: toDate,
+  );
 
   /// Fetches customer order history.
   Future<({List<Order> items, int total})> getCustomerOrders({
-    required String customerId, String? storeId, String? date, int limit = 10, int offset = 0,
+    required String customerId,
+    String? storeId,
+    String? date,
+    int limit = 10,
+    int offset = 0,
   }) => CustomerOrdersQuery.fetchCustomerOrders(
-    db: _db, customerId: customerId, storeId: storeId, date: date, limit: limit, offset: offset,
+    db: _db,
+    customerId: customerId,
+    storeId: storeId,
+    date: date,
+    limit: limit,
+    offset: offset,
   );
 }

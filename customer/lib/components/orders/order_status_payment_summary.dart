@@ -38,6 +38,16 @@ class OrderStatusPaymentSummary extends StatelessComponent {
             .text('₹${order.platformFee.toStringAsFixed(2)}'),
           ]),
         ]),
+      div(classes: 'flex justify-between text-gray-500', [
+        span([.text('Gateway Charges (PhonePe)')]),
+        span(classes: 'font-semibold text-emerald-700', [
+          .text(
+            order.gatewayCharges > 0
+                ? '₹${order.gatewayCharges.toStringAsFixed(2)}'
+                : 'Free (₹0.00)',
+          ),
+        ]),
+      ]),
       if (order.taxTotal > 0)
         div(classes: 'flex justify-between text-gray-500', [
           span([.text('Total Tax')]),

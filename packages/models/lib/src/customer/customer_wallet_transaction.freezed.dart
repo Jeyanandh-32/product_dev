@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$CustomerWalletTransaction {
 
- String get id; String get customerId; double get amount; WalletTransactionType get type; String? get reference; String get status; DateTime get createdAt;
+ String get id; String get customerId; double get amount; WalletTransactionType get type; String? get reference; String get status; double get platformFee; double get gatewayCharges; DateTime get createdAt;
 /// Create a copy of CustomerWalletTransaction
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $CustomerWalletTransactionCopyWith<CustomerWalletTransaction> get copyWith => _$
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CustomerWalletTransaction&&(identical(other.id, id) || other.id == id)&&(identical(other.customerId, customerId) || other.customerId == customerId)&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.type, type) || other.type == type)&&(identical(other.reference, reference) || other.reference == reference)&&(identical(other.status, status) || other.status == status)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CustomerWalletTransaction&&(identical(other.id, id) || other.id == id)&&(identical(other.customerId, customerId) || other.customerId == customerId)&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.type, type) || other.type == type)&&(identical(other.reference, reference) || other.reference == reference)&&(identical(other.status, status) || other.status == status)&&(identical(other.platformFee, platformFee) || other.platformFee == platformFee)&&(identical(other.gatewayCharges, gatewayCharges) || other.gatewayCharges == gatewayCharges)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,customerId,amount,type,reference,status,createdAt);
+int get hashCode => Object.hash(runtimeType,id,customerId,amount,type,reference,status,platformFee,gatewayCharges,createdAt);
 
 @override
 String toString() {
-  return 'CustomerWalletTransaction(id: $id, customerId: $customerId, amount: $amount, type: $type, reference: $reference, status: $status, createdAt: $createdAt)';
+  return 'CustomerWalletTransaction(id: $id, customerId: $customerId, amount: $amount, type: $type, reference: $reference, status: $status, platformFee: $platformFee, gatewayCharges: $gatewayCharges, createdAt: $createdAt)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $CustomerWalletTransactionCopyWith<$Res>  {
   factory $CustomerWalletTransactionCopyWith(CustomerWalletTransaction value, $Res Function(CustomerWalletTransaction) _then) = _$CustomerWalletTransactionCopyWithImpl;
 @useResult
 $Res call({
- String id, String customerId, double amount, WalletTransactionType type, String? reference, String status, DateTime createdAt
+ String id, String customerId, double amount, WalletTransactionType type, String? reference, String status, double platformFee, double gatewayCharges, DateTime createdAt
 });
 
 
@@ -65,7 +65,7 @@ class _$CustomerWalletTransactionCopyWithImpl<$Res>
 
 /// Create a copy of CustomerWalletTransaction
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? customerId = null,Object? amount = null,Object? type = null,Object? reference = freezed,Object? status = null,Object? createdAt = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? customerId = null,Object? amount = null,Object? type = null,Object? reference = freezed,Object? status = null,Object? platformFee = null,Object? gatewayCharges = null,Object? createdAt = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,customerId: null == customerId ? _self.customerId : customerId // ignore: cast_nullable_to_non_nullable
@@ -73,7 +73,9 @@ as String,amount: null == amount ? _self.amount : amount // ignore: cast_nullabl
 as double,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
 as WalletTransactionType,reference: freezed == reference ? _self.reference : reference // ignore: cast_nullable_to_non_nullable
 as String?,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
-as String,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as String,platformFee: null == platformFee ? _self.platformFee : platformFee // ignore: cast_nullable_to_non_nullable
+as double,gatewayCharges: null == gatewayCharges ? _self.gatewayCharges : gatewayCharges // ignore: cast_nullable_to_non_nullable
+as double,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,
   ));
 }
@@ -159,10 +161,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String customerId,  double amount,  WalletTransactionType type,  String? reference,  String status,  DateTime createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String customerId,  double amount,  WalletTransactionType type,  String? reference,  String status,  double platformFee,  double gatewayCharges,  DateTime createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _CustomerWalletTransaction() when $default != null:
-return $default(_that.id,_that.customerId,_that.amount,_that.type,_that.reference,_that.status,_that.createdAt);case _:
+return $default(_that.id,_that.customerId,_that.amount,_that.type,_that.reference,_that.status,_that.platformFee,_that.gatewayCharges,_that.createdAt);case _:
   return orElse();
 
 }
@@ -180,10 +182,10 @@ return $default(_that.id,_that.customerId,_that.amount,_that.type,_that.referenc
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String customerId,  double amount,  WalletTransactionType type,  String? reference,  String status,  DateTime createdAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String customerId,  double amount,  WalletTransactionType type,  String? reference,  String status,  double platformFee,  double gatewayCharges,  DateTime createdAt)  $default,) {final _that = this;
 switch (_that) {
 case _CustomerWalletTransaction():
-return $default(_that.id,_that.customerId,_that.amount,_that.type,_that.reference,_that.status,_that.createdAt);case _:
+return $default(_that.id,_that.customerId,_that.amount,_that.type,_that.reference,_that.status,_that.platformFee,_that.gatewayCharges,_that.createdAt);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -200,10 +202,10 @@ return $default(_that.id,_that.customerId,_that.amount,_that.type,_that.referenc
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String customerId,  double amount,  WalletTransactionType type,  String? reference,  String status,  DateTime createdAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String customerId,  double amount,  WalletTransactionType type,  String? reference,  String status,  double platformFee,  double gatewayCharges,  DateTime createdAt)?  $default,) {final _that = this;
 switch (_that) {
 case _CustomerWalletTransaction() when $default != null:
-return $default(_that.id,_that.customerId,_that.amount,_that.type,_that.reference,_that.status,_that.createdAt);case _:
+return $default(_that.id,_that.customerId,_that.amount,_that.type,_that.reference,_that.status,_that.platformFee,_that.gatewayCharges,_that.createdAt);case _:
   return null;
 
 }
@@ -215,7 +217,7 @@ return $default(_that.id,_that.customerId,_that.amount,_that.type,_that.referenc
 @JsonSerializable()
 
 class _CustomerWalletTransaction implements CustomerWalletTransaction {
-  const _CustomerWalletTransaction({required this.id, required this.customerId, required this.amount, required this.type, this.reference, required this.status, required this.createdAt});
+  const _CustomerWalletTransaction({required this.id, required this.customerId, required this.amount, required this.type, this.reference, required this.status, this.platformFee = 0.0, this.gatewayCharges = 0.0, required this.createdAt});
   factory _CustomerWalletTransaction.fromJson(Map<String, dynamic> json) => _$CustomerWalletTransactionFromJson(json);
 
 @override final  String id;
@@ -224,6 +226,8 @@ class _CustomerWalletTransaction implements CustomerWalletTransaction {
 @override final  WalletTransactionType type;
 @override final  String? reference;
 @override final  String status;
+@override@JsonKey() final  double platformFee;
+@override@JsonKey() final  double gatewayCharges;
 @override final  DateTime createdAt;
 
 /// Create a copy of CustomerWalletTransaction
@@ -239,16 +243,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CustomerWalletTransaction&&(identical(other.id, id) || other.id == id)&&(identical(other.customerId, customerId) || other.customerId == customerId)&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.type, type) || other.type == type)&&(identical(other.reference, reference) || other.reference == reference)&&(identical(other.status, status) || other.status == status)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CustomerWalletTransaction&&(identical(other.id, id) || other.id == id)&&(identical(other.customerId, customerId) || other.customerId == customerId)&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.type, type) || other.type == type)&&(identical(other.reference, reference) || other.reference == reference)&&(identical(other.status, status) || other.status == status)&&(identical(other.platformFee, platformFee) || other.platformFee == platformFee)&&(identical(other.gatewayCharges, gatewayCharges) || other.gatewayCharges == gatewayCharges)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,customerId,amount,type,reference,status,createdAt);
+int get hashCode => Object.hash(runtimeType,id,customerId,amount,type,reference,status,platformFee,gatewayCharges,createdAt);
 
 @override
 String toString() {
-  return 'CustomerWalletTransaction(id: $id, customerId: $customerId, amount: $amount, type: $type, reference: $reference, status: $status, createdAt: $createdAt)';
+  return 'CustomerWalletTransaction(id: $id, customerId: $customerId, amount: $amount, type: $type, reference: $reference, status: $status, platformFee: $platformFee, gatewayCharges: $gatewayCharges, createdAt: $createdAt)';
 }
 
 
@@ -259,7 +263,7 @@ abstract mixin class _$CustomerWalletTransactionCopyWith<$Res> implements $Custo
   factory _$CustomerWalletTransactionCopyWith(_CustomerWalletTransaction value, $Res Function(_CustomerWalletTransaction) _then) = __$CustomerWalletTransactionCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String customerId, double amount, WalletTransactionType type, String? reference, String status, DateTime createdAt
+ String id, String customerId, double amount, WalletTransactionType type, String? reference, String status, double platformFee, double gatewayCharges, DateTime createdAt
 });
 
 
@@ -276,7 +280,7 @@ class __$CustomerWalletTransactionCopyWithImpl<$Res>
 
 /// Create a copy of CustomerWalletTransaction
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? customerId = null,Object? amount = null,Object? type = null,Object? reference = freezed,Object? status = null,Object? createdAt = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? customerId = null,Object? amount = null,Object? type = null,Object? reference = freezed,Object? status = null,Object? platformFee = null,Object? gatewayCharges = null,Object? createdAt = null,}) {
   return _then(_CustomerWalletTransaction(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,customerId: null == customerId ? _self.customerId : customerId // ignore: cast_nullable_to_non_nullable
@@ -284,7 +288,9 @@ as String,amount: null == amount ? _self.amount : amount // ignore: cast_nullabl
 as double,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
 as WalletTransactionType,reference: freezed == reference ? _self.reference : reference // ignore: cast_nullable_to_non_nullable
 as String?,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
-as String,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as String,platformFee: null == platformFee ? _self.platformFee : platformFee // ignore: cast_nullable_to_non_nullable
+as double,gatewayCharges: null == gatewayCharges ? _self.gatewayCharges : gatewayCharges // ignore: cast_nullable_to_non_nullable
+as double,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,
   ));
 }

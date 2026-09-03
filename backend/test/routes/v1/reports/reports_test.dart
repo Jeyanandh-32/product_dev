@@ -6,6 +6,7 @@ import 'package:backend/models/token_payload/token_payload.dart';
 import 'package:backend/repositories/customer_repository.dart';
 import 'package:backend/repositories/order_item_repository.dart';
 import 'package:backend/repositories/order_repository.dart';
+import 'package:backend/repositories/order_types.dart';
 import 'package:backend/repositories/product_repository.dart';
 import 'package:dart_frog/dart_frog.dart';
 import 'package:mocktail/mocktail.dart';
@@ -129,16 +130,17 @@ void main() {
         toDate: any(named: 'toDate'),
       ),
     ).thenAnswer(
-      (_) async => (
+      (_) async => const OrderSummaryResult(
         totalOrders: 10,
-        grossSubtotal: 50000.0,
-        totalDiscount: 500.0,
-        platformFeeTotal: 0.0,
-        netRevenue: 49500.0,
-        cashCollected: 30000.0,
-        upiCollected: 19500.0,
-        walletCollected: 0.0,
-        freeTotal: 0.0,
+        grossSubtotal: 50000,
+        totalDiscount: 500,
+        platformFeeTotal: 0,
+        gatewayChargesTotal: 0,
+        netRevenue: 49500,
+        cashCollected: 30000,
+        upiCollected: 19500,
+        walletCollected: 0,
+        freeTotal: 0,
       ),
     );
     when(() => orderItemRepo.getAllForOrders(any()))

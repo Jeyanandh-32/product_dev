@@ -6,6 +6,7 @@ typedef OrderSummary = ({
   double grossSubtotal,
   double totalDiscount,
   double platformFeeTotal,
+  double gatewayChargesTotal,
   double netRevenue,
   double cashCollected,
   double upiCollected,

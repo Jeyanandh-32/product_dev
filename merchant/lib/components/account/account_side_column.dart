@@ -1,6 +1,7 @@
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:merchant/components/account/notification_settings_card.dart';
+import 'package:merchant/components/account/platform_fees_card.dart';
 import 'package:merchant/components/account/store_subscriptions_card.dart';
 import 'package:merchant/signals/subscription_signal.dart';
 import 'package:models/models.dart';
@@ -35,6 +36,7 @@ class AccountSideColumn extends StatelessComponent {
         subscriptions: subscriptionsSignal.value,
         onManageSubscription: SubscriptionActions.openManageSubscription,
       ),
+      const PlatformFeesCard(),
       NotificationSettingsCard(
         waNotifications: waNotifications,
         lowStockAlerts: lowStockAlerts,

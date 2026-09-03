@@ -1,9 +1,12 @@
+import 'dart:math';
+
 import 'package:backend/database/schema.dart';
 import 'package:backend/repositories/customer_repository.dart';
 import 'package:backend/services/order_service.dart';
+import 'package:backend/services/payment_gateway_fee_calculator.dart';
 import 'package:typed_sql/typed_sql.dart';
 
-/// Calculation handler for wallet deduction vs online payment gateway remaining amounts.
+/// Calculation handler for wallet deduction vs online payment gateway remaining amounts and marketplace split.
 class OnlinePaymentCalculator {
   const OnlinePaymentCalculator._();
 
@@ -12,6 +15,9 @@ class OnlinePaymentCalculator {
       int totalAmountPaise,
       int actualWalletDeductionPaise,
       int remainingPayablePaise,
+      int merchantSharePaise,
+      int platformSharePaise,
+      int gatewayChargesPaise,
     })
   >
   computeAmounts({
@@ -22,6 +28,7 @@ class OnlinePaymentCalculator {
     required List<Map<String, dynamic>> productsList,
     required double discountTotal,
     required bool useWallet,
+    String? paymentProvider,
   }) async {
     var totalWalletAvailablePaise = await customerRepo.getStoreWalletBalance(
       customerId: customerId,
@@ -52,21 +59,50 @@ class OnlinePaymentCalculator {
       isOnline: true,
     );
 
-    final totalAmountPaise = calculated.grandTotal;
-    var actualWalletDeductionPaise = 0;
-    var remainingPayablePaise = totalAmountPaise;
+    final netOrderTotalPaise = max(
+      0,
+      calculated.subtotal + calculated.taxTotal - calculated.discountTotal,
+    );
 
+    var actualWalletDeductionPaise = 0;
     if (useWallet && totalWalletAvailablePaise > 0) {
-      actualWalletDeductionPaise = totalWalletAvailablePaise >= totalAmountPaise
-          ? totalAmountPaise
+      final orderWithPlatformFee = netOrderTotalPaise + calculated.platformFee;
+      actualWalletDeductionPaise = totalWalletAvailablePaise >= orderWithPlatformFee
+          ? orderWithPlatformFee
           : totalWalletAvailablePaise;
-      remainingPayablePaise = totalAmountPaise - actualWalletDeductionPaise;
     }
+
+    final netPayableBeforeGatewayFee = max(
+      0,
+      netOrderTotalPaise + calculated.platformFee - actualWalletDeductionPaise,
+    );
+
+    final gatewayCalc = PaymentGatewayFeeCalculator.calculate(
+      provider: paymentProvider,
+      amountInPaisa: netPayableBeforeGatewayFee,
+    );
+    final gatewayChargesPaise = gatewayCalc.gatewayChargesPaise;
+
+    final totalAmountPaise = calculated.grandTotal + gatewayChargesPaise;
+    final remainingPayablePaise = netPayableBeforeGatewayFee + gatewayChargesPaise;
+
+    final merchantRemainingOrderPaise = max(
+      0,
+      netOrderTotalPaise - actualWalletDeductionPaise,
+    );
+    final merchantSharePaise = merchantRemainingOrderPaise + gatewayChargesPaise;
+    final platformSharePaise = max(
+      0,
+      remainingPayablePaise - merchantSharePaise,
+    );
 
     return (
       totalAmountPaise: totalAmountPaise,
       actualWalletDeductionPaise: actualWalletDeductionPaise,
       remainingPayablePaise: remainingPayablePaise,
+      merchantSharePaise: merchantSharePaise,
+      platformSharePaise: platformSharePaise,
+      gatewayChargesPaise: gatewayChargesPaise,
     );
   }
 }

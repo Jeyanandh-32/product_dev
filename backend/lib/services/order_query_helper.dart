@@ -31,21 +31,20 @@ class OrderQueryHelper {
     final fromDate = fromDateStr != null && fromDateStr.isNotEmpty
         ? DateTime.tryParse(fromDateStr)?.toUtc()
         : null;
-    DateTime? toDate;
-    if (toDateStr != null && toDateStr.isNotEmpty) {
-      final parsed = DateTime.tryParse(toDateStr);
-      if (parsed != null) {
-        toDate = DateTime.utc(
-          parsed.year,
-          parsed.month,
-          parsed.day,
-          23,
-          59,
-          59,
-          999,
-        );
-      }
-    }
+    final parsedTo = toDateStr != null && toDateStr.isNotEmpty
+        ? DateTime.tryParse(toDateStr)
+        : null;
+    final toDate = parsedTo != null
+        ? DateTime.utc(
+            parsedTo.year,
+            parsedTo.month,
+            parsedTo.day,
+            23,
+            59,
+            59,
+            999,
+          )
+        : null;
 
     final orderRepo = context.orderRepo;
     final itemRepo = context.orderItemRepo;
@@ -140,17 +139,7 @@ class OrderQueryHelper {
           'pageSize': size,
           'totalItems': total,
           'totalPages': totalPages,
-          'summary': {
-            'totalOrders': orderSummary.totalOrders,
-            'grossSubtotal': orderSummary.grossSubtotal,
-            'totalDiscount': orderSummary.totalDiscount,
-            'platformFeeTotal': orderSummary.platformFeeTotal,
-            'netRevenue': orderSummary.netRevenue,
-            'cashCollected': orderSummary.cashCollected,
-            'upiCollected': orderSummary.upiCollected,
-            'walletCollected': orderSummary.walletCollected,
-            'freeTotal': orderSummary.freeTotal,
-          },
+          'summary': orderSummary.toJson(),
           'orders': orders,
         },
       );

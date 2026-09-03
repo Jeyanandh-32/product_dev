@@ -59,6 +59,15 @@ class CartDrawerFooter extends StatelessComponent {
               ],
             ),
           div(
+            classes: 'flex justify-between items-center text-xs text-gray-500',
+            [
+              span([.text('Gateway Charges (PhonePe)')]),
+              span(classes: 'font-semibold text-emerald-700', [
+                .text('Free (₹0.00)'),
+              ]),
+            ],
+          ),
+          div(
             classes: 'flex justify-between items-center pt-1 border-t border-dashed border-gray-200',
             [
               span(classes: 'text-sm font-bold text-gray-700', [

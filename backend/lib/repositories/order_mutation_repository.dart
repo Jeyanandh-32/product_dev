@@ -25,6 +25,7 @@ class OrderMutationRepository {
     required int grandTotal,
     int walletDeduction = 0,
     int platformFee = 0,
+    int gatewayCharges = 0,
     String? terminalCode,
     String? customerId,
   }) async {
@@ -45,6 +46,7 @@ class OrderMutationRepository {
           grandTotal: grandTotal,
           walletDeduction: walletDeduction,
           platformFee: platformFee,
+          gatewayCharges: gatewayCharges,
           terminalCode: terminalCode,
           customerId: customerId,
         )

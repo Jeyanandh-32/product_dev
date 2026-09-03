@@ -48,13 +48,20 @@ class OrderReportsHelper {
 
       final summary = (
         totalOrders: summaryData['totalOrders'] as int? ?? 0,
-        grossSubtotal: (summaryData['grossSubtotal'] as num?)?.toDouble() ?? 0.0,
-        totalDiscount: (summaryData['totalDiscount'] as num?)?.toDouble() ?? 0.0,
-        platformFeeTotal: (summaryData['platformFeeTotal'] as num?)?.toDouble() ?? 0.0,
+        grossSubtotal:
+            (summaryData['grossSubtotal'] as num?)?.toDouble() ?? 0.0,
+        totalDiscount:
+            (summaryData['totalDiscount'] as num?)?.toDouble() ?? 0.0,
+        platformFeeTotal:
+            (summaryData['platformFeeTotal'] as num?)?.toDouble() ?? 0.0,
+        gatewayChargesTotal:
+            (summaryData['gatewayChargesTotal'] as num?)?.toDouble() ?? 0.0,
         netRevenue: (summaryData['netRevenue'] as num?)?.toDouble() ?? 0.0,
-        cashCollected: (summaryData['cashCollected'] as num?)?.toDouble() ?? 0.0,
+        cashCollected:
+            (summaryData['cashCollected'] as num?)?.toDouble() ?? 0.0,
         upiCollected: (summaryData['upiCollected'] as num?)?.toDouble() ?? 0.0,
-        walletCollected: (summaryData['walletCollected'] as num?)?.toDouble() ?? 0.0,
+        walletCollected:
+            (summaryData['walletCollected'] as num?)?.toDouble() ?? 0.0,
         freeTotal: (summaryData['freeTotal'] as num?)?.toDouble() ?? 0.0,
       );
 

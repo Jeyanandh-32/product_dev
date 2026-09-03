@@ -45,6 +45,7 @@ class OrdersTableView extends StatelessComponent {
         .grossAmount => item.subtotal,
         .discountAmount => item.discountTotal,
         .platformFee => item.platformFee,
+        .gatewayCharges => item.gatewayCharges,
         .walletPaid => item.walletDeduction,
         .netAmount => item.grandTotal,
         .paymentMode => item.paymentMethod.name.toLowerCase(),
@@ -70,6 +71,7 @@ class OrdersTableView extends StatelessComponent {
                 grossAmount: order.subtotal.toDouble(),
                 discountAmount: order.discountTotal.toDouble(),
                 platformFee: order.platformFee,
+                gatewayCharges: order.gatewayCharges,
                 walletAmount: order.walletDeduction.toDouble(),
                 netAmount: order.grandTotal.toDouble(),
                 paymentType: PaymentFormatter.formatPaymentType(

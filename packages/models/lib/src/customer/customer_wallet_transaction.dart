@@ -13,6 +13,8 @@ abstract class CustomerWalletTransaction with _$CustomerWalletTransaction {
     required WalletTransactionType type,
     String? reference,
     required String status,
+    @Default(0.0) double platformFee,
+    @Default(0.0) double gatewayCharges,
     required DateTime createdAt,
   }) = _CustomerWalletTransaction;
 

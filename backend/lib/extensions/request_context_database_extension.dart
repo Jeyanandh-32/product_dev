@@ -11,6 +11,7 @@ import 'package:backend/repositories/merchant_repository.dart';
 import 'package:backend/repositories/merchant_settings_repository.dart';
 import 'package:backend/repositories/order_item_repository.dart';
 import 'package:backend/repositories/order_repository.dart';
+import 'package:backend/repositories/platform_fee_repository.dart';
 import 'package:backend/repositories/platform_phonepe_config_repository.dart';
 import 'package:backend/repositories/product_repository.dart';
 import 'package:backend/repositories/stock_repository.dart';
@@ -90,6 +91,10 @@ extension RequestContextDatabaseExtension on RequestContext {
   /// Configuration repository for platform PhonePe payment credentials.
   PlatformPhonePeConfigRepository get platformPhonePeConfigRepo =>
       _repo((_) => const PlatformPhonePeConfigRepository());
+
+  /// Repository for merchant platform fee calculations and settlements.
+  PlatformFeeRepository get platformFeeRepo =>
+      _repo((_) => const PlatformFeeRepository());
 
   /// Domain service coordinating product creation and stock initialization.
   ProductService get productService {

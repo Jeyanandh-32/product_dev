@@ -1,4 +1,5 @@
 *.sh
+!reset_db.sh
 
 *.rest
 .dart_tool/

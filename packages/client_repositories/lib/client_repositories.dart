@@ -10,6 +10,7 @@ export 'src/merchant_repository.dart';
 export 'src/merchant_settings_repository.dart';
 export 'src/order_repository.dart';
 export 'src/payment_repository.dart';
+export 'src/platform_fee_client_repository.dart';
 export 'src/product_repository.dart';
 export 'src/reports_repository.dart';
 export 'src/stock_repository.dart';

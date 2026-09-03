@@ -73,6 +73,33 @@ class TopUpModal extends StatelessComponent {
               },
             ),
           ]),
+
+          div(
+            classes: 'bg-gray-50/80 rounded-2xl p-3.5 border border-gray-200/60 flex flex-col gap-2 text-xs',
+            [
+              div(classes: 'flex justify-between text-gray-600', [
+                span([.text('Top Up Credit')]),
+                span(classes: 'font-bold font-mono text-gray-900', [
+                  .text('₹${topUpAmount.toStringAsFixed(2)}'),
+                ]),
+              ]),
+              div(classes: 'flex justify-between text-gray-600', [
+                span([.text('Gateway Charges (PhonePe)')]),
+                span(classes: 'font-bold text-emerald-700 font-mono', [
+                  .text('Free (₹0.00)'),
+                ]),
+              ]),
+              div(
+                classes: 'pt-1.5 border-t border-gray-200/60 flex justify-between font-bold text-gray-900',
+                [
+                  span([.text('Total to Pay')]),
+                  span(classes: 'font-mono text-emerald-700 font-extrabold', [
+                    .text('₹${topUpAmount.toStringAsFixed(2)}'),
+                  ]),
+                ],
+              ),
+            ],
+          ),
         ]),
 
         div(

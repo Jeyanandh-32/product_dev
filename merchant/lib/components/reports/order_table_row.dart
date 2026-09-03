@@ -10,6 +10,7 @@ class OrderTableRow extends StatelessComponent {
   final double grossAmount;
   final double discountAmount;
   final double platformFee;
+  final double gatewayCharges;
   final double walletAmount;
   final double netAmount;
   final String paymentType;
@@ -25,6 +26,7 @@ class OrderTableRow extends StatelessComponent {
     required this.grossAmount,
     required this.discountAmount,
     this.platformFee = 0.0,
+    this.gatewayCharges = 0.0,
     required this.walletAmount,
     required this.netAmount,
     required this.paymentType,
@@ -65,6 +67,14 @@ class OrderTableRow extends StatelessComponent {
           if (platformFee > 0)
             span(classes: 'text-gray-700 font-medium', [
               .text(platformFee.toStringAsFixed(2)),
+            ])
+          else
+            .text('-'),
+        ]),
+        td([
+          if (gatewayCharges > 0)
+            span(classes: 'text-gray-700 font-medium', [
+              .text(gatewayCharges.toStringAsFixed(2)),
             ])
           else
             .text('-'),

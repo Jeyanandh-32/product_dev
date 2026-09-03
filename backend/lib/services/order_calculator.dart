@@ -14,6 +14,7 @@ typedef CalculatedOrderSummary = ({
   int grandTotal,
   int discountTotal,
   int platformFee,
+  int gatewayCharges,
   List<CalculatedOrderItem> items,
 });
 
@@ -35,6 +36,7 @@ class OrderCalculator {
     double discountTotalInput = 0.0,
     bool isComplimentary = false,
     bool isOnline = false,
+    int gatewayCharges = 0,
   }) {
     var subtotal = 0;
     var taxTotal = 0;
@@ -67,7 +69,7 @@ class OrderCalculator {
 
     final netOrderTotalPaise = max(0, subtotal + taxTotal - discountTotal);
     final platformFee = isOnline ? (netOrderTotalPaise * 0.0199).round() : 0;
-    final grandTotal = netOrderTotalPaise + platformFee;
+    final grandTotal = netOrderTotalPaise + platformFee + gatewayCharges;
 
     return (
       subtotal: subtotal,
@@ -75,6 +77,7 @@ class OrderCalculator {
       grandTotal: grandTotal,
       discountTotal: discountTotal,
       platformFee: platformFee,
+      gatewayCharges: gatewayCharges,
       items: items,
     );
   }

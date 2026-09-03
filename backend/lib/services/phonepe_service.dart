@@ -7,17 +7,24 @@ import 'package:models/models.dart';
 
 /// Integration service for PhonePe Payment Gateway (OAuth 2.0 & PG V2 Standard Checkout).
 class PhonePeService {
-  PhonePeService({Dio? dio, PhonePeAuthClient? authClient, PhonePeV1Client? v1Client})
-      : _dio = dio ??
-            Dio(
-              BaseOptions(
-                connectTimeout: const Duration(seconds: 10),
-                receiveTimeout: const Duration(seconds: 10),
-                headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
-              ),
-            ),
-        _authClient = authClient ?? PhonePeAuthClient(dio: dio),
-        _v1Client = v1Client ?? PhonePeV1Client(dio: dio);
+  PhonePeService({
+    Dio? dio,
+    PhonePeAuthClient? authClient,
+    PhonePeV1Client? v1Client,
+  }) : _dio =
+           dio ??
+           Dio(
+             BaseOptions(
+               connectTimeout: const Duration(seconds: 10),
+               receiveTimeout: const Duration(seconds: 10),
+               headers: {
+                 'Content-Type': 'application/json',
+                 'Accept': 'application/json',
+               },
+             ),
+           ),
+       _authClient = authClient ?? PhonePeAuthClient(dio: dio),
+       _v1Client = v1Client ?? PhonePeV1Client(dio: dio);
 
   final Dio _dio;
   final PhonePeAuthClient _authClient;
@@ -85,12 +92,9 @@ class PhonePeService {
       if (response.statusCode == 200 && data != null) {
         final innerData = data['data'] as Map<String, dynamic>?;
         final redirectUrlStr =
-            (data['redirectUrl'] as String?) ??
-            (innerData?['redirectUrl'] as String?);
+            (data['redirectUrl'] ?? innerData?['redirectUrl']) as String?;
         final orderIdStr =
-            (data['orderId'] as String?) ??
-            (innerData?['orderId'] as String?) ??
-            '';
+            ((data['orderId'] ?? innerData?['orderId']) as String?) ?? '';
         if (redirectUrlStr != null && redirectUrlStr.isNotEmpty) {
           return (tokenUrl: redirectUrlStr, orderId: orderIdStr);
         }
@@ -100,7 +104,9 @@ class PhonePeService {
       final err = e.response?.data;
       final msg = err is Map
           ? (err['message'] ?? err['error'] ?? e.message)
-          : (err is String && err.trim().isNotEmpty ? err.trim() : (e.message ?? 'Unknown gateway error'));
+          : (err is String && err.trim().isNotEmpty
+                ? err.trim()
+                : (e.message ?? 'Unknown gateway error'));
       throw Exception('PhonePe gateway error: $msg');
     }
   }

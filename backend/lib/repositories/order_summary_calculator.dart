@@ -1,4 +1,5 @@
 import 'package:backend/database/schema.dart';
+import 'package:backend/repositories/order_types.dart';
 import 'package:models/models.dart';
 import 'package:typed_sql/typed_sql.dart' as ts;
 
@@ -7,20 +8,7 @@ class OrderSummaryCalculator {
   const OrderSummaryCalculator._();
 
   /// Computes order summary totals including gross, discounts, net revenue, and payment method channels.
-  static Future<
-    ({
-      int totalOrders,
-      double grossSubtotal,
-      double totalDiscount,
-      double platformFeeTotal,
-      double netRevenue,
-      double cashCollected,
-      double upiCollected,
-      double walletCollected,
-      double freeTotal,
-    })
-  >
-  calculateOrderSummary({
+  static Future<OrderSummaryResult> calculateOrderSummary({
     required ts.Database<DatabaseSchema> db,
     required String merchantId,
     String? storeId,
@@ -47,6 +35,7 @@ class OrderSummaryCalculator {
     var grossSubtotalPaise = 0;
     var totalDiscountPaise = 0;
     var platformFeePaise = 0;
+    var gatewayChargesPaise = 0;
     var netRevenuePaise = 0;
     var cashPaise = 0;
     var upiPaise = 0;
@@ -70,27 +59,31 @@ class OrderSummaryCalculator {
         grossSubtotalPaise += row.subtotal;
         totalDiscountPaise += row.discountTotal;
         platformFeePaise += row.platformFee;
-        netRevenuePaise += row.grandTotal - row.platformFee;
+        gatewayChargesPaise += row.gatewayCharges;
+        final merchantOrderRevenue =
+            row.grandTotal - row.platformFee - row.gatewayCharges;
+        netRevenuePaise += merchantOrderRevenue;
 
         if (row.walletDeduction > 0) {
           walletPaise += row.walletDeduction;
         }
 
         if (method == PaymentMethod.cash.name) {
-          cashPaise += row.grandTotal - row.platformFee;
+          cashPaise += merchantOrderRevenue;
         } else if (method == PaymentMethod.upi.name) {
-          upiPaise += row.grandTotal - row.platformFee;
+          upiPaise += merchantOrderRevenue;
         } else if (method == PaymentMethod.complimentary.name) {
           freePaise += row.subtotal + row.taxTotal;
         }
       }
     }
 
-    return (
+    return OrderSummaryResult(
       totalOrders: validOrderCount,
       grossSubtotal: grossSubtotalPaise / 100.0,
       totalDiscount: totalDiscountPaise / 100.0,
       platformFeeTotal: platformFeePaise / 100.0,
+      gatewayChargesTotal: gatewayChargesPaise / 100.0,
       netRevenue: netRevenuePaise / 100.0,
       cashCollected: cashPaise / 100.0,
       upiCollected: upiPaise / 100.0,

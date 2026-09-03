@@ -93,6 +93,12 @@ abstract final class CustomerWalletTransactionRow extends Row {
   @DefaultValue('completed')
   String get status;
 
+  @DefaultValue(0)
+  int get platformFee;
+
+  @DefaultValue(0)
+  int get gatewayCharges;
+
   @DefaultValue.now
   DateTime get createdAt;
 }

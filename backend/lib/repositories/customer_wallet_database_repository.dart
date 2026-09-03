@@ -78,6 +78,8 @@ class CustomerWalletDatabaseRepository {
     required String type,
     String? reference,
     String status = 'completed',
+    int platformFee = 0,
+    int gatewayCharges = 0,
   }) async {
     return db.customerWalletTransactions
         .insertValue(
@@ -87,6 +89,8 @@ class CustomerWalletDatabaseRepository {
           type: type,
           reference: reference,
           status: status,
+          platformFee: platformFee,
+          gatewayCharges: gatewayCharges,
         )
         .returnInserted()
         .executeAndFetch();

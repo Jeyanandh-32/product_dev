@@ -1,6 +1,7 @@
 import 'package:backend/database/schema.dart';
 import 'package:backend/repositories/dashboard_analytics_query.dart';
 import 'package:backend/repositories/order_summary_calculator.dart';
+import 'package:backend/repositories/order_types.dart';
 import 'package:backend/repositories/profit_loss_report_query.dart';
 import 'package:models/models.dart';
 import 'package:typed_sql/typed_sql.dart' as ts;
@@ -12,20 +13,8 @@ class OrderReportsRepository {
   final ts.Database<DatabaseSchema> db;
 
   /// Computes order summary totals (count, gross, discounts, net revenue, and payment channels).
-  Future<
-    ({
-      int totalOrders,
-      double grossSubtotal,
-      double totalDiscount,
-      double platformFeeTotal,
-      double netRevenue,
-      double cashCollected,
-      double upiCollected,
-      double walletCollected,
-      double freeTotal,
-    })
-  >
-  getOrderSummary({
+  /// Calculates aggregated order summary statistics.
+  Future<OrderSummaryResult> getOrderSummary({
     required String merchantId,
     String? storeId,
     DateTime? fromDate,

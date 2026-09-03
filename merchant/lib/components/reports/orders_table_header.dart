@@ -10,6 +10,7 @@ enum OrderSortKey {
   grossAmount,
   discountAmount,
   platformFee,
+  gatewayCharges,
   walletPaid,
   netAmount,
   paymentMode,
@@ -67,6 +68,12 @@ class OrdersTableHeader extends StatelessComponent {
         SortableHeader<OrderSortKey>(
           title: 'Platform Fee (₹)',
           sortKey: OrderSortKey.platformFee,
+          currentSort: sortState,
+          onSort: onSort,
+        ),
+        SortableHeader<OrderSortKey>(
+          title: 'Gateway Charge (₹)',
+          sortKey: OrderSortKey.gatewayCharges,
           currentSort: sortState,
           onSort: onSort,
         ),
