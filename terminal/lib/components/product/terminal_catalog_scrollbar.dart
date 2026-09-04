@@ -33,8 +33,7 @@ class _TerminalCatalogScrollbarState extends State<TerminalCatalogScrollbar> {
     if (scrollableTrack <= 0) return;
 
     final delta = (details.delta.dy / scrollableTrack) * maxScroll;
-    final newOffset =
-        (widget.controller.offset + delta).clamp(0.0, maxScroll);
+    final newOffset = (widget.controller.offset + delta).clamp(0.0, maxScroll);
     widget.controller.jumpTo(newOffset);
   }
 
@@ -76,6 +75,7 @@ class _TerminalCatalogScrollbarState extends State<TerminalCatalogScrollbar> {
                   animation: widget.controller,
                   builder: (context, _) {
                     if (!widget.controller.hasClients ||
+                        widget.controller.positions.length != 1 ||
                         !widget.controller.position.hasContentDimensions) {
                       return const SizedBox.shrink();
                     }
@@ -86,8 +86,10 @@ class _TerminalCatalogScrollbarState extends State<TerminalCatalogScrollbar> {
 
                     final thumbHeight = _calculateThumbHeight(trackHeight);
                     final scrollableTrack = trackHeight - thumbHeight;
-                    final progress =
-                        (position.pixels / maxScroll).clamp(0.0, 1.0);
+                    final progress = (position.pixels / maxScroll).clamp(
+                      0.0,
+                      1.0,
+                    );
                     final topOffset = progress * scrollableTrack;
 
                     final isActive = _isHovered || _isDragging;

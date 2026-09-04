@@ -32,7 +32,7 @@ class ProductCard extends StatelessWidget {
                   color: isExisting
                       ? const Color(0xFF000000)
                       : const Color(0xFFE5E7EB),
-                  width: 2.0,
+                  width: 1.0,
                 )
                 .shadowOnly(
                   color: isExisting

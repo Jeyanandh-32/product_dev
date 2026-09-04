@@ -46,8 +46,7 @@ class _AppLayoutState extends SignalState<AppLayout> {
                 // Right Actions: My Orders, Customer Avatar & Logout Button
                 div(classes: 'flex items-center gap-2.5', [
                   button(
-                    classes:
-                        'flex items-center gap-2 px-3 py-1.5 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold text-xs transition-all cursor-pointer border border-gray-200/80 active:scale-95',
+                    classes: 'flex items-center gap-2 px-3 py-1.5 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold text-xs transition-all cursor-pointer border border-gray-200/80 active:scale-95',
                     onClick: () => Router.of(context).push('/orders'),
                     [
                       Package(classes: 'w-3.5 h-3.5 text-gray-600'),
@@ -58,18 +57,20 @@ class _AppLayoutState extends SignalState<AppLayout> {
                   // Customer Initials Pill (Clickable -> Account Profile) OR Sign In Button
                   if (customer != null)
                     button(
-                      classes:
-                          'w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-900 hover:text-white text-black font-bold text-xs flex items-center justify-center border border-gray-200/80 transition-all cursor-pointer active:scale-95 select-none p-0',
+                      classes: 'w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-900 hover:text-white text-black font-bold text-xs flex items-center justify-center border border-gray-200/80 transition-all cursor-pointer active:scale-95 select-none p-0',
                       attributes: {'title': 'Profile'},
                       onClick: () => Router.of(context).push('/profile'),
                       [
-                        .text(customer.name.isNotEmpty ? customer.name[0].toUpperCase() : 'C'),
+                        .text(
+                          customer.name.isNotEmpty
+                              ? customer.name[0].toUpperCase()
+                              : 'C',
+                        ),
                       ],
                     )
                   else
                     button(
-                      classes:
-                          'flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black text-white hover:bg-gray-800 font-semibold text-xs transition-all cursor-pointer border-0 active:scale-95',
+                      classes: 'flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black text-white hover:bg-gray-800 font-semibold text-xs transition-all cursor-pointer border-0 active:scale-95',
                       onClick: () => Router.of(context).push('/login'),
                       [
                         User(classes: 'w-3.5 h-3.5 text-white'),
@@ -82,10 +83,14 @@ class _AppLayoutState extends SignalState<AppLayout> {
           ],
         ),
 
-        // Main Route Content Container (Tightened Compact Layout)
-        main_(classes: 'flex-1 max-w-5xl w-full mx-auto p-4 md:p-6 flex flex-col gap-6', [
-          component.child,
-        ]),
+        // Main Route Content Container
+        main_(
+          classes:
+              'flex-1 max-w-6xl w-full mx-auto p-4 md:p-6 flex flex-col gap-6',
+          [
+            component.child,
+          ],
+        ),
       ],
     );
   }

@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
 import 'package:gap/gap.dart';
@@ -21,7 +20,8 @@ class InventoryCategoryTableRow extends StatefulWidget {
   });
 
   @override
-  State<InventoryCategoryTableRow> createState() => _InventoryCategoryTableRowState();
+  State<InventoryCategoryTableRow> createState() =>
+      _InventoryCategoryTableRowState();
 }
 
 class _InventoryCategoryTableRowState extends State<InventoryCategoryTableRow> {
@@ -42,7 +42,9 @@ class _InventoryCategoryTableRowState extends State<InventoryCategoryTableRow> {
         height: 60,
         decoration: BoxDecoration(
           color: rowBg,
-          border: const Border(bottom: BorderSide(color: Color(0xFFF1F5F9), width: 1)),
+          border: const Border(
+            bottom: BorderSide(color: Color(0xFFF1F5F9), width: 1),
+          ),
         ),
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Row(
@@ -53,9 +55,16 @@ class _InventoryCategoryTableRowState extends State<InventoryCategoryTableRow> {
                 alignment: Alignment.centerLeft,
                 child: IconButton(
                   onPressed: widget.onEdit,
-                  icon: const Icon(FLucideIcons.squarePen, size: 16, color: Color(0xFF64748B)),
+                  icon: const Icon(
+                    FLucideIcons.squarePen,
+                    size: 16,
+                    color: Color(0xFF64748B),
+                  ),
                   padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                  constraints: const BoxConstraints(
+                    minWidth: 32,
+                    minHeight: 32,
+                  ),
                   hoverColor: const Color(0xFFE2E8F0),
                   splashRadius: 18,
                 ),
@@ -66,7 +75,7 @@ class _InventoryCategoryTableRowState extends State<InventoryCategoryTableRow> {
               width: 56,
               child: Align(
                 alignment: Alignment.centerLeft,
-                child: _buildThumbnail(cat.imageUrl),
+                child: InventoryTableCells.thumbnail(cat.imageUrl, size: 42),
               ),
             ),
             const Gap(16),
@@ -74,7 +83,11 @@ class _InventoryCategoryTableRowState extends State<InventoryCategoryTableRow> {
               flex: 3,
               child: Text(
                 cat.name,
-                style: const TextStyle(fontSize: 13.5, fontWeight: FontWeight.w700, color: Color(0xFF0F172A)),
+                style: const TextStyle(
+                  fontSize: 13.5,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFF0F172A),
+                ),
                 softWrap: false,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -92,7 +105,11 @@ class _InventoryCategoryTableRowState extends State<InventoryCategoryTableRow> {
               flex: 3,
               child: Text(
                 '${widget.productsCount}',
-                style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: Color(0xFF0F172A)),
+                style: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                  color: Color(0xFF0F172A),
+                ),
               ),
             ),
             const Gap(16),
@@ -108,26 +125,6 @@ class _InventoryCategoryTableRowState extends State<InventoryCategoryTableRow> {
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildThumbnail(String? url) {
-    return Container(
-      width: 42,
-      height: 42,
-      decoration: BoxDecoration(
-        color: const Color(0xFFF1F5F9),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFE2E8F0)),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: (url != null && url.isNotEmpty)
-          ? CachedNetworkImage(
-              imageUrl: url,
-              fit: BoxFit.cover,
-              errorWidget: (_, _, _) => const Icon(FLucideIcons.image, size: 16, color: Color(0xFF94A3B8)),
-            )
-          : const Icon(FLucideIcons.image, size: 16, color: Color(0xFF94A3B8)),
     );
   }
 }

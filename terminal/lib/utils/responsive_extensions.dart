@@ -12,21 +12,24 @@ extension ResponsiveContextX on BuildContext {
   /// The Forui theme breakpoints.
   FBreakpoints get breakpoints => theme.breakpoints;
 
-  /// Whether the current screen is compact / mobile (< sm breakpoint).
-  bool get isMobile => screenWidth < breakpoints.sm;
+  /// Whether the current screen is compact / mobile (<= md breakpoint / 768px).
+  /// For 768px tablet portrait screens, mobile flow is used because there is
+  /// not enough room for the cart sidebar alongside the catalog.
+  bool get isMobile => screenWidth <= breakpoints.md;
 
-  /// Whether the current screen is tablet (< lg breakpoint).
+  /// Whether the current screen is tablet (> md breakpoint and < lg breakpoint).
   bool get isTablet =>
-      screenWidth >= breakpoints.sm && screenWidth < breakpoints.lg;
+      screenWidth > breakpoints.md && screenWidth < breakpoints.lg;
 
   /// Whether the current screen is desktop (>= lg breakpoint).
   bool get isDesktop => screenWidth >= breakpoints.lg;
 
   /// Dynamic product catalog column count based on current breakpoint.
   int get productGridColumns => switch (screenWidth) {
-        _ when screenWidth < breakpoints.sm => 2,
-        _ when screenWidth < breakpoints.lg => 2,
-        _ when screenWidth < breakpoints.xl => 3,
-        _ => 4,
-      };
+    _ when screenWidth < breakpoints.sm => 2,
+    _ when screenWidth <= breakpoints.md => 3,
+    _ when screenWidth < breakpoints.lg => 2,
+    _ when screenWidth < breakpoints.xl => 3,
+    _ => 4,
+  };
 }

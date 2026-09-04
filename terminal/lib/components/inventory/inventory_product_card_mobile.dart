@@ -118,15 +118,20 @@ class InventoryProductCardMobile extends StatelessWidget {
             .alignment(Alignment.center),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: 15, color: text),
-            const Gap(6),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w700,
-                color: text,
+            Icon(icon, size: 14, color: text),
+            const Gap(5),
+            Flexible(
+              child: Text(
+                label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 12.5,
+                  fontWeight: FontWeight.w700,
+                  color: text,
+                ),
               ),
             ),
           ],

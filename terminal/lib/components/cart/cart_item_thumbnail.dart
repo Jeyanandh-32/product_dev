@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:forui/forui.dart';
-import 'package:mix/mix.dart';
 
 /// Product thumbnail image or placeholder for cart list item rows with caching.
 class CartItemThumbnail extends StatelessWidget {
@@ -16,18 +16,30 @@ class CartItemThumbnail extends StatelessWidget {
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(12),
-      child: Box(
-        style: BoxStyler().width(56).height(56).color(const Color(0xFFF3F4F6)),
+      child: Container(
+        width: 56,
+        height: 56,
+        color: const Color(0xFFF3F4F6),
         child: hasValidUrl
-            ? CachedNetworkImage(
-                imageUrl: trimmedUrl,
-                fit: BoxFit.cover,
-                memCacheWidth: 120,
-                memCacheHeight: 120,
-                fadeInDuration: const Duration(milliseconds: 150),
-                placeholder: (context, url) => const _PlaceholderIcon(),
-                errorWidget: (context, url, error) => const _PlaceholderIcon(),
-              )
+            ? (kIsWeb
+                  ? Image.network(
+                      trimmedUrl,
+                      fit: BoxFit.cover,
+                      webHtmlElementStrategy: WebHtmlElementStrategy.prefer,
+                      errorBuilder: (context, error, stackTrace) =>
+                          const _PlaceholderIcon(),
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return const _PlaceholderIcon();
+                      },
+                    )
+                  : CachedNetworkImage(
+                      imageUrl: trimmedUrl,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) => const _PlaceholderIcon(),
+                      errorWidget: (context, url, error) =>
+                          const _PlaceholderIcon(),
+                    ))
             : const _PlaceholderIcon(),
       ),
     );

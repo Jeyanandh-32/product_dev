@@ -31,6 +31,16 @@ class CustomerAppRouter {
   /// Builds route definitions.
   static List<RouteBase> buildRoutes() {
     return [
+      Route(
+        path: '/login',
+        builder: (context, state) => const LoginPage(),
+        redirect: _guestOnlyRedirect,
+      ),
+      Route(
+        path: '/register',
+        builder: (context, state) => const RegisterPage(),
+        redirect: _guestOnlyRedirect,
+      ),
       ShellRoute(
         builder: (context, state, child) => AppLayout(child: child),
         routes: [
@@ -82,17 +92,15 @@ class CustomerAppRouter {
               return null;
             },
           ),
+          Route(
+            path: '/:slug',
+            redirect: (context, state) {
+              final slug = state.params['slug'];
+              if (slug == null || slug.isEmpty) return '/';
+              return '/store/$slug';
+            },
+          ),
         ],
-      ),
-      Route(
-        path: '/login',
-        builder: (context, state) => const LoginPage(),
-        redirect: _guestOnlyRedirect,
-      ),
-      Route(
-        path: '/register',
-        builder: (context, state) => const RegisterPage(),
-        redirect: _guestOnlyRedirect,
       ),
       Route(
         path: '/:path*',

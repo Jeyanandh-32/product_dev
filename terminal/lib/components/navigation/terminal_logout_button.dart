@@ -18,21 +18,21 @@ class _TerminalLogoutButtonState extends State<TerminalLogoutButton> {
 
   @override
   Widget build(BuildContext context) {
-    final isMobile = context.isMobile;
+    final isCompact = context.screenWidth < 800;
     final fgColor = _isHovered ? const Color(0xFFFFFFFF) : const Color(0xFFDC2626);
     final bgColor = _isHovered ? const Color(0xFFDC2626) : const Color(0xFFFEF2F2);
     final borderColor = _isHovered ? const Color(0xFFDC2626) : const Color(0xFFFECACA);
 
     final baseStyle = BoxStyler()
         .height(38)
-        .paddingX(isMobile ? 0 : 14)
+        .paddingX(isCompact ? 0 : 14)
         .borderRadiusAll(const Radius.circular(999))
         .color(bgColor)
         .borderAll(color: borderColor)
         .shadowOnly(color: const Color(0x06000000), offset: const Offset(0, 1), blurRadius: 2)
         .alignment(Alignment.center);
 
-    final buttonStyle = isMobile ? baseStyle.width(38) : baseStyle;
+    final buttonStyle = isCompact ? baseStyle.width(38) : baseStyle;
 
     return MouseRegion(
       cursor: SystemMouseCursors.click,
@@ -47,7 +47,7 @@ class _TerminalLogoutButtonState extends State<TerminalLogoutButton> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Icon(FLucideIcons.logOut, size: 14.5, color: fgColor),
-            if (!isMobile) ...[
+            if (!isCompact) ...[
               const Gap(6),
               Text(
                 'Log Out',

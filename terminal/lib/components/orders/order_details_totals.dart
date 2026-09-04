@@ -3,8 +3,9 @@ import 'package:forui/forui.dart';
 import 'package:gap/gap.dart';
 import 'package:models/models.dart';
 import 'package:terminal/components/cart/cart_summary_item_row.dart';
+import 'package:terminal/components/orders/order_details_totals_header.dart';
 
-/// Senior-friendly totals and price summary section with split payments (Wallet + UPI/Cash).
+/// Totals and price summary with previous details inline and extra metrics in popup.
 class OrderDetailsTotals extends StatelessWidget {
   final Order order;
 
@@ -17,7 +18,10 @@ class OrderDetailsTotals extends StatelessWidget {
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
       children: [
+        OrderDetailsTotalsHeader(order: order),
+        const Gap(10),
         CartSummaryItemRow(
           title: 'Subtotal',
           value: '₹${order.subtotal.toStringAsFixed(2)}',

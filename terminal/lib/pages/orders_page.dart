@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:models/models.dart';
 import 'package:signals_flutter/signals_flutter.dart';
+import 'package:terminal/components/orders/order_details_modal.dart';
 import 'package:terminal/components/orders/orders.dart';
 import 'package:terminal/components/product/terminal_catalog_scrollbar.dart';
 import 'package:terminal/pages/loading.dart';
 import 'package:terminal/signals/navigation_signal.dart';
 import 'package:terminal/signals/orders_signal.dart';
-import 'package:terminal/theme/terminal_colors.dart';
 import 'package:terminal/utils/responsive_extensions.dart';
 
 /// Full-featured, responsive POS Orders management screen.
@@ -53,7 +53,11 @@ class _OrdersPageState extends State<OrdersPage> {
           children: [
             Expanded(
               child: Padding(
-                padding: EdgeInsets.only(left: isDesktop ? 20 : 12, right: isDesktop ? 12 : 8, top: 12),
+                padding: EdgeInsets.only(
+                  left: isDesktop ? 20 : 12,
+                  right: isDesktop ? 12 : 8,
+                  top: 12,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
@@ -61,7 +65,13 @@ class _OrdersPageState extends State<OrdersPage> {
                     const Gap(10),
                     const OrdersDateFilterRow(),
                     const Gap(10),
-                    const Row(children: [Expanded(child: OrdersSearchBar()), Gap(8), OrdersRefreshButton()]),
+                    const Row(
+                      children: [
+                        Expanded(child: OrdersSearchBar()),
+                        Gap(8),
+                        OrdersRefreshButton(),
+                      ],
+                    ),
                     Gap(isDesktop ? 12 : 10),
                     Expanded(child: _buildOrdersGrid(isDesktop, ordersAsync)),
                     const Gap(12),
@@ -78,7 +88,10 @@ class _OrdersPageState extends State<OrdersPage> {
     );
   }
 
-  Widget _buildOrdersGrid(bool isDesktop, AsyncState<List<Order>> ordersAsync) {
+  Widget _buildOrdersGrid(
+    bool isDesktop,
+    AsyncState<List<Order>> ordersAsync,
+  ) {
     if (ordersAsync.isLoading && ordersAsync.value == null) {
       return const Center(child: Loading(message: 'Loading orders...'));
     }
@@ -97,16 +110,25 @@ class _OrdersPageState extends State<OrdersPage> {
               removeTop: true,
               child: CustomScrollView(
                 controller: _scrollController,
-                physics: isDesktop ? const ClampingScrollPhysics() : const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+                physics: isDesktop
+                    ? const ClampingScrollPhysics()
+                    : const BouncingScrollPhysics(
+                        parent: AlwaysScrollableScrollPhysics(),
+                      ),
                 slivers: [
                   SliverDynamicHeightGridView(
-                    crossAxisCount: isDesktop ? 2 : 1,
+                    crossAxisCount: context.isMobile ? 1 : 2,
                     crossAxisSpacing: 12,
                     mainAxisSpacing: 12,
                     itemCount: pagedOrders.length,
                     builder: (context, index) {
                       final order = pagedOrders[index];
-                      return OrderCardItem(order: order, onTap: () => _onOrderTap(context, order, isDesktop));
+                      return OrderCardItem(
+                        order: order,
+                        onTap: () => isDesktop
+                            ? (selectedOrderSignal.value = order)
+                            : OrderDetailsModal.show(context, order),
+                      );
                     },
                   ),
                 ],
@@ -116,20 +138,5 @@ class _OrdersPageState extends State<OrdersPage> {
         );
       },
     );
-  }
-
-  void _onOrderTap(BuildContext context, Order order, bool isDesktop) async {
-    selectedOrderSignal.value = order;
-    if (!isDesktop) {
-      await showModalBottomSheet<void>(
-        context: context,
-        isScrollControlled: true,
-        clipBehavior: Clip.antiAlias,
-        backgroundColor: TerminalColors.pageBackground,
-        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
-        builder: (ctx) => const FractionallySizedBox(heightFactor: 0.88, child: OrderDetailsSidebar(isDrawerMode: true)),
-      );
-      selectedOrderSignal.value = null;
-    }
   }
 }

@@ -81,7 +81,7 @@ class _CartPageState extends SignalState<CartPage> {
     );
 
     return div(
-      classes: 'max-w-4xl mx-auto w-full flex flex-col gap-8',
+      classes: 'max-w-6xl mx-auto w-full flex flex-col gap-8',
       [
         CartPageHeader(
           currentStore: currentStore,
@@ -100,8 +100,8 @@ class _CartPageState extends SignalState<CartPage> {
             },
           )
         else
-          div(classes: 'grid grid-cols-1 lg:grid-cols-3 gap-8 items-start', [
-            div(classes: 'lg:col-span-2 flex flex-col gap-4', [
+          div(classes: 'grid grid-cols-1 lg:grid-cols-12 gap-8 items-start', [
+            div(classes: 'lg:col-span-7 flex flex-col gap-4', [
               for (final item in items) CartItemCard(item: item),
             ]),
 

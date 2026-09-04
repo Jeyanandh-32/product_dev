@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:forui/forui.dart';
 import 'package:gap/gap.dart';
@@ -77,10 +78,7 @@ class ReturnableProductRow extends StatelessWidget {
             ),
           ),
           const Gap(10),
-          CompactSwitch(
-            value: isReturnable,
-            onChanged: onToggle,
-          ),
+          CompactSwitch(value: isReturnable, onChanged: onToggle),
         ],
       ),
     );
@@ -95,29 +93,34 @@ class ReturnableProductRow extends StatelessWidget {
         height: 46,
         color: const Color(0xFFF3F4F6),
         child: validUrl
-            ? CachedNetworkImage(
-                imageUrl: url.trim(),
-                fit: BoxFit.cover,
-                memCacheWidth: 100,
-                memCacheHeight: 100,
-                errorWidget: (_, _, _) => const Icon(
-                  FLucideIcons.wine,
-                  size: 20,
-                  color: Color(0xFF9CA3AF),
-                ),
-                placeholder: (_, _) => const Center(
-                  child: Icon(
-                    FLucideIcons.wine,
-                    size: 20,
-                    color: Color(0xFF9CA3AF),
-                  ),
-                ),
-              )
-            : const Icon(
-                FLucideIcons.wine,
-                size: 20,
-                color: Color(0xFF16A34A),
-              ),
+            ? (kIsWeb
+                  ? Image.network(
+                      url.trim(),
+                      fit: BoxFit.cover,
+                      webHtmlElementStrategy: WebHtmlElementStrategy.prefer,
+                      errorBuilder: (_, _, _) => const Icon(
+                        FLucideIcons.wine,
+                        size: 20,
+                        color: Color(0xFF9CA3AF),
+                      ),
+                    )
+                  : CachedNetworkImage(
+                      imageUrl: url.trim(),
+                      fit: BoxFit.cover,
+                      errorWidget: (_, _, _) => const Icon(
+                        FLucideIcons.wine,
+                        size: 20,
+                        color: Color(0xFF9CA3AF),
+                      ),
+                      placeholder: (_, _) => const Center(
+                        child: Icon(
+                          FLucideIcons.wine,
+                          size: 20,
+                          color: Color(0xFF9CA3AF),
+                        ),
+                      ),
+                    ))
+            : const Icon(FLucideIcons.wine, size: 20, color: Color(0xFF16A34A)),
       ),
     );
   }

@@ -27,7 +27,7 @@ class OrderCardItem extends SignalWidget {
         .borderRadiusAll(const Radius.circular(16))
         .borderAll(
           color: isSelected ? const Color(0xFF000000) : const Color(0xFFE5E7EB),
-          width: 2.0,
+          width: 1.0,
         )
         .shadowOnly(
           color: isSelected ? const Color(0x14000000) : const Color(0x06000000),
@@ -57,7 +57,10 @@ class OrderCardItem extends SignalWidget {
                       children: [
                         StyledText(
                           '#${order.billNo}',
-                          style: TextStyler().fontSize(20).fontWeight(.w900).color(const Color(0xFF000000)),
+                          style: TextStyler()
+                              .fontSize(20)
+                              .fontWeight(.w900)
+                              .color(const Color(0xFF000000)),
                         ),
                         const Gap(6),
                         Box(

@@ -2,25 +2,33 @@ import 'package:flutter/widgets.dart';
 import 'package:forui/forui.dart';
 import 'package:gap/gap.dart';
 import 'package:mix/mix.dart';
+import 'package:models/models.dart';
 import 'package:terminal/components/cart/cart_summary_item_row.dart';
-import 'package:terminal/signals/cart_signal.dart';
 
-/// Overlay popover card displaying full order metrics, taxes, and applied discounts.
-class CartBreakdownPopover extends StatelessWidget {
-  final CartState cart;
+/// Overlay popover card displaying additional order metrics, item counts, and online fees.
+class OrderBreakdownPopover extends StatelessWidget {
+  final Order order;
   final VoidCallback onClose;
 
-  const CartBreakdownPopover({
+  const OrderBreakdownPopover({
     super.key,
-    required this.cart,
+    required this.order,
     required this.onClose,
   });
 
   @override
   Widget build(BuildContext context) {
+    final totalQuantity = order.items.fold<int>(
+      0,
+      (sum, i) => sum + i.quantity,
+    );
+    final isOnline =
+        order.source == OrderSource.web ||
+        order.source == OrderSource.mobileApp;
+
     return Box(
       style: BoxStyler()
-          .width(300)
+          .width(290)
           .paddingAll(16)
           .color(const Color(0xFFFFFFFF))
           .borderRadiusAll(const Radius.circular(16))
@@ -37,12 +45,14 @@ class CartBreakdownPopover extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              StyledText(
-                'Order Breakdown',
-                style: TextStyler()
-                    .fontSize(15)
-                    .fontWeight(.w800)
-                    .color(const Color(0xFF0F172A)),
+              Expanded(
+                child: StyledText(
+                  'Additional Details',
+                  style: TextStyler()
+                      .fontSize(15)
+                      .fontWeight(.w800)
+                      .color(const Color(0xFF0F172A)),
+                ),
               ),
               MouseRegion(
                 cursor: SystemMouseCursors.click,
@@ -67,31 +77,34 @@ class CartBreakdownPopover extends StatelessWidget {
           const Gap(14),
           CartSummaryItemRow.popover(
             title: 'Total No of Items',
-            value: '${cart.noOfItems}',
+            value: '${order.items.length}',
           ),
-          const Gap(10),
+          const Gap(8),
           CartSummaryItemRow.popover(
             title: 'Total Order Quantity',
-            value: '${cart.orderQuantity}',
+            value: '$totalQuantity',
           ),
-          const Gap(10),
-          CartSummaryItemRow.popover(
-            title: 'Subtotal',
-            value: '₹${cart.subtotal.toStringAsFixed(2)}',
-          ),
-          if (cart.discountTotal > 0) ...[
-            const Gap(10),
+          if (order.platformFee > 0 || isOnline) ...[
+            const Gap(8),
             CartSummaryItemRow.popover(
-              title: 'Discount Applied',
-              value: '-₹${cart.discountTotal.toStringAsFixed(2)}',
-              valueColor: const Color(0xFF15803D),
+              title: 'Platform Fee (1.99%)',
+              value: order.platformFee > 0
+                  ? '₹${order.platformFee.toStringAsFixed(2)}'
+                  : 'Free (₹0.00)',
             ),
           ],
-          const Gap(10),
-          CartSummaryItemRow.popover(
-            title: 'Taxes',
-            value: '₹${cart.taxTotal.toStringAsFixed(2)}',
-          ),
+          if (isOnline) ...[
+            const Gap(8),
+            CartSummaryItemRow.popover(
+              title: 'Gateway Charges (PhonePe)',
+              value: order.gatewayCharges > 0
+                  ? '₹${order.gatewayCharges.toStringAsFixed(2)}'
+                  : 'Free (₹0.00)',
+              valueColor: order.gatewayCharges > 0
+                  ? null
+                  : const Color(0xFF15803D),
+            ),
+          ],
         ],
       ),
     );

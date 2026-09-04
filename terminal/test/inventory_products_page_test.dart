@@ -8,6 +8,7 @@ import 'package:signals_flutter/signals_flutter.dart';
 import 'package:terminal/components/inventory/inventory_data_table.dart';
 import 'package:terminal/pages/inventory_products_page.dart';
 import 'package:terminal/signals/auth_signal.dart';
+import 'package:terminal/signals/bottle_return_signal.dart';
 import 'package:terminal/signals/categories_signal.dart';
 import 'package:terminal/signals/counters_signal.dart';
 import 'package:terminal/signals/inventory_products_signal.dart';
@@ -97,5 +98,26 @@ void main() {
     expect(find.text('Espresso Single'), findsOneWidget);
     expect(find.textContaining('ESP-1'), findsOneWidget);
     expect(find.text('ACTIVE'), findsOneWidget);
+  });
+
+  testWidgets('InventoryProductsPage on mobile collapses action buttons when bottle returns is enabled to give search full room', (tester) async {
+    tester.view.physicalSize = const Size(380, 800);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    bottleReturnConfigSignal.value = const BottleReturnConfig(
+      storeId: 'store_1',
+      isEnabled: true,
+      rewardAmountInRupees: 10,
+    );
+
+    await tester.pumpWidget(_wrapTestWidget(const InventoryProductsPage()));
+    await tester.pumpAndSettle();
+
+    expect(find.byIcon(FLucideIcons.recycle), findsOneWidget);
+    expect(find.byIcon(FLucideIcons.plus), findsOneWidget);
+    expect(find.text('Bottle Returns'), findsNothing);
+    expect(find.text('Add Product'), findsNothing);
   });
 }

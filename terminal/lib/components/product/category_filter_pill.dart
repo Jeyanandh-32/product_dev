@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gap/gap.dart';
 import 'package:mix/mix.dart';
@@ -71,14 +72,23 @@ class _CategoryFilterPillState extends State<CategoryFilterPill> {
               child: Box(
                 style: BoxStyler().width(28).height(28).color(avatarBg),
                 child: hasImage
-                    ? CachedNetworkImage(
-                        imageUrl: trimmedImageUrl,
-                        fit: BoxFit.cover,
-                        memCacheWidth: 80,
-                        placeholder: (context, url) => _buildFallback(avatarFg),
-                        errorWidget: (context, url, error) =>
-                            _buildFallback(avatarFg),
-                      )
+                    ? (kIsWeb
+                          ? Image.network(
+                              trimmedImageUrl,
+                              fit: BoxFit.cover,
+                              webHtmlElementStrategy:
+                                  WebHtmlElementStrategy.prefer,
+                              errorBuilder: (_, _, _) =>
+                                  _buildFallback(avatarFg),
+                            )
+                          : CachedNetworkImage(
+                              imageUrl: trimmedImageUrl,
+                              fit: BoxFit.cover,
+                              placeholder: (context, url) =>
+                                  _buildFallback(avatarFg),
+                              errorWidget: (context, url, error) =>
+                                  _buildFallback(avatarFg),
+                            ))
                     : _buildFallback(avatarFg),
               ),
             ),

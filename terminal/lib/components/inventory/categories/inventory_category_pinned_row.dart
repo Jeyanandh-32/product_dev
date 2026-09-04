@@ -1,8 +1,8 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
 import 'package:gap/gap.dart';
 import 'package:models/models.dart';
+import 'package:terminal/components/inventory/inventory_table_cells.dart';
 import 'package:terminal/theme/terminal_colors.dart';
 
 /// Pinned left cells for a category row (Action, Image, Category Name).
@@ -57,9 +57,16 @@ class InventoryCategoryPinnedRow extends StatelessWidget {
                 alignment: Alignment.centerLeft,
                 child: IconButton(
                   onPressed: onEdit,
-                  icon: const Icon(FLucideIcons.squarePen, size: 16, color: TerminalColors.textSecondary),
+                  icon: const Icon(
+                    FLucideIcons.squarePen,
+                    size: 16,
+                    color: TerminalColors.textSecondary,
+                  ),
                   padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                  constraints: const BoxConstraints(
+                    minWidth: 32,
+                    minHeight: 32,
+                  ),
                   hoverColor: TerminalColors.controlHover,
                   splashRadius: 18,
                 ),
@@ -70,7 +77,10 @@ class InventoryCategoryPinnedRow extends StatelessWidget {
               width: 56,
               child: Align(
                 alignment: Alignment.centerLeft,
-                child: _buildThumbnail(category.imageUrl),
+                child: InventoryTableCells.thumbnail(
+                  category.imageUrl,
+                  size: 42,
+                ),
               ),
             ),
             const Gap(16),
@@ -89,26 +99,6 @@ class InventoryCategoryPinnedRow extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildThumbnail(String? url) {
-    return Container(
-      width: 42,
-      height: 42,
-      decoration: BoxDecoration(
-        color: TerminalColors.secondaryBackground,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: TerminalColors.border),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: (url != null && url.isNotEmpty)
-          ? CachedNetworkImage(
-              imageUrl: url,
-              fit: BoxFit.cover,
-              errorWidget: (_, _, _) => const Icon(FLucideIcons.image, size: 16, color: TerminalColors.textMuted),
-            )
-          : const Icon(FLucideIcons.image, size: 16, color: TerminalColors.textMuted),
     );
   }
 }

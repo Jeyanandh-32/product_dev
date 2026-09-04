@@ -54,7 +54,7 @@ class CartSummaryCard extends StatelessComponent {
         : 'w-full py-4 rounded-2xl bg-gray-300 text-gray-500 font-bold text-sm flex items-center justify-center gap-2 cursor-not-allowed border border-transparent shadow-none';
 
     return div(
-      classes: 'bg-white rounded-3xl p-6 border border-gray-200/80 shadow-sm flex flex-col gap-6 sticky top-24',
+      classes: 'lg:col-span-5 w-full bg-white rounded-3xl p-6 sm:p-7 border border-gray-200/80 shadow-sm flex flex-col gap-6 sticky top-24',
       [
         h2(
           classes: 'text-lg font-extrabold text-black tracking-tight border-b border-gray-100 pb-4',

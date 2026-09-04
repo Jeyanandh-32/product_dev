@@ -67,10 +67,9 @@ class _InventoryDataTableState extends State<InventoryDataTable> {
 
   @override
   Widget build(BuildContext context) {
-    const pinnedWidth = 440.0;
-
     return LayoutBuilder(
       builder: (context, constraints) {
+        final pinnedWidth = constraints.maxWidth < 900 ? 340.0 : 440.0;
         final scrollableWidth = max(1680.0, constraints.maxWidth - pinnedWidth);
 
         return ValueListenableBuilder<int?>(

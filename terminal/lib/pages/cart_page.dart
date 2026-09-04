@@ -16,14 +16,15 @@ class CartPage extends SignalWidget {
       childPad: false,
       header: FHeader.nested(
         title: const Text('Order Items'),
-        prefixes: const [
-          TerminalBackButton(),
-        ],
-        suffixes: [
-          if (cart.items.isNotEmpty) const CartClearAllButton(),
-        ],
+        prefixes: const [TerminalBackButton()],
+        suffixes: [if (cart.items.isNotEmpty) const CartClearAllButton()],
       ),
-      child: const Cart(isDrawerMode: true),
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 680),
+          child: const Cart(isDrawerMode: true),
+        ),
+      ),
     );
   }
 }

@@ -56,7 +56,7 @@ class ReturnableProductsSearchBar extends StatelessWidget {
                       color: Color(0xFF0F172A),
                     ),
                     decoration: const InputDecoration(
-                      hintText: 'Search products by name or category...',
+                      hintText: 'Search products...',
                       hintStyle: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w500,
@@ -115,10 +115,7 @@ class ReturnableProductsSearchBar extends StatelessWidget {
                 ),
               ),
               const Gap(8),
-              CompactSwitch(
-                value: areAllReturnable,
-                onChanged: onToggleAll,
-              ),
+              CompactSwitch(value: areAllReturnable, onChanged: onToggleAll),
             ],
           ),
         ),

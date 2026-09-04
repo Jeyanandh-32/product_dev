@@ -1,8 +1,7 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:forui/forui.dart';
 import 'package:gap/gap.dart';
 import 'package:models/models.dart';
+import 'package:terminal/components/inventory/inventory_table_cells.dart';
 import 'package:terminal/theme/terminal_colors.dart';
 
 /// Pinned left cells for a counter row (Image, Counter Name).
@@ -53,7 +52,10 @@ class InventoryCounterPinnedRow extends StatelessWidget {
               width: 56,
               child: Align(
                 alignment: Alignment.centerLeft,
-                child: _buildThumbnail(counter.imageUrl),
+                child: InventoryTableCells.thumbnail(
+                  counter.imageUrl,
+                  size: 42,
+                ),
               ),
             ),
             const Gap(16),
@@ -72,30 +74,6 @@ class InventoryCounterPinnedRow extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildThumbnail(String? url) {
-    return Container(
-      width: 42,
-      height: 42,
-      decoration: BoxDecoration(
-        color: TerminalColors.secondaryBackground,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: TerminalColors.border),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: (url != null && url.isNotEmpty)
-          ? CachedNetworkImage(
-              imageUrl: url,
-              fit: BoxFit.cover,
-              errorWidget: (_, _, _) => const Icon(
-                FLucideIcons.image,
-                size: 16,
-                color: TerminalColors.textMuted,
-              ),
-            )
-          : const Icon(FLucideIcons.image, size: 16, color: TerminalColors.textMuted),
     );
   }
 }

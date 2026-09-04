@@ -6,6 +6,7 @@ import 'package:mix/mix.dart';
 import 'package:terminal/components/navigation/terminal_bottle_returns_button.dart';
 import 'package:terminal/components/navigation/terminal_logout_button.dart';
 import 'package:terminal/components/navigation/terminal_navigation_dropdown.dart';
+import 'package:terminal/utils/responsive_extensions.dart';
 
 /// Top POS App Header with unbolded Arizonia branding, navigation menu, and logout button.
 class TerminalAppBar extends StatelessWidget {
@@ -27,7 +28,7 @@ class TerminalAppBar extends StatelessWidget {
             title: StyledText(
               'Branding',
               style: TextStyler()
-                  .fontSize(36)
+                  .fontSize(context.isMobile ? 28 : 36)
                   .fontWeight(FontWeight.w400)
                   .fontFamily(_arizoniaFontFamily)
                   .color(theme.colors.primary),
@@ -39,10 +40,7 @@ class TerminalAppBar extends StatelessWidget {
               TerminalLogoutButton(),
             ],
           ),
-          Container(
-            color: theme.colors.border,
-            height: 1,
-          ),
+          Container(color: theme.colors.border, height: 1),
         ],
       ),
     );

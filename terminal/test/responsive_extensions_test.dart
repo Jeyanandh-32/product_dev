@@ -36,12 +36,12 @@ void main() {
       ),
     );
 
-    // 2. Tablet screen (width 700, 60% catalog layout)
+    // 2. Tablet screen (width 900, 60% catalog layout)
     await tester.pumpWidget(
       buildApp(
         Builder(
           builder: (context) {
-            expect(context.screenWidth, 700);
+            expect(context.screenWidth, 900);
             expect(context.isMobile, isFalse);
             expect(context.isTablet, isTrue);
             expect(context.isDesktop, isFalse);
@@ -49,7 +49,7 @@ void main() {
             return const SizedBox();
           },
         ),
-        const Size(700, 900),
+        const Size(900, 900),
       ),
     );
 

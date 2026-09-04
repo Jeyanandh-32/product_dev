@@ -13,48 +13,64 @@ class CartPaymentModeSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Flexible(
-          child: StyledText(
-            'Payment Mode',
-            style: TextStyler()
-                .fontSize(14)
-                .fontWeight(.w700)
-                .color(const Color(0xFF000000)),
-          ),
-        ),
-        const Gap(6),
-        Row(
-          mainAxisSize: MainAxisSize.min,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isCompact = constraints.maxWidth < 310;
+        final title = StyledText(
+          'Payment Mode',
+          style: TextStyler()
+              .fontSize(14)
+              .fontWeight(.w700)
+              .color(const Color(0xFF000000)),
+        );
+
+        if (isCompact) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              title,
+              const Gap(8),
+              Row(
+                children: [
+                  Expanded(child: _buildTab(PaymentMethod.cash, 'Cash', FLucideIcons.banknote)),
+                  const Gap(4.5),
+                  Expanded(child: _buildTab(PaymentMethod.upi, 'UPI', FLucideIcons.qrCode)),
+                  const Gap(4.5),
+                  Expanded(child: _buildTab(PaymentMethod.complimentary, 'Free', FLucideIcons.gift)),
+                ],
+              ),
+            ],
+          );
+        }
+
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            _ModeTab(
-              mode: PaymentMethod.cash,
-              label: 'Cash',
-              icon: FLucideIcons.banknote,
-              isSelected: selectedMode == PaymentMethod.cash,
-            ),
-            const Gap(4.5),
-            _ModeTab(
-              mode: PaymentMethod.upi,
-              label: 'UPI',
-              icon: FLucideIcons.qrCode,
-              isSelected: selectedMode == PaymentMethod.upi,
-            ),
-            const Gap(4.5),
-            _ModeTab(
-              mode: PaymentMethod.complimentary,
-              label: 'Free',
-              icon: FLucideIcons.gift,
-              isSelected: selectedMode == PaymentMethod.complimentary,
+            Flexible(child: title),
+            const Gap(6),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _buildTab(PaymentMethod.cash, 'Cash', FLucideIcons.banknote),
+                const Gap(4.5),
+                _buildTab(PaymentMethod.upi, 'UPI', FLucideIcons.qrCode),
+                const Gap(4.5),
+                _buildTab(PaymentMethod.complimentary, 'Free', FLucideIcons.gift),
+              ],
             ),
           ],
-        ),
-      ],
+        );
+      },
     );
   }
+
+  Widget _buildTab(PaymentMethod mode, String label, IconData icon) => _ModeTab(
+        mode: mode,
+        label: label,
+        icon: icon,
+        isSelected: selectedMode == mode,
+      );
 }
 
 class _ModeTab extends StatefulWidget {
