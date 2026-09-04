@@ -104,12 +104,14 @@ class _InventoryProductTableRowState extends State<InventoryProductTableRow> {
   }
 
   Widget _cell(double width, Widget child) => SizedBox(
-        width: width,
-        child: Align(alignment: Alignment.centerLeft, child: child),
-      );
+    width: width,
+    child: Align(alignment: Alignment.centerLeft, child: child),
+  );
 
-  Widget _text(double width, String text) =>
-      SizedBox(width: width, child: Text(text, style: _cellStyle));
+  Widget _text(double width, String text) => SizedBox(
+    width: width,
+    child: Text(text, style: _cellStyle),
+  );
 
   static const _cellStyle = TextStyle(fontSize: 13, color: Color(0xFF0F172A));
 }

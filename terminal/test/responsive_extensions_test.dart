@@ -10,15 +10,14 @@ void main() {
       data: MediaQueryData(size: size),
       child: MaterialApp(
         theme: TerminalTheme.light().toApproximateMaterialTheme(),
-        home: FTheme(
-          data: TerminalTheme.light(),
-          child: child,
-        ),
+        home: FTheme(data: TerminalTheme.light(), child: child),
       ),
     );
   }
 
-  testWidgets('ResponsiveContextX computes correct flags and grid columns', (tester) async {
+  testWidgets('ResponsiveContextX computes correct flags and grid columns', (
+    tester,
+  ) async {
     // 1. Mobile screen (width 400)
     await tester.pumpWidget(
       buildApp(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:signals_flutter/signals_flutter.dart';
+import 'package:terminal/components/inventory/modals/returnable_products_count_row.dart';
 import 'package:terminal/components/inventory/modals/returnable_products_header.dart';
 import 'package:terminal/components/inventory/modals/returnable_products_list.dart';
 import 'package:terminal/components/inventory/modals/returnable_products_search_bar.dart';
@@ -46,14 +47,19 @@ class _ReturnableProductsBodyState extends State<ReturnableProductsBody> {
       isReturnable: isReturnable,
     );
     if (!mounted) return;
-    final desc = '$name marked as ${isReturnable ? 'returnable' : 'not returnable'}.';
+    final desc =
+        '$name marked as ${isReturnable ? 'returnable' : 'not returnable'}.';
     ok
         ? TerminalToast.showSuccess(
-            context: context, title: 'Product Updated', description: desc)
+            context: context,
+            title: 'Product Updated',
+            description: desc,
+          )
         : TerminalToast.showError(
             context: context,
             title: 'Update Failed',
-            description: 'Failed to update $name.');
+            description: 'Failed to update $name.',
+          );
   }
 
   Future<void> _handleToggleAll(String storeId, bool isReturnable) async {
@@ -62,20 +68,26 @@ class _ReturnableProductsBodyState extends State<ReturnableProductsBody> {
       isReturnable: isReturnable,
     );
     if (!mounted) return;
-    final desc = 'All products marked as ${isReturnable ? 'returnable' : 'not returnable'}.';
+    final desc =
+        'All products marked as ${isReturnable ? 'returnable' : 'not returnable'}.';
     ok
         ? TerminalToast.showSuccess(
-            context: context, title: 'Catalog Updated', description: desc)
+            context: context,
+            title: 'Catalog Updated',
+            description: desc,
+          )
         : TerminalToast.showError(
             context: context,
             title: 'Update Failed',
-            description: 'Failed to update catalog status.');
+            description: 'Failed to update catalog status.',
+          );
   }
 
   @override
   Widget build(BuildContext context) {
     final storeId = authSignal.value.value?.storeId ?? '';
-    final rewardAmt = bottleReturnConfigSignal.value?.rewardAmountInRupees ?? 10;
+    final rewardAmt =
+        bottleReturnConfigSignal.value?.rewardAmountInRupees ?? 10;
 
     return SignalBuilder(
       builder: (context) {
@@ -109,27 +121,11 @@ class _ReturnableProductsBodyState extends State<ReturnableProductsBody> {
               onToggleAll: (val) => _handleToggleAll(storeId, val),
             ),
             const Gap(12),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Text(
-                    '$returnableCount of ${allProducts.length} products returnable',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                        fontSize: 12, fontWeight: FontWeight.w600, color: Color(0xFF64748B)),
-                  ),
-                ),
-                if (_searchQuery.isNotEmpty) ...[
-                  const Gap(8),
-                  Text(
-                    '${filtered.length} matching search',
-                    style:
-                        const TextStyle(fontSize: 12, color: Color(0xFF94A3B8)),
-                  ),
-                ],
-              ],
+            ReturnableProductsCountRow(
+              returnableCount: returnableCount,
+              totalCount: allProducts.length,
+              matchingCount: filtered.length,
+              isSearching: _searchQuery.isNotEmpty,
             ),
             const Gap(8),
             Expanded(
