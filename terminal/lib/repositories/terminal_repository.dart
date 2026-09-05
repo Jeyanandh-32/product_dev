@@ -1,9 +1,12 @@
 import 'package:api_client/api_client.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:models/models.dart';
 import 'package:terminal/config/secure_storage.dart';
 
+/// Repository managing Terminal authentication across Web and Native platforms.
 abstract final class TerminalAuthRepository {
+  /// Authenticates a terminal by its unique [code] and [password].
   static Future<Terminal> login({
     required String code,
     required String password,
@@ -16,9 +19,12 @@ abstract final class TerminalAuthRepository {
 
       final data = result.data['data'] as Map<String, dynamic>;
 
-      final accessToken = data['accessToken'] as String;
-
-      await SecureStorage.saveAccessToken(accessToken);
+      if (!kIsWeb) {
+        final accessToken = data['accessToken'] as String?;
+        if (accessToken != null) {
+          await SecureStorage.saveAccessToken(accessToken);
+        }
+      }
 
       final terminal = Terminal.fromJson(data['terminal']);
       return terminal;
@@ -27,15 +33,22 @@ abstract final class TerminalAuthRepository {
     }
   }
 
+  /// Fetches the currently authenticated terminal profile.
   static Future<Terminal?> getTerminal() async {
-    final token = await SecureStorage.getAccessToken();
-    if (token == null) return null;
+    if (!kIsWeb) {
+      final token = await SecureStorage.getAccessToken();
+      if (token == null) return null;
+    }
 
     try {
-      final result = await dio.get(
-        ApiEndpoints.terminals,
-        options: Options(headers: {'Authorization': 'Bearer $token'}),
-      );
+      final result = await dio.get(ApiEndpoints.terminals);
+
+      if (result.statusCode == 401 ||
+          result.data == null ||
+          result.data['data'] == null ||
+          result.data['data']['terminal'] == null) {
+        return null;
+      }
 
       final data = result.data['data'] as Map<String, dynamic>;
       return Terminal.fromJson(data['terminal']);
@@ -44,20 +57,39 @@ abstract final class TerminalAuthRepository {
     }
   }
 
+  /// Fetches the authenticated terminal account and store details.
   static Future<TerminalAccount?> getTerminalAccount() async {
-    final token = await SecureStorage.getAccessToken();
-    if (token == null) return null;
+    if (!kIsWeb) {
+      final token = await SecureStorage.getAccessToken();
+      if (token == null) return null;
+    }
 
     try {
-      final result = await dio.get(
-        ApiEndpoints.terminals,
-        options: Options(headers: {'Authorization': 'Bearer $token'}),
-      );
+      final result = await dio.get(ApiEndpoints.terminals);
+
+      if (result.statusCode == 401 ||
+          result.data == null ||
+          result.data['data'] == null) {
+        return null;
+      }
 
       final data = result.data['data'] as Map<String, dynamic>;
       return TerminalAccount.fromJson(data);
     } on DioException {
       return null;
+    }
+  }
+
+  /// Logs out the terminal session, clearing browser cookies on web or secure storage on native.
+  static Future<void> logout() async {
+    if (kIsWeb) {
+      try {
+        await dio.get(ApiEndpoints.logout);
+      } on DioException catch (e) {
+        handleDioError(e, 'Logout failed.');
+      }
+    } else {
+      await SecureStorage.deleteAccessToken();
     }
   }
 }

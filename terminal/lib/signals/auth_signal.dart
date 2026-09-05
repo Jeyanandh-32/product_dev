@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/widgets.dart';
 import 'package:models/models.dart';
 import 'package:signals_flutter/signals_flutter.dart';
-import 'package:terminal/config/secure_storage.dart';
 import 'package:terminal/repositories/terminal_repository.dart';
 import 'package:terminal/signals/account_signal.dart';
 import 'package:terminal/signals/bottle_return_signal.dart';
@@ -68,7 +67,9 @@ Future<void> loginTerminal({
 }
 
 Future<void> logoutTerminal() async {
-  await SecureStorage.deleteAccessToken();
+  try {
+    await TerminalAuthRepository.logout();
+  } catch (_) {}
   authSignal.value = const AsyncData(null);
   WidgetsBinding.instance.addPostFrameCallback((_) {
     resetAllTerminalSignals();

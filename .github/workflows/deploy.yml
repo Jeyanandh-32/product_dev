@@ -33,7 +33,9 @@ jobs:
           filters: |
             backend:
               - 'backend/**'
-              - 'packages/**'
+              - '!backend/migrations/**'
+              - 'packages/models/**'
+              - 'packages/validators/**'
             merchant:
               - 'merchant/**'
               - 'packages/**'
@@ -52,6 +54,7 @@ jobs:
     name: Build & Package Changes
     needs: changes
     runs-on: ubuntu-latest
+    if: needs.changes.outputs.backend == 'true' || needs.changes.outputs.merchant == 'true' || needs.changes.outputs.customer == 'true' || needs.changes.outputs.terminal == 'true' || needs.changes.outputs.landing == 'true' || needs.changes.outputs.migrations == 'true' || github.event_name == 'workflow_dispatch'
     env:
       API_DOMAIN: ${{ github.ref == 'refs/heads/stage' && 'pos-stage.sparrow-x.in' || 'pos.sparrow-x.in' }}
     steps:
@@ -103,6 +106,12 @@ jobs:
           export PATH="$PATH":"$HOME/.pub-cache/bin"
           jaspr build --experimental-wasm
 
+      - name: Build Terminal Web App (WASM)
+        if: needs.changes.outputs.terminal == 'true' || github.event_name == 'workflow_dispatch'
+        run: |
+          cd terminal
+          flutter build web --wasm --release --base-href /terminal/ --dart-define=API_BASE_URL=https://${{ env.API_DOMAIN }}
+
       - name: Build & Compile Native Backend Binary
         if: needs.changes.outputs.backend == 'true' || github.event_name == 'workflow_dispatch'
         run: |
@@ -118,13 +127,23 @@ jobs:
       - name: Package Changed Artifacts
         run: |
           mkdir -p dist
-          if [ -d "merchant/build/jaspr" ]; then
-            mkdir -p dist/merchant
-            cp -r merchant/build/jaspr/* dist/merchant/
+          if [ "${{ needs.changes.outputs.merchant }}" = "true" ] || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            if [ -d "merchant/build/jaspr" ]; then
+              mkdir -p dist/merchant
+              cp -r merchant/build/jaspr/* dist/merchant/
+            fi
           fi
-          if [ -d "customer/build/jaspr" ]; then
-            mkdir -p dist/store
-            cp -r customer/build/jaspr/* dist/store/
+          if [ "${{ needs.changes.outputs.customer }}" = "true" ] || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            if [ -d "customer/build/jaspr" ]; then
+              mkdir -p dist/store
+              cp -r customer/build/jaspr/* dist/store/
+            fi
+          fi
+          if [ "${{ needs.changes.outputs.terminal }}" = "true" ] || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            if [ -d "terminal/build/web" ]; then
+              mkdir -p dist/terminal
+              cp -r terminal/build/web/* dist/terminal/
+            fi
           fi
           if [ "${{ needs.changes.outputs.landing }}" = "true" ] || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             mkdir -p dist/landing
@@ -134,8 +153,10 @@ jobs:
             mkdir -p dist/migrations
             cp -r backend/migrations/* dist/migrations/
           fi
-          if [ -f "server.exe" ]; then
-            cp server.exe dist/
+          if [ "${{ needs.changes.outputs.backend }}" = "true" ] || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            if [ -f "server.exe" ]; then
+              cp server.exe dist/
+            fi
           fi
 
       - name: Upload Artifacts
@@ -148,7 +169,7 @@ jobs:
     name: Deploy to EC2
     needs: [changes, build]
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/stage'
+    if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/stage') && (needs.changes.outputs.backend == 'true' || needs.changes.outputs.merchant == 'true' || needs.changes.outputs.customer == 'true' || needs.changes.outputs.terminal == 'true' || needs.changes.outputs.landing == 'true' || needs.changes.outputs.migrations == 'true' || github.event_name == 'workflow_dispatch')
     env:
       TARGET_WEB_DIR: ${{ github.ref == 'refs/heads/stage' && '/var/www/pos/stage' || '/var/www/pos/main' }}
       TARGET_APP_DIR: ${{ github.ref == 'refs/heads/stage' && 'pos/stage' || 'pos/main' }}
@@ -178,6 +199,9 @@ jobs:
           fi
           if [ -d "dist/store" ]; then
             rsync -avz -e "ssh -i ~/.ssh/id_rsa" dist/store/ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:${{ env.TARGET_WEB_DIR }}/store/
+          fi
+          if [ -d "dist/terminal" ]; then
+            rsync -avz -e "ssh -i ~/.ssh/id_rsa" dist/terminal/ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:${{ env.TARGET_WEB_DIR }}/terminal/
           fi
           if [ -d "dist/migrations" ]; then
             rsync -avz -e "ssh -i ~/.ssh/id_rsa" dist/migrations/ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/${{ env.TARGET_APP_DIR }}/migrations/

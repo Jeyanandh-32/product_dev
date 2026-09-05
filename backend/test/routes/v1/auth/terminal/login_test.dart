@@ -12,7 +12,9 @@ import '../../../../../routes/v1/auth/terminal/login.dart' as route;
 import '../../../../helpers/schema_factories.dart';
 
 class _MockRequestContext extends Mock implements RequestContext {}
+
 class _MockRequest extends Mock implements Request {}
+
 class _MockTerminalRepository extends Mock implements TerminalRepository {}
 
 void main() {
@@ -43,7 +45,8 @@ void main() {
       when(() => request.json()).thenAnswer(
         (_) async => {'code': 'TERM12345678', 'password': 'Password123'},
       );
-      when(() => repo.getByCode('TERM12345678')).thenAnswer((_) async => terminalRow);
+      when(() => repo.getByCode('TERM12345678'))
+          .thenAnswer((_) async => terminalRow);
 
       final response = await route.onRequest(context);
 
@@ -53,6 +56,11 @@ void main() {
       final data = body['data'] as Map<String, dynamic>;
       final terminal = data['terminal'] as Map<String, dynamic>;
       expect(terminal['code'], equals('TERM12345678'));
+      expect(response.headers[HttpHeaders.setCookieHeader], isNotNull);
+      expect(
+        response.headers[HttpHeaders.setCookieHeader],
+        contains('access_token='),
+      );
     });
   });
 }

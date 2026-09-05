@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:backend/extensions/request_context_extension.dart';
 import 'package:backend/extensions/terminal_row_extension.dart';
 import 'package:backend/services/auth_service.dart';
@@ -44,7 +46,14 @@ Future<Response> _onPost(RequestContext context) async {
       terminalCode: terminalRow.code,
     );
 
+    final cookies = [
+      CookieService.buildAccessTokenCookie(accessToken),
+    ];
+
     return success(
+      headers: {
+        HttpHeaders.setCookieHeader: cookies,
+      },
       data: {
         'terminal': terminalRow.toTerminal(),
         'accessToken': accessToken,
