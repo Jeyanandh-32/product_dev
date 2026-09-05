@@ -5,6 +5,7 @@ import 'package:models/models.dart';
 import 'package:terminal/components/account/account_card_header.dart';
 import 'package:terminal/components/account/account_info_row.dart';
 import 'package:terminal/theme/terminal_colors.dart';
+import 'package:terminal/utils/responsive_extensions.dart';
 
 /// Card displaying store subscription and POS license status.
 class SubscriptionInfoCard extends StatelessWidget {
@@ -54,7 +55,7 @@ class SubscriptionInfoCard extends StatelessWidget {
           ),
         ],
       ),
-      padding: const EdgeInsets.all(22),
+      padding: EdgeInsets.all(context.isMobile ? 14 : 18),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -62,7 +63,6 @@ class SubscriptionInfoCard extends StatelessWidget {
             icon: FLucideIcons.creditCard,
             title: 'Store Subscription',
             subtitle: 'Software license & plan status',
-            isActive: isSubActive,
           ),
           const Gap(18),
           Container(height: 1, color: const Color(0xFFF1F5F9)),

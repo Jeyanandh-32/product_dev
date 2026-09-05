@@ -6,6 +6,7 @@ import 'package:models/models.dart';
 import 'package:terminal/components/account/account_card_header.dart';
 import 'package:terminal/components/account/account_info_row.dart';
 import 'package:terminal/theme/terminal_colors.dart';
+import 'package:terminal/utils/responsive_extensions.dart';
 import 'package:terminal/utils/terminal_toast.dart';
 
 /// Card displaying authenticated POS terminal device details.
@@ -38,7 +39,7 @@ class TerminalInfoCard extends StatelessWidget {
           ),
         ],
       ),
-      padding: const EdgeInsets.all(22),
+      padding: EdgeInsets.all(context.isMobile ? 14 : 18),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -46,7 +47,6 @@ class TerminalInfoCard extends StatelessWidget {
             icon: FLucideIcons.monitor,
             title: 'Terminal Hardware',
             subtitle: 'Device & workstation profile',
-            isActive: terminal.isActive,
           ),
           const Gap(18),
           Container(height: 1, color: const Color(0xFFF1F5F9)),

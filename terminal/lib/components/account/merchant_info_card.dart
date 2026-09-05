@@ -5,6 +5,7 @@ import 'package:models/models.dart';
 import 'package:terminal/components/account/account_card_header.dart';
 import 'package:terminal/components/account/account_info_row.dart';
 import 'package:terminal/theme/terminal_colors.dart';
+import 'package:terminal/utils/responsive_extensions.dart';
 
 /// Card displaying merchant enterprise and owner contact details.
 class MerchantInfoCard extends StatelessWidget {
@@ -23,7 +24,7 @@ class MerchantInfoCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           border: Border.all(color: TerminalColors.border),
         ),
-        padding: const EdgeInsets.all(22),
+        padding: EdgeInsets.all(context.isMobile ? 14 : 18),
         child: const Center(
           child: Text(
             'Merchant details unavailable.',
@@ -46,7 +47,7 @@ class MerchantInfoCard extends StatelessWidget {
           ),
         ],
       ),
-      padding: const EdgeInsets.all(22),
+      padding: EdgeInsets.all(context.isMobile ? 14 : 18),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

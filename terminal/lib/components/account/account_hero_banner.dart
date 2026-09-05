@@ -1,12 +1,13 @@
 import 'package:flutter/widgets.dart';
-import 'package:forui/forui.dart';
 import 'package:gap/gap.dart';
 import 'package:models/models.dart';
 import 'package:terminal/components/account/account_hero_avatar.dart';
+import 'package:terminal/components/account/account_hero_details.dart';
 import 'package:terminal/components/account/account_status_badge.dart';
 import 'package:terminal/theme/terminal_colors.dart';
+import 'package:terminal/utils/responsive_extensions.dart';
 
-/// Top hero banner displaying active terminal device, store, and merchant summary with high-contrast text.
+/// Top hero banner displaying active terminal device, store, and merchant summary.
 class AccountHeroBanner extends StatelessWidget {
   final Terminal terminal;
   final Store? store;
@@ -22,6 +23,7 @@ class AccountHeroBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final initials = _getInitials(terminal.name);
+    final isMobile = context.isMobile;
 
     return Container(
       width: double.infinity,
@@ -37,12 +39,12 @@ class AccountHeroBanner extends StatelessWidget {
           ),
         ],
       ),
-      padding: const EdgeInsets.all(22),
+      padding: EdgeInsets.all(isMobile ? 14 : 18),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           AccountHeroAvatar(initials: initials),
-          const Gap(18),
+          Gap(isMobile ? 14 : 18),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -50,72 +52,24 @@ class AccountHeroBanner extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Flexible(
+                    Expanded(
                       child: Text(
                         terminal.name,
-                        style: const TextStyle(
-                          fontSize: 20,
+                        style: TextStyle(
+                          fontSize: isMobile ? 18 : 20,
                           fontWeight: FontWeight.w800,
-                          color: Color(0xFF0F172A),
+                          color: const Color(0xFF0F172A),
                           letterSpacing: -0.4,
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    const Gap(10),
+                    const Gap(8),
                     AccountStatusBadge(isActive: terminal.isActive),
                   ],
                 ),
-                const Gap(6),
-                Row(
-                  children: [
-                    const Icon(
-                      FLucideIcons.store,
-                      size: 14,
-                      color: Color(0xFF64748B),
-                    ),
-                    const Gap(5),
-                    Flexible(
-                      child: Text(
-                        store?.name ?? 'Assigned Store',
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFF334155),
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    if (merchant case final merchantObj?) ...[
-                      const Gap(8),
-                      const Text(
-                        '•',
-                        style: TextStyle(
-                          color: Color(0xFF94A3B8),
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const Gap(8),
-                      const Icon(
-                        FLucideIcons.building2,
-                        size: 14,
-                        color: Color(0xFF64748B),
-                      ),
-                      const Gap(5),
-                      Flexible(
-                        child: Text(
-                          merchantObj.businessName,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                            color: Color(0xFF475569),
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
+                Gap(isMobile ? 8 : 6),
+                AccountHeroDetails(store: store, merchant: merchant),
               ],
             ),
           ),
@@ -125,10 +79,8 @@ class AccountHeroBanner extends StatelessWidget {
   }
 
   String _getInitials(String text) {
-    final words = text.trim().split(RegExp(r'\s+'));
-    if (words.length >= 2) {
-      return '${words[0][0]}${words[1][0]}'.toUpperCase();
-    }
+    final parts = text.trim().split(RegExp(r'\s+'));
+    if (parts.length >= 2) return '${parts[0][0]}${parts[1][0]}'.toUpperCase();
     return text.length >= 2
         ? text.substring(0, 2).toUpperCase()
         : text.toUpperCase();

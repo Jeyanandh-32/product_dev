@@ -8,6 +8,7 @@ import 'package:terminal/components/account/subscription_info_card.dart';
 import 'package:terminal/components/account/terminal_info_card.dart';
 import 'package:terminal/signals/account_signal.dart';
 import 'package:terminal/signals/auth_signal.dart';
+import 'package:terminal/utils/responsive_extensions.dart';
 
 /// Terminal device and merchant account view with premium layout and cards.
 class AccountPage extends StatelessWidget {
@@ -27,18 +28,19 @@ class AccountPage extends StatelessWidget {
         final store = accountData?.store;
         final merchant = accountData?.merchant;
         final subscription = accountData?.subscription;
+        final isMobile = context.isMobile;
 
         return Container(
           color: const Color(0xFFF8FAFC),
           child: ListView(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+            padding: EdgeInsets.all(isMobile ? 10 : 16),
             children: [
               AccountHeroBanner(
                 terminal: terminal,
                 store: store,
                 merchant: merchant,
               ),
-              const Gap(20),
+              Gap(isMobile ? 12 : 16),
               LayoutBuilder(
                 builder: (context, constraints) {
                   final isWide = constraints.maxWidth >= 768;
@@ -75,14 +77,14 @@ class AccountPage extends StatelessWidget {
                   return Column(
                     children: [
                       TerminalInfoCard(terminal: terminal),
-                      const Gap(16),
+                      Gap(isMobile ? 12 : 16),
                       StoreInfoCard(store: store),
-                      const Gap(16),
+                      Gap(isMobile ? 12 : 16),
                       SubscriptionInfoCard(
                         store: store,
                         subscription: subscription,
                       ),
-                      const Gap(16),
+                      Gap(isMobile ? 12 : 16),
                       MerchantInfoCard(merchant: merchant),
                     ],
                   );

@@ -5,6 +5,7 @@ import 'package:models/models.dart';
 import 'package:terminal/components/account/account_card_header.dart';
 import 'package:terminal/components/account/account_info_row.dart';
 import 'package:terminal/theme/terminal_colors.dart';
+import 'package:terminal/utils/responsive_extensions.dart';
 
 /// Card displaying assigned store details and operational status.
 class StoreInfoCard extends StatelessWidget {
@@ -15,6 +16,7 @@ class StoreInfoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final storeData = store;
+    final padding = EdgeInsets.all(context.isMobile ? 14 : 18);
 
     if (storeData == null) {
       return Container(
@@ -23,7 +25,7 @@ class StoreInfoCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           border: Border.all(color: TerminalColors.border),
         ),
-        padding: const EdgeInsets.all(22),
+        padding: padding,
         child: const Center(
           child: Text(
             'Store details unavailable.',
@@ -46,7 +48,7 @@ class StoreInfoCard extends StatelessWidget {
           ),
         ],
       ),
-      padding: const EdgeInsets.all(22),
+      padding: padding,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -54,7 +56,6 @@ class StoreInfoCard extends StatelessWidget {
             icon: FLucideIcons.store,
             title: 'Assigned Store',
             subtitle: 'Branch & operational settings',
-            isActive: storeData.isActive,
           ),
           const Gap(18),
           Container(height: 1, color: const Color(0xFFF1F5F9)),

@@ -4,6 +4,7 @@ import 'package:forui/forui.dart';
 import 'package:models/models.dart';
 import 'package:signals_flutter/signals_flutter.dart';
 import 'package:terminal/components/account/account_hero_banner.dart';
+import 'package:terminal/components/account/account_status_badge.dart';
 import 'package:terminal/components/account/merchant_info_card.dart';
 import 'package:terminal/components/account/store_info_card.dart';
 import 'package:terminal/components/account/subscription_info_card.dart';
@@ -71,29 +72,30 @@ void main() {
     );
   });
 
-  testWidgets('AccountPage renders hero banner and all 4 info cards on desktop layout', (
-    tester,
-  ) async {
-    tester.view.physicalSize = const Size(1280, 800);
-    tester.view.devicePixelRatio = 1.0;
-    addTearDown(() => tester.view.resetPhysicalSize());
+  testWidgets(
+    'AccountPage renders hero banner and all 4 info cards on desktop layout',
+    (tester) async {
+      tester.view.physicalSize = const Size(1280, 800);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(() => tester.view.resetPhysicalSize());
 
-    await tester.pumpWidget(_wrapTestWidget(const AccountPage()));
-    await tester.pumpAndSettle();
+      await tester.pumpWidget(_wrapTestWidget(const AccountPage()));
+      await tester.pumpAndSettle();
 
-    expect(find.byType(AccountHeroBanner), findsOneWidget);
-    expect(find.byType(TerminalInfoCard), findsOneWidget);
-    expect(find.byType(StoreInfoCard), findsOneWidget);
-    expect(find.byType(SubscriptionInfoCard), findsOneWidget);
-    expect(find.byType(MerchantInfoCard), findsOneWidget);
+      expect(find.byType(AccountHeroBanner), findsOneWidget);
+      expect(find.byType(TerminalInfoCard), findsOneWidget);
+      expect(find.byType(StoreInfoCard), findsOneWidget);
+      expect(find.byType(SubscriptionInfoCard), findsOneWidget);
+      expect(find.byType(MerchantInfoCard), findsOneWidget);
 
-    expect(find.text('Main Counter POS'), findsWidgets);
-    expect(find.text('TERM98765432'), findsOneWidget);
-    expect(find.text('Downtown Coffee & Cafe'), findsWidgets);
-    expect(find.text('Downtown Enterprises Ltd'), findsWidgets);
-    expect(find.text('jane@downtown.com'), findsOneWidget);
-    expect(find.text('+91 98765 43210'), findsOneWidget);
-  });
+      expect(find.text('Main Counter POS'), findsWidgets);
+      expect(find.text('TERM98765432'), findsOneWidget);
+      expect(find.text('Downtown Coffee & Cafe'), findsWidgets);
+      expect(find.text('Downtown Enterprises Ltd'), findsWidgets);
+      expect(find.text('jane@downtown.com'), findsOneWidget);
+      expect(find.text('+91 98765 43210'), findsOneWidget);
+    },
+  );
 
   testWidgets('AccountPage renders in single column on mobile layout', (
     tester,
@@ -110,6 +112,8 @@ void main() {
     expect(find.byType(StoreInfoCard), findsOneWidget);
     expect(find.byType(SubscriptionInfoCard), findsOneWidget);
     expect(find.byType(MerchantInfoCard), findsOneWidget);
+    expect(find.text('Downtown Coffee & Cafe'), findsWidgets);
+    expect(find.text('Downtown Enterprises Ltd'), findsWidgets);
   });
 
   testWidgets('TerminalInfoCard displays copy icon button', (tester) async {
@@ -121,4 +125,14 @@ void main() {
     final copyIconFinder = find.byIcon(FLucideIcons.copy);
     expect(copyIconFinder, findsOneWidget);
   });
+
+  testWidgets(
+    'AccountPage renders exactly one AccountStatusBadge on hero banner',
+    (tester) async {
+      await tester.pumpWidget(_wrapTestWidget(const AccountPage()));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(AccountStatusBadge), findsOneWidget);
+    },
+  );
 }
