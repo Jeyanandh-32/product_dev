@@ -6,11 +6,13 @@ class ProductQueryBuilder {
   const ProductQueryBuilder._();
 
   /// Fetches paginated products with joined stock, category, and counter records.
-  static Future<List<(ProductRow, StockRow?, CategoryRow?, CounterRow?)>> getAll({
+  static Future<List<(ProductRow, StockRow?, CategoryRow?, CounterRow?)>>
+  getAll({
     required ts.Database<DatabaseSchema> db,
     String? merchantId,
     String? storeId,
     String? searchQuery,
+    bool? isActive,
     int? limit,
     int? offset,
   }) async {
@@ -29,6 +31,10 @@ class ProductQueryBuilder {
           if (storeId != null) {
             final storeExpr = p.storeId.equalsValue(storeId);
             expr = expr == null ? storeExpr : expr.and(storeExpr);
+          }
+          if (isActive != null) {
+            final activeExpr = p.isActive.equalsValue(isActive);
+            expr = expr == null ? activeExpr : expr.and(activeExpr);
           }
           if (searchQuery != null && searchQuery.trim().isNotEmpty) {
             final term = '%${searchQuery.trim().toLowerCase()}%';
@@ -64,6 +70,7 @@ class ProductQueryBuilder {
     String? merchantId,
     String? storeId,
     String? searchQuery,
+    bool? isActive,
   }) async {
     final q = db.products.where((p) {
       ts.Expr<bool?>? expr;
@@ -73,6 +80,10 @@ class ProductQueryBuilder {
       if (storeId != null) {
         final storeExpr = p.storeId.equalsValue(storeId);
         expr = expr == null ? storeExpr : expr.and(storeExpr);
+      }
+      if (isActive != null) {
+        final activeExpr = p.isActive.equalsValue(isActive);
+        expr = expr == null ? activeExpr : expr.and(activeExpr);
       }
       if (searchQuery != null && searchQuery.trim().isNotEmpty) {
         final term = '%${searchQuery.trim().toLowerCase()}%';

@@ -31,21 +31,31 @@ Future<Response> _onGet(RequestContext context) async {
 
   try {
     final searchQuery = context.request.uri.queryParameters['search'];
-    final merchantId =
-        (tokenPayload == null || tokenPayload.role == UserRole.customer)
-        ? null
-        : tokenPayload.sub;
+    final isCustomerOrPublic =
+        tokenPayload == null || tokenPayload.role == UserRole.customer;
+    final activeParam = context.request.uri.queryParameters['isActive']
+        ?.toLowerCase();
+    final isActive = switch (activeParam) {
+      'true' => true,
+      'false' => isCustomerOrPublic,
+      'all' => isCustomerOrPublic ? true : null,
+      _ => isCustomerOrPublic ? true : null,
+    };
+
+    final merchantId = isCustomerOrPublic ? null : tokenPayload.sub;
     final offset = (page - 1) * size;
 
     final totalFuture = repo.count(
       storeId: context.storeId,
       merchantId: merchantId,
       searchQuery: searchQuery,
+      isActive: isActive,
     );
     final productRowsFuture = repo.getAll(
       storeId: context.storeId,
       merchantId: merchantId,
       searchQuery: searchQuery,
+      isActive: isActive,
       limit: size,
       offset: offset,
     );

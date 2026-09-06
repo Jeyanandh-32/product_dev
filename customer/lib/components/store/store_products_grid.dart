@@ -26,6 +26,9 @@ class StoreProductsGrid extends StatelessComponent {
   Component build(BuildContext context) {
     final query = searchQuery.trim().toLowerCase();
     final filtered = products.where((product) {
+      if (!product.isActive || !(product.category?.isActive ?? true)) {
+        return false;
+      }
       final matchesCategory =
           selectedCategoryId == null ||
           product.category?.id == selectedCategoryId;

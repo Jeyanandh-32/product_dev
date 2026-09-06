@@ -38,13 +38,21 @@ class TerminalRepository {
   Future<List<TerminalRow>> getAll({
     required String merchantId,
     String? storeId,
+    bool? isActive,
     int? limit,
     int? offset,
   }) {
-    final key = '$merchantId:$storeId:$limit:$offset';
+    final key = '$merchantId:$storeId:$isActive:$limit:$offset';
     return _listCache.getOrFetch(key, () async {
-      var query = _db.terminals.where((t) => t.merchantId.equalsValue(merchantId));
-      if (storeId != null) query = query.where((t) => t.storeId.equalsValue(storeId));
+      var query = _db.terminals.where(
+        (t) => t.merchantId.equalsValue(merchantId),
+      );
+      if (storeId != null) {
+        query = query.where((t) => t.storeId.equalsValue(storeId));
+      }
+      if (isActive != null) {
+        query = query.where((t) => t.isActive.equalsValue(isActive));
+      }
       if (offset != null) query = query.offset(offset);
       if (limit != null) query = query.limit(limit);
       return query.fetch();
@@ -52,11 +60,22 @@ class TerminalRepository {
   }
 
   /// Counts matching terminals with in-memory caching.
-  Future<int> count({required String merchantId, String? storeId}) {
-    final key = '$merchantId:$storeId';
+  Future<int> count({
+    required String merchantId,
+    String? storeId,
+    bool? isActive,
+  }) {
+    final key = '$merchantId:$storeId:$isActive';
     return _countCache.getOrFetch(key, () async {
-      var query = _db.terminals.where((t) => t.merchantId.equalsValue(merchantId));
-      if (storeId != null) query = query.where((t) => t.storeId.equalsValue(storeId));
+      var query = _db.terminals.where(
+        (t) => t.merchantId.equalsValue(merchantId),
+      );
+      if (storeId != null) {
+        query = query.where((t) => t.storeId.equalsValue(storeId));
+      }
+      if (isActive != null) {
+        query = query.where((t) => t.isActive.equalsValue(isActive));
+      }
       final total = await query.count().fetch();
       return total ?? 0;
     });
@@ -89,7 +108,9 @@ class TerminalRepository {
         .update(
           (t, set) => set(
             name: name != null ? ts.toExpr(name) : t.name,
-            passwordHash: passwordHash != null ? ts.toExpr(passwordHash) : t.passwordHash,
+            passwordHash: passwordHash != null
+                ? ts.toExpr(passwordHash)
+                : t.passwordHash,
             isActive: isActive != null ? ts.toExpr(isActive) : t.isActive,
             updatedAt: ts.Expr.currentTimestamp,
           ),

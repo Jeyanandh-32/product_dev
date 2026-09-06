@@ -15,9 +15,15 @@ final filteredProductsSignal = computed(() {
   final searchQuery = searchQuerySignal.value;
   final selectedCategory = selectedCategorySignal.value;
 
-  if (searchQuery.isEmpty && selectedCategory == null) return products;
+  final activeProducts = products.where(
+    (product) => product.isActive && (product.category?.isActive ?? true),
+  );
 
-  return products.where((product) {
+  if (searchQuery.isEmpty && selectedCategory == null) {
+    return activeProducts.toList();
+  }
+
+  return activeProducts.where((product) {
     if (searchQuery.isNotEmpty) {
       return product.name.toLowerCase().contains(searchQuery) ||
           (product.sku?.toLowerCase().contains(searchQuery) ?? false) ||

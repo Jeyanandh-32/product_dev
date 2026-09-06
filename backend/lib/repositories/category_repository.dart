@@ -39,10 +39,11 @@ class CategoryRepository {
     String? merchantId,
     String? storeId,
     String? searchQuery,
+    bool? isActive,
     int? limit,
     int? offset,
   }) {
-    final key = '$merchantId:$storeId:$searchQuery:$limit:$offset';
+    final key = '$merchantId:$storeId:$searchQuery:$isActive:$limit:$offset';
     return _listCache.getOrFetch(key, () async {
       var query = _db.categories.where((c) {
         ts.Expr<bool?>? expr;
@@ -50,6 +51,10 @@ class CategoryRepository {
         if (storeId != null) {
           final storeExpr = c.storeId.equalsValue(storeId);
           expr = expr == null ? storeExpr : expr.and(storeExpr);
+        }
+        if (isActive != null) {
+          final activeExpr = c.isActive.equalsValue(isActive);
+          expr = expr == null ? activeExpr : expr.and(activeExpr);
         }
         if (searchQuery != null && searchQuery.trim().isNotEmpty) {
           final term = '%${searchQuery.trim().toLowerCase()}%';
@@ -71,8 +76,9 @@ class CategoryRepository {
     String? merchantId,
     String? storeId,
     String? searchQuery,
+    bool? isActive,
   }) {
-    final key = '$merchantId:$storeId:$searchQuery';
+    final key = '$merchantId:$storeId:$searchQuery:$isActive';
     return _countCache.getOrFetch(key, () async {
       final query = _db.categories.where((c) {
         ts.Expr<bool?>? expr;
@@ -80,6 +86,10 @@ class CategoryRepository {
         if (storeId != null) {
           final storeExpr = c.storeId.equalsValue(storeId);
           expr = expr == null ? storeExpr : expr.and(storeExpr);
+        }
+        if (isActive != null) {
+          final activeExpr = c.isActive.equalsValue(isActive);
+          expr = expr == null ? activeExpr : expr.and(activeExpr);
         }
         if (searchQuery != null && searchQuery.trim().isNotEmpty) {
           final term = '%${searchQuery.trim().toLowerCase()}%';
@@ -115,7 +125,9 @@ class CategoryRepository {
           (c, set) => set(
             name: name != null ? ts.toExpr(name) : c.name,
             isActive: isActive != null ? ts.toExpr(isActive) : c.isActive,
-            description: descriptionPresent ? ts.toExpr(description) : c.description,
+            description: descriptionPresent
+                ? ts.toExpr(description)
+                : c.description,
             imageUrl: imageUrlPresent ? ts.toExpr(imageUrl) : c.imageUrl,
             updatedAt: ts.Expr.currentTimestamp,
           ),

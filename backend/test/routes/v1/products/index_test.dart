@@ -71,6 +71,7 @@ void main() {
           storeId: validStoreId,
           merchantId: 'm-1',
           searchQuery: any(named: 'searchQuery'),
+          isActive: any(named: 'isActive'),
         ),
       ).thenAnswer((_) async => 1);
 
@@ -79,6 +80,7 @@ void main() {
           storeId: validStoreId,
           merchantId: 'm-1',
           searchQuery: any(named: 'searchQuery'),
+          isActive: any(named: 'isActive'),
           limit: 50,
           offset: 0,
         ),
@@ -119,6 +121,7 @@ void main() {
         () => productRepo.count(
           storeId: validStoreId,
           searchQuery: any(named: 'searchQuery'),
+          isActive: any(named: 'isActive'),
         ),
       ).thenAnswer((_) async => 1);
 
@@ -126,6 +129,7 @@ void main() {
         () => productRepo.getAll(
           storeId: validStoreId,
           searchQuery: any(named: 'searchQuery'),
+          isActive: any(named: 'isActive'),
           limit: 50,
           offset: 0,
         ),
@@ -159,6 +163,7 @@ void main() {
           storeId: validStoreId,
           merchantId: 'm-1',
           searchQuery: 'chocolate',
+          isActive: any(named: 'isActive'),
         ),
       ).thenAnswer((_) async => 1);
 
@@ -167,6 +172,7 @@ void main() {
           storeId: validStoreId,
           merchantId: 'm-1',
           searchQuery: 'chocolate',
+          isActive: any(named: 'isActive'),
           limit: 50,
           offset: 0,
         ),
@@ -180,6 +186,42 @@ void main() {
       final data = body['data'] as Map<String, dynamic>;
       final products = data['products'] as List<dynamic>;
       expect(products.length, equals(1));
+    });
+
+    test('GET forwards isActive query parameter when specified', () async {
+      when(() => request.method).thenReturn(.get);
+      when(() => request.uri).thenReturn(
+        Uri.parse(
+          'http://localhost/v1/products?storeId=$validStoreId&isActive=true',
+        ),
+      );
+
+      when(
+        () => productRepo.count(
+          storeId: validStoreId,
+          merchantId: 'm-1',
+          searchQuery: any(named: 'searchQuery'),
+          isActive: true,
+        ),
+      ).thenAnswer((_) async => 1);
+
+      when(
+        () => productRepo.getAll(
+          storeId: validStoreId,
+          merchantId: 'm-1',
+          searchQuery: any(named: 'searchQuery'),
+          isActive: true,
+          limit: 50,
+          offset: 0,
+        ),
+      ).thenAnswer(
+        (_) async => [
+          (createProductRow(storeId: validStoreId), null, null, null),
+        ],
+      );
+
+      final response = await route.onRequest(context);
+      expect(response.statusCode, equals(HttpStatus.ok));
     });
 
     test('GET responds with 400 when storeId is missing', () async {

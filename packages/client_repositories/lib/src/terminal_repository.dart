@@ -45,11 +45,14 @@ abstract final class TerminalRepository {
     }
   }
 
-  static Future<List<Terminal>> getAll({String? storeId}) async {
+  static Future<List<Terminal>> getAll({
+    String? storeId,
+    bool? isActive,
+  }) async {
     try {
       final result = await dio.get(
         ApiEndpoints.terminals,
-        queryParameters: {'storeId': ?storeId},
+        queryParameters: {'storeId': ?storeId, 'isActive': ?isActive},
       );
 
       final list = result.data['data']['terminals'] as List<dynamic>;

@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:math';
 
+import 'package:backend/extensions/merchant_row_extension.dart';
 import 'package:backend/extensions/request_context_extension.dart';
 import 'package:backend/extensions/store_row_extension.dart';
 import 'package:backend/extensions/subscription_row_extension.dart';
@@ -16,29 +17,22 @@ Future<Response> onRequest(RequestContext context) async {
   final storeId = context.request.uri.queryParameters['storeId'];
   final tokenPayload = context.tokenPayload;
 
-  switch (context.request.method) {
-    case .get:
-      if (tokenPayload.role == .terminal && tokenPayload.terminalCode != null) {
-        return _onGetTerminal(context, tokenPayload);
-      }
-      if (storeId != null && storeId.isNotEmpty && !storeId.isUUID()) {
-        return badRequest(message: 'Invalid store id.');
-      }
-      return _onGet(context, storeId);
-    case .post:
-      final storeIdError = context.validateStoreId();
-      if (storeIdError != null) return storeIdError;
-      return _onPost(context, context.storeId);
-    case .put:
-    case .delete:
-    case .patch:
-    case .head:
-    case .options:
-      return methodNotAllowed();
-  }
+  return switch (context.request.method) {
+    .get =>
+      (tokenPayload.role == .terminal && tokenPayload.terminalCode != null)
+          ? _onGetTerminal(context, tokenPayload)
+          : (storeId != null && storeId.isNotEmpty && !storeId.isUUID())
+          ? badRequest(message: 'Invalid store id.')
+          : _onGet(context, storeId),
+    .post => context.validateStoreId() ?? _onPost(context, context.storeId),
+    _ => methodNotAllowed(),
+  };
 }
 
-Future<Response> _onGetTerminal(RequestContext context, TokenPayload tokenPayload) async {
+Future<Response> _onGetTerminal(
+  RequestContext context,
+  TokenPayload tokenPayload,
+) async {
   final repo = context.terminalRepo;
   final subRepo = context.subscriptionRepo;
 
@@ -49,7 +43,9 @@ Future<Response> _onGetTerminal(RequestContext context, TokenPayload tokenPayloa
     }
     final terminalRow = await repo.getByCode(terminalCode);
     if (terminalRow == null) return badRequest(message: 'Terminal not exists');
-    if (!terminalRow.isActive) return forbidden(message: 'This Terminal is deactivated.');
+    if (!terminalRow.isActive) {
+      return forbidden(message: 'This Terminal is deactivated.');
+    }
 
     final storeRow = await repo.getStoreById(terminalRow.storeId);
     final merchantRow = await repo.getMerchantById(terminalRow.merchantId);
@@ -60,17 +56,7 @@ Future<Response> _onGetTerminal(RequestContext context, TokenPayload tokenPayloa
         'terminal': terminalRow.toTerminal().toJson(),
         'store': storeRow?.toStore().toJson(),
         'subscription': subRow?.toStoreSubscription().toJson(),
-        'merchant': merchantRow != null
-            ? {
-                'id': merchantRow.id,
-                'name': merchantRow.name,
-                'businessName': merchantRow.businessName,
-                'email': merchantRow.email,
-                'whatsappNumber': merchantRow.whatsappNumber,
-                'createdAt': merchantRow.createdAt.toIso8601String(),
-                'updatedAt': merchantRow.updatedAt.toIso8601String(),
-              }
-            : null,
+        'merchant': merchantRow?.toMerchant().toJson(),
       },
     );
   } catch (e) {
@@ -88,10 +74,28 @@ Future<Response> _onGet(RequestContext context, String? storeId) async {
   final tokenPayload = context.tokenPayload;
 
   try {
+    final activeParam = context.request.uri.queryParameters['isActive']
+        ?.toLowerCase();
+    final isActive = switch (activeParam) {
+      'true' => true,
+      'false' => false,
+      'all' => null,
+      _ => null,
+    };
     final offset = (page - 1) * size;
     final (total, terminalRows) = await (
-      repo.count(merchantId: tokenPayload.sub, storeId: storeId),
-      repo.getAll(storeId: storeId, merchantId: tokenPayload.sub, limit: size, offset: offset),
+      repo.count(
+        merchantId: tokenPayload.sub,
+        storeId: storeId,
+        isActive: isActive,
+      ),
+      repo.getAll(
+        storeId: storeId,
+        merchantId: tokenPayload.sub,
+        isActive: isActive,
+        limit: size,
+        offset: offset,
+      ),
     ).wait;
 
     return success(
@@ -116,16 +120,13 @@ Future<Response> _onPost(RequestContext context, String storeId) async {
     final body = await context.validateBody(TerminalValidator.create);
     final input = TerminalCreate.fromJson(body);
     final passwordHash = await PasswordService.hash(input.password);
-    final code = _generateTerminalCode();
-
     final terminalRow = await repo.create(
-      code: code,
+      code: _generateTerminalCode(),
       merchantId: tokenPayload.sub,
       storeId: storeId,
       name: input.name.trim(),
       passwordHash: passwordHash,
     );
-
     return success(
       statusCode: HttpStatus.created,
       data: {'terminal': terminalRow.toTerminal()},
@@ -138,7 +139,9 @@ Future<Response> _onPost(RequestContext context, String storeId) async {
 }
 
 String _generateTerminalCode() {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
   final random = Random.secure();
-  return List.generate(12, (_) => chars[random.nextInt(chars.length)]).join();
+  return List.generate(
+    12,
+    (_) => 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'[random.nextInt(36)],
+  ).join();
 }

@@ -1,0 +1,16 @@
+{
+    "git.autofetch": false,
+    "git.autorefresh": true,
+    "files.watcherExclude": {
+        "**/.git/objects/**": true,
+        "**/.git/subtree-cache/**": true,
+        "**/.dart_tool/**": true,
+        "**/build/**": true,
+        "**/.jaspr/**": true,
+        "**/.gemini/**": true,
+        "**/.agent/**": true,
+        "**/.agents/**": true,
+        "**/.dart_skills/**": true,
+        "**/node_modules/**": true
+    }
+}

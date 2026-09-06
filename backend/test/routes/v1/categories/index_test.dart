@@ -13,8 +13,11 @@ import '../../../../routes/v1/categories/index.dart' as route;
 import '../../../helpers/schema_factories.dart';
 
 class _MockRequestContext extends Mock implements RequestContext {}
+
 class _MockRequest extends Mock implements Request {}
+
 class _MockCategoryRepository extends Mock implements CategoryRepository {}
+
 class _MockStoreRepository extends Mock implements StoreRepository {}
 
 void main() {
@@ -41,15 +44,31 @@ void main() {
     test('GET responds with categories and pagination', () async {
       const validStoreId = '11111111-1111-1111-1111-111111111111';
       when(() => request.method).thenReturn(.get);
-      when(() => request.uri).thenReturn(Uri.parse('http://localhost/v1/categories?storeId=$validStoreId'));
+      when(() => request.uri).thenReturn(
+        Uri.parse('http://localhost/v1/categories?storeId=$validStoreId'),
+      );
 
       final storeRow = createStoreRow(id: validStoreId);
       final catRows = [createCategoryRow(storeId: validStoreId)];
 
-      when(() => storeRepo.getById(validStoreId)).thenAnswer((_) async => storeRow);
-      when(() => catRepo.getAll(merchantId: 'm-1', storeId: validStoreId, limit: 50, offset: 0))
-          .thenAnswer((_) async => catRows);
-      when(() => catRepo.count(merchantId: 'm-1', storeId: validStoreId)).thenAnswer((_) async => 1);
+      when(() => storeRepo.getById(validStoreId))
+          .thenAnswer((_) async => storeRow);
+      when(
+        () => catRepo.getAll(
+          merchantId: 'm-1',
+          storeId: validStoreId,
+          limit: 50,
+          offset: 0,
+          isActive: any(named: 'isActive'),
+        ),
+      ).thenAnswer((_) async => catRows);
+      when(
+        () => catRepo.count(
+          merchantId: 'm-1',
+          storeId: validStoreId,
+          isActive: any(named: 'isActive'),
+        ),
+      ).thenAnswer((_) async => 1);
 
       final response = await route.onRequest(context);
 
@@ -64,18 +83,27 @@ void main() {
     test('POST creates category successfully', () async {
       const validStoreId = '11111111-1111-1111-1111-111111111111';
       when(() => request.method).thenReturn(.post);
-      when(() => request.uri).thenReturn(Uri.parse('http://localhost/v1/categories?storeId=$validStoreId'));
+      when(() => request.uri).thenReturn(
+        Uri.parse('http://localhost/v1/categories?storeId=$validStoreId'),
+      );
       when(() => request.json()).thenAnswer((_) async => {'name': 'Desserts'});
 
       final storeRow = createStoreRow(id: validStoreId);
-      final newCatRow = createCategoryRow(id: 'cat-2', name: 'Desserts', storeId: validStoreId);
+      final newCatRow = createCategoryRow(
+        id: 'cat-2',
+        name: 'Desserts',
+        storeId: validStoreId,
+      );
 
-      when(() => storeRepo.getById(validStoreId)).thenAnswer((_) async => storeRow);
-      when(() => catRepo.create(
-            merchantId: 'm-1',
-            storeId: validStoreId,
-            name: 'Desserts',
-          )).thenAnswer((_) async => newCatRow);
+      when(() => storeRepo.getById(validStoreId))
+          .thenAnswer((_) async => storeRow);
+      when(
+        () => catRepo.create(
+          merchantId: 'm-1',
+          storeId: validStoreId,
+          name: 'Desserts',
+        ),
+      ).thenAnswer((_) async => newCatRow);
 
       final response = await route.onRequest(context);
 

@@ -27,11 +27,13 @@ class StoreDetailLoader {
 
         final categoriesFuture = CategoryRepository.getAll(
           storeId: store.id,
+          isActive: true,
           size: 100,
         ).then((res) => res.items).catchError((_) => <Category>[]);
 
         final productsFuture = ProductRepository.getAll(
           storeId: store.id,
+          isActive: true,
           size: 200,
         ).then((res) => res.items).catchError((_) => <Product>[]);
 

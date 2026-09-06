@@ -26,9 +26,28 @@ Future<Response> _onPost(RequestContext context) async {
       );
     }
 
+    final store = await context.storeRepo.getById(context.storeId);
+    if (store == null || !store.isActive) {
+      return badRequest(
+        message: 'Store is deactivated. Ordering is disabled.',
+      );
+    }
+
     final body = await context.validateBody(OrderValidator.create);
     final input = OrderCreate.fromJson(body);
     final tokenPayload = context.tokenPayload;
+
+    if (tokenPayload.terminalCode != null) {
+      final terminal = await context.terminalRepo.getByCode(
+        tokenPayload.terminalCode!,
+      );
+      if (terminal == null || !terminal.isActive) {
+        return badRequest(
+          message: 'This terminal is deactivated. Ordering is disabled.',
+        );
+      }
+    }
+
     final orderService = context.orderService;
 
     final productsList = input.products

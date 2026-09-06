@@ -56,7 +56,7 @@ Future<Response> _onPost(RequestContext context) async {
       phonePeFuture,
     ).wait;
 
-    if (storeRow == null || !storeRow.isOnlineEnabled) {
+    if (storeRow == null || !storeRow.isActive || !storeRow.isOnlineEnabled) {
       return badRequest(
         message: 'Online ordering is currently disabled for this store.',
       );

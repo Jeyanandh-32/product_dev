@@ -60,6 +60,7 @@ abstract final class CounterRepository {
     int? page,
     int? size,
     String? search,
+    bool? isActive,
   }) async {
     try {
       final result = await dio.get(
@@ -69,6 +70,7 @@ abstract final class CounterRepository {
           'page': ?page,
           'size': ?size,
           'search': ?search,
+          'isActive': ?isActive,
         },
       );
 

@@ -31,6 +31,7 @@ class CategoryFilterList extends SignalWidget {
       error: (err, stack) =>
           SizedBox(height: 38, child: Center(child: Text('Error: $err'))),
       data: (categories) {
+        final activeCategories = categories.where((c) => c.isActive).toList();
         final isAllSelected = selectedCategory == null;
 
         return SingleChildScrollView(
@@ -46,7 +47,7 @@ class CategoryFilterList extends SignalWidget {
                 onTap: () => selectedCategorySignal.value = null,
               ),
               const Gap(8),
-              ...categories.map((category) {
+              ...activeCategories.map((category) {
                 final isSelected = category.id == selectedCategory?.id;
                 final initial = category.name.trim().isNotEmpty
                     ? category.name.trim().substring(0, 1).toUpperCase()
@@ -60,8 +61,9 @@ class CategoryFilterList extends SignalWidget {
                     imageUrl: category.imageUrl,
                     isSelected: isSelected,
                     onTap: () {
-                      selectedCategorySignal.value =
-                          isSelected ? null : category;
+                      selectedCategorySignal.value = isSelected
+                          ? null
+                          : category;
                     },
                   ),
                 );

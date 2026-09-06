@@ -3,6 +3,7 @@ import 'package:backend/repositories/order_item_repository.dart';
 import 'package:backend/repositories/order_repository.dart';
 import 'package:backend/repositories/product_repository.dart';
 import 'package:backend/repositories/stock_repository.dart';
+import 'package:backend/services/order_batch_resolver.dart';
 import 'package:backend/services/order_calculator.dart';
 import 'package:backend/services/order_checkout_executor.dart';
 import 'package:backend/services/order_status_manager.dart';
@@ -30,47 +31,12 @@ class OrderService {
     bool isComplimentary = false,
     bool isOnline = false,
   }) async {
-    final resolvedItems =
-        <
-          ({
-            String productId,
-            int quantity,
-            int sellingPrice,
-            double taxRate,
-            double discount,
-          })
-        >[];
-
-    for (final p in productsInput) {
-      final productId = p['productId'] as String;
-      final quantity = p['quantity'] as int;
-      final discount = (p['discount'] as num?)?.toDouble() ?? 0.0;
-
-      final result = await _productRepo.getById(productId);
-      if (result == null) {
-        throw Exception('Product with id "$productId" not found');
-      }
-      final productRow = result.$1;
-
-      final stockRow = await _stockRepo.getByProductAndStore(
-        storeId: storeId,
-        productId: productId,
-      );
-
-      if (stockRow != null && stockRow.quantity < quantity) {
-        throw Exception(
-          'Insufficient stock for product "${productRow.name}". Available: ${stockRow.quantity}, Requested: $quantity.',
-        );
-      }
-
-      resolvedItems.add((
-        productId: productId,
-        quantity: quantity,
-        sellingPrice: productRow.sellingPrice,
-        taxRate: productRow.taxRate,
-        discount: discount,
-      ));
-    }
+    final resolvedItems = await OrderBatchResolver.resolve(
+      productRepo: _productRepo,
+      stockRepo: _stockRepo,
+      storeId: storeId,
+      productsInput: productsInput,
+    );
 
     return OrderCalculator.calculate(
       lineItems: resolvedItems,

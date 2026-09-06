@@ -147,6 +147,7 @@ void main() {
           () => terminalRepo.count(
             merchantId: 'm-1',
             storeId: validStoreId,
+            isActive: any(named: 'isActive'),
           ),
         ).thenAnswer((_) async => 1);
 
@@ -154,6 +155,7 @@ void main() {
           () => terminalRepo.getAll(
             merchantId: 'm-1',
             storeId: validStoreId,
+            isActive: any(named: 'isActive'),
             limit: 50,
             offset: 0,
           ),

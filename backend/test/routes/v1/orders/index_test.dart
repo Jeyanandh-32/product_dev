@@ -4,7 +4,9 @@ import 'dart:io';
 import 'package:backend/config/env.dart';
 import 'package:backend/enums/user_role.dart';
 import 'package:backend/models/token_payload/token_payload.dart';
+import 'package:backend/repositories/store_repository.dart';
 import 'package:backend/repositories/subscription_repository.dart';
+import 'package:backend/repositories/terminal_repository.dart';
 import 'package:backend/services/order_service.dart';
 import 'package:dart_frog/dart_frog.dart';
 import 'package:mocktail/mocktail.dart';
@@ -12,6 +14,7 @@ import 'package:models/models.dart';
 import 'package:test/test.dart';
 
 import '../../../../routes/v1/orders/index.dart' as route;
+import '../../../helpers/schema_factories.dart';
 
 class _MockRequestContext extends Mock implements RequestContext {}
 
@@ -22,11 +25,17 @@ class _MockOrderService extends Mock implements OrderService {}
 class _MockSubscriptionRepository extends Mock
     implements SubscriptionRepository {}
 
+class _MockStoreRepository extends Mock implements StoreRepository {}
+
+class _MockTerminalRepository extends Mock implements TerminalRepository {}
+
 void main() {
   late _MockRequestContext context;
   late _MockRequest request;
   late _MockOrderService orderService;
   late _MockSubscriptionRepository subscriptionRepo;
+  late _MockStoreRepository storeRepo;
+  late _MockTerminalRepository terminalRepo;
 
   const testMerchantId = 'm-1';
   const testStoreId = '11111111-1111-1111-1111-111111111111';
@@ -51,6 +60,8 @@ void main() {
     request = _MockRequest();
     orderService = _MockOrderService();
     subscriptionRepo = _MockSubscriptionRepository();
+    storeRepo = _MockStoreRepository();
+    terminalRepo = _MockTerminalRepository();
 
     when(() => context.request).thenReturn(request);
     when(() => context.read<TokenPayload>()).thenReturn(tokenPayload);
@@ -59,8 +70,22 @@ void main() {
       () => context.read<SubscriptionRepository>(),
     ).thenReturn(subscriptionRepo);
     when(
+      () => context.read<StoreRepository>(),
+    ).thenReturn(storeRepo);
+    when(
+      () => context.read<TerminalRepository>(),
+    ).thenReturn(terminalRepo);
+    when(
       () => subscriptionRepo.isStoreOperational(any()),
     ).thenAnswer((_) async => true);
+    when(() => storeRepo.getById(testStoreId)).thenAnswer(
+      (_) async => createStoreRow(id: testStoreId),
+    );
+    when(() => terminalRepo.getByCode('TERM01')).thenAnswer(
+      (_) async => createTerminalRow(
+        storeId: testStoreId,
+      ),
+    );
   });
 
   group('POST /v1/orders', () {
@@ -87,6 +112,62 @@ void main() {
         );
       },
     );
+
+    test('responds with 400 when store is inactive', () async {
+      when(() => storeRepo.getById(testStoreId)).thenAnswer(
+        (_) async => createStoreRow(id: testStoreId, isActive: false),
+      );
+      when(() => request.method).thenReturn(.post);
+      when(() => request.uri).thenReturn(
+        Uri.parse('http://localhost/v1/orders?storeId=$testStoreId'),
+      );
+      when(() => request.json()).thenAnswer(
+        (_) async => {
+          'products': [
+            {'productId': testProductId, 'quantity': 1},
+          ],
+        },
+      );
+
+      final response = await route.onRequest(context);
+
+      expect(response.statusCode, equals(HttpStatus.badRequest));
+      final body = jsonDecode(await response.body()) as Map<String, dynamic>;
+      expect(
+        body['message'],
+        equals('Store is deactivated. Ordering is disabled.'),
+      );
+    });
+
+    test('responds with 400 when terminal is deactivated', () async {
+      when(() => terminalRepo.getByCode('TERM01')).thenAnswer(
+        (_) async => createTerminalRow(
+          storeId: testStoreId,
+          isActive: false,
+        ),
+      );
+      when(() => request.method).thenReturn(.post);
+      when(() => request.uri).thenReturn(
+        Uri.parse('http://localhost/v1/orders?storeId=$testStoreId'),
+      );
+      when(() => request.json()).thenAnswer(
+        (_) async => {
+          'products': [
+            {'productId': testProductId, 'quantity': 1},
+          ],
+        },
+      );
+
+      final response = await route.onRequest(context);
+
+      expect(response.statusCode, equals(HttpStatus.badRequest));
+      final body = jsonDecode(await response.body()) as Map<String, dynamic>;
+      expect(
+        body['message'],
+        equals('This terminal is deactivated. Ordering is disabled.'),
+      );
+    });
+
     test(
       'responds with 400 when storeId is missing from query parameters',
       () async {

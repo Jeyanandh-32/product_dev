@@ -12,7 +12,9 @@ import '../../../../routes/v1/counters/index.dart' as route;
 import '../../../helpers/schema_factories.dart';
 
 class _MockRequestContext extends Mock implements RequestContext {}
+
 class _MockRequest extends Mock implements Request {}
+
 class _MockCounterRepository extends Mock implements CounterRepository {}
 
 void main() {
@@ -52,6 +54,7 @@ void main() {
           merchantId: 'm-1',
           storeId: validStoreId,
           searchQuery: any(named: 'searchQuery'),
+          isActive: any(named: 'isActive'),
         ),
       ).thenAnswer((_) async => 1);
 
@@ -60,6 +63,7 @@ void main() {
           merchantId: 'm-1',
           storeId: validStoreId,
           searchQuery: any(named: 'searchQuery'),
+          isActive: any(named: 'isActive'),
           limit: 50,
           offset: 0,
         ),
@@ -82,7 +86,9 @@ void main() {
     test('GET responds with filtered counters on search query', () async {
       when(() => request.method).thenReturn(.get);
       when(() => request.uri).thenReturn(
-        Uri.parse('http://localhost/v1/counters?storeId=$validStoreId&search=front'),
+        Uri.parse(
+          'http://localhost/v1/counters?storeId=$validStoreId&search=front',
+        ),
       );
 
       final counterRows = [
@@ -97,6 +103,7 @@ void main() {
           merchantId: 'm-1',
           storeId: validStoreId,
           searchQuery: 'front',
+          isActive: any(named: 'isActive'),
         ),
       ).thenAnswer((_) async => 1);
 
@@ -105,6 +112,7 @@ void main() {
           merchantId: 'm-1',
           storeId: validStoreId,
           searchQuery: 'front',
+          isActive: any(named: 'isActive'),
           limit: 50,
           offset: 0,
         ),

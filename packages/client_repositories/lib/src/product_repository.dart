@@ -88,6 +88,7 @@ abstract final class ProductRepository {
     int? page,
     int? size,
     String? search,
+    bool? isActive,
   }) async {
     try {
       final result = await dio.get(
@@ -97,6 +98,7 @@ abstract final class ProductRepository {
           'page': ?page,
           'size': ?size,
           'search': ?search,
+          'isActive': ?isActive,
         },
       );
 
