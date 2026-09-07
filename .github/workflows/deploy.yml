@@ -39,82 +39,53 @@ jobs:
               - 'packages/validators/**'
             merchant:
               - 'merchant/**'
-              - 'packages/**'
+              - 'packages/models/**'
+              - 'packages/validators/**'
+              - 'packages/api_client/**'
+              - 'packages/client_repositories/**'
             customer:
               - 'customer/**'
-              - 'packages/**'
+              - 'packages/models/**'
+              - 'packages/validators/**'
+              - 'packages/api_client/**'
+              - 'packages/client_repositories/**'
             terminal:
               - 'terminal/**'
-              - 'packages/**'
+              - 'packages/models/**'
+              - 'packages/validators/**'
+              - 'packages/api_client/**'
+              - 'packages/client_repositories/**'
             landing:
               - 'landing/**'
             migrations:
               - 'backend/migrations/**'
 
-  build:
-    name: Build & Package Changes
+  build-backend:
+    name: Build Backend Binary
     needs: changes
     runs-on: ubuntu-latest
-    if: needs.changes.outputs.backend == 'true' || needs.changes.outputs.merchant == 'true' || needs.changes.outputs.customer == 'true' || needs.changes.outputs.terminal == 'true' || needs.changes.outputs.landing == 'true' || needs.changes.outputs.migrations == 'true' || github.event_name == 'workflow_dispatch'
-    env:
-      API_DOMAIN: ${{ github.ref == 'refs/heads/stage' && 'pos-stage.sparrow-x.in' || 'pos.sparrow-x.in' }}
+    if: needs.changes.outputs.backend == 'true' || github.event_name == 'workflow_dispatch'
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
       - name: Setup Flutter & Dart SDK
-        if: needs.changes.outputs.backend == 'true' || needs.changes.outputs.merchant == 'true' || needs.changes.outputs.customer == 'true' || needs.changes.outputs.terminal == 'true' || github.event_name == 'workflow_dispatch'
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
           cache: true
 
       - name: Install Workspace Dependencies
-        if: needs.changes.outputs.backend == 'true' || needs.changes.outputs.merchant == 'true' || needs.changes.outputs.customer == 'true' || needs.changes.outputs.terminal == 'true' || github.event_name == 'workflow_dispatch'
         run: |
           dart pub global activate melos
           export PATH="$PATH":"$HOME/.pub-cache/bin"
           melos bootstrap
 
-      - name: Run Tests on Changed Packages
-        if: needs.changes.outputs.backend == 'true' || needs.changes.outputs.customer == 'true' || needs.changes.outputs.terminal == 'true' || github.event_name == 'workflow_dispatch'
+      - name: Run Backend Tests
         run: |
-          export PATH="$PATH":"$HOME/.pub-cache/bin"
-          dart analyze
-          if [ "${{ needs.changes.outputs.backend }}" = "true" ] || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            cd backend && dart test && cd ..
-          fi
-          if [ "${{ needs.changes.outputs.customer }}" = "true" ] || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            cd customer && dart test && cd ..
-          fi
-          if [ "${{ needs.changes.outputs.terminal }}" = "true" ] || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            cd terminal && flutter test && cd ..
-          fi
-
-      - name: Build Merchant Web App (WASM)
-        if: needs.changes.outputs.merchant == 'true' || github.event_name == 'workflow_dispatch'
-        run: |
-          cd merchant
-          dart pub global activate jaspr_cli
-          export PATH="$PATH":"$HOME/.pub-cache/bin"
-          jaspr build --experimental-wasm
-
-      - name: Build Customer Store Web App (WASM)
-        if: needs.changes.outputs.customer == 'true' || github.event_name == 'workflow_dispatch'
-        run: |
-          cd customer
-          dart pub global activate jaspr_cli
-          export PATH="$PATH":"$HOME/.pub-cache/bin"
-          jaspr build --experimental-wasm
-
-      - name: Build Terminal Web App (WASM)
-        if: needs.changes.outputs.terminal == 'true' || github.event_name == 'workflow_dispatch'
-        run: |
-          cd terminal
-          flutter build web --wasm --release --base-href /terminal/ --dart-define=API_BASE_URL=https://${{ env.API_DOMAIN }}
+          cd backend && dart test
 
       - name: Build & Compile Native Backend Binary
-        if: needs.changes.outputs.backend == 'true' || github.event_name == 'workflow_dispatch'
         run: |
           export PATH="$PATH":"$HOME/.pub-cache/bin"
           dart pub global activate dart_frog_cli
@@ -125,63 +96,171 @@ jobs:
           dart pub get
           dart compile exe bin/server.dart -o $GITHUB_WORKSPACE/server.exe
 
-      - name: Package Changed Artifacts
-        run: |
-          mkdir -p dist
-          if [ "${{ needs.changes.outputs.merchant }}" = "true" ] || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            if [ -d "merchant/build/jaspr" ]; then
-              mkdir -p dist/merchant
-              cp -r merchant/build/jaspr/* dist/merchant/
-            fi
-          fi
-          if [ "${{ needs.changes.outputs.customer }}" = "true" ] || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            if [ -d "customer/build/jaspr" ]; then
-              mkdir -p dist/store
-              cp -r customer/build/jaspr/* dist/store/
-            fi
-          fi
-          if [ "${{ needs.changes.outputs.terminal }}" = "true" ] || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            if [ -d "terminal/build/web" ]; then
-              mkdir -p dist/terminal
-              cp -r terminal/build/web/* dist/terminal/
-            fi
-          fi
-          if [ "${{ needs.changes.outputs.landing }}" = "true" ] || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            mkdir -p dist/landing
-            cp -r landing/* dist/landing/
-          fi
-          if [ "${{ needs.changes.outputs.migrations }}" = "true" ] || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            mkdir -p dist/migrations
-            cp -r backend/migrations/* dist/migrations/
-          fi
-          if [ "${{ needs.changes.outputs.backend }}" = "true" ] || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            if [ -f "server.exe" ]; then
-              cp server.exe dist/
-            fi
-          fi
-
-      - name: Upload Artifacts
+      - name: Upload Backend Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: release-dist
-          path: dist/
+          name: release-backend
+          path: server.exe
+
+  build-merchant:
+    name: Build Merchant Web App
+    needs: changes
+    runs-on: ubuntu-latest
+    if: needs.changes.outputs.merchant == 'true' || github.event_name == 'workflow_dispatch'
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter & Dart SDK
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Install Workspace Dependencies
+        run: |
+          dart pub global activate melos
+          export PATH="$PATH":"$HOME/.pub-cache/bin"
+          melos bootstrap
+
+      - name: Build Merchant Web App (WASM)
+        run: |
+          cd merchant
+          dart pub global activate jaspr_cli
+          export PATH="$PATH":"$HOME/.pub-cache/bin"
+          jaspr build --experimental-wasm
+
+      - name: Upload Merchant Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-merchant
+          path: merchant/build/jaspr/
+
+  build-customer:
+    name: Build Customer Web App
+    needs: changes
+    runs-on: ubuntu-latest
+    if: needs.changes.outputs.customer == 'true' || github.event_name == 'workflow_dispatch'
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter & Dart SDK
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Install Workspace Dependencies
+        run: |
+          dart pub global activate melos
+          export PATH="$PATH":"$HOME/.pub-cache/bin"
+          melos bootstrap
+
+      - name: Run Customer Tests
+        run: |
+          cd customer && dart test
+
+      - name: Build Customer Store Web App (WASM)
+        run: |
+          cd customer
+          dart pub global activate jaspr_cli
+          export PATH="$PATH":"$HOME/.pub-cache/bin"
+          jaspr build --experimental-wasm
+
+      - name: Upload Customer Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-customer
+          path: customer/build/jaspr/
+
+  build-terminal:
+    name: Build Terminal Web App
+    needs: changes
+    runs-on: ubuntu-latest
+    if: needs.changes.outputs.terminal == 'true' || github.event_name == 'workflow_dispatch'
+    env:
+      API_DOMAIN: ${{ github.ref == 'refs/heads/stage' && 'pos-stage.sparrow-x.in' || 'pos.sparrow-x.in' }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter & Dart SDK
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Install Workspace Dependencies
+        run: |
+          dart pub global activate melos
+          export PATH="$PATH":"$HOME/.pub-cache/bin"
+          melos bootstrap
+
+      - name: Run Terminal Tests
+        run: |
+          cd terminal && flutter test
+
+      - name: Build Terminal Web App (WASM)
+        run: |
+          cd terminal
+          flutter build web --wasm --release --base-href /terminal/ --dart-define=API_BASE_URL=https://${{ env.API_DOMAIN }}
+
+      - name: Upload Terminal Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-terminal
+          path: terminal/build/web/
 
   deploy:
     name: Deploy to EC2
-    needs: [changes, build]
+    needs: [changes, build-backend, build-merchant, build-customer, build-terminal]
     runs-on: ubuntu-latest
-    if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/stage') && (needs.changes.outputs.backend == 'true' || needs.changes.outputs.merchant == 'true' || needs.changes.outputs.customer == 'true' || needs.changes.outputs.terminal == 'true' || needs.changes.outputs.landing == 'true' || needs.changes.outputs.migrations == 'true' || github.event_name == 'workflow_dispatch')
+    if: |
+      !cancelled() &&
+      (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/stage') &&
+      (needs.changes.outputs.backend == 'true' || needs.changes.outputs.merchant == 'true' || needs.changes.outputs.customer == 'true' || needs.changes.outputs.terminal == 'true' || needs.changes.outputs.landing == 'true' || needs.changes.outputs.migrations == 'true' || github.event_name == 'workflow_dispatch') &&
+      (needs.build-backend.result == 'success' || needs.build-backend.result == 'skipped') &&
+      (needs.build-merchant.result == 'success' || needs.build-merchant.result == 'skipped') &&
+      (needs.build-customer.result == 'success' || needs.build-customer.result == 'skipped') &&
+      (needs.build-terminal.result == 'success' || needs.build-terminal.result == 'skipped')
     env:
       TARGET_WEB_DIR: ${{ github.ref == 'refs/heads/stage' && '/var/www/pos/stage' || '/var/www/pos/main' }}
       TARGET_APP_DIR: ${{ github.ref == 'refs/heads/stage' && 'pos/stage' || 'pos/main' }}
       TARGET_SERVICE: ${{ github.ref == 'refs/heads/stage' && 'pos-stage-backend' || 'pos-backend' }}
 
     steps:
-      - name: Download Build Artifacts
+      - name: Checkout Code (Static Files & Migrations)
+        if: needs.changes.outputs.landing == 'true' || needs.changes.outputs.migrations == 'true' || github.event_name == 'workflow_dispatch'
+        uses: actions/checkout@v4
+
+      - name: Download Backend Artifact
+        if: needs.changes.outputs.backend == 'true' || github.event_name == 'workflow_dispatch'
         uses: actions/download-artifact@v4
         with:
-          name: release-dist
-          path: dist/
+          name: release-backend
+          path: dist
+
+      - name: Download Merchant Artifact
+        if: needs.changes.outputs.merchant == 'true' || github.event_name == 'workflow_dispatch'
+        uses: actions/download-artifact@v4
+        with:
+          name: release-merchant
+          path: dist/merchant
+
+      - name: Download Customer Artifact
+        if: needs.changes.outputs.customer == 'true' || github.event_name == 'workflow_dispatch'
+        uses: actions/download-artifact@v4
+        with:
+          name: release-customer
+          path: dist/store
+
+      - name: Download Terminal Artifact
+        if: needs.changes.outputs.terminal == 'true' || github.event_name == 'workflow_dispatch'
+        uses: actions/download-artifact@v4
+        with:
+          name: release-terminal
+          path: dist/terminal
 
       - name: Setup SSH Key
         run: |
@@ -192,9 +271,6 @@ jobs:
 
       - name: Deploy Selective Artifacts via Rsync
         run: |
-          if [ -d "dist/landing" ]; then
-            rsync -avz -e "ssh -i ~/.ssh/id_rsa" dist/landing/ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:${{ env.TARGET_WEB_DIR }}/landing/
-          fi
           if [ -d "dist/merchant" ]; then
             rsync -avz -e "ssh -i ~/.ssh/id_rsa" dist/merchant/ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:${{ env.TARGET_WEB_DIR }}/merchant/
           fi
@@ -204,8 +280,11 @@ jobs:
           if [ -d "dist/terminal" ]; then
             rsync -avz -e "ssh -i ~/.ssh/id_rsa" dist/terminal/ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:${{ env.TARGET_WEB_DIR }}/terminal/
           fi
-          if [ -d "dist/migrations" ]; then
-            rsync -avz -e "ssh -i ~/.ssh/id_rsa" dist/migrations/ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/${{ env.TARGET_APP_DIR }}/migrations/
+          if [ "${{ needs.changes.outputs.landing }}" = "true" ] || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            rsync -avz -e "ssh -i ~/.ssh/id_rsa" landing/ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:${{ env.TARGET_WEB_DIR }}/landing/
+          fi
+          if [ "${{ needs.changes.outputs.migrations }}" = "true" ] || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            rsync -avz -e "ssh -i ~/.ssh/id_rsa" backend/migrations/ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/${{ env.TARGET_APP_DIR }}/migrations/
           fi
           if [ -f "dist/server.exe" ]; then
             rsync -avz -e "ssh -i ~/.ssh/id_rsa" dist/server.exe ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/${{ env.TARGET_APP_DIR }}/server.exe
