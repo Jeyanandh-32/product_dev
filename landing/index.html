@@ -8,6 +8,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Preload Showcase Images for Instant Tab Switching -->
+    <link rel="preload" as="image" href="images/merchant-macbook.png" fetchpriority="high">
+    <link rel="preload" as="image" href="images/terminal-macbook.png">
+    <link rel="preload" as="image" href="images/customer-iphone.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -470,7 +474,7 @@
             <!-- Tab 1: Merchant Portal (MacBook Pro Mockup) -->
             <div id="showcase-merchant" class="app-panel block">
                 <div class="max-w-5xl mx-auto drop-shadow-[0_25px_45px_rgba(0,0,0,0.35)]">
-                    <img src="images/merchant-macbook.png" alt="Sparrow POS Merchant Portal on MacBook Pro" class="w-full h-auto object-contain block mx-auto" loading="eager">
+                    <img src="images/merchant-macbook.png" alt="Sparrow POS Merchant Portal on MacBook Pro" width="2128" height="1417" class="w-full h-auto object-contain block mx-auto" loading="eager" fetchpriority="high" decoding="async">
                 </div>
                 <div class="mt-4 sm:mt-6 p-4 sm:p-6 bg-white rounded-2xl border border-slate-200/80 shadow-card flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>
@@ -489,7 +493,7 @@
             <!-- Tab 2: Billing Terminal POS (MacBook Pro Mockup) -->
             <div id="showcase-terminal" class="app-panel hidden">
                 <div class="max-w-5xl mx-auto drop-shadow-[0_25px_45px_rgba(0,0,0,0.35)]">
-                    <img src="images/terminal-macbook.png" alt="Sparrow POS Billing Terminal on MacBook Pro" class="w-full h-auto object-contain block mx-auto" loading="lazy">
+                    <img src="images/terminal-macbook.png" alt="Sparrow POS Billing Terminal on MacBook Pro" width="2128" height="1417" class="w-full h-auto object-contain block mx-auto" loading="eager" decoding="async">
                 </div>
                 <div class="mt-4 sm:mt-6 p-4 sm:p-6 bg-white rounded-2xl border border-slate-200/80 shadow-card flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>
@@ -560,7 +564,7 @@
                     <!-- Right: Authentic iPhone 16 Pro Mockup (Order 1 on mobile, Order 2 on desktop) -->
                     <div class="order-1 lg:order-2 lg:col-span-5 flex justify-center py-2 sm:py-4">
                         <div class="w-[280px] sm:w-[320px] drop-shadow-[0_25px_35px_rgba(0,0,0,0.4)] hover:-translate-y-1 transition-all duration-300">
-                            <img src="images/customer-iphone.png" alt="Sparrow POS Customer Mobile App on iPhone 16 Pro" class="w-full h-auto object-contain block mx-auto" loading="lazy">
+                            <img src="images/customer-iphone.png" alt="Sparrow POS Customer Mobile App on iPhone 16 Pro" width="1490" height="2996" class="w-full h-auto object-contain block mx-auto" loading="eager" decoding="async">
                         </div>
                     </div>
 
@@ -569,8 +573,24 @@
 
         </section>
 
-        <!-- Tab Switching Logic -->
+        <!-- Tab Switching & Showcase Preload Logic -->
         <script>
+            // Pre-warm and decode showcase images in background memory for instant tab switching
+            (function() {
+                var showcaseImages = [
+                    'images/merchant-macbook.png',
+                    'images/terminal-macbook.png',
+                    'images/customer-iphone.png'
+                ];
+                showcaseImages.forEach(function(src) {
+                    var img = new Image();
+                    img.src = src;
+                    if (img.decode) {
+                        img.decode().catch(function() {});
+                    }
+                });
+            })();
+
             function switchApp(appKey) {
                 // Hide all panels
                 document.querySelectorAll('.app-panel').forEach(function(el) {
