@@ -9,7 +9,7 @@
         <script>
             (function() {
                 var p = window.location.pathname;
-                var isSubpath = (window.location.hostname.indexOf('sparrow-x.in') !== -1) && p.startsWith('/store');
+                var isSubpath = (window.location.hostname.indexOf('sparrow-x.in') !== -1 || window.location.hostname.indexOf('finch') !== -1) && p.startsWith('/store');
                 var base = isSubpath ? '/store/' : '/';
                 document.write('<base href="' + base + '">');
             })();

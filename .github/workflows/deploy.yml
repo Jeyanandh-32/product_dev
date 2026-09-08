@@ -1,4 +1,4 @@
-name: Deploy Sparrow POS to AWS EC2
+name: Deploy Finch POS to AWS EC2
 
 on:
   push:
@@ -180,7 +180,7 @@ jobs:
     runs-on: ubuntu-latest
     if: needs.changes.outputs.terminal == 'true' || github.event_name == 'workflow_dispatch'
     env:
-      API_DOMAIN: ${{ github.ref == 'refs/heads/stage' && 'pos-stage.sparrow-x.in' || 'pos.sparrow-x.in' }}
+      API_DOMAIN: ${{ github.ref == 'refs/heads/stage' && 'finch-stage.sparrow-x.in' || 'finch.sparrow-x.in' }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -299,4 +299,5 @@ jobs:
               sudo systemctl restart ${{ env.TARGET_SERVICE }}
             fi
           EOF
+
 

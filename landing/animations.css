@@ -1,0 +1,146 @@
+/* Ambient Background Mesh Breathing Glow */
+@keyframes ambient-glow {
+    0%, 100% {
+        transform: translate(-50%, 0) scale(1);
+        opacity: 0.65;
+    }
+    50% {
+        transform: translate(-50%, -14px) scale(1.06);
+        opacity: 0.95;
+    }
+}
+.animate-ambient-glow {
+    animation: ambient-glow 8s ease-in-out infinite;
+}
+
+/* Staggered Hero Entrances */
+@keyframes hero-fade-in-down {
+    from {
+        opacity: 0;
+        transform: translateY(-12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes hero-fade-in-up {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.hero-animate-badge {
+    animation: hero-fade-in-down 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.hero-animate-title {
+    animation: hero-fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+}
+
+.hero-animate-sub {
+    animation: hero-fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.22s both;
+}
+
+.hero-animate-cta {
+    animation: hero-fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.34s both;
+}
+
+.hero-animate-card-1 {
+    animation: hero-fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.44s both;
+}
+.hero-animate-card-2 {
+    animation: hero-fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.52s both;
+}
+.hero-animate-card-3 {
+    animation: hero-fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.60s both;
+}
+.hero-animate-card-4 {
+    animation: hero-fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.68s both;
+}
+
+/* Hero Pill Badge Shimmer */
+@keyframes shimmer-sweep {
+    0% {
+        transform: translateX(-150%) skewX(-20deg);
+    }
+    35%, 100% {
+        transform: translateX(250%) skewX(-20deg);
+    }
+}
+.badge-shimmer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.85), transparent);
+    animation: shimmer-sweep 5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    pointer-events: none;
+}
+
+/* Bill Ejection Print Animation */
+@keyframes print-feed {
+    0% {
+        transform: translateY(-100%);
+        opacity: 0.4;
+    }
+    10% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.bill-printing {
+    animation: print-feed 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    transform-origin: top center;
+    will-change: transform;
+}
+
+/* Hero Typewriter Blinking Cursor */
+@keyframes cursor-blink {
+    0%, 45% {
+        opacity: 1;
+    }
+    50%, 95% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+.typewriter-cursor {
+    animation: cursor-blink 0.85s infinite;
+    display: inline-block;
+    vertical-align: -0.05em;
+}
+
+/* Respect Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+    .animate-ambient-glow,
+    .hero-animate-badge,
+    .hero-animate-title,
+    .hero-animate-sub,
+    .hero-animate-cta,
+    .hero-animate-card-1,
+    .hero-animate-card-2,
+    .hero-animate-card-3,
+    .hero-animate-card-4,
+    .badge-shimmer,
+    [data-tilt],
+    .bill-printing,
+    .typewriter-cursor {
+        animation: none !important;
+        transform: none !important;
+        opacity: 1 !important;
+    }
+}

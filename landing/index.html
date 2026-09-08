@@ -2,287 +2,83 @@
 <html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sparrow POS — Store Billing & QR Ordering Platform</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Finch POS — Store Billing & QR Ordering Platform</title>
     <meta name="description" content="Fast counter billing for your staff, easy QR phone ordering for your customers, and a clear view of your daily sales.">
+    
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    
+    <!-- OpenGraph Social Sharing Metadata -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Finch POS — Store Billing & QR Ordering Platform">
+    <meta property="og:description" content="Fast counter billing for your staff, easy QR phone ordering for your customers, and a clear view of your daily sales.">
+    <meta property="og:image" content="images/finch_social_banner.png">
+    <meta property="og:image:width" content="1733">
+    <meta property="og:image:height" content="907">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Finch POS — Store Billing & QR Ordering Platform">
+    <meta name="twitter:description" content="Fast counter billing for your staff, easy QR phone ordering for your customers, and a clear view of your daily sales.">
+    <meta name="twitter:image" content="images/finch_social_banner.png">
+
+    <!-- Fonts: Plus Jakarta Sans via async preload for optimal FCP & LCP -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <!-- Preload Showcase Images for Instant Tab Switching -->
-    <link rel="preload" as="image" href="images/merchant-macbook.png" fetchpriority="high">
-    <link rel="preload" as="image" href="images/terminal-macbook.png">
-    <link rel="preload" as="image" href="images/customer-iphone.png">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['"Plus Jakarta Sans"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
-                    },
-                    colors: {
-                        brand: {
-                            dark: '#0B132B',      // Rich Deep Midnight Navy
-                            surface: '#1C2541',   // Refined Slate Surface
-                            accent: '#10B981',    // Vibrant Emerald
-                            accentLight: '#ECFDF5',
-                            border: '#E2E8F0',
-                        }
-                    },
-                    boxShadow: {
-                        'glow-emerald': '0 0 50px -10px rgba(16, 185, 129, 0.25)',
-                        'glow-subtle': '0 20px 80px -20px rgba(11, 19, 43, 0.08)',
-                        'card': '0 1px 3px 0 rgba(11, 19, 43, 0.04), 0 1px 2px -1px rgba(11, 19, 43, 0.03)',
-                        'card-hover': '0 20px 30px -10px rgba(11, 19, 43, 0.08), 0 8px 12px -4px rgba(11, 19, 43, 0.03)',
-                        'inner-glow': 'inset 0 1px 1px 0 rgba(255, 255, 255, 0.8)',
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        * { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
-        
-        /* Subtle Dot Grid Background */
-        .bg-grid-pattern {
-            background-image: radial-gradient(#cbd5e1 1.2px, transparent 1.2px);
-            background-size: 24px 24px;
-        }
-        
-        /* Custom details arrow rotation */
-        details summary::-webkit-details-marker { display: none; }
-        details[open] summary svg.chevron { transform: rotate(180deg); }
-
-        /* Ambient Background Mesh Breathing Glow */
-        @keyframes ambient-glow {
-            0%, 100% {
-                transform: translate(-50%, 0) scale(1);
-                opacity: 0.65;
-            }
-            50% {
-                transform: translate(-50%, -14px) scale(1.06);
-                opacity: 0.95;
-            }
-        }
-        .animate-ambient-glow {
-            animation: ambient-glow 8s ease-in-out infinite;
-        }
-
-        /* Staggered Hero Entrances */
-        @keyframes hero-fade-in-down {
-            from {
-                opacity: 0;
-                transform: translateY(-12px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes hero-fade-in-up {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .hero-animate-badge {
-            animation: hero-fade-in-down 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
-        }
-
-        .hero-animate-title {
-            animation: hero-fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
-        }
-
-        .hero-animate-sub {
-            animation: hero-fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.22s both;
-        }
-
-        .hero-animate-cta {
-            animation: hero-fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.34s both;
-        }
-
-        .hero-animate-card-1 {
-            animation: hero-fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.44s both;
-        }
-        .hero-animate-card-2 {
-            animation: hero-fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.52s both;
-        }
-        .hero-animate-card-3 {
-            animation: hero-fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.60s both;
-        }
-        .hero-animate-card-4 {
-            animation: hero-fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.68s both;
-        }
-
-        /* Hero Pill Badge Shimmer */
-        @keyframes shimmer-sweep {
-            0% {
-                transform: translateX(-150%) skewX(-20deg);
-            }
-            35%, 100% {
-                transform: translateX(250%) skewX(-20deg);
-            }
-        }
-        .badge-shimmer {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 60%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.85), transparent);
-            animation: shimmer-sweep 5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-            pointer-events: none;
-        }
-
-        /* 3D Perspective Tilt Card & Specular Highlight */
-        [data-tilt] {
-            transform-style: preserve-3d;
-            transition: transform 0.2s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.2s ease;
-            will-change: transform;
-        }
-        .specular-container {
-            position: relative;
-            overflow: hidden;
-        }
-        .specular-glow {
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(
-                350px circle at var(--mouse-x, -500px) var(--mouse-y, -500px),
-                rgba(16, 185, 129, 0.15),
-                transparent 70%
-            );
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            z-index: 1;
-        }
-        .specular-container:hover .specular-glow {
-            opacity: 1;
-        }
-
-        /* Minimalist POS Thermal Printer & Bill Ejection */
-        .printer-card {
-            perspective: 1000px;
-        }
-
-        .printer-body {
-            background: linear-gradient(180deg, #1e293b 0%, #0B132B 100%);
-            box-shadow: 
-                0 20px 35px -10px rgba(11, 19, 43, 0.25),
-                inset 0 1px 0 rgba(255, 255, 255, 0.15);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
-
-        .printer-slot {
-            background: #020617;
-            box-shadow: inset 0 3px 6px #000;
-        }
-
-        .bill-viewport {
-            overflow: hidden;
-            position: relative;
-            z-index: 10;
-            margin-top: -4px;
-            padding-bottom: 16px;
-        }
-
-        @keyframes print-feed {
-            0% {
-                transform: translateY(-100%);
-                opacity: 0.4;
-            }
-            10% {
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        .bill-printing {
-            animation: print-feed 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-            transform-origin: top center;
-            will-change: transform;
-        }
-
-        /* Hero Typewriter Blinking Cursor */
-        @keyframes cursor-blink {
-            0%, 45% {
-                opacity: 1;
-            }
-            50%, 95% {
-                opacity: 0;
-            }
-            100% {
-                opacity: 1;
-            }
-        }
-        .typewriter-cursor {
-            animation: cursor-blink 0.85s infinite;
-            display: inline-block;
-            vertical-align: -0.05em;
-        }
-
-        /* Respect Reduced Motion */
-        @media (prefers-reduced-motion: reduce) {
-            .animate-ambient-glow,
-            .hero-animate-badge,
-            .hero-animate-title,
-            .hero-animate-sub,
-            .hero-animate-cta,
-            .hero-animate-card-1,
-            .hero-animate-card-2,
-            .hero-animate-card-3,
-            .hero-animate-card-4,
-            .badge-shimmer,
-            [data-tilt],
-            .bill-printing,
-            .typewriter-cursor {
-                animation: none !important;
-                transform: none !important;
-                opacity: 1 !important;
-            }
-        }
-    </style>
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" media="print" onload="this.media='all'">
+    <noscript>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap">
+    </noscript>
+    <!-- Preload Critical Above-The-Fold Assets -->
+    <link rel="preload" as="image" href="images/finch_receipt_logo.webp" type="image/webp">
+    <link rel="preload" as="image" href="images/finch_app_icon_square.webp" type="image/webp">
+    <!-- Production Stylesheet compiled via Tailwind CLI -->
+    <link rel="preload" as="style" href="styles.css">
+    <link rel="stylesheet" href="styles.css">
 </head>
-<body class="min-h-screen flex flex-col bg-[#F8FAFC] text-slate-900 selection:bg-[#0B132B] selection:text-white font-sans antialiased relative overflow-x-hidden">
+<body class="min-h-screen flex flex-col bg-[#F8FAFC] text-slate-900 selection:bg-blue-600 selection:text-white font-sans antialiased relative overflow-x-clip">
+
+    <!-- Accessible Skip to Main Content Link -->
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:px-4 focus:py-2 focus:bg-blue-600 focus:text-white focus:font-bold focus:rounded-lg focus:shadow-lg focus:outline-none">
+        Skip to main content
+    </a>
 
     <!-- Ambient Mesh Glow Background -->
-    <div class="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[400px] sm:h-[600px] bg-gradient-to-b from-emerald-100/50 via-teal-50/20 to-transparent blur-[80px] sm:blur-[120px] pointer-events-none -z-10 animate-ambient-glow"></div>
+    <div class="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[400px] sm:h-[600px] bg-gradient-to-b from-blue-100/60 via-indigo-50/25 to-transparent blur-[80px] sm:blur-[120px] pointer-events-none -z-10 animate-ambient-glow"></div>
     <div class="fixed inset-0 bg-grid-pattern opacity-40 pointer-events-none -z-10 [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]"></div>
 
     <!-- Announcement Bar -->
     <div class="bg-[#0B132B] text-slate-300 text-[11px] sm:text-xs py-2 px-3 sm:px-4 text-center border-b border-slate-800/80 flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 relative z-50">
-        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 shrink-0">Free Trial</span>
-        <span class="font-medium text-slate-300">Start using Sparrow POS free for 14 days.</span>
-        <a href="/merchant" class="text-white font-bold hover:text-emerald-400 transition-colors inline-flex items-center gap-1 shrink-0">
+        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-blue-500/20 text-blue-400 border border-blue-500/30 shrink-0">Free Trial</span>
+        <span class="font-medium text-slate-300">Start using Finch POS free for 14 days.</span>
+        <a href="/merchant" class="text-white font-bold hover:text-blue-400 transition-colors inline-flex items-center gap-1 shrink-0 py-1 px-1.5 -my-1 rounded">
             <span>Get Started</span>
-            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 12h14M12 5l7 7-7 7"/></svg>
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 12h14M12 5l7 7-7 7"/></svg>
         </a>
     </div>
 
     <!-- Sticky Glassmorphic Header -->
     <header class="sticky top-0 z-40 bg-white/85 backdrop-blur-xl border-b border-slate-200/80 transition-all">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 h-14 sm:h-16 flex items-center justify-between gap-2">
-            <a href="/" class="flex items-center gap-2.5 sm:gap-3 group shrink-0">
-                <div class="w-7 h-7 sm:w-8 h-8 bg-[#0B132B] text-white flex items-center justify-center rounded-lg sm:rounded-xl font-black text-xs sm:text-sm shadow-xs group-hover:bg-slate-800 transition-colors">
-                    S
+            <a href="/" class="flex items-center gap-2.5 sm:gap-3 group shrink-0" aria-label="Finch POS Home">
+                <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl overflow-hidden shadow-xs border border-slate-200/80 group-hover:scale-105 transition-transform duration-200 shrink-0">
+                    <picture>
+                        <source srcset="images/finch_app_icon_square.webp" type="image/webp">
+                        <img src="images/finch_app_icon_square.png" alt="" width="36" height="36" class="w-full h-full object-cover">
+                    </picture>
                 </div>
                 <div class="flex flex-col">
-                    <span class="font-black text-sm sm:text-base tracking-tight text-slate-900 leading-none">Sparrow POS</span>
-                    <span class="text-[9px] sm:text-[10px] font-semibold text-slate-400 tracking-wider uppercase mt-0.5 hidden xs:inline">Retail Platform</span>
+                    <span class="font-black text-sm sm:text-base tracking-tight text-slate-900 leading-none">Finch POS</span>
+                    <span class="text-[9px] sm:text-[10px] font-semibold text-slate-600 tracking-wider uppercase mt-0.5 hidden sm:inline">Retail Platform</span>
                 </div>
             </a>
 
-            <nav class="hidden md:flex items-center gap-6 lg:gap-8 text-xs font-bold text-slate-600">
+            <nav aria-label="Main Navigation" class="hidden md:flex items-center gap-6 lg:gap-8 text-xs font-bold text-slate-600">
                 <a href="#how-it-works" class="hover:text-slate-950 transition-colors">How It Works</a>
                 <a href="#features" class="hover:text-slate-950 transition-colors">Features</a>
                 <a href="#pricing" class="hover:text-slate-950 transition-colors">Pricing</a>
@@ -290,19 +86,19 @@
             </nav>
 
             <div class="flex items-center gap-2 sm:gap-3 shrink-0">
-                <a href="/store" class="text-[11px] sm:text-xs font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-600 hover:text-white px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-lg sm:rounded-xl border border-emerald-200/70 hover:border-emerald-600 transition-all active:scale-95 shadow-2xs">
+                <a href="/store" class="text-xs font-bold text-blue-700 bg-blue-50 hover:bg-blue-600 hover:text-white px-3 sm:px-3.5 py-2 rounded-lg sm:rounded-xl border border-blue-200/70 hover:border-blue-600 transition-all active:scale-95 shadow-2xs">
                     Store
                 </a>
-                <a href="/merchant" class="text-[11px] sm:text-xs font-bold text-white bg-[#0B132B] hover:bg-slate-800 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl transition-all active:scale-95 flex items-center gap-1 sm:gap-1.5 shadow-xs">
+                <a href="/merchant" class="text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 px-3.5 sm:px-4 py-2 rounded-lg sm:rounded-xl transition-all active:scale-95 flex items-center gap-1 sm:gap-1.5 shadow-xs shadow-blue-500/20">
                     <span>Merchant</span>
-                    <svg class="w-3 h-3 sm:w-3.5 sm:h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    <svg class="w-3 h-3 sm:w-3.5 sm:h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 12h14M12 5l7 7-7 7"/></svg>
                 </a>
             </div>
         </div>
     </header>
 
     <!-- Main Content -->
-    <main class="w-full flex-1">
+    <main id="main-content" class="w-full flex-1">
 
         <!-- Hero Section -->
         <section class="max-w-5xl mx-auto px-4 sm:px-6 pt-12 pb-16 sm:pt-20 sm:pb-24 text-center relative">
@@ -311,16 +107,16 @@
             <div class="hero-animate-badge inline-flex items-center gap-2 px-3.5 py-1 sm:px-4 sm:py-1.5 rounded-full bg-white/90 backdrop-blur-md text-slate-800 text-[11px] sm:text-xs font-bold border border-slate-200/90 shadow-card mb-6 sm:mb-8 max-w-full truncate relative overflow-hidden">
                 <div class="badge-shimmer"></div>
                 <span class="flex h-2 w-2 relative shrink-0">
-                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                    <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
                 </span>
                 <span class="truncate relative z-10">Simple Counter Billing & QR Ordering</span>
             </div>
 
             <!-- Headline with Dynamic Typewriter Animation -->
-            <h1 class="hero-animate-title text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-[#0B132B] max-w-3xl mx-auto leading-[1.12] sm:leading-[1.08] mb-4 sm:mb-6 select-none">
+            <h1 class="hero-animate-title text-[28px] sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-[#0B132B] max-w-3xl mx-auto leading-[1.12] sm:leading-[1.08] mb-4 sm:mb-6 select-none">
                 <span class="inline-block">Billing made simple</span> <br class="hidden sm:inline">
-                <span class="inline-block whitespace-nowrap">for your <span id="typewriter-dynamic" class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-600">store.</span><span id="typewriter-cursor" class="typewriter-cursor inline-block w-[3px] sm:w-[4px] md:w-[5px] h-[0.78em] bg-emerald-500 ml-1 sm:ml-1.5 rounded-full"></span></span>
+                <span class="inline-block whitespace-nowrap">for your <span id="typewriter-dynamic" class="text-blue-600">store.</span><span id="typewriter-cursor" class="typewriter-cursor inline-block w-[3px] sm:w-[4px] md:w-[5px] h-[0.78em] bg-blue-600 ml-1 sm:ml-1.5 rounded-full"></span></span>
             </h1>
 
             <!-- Subtitle -->
@@ -330,28 +126,27 @@
 
             <!-- Call to Actions -->
             <div class="hero-animate-cta flex flex-col sm:flex-row items-center justify-center gap-3 max-w-md mx-auto mb-10 sm:mb-12 w-full">
-                <a href="/merchant" class="w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl sm:rounded-2xl bg-[#0B132B] hover:bg-slate-800 text-white font-bold text-xs sm:text-sm transition-all duration-200 active:scale-95 flex items-center justify-center gap-2 shadow-md hover:shadow-lg group">
+                <a href="/merchant" class="w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl sm:rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs sm:text-sm transition-all duration-200 active:scale-95 flex items-center justify-center gap-2 shadow-md shadow-blue-500/25 hover:shadow-lg hover:shadow-blue-500/40 group">
                     <span>Open Merchant Portal</span>
-                    <svg class="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    <svg class="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 12h14M12 5l7 7-7 7"/></svg>
                 </a>
-                <a href="/store" class="w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl sm:rounded-2xl bg-emerald-50 hover:bg-emerald-600 text-emerald-700 hover:text-white border border-emerald-200/70 hover:border-emerald-600 font-bold text-xs sm:text-sm transition-all duration-200 active:scale-95 flex items-center justify-center gap-2 shadow-card hover:shadow-emerald-500/20">
+                <a href="/store" class="w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl sm:rounded-2xl bg-blue-50 hover:bg-blue-600 text-blue-700 hover:text-white border border-blue-200/70 hover:border-blue-600 font-bold text-xs sm:text-sm transition-all duration-200 active:scale-95 flex items-center justify-center gap-2 shadow-card hover:shadow-blue-500/20">
                     <span>Visit Customer Store</span>
                 </a>
             </div>
 
             <!-- Thermal POS Receipt Printer Live Animation -->
-            <!-- Realistic 3D Industrial POS Thermal Printer & Emerging Bill -->
             <!-- Minimalist POS Thermal Printer & Bill Ejection -->
-            <div class="hero-animate-cta printer-card w-[290px] sm:w-[320px] mx-auto mb-12 sm:mb-16 relative select-none cursor-pointer" onclick="triggerReceiptPrint()" title="Click to print bill">
+            <div role="button" tabindex="0" aria-label="Interactive POS thermal printer. Click or press Enter to generate bill." onkeydown="if(event.key==='Enter'||event.key===' '){triggerReceiptPrint();event.preventDefault();}" onclick="triggerReceiptPrint()" class="hero-animate-cta printer-card w-full max-w-[280px] sm:max-w-[320px] mx-auto mb-12 sm:mb-16 relative select-none cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-4 rounded-2xl" title="Click to print bill">
                 
                 <!-- Sleek Minimalist Printer -->
                 <div class="printer-body rounded-2xl p-3.5 sm:p-4 relative z-20 transition-transform duration-200 active:scale-[0.99]">
                     <div class="flex items-center justify-between px-1 mb-2.5">
                         <div class="flex items-center gap-2">
-                            <span class="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399] animate-pulse"></span>
-                            <span class="text-[10px] font-mono font-bold text-slate-300 tracking-wider">PRINTER</span>
+                            <span class="w-2 h-2 rounded-full bg-blue-400 shadow-[0_0_8px_#60a5fa] animate-pulse"></span>
+                            <span class="text-xs font-mono font-bold text-slate-300 tracking-wider">PRINTER</span>
                         </div>
-                        <span class="text-[9px] font-mono text-slate-400">TAP TO PRINT</span>
+                        <span class="text-[11px] font-mono text-slate-300 font-medium">TAP TO PRINT</span>
                     </div>
 
                     <!-- Printer Mouth / Slot -->
@@ -363,18 +158,22 @@
                     <div id="receipt-paper" class="bill-printing relative filter drop-shadow-[0_12px_24px_rgba(0,0,0,0.12)]">
                         
                         <!-- Main White Paper Card Body -->
-                        <div class="bg-white text-slate-800 font-mono text-[11px] sm:text-xs pt-3.5 px-4 pb-2 border-x border-slate-200/90">
-                            <!-- Receipt Content -->
+                        <div class="bg-white text-slate-800 font-mono text-xs sm:text-sm pt-3.5 px-4 sm:px-5 pb-2.5 border-x border-slate-200/90">
+                            <!-- Receipt Content with Finch Brand Receipt Logo -->
                             <div class="text-center pb-2">
-                                <div class="font-bold text-xs tracking-tight text-slate-900 uppercase">SPARROW COFFEE</div>
-                                <div class="text-[9px] text-slate-400">Receipt <span id="receipt-no" class="text-slate-600 font-semibold">#SP-9924</span></div>
+                                <picture>
+                                    <source srcset="images/finch_receipt_logo.webp" type="image/webp">
+                                    <img src="images/finch_receipt_logo.png" alt="Finch Receipt Logo" class="h-24 sm:h-28 w-auto mx-auto mb-2.5 object-contain" width="112" height="112">
+                                </picture>
+                                <div id="receipt-store-name" class="font-extrabold text-sm sm:text-base tracking-tight text-slate-900 uppercase">THE DAILY ROAST CAFE</div>
+                                <div class="text-[11px] sm:text-xs text-slate-600 font-medium mt-0.5">Receipt <span id="receipt-no" class="text-slate-800 font-bold">#ORD-9924</span></div>
                             </div>
 
                             <!-- Divider -->
-                            <div class="border-b border-dashed border-slate-200 my-1.5"></div>
+                            <div class="border-b border-dashed border-slate-200 my-2"></div>
 
                             <!-- Items List -->
-                            <div id="receipt-items" class="space-y-1 py-0.5 text-[10px] sm:text-[11px]">
+                            <div id="receipt-items" class="space-y-1.5 py-0.5 text-xs sm:text-[13px]">
                                 <div class="flex justify-between text-slate-700">
                                     <span>2x Cold Brew</span>
                                     <span class="font-bold text-slate-900">₹180</span>
@@ -386,23 +185,23 @@
                             </div>
 
                             <!-- Divider -->
-                            <div class="border-b border-dashed border-slate-200 my-1.5"></div>
+                            <div class="border-b border-dashed border-slate-200 my-2"></div>
 
                             <!-- Total -->
-                            <div class="flex justify-between font-bold text-xs text-slate-900 py-0.5">
+                            <div class="flex justify-between items-center font-bold text-sm sm:text-base text-slate-900 py-1">
                                 <span>TOTAL</span>
-                                <span id="receipt-total" class="text-emerald-700 font-black">₹290.00</span>
+                                <span id="receipt-total" class="text-blue-600 font-black text-base sm:text-lg">₹290.00</span>
                             </div>
 
                             <!-- Settlement Status -->
-                            <div id="receipt-stamp" class="mt-2 py-1 px-2 rounded-md bg-emerald-50 border border-emerald-200/70 text-emerald-800 flex items-center justify-between text-[9px] sm:text-[10px]">
+                            <div id="receipt-stamp" class="mt-2.5 py-1.5 px-3 rounded-lg bg-blue-50 border border-blue-200/70 text-blue-800 flex items-center justify-between text-xs sm:text-[13px]">
                                 <span id="receipt-pay-method" class="font-bold">UPI</span>
-                                <span class="font-extrabold text-emerald-700">PAID ✓</span>
+                                <span class="font-extrabold text-blue-700">PAID ✓</span>
                             </div>
                         </div>
 
                         <!-- Real Perforated Zigzag Paper Cut Bottom Edge -->
-                        <svg class="w-full h-2.5 sm:h-3 block -mt-[1px]" viewBox="0 0 240 10" preserveAspectRatio="none">
+                        <svg class="w-full h-2.5 sm:h-3 block -mt-[1px]" viewBox="0 0 240 10" preserveAspectRatio="none" aria-hidden="true">
                             <path d="M0,0 L5,9 L10,0 L15,9 L20,0 L25,9 L30,0 L35,9 L40,0 L45,9 L50,0 L55,9 L60,0 L65,9 L70,0 L75,9 L80,0 L85,9 L90,0 L95,9 L100,0 L105,9 L110,0 L115,9 L120,0 L125,9 L130,0 L135,9 L140,0 L145,9 L150,0 L155,9 L160,0 L165,9 L170,0 L175,9 L180,0 L185,9 L190,0 L195,9 L200,0 L205,9 L210,0 L215,9 L220,0 L225,9 L230,0 L235,9 L240,0" fill="#ffffff" stroke="#cbd5e1" stroke-width="0.75" />
                         </svg>
                     </div>
@@ -414,40 +213,40 @@
 
             <!-- 4 Core Trust Highlights -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 text-left max-w-4xl mx-auto">
-                <div data-tilt class="specular-container hero-animate-card-1 p-4 sm:p-5 rounded-2xl bg-white/90 backdrop-blur-sm border border-slate-200/80 hover:border-emerald-300/80 shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300 group">
+                <div data-tilt class="specular-container hero-animate-card-1 p-4 sm:p-5 rounded-2xl bg-white/90 backdrop-blur-sm border border-slate-200/80 hover:border-blue-300/80 shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300 group">
                     <div class="specular-glow"></div>
-                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-emerald-50 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white flex items-center justify-center mb-3 border border-emerald-100/70 group-hover:border-emerald-600 group-hover:scale-105 transition-all duration-300 shadow-2xs relative z-10">
-                        <svg class="w-4.5 h-4.5 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-blue-50 text-blue-600 group-hover:bg-blue-600 group-hover:text-white flex items-center justify-center mb-3 border border-blue-100/70 group-hover:border-blue-600 group-hover:scale-105 transition-all duration-300 shadow-2xs relative z-10">
+                        <svg class="w-4.5 h-4.5 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
                     </div>
-                    <div class="text-xs sm:text-sm font-bold text-slate-900 group-hover:text-emerald-950 transition-colors relative z-10">Fast Billing</div>
-                    <div class="text-[11px] sm:text-xs text-slate-500 mt-1 font-normal leading-normal relative z-10">Bill counter customers in seconds with Cash or UPI</div>
+                    <div class="text-xs sm:text-sm font-bold text-slate-900 group-hover:text-blue-950 transition-colors relative z-10">Fast Billing</div>
+                    <div class="text-[11px] sm:text-xs text-slate-600 mt-1 font-normal leading-normal relative z-10">Bill counter customers in seconds with Cash or UPI</div>
                 </div>
 
-                <div data-tilt class="specular-container hero-animate-card-2 p-4 sm:p-5 rounded-2xl bg-white/90 backdrop-blur-sm border border-slate-200/80 hover:border-emerald-300/80 shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300 group">
+                <div data-tilt class="specular-container hero-animate-card-2 p-4 sm:p-5 rounded-2xl bg-white/90 backdrop-blur-sm border border-slate-200/80 hover:border-blue-300/80 shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300 group">
                     <div class="specular-glow"></div>
-                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-emerald-50 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white flex items-center justify-center mb-3 border border-emerald-100/70 group-hover:border-emerald-600 group-hover:scale-105 transition-all duration-300 shadow-2xs relative z-10">
-                        <svg class="w-4.5 h-4.5 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1Zm12 0h2a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1ZM5 20h2a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1Z"/></svg>
+                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-blue-50 text-blue-600 group-hover:bg-blue-600 group-hover:text-white flex items-center justify-center mb-3 border border-blue-100/70 group-hover:border-blue-600 group-hover:scale-105 transition-all duration-300 shadow-2xs relative z-10">
+                        <svg class="w-4.5 h-4.5 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1Zm12 0h2a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1ZM5 20h2a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1Z"/></svg>
                     </div>
-                    <div class="text-xs sm:text-sm font-bold text-slate-900 group-hover:text-emerald-950 transition-colors relative z-10">QR Phone Menu</div>
-                    <div class="text-[11px] sm:text-xs text-slate-500 mt-1 font-normal leading-normal relative z-10">Customers browse and order directly from mobile</div>
+                    <div class="text-xs sm:text-sm font-bold text-slate-900 group-hover:text-blue-950 transition-colors relative z-10">QR Phone Menu</div>
+                    <div class="text-[11px] sm:text-xs text-slate-600 mt-1 font-normal leading-normal relative z-10">Customers browse and order directly from mobile</div>
                 </div>
 
-                <div data-tilt class="specular-container hero-animate-card-3 p-4 sm:p-5 rounded-2xl bg-white/90 backdrop-blur-sm border border-slate-200/80 hover:border-emerald-300/80 shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300 group">
+                <div data-tilt class="specular-container hero-animate-card-3 p-4 sm:p-5 rounded-2xl bg-white/90 backdrop-blur-sm border border-slate-200/80 hover:border-blue-300/80 shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300 group">
                     <div class="specular-glow"></div>
-                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-emerald-50 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white flex items-center justify-center mb-3 border border-emerald-100/70 group-hover:border-emerald-600 group-hover:scale-105 transition-all duration-300 shadow-2xs relative z-10">
-                        <svg class="w-4.5 h-4.5 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg>
+                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-blue-50 text-blue-600 group-hover:bg-blue-600 group-hover:text-white flex items-center justify-center mb-3 border border-blue-100/70 group-hover:border-blue-600 group-hover:scale-105 transition-all duration-300 shadow-2xs relative z-10">
+                        <svg class="w-4.5 h-4.5 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg>
                     </div>
-                    <div class="text-xs sm:text-sm font-bold text-slate-900 group-hover:text-emerald-950 transition-colors relative z-10">Store Wallet</div>
-                    <div class="text-[11px] sm:text-xs text-slate-500 mt-1 font-normal leading-normal relative z-10">Pre-funded store balance for instant 1-tap checkout</div>
+                    <div class="text-xs sm:text-sm font-bold text-slate-900 group-hover:text-blue-950 transition-colors relative z-10">Store Wallet</div>
+                    <div class="text-[11px] sm:text-xs text-slate-600 mt-1 font-normal leading-normal relative z-10">Pre-funded store balance for instant 1-tap checkout</div>
                 </div>
 
-                <div data-tilt class="specular-container hero-animate-card-4 p-4 sm:p-5 rounded-2xl bg-white/90 backdrop-blur-sm border border-slate-200/80 hover:border-emerald-300/80 shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300 group">
+                <div data-tilt class="specular-container hero-animate-card-4 p-4 sm:p-5 rounded-2xl bg-white/90 backdrop-blur-sm border border-slate-200/80 hover:border-blue-300/80 shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300 group">
                     <div class="specular-glow"></div>
-                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-emerald-50 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white flex items-center justify-center mb-3 border border-emerald-100/70 group-hover:border-emerald-600 group-hover:scale-105 transition-all duration-300 shadow-2xs relative z-10">
-                        <svg class="w-4.5 h-4.5 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 20V10M12 20V4M6 20v-6"/></svg>
+                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-blue-50 text-blue-600 group-hover:bg-blue-600 group-hover:text-white flex items-center justify-center mb-3 border border-blue-100/70 group-hover:border-blue-600 group-hover:scale-105 transition-all duration-300 shadow-2xs relative z-10">
+                        <svg class="w-4.5 h-4.5 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 20V10M12 20V4M6 20v-6"/></svg>
                     </div>
-                    <div class="text-xs sm:text-sm font-bold text-slate-900 group-hover:text-emerald-950 transition-colors relative z-10">Daily Sales</div>
-                    <div class="text-[11px] sm:text-xs text-slate-500 mt-1 font-normal leading-normal relative z-10">Track daily revenue, Cash vs UPI, and best-sellers</div>
+                    <div class="text-xs sm:text-sm font-bold text-slate-900 group-hover:text-blue-950 transition-colors relative z-10">Daily Sales</div>
+                    <div class="text-[11px] sm:text-xs text-slate-600 mt-1 font-normal leading-normal relative z-10">Track daily revenue, Cash vs UPI, and best-sellers</div>
                 </div>
             </div>
         </section>
@@ -455,26 +254,35 @@
         <!-- 3-App Interactive Showcase Section with Real Screenshots -->
         <section class="max-w-6xl mx-auto px-4 sm:px-6 pb-16 sm:pb-24">
             
+            <div class="text-center max-w-md mx-auto mb-6 sm:mb-8">
+                <div class="text-[11px] sm:text-xs font-bold text-blue-700 uppercase tracking-wider mb-1.5 sm:mb-2">Platform Overview</div>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-[#0B132B] tracking-tight">Experience Finch POS in Action</h2>
+                <p class="text-xs sm:text-sm text-slate-600 mt-1.5 sm:mt-2 font-normal">Switch between apps to see how Finch connects your counter, back office, and shoppers.</p>
+            </div>
+
             <!-- App Switcher Tabs -->
-            <div class="flex items-center justify-center p-1 sm:p-1.5 bg-slate-200/80 rounded-xl sm:rounded-2xl max-w-md sm:max-w-lg mx-auto mb-6 sm:mb-8 gap-1 border border-slate-300/60 shadow-xs">
-                <button type="button" onclick="switchApp('merchant')" id="tab-btn-merchant" class="flex-1 py-2 sm:py-2.5 px-2 sm:px-3.5 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-extrabold transition-all bg-[#0B132B] text-white shadow-xs inline-flex items-center justify-center gap-1 sm:gap-1.5 whitespace-nowrap">
-                    <svg class="w-3.5 h-3.5 shrink-0 opacity-90" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+            <div role="tablist" aria-label="Finch POS Applications" class="flex items-center justify-center p-1 sm:p-1.5 bg-slate-200/80 rounded-xl sm:rounded-2xl max-w-md sm:max-w-lg mx-auto mb-6 sm:mb-8 gap-1 border border-slate-300/60 shadow-xs">
+                <button type="button" role="tab" id="tab-btn-merchant" aria-selected="true" tabindex="0" aria-controls="showcase-merchant" onclick="switchApp('merchant')" class="flex-1 py-2 sm:py-2.5 px-2 sm:px-3.5 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-extrabold transition-all bg-blue-600 text-white shadow-xs shadow-blue-500/20 inline-flex items-center justify-center gap-1 sm:gap-1.5 whitespace-nowrap">
+                    <svg class="w-3.5 h-3.5 shrink-0 opacity-90" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
                     <span>Merchant</span>
                 </button>
-                <button type="button" onclick="switchApp('terminal')" id="tab-btn-terminal" class="flex-1 py-2 sm:py-2.5 px-2 sm:px-3.5 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-bold text-slate-600 hover:text-slate-950 transition-all inline-flex items-center justify-center gap-1 sm:gap-1.5 whitespace-nowrap">
-                    <svg class="w-3.5 h-3.5 shrink-0 opacity-90" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                <button type="button" role="tab" id="tab-btn-terminal" aria-selected="false" tabindex="-1" aria-controls="showcase-terminal" onclick="switchApp('terminal')" class="flex-1 py-2 sm:py-2.5 px-2 sm:px-3.5 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-bold text-slate-600 hover:text-slate-950 transition-all inline-flex items-center justify-center gap-1 sm:gap-1.5 whitespace-nowrap">
+                    <svg class="w-3.5 h-3.5 shrink-0 opacity-90" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
                     <span>Terminal<span class="hidden sm:inline"> POS</span></span>
                 </button>
-                <button type="button" onclick="switchApp('customer')" id="tab-btn-customer" class="flex-1 py-2 sm:py-2.5 px-2 sm:px-3.5 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-bold text-slate-600 hover:text-slate-950 transition-all inline-flex items-center justify-center gap-1 sm:gap-1.5 whitespace-nowrap">
-                    <svg class="w-3.5 h-3.5 shrink-0 opacity-90" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                <button type="button" role="tab" id="tab-btn-customer" aria-selected="false" tabindex="-1" aria-controls="showcase-customer" onclick="switchApp('customer')" class="flex-1 py-2 sm:py-2.5 px-2 sm:px-3.5 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-bold text-slate-600 hover:text-slate-950 transition-all inline-flex items-center justify-center gap-1 sm:gap-1.5 whitespace-nowrap">
+                    <svg class="w-3.5 h-3.5 shrink-0 opacity-90" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
                     <span>Customer<span class="hidden sm:inline"> Store</span></span>
                 </button>
             </div>
 
             <!-- Tab 1: Merchant Portal (MacBook Pro Mockup) -->
-            <div id="showcase-merchant" class="app-panel block">
+            <div id="showcase-merchant" role="tabpanel" aria-labelledby="tab-btn-merchant" class="app-panel block">
                 <div class="max-w-5xl mx-auto drop-shadow-[0_25px_45px_rgba(0,0,0,0.35)]">
-                    <img src="images/merchant-macbook.png" alt="Sparrow POS Merchant Portal on MacBook Pro" width="2128" height="1417" class="w-full h-auto object-contain block mx-auto" loading="eager" fetchpriority="high" decoding="async">
+                    <picture>
+                        <source srcset="images/merchant-macbook.webp" type="image/webp">
+                        <img src="images/merchant-macbook.png" alt="Finch POS Merchant Portal on MacBook Pro" width="1600" height="1065" class="w-full h-auto object-contain block mx-auto" loading="lazy" decoding="async">
+                    </picture>
                 </div>
                 <div class="mt-4 sm:mt-6 p-4 sm:p-6 bg-white rounded-2xl border border-slate-200/80 shadow-card flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>
@@ -483,17 +291,20 @@
                             Full store control: live sales charts, payment breakdown (Cash vs UPI), catalog management, low-stock alerts, and billing counter setup.
                         </p>
                     </div>
-                    <a href="/merchant" class="px-5 py-2.5 rounded-xl bg-[#0B132B] hover:bg-slate-800 text-white font-bold text-xs shrink-0 flex items-center justify-center gap-1.5 transition-all shadow-xs">
+                    <a href="/merchant" class="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shrink-0 flex items-center justify-center gap-1.5 transition-all shadow-xs shadow-blue-500/20">
                         <span>Open Merchant Portal</span>
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 12h14M12 5l7 7-7 7"/></svg>
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 12h14M12 5l7 7-7 7"/></svg>
                     </a>
                 </div>
             </div>
 
             <!-- Tab 2: Billing Terminal POS (MacBook Pro Mockup) -->
-            <div id="showcase-terminal" class="app-panel hidden">
+            <div id="showcase-terminal" role="tabpanel" aria-labelledby="tab-btn-terminal" class="app-panel hidden">
                 <div class="max-w-5xl mx-auto drop-shadow-[0_25px_45px_rgba(0,0,0,0.35)]">
-                    <img src="images/terminal-macbook.png" alt="Sparrow POS Billing Terminal on MacBook Pro" width="2128" height="1417" class="w-full h-auto object-contain block mx-auto" loading="eager" decoding="async">
+                    <picture>
+                        <source srcset="images/terminal-macbook.webp" type="image/webp">
+                        <img src="images/terminal-macbook.png" alt="Finch POS Billing Terminal on MacBook Pro" width="1600" height="1065" class="w-full h-auto object-contain block mx-auto" loading="lazy" decoding="async">
+                    </picture>
                 </div>
                 <div class="mt-4 sm:mt-6 p-4 sm:p-6 bg-white rounded-2xl border border-slate-200/80 shadow-card flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>
@@ -502,22 +313,22 @@
                             High-velocity cashier interface: category filter pills, fast product search, live order summary, and instantaneous Cash or UPI tender.
                         </p>
                     </div>
-                    <a href="/terminal" class="px-5 py-2.5 rounded-xl bg-[#0B132B] hover:bg-slate-800 text-white font-bold text-xs shrink-0 flex items-center justify-center gap-1.5 transition-all shadow-xs">
+                    <a href="/terminal" class="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shrink-0 flex items-center justify-center gap-1.5 transition-all shadow-xs shadow-blue-500/20">
                         <span>Open Terminal Web</span>
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 12h14M12 5l7 7-7 7"/></svg>
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 12h14M12 5l7 7-7 7"/></svg>
                     </a>
                 </div>
             </div>
 
             <!-- Tab 3: Customer Mobile Store (Smartphone Mockup Frame) -->
-            <div id="showcase-customer" class="app-panel hidden">
+            <div id="showcase-customer" role="tabpanel" aria-labelledby="tab-btn-customer" class="app-panel hidden">
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
                     
                     <!-- Left: Capabilities Card (Order 2 on mobile, Order 1 on desktop) -->
                     <div class="order-2 lg:order-1 lg:col-span-7 bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-card flex flex-col justify-between space-y-6">
                         <div>
-                            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/60 text-xs font-extrabold mb-3">
-                                <svg class="w-3.5 h-3.5 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200/60 text-xs font-extrabold mb-3">
+                                <svg class="w-3.5 h-3.5 text-blue-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
                                 <span>Smartphone Browser App</span>
                             </div>
                             <h3 class="text-xl sm:text-2xl font-black text-slate-900">Customer Mobile Store</h3>
@@ -529,42 +340,45 @@
                         <!-- 3 Feature Highlights -->
                         <div class="space-y-3.5">
                             <div class="flex items-start gap-3 p-3.5 rounded-xl bg-slate-50 border border-slate-100">
-                                <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center font-black text-sm shrink-0">1</div>
+                                <div class="w-8 h-8 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center font-black text-sm shrink-0">1</div>
                                 <div>
                                     <div class="text-xs font-bold text-slate-900">Scan QR Code at Table or Counter</div>
-                                    <div class="text-[11px] text-slate-500 mt-0.5">Opens your dynamic live menu with real-time item prices and photos instantly.</div>
+                                    <div class="text-[11px] text-slate-600 mt-0.5">Opens your dynamic live menu with real-time item prices and photos instantly.</div>
                                 </div>
                             </div>
 
                             <div class="flex items-start gap-3 p-3.5 rounded-xl bg-slate-50 border border-slate-100">
-                                <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center font-black text-sm shrink-0">2</div>
+                                <div class="w-8 h-8 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center font-black text-sm shrink-0">2</div>
                                 <div>
                                     <div class="text-xs font-bold text-slate-900">Store Wallet & UPI Payment</div>
-                                    <div class="text-[11px] text-slate-500 mt-0.5">Shoppers can pre-load store balances for 1-tap ordering or pay online via UPI.</div>
+                                    <div class="text-[11px] text-slate-600 mt-0.5">Shoppers can pre-load store balances for 1-tap ordering or pay online via UPI.</div>
                                 </div>
                             </div>
 
                             <div class="flex items-start gap-3 p-3.5 rounded-xl bg-slate-50 border border-slate-100">
-                                <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center font-black text-sm shrink-0">3</div>
+                                <div class="w-8 h-8 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center font-black text-sm shrink-0">3</div>
                                 <div>
                                     <div class="text-xs font-bold text-slate-900">Digital Order Pickup Pass</div>
-                                    <div class="text-[11px] text-slate-500 mt-0.5">Generates a scannable pickup QR pass to flash at your counter for quick collection.</div>
+                                    <div class="text-[11px] text-slate-600 mt-0.5">Generates a scannable pickup QR pass to flash at your counter for quick collection.</div>
                                 </div>
                             </div>
                         </div>
 
                         <div class="pt-2">
-                            <a href="/store" class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition-all shadow-sm">
+                            <a href="/store" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs transition-all shadow-sm">
                                 <span>Try Customer Store</span>
-                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 12h14M12 5l7 7-7 7"/></svg>
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 12h14M12 5l7 7-7 7"/></svg>
                             </a>
                         </div>
                     </div>
 
                     <!-- Right: Authentic iPhone 16 Pro Mockup (Order 1 on mobile, Order 2 on desktop) -->
                     <div class="order-1 lg:order-2 lg:col-span-5 flex justify-center py-2 sm:py-4">
-                        <div class="w-[280px] sm:w-[320px] drop-shadow-[0_25px_35px_rgba(0,0,0,0.4)] hover:-translate-y-1 transition-all duration-300">
-                            <img src="images/customer-iphone.png" alt="Sparrow POS Customer Mobile App on iPhone 16 Pro" width="1490" height="2996" class="w-full h-auto object-contain block mx-auto" loading="eager" decoding="async">
+                        <div class="w-full max-w-[280px] sm:max-w-[320px] drop-shadow-[0_25px_35px_rgba(0,0,0,0.4)] hover:-translate-y-1 transition-all duration-300">
+                            <picture>
+                                <source srcset="images/customer-iphone.webp" type="image/webp">
+                                <img src="images/customer-iphone.png" alt="Finch POS Customer Mobile App on iPhone 16 Pro" width="796" height="1600" class="w-full h-auto object-contain block mx-auto" loading="lazy" decoding="async">
+                            </picture>
                         </div>
                     </div>
 
@@ -573,23 +387,20 @@
 
         </section>
 
-        <!-- Tab Switching & Showcase Preload Logic -->
+        <!-- Tab Switching & Showcase Idle Preload Logic -->
         <script>
-            // Pre-warm and decode showcase images in background memory for instant tab switching
-            (function() {
-                var showcaseImages = [
-                    'images/merchant-macbook.png',
-                    'images/terminal-macbook.png',
-                    'images/customer-iphone.png'
-                ];
-                showcaseImages.forEach(function(src) {
+            // Pre-warm showcase images in idle time so critical load is completely unaffected
+            function preloadShowcase() {
+                ['images/merchant-macbook.webp', 'images/terminal-macbook.webp', 'images/customer-iphone.webp'].forEach(function(src) {
                     var img = new Image();
                     img.src = src;
-                    if (img.decode) {
-                        img.decode().catch(function() {});
-                    }
                 });
-            })();
+            }
+            if ('requestIdleCallback' in window) {
+                requestIdleCallback(preloadShowcase);
+            } else {
+                window.addEventListener('load', preloadShowcase);
+            }
 
             function switchApp(appKey) {
                 // Hide all panels
@@ -601,26 +412,49 @@
                 ['merchant', 'terminal', 'customer'].forEach(function(key) {
                     var btn = document.getElementById('tab-btn-' + key);
                     if (btn) {
-                        btn.className = 'flex-1 py-2 sm:py-2.5 px-2 sm:px-3.5 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-bold text-slate-600 hover:text-slate-950 transition-all inline-flex items-center justify-center gap-1 sm:gap-1.5 whitespace-nowrap';
+                        var isActive = key === appKey;
+                        btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
+                        btn.setAttribute('tabindex', isActive ? '0' : '-1');
+                        if (isActive) {
+                            btn.className = 'flex-1 py-2 sm:py-2.5 px-2 sm:px-3.5 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-extrabold transition-all bg-blue-600 text-white shadow-xs shadow-blue-500/20 inline-flex items-center justify-center gap-1 sm:gap-1.5 whitespace-nowrap';
+                        } else {
+                            btn.className = 'flex-1 py-2 sm:py-2.5 px-2 sm:px-3.5 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-bold text-slate-600 hover:text-slate-950 transition-all inline-flex items-center justify-center gap-1 sm:gap-1.5 whitespace-nowrap';
+                        }
                     }
                 });
-                // Activate targeted panel & button
+                // Activate targeted panel
                 var activePanel = document.getElementById('showcase-' + appKey);
-                var activeBtn = document.getElementById('tab-btn-' + appKey);
                 if (activePanel) {
                     activePanel.classList.remove('hidden');
                     activePanel.classList.add('block');
                 }
-                if (activeBtn) {
-                    activeBtn.className = 'flex-1 py-2 sm:py-2.5 px-2 sm:px-3.5 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-extrabold transition-all bg-[#0B132B] text-white shadow-xs inline-flex items-center justify-center gap-1 sm:gap-1.5 whitespace-nowrap';
-                }
             }
+
+            // WAI-ARIA Arrow key navigation across tabs
+            ['merchant', 'terminal', 'customer'].forEach(function(key, idx, arr) {
+                var btn = document.getElementById('tab-btn-' + key);
+                if (btn) {
+                    btn.addEventListener('keydown', function(e) {
+                        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+                            e.preventDefault();
+                            var nextKey = arr[(idx + 1) % arr.length];
+                            switchApp(nextKey);
+                            document.getElementById('tab-btn-' + nextKey).focus();
+                        } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                            e.preventDefault();
+                            var prevKey = arr[(idx - 1 + arr.length) % arr.length];
+                            switchApp(prevKey);
+                            document.getElementById('tab-btn-' + prevKey).focus();
+                        }
+                    });
+                }
+            });
         </script>
 
         <!-- 3-Step Setup Section -->
         <section class="max-w-5xl mx-auto px-4 sm:px-6 py-14 sm:py-20 border-t border-slate-200">
             <div class="text-center max-w-md mx-auto mb-10 sm:mb-14">
-                <div class="text-[11px] sm:text-xs font-bold text-emerald-700 uppercase tracking-wider mb-1.5 sm:mb-2">Easy Setup</div>
+                <div class="text-[11px] sm:text-xs font-bold text-blue-700 uppercase tracking-wider mb-1.5 sm:mb-2">Easy Setup</div>
                 <h2 class="text-2xl sm:text-3xl font-extrabold text-[#0B132B] tracking-tight">Up and Running in 3 Minutes</h2>
                 <p class="text-xs sm:text-sm text-slate-600 mt-1.5 sm:mt-2 font-normal">Start billing immediately with zero hardware setup.</p>
             </div>
@@ -628,7 +462,7 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
                 <!-- Step 1 -->
                 <div class="p-5 sm:p-6 rounded-2xl sm:rounded-3xl bg-white border border-slate-200/80 shadow-card relative">
-                    <div class="w-8 h-8 rounded-full bg-[#0B132B] text-white font-black text-xs flex items-center justify-center mb-3 sm:mb-4">
+                    <div class="w-8 h-8 rounded-full bg-blue-600 text-white font-black text-xs flex items-center justify-center mb-3 sm:mb-4 shadow-xs shadow-blue-500/20">
                         1
                     </div>
                     <h3 class="text-sm sm:text-base font-extrabold text-slate-900 mb-1.5 sm:mb-2">Create Your Store</h3>
@@ -639,7 +473,7 @@
 
                 <!-- Step 2 -->
                 <div class="p-5 sm:p-6 rounded-2xl sm:rounded-3xl bg-white border border-slate-200/80 shadow-card relative">
-                    <div class="w-8 h-8 rounded-full bg-emerald-600 text-white font-black text-xs flex items-center justify-center mb-3 sm:mb-4">
+                    <div class="w-8 h-8 rounded-full bg-blue-600 text-white font-black text-xs flex items-center justify-center mb-3 sm:mb-4 shadow-xs shadow-blue-500/20">
                         2
                     </div>
                     <h3 class="text-sm sm:text-base font-extrabold text-slate-900 mb-1.5 sm:mb-2">Set Up Your Counters</h3>
@@ -650,7 +484,7 @@
 
                 <!-- Step 3 -->
                 <div class="p-5 sm:p-6 rounded-2xl sm:rounded-3xl bg-white border border-slate-200/80 shadow-card relative">
-                    <div class="w-8 h-8 rounded-full bg-[#0B132B] text-white font-black text-xs flex items-center justify-center mb-3 sm:mb-4">
+                    <div class="w-8 h-8 rounded-full bg-blue-600 text-white font-black text-xs flex items-center justify-center mb-3 sm:mb-4 shadow-xs shadow-blue-500/20">
                         3
                     </div>
                     <h3 class="text-sm sm:text-base font-extrabold text-slate-900 mb-1.5 sm:mb-2">Start Selling</h3>
@@ -664,7 +498,7 @@
         <!-- Two Dedicated Portals Section -->
         <section id="how-it-works" class="max-w-5xl mx-auto px-4 sm:px-6 py-14 sm:py-20 border-t border-slate-200">
             <div class="text-center max-w-md mx-auto mb-10 sm:mb-14">
-                <div class="text-[11px] sm:text-xs font-bold text-emerald-700 uppercase tracking-wider mb-1.5 sm:mb-2">Two Portals</div>
+                <div class="text-[11px] sm:text-xs font-bold text-blue-700 uppercase tracking-wider mb-1.5 sm:mb-2">Two Portals</div>
                 <h2 class="text-2xl sm:text-3xl font-extrabold text-[#0B132B] tracking-tight">Built for Both Sides of Your Store</h2>
                 <p class="text-xs sm:text-sm text-slate-600 mt-1.5 sm:mt-2 font-normal">One portal for store management, one for shoppers.</p>
             </div>
@@ -673,88 +507,88 @@
                 <!-- For Store Owners -->
                 <div class="p-5 sm:p-8 rounded-2xl sm:rounded-3xl bg-white border border-slate-200/90 shadow-card hover:shadow-card-hover transition-all flex flex-col justify-between">
                     <div>
-                        <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-[#0B132B] text-white flex items-center justify-center mb-4 sm:mb-6 shadow-xs">
-                            <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2 7h20"/></svg>
+                        <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-blue-600 text-white flex items-center justify-center mb-4 sm:mb-6 shadow-xs shadow-blue-500/20">
+                            <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2 7h20"/></svg>
                         </div>
-                        <div class="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">For Shop Owners</div>
+                        <div class="text-[10px] sm:text-xs font-extrabold text-blue-700 uppercase tracking-wider mb-1">For Shop Owners</div>
                         <h3 class="text-lg sm:text-xl font-extrabold text-slate-900 mb-2 sm:mb-3">Merchant Portal</h3>
                         <p class="text-xs sm:text-sm text-slate-600 leading-relaxed mb-4 sm:mb-6 font-normal">
                             Add items, set prices, create billing counters for your staff, and check your daily sales summary.
                         </p>
                         <ul class="space-y-2.5 sm:space-y-3 text-xs sm:text-sm font-semibold text-slate-700 mb-6 sm:mb-8">
-                            <li class="flex items-center gap-2 sm:gap-2.5">
-                                <span class="w-4 h-4 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
-                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                            <li class="flex items-start gap-2 sm:gap-2.5">
+                                <span class="w-4 h-4 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center shrink-0 mt-0.5">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
                                 </span>
                                 <span>Add products, categories, and stock quantities</span>
                             </li>
-                            <li class="flex items-center gap-2 sm:gap-2.5">
-                                <span class="w-4 h-4 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
-                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                            <li class="flex items-start gap-2 sm:gap-2.5">
+                                <span class="w-4 h-4 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center shrink-0 mt-0.5">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
                                 </span>
                                 <span>Set up multiple billing counters</span>
                             </li>
-                            <li class="flex items-center gap-2 sm:gap-2.5">
-                                <span class="w-4 h-4 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
-                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                            <li class="flex items-start gap-2 sm:gap-2.5">
+                                <span class="w-4 h-4 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center shrink-0 mt-0.5">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
                                 </span>
                                 <span>See today's revenue and best-selling items</span>
                             </li>
-                            <li class="flex items-center gap-2 sm:gap-2.5">
-                                <span class="w-4 h-4 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
-                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                            <li class="flex items-start gap-2 sm:gap-2.5">
+                                <span class="w-4 h-4 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center shrink-0 mt-0.5">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
                                 </span>
                                 <span>Get alerts when products are running low</span>
                             </li>
                         </ul>
                     </div>
-                    <a href="/merchant" class="w-full py-3 sm:py-3.5 rounded-xl bg-[#0B132B] hover:bg-slate-800 text-white font-bold text-xs sm:text-sm text-center transition-all shadow-xs flex items-center justify-center gap-2">
+                    <a href="/merchant" class="w-full py-3 sm:py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs sm:text-sm text-center transition-all shadow-xs shadow-blue-500/20 flex items-center justify-center gap-2">
                         <span>Open Merchant Portal</span>
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 12h14M12 5l7 7-7 7"/></svg>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 12h14M12 5l7 7-7 7"/></svg>
                     </a>
                 </div>
 
                 <!-- For Customers -->
                 <div class="p-5 sm:p-8 rounded-2xl sm:rounded-3xl bg-white border border-slate-200/90 shadow-card hover:shadow-card-hover transition-all flex flex-col justify-between">
                     <div>
-                        <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-emerald-600 text-white flex items-center justify-center mb-4 sm:mb-6 shadow-xs">
-                            <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 0 0-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+                        <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-blue-600 text-white flex items-center justify-center mb-4 sm:mb-6 shadow-xs">
+                            <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 0 0-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
                         </div>
-                        <div class="text-[10px] sm:text-xs font-bold text-emerald-700 uppercase tracking-wider mb-1">For Customers</div>
+                        <div class="text-[10px] sm:text-xs font-bold text-blue-700 uppercase tracking-wider mb-1">For Customers</div>
                         <h3 class="text-lg sm:text-xl font-extrabold text-slate-900 mb-2 sm:mb-3">Customer Store</h3>
                         <p class="text-xs sm:text-sm text-slate-600 leading-relaxed mb-4 sm:mb-6 font-normal">
                             Customers scan your store QR code with their phone, choose items, pay online, and pick up quickly.
                         </p>
                         <ul class="space-y-2.5 sm:space-y-3 text-xs sm:text-sm font-semibold text-slate-700 mb-6 sm:mb-8">
-                            <li class="flex items-center gap-2 sm:gap-2.5">
-                                <span class="w-4 h-4 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
-                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                            <li class="flex items-start gap-2 sm:gap-2.5">
+                                <span class="w-4 h-4 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center shrink-0 mt-0.5">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
                                 </span>
                                 <span>Scan QR code to view the shop catalog</span>
                             </li>
-                            <li class="flex items-center gap-2 sm:gap-2.5">
-                                <span class="w-4 h-4 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
-                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                            <li class="flex items-start gap-2 sm:gap-2.5">
+                                <span class="w-4 h-4 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center shrink-0 mt-0.5">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
                                 </span>
                                 <span>Pay online with UPI</span>
                             </li>
-                            <li class="flex items-center gap-2 sm:gap-2.5">
-                                <span class="w-4 h-4 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
-                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                            <li class="flex items-start gap-2 sm:gap-2.5">
+                                <span class="w-4 h-4 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center shrink-0 mt-0.5">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
                                 </span>
                                 <span>1-tap checkout with pre-loaded Store Wallet</span>
                             </li>
-                            <li class="flex items-center gap-2 sm:gap-2.5">
-                                <span class="w-4 h-4 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
-                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                            <li class="flex items-start gap-2 sm:gap-2.5">
+                                <span class="w-4 h-4 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center shrink-0 mt-0.5">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
                                 </span>
                                 <span>Show order pickup QR code at the counter</span>
                             </li>
                         </ul>
                     </div>
-                    <a href="/store" class="w-full py-3 sm:py-3.5 rounded-xl bg-emerald-50 hover:bg-emerald-600 text-emerald-700 hover:text-white border border-emerald-200/70 hover:border-emerald-600 font-bold text-xs sm:text-sm text-center transition-all shadow-2xs flex items-center justify-center gap-2">
+                    <a href="/store" class="w-full py-3 sm:py-3.5 rounded-xl bg-blue-50 hover:bg-blue-600 text-blue-700 hover:text-white border border-blue-200/70 hover:border-blue-600 font-bold text-xs sm:text-sm text-center transition-all shadow-2xs flex items-center justify-center gap-2">
                         <span>Visit Customer Store</span>
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 12h14M12 5l7 7-7 7"/></svg>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 12h14M12 5l7 7-7 7"/></svg>
                     </a>
                 </div>
             </div>
@@ -763,7 +597,7 @@
         <!-- Features Bento Grid -->
         <section id="features" class="max-w-5xl mx-auto px-4 sm:px-6 py-14 sm:py-20 border-t border-slate-200">
             <div class="max-w-md mb-10 sm:mb-14">
-                <div class="text-[11px] sm:text-xs font-bold text-emerald-700 uppercase tracking-wider mb-1.5 sm:mb-2">Features</div>
+                <div class="text-[11px] sm:text-xs font-bold text-blue-700 uppercase tracking-wider mb-1.5 sm:mb-2">Features</div>
                 <h2 class="text-2xl sm:text-3xl font-extrabold text-[#0B132B] tracking-tight">Built for Everyday Sales</h2>
                 <p class="text-xs sm:text-sm text-slate-600 mt-1.5 sm:mt-2 font-normal">Everything you need to run your store smoothly.</p>
             </div>
@@ -772,7 +606,7 @@
                 <!-- Feature 1 -->
                 <div class="p-5 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-200/90 bg-white shadow-card hover:shadow-card-hover hover:-translate-y-0.5 transition-all">
                     <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-slate-100 text-slate-900 flex items-center justify-center mb-3 sm:mb-4">
-                        <svg class="w-4.5 h-4.5 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                        <svg class="w-4.5 h-4.5 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
                     </div>
                     <h3 class="text-sm font-extrabold text-slate-900 mb-1 sm:mb-1.5">Fast Counter Billing</h3>
                     <p class="text-xs text-slate-600 leading-relaxed font-normal">
@@ -783,7 +617,7 @@
                 <!-- Feature 2 -->
                 <div class="p-5 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-200/90 bg-white shadow-card hover:shadow-card-hover hover:-translate-y-0.5 transition-all">
                     <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-slate-100 text-slate-900 flex items-center justify-center mb-3 sm:mb-4">
-                        <svg class="w-4.5 h-4.5 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1Zm12 0h2a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1ZM5 20h2a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1Z"/></svg>
+                        <svg class="w-4.5 h-4.5 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1Zm12 0h2a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1ZM5 20h2a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1Z"/></svg>
                     </div>
                     <h3 class="text-sm font-extrabold text-slate-900 mb-1 sm:mb-1.5">QR Phone Ordering</h3>
                     <p class="text-xs text-slate-600 leading-relaxed font-normal">
@@ -794,7 +628,7 @@
                 <!-- Feature 3 -->
                 <div class="p-5 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-200/90 bg-white shadow-card hover:shadow-card-hover hover:-translate-y-0.5 transition-all">
                     <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-slate-100 text-slate-900 flex items-center justify-center mb-3 sm:mb-4">
-                        <svg class="w-4.5 h-4.5 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg>
+                        <svg class="w-4.5 h-4.5 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg>
                     </div>
                     <h3 class="text-sm font-extrabold text-slate-900 mb-1.5">Store Wallet</h3>
                     <p class="text-xs text-slate-600 leading-relaxed font-normal">
@@ -805,7 +639,7 @@
                 <!-- Feature 4 -->
                 <div class="p-5 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-200/90 bg-white shadow-card hover:shadow-card-hover hover:-translate-y-0.5 transition-all">
                     <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-slate-100 text-slate-900 flex items-center justify-center mb-3 sm:mb-4">
-                        <svg class="w-4.5 h-4.5 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 20V10M12 20V4M6 20v-6"/></svg>
+                        <svg class="w-4.5 h-4.5 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 20V10M12 20V4M6 20v-6"/></svg>
                     </div>
                     <h3 class="text-sm font-extrabold text-slate-900 mb-1 sm:mb-1.5">Daily Sales & Earnings</h3>
                     <p class="text-xs text-slate-600 leading-relaxed font-normal">
@@ -816,7 +650,7 @@
                 <!-- Feature 5 -->
                 <div class="p-5 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-200/90 bg-white shadow-card hover:shadow-card-hover hover:-translate-y-0.5 transition-all">
                     <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-slate-100 text-slate-900 flex items-center justify-center mb-3 sm:mb-4">
-                        <svg class="w-4.5 h-4.5 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m7.5 4.27 9 5.15M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m3.3 7 8.7 5 8.7-5M12 22V12"/></svg>
+                        <svg class="w-4.5 h-4.5 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m7.5 4.27 9 5.15M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m3.3 7 8.7 5 8.7-5M12 22V12"/></svg>
                     </div>
                     <h3 class="text-sm font-extrabold text-slate-900 mb-1 sm:mb-1.5">Stock Alerts</h3>
                     <p class="text-xs text-slate-600 leading-relaxed font-normal">
@@ -827,7 +661,7 @@
                 <!-- Feature 6 -->
                 <div class="p-5 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-200/90 bg-white shadow-card hover:shadow-card-hover hover:-translate-y-0.5 transition-all">
                     <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-slate-100 text-slate-900 flex items-center justify-center mb-3 sm:mb-4">
-                        <svg class="w-4.5 h-4.5 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2 7h20"/></svg>
+                        <svg class="w-4.5 h-4.5 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2 7h20"/></svg>
                     </div>
                     <h3 class="text-sm font-extrabold text-slate-900 mb-1 sm:mb-1.5">Multiple Counters</h3>
                     <p class="text-xs text-slate-600 leading-relaxed font-normal">
@@ -840,28 +674,28 @@
         <!-- Pricing Section -->
         <section id="pricing" class="max-w-5xl mx-auto px-4 sm:px-6 py-14 sm:py-20 border-t border-slate-200">
             <div class="text-center max-w-md mx-auto mb-10 sm:mb-14">
-                <div class="text-[11px] sm:text-xs font-bold text-emerald-700 uppercase tracking-wider mb-1.5 sm:mb-2">Pricing</div>
+                <div class="text-[11px] sm:text-xs font-bold text-blue-700 uppercase tracking-wider mb-1.5 sm:mb-2">Pricing</div>
                 <h2 class="text-2xl sm:text-3xl font-extrabold text-[#0B132B] tracking-tight">Simple, Clear Pricing</h2>
                 <p class="text-xs sm:text-sm text-slate-600 mt-1.5 sm:mt-2 font-normal">Start free. Upgrade whenever you are ready.</p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6 max-w-4xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6 max-w-4xl mx-auto">
                 <!-- 14-Day Free Trial -->
-                <div class="p-5 sm:p-8 rounded-2xl sm:rounded-3xl bg-white border border-slate-200/90 shadow-card hover:shadow-card-hover transition-all flex flex-col justify-between">
+                <div class="p-5 md:p-5 lg:p-8 rounded-2xl sm:rounded-3xl bg-white border border-slate-200/90 shadow-card hover:shadow-card-hover transition-all flex flex-col justify-between">
                     <div>
-                        <div class="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Free Trial</div>
+                        <div class="text-[10px] sm:text-xs font-extrabold text-blue-700 uppercase tracking-wider mb-2">Free Trial</div>
                         <h3 class="text-lg sm:text-xl font-extrabold text-slate-900">14-Day Trial</h3>
                         <div class="my-3 sm:my-4">
-                            <span class="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">₹0</span>
-                            <span class="text-xs text-slate-500 font-medium ml-1">/ 14 days</span>
+                            <span class="text-3xl lg:text-4xl font-black text-slate-900 tracking-tight">₹0</span>
+                            <span class="text-xs text-slate-600 font-medium ml-1">/ 14 days</span>
                         </div>
                         <p class="text-xs text-slate-600 mb-4 sm:mb-6 font-normal leading-relaxed">
                             Full access to set up your store, items, and billing counters.
                         </p>
                         <ul class="space-y-2.5 sm:space-y-3 text-xs font-semibold text-slate-700 mb-6 sm:mb-8 border-t border-slate-100 pt-4 sm:pt-5">
-                            <li class="flex items-center gap-2"><svg class="w-3.5 h-3.5 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg><span>Unlimited products & billing</span></li>
-                            <li class="flex items-center gap-2"><svg class="w-3.5 h-3.5 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg><span>Daily sales summaries</span></li>
-                            <li class="flex items-center gap-2"><svg class="w-3.5 h-3.5 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg><span>Customer QR ordering</span></li>
+                            <li class="flex items-center gap-2"><svg class="w-3.5 h-3.5 text-blue-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg><span>Unlimited products & billing</span></li>
+                            <li class="flex items-center gap-2"><svg class="w-3.5 h-3.5 text-blue-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg><span>Daily sales summaries</span></li>
+                            <li class="flex items-center gap-2"><svg class="w-3.5 h-3.5 text-blue-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg><span>Customer QR ordering</span></li>
                         </ul>
                     </div>
                     <a href="/merchant" class="w-full py-3 sm:py-3.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-900 font-bold text-xs text-center transition-all shadow-2xs">
@@ -870,69 +704,69 @@
                 </div>
 
                 <!-- Pro Monthly (Highlighted Midnight Blue Card) -->
-                <div class="p-5 sm:p-8 rounded-2xl sm:rounded-3xl bg-[#0B132B] text-white shadow-2xl flex flex-col justify-between border-2 border-emerald-500 relative transform md:-translate-y-2">
-                    <div class="absolute -top-3 right-4 sm:right-6 px-2.5 sm:px-3 py-0.5 rounded-full text-[9px] sm:text-[10px] font-black uppercase tracking-wider bg-emerald-500 text-[#0B132B] shadow-xs">
+                <div class="p-5 md:p-5 lg:p-8 rounded-2xl sm:rounded-3xl bg-[#0B132B] text-white shadow-2xl flex flex-col justify-between border-2 border-blue-500 relative transform md:-translate-y-2">
+                    <div class="absolute -top-3 right-4 sm:right-6 px-2.5 sm:px-3 py-0.5 rounded-full text-[9px] sm:text-[10px] font-black uppercase tracking-wider bg-blue-500 text-white shadow-xs">
                         Popular
                     </div>
                     <div>
-                        <div class="text-[10px] sm:text-xs font-bold text-emerald-400 uppercase tracking-wider mb-2">Monthly Plan</div>
+                        <div class="text-[10px] sm:text-xs font-bold text-blue-400 uppercase tracking-wider mb-2">Monthly Plan</div>
                         <h3 class="text-lg sm:text-xl font-extrabold text-white">Pro Monthly</h3>
                         <div class="my-3 sm:my-4">
-                            <span class="text-3xl sm:text-4xl font-black text-white tracking-tight">₹299</span>
-                            <span class="text-xs text-slate-400 font-medium ml-1">/ month per store</span>
+                            <span class="text-3xl lg:text-4xl font-black text-white tracking-tight">₹299</span>
+                            <span class="text-xs text-slate-300 font-medium ml-1">/ mo per store</span>
                         </div>
                         <p class="text-xs text-slate-300 mb-4 sm:mb-6 font-normal leading-relaxed">
                             Everything you need to run your shop with simple monthly renewal.
                         </p>
                         <ul class="space-y-2.5 sm:space-y-3 text-xs font-semibold text-slate-300 mb-6 sm:mb-8 border-t border-slate-800 pt-4 sm:pt-5">
-                            <li class="flex items-center gap-2"><svg class="w-3.5 h-3.5 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg><span>Unlimited billing & products</span></li>
-                            <li class="flex items-center gap-2"><svg class="w-3.5 h-3.5 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg><span>Multiple counters & staff</span></li>
-                            <li class="flex items-center gap-2"><svg class="w-3.5 h-3.5 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg><span>Customer store wallet</span></li>
-                            <li class="flex items-center gap-2"><svg class="w-3.5 h-3.5 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg><span>3-day grace period on renewal</span></li>
+                            <li class="flex items-center gap-2"><svg class="w-3.5 h-3.5 text-blue-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg><span>Unlimited billing & products</span></li>
+                            <li class="flex items-center gap-2"><svg class="w-3.5 h-3.5 text-blue-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg><span>Multiple counters & staff</span></li>
+                            <li class="flex items-center gap-2"><svg class="w-3.5 h-3.5 text-blue-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg><span>Customer store wallet</span></li>
+                            <li class="flex items-center gap-2"><svg class="w-3.5 h-3.5 text-blue-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg><span>3-day grace period on renewal</span></li>
                         </ul>
                     </div>
-                    <a href="/merchant" class="w-full py-3 sm:py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-[#0B132B] font-black text-xs text-center transition-all shadow-xs flex items-center justify-center gap-1.5">
+                    <a href="/merchant" class="w-full py-3 sm:py-3.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-black text-xs text-center transition-all shadow-xs flex items-center justify-center gap-1.5">
                         <span>Subscribe Monthly</span>
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 12h14M12 5l7 7-7 7"/></svg>
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 12h14M12 5l7 7-7 7"/></svg>
                     </a>
                 </div>
 
                 <!-- Yearly Plan -->
-                <div class="p-5 sm:p-8 rounded-2xl sm:rounded-3xl bg-white border border-slate-200/90 shadow-card hover:shadow-card-hover transition-all flex flex-col justify-between">
+                <div class="p-5 md:p-5 lg:p-8 rounded-2xl sm:rounded-3xl bg-white border border-slate-200/90 shadow-card hover:shadow-card-hover transition-all flex flex-col justify-between">
                     <div>
-                        <div class="inline-flex items-center px-2 sm:px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[9px] sm:text-[10px] font-extrabold mb-2 border border-emerald-200/60">
-                            Save ₹589 (2 Months Free)
+                        <div class="inline-flex items-center px-2 sm:px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 text-[9px] sm:text-[10px] font-extrabold mb-2 border border-blue-200/60">
+                            Save ₹589 (2 Mo Free)
                         </div>
                         <h3 class="text-lg sm:text-xl font-extrabold text-slate-900">Pro Yearly</h3>
                         <div class="my-3 sm:my-4">
-                            <span class="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">₹2,999</span>
-                            <span class="text-xs text-slate-500 font-medium ml-1">/ year per store</span>
+                            <span class="text-3xl lg:text-4xl font-black text-slate-900 tracking-tight">₹2,999</span>
+                            <span class="text-xs text-slate-600 font-medium ml-1">/ yr per store</span>
                         </div>
                         <p class="text-xs text-slate-600 mb-4 sm:mb-6 font-normal leading-relaxed">
                             Best value for regular shops. Pay once for a full year of billing.
                         </p>
                         <ul class="space-y-2.5 sm:space-y-3 text-xs font-semibold text-slate-700 mb-6 sm:mb-8 border-t border-slate-100 pt-4 sm:pt-5">
-                            <li class="flex items-center gap-2"><svg class="w-3.5 h-3.5 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg><span>Everything in Monthly plan</span></li>
-                            <li class="flex items-center gap-2"><svg class="w-3.5 h-3.5 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg><span>2 months free included</span></li>
-                            <li class="flex items-center gap-2"><svg class="w-3.5 h-3.5 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg><span>Priority shop support</span></li>
+                            <li class="flex items-center gap-2"><svg class="w-3.5 h-3.5 text-blue-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg><span>Everything in Monthly plan</span></li>
+                            <li class="flex items-center gap-2"><svg class="w-3.5 h-3.5 text-blue-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg><span>2 months free included</span></li>
+                            <li class="flex items-center gap-2"><svg class="w-3.5 h-3.5 text-blue-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg><span>Priority shop support</span></li>
                         </ul>
                     </div>
-                    <a href="/merchant" class="w-full py-3 sm:py-3.5 rounded-xl bg-[#0B132B] hover:bg-slate-800 text-white font-bold text-xs text-center transition-all shadow-xs">
-                        Subscribe Yearly &rarr;
+                    <a href="/merchant" class="w-full py-3 sm:py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs text-center transition-all shadow-xs shadow-blue-500/20">
+                        <span>Subscribe Yearly</span> <span aria-hidden="true">&rarr;</span>
                     </a>
                 </div>
             </div>
 
             <!-- Fee Transparency Note -->
-            <div class="max-w-2xl mx-auto mt-8 sm:mt-10 p-3.5 sm:p-4 rounded-xl sm:rounded-2xl bg-emerald-50/80 border border-emerald-200/60 text-center text-xs text-emerald-950 font-medium">
-                <span class="font-bold text-emerald-950">Honest Fees:</span> 0% fee on in-store counter billing. A small 1.99% fee applies only when customers order online from their phone.
+            <div class="max-w-2xl mx-auto mt-8 sm:mt-10 p-3.5 sm:p-4 rounded-xl sm:rounded-2xl bg-blue-50/80 border border-blue-200/60 text-center text-xs text-blue-950 font-medium">
+                <span class="font-bold text-blue-950">Honest Fees:</span> 0% fee on in-store counter billing. A small 1.99% fee applies only when customers order online from their phone.
             </div>
         </section>
 
         <!-- Interactive FAQ Section with Smooth Accordions -->
         <section id="faq" class="max-w-3xl mx-auto px-4 sm:px-6 pt-14 sm:pt-20 pb-16 sm:pb-24 border-t border-slate-200">
             <div class="text-center max-w-md mx-auto mb-10 sm:mb-14">
-                <div class="text-[11px] sm:text-xs font-bold text-emerald-700 uppercase tracking-wider mb-1.5 sm:mb-2">FAQ</div>
+                <div class="text-[11px] sm:text-xs font-bold text-blue-700 uppercase tracking-wider mb-1.5 sm:mb-2">FAQ</div>
                 <h2 class="text-2xl sm:text-3xl font-extrabold text-[#0B132B] tracking-tight">Frequently Asked Questions</h2>
             </div>
 
@@ -941,7 +775,7 @@
                 <details class="group p-4 sm:p-6 rounded-2xl sm:rounded-3xl bg-white border border-slate-200/90 shadow-card transition-all" open>
                     <summary class="flex items-center justify-between font-bold text-xs sm:text-sm text-slate-900 cursor-pointer list-none select-none gap-2">
                         <span>What do I need to get started?</span>
-                        <svg class="chevron w-4 h-4 text-slate-400 transition-transform duration-200 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                        <svg class="chevron w-4 h-4 text-slate-400 transition-transform duration-200 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                     </summary>
                     <p class="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal mt-2.5 sm:mt-3 pt-2.5 sm:pt-3 border-t border-slate-100">
                         Just an internet connection and any phone, tablet, or laptop you already have. No special equipment is required.
@@ -952,7 +786,7 @@
                 <details class="group p-4 sm:p-6 rounded-2xl sm:rounded-3xl bg-white border border-slate-200/90 shadow-card transition-all">
                     <summary class="flex items-center justify-between font-bold text-xs sm:text-sm text-slate-900 cursor-pointer list-none select-none gap-2">
                         <span>How do customers pay?</span>
-                        <svg class="chevron w-4 h-4 text-slate-400 transition-transform duration-200 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                        <svg class="chevron w-4 h-4 text-slate-400 transition-transform duration-200 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                     </summary>
                     <p class="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal mt-2.5 sm:mt-3 pt-2.5 sm:pt-3 border-t border-slate-100">
                         At your physical shop counter, staff can accept Cash or UPI. When customers order online from their phone, they pay using UPI or their pre-loaded Store Wallet.
@@ -963,7 +797,7 @@
                 <details class="group p-4 sm:p-6 rounded-2xl sm:rounded-3xl bg-white border border-slate-200/90 shadow-card transition-all">
                     <summary class="flex items-center justify-between font-bold text-xs sm:text-sm text-slate-900 cursor-pointer list-none select-none gap-2">
                         <span>How does the 14-day free trial work?</span>
-                        <svg class="chevron w-4 h-4 text-slate-400 transition-transform duration-200 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                        <svg class="chevron w-4 h-4 text-slate-400 transition-transform duration-200 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                     </summary>
                     <p class="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal mt-2.5 sm:mt-3 pt-2.5 sm:pt-3 border-t border-slate-100">
                         When you sign up, your store is automatically on the 14-day free trial. You can test all features with zero payment upfront.
@@ -974,36 +808,36 @@
 
         <!-- Call to Action (Open, Unboxed) -->
         <section class="max-w-4xl mx-auto px-4 sm:px-6 pt-16 sm:pt-20 pb-20 sm:pb-28 text-center">
-            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-50 text-emerald-800 text-[11px] sm:text-xs font-bold border border-emerald-200/80 mb-5 sm:mb-6 shadow-2xs">
-                <span class="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_#10B981] animate-pulse"></span>
+            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 text-blue-800 text-[11px] sm:text-xs font-bold border border-blue-200/80 mb-5 sm:mb-6 shadow-2xs">
+                <span class="w-2 h-2 rounded-full bg-blue-500 shadow-[0_0_8px_#3B82F6] animate-pulse"></span>
                 <span>Ready in 2 minutes &bull; No credit card needed</span>
             </div>
             <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-[#0B132B] mb-4 sm:mb-5 leading-[1.15]">
-                Start billing with Sparrow POS today.
+                Start billing with Finch POS today.
             </h2>
             <p class="text-sm sm:text-base md:text-lg text-slate-600 max-w-xl mx-auto mb-8 sm:mb-10 font-normal leading-relaxed">
                 Fast counter checkout, instant QR ordering for your customers, and clear daily sales reports from any browser.
             </p>
             <div class="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 max-w-md mx-auto mb-8 sm:mb-10 w-full">
-                <a href="/merchant" class="w-full sm:w-auto px-7 py-3.5 sm:py-4 rounded-xl sm:rounded-2xl bg-[#0B132B] hover:bg-slate-800 text-white font-bold text-xs sm:text-sm transition-all duration-200 active:scale-95 shadow-md hover:shadow-lg flex items-center justify-center gap-2 group">
+                <a href="/merchant" class="w-full sm:w-auto px-7 py-3.5 sm:py-4 rounded-xl sm:rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs sm:text-sm transition-all duration-200 active:scale-95 shadow-md shadow-blue-500/25 hover:shadow-lg hover:shadow-blue-500/40 flex items-center justify-center gap-2 group">
                     <span>Open Merchant Portal</span>
-                    <svg class="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    <svg class="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 12h14M12 5l7 7-7 7"/></svg>
                 </a>
-                <a href="/store" class="w-full sm:w-auto px-7 py-3.5 sm:py-4 rounded-xl sm:rounded-2xl bg-emerald-50 hover:bg-emerald-600 text-emerald-700 hover:text-white border border-emerald-200/70 hover:border-emerald-600 font-bold text-xs sm:text-sm transition-all duration-200 active:scale-95 flex items-center justify-center gap-2 shadow-card hover:shadow-emerald-500/20">
+                <a href="/store" class="w-full sm:w-auto px-7 py-3.5 sm:py-4 rounded-xl sm:rounded-2xl bg-blue-50 hover:bg-blue-600 text-blue-700 hover:text-white border border-blue-200/70 hover:border-blue-600 font-bold text-xs sm:text-sm transition-all duration-200 active:scale-95 flex items-center justify-center gap-2 shadow-card hover:shadow-blue-500/20">
                     <span>Visit Customer Store</span>
                 </a>
             </div>
-            <div class="flex flex-wrap items-center justify-center gap-x-6 gap-y-2.5 text-[11px] sm:text-xs text-slate-500 font-medium">
+            <div class="flex flex-wrap items-center justify-center gap-x-6 gap-y-2.5 text-[11px] sm:text-xs text-slate-600 font-medium">
                 <div class="flex items-center gap-1.5">
-                    <svg class="w-4 h-4 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                    <svg class="w-4 h-4 text-blue-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
                     <span>14-day free trial</span>
                 </div>
                 <div class="flex items-center gap-1.5">
-                    <svg class="w-4 h-4 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                    <svg class="w-4 h-4 text-blue-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
                     <span>Works on phone &amp; laptop</span>
                 </div>
                 <div class="flex items-center gap-1.5">
-                    <svg class="w-4 h-4 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                    <svg class="w-4 h-4 text-blue-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
                     <span>Cancel anytime</span>
                 </div>
             </div>
@@ -1011,22 +845,25 @@
     </main>
 
     <!-- Refined Footer -->
-    <footer class="border-t border-slate-200/80 py-8 sm:py-12 text-xs text-slate-500 bg-white">
+    <footer class="border-t border-slate-200/80 py-8 sm:py-12 text-xs text-slate-600 bg-white">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6 text-center sm:text-left">
             <div class="flex items-center gap-2.5 sm:gap-3">
-                <div class="w-6 h-6 bg-[#0B132B] text-white font-black text-xs flex items-center justify-center rounded-lg">
-                    S
+                <div class="w-6 h-6 rounded-lg overflow-hidden shadow-2xs border border-slate-200/80 shrink-0">
+                    <picture>
+                        <source srcset="images/finch_app_icon_square.webp" type="image/webp">
+                        <img src="images/finch_app_icon_square.png" alt="" width="24" height="24" class="w-full h-full object-cover">
+                    </picture>
                 </div>
-                <span class="font-bold text-slate-800">Sparrow POS &copy; 2026.</span>
+                <span class="font-bold text-slate-800">Finch POS &copy; 2026.</span>
             </div>
-            <div class="flex flex-wrap justify-center gap-4 sm:gap-7 font-semibold text-slate-600">
-                <a href="#how-it-works" class="hover:text-slate-950 transition-colors">How It Works</a>
-                <a href="#features" class="hover:text-slate-950 transition-colors">Features</a>
-                <a href="#pricing" class="hover:text-slate-950 transition-colors">Pricing</a>
-                <a href="/merchant" class="hover:text-slate-950 transition-colors">Merchant Portal</a>
-                <a href="/store" class="hover:text-slate-950 transition-colors">Customer Store</a>
-                <a href="/terminal" class="hover:text-slate-950 transition-colors">Terminal POS</a>
-            </div>
+            <nav aria-label="Footer Navigation" class="flex flex-wrap justify-center gap-3 sm:gap-7 font-semibold text-slate-600">
+                <a href="#how-it-works" class="hover:text-slate-950 transition-colors py-1.5 px-1 -my-1">How It Works</a>
+                <a href="#features" class="hover:text-slate-950 transition-colors py-1.5 px-1 -my-1">Features</a>
+                <a href="#pricing" class="hover:text-slate-950 transition-colors py-1.5 px-1 -my-1">Pricing</a>
+                <a href="/merchant" class="hover:text-slate-950 transition-colors py-1.5 px-1 -my-1">Merchant Portal</a>
+                <a href="/store" class="hover:text-slate-950 transition-colors py-1.5 px-1 -my-1">Customer Store</a>
+                <a href="/terminal" class="hover:text-slate-950 transition-colors py-1.5 px-1 -my-1">Terminal POS</a>
+            </nav>
         </div>
     </footer>
 
@@ -1058,34 +895,37 @@
         // 2. Minimalist POS Thermal Receipt Printer Engine
         var receiptOrders = [
             {
-                receiptNo: '#SP-9924',
+                storeName: 'THE DAILY ROAST CAFE',
+                receiptNo: '#ORD-9924',
                 items: [
                     { name: '2x Cold Brew', price: '₹180' },
                     { name: '1x Croissant', price: '₹110' }
                 ],
                 total: '₹290.00',
                 method: 'UPI',
-                stampBg: 'bg-emerald-50 border-emerald-200/70 text-emerald-800'
+                stampBg: 'bg-blue-50 border-blue-200/70 text-blue-800'
             },
             {
-                receiptNo: '#SP-9925',
+                storeName: 'CRUST & CRAFT PIZZERIA',
+                receiptNo: '#ORD-9925',
                 items: [
                     { name: '1x Margherita Pizza', price: '₹280' },
                     { name: '1x Peach Iced Tea', price: '₹70' }
                 ],
                 total: '₹350.00',
                 method: 'Store Wallet',
-                stampBg: 'bg-teal-50 border-teal-200/70 text-teal-800'
+                stampBg: 'bg-indigo-50 border-indigo-200/70 text-indigo-800'
             },
             {
-                receiptNo: '#SP-9926',
+                storeName: 'ROYAL CHAI & BAKERY',
+                receiptNo: '#ORD-9926',
                 items: [
                     { name: '2x Masala Chai', price: '₹60' },
                     { name: '1x Bun Maska', price: '₹40' }
                 ],
                 total: '₹100.00',
                 method: 'Cash',
-                stampBg: 'bg-amber-50 border-amber-200/70 text-amber-900'
+                stampBg: 'bg-sky-50 border-sky-200/70 text-sky-900'
             }
         ];
 
@@ -1109,16 +949,18 @@
             }
 
             // Update receipt content
+            var storeEl = document.getElementById('receipt-store-name');
             var noEl = document.getElementById('receipt-no');
             var totEl = document.getElementById('receipt-total');
             var payEl = document.getElementById('receipt-pay-method');
             var stampEl = document.getElementById('receipt-stamp');
             var itemsEl = document.getElementById('receipt-items');
 
+            if (storeEl) storeEl.textContent = order.storeName;
             if (noEl) noEl.textContent = order.receiptNo;
             if (totEl) totEl.textContent = order.total;
             if (payEl) payEl.textContent = order.method;
-            if (stampEl) stampEl.className = 'mt-2 py-1 px-2 rounded-md border flex items-center justify-between text-[9px] sm:text-[10px] ' + order.stampBg;
+            if (stampEl) stampEl.className = 'mt-2.5 py-1.5 px-3 rounded-lg border flex items-center justify-between text-xs sm:text-[13px] ' + order.stampBg;
 
             if (itemsEl) {
                 itemsEl.innerHTML = order.items.map(function(item) {
@@ -1160,7 +1002,7 @@
                 'retail.',
                 'bakery.',
                 'grocery.',
-                'restaurant.',
+                'mart.',
                 'counter.',
                 'shop.'
             ];
@@ -1200,9 +1042,9 @@
                 }
             }
 
-            // Start typing immediately on entrance
-            dynamicEl.textContent = '';
-            setTimeout(typeLoop, 350);
+            // Keep initial word for instant LCP and 0 CLS, then begin rotation
+            isDeleting = true;
+            setTimeout(typeLoop, pauseEnd);
         })();
     </script>
 

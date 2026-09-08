@@ -1,0 +1,74 @@
+* {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Subtle Dot Grid Background */
+.bg-grid-pattern {
+    background-image: radial-gradient(#cbd5e1 1.2px, transparent 1.2px);
+    background-size: 24px 24px;
+}
+
+/* Custom details arrow rotation */
+details summary::-webkit-details-marker {
+    display: none;
+}
+details[open] summary svg.chevron {
+    transform: rotate(180deg);
+}
+
+/* 3D Perspective Tilt Card & Specular Highlight */
+[data-tilt] {
+    transform-style: preserve-3d;
+    transition: transform 0.2s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.2s ease;
+    will-change: transform;
+}
+
+.specular-container {
+    position: relative;
+    overflow: hidden;
+}
+
+.specular-glow {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+        350px circle at var(--mouse-x, -500px) var(--mouse-y, -500px),
+        rgba(37, 99, 235, 0.16),
+        transparent 70%
+    );
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 1;
+}
+
+.specular-container:hover .specular-glow {
+    opacity: 1;
+}
+
+/* Minimalist POS Thermal Printer & Bill Ejection */
+.printer-card {
+    perspective: 1000px;
+}
+
+.printer-body {
+    background: linear-gradient(180deg, #1e293b 0%, #0B132B 100%);
+    box-shadow: 
+        0 20px 35px -10px rgba(11, 19, 43, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.printer-slot {
+    background: #020617;
+    box-shadow: inset 0 3px 6px #000;
+}
+
+.bill-viewport {
+    overflow: hidden;
+    position: relative;
+    z-index: 10;
+    margin-top: -4px;
+    padding-bottom: 16px;
+}
