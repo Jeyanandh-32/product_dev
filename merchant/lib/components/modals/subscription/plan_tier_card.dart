@@ -25,7 +25,7 @@ class PlanTierCard extends StatelessComponent {
 
     return div(
       classes: isSelected
-          ? 'p-5 rounded-2xl border-2 border-primary bg-primary/5 cursor-pointer relative transition-all shadow-xs'
+          ? 'p-5 rounded-2xl border border-primary bg-primary/5 cursor-pointer relative transition-all shadow-xs'
           : 'p-5 rounded-2xl border border-border-medium bg-white hover:border-gray-400 cursor-pointer relative transition-all shadow-2xs',
       events: {'click': (_) => onSelect()},
       [

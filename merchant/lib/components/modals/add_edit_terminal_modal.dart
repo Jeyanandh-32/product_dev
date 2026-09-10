@@ -2,8 +2,8 @@ import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:merchant/components/fields/form_field.dart';
 import 'package:merchant/components/modals/modal.dart';
-import 'package:merchant/signals/terminals_signal.dart';
 import 'package:merchant/signals/navigation_signal.dart';
+import 'package:merchant/signals/terminals_signal.dart';
 import 'package:models/models.dart';
 import 'package:validators/validators.dart';
 import 'package:web/web.dart';
@@ -95,7 +95,7 @@ class _AddEditTerminalModalState extends State<AddEditTerminalModal> {
           if (component.terminal != null)
             div(classes: 'form-control mb-4 flex flex-row items-center gap-3', [
               p(
-                classes: 'text-[14px] font-semibold text-gray-500',
+                classes: 'text-[14px] font-semibold text-slate-500',
                 [.text('Active')],
               ),
               input(
@@ -118,7 +118,7 @@ class _AddEditTerminalModalState extends State<AddEditTerminalModal> {
             button(
               type: ButtonType.submit,
               classes:
-                  'bg-primary text-primary-content px-6 h-10 rounded-lg hover:cursor-pointer hover:bg-opacity-80 transition-all duration-300',
+                  'btn btn-primary px-6 h-10 rounded-xl font-bold text-sm shadow-xs transition-all cursor-pointer',
               [
                 .text('Save'),
               ],

@@ -1,9 +1,11 @@
 import 'dart:js_interop';
+
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_lucide/jaspr_lucide.dart' hide Map;
 import 'package:jaspr_router/jaspr_router.dart';
 import 'package:web/web.dart' as web;
+
 /// Reusable form input component with label, helper text, and validation states.
 class FormField extends StatefulComponent {
   final String id;
@@ -28,6 +30,7 @@ class FormField extends StatefulComponent {
   @override
   State<FormField> createState() => _FormFieldState();
 }
+
 class _FormFieldState extends State<FormField> {
   bool _obscureText = true;
   void _handleInput(dynamic eventOrValue) {
@@ -47,6 +50,7 @@ class _FormFieldState extends State<FormField> {
     }
     onChange(eventOrValue?.toString());
   }
+
   void _handleKeyDown(dynamic eventOrValue) {
     try {
       final event = eventOrValue as web.KeyboardEvent;
@@ -73,20 +77,21 @@ class _FormFieldState extends State<FormField> {
       }
     } catch (_) {}
   }
+
   @override
   Component build(BuildContext context) {
     final isPassword = component.type == InputType.password;
     return fieldset(classes: 'fieldset w-full mb-4', [
-      div(classes: 'flex items-center justify-between', [
+      div(classes: 'flex items-center justify-between mb-1.5', [
         label(
           htmlFor: component.id,
-          classes: 'label text-[14px] font-semibold text-gray-500',
+          classes: 'label text-sm font-bold text-slate-700 flex items-center gap-2 p-0',
           [?component.icon, .text(component.labelText)],
         ),
         if (component.enableForgotPassword)
           button(
             type: .button,
-            classes: 'text-sm font-semibold text-accent hover:cursor-pointer',
+            classes: 'text-xs font-semibold text-blue-600 hover:underline hover:cursor-pointer',
             onClick: () => context.push('/forgotPassword'),
             [
               .text('Forgot Password?'),
@@ -102,14 +107,12 @@ class _FormFieldState extends State<FormField> {
             onInput: _handleInput,
             onChange: _handleInput,
             events: {'keydown': _handleKeyDown},
-            classes:
-                'input validator h-11 border border-border-medium w-full rounded-lg pr-10',
+            classes: 'input validator h-[42px] border border-border-medium bg-white w-full rounded-[10px] pr-10 text-sm text-slate-900 placeholder:text-slate-400',
             attributes: component.attributes,
           ),
           button(
             type: .button,
-            classes:
-                'absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 hover:cursor-pointer p-1 rounded-md transition-colors',
+            classes: 'absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 hover:cursor-pointer p-1 rounded-md transition-colors',
             onClick: () {
               setState(() {
                 _obscureText = !_obscureText;
@@ -131,13 +134,13 @@ class _FormFieldState extends State<FormField> {
           onInput: _handleInput,
           onChange: _handleInput,
           events: {'keydown': _handleKeyDown},
-          classes:
-              'input validator h-11 border border-border-medium w-full rounded-lg',
+          classes: 'input validator h-[42px] border border-border-medium bg-white w-full rounded-[10px] text-sm text-slate-900 placeholder:text-slate-400',
           attributes: component.attributes,
         ),
-      p(classes: 'validator-hint hidden', [
-        if (component.hintText != null) .text(component.hintText!),
-      ]),
+      if (component.hintText case final hint?)
+        p(classes: 'validator-hint hidden', [
+          .text(hint),
+        ]),
     ]);
   }
 }

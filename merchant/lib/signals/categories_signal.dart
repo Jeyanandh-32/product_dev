@@ -23,7 +23,10 @@ void resetCategoriesSignal() {
   categoriesSignal.value = const AsyncData([]);
 }
 
-Future<void> refreshCategoriesSignal({int? customSize}) async {
+Future<void> refreshCategoriesSignal({
+  int? customSize,
+  bool ignoreSearch = false,
+}) async {
   final selectedStore = storeSignal.value;
   if (selectedStore == null) {
     untracked(() {
@@ -32,15 +35,19 @@ Future<void> refreshCategoriesSignal({int? customSize}) async {
     return;
   }
 
-  untracked(() {
-    categoriesSignal.value = const AsyncLoading();
-  });
+  if (categoriesSignal.value.value == null) {
+    untracked(() {
+      categoriesSignal.value = const AsyncLoading();
+    });
+  }
 
   final size = customSize ?? entriesSignal.value;
   final page = customSize != null ? 1 : categoriesPageSignal.value;
 
   try {
-    final search = categorySearchSignal.value.trim();
+    final search = ignoreSearch || customSize != null
+        ? ''
+        : categorySearchSignal.value.trim();
 
     final result = await CategoryRepository.getAll(
       storeId: selectedStore.id,

@@ -36,8 +36,7 @@ class ProductTableRow extends StatelessComponent {
       td([
         div(classes: 'flex items-center gap-4', [
           button(
-            classes:
-                'hover:cursor-pointer btn btn-ghost btn-xs h-8 w-8 p-0 rounded-full text-gray-500 hover:text-accent transition-colors',
+            classes: 'hover:cursor-pointer btn btn-ghost btn-xs h-8 w-8 p-0 rounded-full text-gray-500 hover:text-accent transition-colors',
             events: {
               'click': (e) {
                 e.stopPropagation();
@@ -49,8 +48,7 @@ class ProductTableRow extends StatelessComponent {
             ],
           ),
           button(
-            classes:
-                'hover:cursor-pointer btn btn-ghost btn-xs h-8 w-8 p-0 rounded-full text-gray-500 hover:text-accent transition-colors',
+            classes: 'hover:cursor-pointer btn btn-ghost btn-xs h-8 w-8 p-0 rounded-full text-gray-500 hover:text-accent transition-colors',
             events: {
               'click': (e) {
                 e.stopPropagation();
@@ -82,8 +80,8 @@ class ProductTableRow extends StatelessComponent {
       th(classes: 'whitespace-nowrap', [
         .text(name),
       ]),
-      td([.text(sku ?? '-')]),
-      td([.text(barcode ?? '-')]),
+      td(classes: 'whitespace-nowrap', [.text(sku ?? '-')]),
+      td(classes: 'whitespace-nowrap', [.text(barcode ?? '-')]),
       td([
         div(
           classes:

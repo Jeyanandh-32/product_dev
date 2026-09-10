@@ -84,10 +84,6 @@ class _OrdersState extends SignalState<Orders> {
           OrderDetailsModal(state: selectedOrderSignal.value),
 
         OrdersToolbar(
-          entries: entries,
-          currentPage: currentPage,
-          totalCount: ordersTotalSignal.value,
-          onEntryChanged: _changeEntry,
           onSearch: (val) {
             ordersSearchSignal.value = val;
             ordersPageSignal.value = 1;
@@ -127,6 +123,9 @@ class _OrdersState extends SignalState<Orders> {
         TablePagination(
           currentPage: currentPage,
           totalPages: totalPages,
+          entries: entries,
+          totalCount: ordersTotalSignal.value,
+          onEntryChanged: _changeEntry,
           onPageChanged: (page) {
             ordersPageSignal.value = page;
             refreshOrdersSignal();

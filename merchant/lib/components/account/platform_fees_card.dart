@@ -32,7 +32,7 @@ class _PlatformFeesCardState extends SignalState<PlatformFeesCard> {
     final settlements = summary?.recentSettlements ?? [];
 
     return div(
-      classes: 'bg-white rounded-xl border border-border-medium p-5 shadow-2xs space-y-4',
+      classes: 'bg-white rounded-2xl border border-border-medium p-5 shadow-2xs space-y-4',
       [
         div(
           classes: 'flex items-center justify-between border-b border-border-light pb-3',
@@ -44,11 +44,11 @@ class _PlatformFeesCardState extends SignalState<PlatformFeesCard> {
               ),
               div([
                 h3(
-                  classes: 'text-sm sm:text-base font-bold text-gray-900',
+                  classes: 'text-sm sm:text-base font-bold text-slate-900',
                   [.text('Platform Fees & Invoices')],
                 ),
                 p(
-                  classes: 'text-xs text-gray-500 font-medium',
+                  classes: 'text-xs text-slate-500 font-medium',
                   [
                     .text(
                       'Customer platform fees collected across all your stores',
@@ -93,7 +93,7 @@ class _PlatformFeesCardState extends SignalState<PlatformFeesCard> {
             [.text('₹$rupees')],
           ),
           p(
-            classes: 'text-xs text-gray-500 font-medium',
+            classes: 'text-xs text-slate-500 font-medium',
             [
               .text(
                 hasDue
@@ -108,7 +108,7 @@ class _PlatformFeesCardState extends SignalState<PlatformFeesCard> {
             type: ButtonType.button,
             disabled: isPaying,
             classes:
-                'btn btn-primary px-5 py-2.5 rounded-lg text-xs font-bold transition flex items-center justify-center gap-2 cursor-pointer shadow-xs ${isPaying ? 'opacity-70 cursor-not-allowed' : ''}',
+                'btn btn-primary h-10 px-5 rounded-xl text-sm font-bold transition flex items-center justify-center gap-2 cursor-pointer shadow-xs ${isPaying ? 'opacity-70 cursor-not-allowed' : ''}',
             events: {'click': (_) => PlatformFeeActions.payPlatformFees()},
             [
               if (isPaying)

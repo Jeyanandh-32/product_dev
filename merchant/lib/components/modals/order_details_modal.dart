@@ -48,7 +48,7 @@ class OrderDetailsModal extends StatelessComponent {
             items: order.items,
             formatAmount: _formatAmount,
           ),
-          div(classes: 'border-t border-gray-200/60 w-full', []),
+          div(classes: 'border-t border-border-light w-full', []),
           OrderDetailsSummarySection(
             order: order,
             formatAmount: _formatAmount,

@@ -23,7 +23,10 @@ void resetCountersSignal() {
   countersSignal.value = const AsyncData([]);
 }
 
-Future<void> refreshCountersSignal({int? customSize}) async {
+Future<void> refreshCountersSignal({
+  int? customSize,
+  bool ignoreSearch = false,
+}) async {
   final selectedStore = storeSignal.value;
   if (selectedStore == null) {
     untracked(() {
@@ -32,15 +35,19 @@ Future<void> refreshCountersSignal({int? customSize}) async {
     return;
   }
 
-  untracked(() {
-    countersSignal.value = const AsyncLoading();
-  });
+  if (countersSignal.value.value == null) {
+    untracked(() {
+      countersSignal.value = const AsyncLoading();
+    });
+  }
 
   final size = customSize ?? entriesSignal.value;
   final page = customSize != null ? 1 : countersPageSignal.value;
 
   try {
-    final search = counterSearchSignal.value.trim();
+    final search = ignoreSearch || customSize != null
+        ? ''
+        : counterSearchSignal.value.trim();
 
     final result = await CounterRepository.getAll(
       storeId: selectedStore.id,

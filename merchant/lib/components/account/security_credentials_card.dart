@@ -27,28 +27,25 @@ class SecurityCredentialsCard extends StatelessComponent {
   @override
   Component build(BuildContext context) {
     return div(
-      classes:
-          'bg-white rounded-xl border border-border-medium p-5 shadow-2xs space-y-4',
+      classes: 'bg-white rounded-2xl border border-border-medium p-5 shadow-2xs space-y-4',
       [
         div(
-          classes:
-              'flex items-center justify-between border-b border-border-light pb-3',
+          classes: 'flex items-center justify-between border-b border-border-light pb-3',
           [
             div(classes: 'flex items-center gap-2.5', [
               div(
-                classes:
-                    'p-2 bg-neutral text-primary rounded-lg border border-border-medium',
+                classes: 'p-2 bg-neutral text-primary rounded-lg border border-border-medium',
                 [
                   ShieldCheck(classes: 'w-4 h-4'),
                 ],
               ),
               div([
                 h3(
-                  classes: 'text-sm sm:text-base font-bold text-gray-900',
+                  classes: 'text-sm sm:text-base font-bold text-slate-900',
                   [.text('Security & Credentials')],
                 ),
                 p(
-                  classes: 'text-xs text-gray-500 font-medium',
+                  classes: 'text-xs text-slate-500 font-medium',
                   [.text('Manage password & account security')],
                 ),
               ]),
@@ -85,8 +82,7 @@ class SecurityCredentialsCard extends StatelessComponent {
                     'placeholder': '*********',
                     'value': newPassword,
                   },
-                  hintText:
-                      'Must be 6+ characters with a number, lowercase, and uppercase.',
+                  hintText: 'Must be 6+ characters with a number, lowercase, and uppercase.',
                 ),
                 FormField(
                   id: 'account_confirmPassword',
@@ -106,8 +102,7 @@ class SecurityCredentialsCard extends StatelessComponent {
             div(classes: 'flex justify-end pt-1', [
               button(
                 type: .submit,
-                classes:
-                    'px-4 py-2.5 bg-primary text-primary-content hover:bg-opacity-90 active:scale-95 font-bold text-xs sm:text-sm rounded-lg shadow-2xs transition-all flex items-center gap-1.5 hover:cursor-pointer',
+                classes: 'btn btn-primary h-10 px-5 rounded-xl font-bold text-sm shadow-xs flex items-center gap-1.5 cursor-pointer',
                 [
                   KeyRound(classes: 'w-4 h-4'),
                   .text('Update Password'),

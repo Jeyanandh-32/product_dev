@@ -1,14 +1,70 @@
 import 'package:client_repositories/client_repositories.dart';
-import 'package:merchant/exceptions/api_exception.dart';
-import 'package:merchant/signals/toast_signal.dart';
 import 'package:models/models.dart';
 import 'package:signals/signals.dart';
+import 'package:web/web.dart' as web;
+
+export 'package:merchant/signals/stores_actions.dart';
 
 final storeSignal = signal<Store?>(null);
 final selectedTabStoreSignal = signal<Store?>(null);
 final editingStoreSignal = signal<Store?>(null);
 
 final storesSignal = asyncSignal<List<Store>>(const AsyncLoading());
+
+const _lastStoreStorageKey = 'finch_last_selected_store_id';
+
+/// Retrieves the persistent store ID from local storage.
+String? getLastSelectedStoreId() {
+  try {
+    return web.window.localStorage.getItem(_lastStoreStorageKey);
+  } catch (_) {
+    return null;
+  }
+}
+
+/// Persists the selected store ID into local storage.
+void saveLastSelectedStoreId(String storeId) {
+  try {
+    web.window.localStorage.setItem(_lastStoreStorageKey, storeId);
+  } catch (_) {}
+}
+
+/// Clears the saved store ID on explicit logout.
+void clearLastSelectedStoreId() {
+  try {
+    web.window.localStorage.removeItem(_lastStoreStorageKey);
+  } catch (_) {}
+}
+
+/// Sets the global active working store and persists the choice.
+void selectActiveStore(Store store) {
+  storeSignal.value = store;
+  saveLastSelectedStoreId(store.id);
+}
+
+/// Sets the store selected specifically within the stores tab.
+void selectTabStore(Store store) {
+  selectedTabStoreSignal.value = store;
+}
+
+/// Resolves the global store to select, prioritizing saved storage ID, then active storeSignal, then first store.
+Store resolvePreferredStore(List<Store> stores) {
+  final savedId = getLastSelectedStoreId();
+  if (savedId != null && savedId.isNotEmpty) {
+    for (final s in stores) {
+      if (s.id == savedId) return s;
+    }
+  }
+
+  final current = storeSignal.value;
+  if (current != null) {
+    for (final s in stores) {
+      if (s.id == current.id) return s;
+    }
+  }
+
+  return stores.first;
+}
 
 void resetStoresSignal() {
   storeSignal.value = null;
@@ -25,91 +81,9 @@ Future<void> refreshStoresSignal() async {
     final stores = await StoreRepository.getAll();
     storesSignal.value = AsyncData(stores);
     if (stores.isNotEmpty) {
-      final currentStore = storeSignal.value;
-      if (currentStore == null || !stores.any((s) => s.id == currentStore.id)) {
-        storeSignal.value = stores.first;
-      }
+      selectActiveStore(resolvePreferredStore(stores));
     }
   } catch (e, stack) {
     storesSignal.value = AsyncError(e, stack);
-  }
-}
-
-abstract final class StoresActions {
-  static Future<void> create({
-    required String name,
-    StoreType? storeType,
-    bool? isOnlineEnabled,
-    String? slug,
-  }) async {
-    final currentStores = storesSignal.value.value ?? [];
-    untracked(() {
-      storesSignal.value = const AsyncLoading();
-    });
-
-    try {
-      final store = await StoreRepository.create(
-        name: name,
-        storeType: storeType,
-        isOnlineEnabled: isOnlineEnabled,
-        slug: slug,
-      );
-
-      storesSignal.value = AsyncData([...currentStores, store]);
-      if (storeSignal.value == null) {
-        storeSignal.value = store;
-      }
-      showToast('Store created successfully.', type: ToastType.success);
-    } catch (e) {
-      final message = e is ApiException ? e.message : 'Something went wrong.';
-      showToast(message);
-
-      storesSignal.value = AsyncData(currentStores);
-    }
-  }
-
-  static Future<void> updateStore({
-    required String id,
-    String? name,
-    StoreType? storeType,
-    bool? isActive,
-    bool? isOnlineEnabled,
-    String? slug,
-  }) async {
-    final currentStores = storesSignal.value.value ?? [];
-    untracked(() {
-      storesSignal.value = const AsyncLoading();
-    });
-
-    try {
-      final updatedStore = await StoreRepository.update(
-        id: id,
-        name: name,
-        storeType: storeType,
-        isActive: isActive,
-        isOnlineEnabled: isOnlineEnabled,
-        slug: slug,
-      );
-
-      storesSignal.value = AsyncData(
-        currentStores.map((s) => s.id == id ? updatedStore : s).toList(),
-      );
-
-      final selectedStore = selectedTabStoreSignal.value;
-      if (selectedStore != null && selectedStore.id == id) {
-        selectedTabStoreSignal.value = updatedStore;
-      }
-
-      final activeStore = storeSignal.value;
-      if (activeStore != null && activeStore.id == id) {
-        storeSignal.value = updatedStore;
-      }
-      showToast('Store updated successfully.', type: ToastType.success);
-    } catch (e) {
-      final message = e is ApiException ? e.message : 'Something went wrong.';
-      showToast(message);
-
-      storesSignal.value = AsyncData(currentStores);
-    }
   }
 }

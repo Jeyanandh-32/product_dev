@@ -82,10 +82,6 @@ class _StockSummaryState extends SignalState<StockSummary> {
       classes: 'flex flex-col flex-1 min-h-0 m-4 bg-white rounded-2xl border border-border-medium shadow-xs overflow-hidden',
       [
         StockSummaryToolbar(
-          entries: entries,
-          currentPage: currentPage,
-          totalItems: totalItems,
-          onEntryChanged: _changeEntry,
           onSearch: (val) {
             stockSummarySearchSignal.value = val;
             stockSummaryPageSignal.value = 1;
@@ -124,6 +120,9 @@ class _StockSummaryState extends SignalState<StockSummary> {
         TablePagination(
           currentPage: currentPage,
           totalPages: totalPages,
+          entries: entries,
+          totalCount: totalItems,
+          onEntryChanged: _changeEntry,
           onPageChanged: (page) {
             stockSummaryPageSignal.value = page;
             refreshStockSummarySignal();

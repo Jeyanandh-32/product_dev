@@ -19,7 +19,7 @@ class Header extends SignalComponent {
 
 class _HeaderState extends SignalState<Header> {
   void _changeStore(Store store) {
-    storeSignal.value = store;
+    selectActiveStore(store);
 
     final activeElement = document.activeElement;
     if (activeElement != null) {
@@ -70,19 +70,17 @@ class _HeaderState extends SignalState<Header> {
     if (stores != null && stores.isNotEmpty) {
       if (store == null || !stores.any((st) => st.id == store.id)) {
         Future.microtask(() {
-          storeSignal.value = stores.first;
+          selectActiveStore(resolvePreferredStore(stores));
         });
       }
     }
 
     return div(
-      classes:
-          'w-full h-15 min-h-15 px-3 sm:px-4 lg:px-8 flex justify-between items-center gap-2 bg-white border-b border-border-medium shrink-0',
+      classes: 'w-full h-15 min-h-15 px-3 sm:px-4 lg:px-8 flex justify-between items-center gap-2 bg-white border-b border-border-medium shrink-0',
       [
         div(classes: 'flex items-center gap-2.5 lg:gap-0 min-w-0 flex-1 mr-1', [
           button(
-            classes:
-                'block lg:hidden hover:cursor-pointer transition-all duration-300 shrink-0',
+            classes: 'block lg:hidden hover:cursor-pointer transition-all duration-300 shrink-0',
             onClick: () => navOpenSignal.value = !isNavOpen,
             [
               Menu(classes: 'w-5 h-5 text-gray-700'),
@@ -90,8 +88,7 @@ class _HeaderState extends SignalState<Header> {
           ),
 
           h3(
-            classes:
-                'font-semibold flex items-center gap-1 sm:gap-1.5 text-primary text-sm sm:text-base min-w-0 truncate',
+            classes: 'font-semibold flex items-center gap-1 sm:gap-1.5 text-primary text-sm sm:text-base min-w-0 truncate',
             [
               span(classes: 'truncate font-bold', [.text(headerTitle)]),
               if (headerSubTitle != null) ...[

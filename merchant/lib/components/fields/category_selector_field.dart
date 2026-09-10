@@ -4,6 +4,7 @@ import 'package:jaspr_lucide/generated_icons/chevron_down.dart';
 import 'package:models/models.dart';
 import 'package:web/web.dart' as web;
 
+/// Dropdown selector field for choosing a product category.
 class CategorySelectorField extends StatelessComponent {
   final String categoryId;
   final List<Category> categories;
@@ -44,8 +45,7 @@ class CategorySelectorField extends StatelessComponent {
           ],
         ),
         ul(
-          classes:
-              'dropdown-content menu bg-base-100 rounded-box z-50 mt-1 p-2 shadow-sm border border-border-light w-full max-h-48 overflow-y-auto',
+          classes: 'dropdown-content menu bg-base-100 rounded-box z-50 mt-1 p-2 shadow-sm border border-border-light w-full max-h-48 overflow-y-auto',
           [
             if (categories.isEmpty)
               li([

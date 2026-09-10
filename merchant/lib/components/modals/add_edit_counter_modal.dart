@@ -108,7 +108,7 @@ class _AddEditCounterModalState extends State<AddEditCounterModal> {
           if (component.counter != null)
             div(classes: 'form-control mb-4 flex flex-row items-center gap-3', [
               p(
-                classes: 'text-[14px] font-semibold text-gray-500',
+                classes: 'text-[14px] font-semibold text-slate-500',
                 [.text('Active')],
               ),
               input(
@@ -130,8 +130,7 @@ class _AddEditCounterModalState extends State<AddEditCounterModal> {
           div(classes: 'flex justify-end items-center pt-2', [
             button(
               type: ButtonType.submit,
-              classes:
-                  'bg-primary text-primary-content px-6 h-10 rounded-lg hover:cursor-pointer hover:bg-opacity-80 transition-all duration-300',
+              classes: 'btn btn-primary px-6 h-10 rounded-xl font-bold text-sm shadow-xs transition-all cursor-pointer',
               [
                 .text('Save'),
               ],

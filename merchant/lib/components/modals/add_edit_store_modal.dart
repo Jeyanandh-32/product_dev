@@ -1,6 +1,7 @@
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:merchant/components/fields/form_field.dart';
+import 'package:merchant/components/fields/store_active_toggle_field.dart';
 import 'package:merchant/components/fields/store_type_selector_field.dart';
 import 'package:merchant/components/modals/modal.dart';
 import 'package:merchant/components/modals/store_bottle_returns_section.dart';
@@ -122,28 +123,15 @@ class _AddEditStoreModalState extends State<AddEditStoreModal> {
             ),
             if (store.isBottleReturnEnabled)
               StoreBottleReturnsSection(store: store),
-            div(classes: 'form-control mb-4 flex flex-row items-center gap-3', [
-              p(classes: 'text-[14px] font-semibold text-gray-500', [
-                .text('Active'),
-              ]),
-              input(
-                type: InputType.checkbox,
-                classes:
-                    'toggle ${_isActive ? 'toggle-success' : ''} hover:cursor-pointer',
-                checked: _isActive,
-                events: {
-                  'change': (e) => setState(
-                    () =>
-                        _isActive = (e.target as web.HTMLInputElement).checked,
-                  ),
-                },
-              ),
-            ]),
+            StoreActiveToggleField(
+              isActive: _isActive,
+              onChanged: (active) => setState(() => _isActive = active),
+            ),
           ],
           div(classes: 'flex justify-end items-center pt-2', [
             button(
               type: ButtonType.submit,
-              classes: 'bg-primary text-primary-content px-6 h-10 rounded-lg hover:cursor-pointer hover:bg-opacity-80 transition-all duration-300',
+              classes: 'btn btn-primary px-6 h-10 rounded-xl font-bold text-sm shadow-xs transition-all cursor-pointer',
               [.text('Save')],
             ),
           ]),

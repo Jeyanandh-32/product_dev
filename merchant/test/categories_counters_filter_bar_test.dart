@@ -21,30 +21,22 @@ void main() {
   group('CategoriesFilterBar Tests', () {
     test('CategoriesFilterBar instantiates with and without store', () {
       final barWithoutStore = CategoriesFilterBar(
-        entries: 10,
-        currentPage: 1,
-        totalCount: 0,
         store: null,
         statusFilter: null,
-        onEntryChanged: (_) {},
         onStatusChanged: (_) {},
         onSearch: (_) {},
       );
       expect(barWithoutStore.store, isNull);
-      expect(barWithoutStore.entries, 10);
+      expect(barWithoutStore.statusFilter, isNull);
 
       final barWithStore = CategoriesFilterBar(
-        entries: 25,
-        currentPage: 2,
-        totalCount: 50,
         store: sampleStore,
         statusFilter: true,
-        onEntryChanged: (_) {},
         onStatusChanged: (_) {},
         onSearch: (_) {},
       );
       expect(barWithStore.store, equals(sampleStore));
-      expect(barWithStore.totalCount, 50);
+      expect(barWithStore.statusFilter, isTrue);
     });
 
     test('Add Category modal signal trigger', () {
@@ -62,30 +54,22 @@ void main() {
   group('CountersFilterBar Tests', () {
     test('CountersFilterBar instantiates with and without store', () {
       final barWithoutStore = CountersFilterBar(
-        entries: 10,
-        currentPage: 1,
-        totalCount: 0,
         store: null,
         statusFilter: null,
-        onEntryChanged: (_) {},
         onStatusChanged: (_) {},
         onSearch: (_) {},
       );
       expect(barWithoutStore.store, isNull);
-      expect(barWithoutStore.entries, 10);
+      expect(barWithoutStore.statusFilter, isNull);
 
       final barWithStore = CountersFilterBar(
-        entries: 25,
-        currentPage: 2,
-        totalCount: 30,
         store: sampleStore,
         statusFilter: false,
-        onEntryChanged: (_) {},
         onStatusChanged: (_) {},
         onSearch: (_) {},
       );
       expect(barWithStore.store, equals(sampleStore));
-      expect(barWithStore.totalCount, 30);
+      expect(barWithStore.statusFilter, isFalse);
     });
 
     test('Add Counter modal signal trigger', () {

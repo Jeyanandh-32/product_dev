@@ -19,7 +19,7 @@ class StoreSubscriptionsCard extends StatelessComponent {
   @override
   Component build(BuildContext context) {
     return div(
-      classes: 'bg-white rounded-xl border border-border-medium p-5 shadow-2xs space-y-4',
+      classes: 'bg-white rounded-2xl border border-border-medium p-5 shadow-2xs space-y-4',
       [
         div(
           classes: 'flex items-center justify-between border-b border-border-light pb-3',
@@ -33,11 +33,11 @@ class StoreSubscriptionsCard extends StatelessComponent {
               ),
               div([
                 h3(
-                  classes: 'text-sm sm:text-base font-bold text-gray-900',
+                  classes: 'text-sm sm:text-base font-bold text-slate-900',
                   [.text('Store Subscriptions')],
                 ),
                 p(
-                  classes: 'text-xs text-gray-500 font-medium',
+                  classes: 'text-xs text-slate-500 font-medium',
                   [.text('Subscriptions managed per store')],
                 ),
               ]),
@@ -47,7 +47,7 @@ class StoreSubscriptionsCard extends StatelessComponent {
 
         if (stores.isEmpty)
           p(
-            classes: 'text-xs sm:text-sm text-gray-400 font-medium text-center py-3',
+            classes: 'text-xs sm:text-sm text-slate-400 font-medium text-center py-3',
             [.text('No stores created yet.')],
           )
         else
@@ -80,30 +80,30 @@ class StoreSubscriptionsCard extends StatelessComponent {
         : 'Yearly Plan';
 
     return div(
-      classes: 'p-3.5 rounded-lg border border-border-medium bg-neutral/20 space-y-2.5',
+      classes: 'p-3.5 rounded-xl border border-border-medium bg-neutral/20 space-y-2.5',
       [
         div(
           classes: 'flex items-center justify-between gap-2 flex-wrap',
           [
             h4(
-              classes: 'text-xs sm:text-sm font-bold text-gray-900 truncate',
+              classes: 'text-xs sm:text-sm font-bold text-slate-900 truncate',
               [.text(st.name)],
             ),
             span(
               classes: isOperational
-                  ? 'px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-emerald-50 text-emerald-700 border border-emerald-200'
-                  : 'px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-red-50 text-red-600 border border-red-200',
+                  ? 'px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-50 text-emerald-700 border border-emerald-200'
+                  : 'px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-red-50 text-red-600 border border-red-200',
               [.text(statusBadge)],
             ),
           ],
         ),
 
         div(
-          classes: 'flex items-center justify-between text-xs font-semibold text-gray-600 pt-0.5',
+          classes: 'flex items-center justify-between text-xs font-semibold text-slate-600 pt-0.5',
           [
             span(
               classes: isOperational
-                  ? 'flex items-center gap-1.5 text-gray-800 font-bold'
+                  ? 'flex items-center gap-1.5 text-slate-800 font-bold'
                   : 'flex items-center gap-1.5 text-red-600 font-bold',
               [
                 if (isOperational)
@@ -113,7 +113,7 @@ class StoreSubscriptionsCard extends StatelessComponent {
                 .text(currentPlan),
               ],
             ),
-            span(classes: 'text-gray-500 font-medium', [
+            span(classes: 'text-slate-500 font-medium', [
               .text(
                 sub != null
                     ? 'Renews ${sub.endsAt.day.toString().padLeft(2, '0')}/${sub.endsAt.month.toString().padLeft(2, '0')}/${sub.endsAt.year}'
@@ -128,7 +128,7 @@ class StoreSubscriptionsCard extends StatelessComponent {
           events: {
             'click': (e) => onManageSubscription(st),
           },
-          classes: 'btn btn-sm w-full rounded-lg border border-border-medium bg-white hover:bg-neutral text-gray-800 font-semibold text-xs flex items-center justify-center gap-1.5 shadow-2xs transition-all cursor-pointer hover:border-gray-400',
+          classes: 'btn btn-sm h-9 w-full rounded-xl border border-border-medium bg-white hover:bg-slate-50 text-slate-800 font-semibold text-xs flex items-center justify-center gap-1.5 shadow-2xs transition-all cursor-pointer hover:border-slate-400',
           [
             Sparkles(classes: 'w-3.5 h-3.5 text-primary'),
             .text('Manage Subscription'),

@@ -27,10 +27,16 @@ class App extends SignalComponent {
 }
 
 class _AppState extends SignalState<App> {
-  String? _guestOnlyRedirect(BuildContext context, RouteState state) {
+  String? _handleRedirect(BuildContext context, RouteState state) {
     final merchant = authSignal.value.value;
-    if (merchant != null) return '/';
-    return null;
+    final path = state.subloc;
+    final isAuth =
+        path == '/login' || path == '/register' || path == '/forgotPassword';
+
+    if (merchant == null) {
+      return isAuth ? null : '/login';
+    }
+    return isAuth ? '/' : null;
   }
 
   @override
@@ -44,15 +50,10 @@ class _AppState extends SignalState<App> {
     return main_([
       const Toast(),
       Router(
+        redirect: _handleRedirect,
         routes: [
           ShellRoute(
-            builder: (context, state, child) {
-              final merchant = authSignal.value.value;
-              if (merchant == null) {
-                return const Login();
-              }
-              return Home(child: child);
-            },
+            builder: (context, state, child) => Home(child: child),
             routes: [
               Route(
                 path: '/',
@@ -107,17 +108,14 @@ class _AppState extends SignalState<App> {
           Route(
             path: '/register',
             builder: (context, state) => const Register(),
-            redirect: _guestOnlyRedirect,
           ),
           Route(
             path: '/login',
             builder: (context, state) => const Login(),
-            redirect: _guestOnlyRedirect,
           ),
           Route(
             path: '/forgotPassword',
             builder: (context, state) => const ForgotPassword(),
-            redirect: _guestOnlyRedirect,
           ),
           Route(
             path: '/:path*',

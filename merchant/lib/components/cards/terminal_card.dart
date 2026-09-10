@@ -23,11 +23,10 @@ class TerminalCard extends StatelessComponent {
   @override
   Component build(BuildContext context) {
     return div(
-      classes:
-          'flex flex-col gap-4 p-4 border border-border-medium rounded-lg shadow-2xs transition-all duration-200 hover:cursor-pointer hover:border-accent/50',
+      classes: 'flex flex-col gap-4 p-5 border border-border-medium rounded-2xl shadow-2xs transition-all duration-200 hover:cursor-pointer hover:border-slate-400 bg-white',
       [
         div(classes: 'flex justify-between items-center', [
-          h2(classes: 'font-semibold text-primary', [.text(terminal.name)]),
+          h2(classes: 'font-semibold text-slate-900', [.text(terminal.name)]),
           button(
             classes: 'hover:cursor-pointer',
             events: {
@@ -37,7 +36,7 @@ class TerminalCard extends StatelessComponent {
               },
             },
             [
-              SquarePen(classes: 'w-5 h-5 text-gray-500'),
+              SquarePen(classes: 'w-4 h-4 text-slate-400 hover:text-slate-600'),
             ],
           ),
         ]),
@@ -46,8 +45,7 @@ class TerminalCard extends StatelessComponent {
           classes: 'flex gap-2 mt-2',
           [
             div(
-              classes:
-                  'bg-soft-purple text-soft-purple-content rounded-full px-3 py-1 text-xs font-semibold',
+              classes: 'bg-soft-purple text-soft-purple-content rounded-full px-3 py-1 text-xs font-semibold',
               [
                 .text(terminal.code),
               ],

@@ -5,19 +5,29 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="scaffolded-by" content="https://github.com/schultek/jaspr">
 
-        <title>merchant</title>
+        <base id="app-base" href="/">
+        <title>Finch POS — Merchant</title>
         <script>
             (function() {
                 var p = window.location.pathname;
                 var base = p.startsWith('/merchant') ? '/merchant/' : '/';
-                document.write('<base href="' + base + '">');
+                var b = document.getElementById('app-base');
+                if (b) b.setAttribute('href', base);
             })();
         </script>
 
         <!-- Google Fonts: Arizonia & Manrope -->
+        <!-- Favicons -->
+        <link rel="icon" type="image/x-icon" href="favicon.ico">
+        <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+        <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+
+        <!-- Google Fonts: Plus Jakarta Sans -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Arizonia&family=Manrope:wght@300;400;500;600;700;800&display=swap">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700;800;900&family=Playball&family=Arizonia&display=swap">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap">
 
         <!-- Loads Cally web component module for daisyUI calendar -->
         <script type="module" src="https://unpkg.com/cally"></script>

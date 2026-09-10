@@ -2,6 +2,7 @@ import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_lucide/jaspr_lucide.dart' hide Map;
 import 'package:jaspr_router/jaspr_router.dart';
+import 'package:merchant/components/auth/auth_submit_button.dart';
 import 'package:merchant/components/fields/form_field.dart';
 import 'package:merchant/components/layouts/auth_layout.dart';
 import 'package:merchant/components/signal_component.dart';
@@ -34,11 +35,8 @@ class _LoginState extends SignalState<Login> {
     final isSubmitting = authSubmittingSignal.value;
 
     return AuthLayout(
-      title: 'Sign in to your account',
-      descriptionLine1: 'Enter to your credentials to access',
-      descriptionLine2: 'and tracking sales today.',
       formContent: form(
-        classes: 'card-body items-start',
+        classes: 'w-full flex flex-col',
         method: .post,
         events: {
           'submit': (e) => _onSubmit(e),
@@ -73,22 +71,13 @@ class _LoginState extends SignalState<Login> {
               'minlength': '6',
               'value': _password,
             },
-            hintText:
-                'Must be 6+ characters with a number, lowercase, and uppercase.',
+            hintText: 'Must be 6+ characters with a number, lowercase, and uppercase.',
           ),
 
-          button(
-            classes:
-                'btn btn-primary mt-3 rounded-lg h-12 w-full gap-2.5 disabled:bg-primary disabled:text-primary-content disabled:opacity-85 disabled:border-transparent',
-            type: .submit,
-            disabled: isSubmitting,
-            [
-              if (isSubmitting) ...[
-                span(classes: 'loading loading-spinner loading-xs text-white', []),
-                span(classes: 'text-sm font-bold text-white', [.text('Signing In...')]),
-              ] else
-                .text('Sign In'),
-            ],
+          AuthSubmitButton(
+            label: 'Sign In',
+            loadingLabel: 'Signing In...',
+            isLoading: isSubmitting,
           ),
         ],
       ),
@@ -96,8 +85,8 @@ class _LoginState extends SignalState<Login> {
         classes: 'text-sm hover:cursor-pointer',
         onClick: () => context.push('/register'),
         [
-          span([.text('New to Brand?')]),
-          span(classes: 'text-accent font-semibold ml-1', [
+          span(classes: 'text-slate-500', [.text('New to Finch?')]),
+          span(classes: 'text-blue-600 font-semibold ml-1.5 hover:underline', [
             .text('Create an account'),
           ]),
         ],

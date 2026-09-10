@@ -18,14 +18,12 @@ class DashboardHeaderBar extends StatelessComponent {
   @override
   Component build(BuildContext context) {
     return div(
-      classes:
-          'flex flex-col lg:flex-row lg:items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-border-medium shadow-2xs',
+      classes: 'flex flex-col lg:flex-row lg:items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-border-medium shadow-2xs',
       [
         div(classes: 'space-y-0.5', [
           div(classes: 'flex items-center gap-2', [
             span(
-              classes:
-                  'inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/60',
+              classes: 'inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/60',
               [
                 span(
                   classes:
@@ -45,8 +43,7 @@ class DashboardHeaderBar extends StatelessComponent {
 
         div(classes: 'flex items-center gap-2.5 self-start lg:self-auto', [
           div(
-            classes:
-                'inline-flex p-1 bg-gray-100/80 rounded-lg border border-gray-200/60 text-xs font-semibold',
+            classes: 'inline-flex p-1 bg-slate-100 rounded-xl border border-border-medium text-xs font-semibold',
             [
               _rangeTab('Today', .today),
               _rangeTab('7 Days', .days7),
@@ -56,8 +53,7 @@ class DashboardHeaderBar extends StatelessComponent {
           ),
           button(
             type: .button,
-            classes:
-                'p-2 bg-white border border-border-medium hover:bg-neutral rounded-lg text-gray-600 transition-all hover:scale-105 active:scale-95 shadow-2xs hover:cursor-pointer',
+            classes: 'p-2 bg-white border border-border-medium hover:bg-slate-50 rounded-xl text-slate-600 transition-all hover:scale-105 active:scale-95 shadow-2xs hover:cursor-pointer',
             attributes: {'title': 'Refresh Analytics'},
             events: {
               'click': (e) => onRefresh(),
@@ -76,7 +72,7 @@ class DashboardHeaderBar extends StatelessComponent {
     return button(
       type: .button,
       classes:
-          'px-3 py-1 rounded-md transition-all hover:cursor-pointer ${isSelected ? 'bg-white text-gray-900 shadow-2xs font-bold' : 'text-gray-500 hover:text-gray-700 font-medium'}',
+          'px-3 py-1.5 rounded-lg transition-all hover:cursor-pointer ${isSelected ? 'bg-white text-slate-900 shadow-2xs font-bold' : 'text-slate-500 hover:text-slate-800 font-medium'}',
       events: {
         'click': (e) => onRangeChanged(range),
       },

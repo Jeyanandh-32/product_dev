@@ -24,9 +24,9 @@ class StoreCard extends StatelessComponent {
 
   String get _containerClass {
     if (isSelected) {
-      return 'flex flex-col gap-4 p-4 border border-accent border-2 rounded-xl shadow-xs transition-all duration-200 hover:cursor-pointer hover:border-accent/80 bg-white';
+      return 'flex flex-col gap-4 p-5 border border-slate-900 rounded-2xl shadow-xs transition-all duration-200 hover:cursor-pointer bg-white';
     }
-    return 'flex flex-col gap-4 p-4 border border-border-medium rounded-xl shadow-2xs transition-all duration-200 hover:cursor-pointer hover:border-accent/40 bg-white';
+    return 'flex flex-col gap-4 p-5 border border-border-medium rounded-2xl shadow-2xs transition-all duration-200 hover:cursor-pointer hover:border-slate-400 bg-white';
   }
 
   String get _statusBadgeClass {
@@ -41,11 +41,11 @@ class StoreCard extends StatelessComponent {
     return div(
       classes: _containerClass,
       events: {
-        if (onClick != null) 'click': (e) => onClick!(),
+        if (onClick != null) 'click': (e) => onClick?.call(),
       },
       [
         div(classes: 'flex justify-between items-center', [
-          h2(classes: 'font-semibold text-primary text-base truncate mr-2', [
+          h2(classes: 'font-semibold text-slate-900 text-base truncate mr-2', [
             .text(store.name),
           ]),
           div(classes: 'flex items-center gap-1.5', [
@@ -64,7 +64,7 @@ class StoreCard extends StatelessComponent {
                 ],
               ),
             button(
-              classes: 'p-1.5 rounded-lg text-gray-400 hover:text-primary hover:bg-neutral/60 hover:cursor-pointer transition-all duration-200',
+              classes: 'p-1.5 rounded-lg text-slate-400 hover:text-slate-900 hover:bg-slate-100 hover:cursor-pointer transition-all duration-200',
               events: {
                 'click': (e) {
                   e.stopPropagation();

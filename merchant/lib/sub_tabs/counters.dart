@@ -88,12 +88,8 @@ class _CountersState extends SignalState<Counters> {
         if (isModalActive)
           AddEditCounterModal(counter: editingCounterSignal.value),
         CountersFilterBar(
-          entries: entriesSignal.value,
-          currentPage: countersPageSignal.value,
-          totalCount: countersTotalSignal.value,
           store: store,
           statusFilter: _statusFilter,
-          onEntryChanged: _changeEntry,
           onStatusChanged: (val) => setState(() => _statusFilter = val),
           onSearch: (val) {
             counterSearchSignal.value = val;
@@ -129,6 +125,9 @@ class _CountersState extends SignalState<Counters> {
         TablePagination(
           currentPage: countersPageSignal.value,
           totalPages: countersTotalPagesSignal.value,
+          entries: entriesSignal.value,
+          totalCount: countersTotalSignal.value,
+          onEntryChanged: _changeEntry,
           onPageChanged: (page) {
             countersPageSignal.value = page;
             refreshCountersSignal();

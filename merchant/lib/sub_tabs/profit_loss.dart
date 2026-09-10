@@ -82,10 +82,6 @@ class _ProfitLossState extends SignalState<ProfitLoss> {
       classes: 'flex flex-col flex-1 min-h-0 m-4 bg-white rounded-2xl border border-border-medium shadow-xs overflow-hidden',
       [
         ProfitLossToolbar(
-          entries: entries,
-          currentPage: currentPage,
-          totalItems: totalItems,
-          onEntryChanged: _changeEntry,
           onSearch: (val) {
             profitLossSearchSignal.value = val;
             profitLossPageSignal.value = 1;
@@ -124,6 +120,9 @@ class _ProfitLossState extends SignalState<ProfitLoss> {
         TablePagination(
           currentPage: currentPage,
           totalPages: totalPages,
+          entries: entries,
+          totalCount: totalItems,
+          onEntryChanged: _changeEntry,
           onPageChanged: (page) {
             profitLossPageSignal.value = page;
             refreshProfitLossSignal();

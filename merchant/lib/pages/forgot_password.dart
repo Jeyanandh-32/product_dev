@@ -2,8 +2,9 @@ import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_lucide/jaspr_lucide.dart' hide Map;
 import 'package:jaspr_router/jaspr_router.dart';
-import 'package:merchant/components/layouts/auth_layout.dart';
+import 'package:merchant/components/auth/auth_submit_button.dart';
 import 'package:merchant/components/fields/form_field.dart';
+import 'package:merchant/components/layouts/auth_layout.dart';
 import 'package:web/web.dart' hide Lock;
 
 class ForgotPassword extends StatefulComponent {
@@ -27,10 +28,10 @@ class _ForgotPasswordState extends State<ForgotPassword> {
   Component build(BuildContext context) {
     return AuthLayout(
       title: 'Forgot Password?',
-      descriptionLine1: 'Enter to your email to',
-      descriptionLine2: 'get password reset link.',
+      descriptionLine1: 'Enter your email to receive a',
+      descriptionLine2: 'password reset link.',
       formContent: form(
-        classes: 'card-body items-start',
+        classes: 'w-full flex flex-col',
         method: .post,
         events: {
           'submit': (e) => _onSubmit(context, e),
@@ -50,17 +51,14 @@ class _ForgotPasswordState extends State<ForgotPassword> {
             hintText: 'Email is required.',
           ),
 
-          button(
-            classes: 'btn btn-primary mt-3 rounded-lg h-12 w-full',
-            type: .submit,
-            [
-              .text('Get link'),
-            ],
+          AuthSubmitButton(
+            label: 'Send Reset Link',
+            loadingLabel: 'Sending Link...',
           ),
         ],
       ),
       footerContent: button(
-        classes: 'text-sm hover:cursor-pointer text-accent font-semibold',
+        classes: 'text-sm hover:cursor-pointer text-blue-600 font-semibold hover:underline',
         onClick: () => context.push('/login'),
         [
           .text('Back to Sign In'),

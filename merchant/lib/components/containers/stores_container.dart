@@ -82,14 +82,14 @@ class _StoresContainerState extends SignalState<StoresContainer> {
                     store: store,
                     isSelected: store.id == selectedStore?.id,
                     onClick: () {
-                      selectedTabStoreSignal.value = store;
+                      selectTabStore(store);
                     },
                     onEdit: () {
                       editingStoreSignal.value = store;
                       activeModalSignal.value = ActiveModal.editStore;
                     },
                     onBottleReturns: () {
-                      selectedTabStoreSignal.value = store;
+                      selectTabStore(store);
                       activeModalSignal.value = ActiveModal.bottleReturns;
                     },
                   ),

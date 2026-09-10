@@ -24,7 +24,7 @@ class NotificationSettingsCard extends StatelessComponent {
   @override
   Component build(BuildContext context) {
     return div(
-      classes: 'bg-white rounded-xl border border-border-medium p-5 shadow-2xs space-y-4',
+      classes: 'bg-white rounded-2xl border border-border-medium p-5 shadow-2xs space-y-4',
       [
         div(
           classes: 'flex items-center justify-between border-b border-border-light pb-3 gap-2 flex-wrap',
@@ -35,27 +35,37 @@ class NotificationSettingsCard extends StatelessComponent {
                 [Bell(classes: 'w-4 h-4')],
               ),
               div([
-                h3(classes: 'text-sm sm:text-base font-bold text-gray-900', [.text('Notification Settings')]),
-                p(classes: 'text-xs text-gray-500 font-medium', [.text('Configure alerts & summaries')]),
+                h3(
+                  classes: 'text-sm sm:text-base font-bold text-slate-900',
+                  [.text('Notification Settings')],
+                ),
+                p(
+                  classes: 'text-xs text-slate-500 font-medium',
+                  [.text('Configure alerts & summaries')],
+                ),
               ]),
             ]),
             span(
-              classes: 'px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-amber-50 text-amber-700 border border-amber-200',
+              classes: 'px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-50 text-amber-700 border border-amber-200',
               [.text('Coming Soon')],
             ),
           ],
         ),
 
         div(
-          classes: 'p-2.5 rounded-lg bg-neutral/40 border border-border-light text-xs text-gray-500 flex items-center gap-2',
+          classes: 'p-2.5 rounded-xl bg-neutral/40 border border-border-light text-xs text-slate-500 flex items-center gap-2',
           [
             Clock(classes: 'w-3.5 h-3.5 text-amber-600 shrink-0'),
-            span([.text('WhatsApp notifications and automated reports will be available in a future release.')]),
+            span([
+              .text(
+                'WhatsApp notifications and automated reports will be available in a future release.',
+              ),
+            ]),
           ],
         ),
 
         div(
-          classes: 'space-y-3 text-xs sm:text-sm font-medium text-gray-700 opacity-60 pointer-events-none select-none',
+          classes: 'space-y-3 text-xs sm:text-sm font-medium text-slate-700 opacity-60 pointer-events-none select-none',
           [
             _buildToggleRow(
               title: 'WhatsApp Alerts',
@@ -85,8 +95,10 @@ class NotificationSettingsCard extends StatelessComponent {
   }) {
     return div(classes: 'flex items-center justify-between gap-3', [
       div([
-        p(classes: 'font-bold text-gray-900 text-xs sm:text-sm', [.text(title)]),
-        p(classes: 'text-xs text-gray-500', [.text(desc)]),
+        p(classes: 'font-bold text-slate-900 text-xs sm:text-sm', [
+          .text(title),
+        ]),
+        p(classes: 'text-xs text-slate-500', [.text(desc)]),
       ]),
       input(
         type: InputType.checkbox,

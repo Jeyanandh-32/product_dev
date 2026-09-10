@@ -77,7 +77,11 @@ class _AddEditCategoryModalState extends State<AddEditCategoryModal> {
             id: 'categoryName',
             labelText: 'Category Name',
             type: InputType.text,
-            attributes: {'placeholder': 'Biscuits', 'required': '', 'value': _categoryName},
+            attributes: {
+              'placeholder': 'Biscuits',
+              'required': '',
+              'value': _categoryName,
+            },
             hintText: 'Category name is required.',
             onChange: (value) => _categoryName = value as String,
           ),
@@ -85,22 +89,31 @@ class _AddEditCategoryModalState extends State<AddEditCategoryModal> {
             id: 'description',
             labelText: 'Description (optional)',
             type: InputType.text,
-            attributes: {'placeholder': 'Optional description...', 'value': _description},
+            attributes: {
+              'placeholder': 'Optional description...',
+              'value': _description,
+            },
             onChange: (value) => _description = value as String,
           ),
           FormField(
             id: 'imageUrl',
             labelText: 'Image URL (optional)',
             type: InputType.url,
-            attributes: {'placeholder': 'https://example.com/image.jpg', 'value': _imageUrl},
+            attributes: {
+              'placeholder': 'https://example.com/image.jpg',
+              'value': _imageUrl,
+            },
             onChange: (value) => _imageUrl = value as String,
           ),
           if (isEditing)
             div(classes: 'form-control mb-4 flex flex-row items-center gap-3', [
-              p(classes: 'text-[14px] font-semibold text-gray-500', [.text('Active')]),
+              p(classes: 'text-[14px] font-semibold text-slate-500', [
+                .text('Active'),
+              ]),
               input(
                 type: InputType.checkbox,
-                classes: 'toggle ${_isActive ? 'toggle-success' : ''} hover:cursor-pointer',
+                classes:
+                    'toggle ${_isActive ? 'toggle-success' : ''} hover:cursor-pointer',
                 checked: _isActive,
                 events: {
                   'change': (e) {
@@ -113,8 +126,7 @@ class _AddEditCategoryModalState extends State<AddEditCategoryModal> {
           div(classes: 'flex justify-end items-center pt-2', [
             button(
               type: ButtonType.submit,
-              classes:
-                  'bg-primary text-primary-content px-6 h-10 rounded-lg hover:cursor-pointer hover:bg-opacity-80 transition-all duration-300',
+              classes: 'btn btn-primary px-6 h-10 rounded-xl font-bold text-sm shadow-xs transition-all cursor-pointer',
               [.text('Save')],
             ),
           ]),

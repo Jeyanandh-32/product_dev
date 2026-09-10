@@ -4,6 +4,7 @@ import 'package:jaspr_lucide/generated_icons/chevron_down.dart';
 import 'package:models/models.dart';
 import 'package:web/web.dart' as web;
 
+/// Dropdown selector field for choosing an optional store counter.
 class CounterSelectorField extends StatelessComponent {
   final String counterId;
   final List<Counter> counters;
@@ -21,8 +22,7 @@ class CounterSelectorField extends StatelessComponent {
     return fieldset(classes: 'fieldset w-full mb-4', [
       label(
         htmlFor: 'counterId',
-        classes:
-            'label text-[14px] font-semibold text-gray-500 flex justify-between',
+        classes: 'label text-[14px] font-semibold text-gray-500 flex justify-between',
         [
           .text('Counter'),
           span(classes: 'text-xs text-gray-400 font-normal', [
@@ -40,9 +40,7 @@ class CounterSelectorField extends StatelessComponent {
                 counterId.isEmpty
                     ? 'Select Counter (Optional)'
                     : (counters.any((c) => c.id == counterId)
-                          ? counters
-                                .firstWhere((c) => c.id == counterId)
-                                .name
+                          ? counters.firstWhere((c) => c.id == counterId).name
                           : 'Select Counter (Optional)'),
               ),
             ]),
@@ -50,8 +48,7 @@ class CounterSelectorField extends StatelessComponent {
           ],
         ),
         ul(
-          classes:
-              'dropdown-content menu bg-base-100 rounded-box z-50 mt-1 p-2 shadow-sm border border-border-light w-full max-h-48 overflow-y-auto',
+          classes: 'dropdown-content menu bg-base-100 rounded-box z-50 mt-1 p-2 shadow-sm border border-border-light w-full max-h-48 overflow-y-auto',
           [
             li([
               a(

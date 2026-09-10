@@ -37,7 +37,7 @@ class _StoresState extends SignalState<Stores> {
       if (selectedStore == null ||
           !storesList.any((st) => st.id == selectedStore.id)) {
         Future.microtask(() {
-          selectedTabStoreSignal.value = storesList.first;
+          selectTabStore(storesList.first);
         });
       }
     }

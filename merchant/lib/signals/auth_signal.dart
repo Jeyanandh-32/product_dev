@@ -123,6 +123,7 @@ Future<void> logoutMerchant() async {
     final message = e is ApiException ? e.message : 'Something went wrong.';
     showToast(message);
   } finally {
+    clearLastSelectedStoreId();
     authSignal.value = const AsyncData(null);
     resetAllMerchantSignals();
   }

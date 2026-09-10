@@ -88,12 +88,8 @@ class _CategoriesState extends SignalState<Categories> {
         if (isModalActive)
           AddEditCategoryModal(category: editingCategorySignal.value),
         CategoriesFilterBar(
-          entries: entriesSignal.value,
-          currentPage: categoriesPageSignal.value,
-          totalCount: categoriesTotalSignal.value,
           store: store,
           statusFilter: _statusFilter,
-          onEntryChanged: _changeEntry,
           onStatusChanged: (val) => setState(() => _statusFilter = val),
           onSearch: (val) {
             categorySearchSignal.value = val;
@@ -129,6 +125,9 @@ class _CategoriesState extends SignalState<Categories> {
         TablePagination(
           currentPage: categoriesPageSignal.value,
           totalPages: categoriesTotalPagesSignal.value,
+          entries: entriesSignal.value,
+          totalCount: categoriesTotalSignal.value,
+          onEntryChanged: _changeEntry,
           onPageChanged: (page) {
             categoriesPageSignal.value = page;
             refreshCategoriesSignal();

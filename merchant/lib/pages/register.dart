@@ -1,21 +1,22 @@
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
-import 'package:jaspr_lucide/jaspr_lucide.dart' hide Map;
 import 'package:jaspr_router/jaspr_router.dart';
-import 'package:merchant/components/fields/form_field.dart';
+import 'package:merchant/components/auth/auth_submit_button.dart';
+import 'package:merchant/components/auth/register_form_inputs.dart';
 import 'package:merchant/components/layouts/auth_layout.dart';
+import 'package:merchant/components/signal_component.dart';
 import 'package:merchant/signals/auth_signal.dart';
-import 'package:validators/validators.dart';
 import 'package:web/web.dart' hide Lock;
 
-class Register extends StatefulComponent {
+/// Registration page for onboarding new merchants to Finch POS.
+class Register extends SignalComponent {
   const Register({super.key});
 
   @override
-  State<Register> createState() => _RegisterState();
+  SignalState<Register> createState() => _RegisterState();
 }
 
-class _RegisterState extends State<Register> {
+class _RegisterState extends SignalState<Register> {
   String _fullName = '';
   String _businessName = '';
   String _whatsappNumber = '';
@@ -35,98 +36,42 @@ class _RegisterState extends State<Register> {
   }
 
   @override
-  Component build(BuildContext context) {
+  Component buildSignal(BuildContext context) {
+    final isSubmitting = authSubmittingSignal.value;
+
     return AuthLayout(
-      title: 'Create Your Account',
-      descriptionLine1: 'Register your business to start billing',
-      descriptionLine2: 'and tracking sales today.',
       formContent: form(
-        classes: 'card-body items-start',
+        classes: 'w-full flex flex-col',
         method: .post,
         events: {'submit': _onSubmit},
         [
-          FormField(
-            onChange: (value) => _fullName = value as String,
-            id: 'fullname',
-            labelText: 'Full Name',
-            icon: User(classes: 'w-4.5 h-4.5'),
-            type: .text,
-            attributes: {'placeholder': 'Jack Dev', 'required': '', 'value': _fullName},
-            hintText: 'Name is required.',
+          RegisterFormInputs(
+            fullName: _fullName,
+            businessName: _businessName,
+            whatsappNumber: _whatsappNumber,
+            email: _email,
+            password: _password,
+            onFullNameChanged: (v) => _fullName = v,
+            onBusinessNameChanged: (v) => _businessName = v,
+            onWhatsappNumberChanged: (v) => _whatsappNumber = v,
+            onEmailChanged: (v) => _email = v,
+            onPasswordChanged: (v) => setState(() => _password = v),
           ),
-          FormField(
-            id: 'businessName',
-            labelText: 'Business Name',
-            icon: Building(classes: 'w-4.5 h-4.5'),
-            type: .text,
-            onChange: (value) => _businessName = value as String,
-            attributes: {'placeholder': 'Acme Retail Solutions', 'required': '', 'value': _businessName},
-            hintText: 'Business Name is required.',
+          AuthSubmitButton(
+            label: 'Create Account',
+            loadingLabel: 'Creating Account...',
+            isLoading: isSubmitting,
           ),
-          FormField(
-            id: 'whatsappNumber',
-            labelText: 'Whatsapp Number',
-            icon: Phone(classes: 'w-4.5 h-4.5'),
-            type: .tel,
-            onChange: (value) => _whatsappNumber = value as String,
-            attributes: {
-              'placeholder': '7449261057',
-              'required': '',
-              'pattern': ValidationPatterns.whatsappHtml,
-              'minlength': '10',
-              'maxlength': '10',
-              'title': 'Must be 10 digits',
-              'value': _whatsappNumber,
-            },
-            hintText: 'Must be 10 digits.',
-          ),
-          FormField(
-            id: 'email',
-            labelText: 'Email',
-            icon: Mail(classes: 'w-4.5 h-4.5'),
-            type: .email,
-            onChange: (value) => _email = value as String,
-            attributes: {'placeholder': 'jacksparrow@example.com', 'required': '', 'value': _email},
-            hintText: 'Email is required.',
-          ),
-          FormField(
-            id: 'password',
-            labelText: 'Password',
-            icon: Lock(classes: 'w-4.5 h-4.5'),
-            type: .password,
-            onChange: (value) => setState(() => _password = value as String),
-            attributes: {
-              'placeholder': '*********',
-              'required': '',
-              'pattern': ValidationPatterns.password,
-              'minlength': '6',
-              'value': _password,
-            },
-            hintText: 'Must be 6+ characters with a number, lowercase, and uppercase.',
-          ),
-          button(
-            classes: 'btn btn-primary mt-3 rounded-lg h-12 w-full gap-2.5 disabled:bg-primary disabled:text-primary-content disabled:opacity-85 disabled:border-transparent',
-            type: .submit,
-            disabled: authSubmittingSignal.value,
-            [
-              if (authSubmittingSignal.value) ...[
-                span(classes: 'loading loading-spinner loading-xs text-white', []),
-                span(classes: 'text-sm font-bold text-white', [.text('Registering...')]),
-              ] else
-                .text('Register'),
-            ],
-          ),
-          span(classes: 'text-gray-500 text-center px-8 md:px-16 mt-6', [
-            .text('By clicking "Register Business", you agree to our Terms of Service and Privacy Policy.'),
-          ]),
         ],
       ),
       footerContent: button(
         classes: 'text-sm hover:cursor-pointer',
         onClick: () => context.push('/login'),
         [
-          span([.text('Already have an account?')]),
-          span(classes: 'text-accent font-semibold ml-1', [.text('Sign in to Brand')]),
+          span(classes: 'text-slate-500', [.text('Already have an account?')]),
+          span(classes: 'text-blue-600 font-semibold ml-1.5 hover:underline', [
+            .text('Sign in to Finch'),
+          ]),
         ],
       ),
     );

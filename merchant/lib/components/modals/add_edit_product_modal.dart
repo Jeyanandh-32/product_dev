@@ -53,8 +53,8 @@ class _AddEditProductModalState extends SignalState<AddEditProductModal> {
       _imageUrl = p.imageUrl ?? '';
       _isActive = p.isActive;
     }
-    refreshCategoriesSignal(customSize: 1000);
-    refreshCountersSignal(customSize: 1000);
+    refreshCategoriesSignal(customSize: 1000, ignoreSearch: true);
+    refreshCountersSignal(customSize: 1000, ignoreSearch: true);
   }
 
   void _onSubmit(web.Event e) {
@@ -88,51 +88,55 @@ class _AddEditProductModalState extends SignalState<AddEditProductModal> {
     return Modal(
       title: component.product != null ? 'Edit Product' : 'Add Product',
       child: form(
+        classes: 'w-full flex flex-col',
         events: {'submit': _onSubmit},
-        classes: 'flex flex-col gap-4',
         [
-          div(classes: 'flex flex-col gap-4 max-h-[60vh] overflow-y-auto px-1', [
-            FormField(
-              id: 'name',
-              labelText: 'Name',
-              type: InputType.text,
-              attributes: {'placeholder': 'Product name', 'required': 'true', 'value': _name},
-              onChange: (value) => _name = value as String,
-            ),
-            CategorySelectorField(
-              categories: categories,
-              categoryId: _categoryId,
-              onSelect: (val) => setState(() => _categoryId = val),
-            ),
-            CounterSelectorField(
-              counters: counters,
-              counterId: _counterId,
-              onSelect: (val) => setState(() => _counterId = val),
-            ),
-            ProductPricingFields(
-              basePrice: _basePrice,
-              sellingPrice: _sellingPrice,
-              taxRate: _taxRate,
-              onBasePriceChanged: (val) => _basePrice = val,
-              onSellingPriceChanged: (val) => _sellingPrice = val,
-              onTaxRateChanged: (val) => _taxRate = val,
-            ),
-            ProductMetadataSection(
-              sku: _sku,
-              barcode: _barcode,
-              imageUrl: _imageUrl,
-              isActive: _isActive,
-              isEditing: component.product != null,
-              onSkuChanged: (val) => _sku = val,
-              onBarcodeChanged: (val) => _barcode = val,
-              onImageUrlChanged: (val) => _imageUrl = val,
-              onActiveChanged: (val) => setState(() => _isActive = val),
-            ),
-          ]),
+          div(
+            classes: 'flex flex-col gap-4',
+            [
+              FormField(
+                id: 'productName',
+                labelText: 'Product Name',
+                type: InputType.text,
+                attributes: {'placeholder': 'Amul Butter 500g', 'required': '', 'value': _name},
+                hintText: 'Product name is required.',
+                onChange: (val) => _name = val as String,
+              ),
+              CategorySelectorField(
+                categories: categories,
+                categoryId: _categoryId,
+                onSelect: (val) => setState(() => _categoryId = val),
+              ),
+              CounterSelectorField(
+                counters: counters,
+                counterId: _counterId,
+                onSelect: (val) => setState(() => _counterId = val),
+              ),
+              ProductPricingFields(
+                basePrice: _basePrice,
+                sellingPrice: _sellingPrice,
+                taxRate: _taxRate,
+                onBasePriceChanged: (val) => _basePrice = val,
+                onSellingPriceChanged: (val) => _sellingPrice = val,
+                onTaxRateChanged: (val) => _taxRate = val,
+              ),
+              ProductMetadataSection(
+                sku: _sku,
+                barcode: _barcode,
+                imageUrl: _imageUrl,
+                isActive: _isActive,
+                isEditing: component.product != null,
+                onSkuChanged: (val) => _sku = val,
+                onBarcodeChanged: (val) => _barcode = val,
+                onImageUrlChanged: (val) => _imageUrl = val,
+                onActiveChanged: (val) => setState(() => _isActive = val),
+              ),
+            ],
+          ),
           div(classes: 'flex justify-end items-center pt-2', [
             button(
               type: ButtonType.submit,
-              classes: 'bg-primary text-primary-content px-6 h-10 rounded-lg hover:cursor-pointer hover:bg-opacity-80 transition-all duration-300',
+              classes: 'btn btn-primary px-6 h-10 rounded-xl font-bold text-sm shadow-xs transition-all cursor-pointer',
               [.text('Save')],
             ),
           ]),

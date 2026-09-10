@@ -41,7 +41,7 @@ class _ProductsState extends SignalState<Products> {
     final store = storeSignal.value;
     if (store != null) _loadedStoreId = store.id;
     refreshProductsSignal();
-    refreshCategoriesSignal(customSize: 1000);
+    refreshCategoriesSignal(customSize: 1000, ignoreSearch: true);
   }
 
   void _closeDropdowns() {
@@ -79,7 +79,7 @@ class _ProductsState extends SignalState<Products> {
       _loadedStoreId = store.id;
       Future.microtask(() {
         refreshProductsSignal();
-        refreshCategoriesSignal(customSize: 1000);
+        refreshCategoriesSignal(customSize: 1000, ignoreSearch: true);
       });
     }
     final entries = entriesSignal.value;
@@ -92,13 +92,9 @@ class _ProductsState extends SignalState<Products> {
       [
         const ProductsModalsHost(),
         ProductsToolbar(
-          entries: entries,
-          currentPage: productsPageSignal.value,
-          totalCount: productsTotalSignal.value,
           store: store,
           statusFilter: _statusFilter,
           stockMonitorFilter: _stockMonitorFilter,
-          onEntryChanged: _changeEntry,
           onStatusFilterChanged: (val) => setState(() => _statusFilter = val),
           onStockMonitorFilterChanged: (val) =>
               setState(() => _stockMonitorFilter = val),
@@ -132,6 +128,9 @@ class _ProductsState extends SignalState<Products> {
         TablePagination(
           currentPage: productsPageSignal.value,
           totalPages: productsTotalPagesSignal.value,
+          entries: entries,
+          totalCount: productsTotalSignal.value,
+          onEntryChanged: _changeEntry,
           onPageChanged: (page) {
             productsPageSignal.value = page;
             refreshProductsSignal();
