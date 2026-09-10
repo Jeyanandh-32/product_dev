@@ -29,16 +29,25 @@ class _AppLayoutState extends SignalState<AppLayout> {
             div(
               classes: 'max-w-6xl mx-auto flex items-center justify-between',
               [
-                // Brand Logo (Script Typography without icon)
+                // Brand Logo: Finch Icon Badge + Dancing Script Finch
                 button(
-                  classes: 'cursor-pointer border-0 bg-transparent p-0 text-left group',
+                  classes: 'cursor-pointer border-0 bg-transparent p-0 flex items-center gap-2.5 text-left group select-none',
                   onClick: () => Router.of(context).push('/'),
                   [
-                    h1(
-                      classes: 'font-script text-primary text-3xl font-normal hover:opacity-80 transition-opacity',
+                    div(
+                      classes: 'w-8 h-8 rounded-xl overflow-hidden shadow-2xs border border-gray-200 group-hover:scale-105 transition-transform duration-200 shrink-0',
                       [
-                        .text('Branding'),
+                        img(
+                          src: 'images/finch_app_icon_square.png',
+                          width: 32,
+                          height: 32,
+                          classes: 'w-full h-full object-cover',
+                        ),
                       ],
+                    ),
+                    span(
+                      classes: 'font-script text-[26px] font-bold text-slate-900 leading-none group-hover:opacity-85 transition-opacity',
+                      [.text('Finch')],
                     ),
                   ],
                 ),
@@ -70,7 +79,7 @@ class _AppLayoutState extends SignalState<AppLayout> {
                     )
                   else
                     button(
-                      classes: 'flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black text-white hover:bg-gray-800 font-semibold text-xs transition-all cursor-pointer border-0 active:scale-95',
+                      classes: 'flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#0B132B] hover:bg-[#1C2541] text-white font-semibold text-xs transition-all cursor-pointer border-0 active:scale-95 shadow-2xs',
                       onClick: () => Router.of(context).push('/login'),
                       [
                         User(classes: 'w-3.5 h-3.5 text-white'),

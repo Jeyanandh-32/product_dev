@@ -1,4 +1,5 @@
 import 'dart:js_interop';
+
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_lucide/jaspr_lucide.dart' hide Map;
@@ -37,55 +38,50 @@ class _FormFieldState extends State<FormField> {
   void _handleInput(dynamic eventOrValue) {
     final callback = component.onChange;
     if (callback == null) return;
-    try {
-      final event = eventOrValue as web.Event;
-      final target = event.target as web.HTMLInputElement?;
-      if (target != null) {
+    if (eventOrValue case final web.Event event) {
+      if (event.target case final web.HTMLInputElement target) {
         callback(target.value);
         return;
       }
-    } catch (_) {}
-    if (eventOrValue is String) {
-      callback(eventOrValue);
-      return;
     }
-    callback(eventOrValue?.toString());
+    callback(eventOrValue?.toString() ?? '');
   }
 
   void _handleKeyDown(dynamic eventOrValue) {
-    try {
-      final event = eventOrValue as web.KeyboardEvent;
-      if (event.key == 'Enter') {
-        final currentTarget = event.target as web.HTMLInputElement?;
-        final form = currentTarget?.form;
-        if (form != null && currentTarget != null) {
-          final elements = form.querySelectorAll('input:not([type="hidden"]):not([disabled])');
-          final list = <web.HTMLInputElement>[];
-          for (var i = 0; i < elements.length; i++) {
-            final item = elements.item(i);
-            if (item.isA<web.HTMLInputElement>()) list.add(item as web.HTMLInputElement);
-          }
-          final index = list.indexOf(currentTarget);
-          if (index != -1 && index < list.length - 1) {
-            event.preventDefault();
-            list[index + 1].focus();
+    if (eventOrValue case final web.KeyboardEvent event
+        when event.key == 'Enter') {
+      final target = event.target as web.HTMLInputElement?;
+      final form = target?.form;
+      if (form != null && target != null) {
+        final elements = form.querySelectorAll(
+          'input:not([type="hidden"]):not([disabled])',
+        );
+        final list = <web.HTMLInputElement>[];
+        for (var i = 0; i < elements.length; i++) {
+          final item = elements.item(i);
+          if (item.isA<web.HTMLInputElement>()) {
+            list.add(item as web.HTMLInputElement);
           }
         }
+        final index = list.indexOf(target);
+        if (index != -1 && index < list.length - 1) {
+          event.preventDefault();
+          list[index + 1].focus();
+        }
       }
-    } catch (_) {}
+    }
   }
 
   @override
   Component build(BuildContext context) {
     final isPassword = component.type == InputType.password;
     final icon = component.icon;
-    final hint = component.hintText;
 
-    return fieldset(classes: 'w-full flex flex-col gap-1.5 mb-4', [
-      div(classes: 'flex items-center justify-between', [
+    return fieldset(classes: 'fieldset w-full mb-4', [
+      div(classes: 'flex items-center justify-between mb-1.5', [
         label(
           htmlFor: component.id,
-          classes: 'text-xs font-extrabold text-black uppercase tracking-wider flex items-center gap-1.5',
+          classes: 'label text-sm font-bold text-slate-700 flex items-center gap-2 p-0',
           [
             ?icon,
             .text(component.labelText),
@@ -94,7 +90,7 @@ class _FormFieldState extends State<FormField> {
         if (component.enableForgotPassword)
           button(
             type: .button,
-            classes: 'text-xs font-extrabold text-black underline hover:text-gray-700 cursor-pointer border-0 bg-transparent p-0',
+            classes: 'text-xs font-semibold text-blue-600 hover:underline hover:cursor-pointer border-0 bg-transparent p-0',
             onClick: () => context.push('/forgotPassword'),
             [.text('Forgot Password?')],
           ),
@@ -108,16 +104,19 @@ class _FormFieldState extends State<FormField> {
             onInput: _handleInput,
             onChange: _handleInput,
             events: {'keydown': _handleKeyDown},
-            classes:
-                'h-12 w-full px-4 bg-gray-50 hover:bg-gray-100/80 focus:bg-white border border-gray-200 focus:border-black rounded-xl text-sm font-medium text-black transition-all focus:outline-none focus:ring-1 focus:ring-black pr-10',
+            classes: 'input validator h-10.5 border border-border-medium bg-white w-full rounded-[10px] pr-10 text-sm text-slate-900 placeholder:text-slate-400',
             attributes: component.attributes,
           ),
           button(
             type: .button,
-            classes:
-                'absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black cursor-pointer p-1 rounded-md transition-colors border-0 bg-transparent',
+            classes: 'absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 hover:cursor-pointer p-1 rounded-md transition-colors border-0 bg-transparent',
             onClick: () => setState(() => _obscureText = !_obscureText),
-            [if (_obscureText) EyeOff(classes: 'w-4 h-4') else Eye(classes: 'w-4 h-4')],
+            [
+              if (_obscureText)
+                EyeOff(classes: 'w-4.5 h-4.5')
+              else
+                Eye(classes: 'w-4.5 h-4.5'),
+            ],
           ),
         ])
       else
@@ -128,11 +127,13 @@ class _FormFieldState extends State<FormField> {
           onInput: _handleInput,
           onChange: _handleInput,
           events: {'keydown': _handleKeyDown},
-          classes:
-              'h-12 w-full px-4 bg-gray-50 hover:bg-gray-100/80 focus:bg-white border border-gray-200 focus:border-black rounded-xl text-sm font-medium text-black transition-all focus:outline-none focus:ring-1 focus:ring-black',
+          classes: 'input validator h-10.5 border border-border-medium bg-white w-full rounded-[10px] text-sm text-slate-900 placeholder:text-slate-400',
           attributes: component.attributes,
         ),
-      if (hint != null) p(classes: 'text-[11px] font-medium text-gray-400 px-1', [.text(hint)]),
+      if (component.hintText case final hint?)
+        p(classes: 'validator-hint hidden', [
+          .text(hint),
+        ]),
     ]);
   }
 }

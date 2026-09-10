@@ -37,11 +37,8 @@ class _LoginPageState extends SignalState<LoginPage> {
     final isSubmitting = customerAuthSubmittingSignal.value;
 
     return AuthLayout(
-      title: 'Sign in to your account',
-      descriptionLine1: 'Enter your 10-digit mobile number and',
-      descriptionLine2: '6-digit security PIN to access your orders.',
       formContent: form(
-        classes: 'w-full flex flex-col items-start',
+        classes: 'w-full flex flex-col',
         method: .post,
         events: {
           'submit': (e) => _onSubmit(e),
@@ -50,7 +47,7 @@ class _LoginPageState extends SignalState<LoginPage> {
           FormField(
             id: 'mobileNumber',
             labelText: 'Mobile Number',
-            icon: Phone(classes: 'w-4 h-4 text-gray-500'),
+            icon: Phone(classes: 'w-4.5 h-4.5 text-slate-500'),
             type: .tel,
             onChange: (value) => _mobileNumber = value as String,
             attributes: {
@@ -67,8 +64,8 @@ class _LoginPageState extends SignalState<LoginPage> {
 
           FormField(
             id: 'pin',
-            labelText: '6-Digit Security PIN',
-            icon: Lock(classes: 'w-4 h-4 text-gray-500'),
+            labelText: 'Security PIN',
+            icon: Lock(classes: 'w-4.5 h-4.5 text-slate-500'),
             type: .password,
             onChange: (value) => setState(() => _pin = value as String),
             attributes: {
@@ -84,30 +81,36 @@ class _LoginPageState extends SignalState<LoginPage> {
           ),
 
           button(
-            classes:
-                'w-full h-12 mt-2 rounded-xl bg-black hover:bg-gray-800 text-white font-extrabold text-sm flex items-center justify-center gap-2.5 transition-all cursor-pointer shadow-2xs active:scale-98 disabled:bg-black disabled:text-white disabled:opacity-85 disabled:cursor-not-allowed border-0',
+            classes: 'w-full h-12 mt-2 rounded-2xl bg-[#0B132B] hover:bg-[#1C2541] text-white font-extrabold text-sm flex items-center justify-center gap-2.5 transition-all cursor-pointer shadow-[0_4px_14px_rgba(11,19,43,0.22)] active:scale-98 disabled:bg-[#0B132B] disabled:text-white disabled:opacity-85 disabled:cursor-not-allowed border-0',
             type: .submit,
             disabled: isSubmitting,
             [
               if (isSubmitting) ...[
-                span(classes: 'loading loading-spinner loading-xs text-white', []),
-                span(classes: 'text-sm font-bold text-white', [.text('Signing In...')]),
+                span(
+                  classes: 'loading loading-spinner loading-xs text-white',
+                  [],
+                ),
+                span(classes: 'text-sm font-bold text-white', [
+                  .text('Signing In...'),
+                ]),
               ] else
                 .text('Sign In'),
             ],
           ),
         ],
       ),
-      footerContent: button(
-        classes: 'text-xs font-semibold text-gray-500 hover:text-black cursor-pointer border-0 bg-transparent p-0',
-        onClick: () => context.push('/register'),
-        [
-          span([.text("Don't have an account?")]),
-          span(classes: 'text-black font-extrabold underline ml-1', [
-            .text('Register now'),
-          ]),
-        ],
-      ),
+      footerContent: div(classes: 'flex items-center gap-1.5 justify-center', [
+        span(
+          classes: 'text-sm text-slate-500',
+          [.text("Don't have an account?")],
+        ),
+        button(
+          type: .button,
+          classes: 'text-sm font-semibold text-blue-600 hover:underline hover:cursor-pointer border-0 bg-transparent p-0',
+          onClick: () => context.push('/register'),
+          [.text('Register now')],
+        ),
+      ]),
     );
   }
 }

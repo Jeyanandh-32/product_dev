@@ -1,18 +1,19 @@
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 
+/// Clean authentication layout matching the Finch brand aesthetic.
 class AuthLayout extends StatelessComponent {
-  final String title;
-  final String descriptionLine1;
-  final String descriptionLine2;
+  final String? title;
+  final String? descriptionLine1;
+  final String? descriptionLine2;
   final Component formContent;
   final Component footerContent;
 
   const AuthLayout({
     super.key,
-    required this.title,
-    required this.descriptionLine1,
-    required this.descriptionLine2,
+    this.title,
+    this.descriptionLine1,
+    this.descriptionLine2,
     required this.formContent,
     required this.footerContent,
   });
@@ -20,40 +21,69 @@ class AuthLayout extends StatelessComponent {
   @override
   Component build(BuildContext context) {
     return div(
-      classes:
-          'min-h-screen bg-white text-gray-900 flex flex-col items-center justify-center py-8 px-4 font-sans selection:bg-gray-900 selection:text-white',
+      classes: 'bg-neutral w-full min-h-screen flex flex-col justify-center py-10 font-sans selection:bg-slate-900 selection:text-white',
       [
         div(
-          classes: 'max-w-md w-full mx-auto flex flex-col items-center',
+          classes: 'max-w-110 w-full mx-auto flex flex-col justify-center items-center px-4 md:px-0',
           [
-            // Script Branding Logo
-            h1(classes: 'font-script text-primary text-4xl font-normal mb-1', [
-              .text('Branding'),
-            ]),
-
-            // Page Title
-            h1(
-              classes: 'text-center text-2xl md:text-3xl font-extrabold text-black tracking-tight mt-2 mb-1.5',
+            // Brand Logo & Heading Section
+            div(
+              classes: 'flex flex-col items-center mb-8 text-center',
               [
-                .text(title),
+                div(
+                  classes: 'w-14 h-14 rounded-2xl overflow-hidden shadow-2xs border border-border-medium mb-3',
+                  [
+                    img(
+                      src: 'images/finch_app_icon_square.png',
+                      width: 56,
+                      height: 56,
+                      classes: 'w-full h-full object-cover',
+                    ),
+                  ],
+                ),
+                div(
+                  classes: 'mb-0.5',
+                  [
+                    span(
+                      classes: 'font-script text-[44px] font-bold text-slate-900 leading-none select-none',
+                      [.text('Finch')],
+                    ),
+                  ],
+                ),
+                span(
+                  classes: 'text-sm font-medium text-slate-500 mt-1',
+                  [.text('Customer Online Ordering')],
+                ),
+                if (title case final heading? when heading.isNotEmpty)
+                  h1(
+                    classes: 'text-center text-xl font-bold text-slate-900 mt-4 mb-1 tracking-tight',
+                    [.text(heading)],
+                  ),
+                if (descriptionLine1 case final desc? when desc.isNotEmpty)
+                  h4(
+                    classes:
+                        'text-slate-500 text-center mb-2 text-sm font-normal',
+                    [
+                      .text(desc),
+                      if (descriptionLine2 case final d2?
+                          when d2.isNotEmpty) ...[
+                        br(),
+                        .text(d2),
+                      ],
+                    ],
+                  ),
               ],
             ),
 
-            // Subtitle Description
-            p(classes: 'text-xs text-gray-500 font-medium text-center mb-6 max-w-xs', [
-              .text(descriptionLine1),
-              if (descriptionLine2.isNotEmpty) ...[
-                .text(' '),
-                .text(descriptionLine2),
+            // Form Content Container
+            div(
+              classes: 'w-full bg-white rounded-3xl border border-border-medium shadow-[0_4px_16px_rgba(0,0,0,0.04)] p-7 mb-6 flex flex-col gap-4',
+              [
+                formContent,
               ],
-            ]),
+            ),
 
-            // Form Body Container
-            div(classes: 'w-full mb-6', [
-              formContent,
-            ]),
-
-            // Footer Link
+            // Footer Content Link
             footerContent,
           ],
         ),
