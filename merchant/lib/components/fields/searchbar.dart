@@ -18,13 +18,13 @@ class Searchbar extends StatelessComponent {
   Component build(BuildContext context) {
     return label(
       classes:
-          'input ${classes ?? 'flex-2'} h-10 border border-border-medium bg-white rounded-[10px] px-3 text-sm text-slate-900 shadow-2xs flex items-center',
+          'input w-full ${classes ?? 'flex-2'} h-10 border border-border-medium bg-white rounded-xl px-3.5 text-sm text-slate-900 shadow-2xs flex items-center',
       [
-        Search(classes: 'w-4 h-4 text-slate-400 shrink-0 mr-2'),
+        Search(classes: 'w-4 h-4 text-slate-400 shrink-0 mr-2.5'),
 
         input(
           type: .search,
-          classes: 'grow outline-none border-none text-sm text-slate-900 placeholder:text-slate-400',
+          classes: 'grow outline-none border-none text-sm text-slate-900 placeholder:text-slate-400 w-full',
           attributes: {
             'required': '',
             'placeholder': placeholder,

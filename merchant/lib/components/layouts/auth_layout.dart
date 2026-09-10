@@ -42,14 +42,14 @@ class AuthLayout extends StatelessComponent {
                   ],
                 ),
                 div(
-                  classes: 'flex items-center gap-2 mb-0.5',
+                  classes: 'flex items-center gap-2.5 mb-1',
                   [
                     span(
-                      classes: 'font-script text-[42px] font-bold text-slate-900 leading-none select-none',
+                      classes: 'font-black text-3xl sm:text-4xl tracking-tight text-slate-900 leading-none select-none',
                       [.text('Finch')],
                     ),
                     span(
-                      classes: 'text-xs font-black tracking-widest text-slate-700 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-md uppercase leading-none shadow-2xs select-none',
+                      classes: 'text-xs font-black tracking-widest text-sky-600 bg-sky-50 border border-sky-200/80 px-2 py-0.5 rounded-md uppercase leading-none shadow-2xs select-none',
                       [.text('POS')],
                     ),
                   ],

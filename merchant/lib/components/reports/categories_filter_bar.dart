@@ -28,7 +28,7 @@ class CategoriesFilterBar extends StatelessComponent {
       classes: 'flex flex-col md:items-center md:flex-row md:justify-between w-full border-b border-border-medium p-4 gap-4',
       [
         div(
-          classes: 'flex flex-wrap items-center gap-3 text-sm font-medium',
+          classes: 'w-full sm:w-auto flex flex-wrap items-center gap-3 text-sm font-medium',
           [
             ReportStatusFilter(
               status: statusFilter,
@@ -37,11 +37,11 @@ class CategoriesFilterBar extends StatelessComponent {
           ],
         ),
         div(
-          classes: 'flex justify-between gap-2 items-center w-full sm:w-auto',
+          classes: 'flex justify-between gap-2 items-center w-full md:w-auto',
           [
             Searchbar(
               placeholder: 'Search Categories...',
-              classes: 'flex-1 sm:flex-none sm:w-64',
+              classes: 'flex-1 md:flex-none md:w-64',
               onInput: onSearch,
             ),
             if (store != null)

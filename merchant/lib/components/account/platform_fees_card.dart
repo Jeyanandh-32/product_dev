@@ -28,7 +28,6 @@ class _PlatformFeesCardState extends SignalState<PlatformFeesCard> {
 
     final unsettledPaise = summary?.unsettledAmountInPaise ?? 0;
     final unsettledRupees = (unsettledPaise / 100.0).toStringAsFixed(2);
-    final count = summary?.unsettledOrdersCount ?? 0;
     final settlements = summary?.recentSettlements ?? [];
 
     return div(
@@ -45,21 +44,21 @@ class _PlatformFeesCardState extends SignalState<PlatformFeesCard> {
               div([
                 h3(
                   classes: 'text-sm sm:text-base font-bold text-slate-900',
-                  [.text('Platform Fees & Invoices')],
+                  [.text('Platform Fees')],
                 ),
                 p(
                   classes: 'text-xs text-slate-500 font-medium',
-                  [
-                    .text(
-                      'Customer platform fees collected across all your stores',
-                    ),
-                  ],
+                  [.text('Customer platform fees remittance')],
                 ),
               ]),
             ]),
+            span(
+              classes: 'px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-blue-50 text-blue-700 border border-blue-200/80',
+              [.text('1.99% fee')],
+            ),
           ],
         ),
-        _buildBalanceSection(unsettledPaise, unsettledRupees, count, isPaying),
+        _buildBalanceSection(unsettledPaise, unsettledRupees, isPaying),
         if (settlements.isNotEmpty)
           PlatformFeeSettlementHistory(settlements: settlements),
       ],
@@ -69,35 +68,47 @@ class _PlatformFeesCardState extends SignalState<PlatformFeesCard> {
   Component _buildBalanceSection(
     int paise,
     String rupees,
-    int count,
     bool isPaying,
   ) {
     final hasDue = paise > 0;
 
     return div(
       classes:
-          'p-4 rounded-xl border ${hasDue ? 'bg-amber-50/50 border-amber-200/60' : 'bg-green-50/50 border-green-200/60'} flex flex-col sm:flex-row sm:items-center justify-between gap-4',
+          'p-4 rounded-xl border border-border-medium bg-neutral/20 space-y-3',
       [
-        div(classes: 'space-y-1', [
-          div(classes: 'flex items-center gap-2', [
+        div(classes: 'flex items-center justify-between gap-2', [
+          if (hasDue)
             span(
-              classes:
-                  'text-xs font-semibold uppercase tracking-wider ${hasDue ? 'text-amber-800' : 'text-green-800'}',
-              [.text(hasDue ? 'Unsettled Platform Fees' : 'All Settled')],
+              classes: 'inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-50 text-amber-700 border border-amber-200/80',
+              [
+                span(classes: 'w-1.5 h-1.5 rounded-full bg-amber-500', []),
+                .text('Payment Due'),
+              ],
+            )
+          else
+            span(
+              classes: 'inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-50 text-emerald-700 border border-emerald-200',
+              [
+                Check(classes: 'w-3 h-3 text-emerald-600'),
+                .text('All Settled'),
+              ],
             ),
-            if (!hasDue) Check(classes: 'w-4 h-4 text-green-600'),
-          ]),
+          span(
+            classes: 'text-[11px] text-slate-400 font-medium',
+            [.text(hasDue ? 'Auto-calculated' : 'Up to date')],
+          ),
+        ]),
+        div([
           div(
-            classes:
-                'text-2xl sm:text-3xl font-bold tracking-tight ${hasDue ? 'text-amber-950' : 'text-green-950'}',
+            classes: 'text-3xl font-extrabold text-slate-900 tracking-tight',
             [.text('₹$rupees')],
           ),
           p(
-            classes: 'text-xs text-slate-500 font-medium',
+            classes: 'text-xs text-slate-500 font-medium mt-1',
             [
               .text(
                 hasDue
-                    ? 'Collected from $count online customer orders on your behalf.'
+                    ? 'Collected across all your stores pending remittance.'
                     : 'Zero outstanding platform fees pending remittance.',
               ),
             ],
@@ -108,13 +119,13 @@ class _PlatformFeesCardState extends SignalState<PlatformFeesCard> {
             type: ButtonType.button,
             disabled: isPaying,
             classes:
-                'btn btn-primary h-10 px-5 rounded-xl text-sm font-bold transition flex items-center justify-center gap-2 cursor-pointer shadow-xs ${isPaying ? 'opacity-70 cursor-not-allowed' : ''}',
+                'btn btn-primary w-full h-10 px-4 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer shadow-xs active:scale-[0.99] ${isPaying ? 'opacity-70 cursor-not-allowed' : ''}',
             events: {'click': (_) => PlatformFeeActions.payPlatformFees()},
             [
               if (isPaying)
                 span(classes: 'loading loading-spinner loading-xs', [])
               else
-                CreditCard(classes: 'w-4 h-4'),
+                CreditCard(classes: 'w-3.5 h-3.5 text-slate-300'),
               .text(isPaying ? 'Redirecting...' : 'Pay Platform Fees'),
             ],
           ),

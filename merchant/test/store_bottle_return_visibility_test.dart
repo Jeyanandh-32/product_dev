@@ -1,4 +1,7 @@
+import 'package:merchant/components/cards/bottle_return_product_row.dart';
 import 'package:merchant/components/cards/store_card.dart';
+import 'package:merchant/components/containers/bottle_return_header.dart';
+import 'package:merchant/components/containers/bottle_return_reward_card.dart';
 import 'package:merchant/components/modals/add_edit_store_modal.dart';
 import 'package:merchant/components/modals/store_bottle_returns_section.dart';
 import 'package:models/models.dart';
@@ -50,12 +53,64 @@ void main() {
       expect(cardProvisioned.onBottleReturns, isNotNull);
     });
 
-    test('AddEditStoreModal holds provisioned and unprovisioned store instances', () {
-      final modalUnprovisioned = AddEditStoreModal(store: unprovisionedStore);
-      expect(modalUnprovisioned.store?.isBottleReturnEnabled, isFalse);
+    test(
+      'AddEditStoreModal holds provisioned and unprovisioned store instances',
+      () {
+        final modalUnprovisioned = AddEditStoreModal(store: unprovisionedStore);
+        expect(modalUnprovisioned.store?.isBottleReturnEnabled, isFalse);
 
-      final modalProvisioned = AddEditStoreModal(store: provisionedStore);
-      expect(modalProvisioned.store?.isBottleReturnEnabled, isTrue);
+        final modalProvisioned = AddEditStoreModal(store: provisionedStore);
+        expect(modalProvisioned.store?.isBottleReturnEnabled, isTrue);
+      },
+    );
+  });
+
+  group('Bottle Return Modal Component Tests', () {
+    test('BottleReturnHeader instantiates and reflects store parameters', () {
+      var toggled = false;
+      final header = BottleReturnHeader(
+        store: provisionedStore,
+        isEnabled: true,
+        returnableCount: 5,
+        onToggleStore: (v) => toggled = v,
+      );
+
+      expect(header.store.id, 'store-2');
+      expect(header.isEnabled, isTrue);
+      expect(header.returnableCount, 5);
+      header.onToggleStore(false);
+      expect(toggled, isFalse);
+    });
+
+    test('BottleReturnRewardCard instantiates with reward amount', () {
+      var savedReward = 0;
+      final rewardCard = BottleReturnRewardCard(
+        rewardAmount: 15,
+        onSaveReward: (amt) => savedReward = amt,
+      );
+
+      expect(rewardCard.rewardAmount, 15);
+      rewardCard.onSaveReward(20);
+      expect(savedReward, 20);
+    });
+
+    test('BottleReturnProductRow instantiates with product map and dispatches toggle', () {
+      var toggledState = false;
+      final row = BottleReturnProductRow(
+        product: {
+          'productId': 'p-1',
+          'name': 'Mineral Water Bottle 1L',
+          'categoryName': 'Beverages',
+          'sellingPrice': 25.0,
+          'isReturnable': true,
+        },
+        onToggle: (val) => toggledState = val,
+      );
+
+      expect(row.product['productId'], 'p-1');
+      expect(row.product['isReturnable'], isTrue);
+      row.onToggle(false);
+      expect(toggledState, isFalse);
     });
   });
 }

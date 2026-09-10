@@ -20,25 +20,28 @@ class Modal extends StatelessComponent {
     final maxWidth = maxWidthClass ?? 'max-w-md';
 
     return div(
-      classes: 'fixed inset-0 bg-black/40 z-50 flex items-center justify-center px-4',
+      classes: 'fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-3 sm:p-4',
       events: {
         'click': (e) => activeModalSignal.value = ActiveModal.none,
       },
       [
         div(
           classes:
-              'bg-white w-full $maxWidth rounded-3xl border border-border-medium shadow-modal p-6 flex flex-col gap-4 max-h-[90vh] overflow-y-auto',
+              'bg-white w-full $maxWidth rounded-2xl sm:rounded-3xl border border-border-medium shadow-modal p-4 sm:p-6 flex flex-col gap-3.5 sm:gap-4 max-h-[92vh] sm:max-h-[90vh] overflow-y-auto',
           events: {'click': (e) => e.stopPropagation()},
           [
-            div(classes: 'flex justify-between items-center', [
-              h1(classes: 'text-xl font-bold text-slate-900 tracking-tight', [
-                .text(title),
-              ]),
+            div(classes: 'flex justify-between items-center gap-2.5', [
+              h1(
+                classes: 'text-base sm:text-xl font-bold text-slate-900 tracking-tight truncate min-w-0 flex-1',
+                [
+                  .text(title),
+                ],
+              ),
               button(
                 onClick: () => activeModalSignal.value = ActiveModal.none,
-                classes: 'border border-border-medium p-1.5 rounded-full transition-all duration-150 hover:bg-slate-100 hover:text-slate-900 text-slate-500 hover:cursor-pointer',
+                classes: 'border border-border-medium p-1 sm:p-1.5 rounded-full transition-all duration-150 hover:bg-slate-100 hover:text-slate-900 text-slate-500 hover:cursor-pointer shrink-0',
                 [
-                  X(classes: 'w-5 h-5'),
+                  X(classes: 'w-4 h-4 sm:w-5 sm:h-5'),
                 ],
               ),
             ]),

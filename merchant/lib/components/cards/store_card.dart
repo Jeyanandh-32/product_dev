@@ -44,38 +44,25 @@ class StoreCard extends StatelessComponent {
         if (onClick != null) 'click': (e) => onClick?.call(),
       },
       [
-        div(classes: 'flex justify-between items-center', [
-          h2(classes: 'font-semibold text-slate-900 text-base truncate mr-2', [
-            .text(store.name),
-          ]),
-          div(classes: 'flex items-center gap-1.5', [
-            if (store.isBottleReturnEnabled && onBottleReturns != null)
-              button(
-                classes: 'flex items-center gap-1 text-xs font-medium text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200/80 px-2.5 py-1 rounded-lg hover:cursor-pointer transition-all duration-200 shadow-2xs',
-                events: {
-                  'click': (e) {
-                    e.stopPropagation();
-                    onBottleReturns?.call();
-                  },
-                },
-                [
-                  Recycle(classes: 'w-3.5 h-3.5 text-emerald-600'),
-                  .text('Bottle Returns'),
-                ],
-              ),
-            button(
-              classes: 'p-1.5 rounded-lg text-slate-400 hover:text-slate-900 hover:bg-slate-100 hover:cursor-pointer transition-all duration-200',
-              events: {
-                'click': (e) {
-                  e.stopPropagation();
-                  onEdit?.call();
-                },
+        div(classes: 'flex justify-between items-center gap-2', [
+          h2(
+            classes: 'font-semibold text-slate-900 text-base truncate min-w-0 flex-1 mr-2',
+            [
+              .text(store.name),
+            ],
+          ),
+          button(
+            classes: 'p-1.5 rounded-lg text-slate-400 hover:text-slate-900 hover:bg-slate-100 hover:cursor-pointer transition-all duration-200 shrink-0',
+            events: {
+              'click': (e) {
+                e.stopPropagation();
+                onEdit?.call();
               },
-              [
-                SquarePen(classes: 'w-4 h-4'),
-              ],
-            ),
-          ]),
+            },
+            [
+              SquarePen(classes: 'w-4 h-4'),
+            ],
+          ),
         ]),
 
         div(
@@ -110,6 +97,26 @@ class StoreCard extends StatelessComponent {
             ],
           ],
         ),
+
+        if (store.isBottleReturnEnabled && onBottleReturns != null)
+          div(
+            classes: 'pt-3 border-t border-border-medium/60 flex items-center w-full',
+            [
+              button(
+                classes: 'flex items-center justify-center gap-1.5 text-xs font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200/80 px-3 py-2 rounded-xl hover:cursor-pointer transition-all duration-150 shadow-2xs w-full',
+                events: {
+                  'click': (e) {
+                    e.stopPropagation();
+                    onBottleReturns?.call();
+                  },
+                },
+                [
+                  Recycle(classes: 'w-4 h-4 text-emerald-600'),
+                  .text('Bottle Returns'),
+                ],
+              ),
+            ],
+          ),
       ],
     );
   }

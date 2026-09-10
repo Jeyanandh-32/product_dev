@@ -1,6 +1,7 @@
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 
+/// Card component displaying payment methods distribution doughnut chart (UPI vs Cash).
 class PaymentMethodChartCard extends StatelessComponent {
   final String formattedTotal;
   final String upiPercent;
@@ -20,8 +21,7 @@ class PaymentMethodChartCard extends StatelessComponent {
   @override
   Component build(BuildContext context) {
     return div(
-      classes:
-          'bg-white p-4.5 rounded-2xl border border-border-medium shadow-2xs flex flex-col justify-between',
+      classes: 'min-w-0 bg-white p-4 sm:p-4.5 rounded-2xl border border-border-medium shadow-2xs flex flex-col justify-between',
       [
         div([
           h3(classes: 'text-base font-bold text-gray-900', [
@@ -34,8 +34,7 @@ class PaymentMethodChartCard extends StatelessComponent {
 
         // Canvas chart container with centered overlay
         div(
-          classes:
-              'relative w-full h-48 my-1 bg-neutral/20 rounded-lg border border-border-light flex items-center justify-center p-3',
+          classes: 'relative w-full min-w-0 h-48 my-1 bg-neutral/20 rounded-lg border border-border-light flex items-center justify-center p-3',
           [
             Component.element(
               tag: 'canvas',
@@ -44,13 +43,11 @@ class PaymentMethodChartCard extends StatelessComponent {
               children: [],
             ),
             div(
-              classes:
-                  'absolute inset-0 flex flex-col items-center justify-center pointer-events-none text-center p-2',
+              classes: 'absolute inset-0 flex flex-col items-center justify-center pointer-events-none text-center p-2',
               [
                 span(
                   id: 'paymentCenterLabel',
-                  classes:
-                      'text-[10px] uppercase tracking-wider font-extrabold text-black mb-0.5 max-w-27.5 truncate',
+                  classes: 'text-[10px] uppercase tracking-wider font-extrabold text-black mb-0.5 max-w-27.5 truncate',
                   [.text('TOTAL')],
                 ),
                 span(

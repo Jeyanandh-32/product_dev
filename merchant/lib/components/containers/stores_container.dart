@@ -27,7 +27,7 @@ class _StoresContainerState extends SignalState<StoresContainer> {
     final terminalsState = terminalsSignal.value;
 
     return div(
-      classes: 'h-125 md:flex-1 lg:h-full lg:flex-1 min-h-0 bg-white rounded-2xl border border-border-medium p-6 flex flex-col shrink-0 lg:shrink',
+      classes: 'h-125 md:flex-1 lg:h-full lg:flex-1 min-h-0 bg-white rounded-2xl border border-border-medium p-5 flex flex-col shrink-0 lg:shrink',
       [
         div(
           classes: 'flex flex-col sm:flex-row lg:flex-col gap-2 justify-between items-start sm:items-center lg:items-start',

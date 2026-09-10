@@ -49,13 +49,16 @@ class _BottleReturnModalState extends SignalState<BottleReturnModal> {
       return name.contains(query) || cat.contains(query);
     }).toList();
 
-    final returnableCount = allProducts.where((item) => item['isReturnable'] as bool? ?? false).length;
-    final areAllReturnable = allProducts.isNotEmpty && returnableCount == allProducts.length;
+    final returnableCount = allProducts
+        .where((item) => item['isReturnable'] as bool? ?? false)
+        .length;
+    final areAllReturnable =
+        allProducts.isNotEmpty && returnableCount == allProducts.length;
 
     return Modal(
       title: 'Bottle Return Settings — ${store.name}',
       maxWidthClass: 'max-w-2xl',
-      child: div(classes: 'flex flex-col gap-4', [
+      child: div(classes: 'flex flex-col gap-3 sm:gap-4', [
         BottleReturnHeader(
           store: store,
           isEnabled: isEnabled,
@@ -75,30 +78,36 @@ class _BottleReturnModalState extends SignalState<BottleReturnModal> {
               rewardAmount: newAmount,
             ),
           ),
-          div(classes: 'flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3', [
-            Searchbar(
-              placeholder: 'Search store products...',
-              classes: 'flex-1 h-10 ring-1 ring-border-medium rounded-xl',
-              onInput: (val) => setState(() => _searchQuery = val),
-            ),
-            div(classes: 'flex items-center justify-between sm:justify-end gap-2.5', [
-              div(classes: 'flex items-center gap-2 px-3 h-10 bg-neutral/50 border border-border-medium/60 rounded-xl', [
-                span(classes: 'text-xs font-semibold text-gray-600', [.text('Select All')]),
+          Searchbar(
+            placeholder: 'Search store products...',
+            classes: 'w-full h-10 ring-1 ring-border-medium rounded-xl text-sm',
+            onInput: (val) => setState(() => _searchQuery = val),
+          ),
+          div(classes: 'flex items-center justify-between gap-2.5', [
+            div(
+              classes: 'flex items-center gap-2 px-3 h-10 bg-neutral/50 border border-border-medium/60 rounded-xl',
+              [
+                span(classes: 'text-xs font-semibold text-gray-600', [
+                  .text('Select All'),
+                ]),
                 input(
                   type: InputType.checkbox,
-                  classes: 'toggle toggle-sm ${areAllReturnable ? 'toggle-success' : ''} hover:cursor-pointer',
+                  classes:
+                      'toggle toggle-sm ${areAllReturnable ? 'toggle-success' : ''} hover:cursor-pointer shrink-0',
                   checked: areAllReturnable,
-                  events: {'change': (e) => BottleReturnActions.toggleAllProducts(
-                    storeId: store.id,
-                    isReturnable: (e.target as web.HTMLInputElement).checked,
-                  )},
+                  events: {
+                    'change': (e) => BottleReturnActions.toggleAllProducts(
+                      storeId: store.id,
+                      isReturnable: (e.target as web.HTMLInputElement).checked,
+                    ),
+                  },
                 ),
-              ]),
-              span(
-                classes: 'text-xs font-semibold text-gray-500 bg-neutral/80 px-3 rounded-xl whitespace-nowrap h-10 flex items-center',
-                [.text('$returnableCount / ${allProducts.length} Returnable')],
-              ),
-            ]),
+              ],
+            ),
+            span(
+              classes: 'text-xs font-semibold text-gray-500 bg-neutral/80 px-3 rounded-xl whitespace-nowrap h-10 flex items-center justify-center shrink-0',
+              [.text('$returnableCount / ${allProducts.length} Returnable')],
+            ),
           ]),
           if (productsState.isLoading)
             Loading(text: 'Loading store items...', fullScreen: false)
@@ -106,7 +115,7 @@ class _BottleReturnModalState extends SignalState<BottleReturnModal> {
             CenteredMessage(message: 'No products found for this store.')
           else
             div(
-              classes: 'flex flex-col gap-2.5 max-h-[340px] overflow-y-auto pr-1',
+              classes: 'flex flex-col gap-2 sm:gap-2.5 max-h-[42vh] sm:max-h-85 overflow-y-auto pr-0.5 sm:pr-1',
               [
                 for (final item in filtered)
                   BottleReturnProductRow(

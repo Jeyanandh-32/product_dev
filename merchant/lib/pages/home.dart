@@ -20,14 +20,14 @@ class _HomeState extends SignalState<Home> {
     final isNavOpen = navOpenSignal.value;
 
     return div(classes: 'h-screen w-full bg-neutral flex', [
-      if (isNavOpen)
-        div(
-          classes: 'fixed inset-0 bg-black/40 z-40 lg:hidden',
-          events: {
-            'click': (e) => navOpenSignal.value = false,
-          },
-          [],
-        ),
+      div(
+        classes:
+            'fixed inset-0 bg-black/40 z-40 lg:hidden transition-opacity duration-300 ease-in-out ${isNavOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}',
+        events: {
+          'click': (e) => navOpenSignal.value = false,
+        },
+        [],
+      ),
 
       const Drawer(),
 

@@ -19,27 +19,31 @@ class ProductsFilterBar extends StatelessComponent {
 
   @override
   Component build(BuildContext context) {
-    return div(classes: 'flex flex-wrap items-center gap-2', [
-      ReportDropdownFilter<bool>(
-        title: 'Status',
-        currentValue: statusFilter,
-        items: const [
-          DropdownFilterItem(label: 'All Statuses', value: null),
-          DropdownFilterItem(label: 'Active', value: true),
-          DropdownFilterItem(label: 'Inactive', value: false),
-        ],
-        onSelected: onStatusFilterChanged,
-      ),
-      ReportDropdownFilter<bool>(
-        title: 'Stock Monitor',
-        currentValue: stockMonitorFilter,
-        items: const [
-          DropdownFilterItem(label: 'All Stock Monitors', value: null),
-          DropdownFilterItem(label: 'Enabled', value: true),
-          DropdownFilterItem(label: 'Disabled', value: false),
-        ],
-        onSelected: onStockMonitorFilterChanged,
-      ),
-    ]);
+    return div(
+      classes: 'grid grid-cols-2 gap-2 w-full sm:flex sm:items-center',
+      [
+        ReportDropdownFilter<bool>(
+          title: 'Status',
+          currentValue: statusFilter,
+          items: const [
+            DropdownFilterItem(label: 'All Statuses', value: null),
+            DropdownFilterItem(label: 'Active', value: true),
+            DropdownFilterItem(label: 'Inactive', value: false),
+          ],
+          onSelected: onStatusFilterChanged,
+        ),
+        ReportDropdownFilter<bool>(
+          title: 'Stock Monitor',
+          currentValue: stockMonitorFilter,
+          alignEnd: true,
+          items: const [
+            DropdownFilterItem(label: 'All Stock Monitors', value: null),
+            DropdownFilterItem(label: 'Enabled', value: true),
+            DropdownFilterItem(label: 'Disabled', value: false),
+          ],
+          onSelected: onStockMonitorFilterChanged,
+        ),
+      ],
+    );
   }
 }

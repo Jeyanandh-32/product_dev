@@ -11,50 +11,54 @@ class OrdersFilterBar extends StatelessComponent {
 
   @override
   Component build(BuildContext context) {
-    return div(classes: 'flex flex-wrap items-center gap-2', [
-      ReportDropdownFilter<String>(
-        title: 'Payment',
-        currentValue: reportsPaymentMethodSignal.value,
-        items: const [
-          DropdownFilterItem(label: 'All Payment Modes', value: null),
-          DropdownFilterItem(label: 'Cash', value: 'cash'),
-          DropdownFilterItem(label: 'UPI', value: 'upi'),
-          DropdownFilterItem(label: 'Free', value: 'complimentary'),
-        ],
-        onSelected: (val) {
-          reportsPaymentMethodSignal.value = val;
-          onFiltersChanged();
-        },
-      ),
-      ReportDropdownFilter<String>(
-        title: 'Payment Status',
-        currentValue: reportsPaymentStatusSignal.value,
-        items: const [
-          DropdownFilterItem(label: 'All Payment Statuses', value: null),
-          DropdownFilterItem(label: 'Completed', value: 'completed'),
-          DropdownFilterItem(label: 'Pending', value: 'pending'),
-          DropdownFilterItem(label: 'Failed', value: 'failed'),
-        ],
-        onSelected: (val) {
-          reportsPaymentStatusSignal.value = val;
-          onFiltersChanged();
-        },
-      ),
-      ReportDropdownFilter<String>(
-        title: 'Order Status',
-        currentValue: reportsOrderStatusSignal.value,
-        items: const [
-          DropdownFilterItem(label: 'All Order Statuses', value: null),
-          DropdownFilterItem(label: 'Completed', value: 'completed'),
-          DropdownFilterItem(label: 'Preparing', value: 'preparing'),
-          DropdownFilterItem(label: 'Pending', value: 'pending'),
-          DropdownFilterItem(label: 'Cancelled', value: 'cancelled'),
-        ],
-        onSelected: (val) {
-          reportsOrderStatusSignal.value = val;
-          onFiltersChanged();
-        },
-      ),
-    ]);
+    return div(
+      classes: 'contents sm:flex sm:flex-wrap sm:items-center sm:gap-2',
+      [
+        ReportDropdownFilter<String>(
+          title: 'Payment',
+          currentValue: reportsPaymentMethodSignal.value,
+          items: const [
+            DropdownFilterItem(label: 'All Payment Modes', value: null),
+            DropdownFilterItem(label: 'Cash', value: 'cash'),
+            DropdownFilterItem(label: 'UPI', value: 'upi'),
+            DropdownFilterItem(label: 'Free', value: 'complimentary'),
+          ],
+          onSelected: (val) {
+            reportsPaymentMethodSignal.value = val;
+            onFiltersChanged();
+          },
+        ),
+        ReportDropdownFilter<String>(
+          title: 'Payment Status',
+          currentValue: reportsPaymentStatusSignal.value,
+          alignEnd: true,
+          items: const [
+            DropdownFilterItem(label: 'All Payment Statuses', value: null),
+            DropdownFilterItem(label: 'Completed', value: 'completed'),
+            DropdownFilterItem(label: 'Pending', value: 'pending'),
+            DropdownFilterItem(label: 'Failed', value: 'failed'),
+          ],
+          onSelected: (val) {
+            reportsPaymentStatusSignal.value = val;
+            onFiltersChanged();
+          },
+        ),
+        ReportDropdownFilter<String>(
+          title: 'Order Status',
+          currentValue: reportsOrderStatusSignal.value,
+          items: const [
+            DropdownFilterItem(label: 'All Order Statuses', value: null),
+            DropdownFilterItem(label: 'Completed', value: 'completed'),
+            DropdownFilterItem(label: 'Preparing', value: 'preparing'),
+            DropdownFilterItem(label: 'Pending', value: 'pending'),
+            DropdownFilterItem(label: 'Cancelled', value: 'cancelled'),
+          ],
+          onSelected: (val) {
+            reportsOrderStatusSignal.value = val;
+            onFiltersChanged();
+          },
+        ),
+      ],
+    );
   }
 }

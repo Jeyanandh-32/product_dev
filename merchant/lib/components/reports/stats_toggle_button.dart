@@ -21,7 +21,7 @@ class StatsToggleButton extends StatelessComponent {
     return button(
       type: .button,
       classes:
-          'btn btn-sm rounded-full border text-xs font-semibold px-3 h-8 flex items-center gap-1.5 shadow-2xs cursor-pointer transition-all $activeClass',
+          'btn btn-sm rounded-xl sm:rounded-full border text-xs font-semibold px-3 h-9 flex items-center justify-center sm:justify-start gap-1.5 shadow-2xs cursor-pointer transition-all w-full sm:w-auto $activeClass',
       events: {
         'click': (e) => onToggle(),
       },

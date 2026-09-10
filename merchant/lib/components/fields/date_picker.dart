@@ -67,20 +67,22 @@ class _DatePickerState extends SignalState<DatePicker> {
     final isYesterday = _tempDate == yesterday;
 
     return details(
-      classes: 'dropdown dropdown-bottom dropdown-start inline-block',
+      classes: 'dropdown dropdown-bottom dropdown-start w-full sm:w-auto inline-block',
       [
         summary(
-          classes: 'btn btn-sm rounded-full border border-border-medium bg-base-100 hover:bg-base-200 text-xs px-3 font-medium flex items-center gap-2 shadow-2xs cursor-pointer list-none select-none',
+          classes: 'btn btn-sm rounded-xl sm:rounded-full border border-border-medium bg-base-100 hover:bg-base-200 text-xs px-3.5 font-medium flex items-center justify-between sm:justify-start gap-2 shadow-2xs cursor-pointer list-none select-none w-full sm:w-auto h-9',
           [
-            Calendar(classes: 'w-3.5 h-3.5 text-primary'),
-            span(classes: 'text-xs text-base-content font-medium', [
-              .text(_buttonText),
+            div(classes: 'flex items-center gap-2 truncate', [
+              Calendar(classes: 'w-3.5 h-3.5 text-primary shrink-0'),
+              span(classes: 'text-xs text-base-content font-medium truncate', [
+                .text(_buttonText),
+              ]),
             ]),
-            ChevronDown(classes: 'w-3.5 h-3.5 opacity-60'),
+            ChevronDown(classes: 'w-3.5 h-3.5 opacity-60 shrink-0'),
           ],
         ),
         div(
-          classes: 'dropdown-content menu bg-base-100 rounded-2xl z-30 mt-2 p-3 shadow-xl border border-border-medium w-72 flex flex-col gap-2.5',
+          classes: 'dropdown-content menu bg-base-100 rounded-2xl z-30 mt-2 p-3 shadow-xl border border-border-medium w-72 max-w-[calc(100vw-2.5rem)] flex flex-col gap-2.5',
           [
             div(classes: 'flex flex-col gap-1', [
               span(

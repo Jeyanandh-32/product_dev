@@ -22,32 +22,52 @@ class Drawer extends SignalComponent {
 }
 
 class _DrawerState extends SignalState<Drawer> {
-  static Component _navChevron({required bool isOpen}) {
-    const iconClass = 'w-4 h-4 ml-auto mr-3 text-slate-400';
-    return isOpen
-        ? ChevronDown(classes: iconClass)
-        : ChevronRight(classes: iconClass);
-  }
+  bool? _isInventoryExpanded;
+  bool? _isReportsExpanded;
+  String? _lastLocation;
 
   void _navigateTo(BuildContext context, String path) {
-    Router.of(context).push(path);
+    final router = Router.of(context);
+    final currentLocation = router.matchList.uri.toString();
+    final wasOpen = navOpenSignal.value;
     navOpenSignal.value = false;
+
+    if (currentLocation == path) return;
+
+    if (wasOpen) {
+      Future.delayed(const Duration(milliseconds: 180), () {
+        if (mounted) router.push(path);
+      });
+    } else {
+      router.push(path);
+    }
   }
+
+  void _toggleInventory(bool currentlyOpen) =>
+      setState(() => _isInventoryExpanded = !currentlyOpen);
+
+  void _toggleReports(bool currentlyOpen) =>
+      setState(() => _isReportsExpanded = !currentlyOpen);
 
   @override
   Component buildSignal(BuildContext context) {
     final location = Router.of(context).matchList.uri.toString();
+    if (_lastLocation != location) {
+      _lastLocation = location;
+      _isInventoryExpanded = null;
+      _isReportsExpanded = null;
+    }
+
     final activeTab = NavTab.values.firstWhere(
       (t) => location.startsWith(t.path),
       orElse: () => .dashboard,
     );
     final isNavOpen = navOpenSignal.value;
 
-    final isDashboard = activeTab == .dashboard;
     final isInventory = activeTab == .inventory;
     final isReports = activeTab == .reports;
-    final isStores = activeTab == .stores;
-    final isAccount = activeTab == .account;
+    final isInventoryOpen = _isInventoryExpanded ?? isInventory;
+    final isReportsOpen = _isReportsExpanded ?? isReports;
 
     final activeInv = isInventory
         ? SubTab.values.firstWhere(
@@ -64,24 +84,25 @@ class _DrawerState extends SignalState<Drawer> {
 
     return div(
       classes:
-          'fixed z-50 ${isNavOpen ? 'left-0' : '-left-full'} transition-all duration-300 lg:left-0 flex w-64 h-full bg-white border-r border-border-medium flex-col items-center ${component.classes ?? ''}',
+          'fixed inset-y-0 left-0 z-50 w-64 h-full bg-white border-r border-border-medium flex flex-col items-center transform transition-transform duration-300 ease-in-out lg:translate-x-0 ${isNavOpen ? 'translate-x-0' : '-translate-x-full'} ${component.classes ?? ''}',
       [
         const DrawerBrandHeader(),
         ul(classes: 'mt-3 flex-1 w-full px-3.5 space-y-1 overflow-y-auto', [
           DrawerNavButtons.navButton(
             name: 'Dashboard',
             prefixIcon: LayoutGrid(classes: 'w-4.5 h-4.5'),
-            isSelected: isDashboard,
+            isSelected: activeTab == .dashboard,
             onClick: () => _navigateTo(context, '/'),
           ),
           DrawerNavButtons.navButton(
             name: 'Inventory',
             prefixIcon: ShoppingCart(classes: 'w-4.5 h-4.5'),
-            suffixIcon: _navChevron(isOpen: isInventory),
+            suffixIcon: DrawerNavButtons.chevron(isOpen: isInventoryOpen),
             isSelected: isInventory,
-            onClick: () => _navigateTo(context, '/inventory/products'),
+            isExpandable: true,
+            onClick: () => _toggleInventory(isInventoryOpen),
           ),
-          if (isInventory)
+          if (isInventoryOpen)
             DrawerInventorySubNav(
               activeInv: activeInv,
               onNavigate: (targetRoute) => _navigateTo(context, targetRoute),
@@ -89,11 +110,12 @@ class _DrawerState extends SignalState<Drawer> {
           DrawerNavButtons.navButton(
             name: 'Reports',
             prefixIcon: ChartNoAxesCombined(classes: 'w-4.5 h-4.5'),
-            suffixIcon: _navChevron(isOpen: isReports),
+            suffixIcon: DrawerNavButtons.chevron(isOpen: isReportsOpen),
             isSelected: isReports,
-            onClick: () => _navigateTo(context, '/reports/orders'),
+            isExpandable: true,
+            onClick: () => _toggleReports(isReportsOpen),
           ),
-          if (isReports)
+          if (isReportsOpen)
             DrawerReportsSubNav(
               activeRep: activeRep,
               onNavigate: (targetRoute) => _navigateTo(context, targetRoute),
@@ -101,13 +123,13 @@ class _DrawerState extends SignalState<Drawer> {
           DrawerNavButtons.navButton(
             name: 'Stores',
             prefixIcon: Store(classes: 'w-4.5 h-4.5'),
-            isSelected: isStores,
+            isSelected: activeTab == .stores,
             onClick: () => _navigateTo(context, '/stores'),
           ),
           DrawerNavButtons.navButton(
             name: 'Account',
             prefixIcon: UserRound(classes: 'w-4.5 h-4.5'),
-            isSelected: isAccount,
+            isSelected: activeTab == .account,
             onClick: () => _navigateTo(context, '/account'),
           ),
         ]),

@@ -34,7 +34,7 @@ class DashboardPaymentChartsRow extends StatelessComponent {
   Component build(BuildContext context) {
     final formattedTotal = '₹ ${totalRevenue.toStringAsFixed(2)}';
 
-    return div(classes: 'grid grid-cols-1 md:grid-cols-2 gap-4', [
+    return div(classes: 'grid grid-cols-1 md:grid-cols-2 gap-4 min-w-0', [
       PaymentMethodChartCard(
         formattedTotal: formattedTotal,
         upiPercent: '$upiPercent%',

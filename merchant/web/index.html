@@ -61,10 +61,10 @@
                 const ctx = document.getElementById(canvasId);
                 if (!ctx) {
                     retries = retries || 0;
-                    if (retries < 20) {
+                    if (retries < 35) {
                         setTimeout(function() {
                             window.renderChart(canvasId, type, data, options, retries + 1);
-                        }, 16);
+                        }, 30);
                     }
                     return null;
                 }
@@ -109,6 +109,14 @@
                 window._charts[canvasId] = chart;
                 return chart;
             };
+
+            window.addEventListener('resize', function() {
+                for (const key in window._charts) {
+                    if (window._charts[key]) {
+                        try { window._charts[key].resize(); } catch(e) {}
+                    }
+                }
+            });
         </script>
 
 

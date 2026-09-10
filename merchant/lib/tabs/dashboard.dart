@@ -65,8 +65,7 @@ class _DashboardState extends SignalState<Dashboard> {
     final storeList = storesState.value ?? [];
     if (storeList.isEmpty) {
       return div(
-        classes:
-            'flex-1 flex flex-col items-center justify-center bg-neutral/30 p-8 space-y-3',
+        classes: 'flex-1 flex flex-col items-center justify-center bg-neutral/30 p-8 space-y-3',
         [
           ShoppingBag(classes: 'w-12 h-12 text-gray-400 mb-2'),
           h3(classes: 'text-lg font-bold text-gray-800', [
@@ -98,7 +97,7 @@ class _DashboardState extends SignalState<Dashboard> {
     final totalOrdersCount = pStatus.paidCount + pStatus.freeCount;
 
     return div(
-      classes: 'flex-1 overflow-y-auto bg-neutral/30 p-4 space-y-4',
+      classes: 'flex-1 overflow-y-auto bg-neutral/30 p-3 sm:p-4 space-y-4',
       [
         DashboardHeaderBar(
           selectedRange: _selectedRange,
@@ -134,12 +133,12 @@ class _DashboardState extends SignalState<Dashboard> {
           isStoreActive: selectedStore.isActive,
         ),
 
-        div(classes: 'grid grid-cols-1 lg:grid-cols-12 gap-4', [
+        div(classes: 'grid grid-cols-1 lg:grid-cols-12 gap-4 min-w-0', [
           const CategorySalesChartCard(),
           const HourlyOrdersChartCard(),
         ]),
 
-        div(classes: 'grid grid-cols-1 lg:grid-cols-12 gap-4', [
+        div(classes: 'grid grid-cols-1 lg:grid-cols-12 gap-4 min-w-0', [
           TopProductsCard(topProducts: topProducts),
           LowStockCard(lowStockProducts: lowStockProducts),
         ]),

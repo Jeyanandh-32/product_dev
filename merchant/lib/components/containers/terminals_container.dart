@@ -7,9 +7,9 @@ import 'package:merchant/components/fields/searchbar.dart';
 import 'package:merchant/components/loading.dart';
 import 'package:merchant/components/signal_component.dart';
 import 'package:merchant/exceptions/api_exception.dart';
-import 'package:merchant/signals/terminals_signal.dart';
 import 'package:merchant/signals/navigation_signal.dart';
 import 'package:merchant/signals/stores_signal.dart';
+import 'package:merchant/signals/terminals_signal.dart';
 
 class TerminalsContainer extends SignalComponent {
   const TerminalsContainer({super.key});
@@ -37,12 +37,10 @@ class _TerminalsContainerState extends SignalState<TerminalsContainer> {
         [];
 
     return div(
-      classes:
-          'h-[500px] md:flex-1 lg:h-full lg:flex-2 min-h-0 p-4 bg-white rounded-2xl border border-border-medium flex flex-col flex-shrink-0 lg:flex-shrink',
+      classes: 'h-125 md:flex-1 lg:h-full lg:flex-2 min-h-0 p-5 bg-white rounded-2xl border border-border-medium flex flex-col shrink-0 lg:shrink',
       [
         div(
-          classes:
-              'flex flex-col sm:flex-row gap-2 lg:gap-0 justify-between items-start sm:items-center',
+          classes: 'flex flex-col sm:flex-row gap-2 lg:gap-0 justify-between items-start sm:items-center',
           [
             h3(
               classes: 'text-primary font-semibold text-lg flex items-center',
@@ -62,6 +60,7 @@ class _TerminalsContainerState extends SignalState<TerminalsContainer> {
             div(classes: 'flex gap-2 w-full sm:w-auto', [
               Searchbar(
                 placeholder: 'Search Terminal...',
+                classes: 'flex-1',
               ),
               if (selectedStore != null)
                 AddButton(
@@ -76,8 +75,7 @@ class _TerminalsContainerState extends SignalState<TerminalsContainer> {
         ),
 
         div(
-          classes:
-              'divider before:h-[0.5px] after:h-[0.5px] before:bg-gray-300 after:bg-gray-300',
+          classes: 'divider before:h-[0.5px] after:h-[0.5px] before:bg-gray-300 after:bg-gray-300',
           [],
         ),
 
@@ -95,8 +93,7 @@ class _TerminalsContainerState extends SignalState<TerminalsContainer> {
           CenteredMessage(message: 'No terminals found.')
         else
           div(
-            classes:
-                'grid grid-cols-1 sm:grid-cols-2 gap-4 overflow-y-auto flex-1 pr-2 auto-rows-max',
+            classes: 'grid grid-cols-1 sm:grid-cols-2 gap-4 overflow-y-auto flex-1 pr-2 auto-rows-max',
             [
               for (final terminal in terminalsList)
                 TerminalCard(

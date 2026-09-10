@@ -55,37 +55,23 @@ class DashboardBarLineChartsDrawer {
           },
         ],
       },
-      options: {
-        'responsive': true,
-        'maintainAspectRatio': false,
-        'plugins': {
-          'legend': {'display': false},
-          'tooltip': {
-            'mode': 'index',
-            'intersect': false,
-            'padding': 8,
-            'cornerRadius': 6,
-          },
-        },
-        'scales': {
-          'x': {
-            'grid': {'display': false},
-          },
-          'y': {
-            'grid': {'color': '#F3F4F6'},
-            'beginAtZero': true,
-          },
-        },
-      },
+      options: DashboardBarChartOptions.salesTrendLine(),
     );
   }
 
   static void drawTopCategoriesChart(DashboardCategorySalesData catSales) {
+    final displayLabels = catSales.labels.map((label) {
+      if (label.length > 20) {
+        return '${label.substring(0, 18)}…';
+      }
+      return label;
+    }).toList();
+
     drawChart(
       canvasId: 'topCategoriesChart',
       type: 'bar',
       data: {
-        'labels': catSales.labels,
+        'labels': displayLabels,
         'datasets': [
           {
             'label': 'Sales (₹)',
@@ -101,7 +87,7 @@ class DashboardBarLineChartsDrawer {
           },
         ],
       },
-      options: DashboardBarChartOptions.standard(),
+      options: DashboardBarChartOptions.categoryHorizontalBar(),
     );
   }
 
@@ -121,7 +107,7 @@ class DashboardBarLineChartsDrawer {
           },
         ],
       },
-      options: DashboardBarChartOptions.standard(),
+      options: DashboardBarChartOptions.hourlyOrdersBar(),
     );
   }
 }

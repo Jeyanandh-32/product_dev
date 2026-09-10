@@ -22,7 +22,7 @@ class ProfitLossToolbar extends StatelessComponent {
       classes: 'flex flex-col md:items-center md:flex-row md:justify-between w-full border-b border-border-medium p-4 gap-4',
       [
         div(
-          classes: 'flex flex-wrap items-center gap-3 text-sm font-medium',
+          classes: 'grid grid-cols-1 gap-2 w-full sm:w-auto sm:flex sm:flex-wrap sm:items-center sm:gap-3 text-sm font-medium',
           [
             DateRangePicker(
               fromDate: reportsFromDateSignal.value,
@@ -43,11 +43,11 @@ class ProfitLossToolbar extends StatelessComponent {
           ],
         ),
         div(
-          classes: 'flex justify-between gap-2 items-center w-full sm:w-auto',
+          classes: 'flex justify-between gap-2 items-center w-full md:w-auto',
           [
             Searchbar(
               placeholder: 'Search Products...',
-              classes: 'flex-1 sm:flex-none sm:w-64',
+              classes: 'flex-1 md:flex-none md:w-64',
               onInput: onSearch,
             ),
           ],

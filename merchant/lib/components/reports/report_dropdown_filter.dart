@@ -17,6 +17,7 @@ class ReportDropdownFilter<T> extends StatelessComponent {
   final T? currentValue;
   final List<DropdownFilterItem<T>> items;
   final ValueChanged<T?> onSelected;
+  final bool alignEnd;
 
   const ReportDropdownFilter({
     super.key,
@@ -24,6 +25,7 @@ class ReportDropdownFilter<T> extends StatelessComponent {
     required this.currentValue,
     required this.items,
     required this.onSelected,
+    this.alignEnd = false,
   });
 
   void _closeDropdown() {
@@ -49,22 +51,25 @@ class ReportDropdownFilter<T> extends StatelessComponent {
         ? '$title: All'
         : '$title: ${selectedItem.label}';
 
+    final dropdownAlign = alignEnd
+        ? 'dropdown-end sm:dropdown-start'
+        : 'dropdown-start';
+
     return details(
-      classes: 'dropdown dropdown-bottom dropdown-start inline-block',
+      classes:
+          'dropdown dropdown-bottom $dropdownAlign w-full sm:w-auto inline-block',
       [
         summary(
-          classes:
-              'btn btn-sm rounded-full border border-border-medium bg-base-100 hover:bg-base-200 text-xs px-3 font-medium flex items-center gap-1.5 shadow-2xs cursor-pointer list-none select-none',
+          classes: 'btn btn-sm rounded-xl sm:rounded-full border border-border-medium bg-base-100 hover:bg-base-200 text-xs px-3 font-medium flex items-center justify-between sm:justify-start gap-1.5 shadow-2xs cursor-pointer list-none select-none w-full sm:w-auto h-9',
           [
-            span(classes: 'text-xs text-base-content font-medium', [
+            span(classes: 'text-xs text-base-content font-medium truncate', [
               .text(displayLabel),
             ]),
-            ChevronDown(classes: 'w-3.5 h-3.5 opacity-60'),
+            ChevronDown(classes: 'w-3.5 h-3.5 opacity-60 shrink-0'),
           ],
         ),
         ul(
-          classes:
-              'dropdown-content menu bg-base-100 rounded-2xl z-30 mt-2 p-2 shadow-xl border border-border-medium w-48 flex flex-col gap-1',
+          classes: 'dropdown-content menu bg-base-100 rounded-2xl z-30 mt-2 p-2 shadow-xl border border-border-medium w-48 max-w-[calc(100vw-2rem)] flex flex-col gap-1',
           [
             for (final item in items)
               li([

@@ -23,18 +23,20 @@ class OrdersToolbar extends StatelessComponent {
       classes: 'flex flex-col md:items-center md:flex-row md:justify-between w-full border-b border-border-medium p-4 gap-4',
       [
         div(
-          classes: 'flex flex-wrap items-center gap-3 text-sm font-medium',
+          classes: 'grid grid-cols-2 gap-2 w-full sm:flex sm:flex-wrap sm:items-center sm:gap-3 text-sm font-medium',
           [
-            DateRangePicker(
-              fromDate: reportsFromDateSignal.value,
-              toDate: reportsToDateSignal.value,
-              onChanged: (from, to) {
-                reportsFromDateSignal.value = from;
-                reportsToDateSignal.value = to;
-                ordersPageSignal.value = 1;
-                refreshOrdersSignal();
-              },
-            ),
+            div(classes: 'col-span-2 sm:col-span-1 w-full sm:w-auto', [
+              DateRangePicker(
+                fromDate: reportsFromDateSignal.value,
+                toDate: reportsToDateSignal.value,
+                onChanged: (from, to) {
+                  reportsFromDateSignal.value = from;
+                  reportsToDateSignal.value = to;
+                  ordersPageSignal.value = 1;
+                  refreshOrdersSignal();
+                },
+              ),
+            ]),
             OrdersFilterBar(
               onFiltersChanged: () {
                 ordersPageSignal.value = 1;
@@ -50,11 +52,11 @@ class OrdersToolbar extends StatelessComponent {
           ],
         ),
         div(
-          classes: 'flex justify-between gap-2 items-center w-full sm:w-auto',
+          classes: 'flex justify-between gap-2 items-center w-full md:w-auto',
           [
             Searchbar(
               placeholder: 'Search Orders...',
-              classes: 'flex-1 sm:flex-none sm:w-64',
+              classes: 'flex-1 md:flex-none md:w-64',
               onInput: onSearch,
             ),
           ],
