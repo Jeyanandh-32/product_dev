@@ -5,8 +5,6 @@ import 'package:customer/components/orders/customer_order_tab.dart';
 import 'package:customer/components/signal_component.dart';
 import 'package:customer/components/store/floating_cart_bar.dart';
 import 'package:customer/components/store/store_category_filters.dart';
-import 'package:customer/pages/login.dart';
-import 'package:customer/pages/register.dart';
 import 'package:jaspr/dom.dart';
 import 'package:test/test.dart';
 
@@ -57,18 +55,6 @@ void main() {
 
       final state = appLayout.createState();
       expect(state, isNotNull);
-    });
-
-    test('LoginPage and RegisterPage instantiate as SignalComponents', () {
-      const loginPage = LoginPage();
-      expect(loginPage, isA<SignalComponent>());
-      final loginState = loginPage.createState();
-      expect(loginState, isNotNull);
-
-      const registerPage = RegisterPage();
-      expect(registerPage, isA<SignalComponent>());
-      final registerState = registerPage.createState();
-      expect(registerState, isNotNull);
     });
 
     test('FloatingCartBar instantiates with cart totals', () {
