@@ -1,6 +1,4 @@
 *.sh
-!reset_db.sh
-
 *.rest
 .dart_tool/
 
@@ -12,10 +10,6 @@
 .agents/
 .dart_skills/
 AGENTS.md
-*.png
-!landing/images/*.png
-!landing/*.png
-!assets/brand/*.png
 .widget_preview/
 build/
 *.exe
