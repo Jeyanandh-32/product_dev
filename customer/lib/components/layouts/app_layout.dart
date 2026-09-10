@@ -55,10 +55,10 @@ class _AppLayoutState extends SignalState<AppLayout> {
                 // Right Actions: My Orders, Customer Avatar & Logout Button
                 div(classes: 'flex items-center gap-2.5', [
                   button(
-                    classes: 'flex items-center gap-2 px-3 py-1.5 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold text-xs transition-all cursor-pointer border border-gray-200/80 active:scale-95',
+                    classes: 'flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold text-xs transition-all cursor-pointer border border-border-medium active:scale-95',
                     onClick: () => Router.of(context).push('/orders'),
                     [
-                      Package(classes: 'w-3.5 h-3.5 text-gray-600'),
+                      Package(classes: 'w-3.5 h-3.5 text-slate-600'),
                       .text('My Orders'),
                     ],
                   ),
@@ -66,7 +66,7 @@ class _AppLayoutState extends SignalState<AppLayout> {
                   // Customer Initials Pill (Clickable -> Account Profile) OR Sign In Button
                   if (customer != null)
                     button(
-                      classes: 'w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-900 hover:text-white text-black font-bold text-xs flex items-center justify-center border border-gray-200/80 transition-all cursor-pointer active:scale-95 select-none p-0',
+                      classes: 'w-8 h-8 rounded-full bg-slate-100 hover:bg-[#0B132B] hover:text-white text-slate-800 font-bold text-xs flex items-center justify-center border border-border-medium transition-all cursor-pointer active:scale-95 select-none p-0',
                       attributes: {'title': 'Profile'},
                       onClick: () => Router.of(context).push('/profile'),
                       [

@@ -19,29 +19,24 @@ class EmptyCartState extends StatelessComponent {
     final store = currentStore;
 
     return div(
-      classes:
-          'flex flex-col items-center justify-center py-16 px-4 text-center gap-3 bg-white rounded-3xl border border-dashed border-gray-200',
+      classes: 'flex flex-col items-center justify-center py-16 px-4 text-center gap-3 bg-white rounded-3xl border border-dashed border-gray-200',
       [
         div(
-          classes:
-              'w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 mb-1',
+          classes: 'w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 mb-1',
           [ShoppingBag(classes: 'w-7 h-7 text-gray-400')],
         ),
-        h2(classes: 'text-xl font-extrabold text-black', [
+        h2(classes: 'text-xl font-extrabold text-slate-900', [
           .text('Your cart is empty'),
         ]),
-        p(classes: 'text-sm text-gray-500 max-w-sm', [
+        p(classes: 'text-sm text-slate-500 max-w-sm', [
           .text('Browse store catalog menus to add items to your cart.'),
         ]),
         button(
-          classes:
-              'mt-2 px-6 py-3 rounded-full bg-black text-white font-bold text-xs hover:bg-gray-800 transition-all cursor-pointer border-0',
+          classes: 'mt-2 px-6 py-3 rounded-full bg-[#0B132B] hover:bg-[#1C2541] text-white font-bold text-xs transition-all cursor-pointer border-0 shadow-2xs active:scale-95',
           onClick: onExplore,
           [
             .text(
-              store != null
-                  ? 'Back to ${store.name}'
-                  : 'Explore Stores',
+              store != null ? 'Back to ${store.name}' : 'Explore Stores',
             ),
           ],
         ),

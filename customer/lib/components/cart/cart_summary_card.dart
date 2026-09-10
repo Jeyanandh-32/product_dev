@@ -45,65 +45,64 @@ class CartSummaryCard extends StatelessComponent {
         : 0.0;
     final finalPayable = grandTotal - walletDeduction;
 
-    final isStoreOrderingActive =
-        currentStore == null ||
-        (currentStore!.isOperational && currentStore!.isOnlineEnabled);
+    final isStoreOrderingActive = switch (currentStore) {
+      final store? => store.isOperational && store.isOnlineEnabled,
+      _ => true,
+    };
 
     final buttonClasses = isStoreOrderingActive
-        ? 'w-full py-4 rounded-2xl bg-emerald-50 hover:bg-emerald-600 text-emerald-700 hover:text-white border border-emerald-200/60 hover:border-emerald-600 font-bold text-sm flex items-center justify-center gap-2 cursor-pointer transition-all shadow-xs active:scale-98'
-        : 'w-full py-4 rounded-2xl bg-gray-300 text-gray-500 font-bold text-sm flex items-center justify-center gap-2 cursor-not-allowed border border-transparent shadow-none';
+        ? 'w-full py-4 rounded-2xl bg-[#0B132B] hover:bg-[#1C2541] text-white font-bold text-sm flex items-center justify-center gap-2 cursor-pointer transition-all shadow-[0_4px_14px_rgba(11,19,43,0.22)] active:scale-98 border-0'
+        : 'w-full py-4 rounded-2xl bg-slate-200 text-slate-400 font-bold text-sm flex items-center justify-center gap-2 cursor-not-allowed border border-transparent shadow-none';
 
     return div(
-      classes: 'lg:col-span-5 w-full bg-white rounded-3xl p-6 sm:p-7 border border-gray-200/80 shadow-sm flex flex-col gap-6 sticky top-24',
+      classes: 'lg:col-span-5 w-full bg-white rounded-3xl p-6 sm:p-7 border border-border-medium shadow-xs flex flex-col gap-6 sticky top-24',
       [
         h2(
-          classes: 'text-lg font-extrabold text-black tracking-tight border-b border-gray-100 pb-4',
-          [
-            .text('Order Summary'),
-          ],
+          classes: 'text-lg font-extrabold text-slate-900 tracking-tight border-b border-border-light pb-4',
+          [.text('Order Summary')],
         ),
 
         div(classes: 'flex flex-col gap-3 text-sm', [
-          div(classes: 'flex justify-between items-center text-gray-500', [
+          div(classes: 'flex justify-between items-center text-slate-500', [
             span([.text('Total No of Items')]),
-            span(classes: 'font-semibold text-black', [
+            span(classes: 'font-semibold text-slate-900', [
               .text('$totalItemCount'),
             ]),
           ]),
-          div(classes: 'flex justify-between items-center text-gray-500', [
+          div(classes: 'flex justify-between items-center text-slate-500', [
             span([.text('Total Order Quantity')]),
-            span(classes: 'font-semibold text-black', [
+            span(classes: 'font-semibold text-slate-900', [
               .text('$totalQuantity'),
             ]),
           ]),
-          div(classes: 'flex justify-between items-center text-gray-500', [
+          div(classes: 'flex justify-between items-center text-slate-500', [
             span([.text('Items Subtotal')]),
-            span(classes: 'font-semibold text-black', [
+            span(classes: 'font-semibold text-slate-900', [
               .text('₹${subtotal.toStringAsFixed(2)}'),
             ]),
           ]),
           if (totalTax > 0)
-            div(classes: 'flex justify-between items-center text-gray-500', [
+            div(classes: 'flex justify-between items-center text-slate-500', [
               span([.text('Taxes & Charges')]),
-              span(classes: 'font-semibold text-black', [
+              span(classes: 'font-semibold text-slate-900', [
                 .text('₹${totalTax.toStringAsFixed(2)}'),
               ]),
             ]),
           if (platformFee > 0)
-            div(classes: 'flex justify-between items-center text-gray-500', [
+            div(classes: 'flex justify-between items-center text-slate-500', [
               span([.text('Platform Fee (1.99%)')]),
-              span(classes: 'font-semibold text-black', [
+              span(classes: 'font-semibold text-slate-900', [
                 .text('₹${platformFee.toStringAsFixed(2)}'),
               ]),
             ]),
-          div(classes: 'flex justify-between items-center text-gray-500', [
+          div(classes: 'flex justify-between items-center text-slate-500', [
             span([.text('Gateway Charges (PhonePe)')]),
-            span(classes: 'font-semibold text-emerald-700', [
+            span(classes: 'font-semibold text-emerald-600', [
               .text('Free (₹0.00)'),
             ]),
           ]),
           div(
-            classes: 'border-t border-dashed border-gray-200 pt-2 flex justify-between items-center text-sm font-bold text-black',
+            classes: 'border-t border-dashed border-border-medium pt-2 flex justify-between items-center text-sm font-bold text-slate-900',
             [
               span([.text('Order Total')]),
               span([.text('₹${grandTotal.toStringAsFixed(2)}')]),

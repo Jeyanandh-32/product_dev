@@ -1,6 +1,10 @@
 import 'package:customer/components/layouts/app_layout.dart';
 import 'package:customer/components/layouts/auth_layout.dart';
+import 'package:customer/components/orders/customer_order_status_tabs.dart';
+import 'package:customer/components/orders/customer_order_tab.dart';
 import 'package:customer/components/signal_component.dart';
+import 'package:customer/components/store/floating_cart_bar.dart';
+import 'package:customer/components/store/store_category_filters.dart';
 import 'package:customer/pages/login.dart';
 import 'package:customer/pages/register.dart';
 import 'package:jaspr/dom.dart';
@@ -65,6 +69,33 @@ void main() {
       expect(registerPage, isA<SignalComponent>());
       final registerState = registerPage.createState();
       expect(registerState, isNotNull);
+    });
+
+    test('FloatingCartBar instantiates with cart totals', () {
+      const cartBar = FloatingCartBar(
+        totalCartCount: 3,
+        totalCartPrice: 450.0,
+      );
+      expect(cartBar.totalCartCount, equals(3));
+      expect(cartBar.totalCartPrice, equals(450.0));
+    });
+
+    test('CustomerOrderStatusTabs instantiates with active tab', () {
+      final tabs = CustomerOrderStatusTabs(
+        selectedTab: CustomerOrderTab.pending,
+        onTabSelected: (_) {},
+      );
+      expect(tabs.selectedTab, equals(CustomerOrderTab.pending));
+    });
+
+    test('StoreCategoryFilters instantiates with empty list', () {
+      final filters = StoreCategoryFilters(
+        categories: const [],
+        selectedCategoryId: null,
+        onSelectCategory: (_) {},
+      );
+      expect(filters.categories, isEmpty);
+      expect(filters.selectedCategoryId, isNull);
     });
   });
 }

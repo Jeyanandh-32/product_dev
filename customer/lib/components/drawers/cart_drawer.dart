@@ -57,22 +57,22 @@ class _CartDrawerState extends SignalState<CartDrawer> {
               [
                 div(classes: 'flex items-center gap-3', [
                   div(
-                    classes: 'w-10 h-10 rounded-xl bg-soft-green text-soft-green-content flex items-center justify-center font-bold',
+                    classes: 'w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold',
                     [
-                      ShoppingBag(classes: 'w-5 h-5 text-emerald-accent'),
+                      ShoppingBag(classes: 'w-5 h-5 text-blue-600'),
                     ],
                   ),
                   div(classes: 'flex flex-col', [
-                    h2(classes: 'text-base font-bold text-gray-900', [
+                    h2(classes: 'text-base font-bold text-slate-900', [
                       .text('Your Shopping Cart'),
                     ]),
-                    span(classes: 'text-xs text-gray-500 font-medium', [
+                    span(classes: 'text-xs text-slate-500 font-medium', [
                       .text('${items.length} unique items'),
                     ]),
                   ]),
                 ]),
                 button(
-                  classes: 'w-9 h-9 rounded-full bg-white hover:bg-gray-100 text-gray-500 flex items-center justify-center transition-all cursor-pointer border-0 shadow-2xs',
+                  classes: 'w-9 h-9 rounded-full bg-white hover:bg-slate-100 text-slate-500 flex items-center justify-center transition-all cursor-pointer border-0 shadow-2xs',
                   onClick: closeCartDrawer,
                   [
                     X(classes: 'w-5 h-5'),
@@ -88,12 +88,12 @@ class _CartDrawerState extends SignalState<CartDrawer> {
                   classes: 'h-full flex flex-col items-center justify-center text-center p-8 gap-4',
                   [
                     div(
-                      classes: 'w-20 h-20 rounded-full bg-soft-green flex items-center justify-center text-emerald-accent',
+                      classes: 'w-20 h-20 rounded-full bg-blue-50 flex items-center justify-center text-blue-600',
                       [
                         ShoppingBag(classes: 'w-10 h-10'),
                       ],
                     ),
-                    h3(classes: 'text-base font-bold text-gray-800', [
+                    h3(classes: 'text-base font-bold text-slate-800', [
                       .text('Your cart is currently empty'),
                     ]),
                     p(classes: 'text-xs text-gray-500 max-w-xs', [

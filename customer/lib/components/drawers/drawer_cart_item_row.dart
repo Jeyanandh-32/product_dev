@@ -30,11 +30,11 @@ class DrawerCartItemRow extends StatelessComponent {
           ),
           div(classes: 'flex flex-col min-w-0', [
             h4(
-              classes: 'text-sm font-bold text-gray-900 truncate',
+              classes: 'text-sm font-bold text-slate-900 truncate',
               [.text(item.product.name)],
             ),
             span(
-              classes: 'text-xs font-semibold text-emerald-accent',
+              classes: 'text-xs font-bold text-slate-900',
               [
                 .text(
                   '₹${item.product.sellingPrice.toStringAsFixed(2)}',
@@ -49,16 +49,16 @@ class DrawerCartItemRow extends StatelessComponent {
           classes: 'flex items-center gap-2 bg-white rounded-xl p-1 shadow-2xs border-0 shrink-0',
           [
             button(
-              classes: 'w-7 h-7 rounded-lg bg-gray-50 hover:bg-gray-100 flex items-center justify-center text-gray-700 cursor-pointer border-0',
+              classes: 'w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 cursor-pointer border-0',
               onClick: () => removeFromCart(item.product),
               [Minus(classes: 'w-3.5 h-3.5')],
             ),
             span(
-              classes: 'font-bold text-xs min-w-4 text-center text-gray-900',
+              classes: 'font-bold text-xs min-w-4 text-center text-slate-900',
               [.text('${item.quantity}')],
             ),
             button(
-              classes: 'w-7 h-7 rounded-lg bg-emerald-50 hover:bg-emerald-600 text-emerald-700 hover:text-white border border-emerald-200/60 hover:border-emerald-600 flex items-center justify-center cursor-pointer transition-all active:scale-95 shadow-2xs',
+              classes: 'w-7 h-7 rounded-lg bg-slate-100 hover:bg-[#0B132B] hover:text-white text-slate-800 flex items-center justify-center cursor-pointer transition-all active:scale-95 shadow-2xs border-0',
               onClick: () => addToCart(
                 currentCartStoreIdSignal.value ?? '',
                 item.product,

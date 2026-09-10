@@ -24,7 +24,7 @@ class CartPageHeader extends StatelessComponent {
       [
         div(classes: 'flex items-center gap-4', [
           button(
-            classes: 'w-10 h-10 rounded-full bg-gray-100 hover:bg-black hover:text-white text-black transition-all flex items-center justify-center cursor-pointer border-0',
+            classes: 'w-10 h-10 rounded-full bg-slate-100 hover:bg-[#0B132B] hover:text-white text-slate-800 transition-all flex items-center justify-center cursor-pointer border-0 active:scale-95 shadow-2xs',
             onClick: () => navigateToRecentStoreOrAll(context),
             [
               ArrowLeft(classes: 'w-5 h-5'),
@@ -32,14 +32,14 @@ class CartPageHeader extends StatelessComponent {
           ),
           div(classes: 'flex flex-col', [
             h1(
-              classes: 'text-xl md:text-3xl font-extrabold text-black tracking-tight',
+              classes: 'text-xl md:text-3xl font-extrabold text-slate-900 tracking-tight',
               [
                 .text('Your Shopping Cart'),
               ],
             ),
-            if (currentStore != null)
-              span(classes: 'text-xs font-bold text-gray-400', [
-                .text('Ordering from ${currentStore!.name}'),
+            if (currentStore case final store?)
+              span(classes: 'text-xs font-bold text-slate-400', [
+                .text('Ordering from ${store.name}'),
               ]),
           ]),
         ]),

@@ -80,11 +80,11 @@ class CartDrawerFooter extends StatelessComponent {
           ),
         ]),
         button(
-          classes: 'w-full py-4 rounded-2xl bg-emerald-50 hover:bg-emerald-600 text-emerald-700 hover:text-white border border-emerald-200/60 hover:border-emerald-600 font-bold text-base flex items-center justify-center gap-2 cursor-pointer transition-all shadow-xs active:scale-98',
+          classes: 'w-full py-4 rounded-2xl bg-[#0B132B] hover:bg-[#1C2541] text-white font-bold text-base flex items-center justify-center gap-2 cursor-pointer transition-all shadow-[0_4px_14px_rgba(11,19,43,0.22)] active:scale-98 border-0',
           onClick: onCheckout,
           [
             if (isSubmitting)
-              span(classes: 'loading loading-spinner loading-sm', [])
+              span(classes: 'loading loading-spinner loading-sm text-white', [])
             else ...[
               .text('Place Order Now'),
               ArrowRight(classes: 'w-5 h-5'),
