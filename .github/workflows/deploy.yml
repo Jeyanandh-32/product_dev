@@ -9,7 +9,18 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  id-token: write   # needed for AWS OIDC auth
+  contents: read
+
+env:
+  AWS_REGION: <us-east-1>
+  SSM_PREFIX: /finch/${{ github.ref_name }}
+
 jobs:
+  # ─────────────────────────────────────────────
+  # 1. Detect changes since each component's last SUCCESSFUL deploy
+  # ─────────────────────────────────────────────
   changes:
     name: Detect Changed Components
     runs-on: ubuntu-latest
@@ -26,278 +37,221 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Filter Changed Paths
-        uses: dorny/paths-filter@v3
-        id: filter
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
         with:
-          base: ${{ github.ref }}
-          filters: |
-            backend:
-              - 'backend/!(migrations)/**'
-              - 'backend/*'
-              - 'packages/models/**'
-              - 'packages/validators/**'
-            merchant:
-              - 'merchant/**'
-              - 'packages/models/**'
-              - 'packages/validators/**'
-              - 'packages/api_client/**'
-              - 'packages/client_repositories/**'
-            customer:
-              - 'customer/**'
-              - 'packages/models/**'
-              - 'packages/validators/**'
-              - 'packages/api_client/**'
-              - 'packages/client_repositories/**'
-            terminal:
-              - 'terminal/**'
-              - 'packages/models/**'
-              - 'packages/validators/**'
-              - 'packages/api_client/**'
-              - 'packages/client_repositories/**'
-            landing:
-              - 'landing/**'
-            migrations:
-              - 'backend/migrations/**'
+          role-to-assume: <arn:aws:iam::ACCOUNT_ID:role/github-actions-deploy-role>
+          aws-region: ${{ env.AWS_REGION }}
 
-  build-backend:
-    name: Build Backend Binary
-    needs: changes
-    runs-on: ubuntu-latest
-    if: needs.changes.outputs.backend == 'true' || github.event_name == 'workflow_dispatch'
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Setup Flutter & Dart SDK
-        uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
-          cache: true
-
-      - name: Install Workspace Dependencies
+      - name: Get last successful deploy SHA per component
+        id: last_sha
         run: |
-          dart pub global activate melos
-          export PATH="$PATH":"$HOME/.pub-cache/bin"
-          melos bootstrap
-
-      - name: Run Backend Tests
-        run: |
-          cd backend && dart test
-
-      - name: Build & Compile Native Backend Binary
-        run: |
-          export PATH="$PATH":"$HOME/.pub-cache/bin"
-          dart pub global activate dart_frog_cli
-          cd backend
-          dart pub global run dart_frog_cli:dart_frog build
-          mv build /tmp/backend-build
-          cd /tmp/backend-build
-          dart pub get
-          dart compile exe bin/server.dart -o $GITHUB_WORKSPACE/server.exe
-
-      - name: Upload Backend Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: release-backend
-          path: server.exe
-
-  build-merchant:
-    name: Build Merchant Web App
-    needs: changes
-    runs-on: ubuntu-latest
-    if: needs.changes.outputs.merchant == 'true' || github.event_name == 'workflow_dispatch'
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Setup Flutter & Dart SDK
-        uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
-          cache: true
-
-      - name: Install Workspace Dependencies
-        run: |
-          dart pub global activate melos
-          export PATH="$PATH":"$HOME/.pub-cache/bin"
-          melos bootstrap
-
-      - name: Build Merchant Web App (WASM)
-        run: |
-          cd merchant
-          dart pub global activate jaspr_cli
-          export PATH="$PATH":"$HOME/.pub-cache/bin"
-          jaspr build --experimental-wasm
-
-      - name: Upload Merchant Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: release-merchant
-          path: merchant/build/jaspr/
-
-  build-customer:
-    name: Build Customer Web App
-    needs: changes
-    runs-on: ubuntu-latest
-    if: needs.changes.outputs.customer == 'true' || github.event_name == 'workflow_dispatch'
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Setup Flutter & Dart SDK
-        uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
-          cache: true
-
-      - name: Install Workspace Dependencies
-        run: |
-          dart pub global activate melos
-          export PATH="$PATH":"$HOME/.pub-cache/bin"
-          melos bootstrap
-
-      - name: Run Customer Tests
-        run: |
-          cd customer && dart test
-
-      - name: Build Customer Store Web App (WASM)
-        run: |
-          cd customer
-          dart pub global activate jaspr_cli
-          export PATH="$PATH":"$HOME/.pub-cache/bin"
-          jaspr build --experimental-wasm
-
-      - name: Upload Customer Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: release-customer
-          path: customer/build/jaspr/
-
-  build-terminal:
-    name: Build Terminal Web App
-    needs: changes
-    runs-on: ubuntu-latest
-    if: needs.changes.outputs.terminal == 'true' || github.event_name == 'workflow_dispatch'
-    env:
-      API_DOMAIN: ${{ github.ref == 'refs/heads/stage' && 'finch-stage.sparrow-x.in' || 'finch.sparrow-x.in' }}
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Setup Flutter & Dart SDK
-        uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
-          cache: true
-
-      - name: Install Workspace Dependencies
-        run: |
-          dart pub global activate melos
-          export PATH="$PATH":"$HOME/.pub-cache/bin"
-          melos bootstrap
-
-      - name: Run Terminal Tests
-        run: |
-          cd terminal && flutter test
-
-      - name: Build Terminal Web App (WASM)
-        run: |
-          cd terminal
-          flutter build web --wasm --release --base-href /terminal/ --dart-define=API_BASE_URL=https://${{ env.API_DOMAIN }}
-
-      - name: Upload Terminal Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: release-terminal
-          path: terminal/build/web/
-
-  deploy:
-    name: Deploy to EC2
-    needs: [changes, build-backend, build-merchant, build-customer, build-terminal]
-    runs-on: ubuntu-latest
-    if: |
-      !cancelled() &&
-      (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/stage') &&
-      (needs.changes.outputs.backend == 'true' || needs.changes.outputs.merchant == 'true' || needs.changes.outputs.customer == 'true' || needs.changes.outputs.terminal == 'true' || needs.changes.outputs.landing == 'true' || needs.changes.outputs.migrations == 'true' || github.event_name == 'workflow_dispatch') &&
-      (needs.build-backend.result == 'success' || needs.build-backend.result == 'skipped') &&
-      (needs.build-merchant.result == 'success' || needs.build-merchant.result == 'skipped') &&
-      (needs.build-customer.result == 'success' || needs.build-customer.result == 'skipped') &&
-      (needs.build-terminal.result == 'success' || needs.build-terminal.result == 'skipped')
-    env:
-      TARGET_WEB_DIR: ${{ github.ref == 'refs/heads/stage' && '/var/www/pos/stage' || '/var/www/pos/main' }}
-      TARGET_APP_DIR: ${{ github.ref == 'refs/heads/stage' && 'pos/stage' || 'pos/main' }}
-      TARGET_SERVICE: ${{ github.ref == 'refs/heads/stage' && 'pos-stage-backend' || 'pos-backend' }}
-
-    steps:
-      - name: Checkout Code (Static Files & Migrations)
-        if: needs.changes.outputs.landing == 'true' || needs.changes.outputs.migrations == 'true' || github.event_name == 'workflow_dispatch'
-        uses: actions/checkout@v4
-
-      - name: Download Backend Artifact
-        if: needs.changes.outputs.backend == 'true' || github.event_name == 'workflow_dispatch'
-        uses: actions/download-artifact@v4
-        with:
-          name: release-backend
-          path: dist
-
-      - name: Download Merchant Artifact
-        if: needs.changes.outputs.merchant == 'true' || github.event_name == 'workflow_dispatch'
-        uses: actions/download-artifact@v4
-        with:
-          name: release-merchant
-          path: dist/merchant
-
-      - name: Download Customer Artifact
-        if: needs.changes.outputs.customer == 'true' || github.event_name == 'workflow_dispatch'
-        uses: actions/download-artifact@v4
-        with:
-          name: release-customer
-          path: dist/store
-
-      - name: Download Terminal Artifact
-        if: needs.changes.outputs.terminal == 'true' || github.event_name == 'workflow_dispatch'
-        uses: actions/download-artifact@v4
-        with:
-          name: release-terminal
-          path: dist/terminal
-
-      - name: Setup SSH Key
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
-
-      - name: Deploy Selective Artifacts via Rsync
-        run: |
-          if [ -d "dist/merchant" ]; then
-            rsync -avz -e "ssh -i ~/.ssh/id_rsa" dist/merchant/ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:${{ env.TARGET_WEB_DIR }}/merchant/
-          fi
-          if [ -d "dist/store" ]; then
-            rsync -avz -e "ssh -i ~/.ssh/id_rsa" dist/store/ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:${{ env.TARGET_WEB_DIR }}/store/
-          fi
-          if [ -d "dist/terminal" ]; then
-            rsync -avz -e "ssh -i ~/.ssh/id_rsa" dist/terminal/ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:${{ env.TARGET_WEB_DIR }}/terminal/
-          fi
-          if [ "${{ needs.changes.outputs.landing }}" = "true" ] || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            rsync -avz -e "ssh -i ~/.ssh/id_rsa" landing/ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:${{ env.TARGET_WEB_DIR }}/landing/
-          fi
-          if [ "${{ needs.changes.outputs.migrations }}" = "true" ] || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            rsync -avz -e "ssh -i ~/.ssh/id_rsa" backend/migrations/ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/${{ env.TARGET_APP_DIR }}/migrations/
-          fi
-          if [ -f "dist/server.exe" ]; then
-            rsync -avz -e "ssh -i ~/.ssh/id_rsa" dist/server.exe ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/${{ env.TARGET_APP_DIR }}/server.exe
-          fi
-
-      - name: Restart Backend Service
-        if: needs.changes.outputs.backend == 'true' || needs.changes.outputs.migrations == 'true' || github.event_name == 'workflow_dispatch'
-        run: |
-          ssh -i ~/.ssh/id_rsa ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << EOF
-            if [ -f "/home/${{ secrets.EC2_USER }}/${{ env.TARGET_APP_DIR }}/server.exe" ]; then
-              chmod +x /home/${{ secrets.EC2_USER }}/${{ env.TARGET_APP_DIR }}/server.exe
-              sudo systemctl restart ${{ env.TARGET_SERVICE }}
+          ROOT_SHA=$(git rev-list --max-parents=0 HEAD)
+          for comp in backend merchant customer terminal landing migrations; do
+            SHA=$(aws ssm get-parameter \
+              --name "${SSM_PREFIX}/${comp}/last-deploy-sha" \
+              --query 'Parameter.Value' --output text 2>/dev/null || echo "")
+            if [ -z "$SHA" ] || [ "$SHA" == "None" ] || ! git cat-file -e "$SHA" 2>/dev/null; then
+              SHA="$ROOT_SHA"
             fi
-          EOF
+            echo "Resolved base for $comp: $SHA"
+            echo "${comp}_sha=$SHA" >> "$GITHUB_OUTPUT"
+          done
 
+      - name: Detect changes per component
+        id: filter
+        run: |
+          check() {
+            local name=$1 sha=$2; shift 2
+            local paths=("$@")
+            if ! git diff --quiet "$sha" HEAD -- "${paths[@]}"; then
+              echo "${name}=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "${name}=false" >> "$GITHUB_OUTPUT"
+            fi
+          }
 
+          check backend    "${{ steps.last_sha.outputs.backend_sha }}"    'backend' ':!backend/migrations'
+          check merchant   "${{ steps.last_sha.outputs.merchant_sha }}"   'merchant'
+          check customer   "${{ steps.last_sha.outputs.customer_sha }}"   'customer'
+          check terminal   "${{ steps.last_sha.outputs.terminal_sha }}"   'terminal'
+          check landing    "${{ steps.last_sha.outputs.landing_sha }}"    'landing'
+          check migrations "${{ steps.last_sha.outputs.migrations_sha }}" 'backend/migrations'
+
+  # ─────────────────────────────────────────────
+  # 2. Deploy jobs — one per component
+  #    Each only writes its SSM success-marker if deploy succeeds
+  # ─────────────────────────────────────────────
+  deploy-migrations:
+    name: Run DB Migrations
+    needs: changes
+    if: needs.changes.outputs.migrations == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: <arn:aws:iam::ACCOUNT_ID:role/github-actions-deploy-role>
+          aws-region: ${{ env.AWS_REGION }}
+      - name: Run migrations on EC2
+        run: |
+          aws ssm send-command \
+            --instance-ids "<i-xxxxxxxxxxxxxxxxx>" \
+            --document-name "AWS-RunShellScript" \
+            --parameters 'commands=["cd /opt/finch/backend && ./run-migrations.sh"]' \
+            --comment "Finch migrations - ${{ github.sha }}" \
+            --output text
+      - name: Mark migrations deploy successful
+        if: success()
+        run: |
+          aws ssm put-parameter \
+            --name "${SSM_PREFIX}/migrations/last-deploy-sha" \
+            --value "${{ github.sha }}" \
+            --type String --overwrite
+
+  deploy-backend:
+    name: Deploy Backend
+    needs: [changes, deploy-migrations]
+    if: |
+      always() &&
+      needs.changes.outputs.backend == 'true' &&
+      (needs.deploy-migrations.result == 'success' || needs.deploy-migrations.result == 'skipped')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: <arn:aws:iam::ACCOUNT_ID:role/github-actions-deploy-role>
+          aws-region: ${{ env.AWS_REGION }}
+      - name: Deploy backend to EC2
+        run: |
+          aws ssm send-command \
+            --instance-ids "<i-xxxxxxxxxxxxxxxxx>" \
+            --document-name "AWS-RunShellScript" \
+            --parameters 'commands=["cd /opt/finch/backend && git fetch && git checkout ${{ github.sha }} && ./deploy.sh"]' \
+            --comment "Finch backend - ${{ github.sha }}" \
+            --output text
+      - name: Mark backend deploy successful
+        if: success()
+        run: |
+          aws ssm put-parameter \
+            --name "${SSM_PREFIX}/backend/last-deploy-sha" \
+            --value "${{ github.sha }}" \
+            --type String --overwrite
+
+  deploy-merchant:
+    name: Deploy Merchant App
+    needs: [changes, deploy-backend]
+    if: |
+      always() &&
+      needs.changes.outputs.merchant == 'true' &&
+      (needs.deploy-backend.result == 'success' || needs.deploy-backend.result == 'skipped')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: <arn:aws:iam::ACCOUNT_ID:role/github-actions-deploy-role>
+          aws-region: ${{ env.AWS_REGION }}
+      - name: Deploy merchant to EC2
+        run: |
+          aws ssm send-command \
+            --instance-ids "<i-xxxxxxxxxxxxxxxxx>" \
+            --document-name "AWS-RunShellScript" \
+            --parameters 'commands=["cd /opt/finch/merchant && git fetch && git checkout ${{ github.sha }} && ./deploy.sh"]' \
+            --comment "Finch merchant - ${{ github.sha }}" \
+            --output text
+      - name: Mark merchant deploy successful
+        if: success()
+        run: |
+          aws ssm put-parameter \
+            --name "${SSM_PREFIX}/merchant/last-deploy-sha" \
+            --value "${{ github.sha }}" \
+            --type String --overwrite
+
+  deploy-customer:
+    name: Deploy Customer App
+    needs: [changes, deploy-backend]
+    if: |
+      always() &&
+      needs.changes.outputs.customer == 'true' &&
+      (needs.deploy-backend.result == 'success' || needs.deploy-backend.result == 'skipped')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: <arn:aws:iam::ACCOUNT_ID:role/github-actions-deploy-role>
+          aws-region: ${{ env.AWS_REGION }}
+      - name: Deploy customer to EC2
+        run: |
+          aws ssm send-command \
+            --instance-ids "<i-xxxxxxxxxxxxxxxxx>" \
+            --document-name "AWS-RunShellScript" \
+            --parameters 'commands=["cd /opt/finch/customer && git fetch && git checkout ${{ github.sha }} && ./deploy.sh"]' \
+            --comment "Finch customer - ${{ github.sha }}" \
+            --output text
+      - name: Mark customer deploy successful
+        if: success()
+        run: |
+          aws ssm put-parameter \
+            --name "${SSM_PREFIX}/customer/last-deploy-sha" \
+            --value "${{ github.sha }}" \
+            --type String --overwrite
+
+  deploy-terminal:
+    name: Deploy Terminal App
+    needs: [changes, deploy-backend]
+    if: |
+      always() &&
+      needs.changes.outputs.terminal == 'true' &&
+      (needs.deploy-backend.result == 'success' || needs.deploy-backend.result == 'skipped')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: <arn:aws:iam::ACCOUNT_ID:role/github-actions-deploy-role>
+          aws-region: ${{ env.AWS_REGION }}
+      - name: Deploy terminal to EC2
+        run: |
+          aws ssm send-command \
+            --instance-ids "<i-xxxxxxxxxxxxxxxxx>" \
+            --document-name "AWS-RunShellScript" \
+            --parameters 'commands=["cd /opt/finch/terminal && git fetch && git checkout ${{ github.sha }} && ./deploy.sh"]' \
+            --comment "Finch terminal - ${{ github.sha }}" \
+            --output text
+      - name: Mark terminal deploy successful
+        if: success()
+        run: |
+          aws ssm put-parameter \
+            --name "${SSM_PREFIX}/terminal/last-deploy-sha" \
+            --value "${{ github.sha }}" \
+            --type String --overwrite
+
+  deploy-landing:
+    name: Deploy Landing Site
+    needs: changes
+    if: needs.changes.outputs.landing == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: <arn:aws:iam::ACCOUNT_ID:role/github-actions-deploy-role>
+          aws-region: ${{ env.AWS_REGION }}
+      - name: Deploy landing to EC2
+        run: |
+          aws ssm send-command \
+            --instance-ids "<i-xxxxxxxxxxxxxxxxx>" \
+            --document-name "AWS-RunShellScript" \
+            --parameters 'commands=["cd /opt/finch/landing && git fetch && git checkout ${{ github.sha }} && ./deploy.sh"]' \
+            --comment "Finch landing - ${{ github.sha }}" \
+            --output text
+      - name: Mark landing deploy successful
+        if: success()
+        run: |
+          aws ssm put-parameter \
+            --name "${SSM_PREFIX}/landing/last-deploy-sha" \
+            --value "${{ github.sha }}" \
+            --type String --overwrite
