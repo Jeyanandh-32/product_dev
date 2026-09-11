@@ -27,13 +27,16 @@ class SecurityPinInputs extends StatelessComponent {
         ),
         input(
           type: InputType.password,
-          classes:
-              'w-full px-4 py-3 rounded-2xl border border-gray-300 focus:border-black focus:outline-hidden text-sm font-semibold text-black bg-gray-50/50 transition-all font-mono tracking-widest',
+          classes: 'w-full px-4 py-3 rounded-2xl border border-gray-300 focus:border-black focus:outline-hidden text-sm font-semibold text-black bg-gray-50/50 transition-all font-mono tracking-widest',
           attributes: {'placeholder': '••••••', 'maxlength': '6'},
           events: {
             'input': (e) {
-              final el = e.target as web.HTMLInputElement;
-              onCurrentPinChanged(el.value);
+              try {
+                final el = e.target as web.HTMLInputElement?;
+                if (el != null) {
+                  onCurrentPinChanged(el.value);
+                }
+              } catch (_) {}
             },
           },
         ),
@@ -49,13 +52,16 @@ class SecurityPinInputs extends StatelessComponent {
           ),
           input(
             type: InputType.password,
-            classes:
-                'w-full px-4 py-3 rounded-2xl border border-gray-300 focus:border-black focus:outline-hidden text-sm font-semibold text-black bg-gray-50/50 transition-all font-mono tracking-widest',
+            classes: 'w-full px-4 py-3 rounded-2xl border border-gray-300 focus:border-black focus:outline-hidden text-sm font-semibold text-black bg-gray-50/50 transition-all font-mono tracking-widest',
             attributes: {'placeholder': '••••••', 'maxlength': '6'},
             events: {
               'input': (e) {
-                final el = e.target as web.HTMLInputElement;
-                onNewPinChanged(el.value);
+                try {
+                  final el = e.target as web.HTMLInputElement?;
+                  if (el != null) {
+                    onNewPinChanged(el.value);
+                  }
+                } catch (_) {}
               },
             },
           ),
@@ -70,13 +76,16 @@ class SecurityPinInputs extends StatelessComponent {
           ),
           input(
             type: InputType.password,
-            classes:
-                'w-full px-4 py-3 rounded-2xl border border-gray-300 focus:border-black focus:outline-hidden text-sm font-semibold text-black bg-gray-50/50 transition-all font-mono tracking-widest',
+            classes: 'w-full px-4 py-3 rounded-2xl border border-gray-300 focus:border-black focus:outline-hidden text-sm font-semibold text-black bg-gray-50/50 transition-all font-mono tracking-widest',
             attributes: {'placeholder': '••••••', 'maxlength': '6'},
             events: {
               'input': (e) {
-                final el = e.target as web.HTMLInputElement;
-                onConfirmPinChanged(el.value);
+                try {
+                  final el = e.target as web.HTMLInputElement?;
+                  if (el != null) {
+                    onConfirmPinChanged(el.value);
+                  }
+                } catch (_) {}
               },
             },
           ),

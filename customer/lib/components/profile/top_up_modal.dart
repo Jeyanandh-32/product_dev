@@ -64,11 +64,15 @@ class TopUpModal extends StatelessComponent {
               value: topUpAmount.toInt().toString(),
               events: {
                 'input': (e) {
-                  final input = e.target as web.HTMLInputElement;
-                  final parsed = double.tryParse(input.value);
-                  if (parsed != null && parsed > 0) {
-                    onAmountChanged(parsed);
-                  }
+                  try {
+                    final input = e.target as web.HTMLInputElement?;
+                    if (input != null) {
+                      final parsed = double.tryParse(input.value);
+                      if (parsed != null && parsed > 0) {
+                        onAmountChanged(parsed);
+                      }
+                    }
+                  } catch (_) {}
                 },
               },
             ),

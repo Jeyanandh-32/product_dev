@@ -38,38 +38,46 @@ class _FormFieldState extends State<FormField> {
   void _handleInput(dynamic eventOrValue) {
     final callback = component.onChange;
     if (callback == null) return;
-    if (eventOrValue case final web.Event event) {
-      if (event.target case final web.HTMLInputElement target) {
+    try {
+      final event = eventOrValue as web.Event;
+      final target = event.target as web.HTMLInputElement?;
+      if (target != null) {
         callback(target.value);
         return;
       }
+    } catch (_) {}
+    if (eventOrValue is String) {
+      callback(eventOrValue);
+      return;
     }
     callback(eventOrValue?.toString() ?? '');
   }
 
   void _handleKeyDown(dynamic eventOrValue) {
-    if (eventOrValue case final web.KeyboardEvent event
-        when event.key == 'Enter') {
-      final target = event.target as web.HTMLInputElement?;
-      final form = target?.form;
-      if (form != null && target != null) {
-        final elements = form.querySelectorAll(
-          'input:not([type="hidden"]):not([disabled])',
-        );
-        final list = <web.HTMLInputElement>[];
-        for (var i = 0; i < elements.length; i++) {
-          final item = elements.item(i);
-          if (item.isA<web.HTMLInputElement>()) {
-            list.add(item as web.HTMLInputElement);
+    try {
+      final event = eventOrValue as web.KeyboardEvent;
+      if (event.key == 'Enter') {
+        final target = event.target as web.HTMLInputElement?;
+        final form = target?.form;
+        if (form != null && target != null) {
+          final elements = form.querySelectorAll(
+            'input:not([type="hidden"]):not([disabled])',
+          );
+          final list = <web.HTMLInputElement>[];
+          for (var i = 0; i < elements.length; i++) {
+            final item = elements.item(i);
+            if (item.isA<web.HTMLInputElement>()) {
+              list.add(item as web.HTMLInputElement);
+            }
+          }
+          final index = list.indexOf(target);
+          if (index != -1 && index < list.length - 1) {
+            event.preventDefault();
+            list[index + 1].focus();
           }
         }
-        final index = list.indexOf(target);
-        if (index != -1 && index < list.length - 1) {
-          event.preventDefault();
-          list[index + 1].focus();
-        }
       }
-    }
+    } catch (_) {}
   }
 
   @override

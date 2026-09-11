@@ -53,9 +53,9 @@ class _AppLayoutState extends SignalState<AppLayout> {
                 ),
 
                 // Right Actions: My Orders, Customer Avatar & Logout Button
-                div(classes: 'flex items-center gap-2.5', [
+                div(classes: 'flex items-center gap-2.5 shrink-0', [
                   button(
-                    classes: 'flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold text-xs transition-all cursor-pointer border border-border-medium active:scale-95',
+                    classes: 'h-8 flex items-center gap-2 px-3.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold text-xs transition-all cursor-pointer border border-border-medium active:scale-95 shrink-0 select-none',
                     onClick: () => Router.of(context).push('/orders'),
                     [
                       Package(classes: 'w-3.5 h-3.5 text-slate-600'),
@@ -66,7 +66,7 @@ class _AppLayoutState extends SignalState<AppLayout> {
                   // Customer Initials Pill (Clickable -> Account Profile) OR Sign In Button
                   if (customer != null)
                     button(
-                      classes: 'w-8 h-8 rounded-full bg-slate-100 hover:bg-[#0B132B] hover:text-white text-slate-800 font-bold text-xs flex items-center justify-center border border-border-medium transition-all cursor-pointer active:scale-95 select-none p-0',
+                      classes: 'w-8 h-8 rounded-full bg-slate-100 hover:bg-brand-dark hover:text-white text-slate-800 font-bold text-xs flex items-center justify-center border border-border-medium transition-all cursor-pointer active:scale-95 select-none p-0 shrink-0',
                       attributes: {'title': 'Profile'},
                       onClick: () => Router.of(context).push('/profile'),
                       [
@@ -79,7 +79,7 @@ class _AppLayoutState extends SignalState<AppLayout> {
                     )
                   else
                     button(
-                      classes: 'flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#0B132B] hover:bg-[#1C2541] text-white font-semibold text-xs transition-all cursor-pointer border-0 active:scale-95 shadow-2xs',
+                      classes: 'h-8 flex items-center gap-1.5 px-3.5 rounded-full bg-brand-dark hover:bg-brand-surface text-white font-semibold text-xs transition-all cursor-pointer border border-transparent active:scale-95 shadow-2xs shrink-0 select-none',
                       onClick: () => Router.of(context).push('/login'),
                       [
                         User(classes: 'w-3.5 h-3.5 text-white'),

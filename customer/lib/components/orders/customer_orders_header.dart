@@ -26,15 +26,13 @@ class CustomerOrdersHeader extends StatelessComponent {
       [
         div(classes: 'flex items-center gap-3', [
           button(
-            classes:
-                'w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 flex items-center justify-center cursor-pointer border-0 transition-all active:scale-95 shrink-0',
+            classes: 'w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 flex items-center justify-center cursor-pointer border-0 transition-all active:scale-95 shrink-0',
             onClick: () => navigateToRecentStoreOrAll(context),
             [ArrowLeft(classes: 'w-5 h-5')],
           ),
           div(classes: 'flex flex-col', [
             h1(
-              classes:
-                  'text-2xl sm:text-3xl font-extrabold text-black tracking-tight',
+              classes: 'text-2xl sm:text-3xl font-extrabold text-black tracking-tight',
               [.text('My Orders')],
             ),
             if (currentCartStoreSignal.value case final store?)
@@ -52,8 +50,7 @@ class CustomerOrdersHeader extends StatelessComponent {
 
         // Mobile-responsive Date Picker Control
         div(
-          classes:
-              'flex items-center justify-between sm:justify-start gap-2 bg-gray-50 border border-gray-200 rounded-2xl px-3.5 py-2 shadow-2xs w-full sm:w-auto',
+          classes: 'flex items-center justify-between sm:justify-start gap-2 bg-gray-50 border border-gray-200 rounded-2xl px-3.5 py-2 shadow-2xs w-full sm:w-auto',
           [
             div(classes: 'flex items-center gap-2', [
               Calendar(classes: 'w-4 h-4 text-gray-500 shrink-0'),
@@ -64,29 +61,32 @@ class CustomerOrdersHeader extends StatelessComponent {
             ]),
             input(
               type: .date,
-              classes:
-                  'bg-transparent text-xs font-bold text-black focus:outline-none cursor-pointer text-right sm:text-left',
+              classes: 'bg-transparent text-xs font-bold text-black focus:outline-none cursor-pointer text-right sm:text-left',
               attributes: {'value': selectedDate},
               events: {
                 'change': (event) {
-                  final target = event.target;
-                  if (target != null && target.isA<web.HTMLInputElement>()) {
-                    final input = target as web.HTMLInputElement;
-                    final val = input.value;
-                    if (val.isNotEmpty && val != selectedDate) {
-                      onDateChanged(val);
+                  try {
+                    final target = event.target;
+                    if (target != null && target.isA<web.HTMLInputElement>()) {
+                      final input = target as web.HTMLInputElement;
+                      final val = input.value;
+                      if (val.isNotEmpty && val != selectedDate) {
+                        onDateChanged(val);
+                      }
                     }
-                  }
+                  } catch (_) {}
                 },
                 'input': (event) {
-                  final target = event.target;
-                  if (target != null && target.isA<web.HTMLInputElement>()) {
-                    final input = target as web.HTMLInputElement;
-                    final val = input.value;
-                    if (val.isNotEmpty && val != selectedDate) {
-                      onDateChanged(val);
+                  try {
+                    final target = event.target;
+                    if (target != null && target.isA<web.HTMLInputElement>()) {
+                      final input = target as web.HTMLInputElement;
+                      final val = input.value;
+                      if (val.isNotEmpty && val != selectedDate) {
+                        onDateChanged(val);
+                      }
                     }
-                  }
+                  } catch (_) {}
                 },
               },
             ),
