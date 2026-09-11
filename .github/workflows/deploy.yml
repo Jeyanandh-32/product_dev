@@ -304,7 +304,7 @@ jobs:
   mark-deployed:
     name: Mark Commit as Deployed
     needs: [changes, deploy]
-    if: needs.deploy.result == 'success'
+    if: !cancelled() && needs.deploy.result == 'success'
     runs-on: ubuntu-latest
     permissions:
       contents: write
