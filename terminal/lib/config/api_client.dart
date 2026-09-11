@@ -16,12 +16,17 @@ String resolveApiBaseUrl() {
   }
 
   if (kIsWeb) {
-    final origin = Uri.base.origin;
-    if (origin.startsWith('https://')) {
-      return origin;
-    }
     final host = Uri.base.host;
-    return 'http://${host.isEmpty ? 'localhost' : host}:8080';
+    final isIp = RegExp(r'^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$').hasMatch(host);
+    if (host.isEmpty || host == 'localhost' || isIp) {
+      return 'http://${host.isEmpty ? 'localhost' : host}:8080';
+    }
+
+    if (host.contains('stage')) {
+      return 'https://api.finch-stage.sparrow-x.in';
+    }
+
+    return 'https://api.finch.sparrow-x.in';
   }
 
   return 'http://localhost:8080';

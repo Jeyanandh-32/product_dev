@@ -23,7 +23,7 @@ jobs:
       deploy_tag: ${{ steps.tag.outputs.deploy_tag }}
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
@@ -43,7 +43,7 @@ jobs:
           echo "base_sha=$BASE_SHA" >> "$GITHUB_OUTPUT"
 
       - name: Filter Changed Paths
-        uses: dorny/paths-filter@v3
+        uses: dorny/paths-filter@v4
         id: filter
         with:
           base: ${{ steps.tag.outputs.base_sha }}
@@ -83,7 +83,7 @@ jobs:
     if: needs.changes.outputs.backend == 'true' || github.event_name == 'workflow_dispatch'
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Setup Flutter & Dart SDK
         uses: subosito/flutter-action@v2
@@ -110,7 +110,7 @@ jobs:
           dart pub get
           dart compile exe bin/server.dart -o $GITHUB_WORKSPACE/server.exe
       - name: Upload Backend Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: release-backend
           path: server.exe
@@ -122,7 +122,7 @@ jobs:
     if: needs.changes.outputs.merchant == 'true' || github.event_name == 'workflow_dispatch'
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Setup Flutter & Dart SDK
         uses: subosito/flutter-action@v2
@@ -142,7 +142,7 @@ jobs:
           export PATH="$PATH":"$HOME/.pub-cache/bin"
           jaspr build --experimental-wasm
       - name: Upload Merchant Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: release-merchant
           path: merchant/build/jaspr/
@@ -154,7 +154,7 @@ jobs:
     if: needs.changes.outputs.customer == 'true' || github.event_name == 'workflow_dispatch'
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Setup Flutter & Dart SDK
         uses: subosito/flutter-action@v2
@@ -177,7 +177,7 @@ jobs:
           export PATH="$PATH":"$HOME/.pub-cache/bin"
           jaspr build --experimental-wasm
       - name: Upload Customer Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: release-customer
           path: customer/build/jaspr/
@@ -189,7 +189,7 @@ jobs:
     if: needs.changes.outputs.terminal == 'true' || github.event_name == 'workflow_dispatch'
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Setup Flutter & Dart SDK
         uses: subosito/flutter-action@v2
@@ -210,7 +210,7 @@ jobs:
           cd terminal
           flutter build web --wasm --release --base-href /
       - name: Upload Terminal Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: release-terminal
           path: terminal/build/web/
@@ -235,32 +235,32 @@ jobs:
     steps:
       - name: Checkout Code (Static Files & Migrations)
         if: needs.changes.outputs.landing == 'true' || needs.changes.outputs.migrations == 'true' || github.event_name == 'workflow_dispatch'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Download Backend Artifact
         if: needs.changes.outputs.backend == 'true' || github.event_name == 'workflow_dispatch'
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: release-backend
           path: dist
 
       - name: Download Merchant Artifact
         if: needs.changes.outputs.merchant == 'true' || github.event_name == 'workflow_dispatch'
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: release-merchant
           path: dist/merchant
 
       - name: Download Customer Artifact
         if: needs.changes.outputs.customer == 'true' || github.event_name == 'workflow_dispatch'
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: release-customer
           path: dist/store
 
       - name: Download Terminal Artifact
         if: needs.changes.outputs.terminal == 'true' || github.event_name == 'workflow_dispatch'
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: release-terminal
           path: dist/terminal
@@ -310,7 +310,7 @@ jobs:
       contents: write
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - name: Move deploy tag to this commit

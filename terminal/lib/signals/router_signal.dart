@@ -7,6 +7,7 @@ import 'package:terminal/pages/loading.dart';
 import 'package:terminal/pages/login.dart';
 import 'package:terminal/signals/auth_signal.dart';
 
+/// Listenable bridge notifying [GoRouter] whenever [authSignal] updates.
 class RouterListenable extends ChangeNotifier {
   RouterListenable() {
     authSignal.subscribe((_) {
@@ -15,8 +16,10 @@ class RouterListenable extends ChangeNotifier {
   }
 }
 
+/// Global listenable instance bound to reactive authentication state changes.
 final routerListenable = RouterListenable();
 
+/// Application router defining routes, guards, and auth redirects.
 final appRouter = GoRouter(
   initialLocation: '/loading',
   refreshListenable: routerListenable,
@@ -43,7 +46,8 @@ final appRouter = GoRouter(
   routes: [
     GoRoute(
       path: '/loading',
-      builder: (context, state) => const FScaffold(childPad: false, child: Loading()),
+      builder: (context, state) =>
+          const FScaffold(childPad: false, child: Loading()),
     ),
     GoRoute(path: '/login', builder: (context, state) => const Login()),
     GoRoute(path: '/', builder: (context, state) => const Home()),
