@@ -869,6 +869,46 @@
 
     <!-- Premium Animations: 3D Perspective Tilt & Telemetry Simulation -->
     <script>
+        // 0. Dynamic Web App Subdomain Routing
+        (function initAppRouting() {
+            var host = window.location.hostname;
+            var proto = window.location.protocol;
+            var isLocal = host === 'localhost' || host === '127.0.0.1';
+
+            if (!isLocal && host.includes('.')) {
+                var isStage = host.includes('stage');
+                var baseDomain = isStage ? 'finch-stage.sparrow-x.in' : 'finch.sparrow-x.in';
+
+                var appMap = {
+                    '/merchant': proto + '//merchant.' + baseDomain,
+                    '/store': proto + '//store.' + baseDomain,
+                    '/terminal': proto + '//terminal.' + baseDomain
+                };
+
+                function updateLinks() {
+                    document.querySelectorAll('a[href]').forEach(function(link) {
+                        var href = link.getAttribute('href');
+                        if (!href) return;
+                        for (var key in appMap) {
+                            if (href === key) {
+                                link.href = appMap[key];
+                                break;
+                            } else if (href.indexOf(key + '/') === 0 || href.indexOf(key + '?') === 0 || href.indexOf(key + '#') === 0) {
+                                link.href = appMap[key] + href.substring(key.length);
+                                break;
+                            }
+                        }
+                    });
+                }
+
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', updateLinks);
+                } else {
+                    updateLinks();
+                }
+            }
+        })();
+
         // 1. Hardware-Grade 3D Perspective Tilt with Dynamic Cursor Specular Glow
         (function initTilt() {
             if (window.matchMedia('(pointer: fine)').matches) {
