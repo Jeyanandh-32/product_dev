@@ -23,15 +23,11 @@ class DrawerBrandHeader extends StatelessComponent {
           ],
         ),
         div(
-          classes: 'flex items-center gap-1.5',
+          classes: 'flex items-center',
           [
             span(
-              classes: 'font-script text-[30px] font-bold text-slate-900 leading-none select-none',
+              classes: 'font-script text-[28px] font-bold text-slate-900 leading-none select-none',
               [.text('Finch')],
-            ),
-            span(
-              classes: 'text-[10px] font-black tracking-widest text-sky-600 bg-sky-50 border border-sky-200/80 px-1.5 py-0.5 rounded-md uppercase leading-none shadow-2xs select-none',
-              [.text('POS')],
             ),
           ],
         ),
