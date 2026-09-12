@@ -25,7 +25,7 @@ class AuthLayout extends StatelessComponent {
           'bg-neutral w-full min-h-screen flex flex-col justify-center py-10',
       [
         div(
-          classes: 'max-w-[440px] w-full mx-auto flex flex-col justify-center items-center px-4 md:px-0',
+          classes: 'max-w-110 w-full mx-auto flex flex-col justify-center items-center px-4 md:px-0',
           [
             div(
               classes: 'flex flex-col items-center mb-8 text-center',
@@ -42,10 +42,10 @@ class AuthLayout extends StatelessComponent {
                   ],
                 ),
                 div(
-                  classes: 'flex items-center gap-2.5 mb-1',
+                  classes: 'flex items-center gap-2 mb-0.5',
                   [
                     span(
-                      classes: 'font-black text-3xl sm:text-4xl tracking-tight text-slate-900 leading-none select-none',
+                      classes: 'font-script text-[42px] font-bold text-slate-900 leading-none select-none',
                       [.text('Finch')],
                     ),
                     span(
