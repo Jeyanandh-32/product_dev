@@ -6,6 +6,7 @@
 
 @theme {
     --font-sans: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-script: "Dancing Script", "Playball", "Arizonia", cursive;
 
     --color-brand-dark: #0B132B;
     --color-brand-surface: #1C2541;

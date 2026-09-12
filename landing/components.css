@@ -72,3 +72,8 @@ details[open] summary svg.chevron {
     margin-top: -4px;
     padding-bottom: 16px;
 }
+
+/* Finch Script Font utility */
+.font-script {
+    font-family: var(--font-script, 'Dancing Script', 'Playball', 'Arizonia', cursive) !important;
+}
