@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:forui/forui.dart';
 import 'package:gap/gap.dart';
 import 'package:mix/mix.dart';
+import 'package:terminal/theme/terminal_colors.dart';
 
 /// Clean placeholder view displayed in the sidebar when no order is selected.
 class OrderDetailsEmptyState extends StatelessWidget {
@@ -19,12 +20,19 @@ class OrderDetailsEmptyState extends StatelessWidget {
               .borderRadiusAll(const Radius.circular(999))
               .color(const Color(0xFFF3F4F6))
               .alignment(Alignment.center),
-          child: const Icon(FLucideIcons.receiptText, size: 28, color: Color(0xFF9CA3AF)),
+          child: const Icon(
+            FLucideIcons.receiptText,
+            size: 28,
+            color: Color(0xFF9CA3AF),
+          ),
         ),
         const Gap(14),
         StyledText(
           'No order selected',
-          style: TextStyler().fontSize(16).fontWeight(.w800).color(const Color(0xFF000000)),
+          style: TextStyler()
+              .fontSize(16)
+              .fontWeight(.w800)
+              .color(TerminalColors.textPrimary),
         ),
         const Gap(8),
         const Text(

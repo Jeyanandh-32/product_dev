@@ -6,6 +6,7 @@ import 'package:signals_flutter/signals_flutter.dart';
 import 'package:terminal/components/product/product_card_image.dart';
 import 'package:terminal/components/product/product_card_stepper.dart';
 import 'package:terminal/signals/cart_signal.dart';
+import 'package:terminal/theme/terminal_colors.dart';
 
 /// Product card with upper tap zone to prevent accidental additions during stepper interaction.
 class ProductCard extends StatelessWidget {
@@ -30,7 +31,7 @@ class ProductCard extends StatelessWidget {
                 .borderRadiusAll(const Radius.circular(16))
                 .borderAll(
                   color: isExisting
-                      ? const Color(0xFF000000)
+                      ? TerminalColors.primary
                       : const Color(0xFFE5E7EB),
                   width: 1.0,
                 )
@@ -62,7 +63,7 @@ class ProductCard extends StatelessWidget {
                           style: const TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w800,
-                            color: Color(0xFF000000),
+                            color: TerminalColors.textPrimary,
                           ),
                         ),
                         if (product.description?.trim() case final desc?
@@ -84,7 +85,7 @@ class ProductCard extends StatelessWidget {
                           style: const TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w900,
-                            color: Color(0xFF000000),
+                            color: TerminalColors.textPrimary,
                           ),
                         ),
                       ],

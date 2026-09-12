@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mix/mix.dart';
 import 'package:signals_flutter/signals_flutter.dart';
 import 'package:terminal/signals/cart_signal.dart';
+import 'package:terminal/theme/terminal_colors.dart';
 
 /// Floating checkout action bar button styled with Mix [PressableBox].
 class MobileCartFloatingButton extends SignalWidget {
@@ -25,12 +26,12 @@ class MobileCartFloatingButton extends SignalWidget {
           child: PressableBox(
             onPress: () => GoRouter.maybeOf(context)?.push('/cart'),
             style: BoxStyler()
-                .color(const Color(0xFF000000))
+                .color(TerminalColors.primary)
                 .paddingAll(14)
                 .borderRadiusAll(const Radius.circular(16))
-                .borderAll(color: const Color(0xFF1E293B))
+                .borderAll(color: TerminalColors.primaryHover)
                 .shadowOnly(
-                  color: const Color(0x40000000),
+                  color: const Color(0x590B132B),
                   offset: const Offset(0, 8),
                   blurRadius: 20,
                 ),
@@ -49,7 +50,7 @@ class MobileCartFloatingButton extends SignalWidget {
                       child: StyledText(
                         '${cart.orderQuantity} ${cart.orderQuantity == 1 ? 'item' : 'items'}',
                         style: TextStyler()
-                            .color(const Color(0xFF000000))
+                            .color(TerminalColors.primary)
                             .fontSize(12)
                             .fontWeight(.w800),
                       ),

@@ -3,6 +3,7 @@ import 'package:forui/forui.dart';
 import 'package:gap/gap.dart';
 import 'package:mix/mix.dart';
 import 'package:terminal/signals/products_signal.dart';
+import 'package:terminal/theme/terminal_colors.dart';
 
 /// Clean circular pill search bar using Mix [Box].
 class ProductSearchBar extends StatefulWidget {
@@ -53,11 +54,7 @@ class _ProductSearchBarState extends State<ProductSearchBar> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const Icon(
-            FLucideIcons.search,
-            size: 16,
-            color: Color(0xFF6B7280),
-          ),
+          const Icon(FLucideIcons.search, size: 16, color: Color(0xFF6B7280)),
           const Gap(10),
           Expanded(
             child: TextField(
@@ -66,7 +63,7 @@ class _ProductSearchBarState extends State<ProductSearchBar> {
               style: const TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
-                color: Color(0xFF000000),
+                color: TerminalColors.textPrimary,
               ),
               decoration: const InputDecoration(
                 hintText: 'Search products by name, SKU or barcode...',
@@ -89,11 +86,7 @@ class _ProductSearchBarState extends State<ProductSearchBar> {
               },
               child: const MouseRegion(
                 cursor: SystemMouseCursors.click,
-                child: Icon(
-                  FLucideIcons.x,
-                  size: 16,
-                  color: Color(0xFF9CA3AF),
-                ),
+                child: Icon(FLucideIcons.x, size: 16, color: Color(0xFF9CA3AF)),
               ),
             ),
         ],

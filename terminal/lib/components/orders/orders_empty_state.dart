@@ -2,15 +2,13 @@ import 'package:flutter/widgets.dart';
 import 'package:forui/forui.dart';
 import 'package:gap/gap.dart';
 import 'package:mix/mix.dart';
+import 'package:terminal/theme/terminal_colors.dart';
 
 /// Clean empty state for the orders list when no orders are found.
 class OrdersEmptyState extends StatelessWidget {
   final String message;
 
-  const OrdersEmptyState({
-    super.key,
-    this.message = 'No orders found',
-  });
+  const OrdersEmptyState({super.key, this.message = 'No orders found'});
 
   @override
   Widget build(BuildContext context) {
@@ -39,14 +37,12 @@ class OrdersEmptyState extends StatelessWidget {
               style: TextStyler()
                   .fontSize(15)
                   .fontWeight(.w800)
-                  .color(const Color(0xFF000000)),
+                  .color(TerminalColors.textPrimary),
             ),
             const Gap(4),
             StyledText(
               'Orders matching your filters will appear here',
-              style: TextStyler()
-                  .fontSize(12.5)
-                  .color(const Color(0xFF64748B)),
+              style: TextStyler().fontSize(12.5).color(const Color(0xFF64748B)),
             ),
           ],
         ),

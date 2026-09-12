@@ -3,13 +3,18 @@ import 'package:gap/gap.dart';
 import 'package:mix/mix.dart';
 import 'package:models/models.dart';
 import 'package:terminal/components/cart/cart_item_thumbnail.dart';
+import 'package:terminal/theme/terminal_colors.dart';
 
 /// Single item card in the POS Order Details receipt list matching [CartItemRow].
 class OrderDetailsItemRow extends StatelessWidget {
   final OrderItem item;
   final int index;
 
-  const OrderDetailsItemRow({super.key, required this.item, required this.index});
+  const OrderDetailsItemRow({
+    super.key,
+    required this.item,
+    required this.index,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +33,9 @@ class OrderDetailsItemRow extends StatelessWidget {
             blurRadius: 3,
           )
           .onHovered(
-            BoxStyler().borderAll(color: const Color(0xFF000000)).shadowOnly(
+            BoxStyler()
+                .borderAll(color: TerminalColors.primary)
+                .shadowOnly(
                   color: const Color(0x10000000),
                   offset: const Offset(0, 2),
                   blurRadius: 6,
@@ -51,7 +58,7 @@ class OrderDetailsItemRow extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: 14.5,
                     fontWeight: FontWeight.w800,
-                    color: Color(0xFF000000),
+                    color: TerminalColors.textPrimary,
                   ),
                 ),
                 const Gap(3),
@@ -71,7 +78,7 @@ class OrderDetailsItemRow extends StatelessWidget {
             style: TextStyler()
                 .fontSize(16)
                 .fontWeight(.w900)
-                .color(const Color(0xFF000000)),
+                .color(TerminalColors.textPrimary),
           ),
         ],
       ),

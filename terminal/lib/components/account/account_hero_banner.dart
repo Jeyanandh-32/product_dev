@@ -79,10 +79,8 @@ class AccountHeroBanner extends StatelessWidget {
   }
 
   String _getInitials(String text) {
-    final parts = text.trim().split(RegExp(r'\s+'));
-    if (parts.length >= 2) return '${parts[0][0]}${parts[1][0]}'.toUpperCase();
-    return text.length >= 2
-        ? text.substring(0, 2).toUpperCase()
-        : text.toUpperCase();
+    final trimmed = text.trim();
+    if (trimmed.isEmpty) return 'T';
+    return trimmed[0].toUpperCase();
   }
 }

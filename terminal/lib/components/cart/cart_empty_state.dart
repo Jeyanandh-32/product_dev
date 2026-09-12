@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:forui/forui.dart';
 import 'package:gap/gap.dart';
 import 'package:mix/mix.dart';
+import 'package:terminal/theme/terminal_colors.dart';
 
 /// Clean placeholder view when the POS cart ticket is empty.
 class CartEmptyState extends StatelessWidget {
@@ -37,7 +38,7 @@ class CartEmptyState extends StatelessWidget {
                 style: TextStyler()
                     .fontSize(16)
                     .fontWeight(.w800)
-                    .color(const Color(0xFF000000)),
+                    .color(TerminalColors.textPrimary),
               ),
               const Gap(6),
               const Text(

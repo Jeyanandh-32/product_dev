@@ -10,6 +10,7 @@ import 'package:terminal/components/inventory/products/inventory_product_search_
 import 'package:terminal/signals/bottle_return_signal.dart';
 import 'package:terminal/signals/categories_signal.dart';
 import 'package:terminal/signals/counters_signal.dart';
+import 'package:terminal/theme/terminal_colors.dart';
 
 /// Top control toolbar for Inventory catalog with search box, filter pills, and add product action.
 class InventoryProductsToolbar extends StatelessWidget {
@@ -30,8 +31,9 @@ class InventoryProductsToolbar extends StatelessWidget {
             final counters = countersSignal.value.value ?? <Counter>[];
             final isBottleEnabled =
                 bottleReturnConfigSignal.value?.isEnabled ?? false;
-            final collapseButtons =
-                isBottleEnabled ? isMobile : constraints.maxWidth < 420;
+            final collapseButtons = isBottleEnabled
+                ? isMobile
+                : constraints.maxWidth < 420;
 
             if (isCompact) {
               return Column(
@@ -42,21 +44,32 @@ class InventoryProductsToolbar extends StatelessWidget {
                       const Expanded(child: InventoryProductSearchField()),
                       const Gap(8),
                       if (isBottleEnabled) ...[
-                        _buildBottleReturnButton(context, isCompact: collapseButtons),
+                        _buildBottleReturnButton(
+                          context,
+                          isCompact: collapseButtons,
+                        ),
                         const Gap(8),
                       ],
                       _buildAddButton(isCompact: collapseButtons),
                     ],
                   ),
                   const Gap(10),
-                  InventoryFilterBar(categories: categories, counters: counters),
+                  InventoryFilterBar(
+                    categories: categories,
+                    counters: counters,
+                  ),
                 ],
               );
             }
 
             return Row(
               children: [
-                Expanded(child: InventoryFilterBar(categories: categories, counters: counters)),
+                Expanded(
+                  child: InventoryFilterBar(
+                    categories: categories,
+                    counters: counters,
+                  ),
+                ),
                 const Gap(16),
                 const InventoryProductSearchField(width: 220),
                 if (isBottleEnabled) ...[
@@ -73,7 +86,10 @@ class InventoryProductsToolbar extends StatelessWidget {
     );
   }
 
-  Widget _buildBottleReturnButton(BuildContext context, {bool isCompact = false}) {
+  Widget _buildBottleReturnButton(
+    BuildContext context, {
+    bool isCompact = false,
+  }) {
     final base = BoxStyler()
         .height(36)
         .color(const Color(0xFFF0FDF4))
@@ -92,10 +108,21 @@ class InventoryProductsToolbar extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(FLucideIcons.recycle, size: 15, color: Color(0xFF16A34A)),
+              const Icon(
+                FLucideIcons.recycle,
+                size: 15,
+                color: Color(0xFF16A34A),
+              ),
               if (!isCompact) ...[
                 const Gap(6),
-                const Text('Bottle Returns', style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700, color: Color(0xFF15803D))),
+                const Text(
+                  'Bottle Returns',
+                  style: TextStyle(
+                    fontSize: 12.5,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFF15803D),
+                  ),
+                ),
               ],
             ],
           ),
@@ -107,10 +134,10 @@ class InventoryProductsToolbar extends StatelessWidget {
   Widget _buildAddButton({bool isCompact = false}) {
     final base = BoxStyler()
         .height(36)
-        .color(const Color(0xFF000000))
+        .color(TerminalColors.primary)
         .borderRadiusAll(const Radius.circular(999))
         .alignment(Alignment.center)
-        .onHovered(BoxStyler().color(const Color(0xFF1E293B)));
+        .onHovered(BoxStyler().color(TerminalColors.primaryHover));
     return MouseRegion(
       cursor: SystemMouseCursors.click,
       child: Tooltip(
@@ -125,7 +152,14 @@ class InventoryProductsToolbar extends StatelessWidget {
               const Icon(FLucideIcons.plus, size: 16, color: Color(0xFFFFFFFF)),
               if (!isCompact) ...[
                 const Gap(6),
-                const Text('Add Product', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w800, color: Color(0xFFFFFFFF))),
+                const Text(
+                  'Add Product',
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w800,
+                    color: Color(0xFFFFFFFF),
+                  ),
+                ),
               ],
             ],
           ),

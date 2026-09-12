@@ -3,6 +3,7 @@ import 'package:forui/forui.dart';
 import 'package:gap/gap.dart';
 import 'package:mix/mix.dart';
 import 'package:models/models.dart';
+import 'package:terminal/theme/terminal_colors.dart';
 
 /// Date, item count, and price footer for order cards.
 class OrderCardFooter extends StatelessWidget {
@@ -55,7 +56,7 @@ class OrderCardFooter extends StatelessWidget {
           style: TextStyler()
               .fontSize(18)
               .fontWeight(.w900)
-              .color(const Color(0xFF000000)),
+              .color(TerminalColors.textPrimary),
         ),
       ],
     );

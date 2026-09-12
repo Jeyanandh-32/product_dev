@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:forui/forui.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mix/mix.dart';
+import 'package:terminal/theme/terminal_colors.dart';
 
 /// Circular back navigation button matching the customer web app (rounded-full with hover inversion).
 class TerminalBackButton extends StatelessWidget {
@@ -11,8 +12,7 @@ class TerminalBackButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final effectiveOnPress =
-        onPress ?? () => GoRouter.maybeOf(context)?.pop();
+    final effectiveOnPress = onPress ?? () => GoRouter.maybeOf(context)?.pop();
 
     return MouseRegion(
       cursor: SystemMouseCursors.click,
@@ -26,9 +26,9 @@ class TerminalBackButton extends StatelessWidget {
             .alignment(Alignment.center)
             .onHovered(
               BoxStyler()
-                  .color(const Color(0xFF000000))
+                  .color(TerminalColors.primary)
                   .shadowOnly(
-                    color: const Color(0x26000000),
+                    color: const Color(0x380B132B),
                     offset: const Offset(0, 2),
                     blurRadius: 6,
                   ),

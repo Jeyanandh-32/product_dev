@@ -5,6 +5,7 @@ import 'package:forui/forui.dart';
 import 'package:gap/gap.dart';
 import 'package:mix/mix.dart';
 import 'package:terminal/components/inventory/modals/compact_switch.dart';
+import 'package:terminal/theme/terminal_colors.dart';
 
 /// Single product card in the Returnable Products modal styled to match CartItemRow.
 class ReturnableProductRow extends StatelessWidget {
@@ -38,7 +39,7 @@ class ReturnableProductRow extends StatelessWidget {
           )
           .onHovered(
             BoxStyler()
-                .borderAll(color: const Color(0xFF000000))
+                .borderAll(color: TerminalColors.primary)
                 .shadowOnly(
                   color: const Color(0x10000000),
                   offset: const Offset(0, 2),
@@ -62,7 +63,7 @@ class ReturnableProductRow extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w800,
-                    color: Color(0xFF000000),
+                    color: TerminalColors.textPrimary,
                   ),
                 ),
                 const Gap(3),

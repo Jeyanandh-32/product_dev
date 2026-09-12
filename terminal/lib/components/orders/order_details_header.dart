@@ -5,6 +5,7 @@ import 'package:mix/mix.dart';
 import 'package:models/models.dart';
 import 'package:terminal/components/orders/order_details_header_badges.dart';
 import 'package:terminal/signals/orders_signal.dart';
+import 'package:terminal/theme/terminal_colors.dart';
 
 /// Senior-friendly header for the Order Details sidebar with bill info, customer info, and status badges.
 class OrderDetailsHeader extends StatelessWidget {
@@ -30,7 +31,7 @@ class OrderDetailsHeader extends StatelessWidget {
                     style: TextStyler()
                         .fontSize(20)
                         .fontWeight(.w900)
-                        .color(const Color(0xFF000000)),
+                        .color(TerminalColors.textPrimary),
                   ),
                   const Gap(10),
                   Flexible(
@@ -95,7 +96,7 @@ class OrderDetailsHeader extends StatelessWidget {
           .color(const Color(0xFFF1F5F9))
           .borderRadiusAll(const Radius.circular(999))
           .alignment(Alignment.center)
-          .onHovered(BoxStyler().color(const Color(0xFF000000))),
+          .onHovered(BoxStyler().color(TerminalColors.primary)),
       child: StyledIcon(
         icon: FLucideIcons.x,
         style: IconStyler()

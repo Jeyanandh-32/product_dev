@@ -1,15 +1,12 @@
 import 'package:flutter/widgets.dart';
+import 'package:terminal/theme/terminal_colors.dart';
 
 /// Clean, proportional iOS/Tailwind-style toggle switch for terminal modals.
 class ModalSwitch extends StatelessWidget {
   final bool value;
   final ValueChanged<bool> onChanged;
 
-  const ModalSwitch({
-    super.key,
-    required this.value,
-    required this.onChanged,
-  });
+  const ModalSwitch({super.key, required this.value, required this.onChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +21,7 @@ class ModalSwitch extends StatelessWidget {
           height: 24,
           padding: const EdgeInsets.all(2.5),
           decoration: BoxDecoration(
-            color: value ? const Color(0xFF000000) : const Color(0xFFCBD5E1),
+            color: value ? TerminalColors.primary : const Color(0xFFCBD5E1),
             borderRadius: BorderRadius.circular(999),
           ),
           alignment: value ? Alignment.centerRight : Alignment.centerLeft,

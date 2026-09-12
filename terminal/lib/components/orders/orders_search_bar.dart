@@ -3,6 +3,7 @@ import 'package:forui/forui.dart';
 import 'package:gap/gap.dart';
 import 'package:mix/mix.dart';
 import 'package:terminal/signals/orders_signal.dart';
+import 'package:terminal/theme/terminal_colors.dart';
 
 /// Clean circular pill search bar for orders matching the catalog search bar aesthetics.
 class OrdersSearchBar extends StatefulWidget {
@@ -53,11 +54,7 @@ class _OrdersSearchBarState extends State<OrdersSearchBar> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const Icon(
-            FLucideIcons.search,
-            size: 16.5,
-            color: Color(0xFF64748B),
-          ),
+          const Icon(FLucideIcons.search, size: 16.5, color: Color(0xFF64748B)),
           const Gap(10),
           Expanded(
             child: TextField(
@@ -66,7 +63,7 @@ class _OrdersSearchBarState extends State<OrdersSearchBar> {
               style: const TextStyle(
                 fontSize: 14.5,
                 fontWeight: FontWeight.w600,
-                color: Color(0xFF000000),
+                color: TerminalColors.textPrimary,
               ),
               decoration: const InputDecoration(
                 hintText: 'Search by Bill # or Order Ref ID...',
@@ -89,11 +86,7 @@ class _OrdersSearchBarState extends State<OrdersSearchBar> {
               },
               child: const MouseRegion(
                 cursor: SystemMouseCursors.click,
-                child: Icon(
-                  FLucideIcons.x,
-                  size: 16,
-                  color: Color(0xFF94A3B8),
-                ),
+                child: Icon(FLucideIcons.x, size: 16, color: Color(0xFF94A3B8)),
               ),
             ),
         ],

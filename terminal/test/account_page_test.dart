@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:forui/forui.dart';
 import 'package:models/models.dart';
 import 'package:signals_flutter/signals_flutter.dart';
+import 'package:terminal/components/account/account_hero_avatar.dart';
 import 'package:terminal/components/account/account_hero_banner.dart';
 import 'package:terminal/components/account/account_status_badge.dart';
 import 'package:terminal/components/account/merchant_info_card.dart';
@@ -14,17 +15,15 @@ import 'package:terminal/signals/account_signal.dart';
 import 'package:terminal/signals/auth_signal.dart';
 import 'package:terminal/theme.dart';
 
-Widget _wrapTestWidget(Widget child) {
-  return MaterialApp(
-    theme: TerminalTheme.light().toApproximateMaterialTheme(),
-    home: FTheme(
-      data: TerminalTheme.light(),
-      child: FToaster(
-        child: Material(type: MaterialType.transparency, child: child),
-      ),
+Widget _wrapTestWidget(Widget child) => MaterialApp(
+  theme: TerminalTheme.light().toApproximateMaterialTheme(),
+  home: FTheme(
+    data: TerminalTheme.light(),
+    child: FToaster(
+      child: Material(type: MaterialType.transparency, child: child),
     ),
-  );
-}
+  ),
+);
 
 void main() {
   final now = DateTime(2026, 8, 23);
@@ -135,4 +134,20 @@ void main() {
       expect(find.byType(AccountStatusBadge), findsOneWidget);
     },
   );
+
+  testWidgets('AccountHeroAvatar renders single initial letter', (
+    tester,
+  ) async {
+    await tester.pumpWidget(_wrapTestWidget(const AccountPage()));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(AccountHeroAvatar), findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byType(AccountHeroAvatar),
+        matching: find.text('M'),
+      ),
+      findsOneWidget,
+    );
+  });
 }

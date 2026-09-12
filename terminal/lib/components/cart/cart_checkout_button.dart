@@ -3,6 +3,7 @@ import 'package:forui/forui.dart';
 import 'package:gap/gap.dart';
 import 'package:mix/mix.dart';
 import 'package:models/models.dart';
+import 'package:terminal/theme/terminal_colors.dart';
 
 /// Checkout button with animated hover and loading state using Mix [PressableBox].
 class CartCheckoutButton extends StatelessWidget {
@@ -36,19 +37,17 @@ class CartCheckoutButton extends StatelessWidget {
             .height(48)
             .borderRadiusAll(const Radius.circular(16))
             .color(
-              canCheckout
-                  ? const Color(0xFF000000)
-                  : const Color(0xFFE2E8F0),
+              canCheckout ? TerminalColors.primary : const Color(0xFFE2E8F0),
             )
             .onHovered(
               canCheckout
                   ? BoxStyler()
-                      .color(const Color(0xFF1E293B))
-                      .shadowOnly(
-                        color: const Color(0x40000000),
-                        offset: const Offset(0, 4),
-                        blurRadius: 12,
-                      )
+                        .color(TerminalColors.primaryHover)
+                        .shadowOnly(
+                          color: const Color(0x380B132B),
+                          offset: const Offset(0, 4),
+                          blurRadius: 14,
+                        )
                   : BoxStyler(),
             ),
         child: Center(

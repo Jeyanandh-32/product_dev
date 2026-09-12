@@ -3,6 +3,7 @@ import 'package:forui/forui.dart';
 import 'package:mix/mix.dart';
 import 'package:models/models.dart';
 import 'package:terminal/components/inventory/inventory_table_cells.dart';
+import 'package:terminal/theme/terminal_colors.dart';
 import 'package:trina_grid/trina_grid.dart';
 
 /// Column definitions for the POS Inventory Categories TrinaGrid spreading columns equally like DaisyUI.
@@ -45,7 +46,13 @@ class CategoryTrinaColumns {
         enableEditingMode: false,
         enableContextMenu: false,
         enableDropToResize: false,
-        renderer: (ctx) => Align(alignment: Alignment.centerLeft, child: InventoryTableCells.thumbnail(ctx.cell.value as String?, size: 38)),
+        renderer: (ctx) => Align(
+          alignment: Alignment.centerLeft,
+          child: InventoryTableCells.thumbnail(
+            ctx.cell.value as String?,
+            size: 38,
+          ),
+        ),
       ),
       TrinaColumn(
         title: 'Name',
@@ -61,7 +68,11 @@ class CategoryTrinaColumns {
             ctx.cell.value?.toString() ?? '',
             softWrap: false,
             overflow: TextOverflow.visible,
-            style: const TextStyle(fontSize: 13.5, fontWeight: FontWeight.w700, color: Color(0xFF000000)),
+            style: const TextStyle(
+              fontSize: 13.5,
+              fontWeight: FontWeight.w700,
+              color: TerminalColors.textPrimary,
+            ),
           ),
         ),
       ),
@@ -72,8 +83,14 @@ class CategoryTrinaColumns {
         width: colWidth,
         enableEditingMode: false,
         enableContextMenu: false,
-        titleRenderer: (ctx) => InventoryTableCells.sortableTitle(ctx, 'Status'),
-        renderer: (ctx) => Align(alignment: Alignment.centerLeft, child: InventoryTableCells.statusBadge(ctx.cell.value as bool? ?? true)),
+        titleRenderer: (ctx) =>
+            InventoryTableCells.sortableTitle(ctx, 'Status'),
+        renderer: (ctx) => Align(
+          alignment: Alignment.centerLeft,
+          child: InventoryTableCells.statusBadge(
+            ctx.cell.value as bool? ?? true,
+          ),
+        ),
       ),
       TrinaColumn(
         title: 'Associated Products',
@@ -82,7 +99,8 @@ class CategoryTrinaColumns {
         width: colWidth,
         enableEditingMode: false,
         enableContextMenu: false,
-        titleRenderer: (ctx) => InventoryTableCells.sortableTitle(ctx, 'Associated Products'),
+        titleRenderer: (ctx) =>
+            InventoryTableCells.sortableTitle(ctx, 'Associated Products'),
         renderer: (ctx) => Align(
           alignment: Alignment.centerLeft,
           child: Text(
@@ -100,7 +118,8 @@ class CategoryTrinaColumns {
         width: colWidth,
         enableEditingMode: false,
         enableContextMenu: false,
-        titleRenderer: (ctx) => InventoryTableCells.sortableTitle(ctx, 'Description'),
+        titleRenderer: (ctx) =>
+            InventoryTableCells.sortableTitle(ctx, 'Description'),
         renderer: (ctx) => Align(
           alignment: Alignment.centerLeft,
           child: Text(
@@ -119,8 +138,18 @@ class CategoryTrinaColumns {
       cursor: SystemMouseCursors.click,
       child: PressableBox(
         onPress: onTap,
-        style: BoxStyler().width(30).height(30).borderRadiusAll(const Radius.circular(8)).color(const Color(0xFFF1F5F9)).alignment(Alignment.center).onHovered(BoxStyler().color(const Color(0xFFE2E8F0))),
-        child: const Icon(FLucideIcons.squarePen, size: 14.5, color: Color(0xFF334155)),
+        style: BoxStyler()
+            .width(30)
+            .height(30)
+            .borderRadiusAll(const Radius.circular(8))
+            .color(const Color(0xFFF1F5F9))
+            .alignment(Alignment.center)
+            .onHovered(BoxStyler().color(const Color(0xFFE2E8F0))),
+        child: const Icon(
+          FLucideIcons.squarePen,
+          size: 14.5,
+          color: Color(0xFF334155),
+        ),
       ),
     );
   }

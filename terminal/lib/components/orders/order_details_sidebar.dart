@@ -11,6 +11,7 @@ import 'package:terminal/components/orders/order_details_summary_card.dart';
 import 'package:terminal/components/product/scroll_down_indicator_pill.dart';
 import 'package:terminal/components/product/terminal_catalog_scrollbar.dart';
 import 'package:terminal/signals/orders_signal.dart';
+import 'package:terminal/theme/terminal_colors.dart';
 import 'package:terminal/utils/responsive_extensions.dart';
 
 /// POS order details sidebar matching the exact layout, aesthetics, and summary card of [Cart].
@@ -31,7 +32,9 @@ class _OrderDetailsSidebarState extends State<OrderDetailsSidebar> {
   void initState() {
     super.initState();
     _itemsScrollController.addListener(_updateScrollIndicator);
-    WidgetsBinding.instance.addPostFrameCallback((_) => _updateScrollIndicator());
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => _updateScrollIndicator(),
+    );
   }
 
   @override
@@ -54,8 +57,8 @@ class _OrderDetailsSidebarState extends State<OrderDetailsSidebar> {
     final sidebarWidth = isDrawerMode
         ? double.infinity
         : context.screenWidth < context.breakpoints.xl
-            ? 370.0
-            : context.screenWidth * .38;
+        ? 370.0
+        : context.screenWidth * .38;
 
     final sidebarStyle = FlexBoxStyler()
         .paddingX(isDrawerMode ? 16 : 20)
@@ -63,14 +66,20 @@ class _OrderDetailsSidebarState extends State<OrderDetailsSidebar> {
         .paddingBottom(isDrawerMode ? 24 : 20)
         .color(isDrawerMode ? const Color(0xFFF8FAFC) : const Color(0xFFFFFFFF))
         .width(sidebarWidth)
-        .borderLeft(color: isDrawerMode ? const Color(0x00000000) : theme.colors.border);
+        .borderLeft(
+          color: isDrawerMode ? const Color(0x00000000) : theme.colors.border,
+        );
 
     return ClipRRect(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(isDrawerMode ? 24 : 0)),
+      borderRadius: BorderRadius.vertical(
+        top: Radius.circular(isDrawerMode ? 24 : 0),
+      ),
       child: SignalBuilder(
         builder: (context) {
           final order = selectedOrderSignal.value;
-          WidgetsBinding.instance.addPostFrameCallback((_) => _updateScrollIndicator());
+          WidgetsBinding.instance.addPostFrameCallback(
+            (_) => _updateScrollIndicator(),
+          );
 
           return ColumnBox(
             style: sidebarStyle,
@@ -89,9 +98,17 @@ class _OrderDetailsSidebarState extends State<OrderDetailsSidebar> {
                 ),
               if (order == null) ...[
                 RowBox(
-                  style: FlexBoxStyler().mainAxisAlignment(MainAxisAlignment.spaceBetween).crossAxisAlignment(CrossAxisAlignment.center),
+                  style: FlexBoxStyler()
+                      .mainAxisAlignment(MainAxisAlignment.spaceBetween)
+                      .crossAxisAlignment(CrossAxisAlignment.center),
                   children: [
-                    StyledText('Order Details', style: TextStyler().fontSize(20).fontWeight(.w900).color(const Color(0xFF000000))),
+                    StyledText(
+                      'Order Details',
+                      style: TextStyler()
+                          .fontSize(20)
+                          .fontWeight(.w900)
+                          .color(TerminalColors.textPrimary),
+                    ),
                   ],
                 ),
                 const Gap(16),
@@ -128,11 +145,15 @@ class _OrderDetailsSidebarState extends State<OrderDetailsSidebar> {
               padding: const EdgeInsets.only(top: 6, right: 14, bottom: 20),
               itemCount: order.items.length,
               separatorBuilder: (context, index) => const Gap(10),
-              itemBuilder: (context, index) => OrderDetailsItemRow(item: order.items[index], index: index),
+              itemBuilder: (context, index) =>
+                  OrderDetailsItemRow(item: order.items[index], index: index),
             ),
           ),
         ),
-        ScrollDownIndicatorPill(visible: _canScrollDown, controller: _itemsScrollController),
+        ScrollDownIndicatorPill(
+          visible: _canScrollDown,
+          controller: _itemsScrollController,
+        ),
       ],
     );
   }

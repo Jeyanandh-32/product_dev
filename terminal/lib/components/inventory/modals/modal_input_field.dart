@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:terminal/theme/terminal_colors.dart';
 
 /// Reusable clean styled text input field with exact 42px container height.
 class ModalInputField extends StatefulWidget {
@@ -74,8 +75,8 @@ class _ModalInputFieldState extends State<ModalInputField> {
             borderRadius: BorderRadius.circular(10),
             border: Border.all(
               color: _isFocused
-                  ? const Color(0xFF000000)
-                  : const Color(0xFFE2E8F0),
+                  ? TerminalColors.primary
+                  : TerminalColors.border,
               width: _isFocused ? 1.5 : 1.0,
             ),
           ),

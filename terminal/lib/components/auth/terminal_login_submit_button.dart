@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:forui/forui.dart';
 import 'package:gap/gap.dart';
 import 'package:mix/mix.dart';
+import 'package:terminal/theme/terminal_colors.dart';
 
 /// Submit action button for the terminal login form using Mix and Forui (rounded-2xl).
 class TerminalLoginSubmitButton extends StatelessWidget {
@@ -24,14 +25,14 @@ class TerminalLoginSubmitButton extends StatelessWidget {
             .alignment(Alignment.center)
             .height(48)
             .borderRadiusAll(const Radius.circular(16))
-            .color(const Color(0xFF000000))
+            .color(TerminalColors.primary)
             .onHovered(
               BoxStyler()
-                  .color(const Color(0xFF1E293B))
+                  .color(TerminalColors.primaryHover)
                   .shadowOnly(
-                    color: const Color(0x40000000),
+                    color: const Color(0x380B132B),
                     offset: const Offset(0, 4),
-                    blurRadius: 12,
+                    blurRadius: 14,
                   ),
             ),
         child: Center(

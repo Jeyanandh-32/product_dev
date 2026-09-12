@@ -17,7 +17,6 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  static final String _arizoniaFontFamily = GoogleFonts.arizonia().fontFamily ?? 'Arizonia';
   final formKey = GlobalKey<FormState>();
   final codeController = TextEditingController();
   final passwordController = TextEditingController();
@@ -31,6 +30,7 @@ class _LoginState extends State<Login> {
   }
 
   Future<void> _signIn() async {
+    if (_isSubmitting) return;
     FocusManager.instance.primaryFocus?.unfocus();
     if (formKey.currentState?.validate() ?? false) {
       final code = codeController.text.trim();
@@ -47,7 +47,9 @@ class _LoginState extends State<Login> {
         );
       } catch (e) {
         if (!mounted) return;
-        final message = e is ApiException ? e.message : 'Login failed. Please check your credentials.';
+        final message = e is ApiException
+            ? e.message
+            : 'Login failed. Please check your credentials.';
         TerminalToast.showError(
           context: context,
           title: 'Authentication Error',
@@ -74,14 +76,44 @@ class _LoginState extends State<Login> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                StyledText(
-                  'Branding',
-                  style: TextStyler().fontSize(56).fontFamily(_arizoniaFontFamily).color(theme.colors.primary),
+                Container(
+                  width: 56,
+                  height: 56,
+                  margin: const EdgeInsets.only(bottom: 12),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: const Color(0xFFE2E8F0)),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Color(0x0A000000),
+                        blurRadius: 4,
+                        offset: Offset(0, 1),
+                      ),
+                    ],
+                  ),
+                  clipBehavior: Clip.antiAlias,
+                  child: Image.asset(
+                    'assets/images/finch_app_icon_square.png',
+                    width: 56,
+                    height: 56,
+                    fit: BoxFit.cover,
+                  ),
                 ),
-                const Gap(8),
+                Text(
+                  'Finch',
+                  style: GoogleFonts.dancingScript(
+                    fontSize: 48,
+                    fontWeight: FontWeight.w700,
+                    color: theme.colors.primary,
+                  ),
+                ),
+                const Gap(6),
                 StyledText(
                   'Cashier POS Portal',
-                  style: TextStyler().fontSize(14).fontWeight(.w600).color(const Color(0xFF6B7280)),
+                  style: TextStyler()
+                      .fontSize(14)
+                      .fontWeight(FontWeight.w600)
+                      .color(const Color(0xFF64748B)),
                 ),
                 const Gap(32),
                 TerminalLoginFormCard(

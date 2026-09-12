@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:forui/forui.dart';
 import 'package:gap/gap.dart';
 import 'package:mix/mix.dart';
+import 'package:terminal/theme/terminal_colors.dart';
 
 /// High-contrast navigation trigger pill with matching button height and large readable typography.
 class DropdownTriggerPill extends StatelessWidget {
@@ -21,7 +22,8 @@ class DropdownTriggerPill extends StatelessWidget {
     return ListenableBuilder(
       listenable: controller,
       builder: (context, _) {
-        final isOpen = controller.status == AnimationStatus.completed ||
+        final isOpen =
+            controller.status == AnimationStatus.completed ||
             controller.status == AnimationStatus.forward;
 
         return MouseRegion(
@@ -32,9 +34,18 @@ class DropdownTriggerPill extends StatelessWidget {
                 .height(38)
                 .paddingX(14)
                 .borderRadiusAll(const Radius.circular(999))
-                .color(isOpen ? const Color(0xFFF1F5F9) : const Color(0xFFFFFFFF))
-                .borderAll(color: isOpen ? const Color(0xFF000000) : theme.colors.border, width: isOpen ? 1.5 : 1.0)
-                .shadowOnly(color: const Color(0x06000000), offset: const Offset(0, 1), blurRadius: 2)
+                .color(
+                  isOpen ? const Color(0xFFF1F5F9) : const Color(0xFFFFFFFF),
+                )
+                .borderAll(
+                  color: isOpen ? TerminalColors.primary : theme.colors.border,
+                  width: isOpen ? 1.5 : 1.0,
+                )
+                .shadowOnly(
+                  color: const Color(0x06000000),
+                  offset: const Offset(0, 1),
+                  blurRadius: 2,
+                )
                 .alignment(Alignment.center)
                 .onHovered(
                   BoxStyler()
@@ -50,7 +61,7 @@ class DropdownTriggerPill extends StatelessWidget {
                   style: TextStyler()
                       .fontSize(13.5)
                       .fontWeight(.w800)
-                      .color(const Color(0xFF000000)),
+                      .color(TerminalColors.textPrimary),
                 ),
                 const Gap(6),
                 AnimatedRotation(
@@ -59,7 +70,7 @@ class DropdownTriggerPill extends StatelessWidget {
                   child: const Icon(
                     FLucideIcons.chevronDown,
                     size: 14,
-                    color: Color(0xFF000000),
+                    color: TerminalColors.textPrimary,
                   ),
                 ),
               ],

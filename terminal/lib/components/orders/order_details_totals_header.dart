@@ -47,7 +47,7 @@ class _OrderDetailsTotalsHeaderState extends State<OrderDetailsTotalsHeader>
             style: TextStyle(
               fontSize: 17,
               fontWeight: FontWeight.w900,
-              color: Color(0xFF000000),
+              color: TerminalColors.textPrimary,
             ),
           ),
         ),
@@ -73,7 +73,7 @@ class _OrderDetailsTotalsHeaderState extends State<OrderDetailsTotalsHeader>
                     .color(const Color(0xFFF1F5F9))
                     .borderAll(color: const Color(0xFFE2E8F0))
                     .alignment(Alignment.center)
-                    .onHovered(BoxStyler().color(const Color(0xFF000000))),
+                    .onHovered(BoxStyler().color(TerminalColors.primary)),
                 child: Row(
                   children: [
                     StyledText(

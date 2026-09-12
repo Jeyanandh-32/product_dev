@@ -7,6 +7,7 @@ import 'package:terminal/components/cart/cart_item_trash_button.dart';
 import 'package:terminal/components/cart/stepper_circle_button.dart';
 import 'package:terminal/models/cart_item.dart';
 import 'package:terminal/signals/cart_signal.dart';
+import 'package:terminal/theme/terminal_colors.dart';
 
 /// Single item card in the POS cart list with enhanced high-contrast text readability.
 class CartItemRow extends StatelessWidget {
@@ -30,7 +31,7 @@ class CartItemRow extends StatelessWidget {
           )
           .onHovered(
             BoxStyler()
-                .borderAll(color: const Color(0xFF000000))
+                .borderAll(color: TerminalColors.primary)
                 .shadowOnly(
                   color: const Color(0x10000000),
                   offset: const Offset(0, 2),
@@ -54,7 +55,7 @@ class CartItemRow extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: 14.5,
                     fontWeight: FontWeight.w800,
-                    color: Color(0xFF000000),
+                    color: TerminalColors.textPrimary,
                   ),
                 ),
                 const Gap(3),
@@ -106,7 +107,7 @@ class CartItemRow extends StatelessWidget {
               style: TextStyler()
                   .fontSize(13.5)
                   .fontWeight(.w900)
-                  .color(const Color(0xFF000000)),
+                  .color(TerminalColors.textPrimary),
             ),
           ),
           StepperCircleButton(

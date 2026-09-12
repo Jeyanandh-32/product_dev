@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:forui/forui.dart';
 import 'package:gap/gap.dart';
+import 'package:terminal/theme/terminal_colors.dart';
 
 /// Full-page or inline loading spinner with optional text below using Forui [FCircularProgress].
 class Loading extends StatelessWidget {
@@ -20,7 +21,7 @@ class Loading extends StatelessWidget {
             style: FCircularProgressStyle(
               iconStyle: const IconThemeData(
                 size: 36,
-                color: Color(0xFF000000),
+                color: TerminalColors.primary,
               ),
             ),
           ),

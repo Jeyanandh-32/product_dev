@@ -4,10 +4,21 @@ import 'package:forui/forui.dart';
 import 'package:gap/gap.dart';
 import 'package:mix/mix.dart';
 import 'package:terminal/components/orders/calendar_days_grid.dart';
+import 'package:terminal/theme/terminal_colors.dart';
 
 const _monthNames = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December',
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
 ];
 
 /// Compact calendar month grid card with single day and range selection for date filtering.
@@ -98,13 +109,29 @@ class _CalendarGridCardState extends State<CalendarGridCard> {
                 style: TextStyler()
                     .fontSize(13)
                     .fontWeight(.w800)
-                    .color(const Color(0xFF000000)),
+                    .color(TerminalColors.textPrimary),
               ),
               Row(
                 children: [
-                  _navBtn(FLucideIcons.chevronLeft, () => setState(() => _viewMonth = DateTime(_viewMonth.year, _viewMonth.month - 1))),
+                  _navBtn(
+                    FLucideIcons.chevronLeft,
+                    () => setState(
+                      () => _viewMonth = DateTime(
+                        _viewMonth.year,
+                        _viewMonth.month - 1,
+                      ),
+                    ),
+                  ),
                   const Gap(4),
-                  _navBtn(FLucideIcons.chevronRight, () => setState(() => _viewMonth = DateTime(_viewMonth.year, _viewMonth.month + 1))),
+                  _navBtn(
+                    FLucideIcons.chevronRight,
+                    () => setState(
+                      () => _viewMonth = DateTime(
+                        _viewMonth.year,
+                        _viewMonth.month + 1,
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ],

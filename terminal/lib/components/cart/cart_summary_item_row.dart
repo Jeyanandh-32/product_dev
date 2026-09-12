@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:gap/gap.dart';
 import 'package:mix/mix.dart';
+import 'package:terminal/theme/terminal_colors.dart';
 
 /// Label-value row widget for cart totals, summaries, and popovers with customizable typography weights.
 class CartSummaryItemRow extends StatelessWidget {
@@ -52,7 +53,7 @@ class CartSummaryItemRow extends StatelessWidget {
             style: TextStyler()
                 .fontSize(titleFontSize ?? (isTotal ? 18 : 14))
                 .fontWeight(titleFontWeight ?? (isTotal ? .w900 : .w700))
-                .color(titleColor ?? const Color(0xFF000000)),
+                .color(titleColor ?? TerminalColors.textPrimary),
           ),
         ),
         const Gap(8),

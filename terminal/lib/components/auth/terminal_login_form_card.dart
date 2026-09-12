@@ -7,7 +7,7 @@ import 'package:terminal/components/auth/login_input_field.dart';
 import 'package:terminal/components/auth/terminal_login_submit_button.dart';
 
 /// Clean card container with terminal login form fields (42px) and submit action using Mix and Forui.
-class TerminalLoginFormCard extends StatelessWidget {
+class TerminalLoginFormCard extends StatefulWidget {
   final GlobalKey<FormState> formKey;
   final TextEditingController codeController;
   final TextEditingController passwordController;
@@ -22,6 +22,35 @@ class TerminalLoginFormCard extends StatelessWidget {
     required this.isLoading,
     required this.onSignIn,
   });
+
+  @override
+  State<TerminalLoginFormCard> createState() => _TerminalLoginFormCardState();
+}
+
+class _TerminalLoginFormCardState extends State<TerminalLoginFormCard> {
+  final FocusNode _codeFocusNode = FocusNode(debugLabel: 'codeFocusNode');
+  final FocusNode _passwordFocusNode = FocusNode(
+    debugLabel: 'passwordFocusNode',
+  );
+
+  @override
+  void dispose() {
+    _codeFocusNode.dispose();
+    _passwordFocusNode.dispose();
+    super.dispose();
+  }
+
+  void _handleCodeSubmit() {
+    if (widget.passwordController.text.trim().isNotEmpty) {
+      if (!widget.isLoading) widget.onSignIn();
+    } else {
+      _passwordFocusNode.requestFocus();
+    }
+  }
+
+  void _handlePasswordSubmit() {
+    if (!widget.isLoading) widget.onSignIn();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,14 +69,15 @@ class TerminalLoginFormCard extends StatelessWidget {
             blurRadius: 16,
           ),
       child: Form(
-        key: formKey,
+        key: widget.formKey,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             _fieldLabel(icon: FLucideIcons.monitor, label: 'Terminal Code'),
             const Gap(8),
             LoginInputField(
-              controller: codeController,
+              controller: widget.codeController,
+              focusNode: _codeFocusNode,
               hint: 'HINXXXXXXOE5',
               textInputAction: TextInputAction.next,
               inputFormatters: [
@@ -59,6 +89,8 @@ class TerminalLoginFormCard extends StatelessWidget {
                   );
                 }),
               ],
+              onEditingComplete: _handleCodeSubmit,
+              onSubmitted: (_) => _handleCodeSubmit(),
               validator: (v) {
                 if (v == null || v.trim().isEmpty) {
                   return 'Terminal Code is required.';
@@ -73,17 +105,20 @@ class TerminalLoginFormCard extends StatelessWidget {
             _fieldLabel(icon: FLucideIcons.lock, label: 'Password'),
             const Gap(8),
             LoginInputField(
-              controller: passwordController,
+              controller: widget.passwordController,
+              focusNode: _passwordFocusNode,
               hint: '••••••••',
               isPassword: true,
               textInputAction: TextInputAction.done,
+              onEditingComplete: _handlePasswordSubmit,
+              onSubmitted: (_) => _handlePasswordSubmit(),
               validator: (v) =>
                   v == null || v.isEmpty ? 'Password is required.' : null,
             ),
             const Gap(28),
             TerminalLoginSubmitButton(
-              isLoading: isLoading,
-              onSignIn: onSignIn,
+              isLoading: widget.isLoading,
+              onSignIn: widget.onSignIn,
             ),
           ],
         ),

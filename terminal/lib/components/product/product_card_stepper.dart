@@ -5,6 +5,7 @@ import 'package:models/models.dart';
 import 'package:signals_flutter/signals_flutter.dart';
 import 'package:terminal/components/cart/stepper_circle_button.dart';
 import 'package:terminal/signals/cart_signal.dart';
+import 'package:terminal/theme/terminal_colors.dart';
 
 /// Reactive quantity stepper controller with localized reactive boundary.
 class ProductCardStepper extends StatelessWidget {
@@ -17,7 +18,9 @@ class ProductCardStepper extends StatelessWidget {
     return SignalBuilder(
       builder: (context) {
         final cart = cartSignal.value;
-        final cartIndex = cart.items.indexWhere((item) => item.product.id == product.id);
+        final cartIndex = cart.items.indexWhere(
+          (item) => item.product.id == product.id,
+        );
         final isExisting = cartIndex >= 0;
         final currentQuantity = isExisting ? cart.items[cartIndex].quantity : 0;
 
@@ -42,11 +45,17 @@ class ProductCardStepper extends StatelessWidget {
                 icon: FLucideIcons.minus,
                 size: 28,
                 iconSize: 13,
-                onTap: () => CartController.updateQuantity(product.id, currentQuantity - 1),
+                onTap: () => CartController.updateQuantity(
+                  product.id,
+                  currentQuantity - 1,
+                ),
               ),
               StyledText(
                 '$currentQuantity',
-                style: TextStyler().fontSize(14).fontWeight(.w900).color(const Color(0xFF000000)),
+                style: TextStyler()
+                    .fontSize(14)
+                    .fontWeight(.w900)
+                    .color(TerminalColors.textPrimary),
               ),
               StepperCircleButton(
                 icon: FLucideIcons.plus,
@@ -76,8 +85,12 @@ class _AddButtonState extends State<_AddButton> {
 
   @override
   Widget build(BuildContext context) {
-    final fgColor = _isHovered ? const Color(0xFFFFFFFF) : const Color(0xFF000000);
-    final bgColor = _isHovered ? const Color(0xFF000000) : const Color(0xFFF3F4F6);
+    final fgColor = _isHovered
+        ? const Color(0xFFFFFFFF)
+        : TerminalColors.textPrimary;
+    final bgColor = _isHovered
+        ? TerminalColors.primary
+        : const Color(0xFFF3F4F6);
 
     return MouseRegion(
       cursor: SystemMouseCursors.click,

@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:gap/gap.dart';
 import 'package:mix/mix.dart';
+import 'package:terminal/theme/terminal_colors.dart';
 
 /// Modal dialog action buttons for Cancel and Submit category.
 class CategoryDialogActions extends StatelessWidget {
@@ -32,24 +33,43 @@ class CategoryDialogActions extends StatelessWidget {
                 .borderRadiusAll(const Radius.circular(10))
                 .alignment(Alignment.center)
                 .onHovered(BoxStyler().color(const Color(0xFFF8FAFC))),
-            child: const Text('Cancel', style: TextStyle(fontSize: 13.5, fontWeight: FontWeight.w600, color: Color(0xFF334155))),
+            child: const Text(
+              'Cancel',
+              style: TextStyle(
+                fontSize: 13.5,
+                fontWeight: FontWeight.w600,
+                color: Color(0xFF334155),
+              ),
+            ),
           ),
         ),
         const Gap(10),
         MouseRegion(
-          cursor: isSubmitting ? SystemMouseCursors.forbidden : SystemMouseCursors.click,
+          cursor: isSubmitting
+              ? SystemMouseCursors.forbidden
+              : SystemMouseCursors.click,
           child: PressableBox(
             onPress: isSubmitting ? () {} : onSubmit,
             style: BoxStyler()
-                .color(const Color(0xFF000000))
+                .color(TerminalColors.primary)
                 .paddingX(20)
                 .height(42)
                 .borderRadiusAll(const Radius.circular(10))
                 .alignment(Alignment.center)
-                .onHovered(isSubmitting ? BoxStyler() : BoxStyler().color(const Color(0xFF1E293B))),
+                .onHovered(
+                  isSubmitting
+                      ? BoxStyler()
+                      : BoxStyler().color(TerminalColors.primaryHover),
+                ),
             child: Text(
-              isSubmitting ? 'Saving...' : (isEditing ? 'Save Changes' : 'Create Category'),
-              style: const TextStyle(fontSize: 13.5, fontWeight: FontWeight.w700, color: Color(0xFFFFFFFF)),
+              isSubmitting
+                  ? 'Saving...'
+                  : (isEditing ? 'Save Changes' : 'Create Category'),
+              style: const TextStyle(
+                fontSize: 13.5,
+                fontWeight: FontWeight.w700,
+                color: Color(0xFFFFFFFF),
+              ),
             ),
           ),
         ),

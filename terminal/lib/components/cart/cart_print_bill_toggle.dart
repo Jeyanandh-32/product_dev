@@ -4,6 +4,7 @@ import 'package:gap/gap.dart';
 import 'package:mix/mix.dart';
 import 'package:signals_flutter/signals_flutter.dart';
 import 'package:terminal/signals/cart_signal.dart';
+import 'package:terminal/theme/terminal_colors.dart';
 
 /// Clean Print Bill toggle switch for Order Summary with senior-friendly visibility.
 class CartPrintBillToggle extends SignalWidget {
@@ -23,7 +24,7 @@ class CartPrintBillToggle extends SignalWidget {
             const Icon(
               FLucideIcons.printer,
               size: 16,
-              color: Color(0xFF000000),
+              color: TerminalColors.textPrimary,
             ),
             const Gap(8),
             StyledText(
@@ -31,7 +32,7 @@ class CartPrintBillToggle extends SignalWidget {
               style: TextStyler()
                   .fontSize(14.5)
                   .fontWeight(.w700)
-                  .color(const Color(0xFF000000)),
+                  .color(TerminalColors.textPrimary),
             ),
           ],
         ),
@@ -48,7 +49,7 @@ class CartPrintBillToggle extends SignalWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(999),
                 color: printBill
-                    ? const Color(0xFF000000)
+                    ? TerminalColors.primary
                     : const Color(0xFFCBD5E1),
               ),
               child: AnimatedAlign(

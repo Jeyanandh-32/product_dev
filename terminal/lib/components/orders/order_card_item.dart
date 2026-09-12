@@ -7,6 +7,7 @@ import 'package:terminal/components/orders/order_card_badges.dart';
 import 'package:terminal/components/orders/order_card_customer_info.dart';
 import 'package:terminal/components/orders/order_card_footer.dart';
 import 'package:terminal/signals/orders_signal.dart';
+import 'package:terminal/theme/terminal_colors.dart';
 import 'package:terminal/utils/responsive_extensions.dart';
 
 /// High-contrast, spacious order card item for the POS orders grid with GPU repaint isolation.
@@ -26,7 +27,7 @@ class OrderCardItem extends SignalWidget {
         .paddingAll(isDesktop ? 18 : 14)
         .borderRadiusAll(const Radius.circular(16))
         .borderAll(
-          color: isSelected ? const Color(0xFF000000) : const Color(0xFFE5E7EB),
+          color: isSelected ? TerminalColors.primary : const Color(0xFFE5E7EB),
           width: 1.0,
         )
         .shadowOnly(
@@ -60,7 +61,7 @@ class OrderCardItem extends SignalWidget {
                           style: TextStyler()
                               .fontSize(20)
                               .fontWeight(.w900)
-                              .color(const Color(0xFF000000)),
+                              .color(TerminalColors.textPrimary),
                         ),
                         const Gap(6),
                         Box(

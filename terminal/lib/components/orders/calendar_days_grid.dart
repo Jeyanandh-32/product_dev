@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:mix/mix.dart';
+import 'package:terminal/theme/terminal_colors.dart';
 
 /// Renders the days grid of a monthly calendar with date range highlighting.
 class CalendarDaysGrid extends StatelessWidget {
@@ -41,14 +42,15 @@ class CalendarDaysGrid extends StatelessWidget {
             final end = rangeEnd;
             final isStart = start != null && _isSame(date, start);
             final isEnd = end != null && _isSame(date, end);
-            final inRange = start != null &&
+            final inRange =
+                start != null &&
                 end != null &&
                 date.isAfter(start) &&
                 date.isBefore(end);
             final isSelected = isStart || isEnd;
 
             final bg = isSelected
-                ? const Color(0xFF000000)
+                ? TerminalColors.primary
                 : (inRange ? const Color(0xFFF1F5F9) : const Color(0x00000000));
             final fg = isSelected
                 ? const Color(0xFFFFFFFF)

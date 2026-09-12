@@ -47,10 +47,18 @@ class _OrderDropdownFilterState<T> extends State<OrderDropdownFilter<T>>
       orElse: () => widget.items.first,
     );
 
-    final label = isSelected ? '${widget.title}: ${activeItem.label}' : widget.title;
-    final bgColor = isSelected ? const Color(0xFF0F172A) : const Color(0xFFFFFFFF);
-    final fgColor = isSelected ? const Color(0xFFFFFFFF) : const Color(0xFF0F172A);
-    final borderColor = isSelected ? const Color(0xFF0F172A) : const Color(0xFFE2E8F0);
+    final label = isSelected
+        ? '${widget.title}: ${activeItem.label}'
+        : widget.title;
+    final bgColor = isSelected
+        ? const Color(0xFF0F172A)
+        : const Color(0xFFFFFFFF);
+    final fgColor = isSelected
+        ? const Color(0xFFFFFFFF)
+        : const Color(0xFF0F172A);
+    final borderColor = isSelected
+        ? const Color(0xFF0F172A)
+        : const Color(0xFFE2E8F0);
 
     return FTheme(
       data: TerminalTheme.light(false),
@@ -69,17 +77,29 @@ class _OrderDropdownFilterState<T> extends State<OrderDropdownFilter<T>>
                 .paddingX(14)
                 .borderRadiusAll(const Radius.circular(999))
                 .borderAll(color: borderColor)
-                .shadowOnly(color: const Color(0x08000000), offset: const Offset(0, 1), blurRadius: 2)
+                .shadowOnly(
+                  color: const Color(0x08000000),
+                  offset: const Offset(0, 1),
+                  blurRadius: 2,
+                )
                 .alignment(Alignment.center)
                 .onHovered(
                   isSelected
                       ? BoxStyler()
-                      : BoxStyler().color(const Color(0xFFF8FAFC)).borderAll(color: const Color(0xFFCBD5E1)),
+                      : BoxStyler()
+                            .color(const Color(0xFFF8FAFC))
+                            .borderAll(color: const Color(0xFFCBD5E1)),
                 ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                StyledText(label, style: TextStyler().fontSize(13.5).fontWeight(isSelected ? .w800 : .w700).color(fgColor)),
+                StyledText(
+                  label,
+                  style: TextStyler()
+                      .fontSize(13.5)
+                      .fontWeight(isSelected ? .w800 : .w700)
+                      .color(fgColor),
+                ),
                 const Gap(4),
                 Icon(FLucideIcons.chevronDown, size: 14, color: fgColor),
                 if (isSelected) ...[
@@ -109,7 +129,11 @@ class _OrderDropdownFilterState<T> extends State<OrderDropdownFilter<T>>
           .borderRadiusAll(const Radius.circular(12))
           .borderAll(color: const Color(0xFFE2E8F0))
           .paddingAll(6)
-          .shadowOnly(color: const Color(0x14000000), offset: const Offset(0, 4), blurRadius: 16),
+          .shadowOnly(
+            color: const Color(0x14000000),
+            offset: const Offset(0, 4),
+            blurRadius: 16,
+          ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: widget.items.map((item) {
@@ -122,7 +146,11 @@ class _OrderDropdownFilterState<T> extends State<OrderDropdownFilter<T>>
                 controller.toggle();
               },
               style: BoxStyler()
-                  .color(isItemActive ? const Color(0xFFF1F5F9) : const Color(0xFFFFFFFF))
+                  .color(
+                    isItemActive
+                        ? const Color(0xFFF1F5F9)
+                        : const Color(0xFFFFFFFF),
+                  )
                   .paddingY(8)
                   .paddingX(10)
                   .borderRadiusAll(const Radius.circular(8))
@@ -131,9 +159,19 @@ class _OrderDropdownFilterState<T> extends State<OrderDropdownFilter<T>>
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  StyledText(item.label,
-                      style: TextStyler().fontSize(13.5).fontWeight(isItemActive ? .w800 : .w600).color(const Color(0xFF000000))),
-                  if (isItemActive) const Icon(FLucideIcons.check, size: 14, color: Color(0xFF000000)),
+                  StyledText(
+                    item.label,
+                    style: TextStyler()
+                        .fontSize(13.5)
+                        .fontWeight(isItemActive ? .w800 : .w600)
+                        .color(TerminalColors.textPrimary),
+                  ),
+                  if (isItemActive)
+                    const Icon(
+                      FLucideIcons.check,
+                      size: 14,
+                      color: TerminalColors.textPrimary,
+                    ),
                 ],
               ),
             ),

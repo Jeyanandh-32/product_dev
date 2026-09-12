@@ -59,7 +59,7 @@ class _CartTotalsBreakdownState extends State<CartTotalsBreakdown>
               style: TextStyler()
                   .fontSize(17.5)
                   .fontWeight(.w900)
-                  .color(const Color(0xFF000000)),
+                  .color(TerminalColors.textPrimary),
             ),
             FTheme(
               data: TerminalTheme.light(false),
@@ -82,7 +82,7 @@ class _CartTotalsBreakdownState extends State<CartTotalsBreakdown>
                         .color(const Color(0xFFF1F5F9))
                         .borderAll(color: const Color(0xFFE2E8F0))
                         .alignment(Alignment.center)
-                        .onHovered(BoxStyler().color(const Color(0xFF000000))),
+                        .onHovered(BoxStyler().color(TerminalColors.primary)),
                     child: Row(
                       children: [
                         StyledText(

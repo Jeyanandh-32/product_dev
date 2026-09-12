@@ -4,6 +4,7 @@ import 'package:gap/gap.dart';
 import 'package:signals_flutter/signals_flutter.dart';
 import 'package:terminal/components/product/category_filter_pill.dart';
 import 'package:terminal/signals/categories_signal.dart';
+import 'package:terminal/theme/terminal_colors.dart';
 
 /// Clean pill-style category filters with image avatars matching the customer web store.
 class CategoryFilterList extends SignalWidget {
@@ -22,7 +23,7 @@ class CategoryFilterList extends SignalWidget {
             style: FCircularProgressStyle(
               iconStyle: const IconThemeData(
                 size: 24,
-                color: Color(0xFF000000),
+                color: TerminalColors.primary,
               ),
             ),
           ),

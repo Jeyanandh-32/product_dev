@@ -20,10 +20,7 @@ Widget _wrapTestWidget(Widget child) {
     home: FTheme(
       data: TerminalTheme.light(),
       child: FToaster(
-        child: Material(
-          type: MaterialType.transparency,
-          child: child,
-        ),
+        child: Material(type: MaterialType.transparency, child: child),
       ),
     ),
   );
@@ -51,50 +48,49 @@ void main() {
     );
   });
 
-  testWidgets('TerminalAppBar renders branding, Billing trigger, and logout button on desktop', (tester) async {
-    tester.view.physicalSize = const Size(1280, 800);
-    tester.view.devicePixelRatio = 1.0;
-    addTearDown(() => tester.view.resetPhysicalSize());
+  testWidgets(
+    'TerminalAppBar renders branding, Billing trigger, and logout button on desktop',
+    (tester) async {
+      tester.view.physicalSize = const Size(1280, 800);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(() => tester.view.resetPhysicalSize());
 
-    await tester.pumpWidget(
-      _wrapTestWidget(
-        const FScaffold(
-          header: TerminalAppBar(),
-          child: SizedBox.shrink(),
+      await tester.pumpWidget(
+        _wrapTestWidget(
+          const FScaffold(header: TerminalAppBar(), child: SizedBox.shrink()),
         ),
-      ),
-    );
-    await tester.pump();
+      );
+      await tester.pump();
 
-    expect(find.text('Branding'), findsOneWidget);
-    expect(find.text('Billing'), findsOneWidget);
-    expect(find.text('Log Out'), findsOneWidget);
+      expect(find.text('Finch'), findsOneWidget);
+      expect(find.text('Billing'), findsOneWidget);
+      expect(find.text('Log Out'), findsOneWidget);
 
-    await tester.tap(find.text('Billing'));
-    await tester.pumpAndSettle();
+      await tester.tap(find.text('Billing'));
+      await tester.pumpAndSettle();
 
-    expect(find.text('Billing'), findsWidgets);
-    expect(find.text('Orders'), findsOneWidget);
-    expect(find.text('Inventory'), findsOneWidget);
-    expect(find.text('Account'), findsOneWidget);
+      expect(find.text('Billing'), findsWidgets);
+      expect(find.text('Orders'), findsOneWidget);
+      expect(find.text('Inventory'), findsOneWidget);
+      expect(find.text('Account'), findsOneWidget);
 
-    await tester.tap(find.text('Orders'));
-    await tester.pumpAndSettle();
+      await tester.tap(find.text('Orders'));
+      await tester.pumpAndSettle();
 
-    expect(activeTerminalPageSignal.value, TerminalNavPage.orders);
-  });
+      expect(activeTerminalPageSignal.value, TerminalNavPage.orders);
+    },
+  );
 
-  testWidgets('TerminalAppBar renders icon-only logout button on mobile', (tester) async {
+  testWidgets('TerminalAppBar renders icon-only logout button on mobile', (
+    tester,
+  ) async {
     tester.view.physicalSize = const Size(400, 800);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(() => tester.view.resetPhysicalSize());
 
     await tester.pumpWidget(
       _wrapTestWidget(
-        const FScaffold(
-          header: TerminalAppBar(),
-          child: SizedBox.shrink(),
-        ),
+        const FScaffold(header: TerminalAppBar(), child: SizedBox.shrink()),
       ),
     );
     await tester.pump();
@@ -121,12 +117,14 @@ void main() {
     expect(activeTerminalPageSignal.value, TerminalNavPage.inventoryProducts);
   });
 
-  testWidgets('Home shell renders TerminalAppBar and active index page', (tester) async {
+  testWidgets('Home shell renders TerminalAppBar and active index page', (
+    tester,
+  ) async {
     await tester.pumpWidget(_wrapTestWidget(const Home()));
     await tester.pumpAndSettle();
 
     expect(find.byType(TerminalAppBar), findsOneWidget);
-    expect(find.text('Branding'), findsOneWidget);
+    expect(find.text('Finch'), findsOneWidget);
 
     activeTerminalPageSignal.value = TerminalNavPage.orders;
     await tester.pumpAndSettle();

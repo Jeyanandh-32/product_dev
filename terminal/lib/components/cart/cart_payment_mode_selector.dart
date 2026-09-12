@@ -4,6 +4,7 @@ import 'package:gap/gap.dart';
 import 'package:mix/mix.dart';
 import 'package:models/models.dart';
 import 'package:terminal/signals/cart_signal.dart';
+import 'package:terminal/theme/terminal_colors.dart';
 
 /// Clean payment method selector tabs positioned side-by-side with large readable tabs.
 class CartPaymentModeSelector extends StatelessWidget {
@@ -21,7 +22,7 @@ class CartPaymentModeSelector extends StatelessWidget {
           style: TextStyler()
               .fontSize(14)
               .fontWeight(.w700)
-              .color(const Color(0xFF000000)),
+              .color(TerminalColors.textPrimary),
         );
 
         if (isCompact) {
@@ -32,11 +33,29 @@ class CartPaymentModeSelector extends StatelessWidget {
               const Gap(8),
               Row(
                 children: [
-                  Expanded(child: _buildTab(PaymentMethod.cash, 'Cash', FLucideIcons.banknote)),
+                  Expanded(
+                    child: _buildTab(
+                      PaymentMethod.cash,
+                      'Cash',
+                      FLucideIcons.banknote,
+                    ),
+                  ),
                   const Gap(4.5),
-                  Expanded(child: _buildTab(PaymentMethod.upi, 'UPI', FLucideIcons.qrCode)),
+                  Expanded(
+                    child: _buildTab(
+                      PaymentMethod.upi,
+                      'UPI',
+                      FLucideIcons.qrCode,
+                    ),
+                  ),
                   const Gap(4.5),
-                  Expanded(child: _buildTab(PaymentMethod.complimentary, 'Free', FLucideIcons.gift)),
+                  Expanded(
+                    child: _buildTab(
+                      PaymentMethod.complimentary,
+                      'Free',
+                      FLucideIcons.gift,
+                    ),
+                  ),
                 ],
               ),
             ],
@@ -56,7 +75,11 @@ class CartPaymentModeSelector extends StatelessWidget {
                 const Gap(4.5),
                 _buildTab(PaymentMethod.upi, 'UPI', FLucideIcons.qrCode),
                 const Gap(4.5),
-                _buildTab(PaymentMethod.complimentary, 'Free', FLucideIcons.gift),
+                _buildTab(
+                  PaymentMethod.complimentary,
+                  'Free',
+                  FLucideIcons.gift,
+                ),
               ],
             ),
           ],
@@ -66,11 +89,11 @@ class CartPaymentModeSelector extends StatelessWidget {
   }
 
   Widget _buildTab(PaymentMethod mode, String label, IconData icon) => _ModeTab(
-        mode: mode,
-        label: label,
-        icon: icon,
-        isSelected: selectedMode == mode,
-      );
+    mode: mode,
+    label: label,
+    icon: icon,
+    isSelected: selectedMode == mode,
+  );
 }
 
 class _ModeTab extends StatefulWidget {
@@ -96,8 +119,10 @@ class _ModeTabState extends State<_ModeTab> {
   @override
   Widget build(BuildContext context) {
     final isDark = widget.isSelected || _isHovered;
-    final bgColor = isDark ? const Color(0xFF000000) : const Color(0xFFF1F5F9);
-    final borderColor = isDark ? const Color(0xFF000000) : const Color(0xFFCBD5E1);
+    final bgColor = isDark ? TerminalColors.primary : const Color(0xFFF1F5F9);
+    final borderColor = isDark
+        ? TerminalColors.primary
+        : const Color(0xFFCBD5E1);
     final fgColor = isDark ? const Color(0xFFFFFFFF) : const Color(0xFF0F172A);
 
     return MouseRegion(

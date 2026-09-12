@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:terminal/components/inventory/inventory_table_cells.dart';
+import 'package:terminal/theme/terminal_colors.dart';
 import 'package:trina_grid/trina_grid.dart';
 
 /// Read-only column definitions for the POS Inventory Counters TrinaGrid spreading columns equally like DaisyUI.
@@ -24,7 +25,13 @@ class CounterTrinaColumns {
         enableEditingMode: false,
         enableContextMenu: false,
         enableDropToResize: false,
-        renderer: (ctx) => Align(alignment: Alignment.centerLeft, child: InventoryTableCells.thumbnail(ctx.cell.value as String?, size: 38)),
+        renderer: (ctx) => Align(
+          alignment: Alignment.centerLeft,
+          child: InventoryTableCells.thumbnail(
+            ctx.cell.value as String?,
+            size: 38,
+          ),
+        ),
       ),
       TrinaColumn(
         title: 'Name',
@@ -40,7 +47,11 @@ class CounterTrinaColumns {
             ctx.cell.value?.toString() ?? '',
             softWrap: false,
             overflow: TextOverflow.visible,
-            style: const TextStyle(fontSize: 13.5, fontWeight: FontWeight.w700, color: Color(0xFF000000)),
+            style: const TextStyle(
+              fontSize: 13.5,
+              fontWeight: FontWeight.w700,
+              color: TerminalColors.textPrimary,
+            ),
           ),
         ),
       ),
@@ -51,8 +62,14 @@ class CounterTrinaColumns {
         width: colWidth,
         enableEditingMode: false,
         enableContextMenu: false,
-        titleRenderer: (ctx) => InventoryTableCells.sortableTitle(ctx, 'Status'),
-        renderer: (ctx) => Align(alignment: Alignment.centerLeft, child: InventoryTableCells.statusBadge(ctx.cell.value as bool? ?? true)),
+        titleRenderer: (ctx) =>
+            InventoryTableCells.sortableTitle(ctx, 'Status'),
+        renderer: (ctx) => Align(
+          alignment: Alignment.centerLeft,
+          child: InventoryTableCells.statusBadge(
+            ctx.cell.value as bool? ?? true,
+          ),
+        ),
       ),
       TrinaColumn(
         title: 'Associated Products',
@@ -61,7 +78,8 @@ class CounterTrinaColumns {
         width: colWidth,
         enableEditingMode: false,
         enableContextMenu: false,
-        titleRenderer: (ctx) => InventoryTableCells.sortableTitle(ctx, 'Associated Products'),
+        titleRenderer: (ctx) =>
+            InventoryTableCells.sortableTitle(ctx, 'Associated Products'),
         renderer: (ctx) => Align(
           alignment: Alignment.centerLeft,
           child: Text(
@@ -79,7 +97,8 @@ class CounterTrinaColumns {
         width: colWidth,
         enableEditingMode: false,
         enableContextMenu: false,
-        titleRenderer: (ctx) => InventoryTableCells.sortableTitle(ctx, 'Description'),
+        titleRenderer: (ctx) =>
+            InventoryTableCells.sortableTitle(ctx, 'Description'),
         renderer: (ctx) => Align(
           alignment: Alignment.centerLeft,
           child: Text(

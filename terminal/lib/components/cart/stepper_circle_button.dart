@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:mix/mix.dart';
+import 'package:terminal/theme/terminal_colors.dart';
 
 /// Interactive circular button for steppers with hover inversion.
 class StepperCircleButton extends StatefulWidget {
@@ -35,12 +36,10 @@ class _StepperCircleButtonState extends State<StepperCircleButton> {
             .width(widget.size)
             .height(widget.size)
             .borderRadiusAll(const Radius.circular(999))
-            .color(
-              _isHovered ? const Color(0xFF000000) : const Color(0xFFFFFFFF),
-            )
+            .color(_isHovered ? TerminalColors.primary : TerminalColors.surface)
             .borderAll(
               color: _isHovered
-                  ? const Color(0xFF000000)
+                  ? TerminalColors.primary
                   : const Color(0xFFE5E7EB),
             )
             .shadowOnly(
@@ -53,8 +52,8 @@ class _StepperCircleButtonState extends State<StepperCircleButton> {
             widget.icon,
             size: widget.iconSize,
             color: _isHovered
-                ? const Color(0xFFFFFFFF)
-                : const Color(0xFF000000),
+                ? TerminalColors.textWhite
+                : TerminalColors.textPrimary,
           ),
         ),
       ),

@@ -40,7 +40,7 @@ class SubscriptionInfoCard extends StatelessWidget {
             SubscriptionPlanCode.monthly => 'Pro Monthly (₹299/mo)',
             SubscriptionPlanCode.yearly => 'Pro Yearly (₹2,999/yr)',
           }
-        : 'Sparrow POS License';
+        : 'Finch POS License';
 
     return Container(
       decoration: BoxDecoration(

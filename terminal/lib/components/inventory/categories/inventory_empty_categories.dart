@@ -3,6 +3,7 @@ import 'package:forui/forui.dart';
 import 'package:gap/gap.dart';
 import 'package:mix/mix.dart';
 import 'package:terminal/signals/inventory_categories_signal.dart';
+import 'package:terminal/theme/terminal_colors.dart';
 
 /// Clean, informative empty state for inventory categories table and list.
 class InventoryEmptyCategories extends StatelessWidget {
@@ -35,13 +36,21 @@ class InventoryEmptyCategories extends StatelessWidget {
               child: Icon(
                 isFiltered ? FLucideIcons.searchX : FLucideIcons.folderOpen,
                 size: 28,
-                color: isFiltered ? const Color(0xFF94A3B8) : const Color(0xFF475569),
+                color: isFiltered
+                    ? const Color(0xFF94A3B8)
+                    : const Color(0xFF475569),
               ),
             ),
             const Gap(16),
             Text(
-              isFiltered ? 'No Matching Categories' : 'No Categories in Inventory',
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: Color(0xFF0F172A)),
+              isFiltered
+                  ? 'No Matching Categories'
+                  : 'No Categories in Inventory',
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w800,
+                color: Color(0xFF0F172A),
+              ),
               textAlign: TextAlign.center,
             ),
             const Gap(6),
@@ -51,7 +60,11 @@ class InventoryEmptyCategories extends StatelessWidget {
                 isFiltered
                     ? 'No categories match the selected search keyword or active status filter.'
                     : 'Get started by creating categories to organize products in your POS catalog.',
-                style: const TextStyle(fontSize: 13, color: Color(0xFF64748B), height: 1.4),
+                style: const TextStyle(
+                  fontSize: 13,
+                  color: Color(0xFF64748B),
+                  height: 1.4,
+                ),
                 textAlign: TextAlign.center,
               ),
             ),
@@ -62,23 +75,33 @@ class InventoryEmptyCategories extends StatelessWidget {
                 child: PressableBox(
                   onPress: isFiltered ? _resetFilters : onAddCategory,
                   style: BoxStyler()
-                      .color(isFiltered ? const Color(0xFFFFFFFF) : const Color(0xFF000000))
-                      .borderAll(color: isFiltered ? const Color(0xFFE2E8F0) : const Color(0xFF000000))
-                  .paddingX(20)
-                  .height(40)
-                  .borderRadiusAll(const Radius.circular(10))
-                  .alignment(Alignment.center)
-                  .onHovered(
-                    isFiltered
-                        ? BoxStyler().color(const Color(0xFFF8FAFC))
-                        : BoxStyler().color(const Color(0xFF1E293B)),
-                  ),
+                      .color(
+                        isFiltered
+                            ? const Color(0xFFFFFFFF)
+                            : TerminalColors.primary,
+                      )
+                      .borderAll(
+                        color: isFiltered
+                            ? const Color(0xFFE2E8F0)
+                            : TerminalColors.primary,
+                      )
+                      .paddingX(20)
+                      .height(40)
+                      .borderRadiusAll(const Radius.circular(10))
+                      .alignment(Alignment.center)
+                      .onHovered(
+                        isFiltered
+                            ? BoxStyler().color(const Color(0xFFF8FAFC))
+                            : BoxStyler().color(TerminalColors.primaryHover),
+                      ),
                   child: Text(
                     isFiltered ? 'Reset Filters' : 'Add Category',
                     style: TextStyle(
                       fontSize: 13.5,
                       fontWeight: FontWeight.w700,
-                      color: isFiltered ? const Color(0xFF0F172A) : const Color(0xFFFFFFFF),
+                      color: isFiltered
+                          ? const Color(0xFF0F172A)
+                          : const Color(0xFFFFFFFF),
                     ),
                   ),
                 ),

@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gap/gap.dart';
 import 'package:mix/mix.dart';
+import 'package:terminal/theme/terminal_colors.dart';
 
 /// Single category filter pill button with avatar image/badge and hover animation.
 class CategoryFilterPill extends StatefulWidget {
@@ -33,13 +34,15 @@ class _CategoryFilterPillState extends State<CategoryFilterPill> {
   @override
   Widget build(BuildContext context) {
     final isDark = widget.isSelected || _isHovered;
-    final bgColor = isDark ? const Color(0xFF000000) : const Color(0xFFFFFFFF);
+    final bgColor = isDark ? TerminalColors.primary : TerminalColors.surface;
     final borderColor = isDark
-        ? const Color(0xFF000000)
+        ? TerminalColors.primary
         : const Color(0xFFE5E7EB);
     final fgColor = isDark ? const Color(0xFFFFFFFF) : const Color(0xFF1F2937);
     final avatarBg = isDark ? const Color(0x33FFFFFF) : const Color(0xFFF3F4F6);
-    final avatarFg = isDark ? const Color(0xFFFFFFFF) : const Color(0xFF000000);
+    final avatarFg = isDark
+        ? const Color(0xFFFFFFFF)
+        : TerminalColors.textPrimary;
 
     final trimmedImageUrl = widget.imageUrl?.trim();
     final hasImage = trimmedImageUrl != null && trimmedImageUrl.isNotEmpty;

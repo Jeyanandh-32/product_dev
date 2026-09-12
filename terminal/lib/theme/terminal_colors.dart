@@ -18,9 +18,9 @@ abstract final class TerminalColors {
   static const textBlack = Color(0xFF000000);
   static const textWhite = Color(0xFFFFFFFF);
 
-  // 10% Accent (Primary CTAs & Hover States)
-  static const primary = Color(0xFF000000);
-  static const primaryHover = Color(0xFF1E293B);
+  // 10% Accent (Primary CTAs & Hover States - Finch Midnight Navy)
+  static const primary = Color(0xFF0B132B);
+  static const primaryHover = Color(0xFF1C2541);
   static const controlHover = Color(0xFFE2E8F0);
 
   // Semantic Status Badges & Chips

@@ -9,6 +9,10 @@ class AccountHeroAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final displayLetter = initials.trim().isNotEmpty
+        ? initials.trim()[0].toUpperCase()
+        : 'T';
+
     return Stack(
       clipBehavior: Clip.none,
       children: [
@@ -22,10 +26,10 @@ class AccountHeroAvatar extends StatelessWidget {
           ),
           alignment: Alignment.center,
           child: Text(
-            initials,
+            displayLetter,
             style: const TextStyle(
               color: Color(0xFFFFFFFF),
-              fontSize: 18,
+              fontSize: 22,
               fontWeight: FontWeight.w800,
               letterSpacing: -0.5,
             ),

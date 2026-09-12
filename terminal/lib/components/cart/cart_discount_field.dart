@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:terminal/signals/cart_signal.dart';
+import 'package:terminal/theme/terminal_colors.dart';
 
 /// High-contrast readable discount input field for order totals calculation in billing summary.
 class CartDiscountField extends StatelessWidget {
@@ -26,7 +27,7 @@ class CartDiscountField extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
-                    color: Color(0xFF000000),
+                    color: TerminalColors.textPrimary,
                   ),
                 ),
                 if (!isCompact) ...[
@@ -54,8 +55,9 @@ class CartDiscountField extends StatelessWidget {
               child: TextField(
                 controller: controller,
                 textAlignVertical: TextAlignVertical.center,
-                keyboardType:
-                    const TextInputType.numberWithOptions(decimal: true),
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
                 textAlign: TextAlign.right,
                 decoration: const InputDecoration(
                   prefixIcon: Padding(
@@ -72,8 +74,10 @@ class CartDiscountField extends StatelessWidget {
                       ),
                     ),
                   ),
-                  prefixIconConstraints:
-                      BoxConstraints(minWidth: 0, minHeight: 0),
+                  prefixIconConstraints: BoxConstraints(
+                    minWidth: 0,
+                    minHeight: 0,
+                  ),
                   hintText: '0.00',
                   hintStyle: TextStyle(
                     color: Color(0xFF94A3B8),
@@ -87,7 +91,7 @@ class CartDiscountField extends StatelessWidget {
                 style: const TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w900,
-                  color: Color(0xFF000000),
+                  color: TerminalColors.textPrimary,
                 ),
                 onChanged: (val) {
                   final cart = cartSignal.value;
