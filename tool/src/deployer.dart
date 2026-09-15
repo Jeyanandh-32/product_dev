@@ -110,7 +110,8 @@ class Ec2Deployer {
 
   File? _resolveSshKeyFile() {
     if (config.sshKeyPath != null) {
-      return File(config.sshKeyPath!);
+      final file = File(config.sshKeyPath!);
+      if (file.existsSync()) return file;
     }
     if (config.sshKey != null && config.sshKey!.trim().isNotEmpty) {
       final tempFile = File(p.join(Directory.systemTemp.path, 'ci_deploy_key_${DateTime.now().millisecondsSinceEpoch}'));
@@ -118,6 +119,8 @@ class Ec2Deployer {
       Process.runSync('chmod', ['600', tempFile.path]);
       return tempFile;
     }
+    final defaultKey = File('${Platform.environment['HOME']}/.ssh/id_rsa');
+    if (defaultKey.existsSync()) return defaultKey;
     return null;
   }
 }
