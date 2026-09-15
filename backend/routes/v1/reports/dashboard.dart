@@ -1,6 +1,7 @@
 import 'package:backend/extensions/request_context_extension.dart';
 import 'package:backend/utils/responses.dart';
 import 'package:dart_frog/dart_frog.dart';
+import 'package:models/models.dart';
 
 Future<Response> onRequest(RequestContext context) async {
   return switch (context.request.method) {
@@ -17,24 +18,8 @@ Future<Response> _onGet(RequestContext context) async {
   final fromDateStr = queryParams['fromDate'];
   final toDateStr = queryParams['toDate'];
 
-  final fromDate = fromDateStr != null && fromDateStr.isNotEmpty
-      ? DateTime.tryParse(fromDateStr)?.toUtc()
-      : null;
-  DateTime? toDate;
-  if (toDateStr != null && toDateStr.isNotEmpty) {
-    final parsed = DateTime.tryParse(toDateStr);
-    if (parsed != null) {
-      toDate = DateTime.utc(
-        parsed.year,
-        parsed.month,
-        parsed.day,
-        23,
-        59,
-        59,
-        999,
-      );
-    }
-  }
+  final fromDate = AppDateQueryHelper.parseQueryFromDate(fromDateStr);
+  final toDate = AppDateQueryHelper.parseQueryToDate(toDateStr);
 
   final orderRepo = context.orderRepo;
   final tokenPayload = context.tokenPayload;

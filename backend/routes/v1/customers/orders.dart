@@ -19,6 +19,8 @@ Future<Response> _onGet(RequestContext context) async {
   if (sizeError != null) return sizeError;
 
   final date = context.request.uri.queryParameters['date'];
+  final fromDate = context.request.uri.queryParameters['fromDate'];
+  final toDate = context.request.uri.queryParameters['toDate'];
   final storeId = context.request.uri.queryParameters['storeId'];
   final orderRepo = context.orderRepo;
   final offset = (page - 1) * size;
@@ -28,6 +30,8 @@ Future<Response> _onGet(RequestContext context) async {
       customerId: tokenPayload.sub,
       storeId: storeId,
       date: date,
+      fromDate: fromDate,
+      toDate: toDate,
       limit: size,
       offset: offset,
     );

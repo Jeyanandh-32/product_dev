@@ -50,8 +50,10 @@ Future<void> refreshPaymentsSignal() async {
 
   final size = entriesSignal.value;
   final page = paymentsPageSignal.value;
-  final fromDate = reportsFromDateSignal.value;
-  final toDate = reportsToDateSignal.value;
+  final (fromDate, toDate) = AppDateQueryHelper.localDateRangeStringsToUtcIso(
+    fromDate: reportsFromDateSignal.value,
+    toDate: reportsToDateSignal.value,
+  );
   final paymentMethod = reportsPaymentMethodSignal.value;
   final paymentStatus = reportsPaymentStatusSignal.value;
 

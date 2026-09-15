@@ -1,6 +1,7 @@
 import 'package:backend/extensions/request_context_extension.dart';
 import 'package:backend/utils/responses.dart';
 import 'package:dart_frog/dart_frog.dart';
+import 'package:models/models.dart';
 
 Future<Response> onRequest(RequestContext context) async {
   return switch (context.request.method) {
@@ -24,29 +25,9 @@ Future<Response> _onGet(RequestContext context) async {
   final toDateStr = queryParams['toDate'];
   final searchQuery = queryParams['search'];
 
-  DateTime? fromDate;
-  if (fromDateStr != null && fromDateStr.isNotEmpty) {
-    final parsed = DateTime.tryParse(fromDateStr);
-    if (parsed != null) {
-      fromDate = DateTime.utc(parsed.year, parsed.month, parsed.day);
-    }
-  }
-
-  DateTime? toDate;
-  if (toDateStr != null && toDateStr.isNotEmpty) {
-    final parsed = DateTime.tryParse(toDateStr);
-    if (parsed != null) {
-      toDate = DateTime.utc(
-        parsed.year,
-        parsed.month,
-        parsed.day,
-        23,
-        59,
-        59,
-        999,
-      );
-    }
-  } else if (fromDate != null) {
+  final fromDate = AppDateQueryHelper.parseQueryFromDate(fromDateStr);
+  var toDate = AppDateQueryHelper.parseQueryToDate(toDateStr);
+  if (toDate == null && fromDate != null) {
     toDate = DateTime.utc(
       fromDate.year,
       fromDate.month,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart' show DateTimeRange;
+import 'package:models/models.dart';
 import 'package:flutter/widgets.dart';
 import 'package:forui/forui.dart';
 import 'package:gap/gap.dart';
@@ -132,12 +133,8 @@ class _OrdersDatePickerPopoverState extends State<OrdersDatePickerPopover>
 
   String _formatLabel(DateTimeRange? range) {
     if (range == null) return 'Pick Date';
-    final sDay = range.start.day.toString().padLeft(2, '0');
-    final sMonth = range.start.month.toString().padLeft(2, '0');
-    final startStr = '$sDay/$sMonth/${range.start.year}';
-    final eDay = range.end.day.toString().padLeft(2, '0');
-    final eMonth = range.end.month.toString().padLeft(2, '0');
-    final endStr = '$eDay/$eMonth/${range.end.year}';
+    final startStr = AppDateFormatter.formatDate(range.start);
+    final endStr = AppDateFormatter.formatDate(range.end);
     return startStr == endStr ? startStr : '$startStr – $endStr';
   }
 }

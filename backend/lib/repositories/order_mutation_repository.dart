@@ -58,8 +58,8 @@ class OrderMutationRepository {
 
   /// Returns the next incremental daily bill number for a store.
   Future<int> getNextBillNo(String storeId) async {
-    final today = DateTime.now().toUtc();
-    final startOfToday = DateTime.utc(today.year, today.month, today.day);
+    final now = DateTime.now();
+    final startOfToday = DateTime(now.year, now.month, now.day).toUtc();
 
     final lastOrder = await db.orders
         .where((o) => o.storeId.equals(ts.toExpr(storeId)))

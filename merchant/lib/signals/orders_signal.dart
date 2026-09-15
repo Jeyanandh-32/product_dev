@@ -94,8 +94,10 @@ Future<void> refreshOrdersSignal() async {
 
   final size = entriesSignal.value;
   final page = ordersPageSignal.value;
-  final fromDate = reportsFromDateSignal.value;
-  final toDate = reportsToDateSignal.value;
+  final (fromDate, toDate) = AppDateQueryHelper.localDateRangeStringsToUtcIso(
+    fromDate: reportsFromDateSignal.value,
+    toDate: reportsToDateSignal.value,
+  );
   final paymentMethod = reportsPaymentMethodSignal.value;
   final status = reportsOrderStatusSignal.value;
   final paymentStatus = reportsPaymentStatusSignal.value;

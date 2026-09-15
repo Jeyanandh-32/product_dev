@@ -1,6 +1,7 @@
 import 'package:client_repositories/client_repositories.dart';
 import 'package:merchant/signals/reports_date_signal.dart';
 import 'package:merchant/signals/stores_signal.dart';
+import 'package:models/models.dart';
 import 'package:signals/signals.dart';
 
 final profitLossPageSignal = signal<int>(1);
@@ -51,15 +52,12 @@ Future<void> refreshProfitLossSignal() async {
   try {
     final search = profitLossSearchSignal.value.trim();
 
-    final rawFrom = reportsFromDateSignal.value;
-    final fromDate = (rawFrom != null && rawFrom.isNotEmpty)
-        ? DateTime.tryParse(rawFrom)
-        : null;
-
-    final rawTo = reportsToDateSignal.value;
-    final toDate = (rawTo != null && rawTo.isNotEmpty)
-        ? DateTime.tryParse(rawTo)
-        : null;
+    final (fromIso, toIso) = AppDateQueryHelper.localDateRangeStringsToUtcIso(
+      fromDate: reportsFromDateSignal.value,
+      toDate: reportsToDateSignal.value,
+    );
+    final fromDate = fromIso != null ? DateTime.tryParse(fromIso) : null;
+    final toDate = toIso != null ? DateTime.tryParse(toIso) : null;
 
     final result = await ReportsRepository.getProfitLoss(
       storeId: currentStore.id,

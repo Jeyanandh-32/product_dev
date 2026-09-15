@@ -52,7 +52,7 @@ class SubscriptionStatusBanner extends StatelessComponent {
             if (sub != null)
               p(classes: 'text-[11px] text-gray-500', [
                 .text(
-                  'Valid until: ${sub.endsAt.day.toString().padLeft(2, '0')}/${sub.endsAt.month.toString().padLeft(2, '0')}/${sub.endsAt.year}',
+                  'Valid until: ${AppDateFormatter.formatDate(sub.endsAt)}',
                 ),
               ]),
           ]),

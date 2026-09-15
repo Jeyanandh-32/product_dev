@@ -20,11 +20,8 @@ class OrderTile extends StatelessComponent {
     final isOrderCompleted = order.status == OrderStatus.completed;
     final showQrButton = !isOrderCompleted;
 
-    final createdAt = order.createdAt;
-    final formattedDate =
-        '${createdAt.day.toString().padLeft(2, '0')}/${createdAt.month.toString().padLeft(2, '0')}/${createdAt.year}';
-    final formattedTime =
-        '${createdAt.hour.toString().padLeft(2, '0')}:${createdAt.minute.toString().padLeft(2, '0')}';
+    final formattedDate = AppDateFormatter.formatDate(order.createdAt);
+    final formattedTime = AppDateFormatter.formatTime(order.createdAt);
 
     final totalItemsCount = order.items.length;
     final totalQuantity = order.items.fold<int>(

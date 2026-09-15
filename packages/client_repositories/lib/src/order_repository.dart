@@ -54,10 +54,7 @@ abstract final class OrderRepository {
       );
 
   /// Retrieves order details by primary UUID or bill number.
-  static Future<Order> getById({
-    required String storeId,
-    required String id,
-  }) =>
+  static Future<Order> getById({required String storeId, required String id}) =>
       OrderReportsHelper.getById(storeId: storeId, id: id);
 
   /// Updates order state, payment status, or payment method via PATCH /v1/orders/[id].
@@ -67,14 +64,13 @@ abstract final class OrderRepository {
     OrderStatus? status,
     PaymentStatus? paymentStatus,
     PaymentMethod? paymentMethod,
-  }) =>
-      OrderReportsHelper.updateStatus(
-        storeId: storeId,
-        id: id,
-        status: status,
-        paymentStatus: paymentStatus,
-        paymentMethod: paymentMethod,
-      );
+  }) => OrderReportsHelper.updateStatus(
+    storeId: storeId,
+    id: id,
+    status: status,
+    paymentStatus: paymentStatus,
+    paymentMethod: paymentMethod,
+  );
 
   /// Retrieves paginated orders report with summary totals for merchant management.
   static Future<OrderPaginatedResponse> getAll({
@@ -88,31 +84,29 @@ abstract final class OrderRepository {
     String? paymentMethod,
     String? status,
     String? paymentStatus,
-  }) =>
-      OrderReportsHelper.getAll(
-        storeId: storeId,
-        page: page,
-        size: size,
-        source: source,
-        terminalCode: terminalCode,
-        fromDate: fromDate,
-        toDate: toDate,
-        paymentMethod: paymentMethod,
-        status: status,
-        paymentStatus: paymentStatus,
-      );
+  }) => OrderReportsHelper.getAll(
+    storeId: storeId,
+    page: page,
+    size: size,
+    source: source,
+    terminalCode: terminalCode,
+    fromDate: fromDate,
+    toDate: toDate,
+    paymentMethod: paymentMethod,
+    status: status,
+    paymentStatus: paymentStatus,
+  );
 
   /// Retrieves dashboard analytics metrics.
   static Future<Map<String, dynamic>> getDashboardAnalytics({
     required String storeId,
     String? fromDate,
     String? toDate,
-  }) =>
-      OrderReportsHelper.getDashboardAnalytics(
-        storeId: storeId,
-        fromDate: fromDate,
-        toDate: toDate,
-      );
+  }) => OrderReportsHelper.getDashboardAnalytics(
+    storeId: storeId,
+    fromDate: fromDate,
+    toDate: toDate,
+  );
 
   /// Verifies status of a pending order payment.
   static Future<Order> verifyStatus({required String reference}) =>
@@ -122,6 +116,8 @@ abstract final class OrderRepository {
   static Future<PaginatedResponse<Order>> getCustomerOrders({
     String? storeId,
     String? date,
+    String? fromDate,
+    String? toDate,
     int? page,
     int? size,
   }) async {
@@ -131,6 +127,8 @@ abstract final class OrderRepository {
         queryParameters: {
           'storeId': ?storeId,
           'date': ?date,
+          'fromDate': ?fromDate,
+          'toDate': ?toDate,
           'page': ?page,
           'size': ?size,
         },

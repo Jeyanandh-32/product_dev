@@ -90,7 +90,5 @@ class TerminalInfoCard extends StatelessWidget {
     );
   }
 
-  String _formatDate(DateTime dt) {
-    return '${dt.day.toString().padLeft(2, '0')}/${dt.month.toString().padLeft(2, '0')}/${dt.year}';
-  }
+  String _formatDate(DateTime dt) => AppDateFormatter.formatDate(dt);
 }

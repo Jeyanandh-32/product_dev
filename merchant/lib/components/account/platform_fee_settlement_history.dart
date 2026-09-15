@@ -12,13 +12,7 @@ class PlatformFeeSettlementHistory extends StatelessComponent {
 
   final List<PlatformFeeSettlement> settlements;
 
-  String _formatDate(DateTime? dt) {
-    if (dt == null) return '';
-    final day = dt.day.toString().padLeft(2, '0');
-    final month = dt.month.toString().padLeft(2, '0');
-    final year = dt.year.toString();
-    return '$day/$month/$year';
-  }
+  String _formatDate(DateTime? dt) => AppDateFormatter.formatDate(dt);
 
   @override
   Component build(BuildContext context) {

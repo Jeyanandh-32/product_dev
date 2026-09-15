@@ -3,6 +3,7 @@ import 'package:backend/extensions/order_row_extension.dart';
 import 'package:backend/extensions/request_context_extension.dart';
 import 'package:backend/utils/responses.dart';
 import 'package:dart_frog/dart_frog.dart';
+import 'package:models/models.dart';
 
 /// Helper coordinating paginated order querying, batch item/product/customer resolution, and summary aggregation.
 class OrderQueryHelper {
@@ -28,23 +29,8 @@ class OrderQueryHelper {
     final statusStr = queryParams['status'];
     final paymentStatusStr = queryParams['paymentStatus'];
 
-    final fromDate = fromDateStr != null && fromDateStr.isNotEmpty
-        ? DateTime.tryParse(fromDateStr)?.toUtc()
-        : null;
-    final parsedTo = toDateStr != null && toDateStr.isNotEmpty
-        ? DateTime.tryParse(toDateStr)
-        : null;
-    final toDate = parsedTo != null
-        ? DateTime.utc(
-            parsedTo.year,
-            parsedTo.month,
-            parsedTo.day,
-            23,
-            59,
-            59,
-            999,
-          )
-        : null;
+    final fromDate = AppDateQueryHelper.parseQueryFromDate(fromDateStr);
+    final toDate = AppDateQueryHelper.parseQueryToDate(toDateStr);
 
     final orderRepo = context.orderRepo;
     final itemRepo = context.orderItemRepo;

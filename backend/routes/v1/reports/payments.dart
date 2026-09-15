@@ -28,24 +28,8 @@ Future<Response> _onGet(RequestContext context) async {
   final paymentMethodStr = queryParams['paymentMethod'];
   final paymentStatusStr = queryParams['paymentStatus'];
 
-  final fromDate = fromDateStr != null && fromDateStr.isNotEmpty
-      ? DateTime.tryParse(fromDateStr)?.toUtc()
-      : null;
-  DateTime? toDate;
-  if (toDateStr != null && toDateStr.isNotEmpty) {
-    final parsed = DateTime.tryParse(toDateStr);
-    if (parsed != null) {
-      toDate = DateTime.utc(
-        parsed.year,
-        parsed.month,
-        parsed.day,
-        23,
-        59,
-        59,
-        999,
-      );
-    }
-  }
+  final fromDate = AppDateQueryHelper.parseQueryFromDate(fromDateStr);
+  final toDate = AppDateQueryHelper.parseQueryToDate(toDateStr);
 
   final orderRepo = context.orderRepo;
   final tokenPayload = context.tokenPayload;

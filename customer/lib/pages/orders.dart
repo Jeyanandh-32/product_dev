@@ -36,20 +36,23 @@ class _CustomerOrdersPageState extends SignalState<CustomerOrdersPage> {
     _fetchOrders();
   }
 
-  String _formatDate(DateTime dt) {
-    final y = dt.year;
-    final m = dt.month.toString().padLeft(2, '0');
-    final d = dt.day.toString().padLeft(2, '0');
-    return '$y-$m-$d';
-  }
+  String _formatDate(DateTime dt) => AppDateFormatter.formatDateIso(dt);
 
   Future<void> _fetchOrders() async {
     _ordersSignal.value = const AsyncLoading();
     try {
       final activeStoreId = currentCartStoreIdSignal.value;
+      final (fromDate, toDate) =
+          AppDateQueryHelper.localDateRangeStringsToUtcIso(
+        fromDate: _selectedDate,
+        toDate: _selectedDate,
+      );
+
       final res = await OrderRepository.getCustomerOrders(
         storeId: activeStoreId,
         date: _selectedDate,
+        fromDate: fromDate,
+        toDate: toDate,
         page: 1,
         size: 50,
       );

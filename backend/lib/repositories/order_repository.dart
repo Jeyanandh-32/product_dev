@@ -211,6 +211,8 @@ class OrderRepository {
     required String customerId,
     String? storeId,
     String? date,
+    String? fromDate,
+    String? toDate,
     int limit = 10,
     int offset = 0,
   }) => CustomerOrdersQuery.fetchCustomerOrders(
@@ -218,6 +220,8 @@ class OrderRepository {
     customerId: customerId,
     storeId: storeId,
     date: date,
+    fromDate: fromDate,
+    toDate: toDate,
     limit: limit,
     offset: offset,
   );

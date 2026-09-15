@@ -4,320 +4,54 @@ on:
   push:
     branches: [ main, stage ]
   workflow_dispatch:
+    inputs:
+      deploy_all:
+        description: 'Force build and deploy all components'
+        required: false
+        type: boolean
+        default: false
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  changes:
-    name: Detect Changed Components
+  deploy:
+    name: Build & Deploy via Dart Orchestrator
     runs-on: ubuntu-latest
-    outputs:
-      backend: ${{ steps.filter.outputs.backend }}
-      merchant: ${{ steps.filter.outputs.merchant }}
-      customer: ${{ steps.filter.outputs.customer }}
-      terminal: ${{ steps.filter.outputs.terminal }}
-      landing: ${{ steps.filter.outputs.landing }}
-      migrations: ${{ steps.filter.outputs.migrations }}
-      deploy_tag: ${{ steps.tag.outputs.deploy_tag }}
+    permissions:
+      contents: write
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
-      - name: Resolve Last Successfully Deployed Commit
-        id: tag
-        run: |
-          BRANCH_SAFE=$(echo "${{ github.ref_name }}" | tr '/' '-')
-          TAG_NAME="deployed-${BRANCH_SAFE}"
-          echo "deploy_tag=$TAG_NAME" >> "$GITHUB_OUTPUT"
-
-          if git rev-parse -q --verify "refs/tags/$TAG_NAME" >/dev/null; then
-            BASE_SHA=$(git rev-parse "refs/tags/$TAG_NAME")
-          else
-            BASE_SHA=$(git rev-list --max-parents=0 HEAD)
-          fi
-          echo "Diffing against $TAG_NAME -> $BASE_SHA"
-          echo "base_sha=$BASE_SHA" >> "$GITHUB_OUTPUT"
-
-      - name: Filter Changed Paths
-        uses: dorny/paths-filter@v4
-        id: filter
-        with:
-          base: ${{ steps.tag.outputs.base_sha }}
-          filters: |
-            backend:
-              - 'backend/!(migrations)/**'
-              - 'backend/*'
-              - 'packages/models/**'
-              - 'packages/validators/**'
-            merchant:
-              - 'merchant/**'
-              - 'packages/models/**'
-              - 'packages/validators/**'
-              - 'packages/api_client/**'
-              - 'packages/client_repositories/**'
-            customer:
-              - 'customer/**'
-              - 'packages/models/**'
-              - 'packages/validators/**'
-              - 'packages/api_client/**'
-              - 'packages/client_repositories/**'
-            terminal:
-              - 'terminal/**'
-              - 'packages/models/**'
-              - 'packages/validators/**'
-              - 'packages/api_client/**'
-              - 'packages/client_repositories/**'
-            landing:
-              - 'landing/**'
-            migrations:
-              - 'backend/migrations/**'
-
-  build-backend:
-    name: Build Backend Binary
-    needs: changes
-    runs-on: ubuntu-latest
-    if: needs.changes.outputs.backend == 'true' || github.event_name == 'workflow_dispatch'
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v7
-
       - name: Setup Flutter & Dart SDK
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
           cache: true
 
-      - name: Install Workspace Dependencies
-        run: |
-          dart pub global activate melos
-          export PATH="$PATH":"$HOME/.pub-cache/bin"
-          melos bootstrap
-      - name: Run Backend Tests
-        run: |
-          cd backend && dart test
-      - name: Build & Compile Native Backend Binary
-        run: |
-          export PATH="$PATH":"$HOME/.pub-cache/bin"
-          dart pub global activate dart_frog_cli
-          cd backend
-          dart pub global run dart_frog_cli:dart_frog build
-          mv build /tmp/backend-build
-          cd /tmp/backend-build
-          dart pub get
-          dart compile exe bin/server.dart -o $GITHUB_WORKSPACE/server.exe
-      - name: Upload Backend Artifact
-        uses: actions/upload-artifact@v7
-        with:
-          name: release-backend
-          path: server.exe
-
-  build-merchant:
-    name: Build Merchant Web App
-    needs: changes
-    runs-on: ubuntu-latest
-    if: needs.changes.outputs.merchant == 'true' || github.event_name == 'workflow_dispatch'
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v7
-
-      - name: Setup Flutter & Dart SDK
-        uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
-          cache: true
-
-      - name: Install Workspace Dependencies
-        run: |
-          dart pub global activate melos
-          export PATH="$PATH":"$HOME/.pub-cache/bin"
-          melos bootstrap
-      - name: Build Merchant Web App (WASM)
-        run: |
-          cd merchant
-          dart pub global activate jaspr_cli
-          export PATH="$PATH":"$HOME/.pub-cache/bin"
-          jaspr build --experimental-wasm
-      - name: Upload Merchant Artifact
-        uses: actions/upload-artifact@v7
-        with:
-          name: release-merchant
-          path: merchant/build/jaspr/
-
-  build-customer:
-    name: Build Customer Web App
-    needs: changes
-    runs-on: ubuntu-latest
-    if: needs.changes.outputs.customer == 'true' || github.event_name == 'workflow_dispatch'
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v7
-
-      - name: Setup Flutter & Dart SDK
-        uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
-          cache: true
-
-      - name: Install Workspace Dependencies
-        run: |
-          dart pub global activate melos
-          export PATH="$PATH":"$HOME/.pub-cache/bin"
-          melos bootstrap
-      - name: Run Customer Tests
-        run: |
-          cd customer && dart test
-      - name: Build Customer Store Web App (WASM)
-        run: |
-          cd customer
-          dart pub global activate jaspr_cli
-          export PATH="$PATH":"$HOME/.pub-cache/bin"
-          jaspr build --experimental-wasm
-      - name: Upload Customer Artifact
-        uses: actions/upload-artifact@v7
-        with:
-          name: release-customer
-          path: customer/build/jaspr/
-
-  build-terminal:
-    name: Build Terminal Web App
-    needs: changes
-    runs-on: ubuntu-latest
-    if: needs.changes.outputs.terminal == 'true' || github.event_name == 'workflow_dispatch'
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v7
-
-      - name: Setup Flutter & Dart SDK
-        uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
-          cache: true
-
-      - name: Install Workspace Dependencies
-        run: |
-          dart pub global activate melos
-          export PATH="$PATH":"$HOME/.pub-cache/bin"
-          melos bootstrap
-      - name: Run Terminal Tests
-        run: |
-          cd terminal && flutter test
-      - name: Build Terminal Web App (WASM)
-        run: |
-          cd terminal
-          flutter build web --wasm --release --base-href /
-      - name: Upload Terminal Artifact
-        uses: actions/upload-artifact@v7
-        with:
-          name: release-terminal
-          path: terminal/build/web/
-
-  deploy:
-    name: Deploy to EC2
-    needs: [changes, build-backend, build-merchant, build-customer, build-terminal]
-    runs-on: ubuntu-latest
-    if: |
-      !cancelled() &&
-      (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/stage') &&
-      (needs.changes.outputs.backend == 'true' || needs.changes.outputs.merchant == 'true' || needs.changes.outputs.customer == 'true' || needs.changes.outputs.terminal == 'true' || needs.changes.outputs.landing == 'true' || needs.changes.outputs.migrations == 'true' || github.event_name == 'workflow_dispatch') &&
-      (needs.build-backend.result == 'success' || needs.build-backend.result == 'skipped') &&
-      (needs.build-merchant.result == 'success' || needs.build-merchant.result == 'skipped') &&
-      (needs.build-customer.result == 'success' || needs.build-customer.result == 'skipped') &&
-      (needs.build-terminal.result == 'success' || needs.build-terminal.result == 'skipped')
-    env:
-      TARGET_WEB_DIR: ${{ github.ref == 'refs/heads/stage' && '/var/www/pos/stage' || '/var/www/pos/main' }}
-      TARGET_APP_DIR: ${{ github.ref == 'refs/heads/stage' && 'pos/stage' || 'pos/main' }}
-      TARGET_SERVICE: ${{ github.ref == 'refs/heads/stage' && 'pos-stage-backend' || 'pos-backend' }}
-
-    steps:
-      - name: Checkout Code (Static Files & Migrations)
-        if: needs.changes.outputs.landing == 'true' || needs.changes.outputs.migrations == 'true' || github.event_name == 'workflow_dispatch'
-        uses: actions/checkout@v7
-
-      - name: Download Backend Artifact
-        if: needs.changes.outputs.backend == 'true' || github.event_name == 'workflow_dispatch'
-        uses: actions/download-artifact@v8
-        with:
-          name: release-backend
-          path: dist
-
-      - name: Download Merchant Artifact
-        if: needs.changes.outputs.merchant == 'true' || github.event_name == 'workflow_dispatch'
-        uses: actions/download-artifact@v8
-        with:
-          name: release-merchant
-          path: dist/merchant
-
-      - name: Download Customer Artifact
-        if: needs.changes.outputs.customer == 'true' || github.event_name == 'workflow_dispatch'
-        uses: actions/download-artifact@v8
-        with:
-          name: release-customer
-          path: dist/store
-
-      - name: Download Terminal Artifact
-        if: needs.changes.outputs.terminal == 'true' || github.event_name == 'workflow_dispatch'
-        uses: actions/download-artifact@v8
-        with:
-          name: release-terminal
-          path: dist/terminal
-
-      - name: Setup SSH Key
+      - name: Setup SSH Key & Known Hosts
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
-      - name: Deploy Selective Artifacts via Rsync
-        run: |
-          if [ -d "dist/merchant" ]; then
-            rsync -avz -e "ssh -i ~/.ssh/id_rsa" dist/merchant/ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:${{ env.TARGET_WEB_DIR }}/merchant/
-          fi
-          if [ -d "dist/store" ]; then
-            rsync -avz -e "ssh -i ~/.ssh/id_rsa" dist/store/ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:${{ env.TARGET_WEB_DIR }}/store/
-          fi
-          if [ -d "dist/terminal" ]; then
-            rsync -avz -e "ssh -i ~/.ssh/id_rsa" dist/terminal/ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:${{ env.TARGET_WEB_DIR }}/terminal/
-          fi
-          if [ "${{ needs.changes.outputs.landing }}" = "true" ] || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            rsync -avz -e "ssh -i ~/.ssh/id_rsa" landing/ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:${{ env.TARGET_WEB_DIR }}/landing/
-          fi
-          if [ "${{ needs.changes.outputs.migrations }}" = "true" ] || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            rsync -avz -e "ssh -i ~/.ssh/id_rsa" backend/migrations/ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/${{ env.TARGET_APP_DIR }}/migrations/
-          fi
-          if [ -f "dist/server.exe" ]; then
-            rsync -avz -e "ssh -i ~/.ssh/id_rsa" dist/server.exe ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/${{ env.TARGET_APP_DIR }}/server.exe
-          fi
-      - name: Restart Backend Service
-        if: needs.changes.outputs.backend == 'true' || needs.changes.outputs.migrations == 'true' || github.event_name == 'workflow_dispatch'
-        run: |
-          ssh -i ~/.ssh/id_rsa ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << EOF
-            if [ -f "/home/${{ secrets.EC2_USER }}/${{ env.TARGET_APP_DIR }}/server.exe" ]; then
-              chmod +x /home/${{ secrets.EC2_USER }}/${{ env.TARGET_APP_DIR }}/server.exe
-              sudo systemctl restart ${{ env.TARGET_SERVICE }}
-            fi
-          EOF
+          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts 2>/dev/null || true
 
-  mark-deployed:
-    name: Mark Commit as Deployed
-    needs: [changes, deploy]
-    if: |
-      !cancelled() &&
-      needs.deploy.result == 'success'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v7
-        with:
-          fetch-depth: 0
-      - name: Move deploy tag to this commit
+      - name: Install Root Dependencies
+        run: dart pub get
+
+      - name: Run Dart Deploy Orchestrator
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+          EC2_USER: ${{ secrets.EC2_USER }}
+          EC2_SSH_KEY_PATH: /home/runner/.ssh/id_rsa
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git tag -f "${{ needs.changes.outputs.deploy_tag }}" "${{ github.sha }}"
-          git push origin "refs/tags/${{ needs.changes.outputs.deploy_tag }}" --force
+          FLAGS="--target=${{ github.ref_name }}"
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.deploy_all }}" = "true" ]; then
+            FLAGS="$FLAGS --all"
+          fi
+          dart run tool/deploy.dart $FLAGS

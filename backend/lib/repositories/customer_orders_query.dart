@@ -15,6 +15,8 @@ class CustomerOrdersQuery {
     required String customerId,
     String? storeId,
     String? date,
+    String? fromDate,
+    String? toDate,
     int limit = 10,
     int offset = 0,
   }) async {
@@ -26,11 +28,17 @@ class CustomerOrdersQuery {
       query = query.where((o) => o.storeId.equals(ts.toExpr(storeId)));
     }
 
-    if (date != null && date.trim().isNotEmpty) {
-      final parsed = DateTime.tryParse(date);
-      if (parsed != null) {
-        final startOfDay = DateTime(parsed.year, parsed.month, parsed.day);
-        final endOfDay = DateTime(parsed.year, parsed.month, parsed.day, 23, 59, 59, 999);
+    final parsedFrom = AppDateQueryHelper.parseQueryFromDate(fromDate);
+    if (parsedFrom != null) {
+      query = query.where((o) => o.createdAt.isAfterValue(parsedFrom.subtract(const Duration(milliseconds: 1))));
+    }
+    final parsedTo = AppDateQueryHelper.parseQueryToDate(toDate);
+    if (parsedTo != null) {
+      query = query.where((o) => o.createdAt.isBeforeValue(parsedTo.add(const Duration(milliseconds: 1))));
+    } else if (date != null && date.trim().isNotEmpty && (fromDate == null || fromDate.isEmpty)) {
+      final startOfDay = AppDateQueryHelper.parseQueryFromDate(date);
+      final endOfDay = AppDateQueryHelper.parseQueryToDate(date);
+      if (startOfDay != null && endOfDay != null) {
         query = query
             .where((o) => o.createdAt.isAfterValue(startOfDay.subtract(const Duration(milliseconds: 1))))
             .where((o) => o.createdAt.isBeforeValue(endOfDay.add(const Duration(milliseconds: 1))));

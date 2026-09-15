@@ -116,7 +116,7 @@ class StoreSubscriptionsCard extends StatelessComponent {
             span(classes: 'text-slate-500 font-medium', [
               .text(
                 sub != null
-                    ? 'Renews ${sub.endsAt.day.toString().padLeft(2, '0')}/${sub.endsAt.month.toString().padLeft(2, '0')}/${sub.endsAt.year}'
+                    ? 'Renews ${AppDateFormatter.formatDate(sub.endsAt)}'
                     : 'Renews Annually',
               ),
             ]),

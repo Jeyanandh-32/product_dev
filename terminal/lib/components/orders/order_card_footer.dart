@@ -13,14 +13,7 @@ class OrderCardFooter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final rawHour = order.createdAt.hour;
-    final period = rawHour >= 12 ? 'PM' : 'AM';
-    final hour12 = rawHour % 12 == 0 ? 12 : rawHour % 12;
-    final min = order.createdAt.minute.toString().padLeft(2, '0');
-    final day = order.createdAt.day.toString().padLeft(2, '0');
-    final month = order.createdAt.month.toString().padLeft(2, '0');
-    final dateTimeStr =
-        '$day/$month/${order.createdAt.year}, $hour12:$min $period';
+    final dateTimeStr = AppDateFormatter.formatDateTime(order.createdAt);
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,

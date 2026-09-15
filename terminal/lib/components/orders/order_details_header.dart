@@ -134,12 +134,5 @@ class OrderDetailsHeader extends StatelessWidget {
     ],
   );
 
-  String _formatDate(DateTime dt) {
-    final hr = dt.hour == 0 ? 12 : (dt.hour > 12 ? dt.hour - 12 : dt.hour);
-    final p = dt.hour >= 12 ? 'PM' : 'AM';
-    final m = dt.minute.toString().padLeft(2, '0');
-    final d = dt.day.toString().padLeft(2, '0');
-    final mo = dt.month.toString().padLeft(2, '0');
-    return '$d/$mo/${dt.year}, $hr:$m $p';
-  }
+  String _formatDate(DateTime dt) => AppDateFormatter.formatDateTime(dt);
 }

@@ -56,13 +56,10 @@ static void my_application_activate(GApplication* application) {
 
   const gchar* assets_dir = fl_dart_project_get_assets_path(project);
   g_autofree gchar* asset_icon = g_build_filename(
-      assets_dir, "assets", "images", "finch_app_icon_square.png", nullptr);
-  const gchar* icon_path = g_file_test(asset_icon, G_FILE_TEST_EXISTS)
-      ? asset_icon
-      : "/home/jack/.local/share/icons/hicolor/512x512/apps/finch-terminal.png";
-  if (g_file_test(icon_path, G_FILE_TEST_EXISTS)) {
-    gtk_window_set_icon_from_file(window, icon_path, nullptr);
-    gtk_window_set_default_icon_from_file(icon_path, nullptr);
+      assets_dir, "assets", "images", "finch_app_icon_rounded.png", nullptr);
+  if (g_file_test(asset_icon, G_FILE_TEST_EXISTS)) {
+    gtk_window_set_icon_from_file(window, asset_icon, nullptr);
+    gtk_window_set_default_icon_from_file(asset_icon, nullptr);
   }
 
   FlView* view = fl_view_new(project);
@@ -136,6 +133,7 @@ static void my_application_init(MyApplication* self) {}
 
 MyApplication* my_application_new() {
   g_set_prgname(APPLICATION_ID);
+  g_set_application_name("Finch POS Terminal");
   return MY_APPLICATION(g_object_new(my_application_get_type(),
                                      "application-id", APPLICATION_ID, "flags",
                                      G_APPLICATION_NON_UNIQUE, nullptr));

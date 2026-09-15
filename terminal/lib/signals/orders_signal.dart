@@ -108,17 +108,14 @@ final pagedOrdersSignal = computed<List<Order>>(() {
 });
 
 (DateTime?, DateTime?) _computeDateRange(OrderDatePreset? preset, DateTimeRange<DateTime>? customRange) {
-  if (customRange != null) return (customRange.start, customRange.end);
+  if (customRange != null) return AppDateQueryHelper.localRangeBoundsUtc(customRange.start, customRange.end);
   final now = DateTime.now();
-  final startOfToday = DateTime(now.year, now.month, now.day);
-  final endOfToday = DateTime(now.year, now.month, now.day, 23, 59, 59, 999);
-
   return switch (preset) {
-    OrderDatePreset.today => (startOfToday, endOfToday),
-    OrderDatePreset.yesterday => (startOfToday.subtract(const Duration(days: 1)), DateTime(now.year, now.month, now.day - 1, 23, 59, 59, 999)),
-    OrderDatePreset.past7Days => (startOfToday.subtract(const Duration(days: 6)), endOfToday),
-    OrderDatePreset.past30Days => (startOfToday.subtract(const Duration(days: 29)), endOfToday),
-    null => (startOfToday, endOfToday),
+    OrderDatePreset.today => AppDateQueryHelper.localDayBoundsUtc(now),
+    OrderDatePreset.yesterday => AppDateQueryHelper.localDayBoundsUtc(now.subtract(const Duration(days: 1))),
+    OrderDatePreset.past7Days => AppDateQueryHelper.localRangeBoundsUtc(now.subtract(const Duration(days: 6)), now),
+    OrderDatePreset.past30Days => AppDateQueryHelper.localRangeBoundsUtc(now.subtract(const Duration(days: 29)), now),
+    null => AppDateQueryHelper.localDayBoundsUtc(now),
   };
 }
 

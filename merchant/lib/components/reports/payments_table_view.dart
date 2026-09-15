@@ -1,4 +1,3 @@
-import 'package:date_format/date_format.dart' as df;
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:merchant/components/reports/payment_table_row.dart';
@@ -20,8 +19,7 @@ class PaymentsTableView extends StatelessComponent {
     required this.onSort,
   });
 
-  String _formatDate(DateTime dt) =>
-      df.formatDate(dt.toLocal(), [df.dd, '/', df.mm, '/', df.yyyy]);
+  String _formatDate(DateTime dt) => AppDateFormatter.formatDate(dt);
 
   @override
   Component build(BuildContext context) {

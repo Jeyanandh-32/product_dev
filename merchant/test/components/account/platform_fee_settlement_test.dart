@@ -11,17 +11,9 @@ void main() {
     });
 
     test('formats settlement dates with zero padding', () {
-      String formatDate(DateTime? dt) {
-        if (dt == null) return '';
-        final day = dt.day.toString().padLeft(2, '0');
-        final month = dt.month.toString().padLeft(2, '0');
-        final year = dt.year.toString();
-        return '$day/$month/$year';
-      }
-
       final date = DateTime(2026, 9, 8);
-      expect(formatDate(date), equals('08/09/2026'));
-      expect(formatDate(null), equals(''));
+      expect(AppDateFormatter.formatDate(date), equals('08/09/2026'));
+      expect(AppDateFormatter.formatDate(null), equals(''));
     });
 
     test('settlement status identification', () {

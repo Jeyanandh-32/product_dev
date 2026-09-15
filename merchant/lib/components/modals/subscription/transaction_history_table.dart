@@ -49,11 +49,7 @@ class TransactionHistoryTable extends StatelessComponent {
                       ]),
                     ]),
                     span(classes: 'text-[10px] text-gray-400', [
-                      .text(
-                        tx.createdAt != null
-                            ? '${tx.createdAt?.day.toString().padLeft(2, '0')}/${tx.createdAt?.month.toString().padLeft(2, '0')}/${tx.createdAt?.year}'
-                            : '',
-                      ),
+                      .text(AppDateFormatter.formatDate(tx.createdAt)),
                     ]),
                   ]),
                 ]),
