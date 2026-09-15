@@ -262,15 +262,15 @@
 
             <!-- App Switcher Tabs -->
             <div role="tablist" aria-label="Finch POS Applications" class="flex items-center justify-center p-1 sm:p-1.5 bg-slate-200/80 rounded-xl sm:rounded-2xl max-w-md sm:max-w-lg mx-auto mb-6 sm:mb-8 gap-1 border border-slate-300/60 shadow-xs">
-                <button type="button" role="tab" id="tab-btn-merchant" aria-selected="true" tabindex="0" aria-controls="showcase-merchant" onclick="switchApp('merchant')" class="flex-1 py-2 sm:py-2.5 px-2 sm:px-3.5 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-extrabold transition-all bg-blue-600 text-white shadow-xs shadow-blue-500/20 inline-flex items-center justify-center gap-1 sm:gap-1.5 whitespace-nowrap">
+                <button type="button" role="tab" id="tab-btn-merchant" aria-selected="true" tabindex="0" aria-controls="showcase-merchant" onclick="switchApp('merchant')" class="flex-1 py-2 sm:py-2.5 px-2 sm:px-3.5 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-extrabold transition-all bg-blue-600 text-white shadow-xs shadow-blue-500/20 inline-flex items-center justify-center gap-1 sm:gap-1.5 whitespace-nowrap cursor-pointer">
                     <svg class="w-3.5 h-3.5 shrink-0 opacity-90" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
                     <span>Merchant</span>
                 </button>
-                <button type="button" role="tab" id="tab-btn-terminal" aria-selected="false" tabindex="-1" aria-controls="showcase-terminal" onclick="switchApp('terminal')" class="flex-1 py-2 sm:py-2.5 px-2 sm:px-3.5 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-bold text-slate-600 hover:text-slate-950 transition-all inline-flex items-center justify-center gap-1 sm:gap-1.5 whitespace-nowrap">
+                <button type="button" role="tab" id="tab-btn-terminal" aria-selected="false" tabindex="-1" aria-controls="showcase-terminal" onclick="switchApp('terminal')" class="flex-1 py-2 sm:py-2.5 px-2 sm:px-3.5 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-bold text-slate-600 hover:text-slate-950 transition-all inline-flex items-center justify-center gap-1 sm:gap-1.5 whitespace-nowrap cursor-pointer">
                     <svg class="w-3.5 h-3.5 shrink-0 opacity-90" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
                     <span>Terminal<span class="hidden sm:inline"> POS</span></span>
                 </button>
-                <button type="button" role="tab" id="tab-btn-customer" aria-selected="false" tabindex="-1" aria-controls="showcase-customer" onclick="switchApp('customer')" class="flex-1 py-2 sm:py-2.5 px-2 sm:px-3.5 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-bold text-slate-600 hover:text-slate-950 transition-all inline-flex items-center justify-center gap-1 sm:gap-1.5 whitespace-nowrap">
+                <button type="button" role="tab" id="tab-btn-customer" aria-selected="false" tabindex="-1" aria-controls="showcase-customer" onclick="switchApp('customer')" class="flex-1 py-2 sm:py-2.5 px-2 sm:px-3.5 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-bold text-slate-600 hover:text-slate-950 transition-all inline-flex items-center justify-center gap-1 sm:gap-1.5 whitespace-nowrap cursor-pointer">
                     <svg class="w-3.5 h-3.5 shrink-0 opacity-90" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
                     <span>Customer<span class="hidden sm:inline"> Store</span></span>
                 </button>
@@ -416,9 +416,9 @@
                         btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
                         btn.setAttribute('tabindex', isActive ? '0' : '-1');
                         if (isActive) {
-                            btn.className = 'flex-1 py-2 sm:py-2.5 px-2 sm:px-3.5 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-extrabold transition-all bg-blue-600 text-white shadow-xs shadow-blue-500/20 inline-flex items-center justify-center gap-1 sm:gap-1.5 whitespace-nowrap';
+                            btn.className = 'flex-1 py-2 sm:py-2.5 px-2 sm:px-3.5 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-extrabold transition-all bg-blue-600 text-white shadow-xs shadow-blue-500/20 inline-flex items-center justify-center gap-1 sm:gap-1.5 whitespace-nowrap cursor-pointer';
                         } else {
-                            btn.className = 'flex-1 py-2 sm:py-2.5 px-2 sm:px-3.5 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-bold text-slate-600 hover:text-slate-950 transition-all inline-flex items-center justify-center gap-1 sm:gap-1.5 whitespace-nowrap';
+                            btn.className = 'flex-1 py-2 sm:py-2.5 px-2 sm:px-3.5 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-bold text-slate-600 hover:text-slate-950 transition-all inline-flex items-center justify-center gap-1 sm:gap-1.5 whitespace-nowrap cursor-pointer';
                         }
                     }
                 });
