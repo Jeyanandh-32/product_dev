@@ -32,7 +32,8 @@ class TablePaginationEntries extends StatelessComponent {
             classes: 'btn btn-sm h-8 min-h-0 bg-slate-50 hover:bg-slate-100 text-slate-800 border border-border-medium rounded-lg px-2.5 font-bold flex items-center gap-1.5 cursor-pointer shadow-xs',
             attributes: {'tabindex': '0', 'role': 'button'},
             [
-              .text('Show $entries'),
+              span(classes: 'hidden sm:inline', [.text('Show ')]),
+              span([.text('$entries')]),
               ChevronDown(classes: 'w-3.5 h-3.5 text-slate-500'),
             ],
           ),
@@ -55,7 +56,8 @@ class TablePaginationEntries extends StatelessComponent {
         if (totalCount > 0) ...[
           div(classes: 'h-4 w-px bg-slate-200 hidden sm:block', []),
           span(
-            classes: 'text-xs sm:text-sm text-slate-500 whitespace-nowrap',
+            classes:
+                'text-xs sm:text-sm text-slate-500 whitespace-nowrap hidden sm:inline',
             [
               span(classes: 'font-normal', [.text('Showing ')]),
               span(classes: 'font-bold text-slate-800', [.text('$start–$end')]),
