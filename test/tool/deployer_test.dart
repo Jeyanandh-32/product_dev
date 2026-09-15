@@ -1,12 +1,12 @@
 import 'package:test/test.dart';
 import '../../tool/src/deployer.dart';
 import '../../tool/src/models/component.dart';
-import '../../tool/src/models/deploy_config.dart';
+import '../../tool/src/models/deploy_parser.dart';
 
 void main() {
   group('Ec2Deployer path calculation', () {
     test('calculates correct web and application target paths for stage', () {
-      final config = DeployConfig.fromArgs(['--target=stage'], environment: {});
+      final config = DeployParser.parse(['--target=stage'], environment: {});
       final deployer = Ec2Deployer(config: config);
 
       expect(deployer.sourcePathFor(DeployComponent.backend), equals('dist/server.exe'));
@@ -35,7 +35,7 @@ void main() {
     });
 
     test('calculates correct paths for main environment', () {
-      final config = DeployConfig.fromArgs(['--target=main'], environment: {});
+      final config = DeployParser.parse(['--target=main'], environment: {});
       final deployer = Ec2Deployer(config: config);
 
       expect(

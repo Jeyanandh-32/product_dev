@@ -1,11 +1,11 @@
 import 'package:test/test.dart';
 import '../../tool/src/models/component.dart';
-import '../../tool/src/models/deploy_config.dart';
+import '../../tool/src/models/deploy_parser.dart';
 
 void main() {
-  group('DeployConfig', () {
+  group('DeployParser', () {
     test('defaults to stage environment when no args or env provided', () {
-      final config = DeployConfig.fromArgs([], environment: {});
+      final config = DeployParser.parse([], environment: {});
 
       expect(config.target, equals('stage'));
       expect(config.webDir, equals('/var/www/pos/stage'));
@@ -17,7 +17,7 @@ void main() {
     });
 
     test('configures main environment correctly', () {
-      final config = DeployConfig.fromArgs(['--target=main'], environment: {});
+      final config = DeployParser.parse(['--target=main'], environment: {});
 
       expect(config.target, equals('main'));
       expect(config.webDir, equals('/var/www/pos/main'));
@@ -27,12 +27,12 @@ void main() {
     });
 
     test('strips refs/heads/ prefix from git branch names', () {
-      final config = DeployConfig.fromArgs(['--target=refs/heads/stage'], environment: {});
+      final config = DeployParser.parse(['--target=refs/heads/stage'], environment: {});
       expect(config.target, equals('stage'));
     });
 
-    test('parses boolean CLI flags and only components list', () {
-      final config = DeployConfig.fromArgs([
+    test('parses boolean CLI flags, phase flags, and only list', () {
+      final config = DeployParser.parse([
         '--target=stage',
         '--dry-run',
         '--all',
@@ -59,8 +59,30 @@ void main() {
       expect(config.onlyComponents.length, equals(2));
     });
 
+    test('parses phase-specific flags correctly', () {
+      final detectConfig = DeployParser.parse(['--detect-only']);
+      expect(detectConfig.detectOnly, isTrue);
+      expect(detectConfig.skipBuild, isTrue);
+      expect(detectConfig.skipDeploy, isTrue);
+
+      final buildConfig = DeployParser.parse(['--build-only']);
+      expect(buildConfig.buildOnly, isTrue);
+      expect(buildConfig.skipDeploy, isTrue);
+      expect(buildConfig.skipTag, isTrue);
+
+      final deployConfig = DeployParser.parse(['--deploy-only']);
+      expect(deployConfig.deployOnly, isTrue);
+      expect(deployConfig.skipTests, isTrue);
+      expect(deployConfig.skipBuild, isTrue);
+
+      final tagConfig = DeployParser.parse(['--tag-only']);
+      expect(tagConfig.tagOnly, isTrue);
+      expect(tagConfig.skipBuild, isTrue);
+      expect(tagConfig.skipDeploy, isTrue);
+    });
+
     test('falls back to environment variables for credentials', () {
-      final config = DeployConfig.fromArgs([], environment: {
+      final config = DeployParser.parse([], environment: {
         'EC2_HOST': 'ec2.aws.com',
         'EC2_USER': 'ubuntu',
         'EC2_SSH_KEY': 'PRIVATE_KEY_CONTENT',

@@ -48,6 +48,21 @@ class ChangeDetector {
     return components;
   }
 
+  /// Emits component change statuses to GitHub Actions $GITHUB_OUTPUT file if present.
+  void emitGithubOutputs(Set<DeployComponent> components) {
+    final outputPath = Platform.environment['GITHUB_OUTPUT'];
+    if (outputPath == null || outputPath.isEmpty) return;
+
+    final file = File(outputPath);
+    final buffer = StringBuffer();
+    for (final component in DeployComponent.values) {
+      final isChanged = components.contains(component);
+      buffer.writeln('${component.identifier}=$isChanged');
+    }
+    buffer.writeln('deploy_tag=${config.deployTag}');
+    file.writeAsStringSync(buffer.toString(), mode: FileMode.append);
+  }
+
   /// Resolves the base commit SHA by checking custom baseSha, deploy tag, or root commit.
   Future<String> _resolveBaseSha() async {
     if (config.baseSha != null && config.baseSha!.isNotEmpty) {
