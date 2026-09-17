@@ -39,7 +39,7 @@ Future<Response> _onPost(RequestContext context, String storeId) async {
             .firstOrNull ??
         SubscriptionPlanCode.monthly;
 
-    if (tx.status == 'completed' || tx.status == 'success') {
+    if (tx.status == PaymentStatus.completed.name || tx.status == 'success') {
       final subRow = await subRepo.getStoreSubscription(storeId);
       final planRow = await subRepo.getPlanByCode(planCode);
       return success(
@@ -59,14 +59,15 @@ Future<Response> _onPost(RequestContext context, String storeId) async {
         merchantOrderId: merchantTxId,
       );
 
-      final state =
+      final stateStr =
           (statusResult['state'] as String?) ??
           (statusResult['data'] is Map
               ? (statusResult['data'] as Map)['state'] as String?
               : null);
 
-      final stateUpper = state?.toUpperCase();
-      if (stateUpper == 'COMPLETED' || stateUpper == 'SUCCESS') {
+      final gatewayState = PhonePeGatewayState.fromJson(stateStr);
+
+      if (gatewayState?.isSuccess ?? false) {
         final renewedSub = await subRepo.renewSubscription(
           storeId: storeId,
           planCode: planCode,
@@ -81,12 +82,12 @@ Future<Response> _onPost(RequestContext context, String storeId) async {
             'plan': planRow?.toSubscriptionPlan().toJson(),
           },
         );
-      } else if (stateUpper == 'FAILED' || stateUpper == 'CANCELLED') {
+      } else if (gatewayState?.isFailed ?? false) {
         await db.subscriptionTransactions
             .byKey(tx.id)
             .update((t, set) => set(status: toExpr('failed')))
             .execute();
-        return badRequest(message: 'Payment was unsuccessful ($stateUpper)');
+        return badRequest(message: 'Payment was unsuccessful ($stateStr)');
       }
     }
 

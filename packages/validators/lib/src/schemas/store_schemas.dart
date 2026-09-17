@@ -1,5 +1,6 @@
 part of '../schemas.dart';
 
+/// Schema definition for store creation payload.
 @Schema()
 abstract class $StoreCreate {
   @StringField(minLength: 1, description: 'Store name')
@@ -19,6 +20,7 @@ abstract class $StoreCreate {
   String? get slug;
 }
 
+/// Schema definition for store update payload.
 @Schema()
 abstract class $StoreUpdate {
   @StringField(minLength: 1, description: 'Store name')
@@ -41,6 +43,7 @@ abstract class $StoreUpdate {
   String? get slug;
 }
 
+/// Schema definition for store PhonePe PG configuration payload.
 @Schema()
 abstract class $StorePhonePeConfigUpdate {
   @StringField(minLength: 1, description: 'PhonePe Client ID')
@@ -53,18 +56,21 @@ abstract class $StorePhonePeConfigUpdate {
   bool? get isEnabled;
 }
 
+/// Schema definition for initiating a store subscription payment session.
 @Schema()
 abstract class $StoreSubscriptionInitiate {
   @StringField(minLength: 1, description: 'Plan code')
   String get planCode;
 }
 
+/// Schema definition for verifying a store subscription payment transaction.
 @Schema()
 abstract class $StoreSubscriptionVerify {
   @StringField(minLength: 1, description: 'Merchant transaction ID')
   String get merchantTransactionId;
 }
 
+/// Schema definition for renewing an existing store subscription.
 @Schema()
 abstract class $StoreSubscriptionRenew {
   @StringField(minLength: 1, description: 'Plan code')

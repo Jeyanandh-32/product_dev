@@ -32,13 +32,10 @@ abstract final class SubscriptionActions {
           storeId: sub,
         };
       }
-    } catch (e) {
-      if (!silent) {
-        final message = e is ApiException
-            ? e.message
-            : 'Failed to load subscription.';
-        showToast(message);
-      }
+    } on ApiException catch (e) {
+      if (!silent) showToast(e.message);
+    } catch (_) {
+      if (!silent) showToast('Failed to load subscription.');
     }
   }
 
@@ -79,7 +76,7 @@ abstract final class SubscriptionActions {
       openPhonePeCheckoutModal(
         tokenUrl: session.tokenUrl,
         onComplete: (status) async {
-          if (status == 'CONCLUDED') {
+          if (PhonePeGatewayState.fromJson(status)?.isConcluded ?? false) {
             try {
               final result =
                   await SubscriptionClientRepository.verifySubscriptionPayment(
@@ -95,8 +92,10 @@ abstract final class SubscriptionActions {
                 type: ToastType.success,
               );
               await fetchStoreSubscription(storeId);
-            } catch (e) {
-              showToast(e is ApiException ? e.message : 'Verification failed');
+            } on ApiException catch (e) {
+              showToast(e.message);
+            } catch (_) {
+              showToast('Verification failed');
             }
           } else {
             showToast('Subscription payment cancelled.', type: ToastType.warning);
@@ -104,10 +103,12 @@ abstract final class SubscriptionActions {
           setSubmitting(false);
         },
       );
-    } catch (e) {
+    } on ApiException catch (e) {
       setSubmitting(false);
-      final rawMsg = e is ApiException ? e.message : e.toString().replaceFirst('Exception: ', '');
-      showToast(rawMsg.isEmpty ? 'Failed to initiate payment.' : rawMsg);
+      showToast(e.message.isEmpty ? 'Failed to initiate payment.' : e.message);
+    } catch (_) {
+      setSubmitting(false);
+      showToast('Failed to initiate payment.');
     }
   }
 
@@ -130,8 +131,11 @@ abstract final class SubscriptionActions {
       showToast('Subscription activated successfully!', type: ToastType.success);
       await fetchStoreSubscription(storeId);
       return true;
-    } catch (e) {
-      showToast(e is ApiException ? e.message : 'Subscription renewal failed.');
+    } on ApiException catch (e) {
+      showToast(e.message);
+      return false;
+    } catch (_) {
+      showToast('Subscription renewal failed.');
       return false;
     }
   }

@@ -11,3 +11,8 @@ resolution: workspace
 
 dependencies:
   dio: ^5.9.2
+  pretty_dio_logger: ^1.4.0
+  dio_smart_retry: ^7.0.1
+
+dev_dependencies:
+  test: ^1.25.6

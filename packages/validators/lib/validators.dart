@@ -1,6 +1,4 @@
-/// Support for doing something awesome.
-///
-/// More dartdocs go here.
+/// JSON schema and string validation utilities across the workspace.
 library;
 
 export 'package:string_validator/string_validator.dart';

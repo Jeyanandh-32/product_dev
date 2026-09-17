@@ -1,6 +1,8 @@
 import 'package:flutter/widgets.dart';
 import 'package:gap/gap.dart';
 
+import 'package:terminal/theme/terminal_colors.dart';
+
 /// Form validation error message displayed below login text inputs.
 class LoginFieldError extends StatelessWidget {
   final String? errorText;
@@ -22,7 +24,7 @@ class LoginFieldError extends StatelessWidget {
           style: const TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.w500,
-            color: Color(0xFFDC2626),
+            color: TerminalColors.error,
           ),
         ),
       ],

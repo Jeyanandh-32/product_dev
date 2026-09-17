@@ -39,7 +39,7 @@ class PlatformFeeSettlementHistory extends StatelessComponent {
 
   Component _buildSettlementRow(PlatformFeeSettlement s) {
     final dateStr = _formatDate(s.settledAt ?? s.createdAt);
-    final isCompleted = s.status.toLowerCase() == 'completed';
+    final isCompleted = s.status.toLowerCase() == PaymentStatus.completed.name;
     final badgeStyle = isCompleted
         ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
         : 'bg-slate-100 text-slate-600 border-slate-200';

@@ -1,5 +1,6 @@
 part of '../schemas.dart';
 
+/// Schema definition for product category creation payload.
 @Schema()
 abstract class $CategoryCreate {
   @StringField(minLength: 1, maxLength: 255, description: 'Category name')
@@ -12,6 +13,7 @@ abstract class $CategoryCreate {
   String? get imageUrl;
 }
 
+/// Schema definition for product category update payload.
 @Schema()
 abstract class $CategoryUpdate {
   @StringField(minLength: 1, maxLength: 255, description: 'Category name')

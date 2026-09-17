@@ -14,7 +14,6 @@ dependencies:
   change_case: ^2.2.0
   client_repositories:
     path: ../packages/client_repositories
-  date_format: ^2.0.9
   dio: ^5.9.2
   jaspr: ^0.23.2
   jaspr_lucide: ^0.55.0

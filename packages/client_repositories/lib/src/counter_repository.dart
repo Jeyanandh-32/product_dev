@@ -2,7 +2,9 @@ import 'package:api_client/api_client.dart';
 import 'package:dio/dio.dart';
 import 'package:models/models.dart';
 
+/// Client repository for managing service counters within a store.
 abstract final class CounterRepository {
+  /// Creates a new counter under the specified store.
   static Future<Counter> create({
     required String storeId,
     required String name,
@@ -28,6 +30,7 @@ abstract final class CounterRepository {
     }
   }
 
+  /// Updates an existing counter by its unique [id].
   static Future<Counter> update({
     required String id,
     String? name,
@@ -55,6 +58,7 @@ abstract final class CounterRepository {
     }
   }
 
+  /// Fetches a paginated list of counters for a store matching search and active filters.
   static Future<PaginatedResponse<Counter>> getAll({
     required String storeId,
     int? page,

@@ -36,6 +36,9 @@ abstract final class TerminalColors {
   static const lowStockBadgeText = Color(0xFF92400E);
   static const lowStockBadgeBorder = Color(0xFFFDE68A);
 
+  // Error Tokens
+  static const error = Color(0xFFDC2626);
+
   // Shadow & Overlay Tokens
   static const shadow = Color(0x08000000);
   static const shadowLight = Color(0x06000000);

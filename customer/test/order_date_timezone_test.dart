@@ -1,4 +1,3 @@
-import 'package:date_format/date_format.dart' as df;
 import 'package:models/models.dart';
 import 'package:test/test.dart';
 
@@ -28,8 +27,7 @@ void main() {
       );
 
       final localCreatedAt = order.createdAt.toLocal();
-      final formattedDate =
-          df.formatDate(localCreatedAt, [df.dd, '/', df.mm, '/', df.yyyy]);
+      final formattedDate = AppDateFormatter.formatDate(localCreatedAt);
 
       final expectedDate =
           '${localCreatedAt.day.toString().padLeft(2, '0')}/${localCreatedAt.month.toString().padLeft(2, '0')}/${localCreatedAt.year}';
@@ -48,7 +46,7 @@ void main() {
       );
 
       final localDt = tx.createdAt.toLocal();
-      final formatted = df.formatDate(localDt, [df.dd, '/', df.mm, '/', df.yyyy]);
+      final formatted = AppDateFormatter.formatDate(localDt);
       final expectedDate =
           '${localDt.day.toString().padLeft(2, '0')}/${localDt.month.toString().padLeft(2, '0')}/${localDt.year}';
 

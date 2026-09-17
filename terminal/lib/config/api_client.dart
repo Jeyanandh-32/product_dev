@@ -4,53 +4,19 @@ import 'package:flutter/foundation.dart';
 import 'package:terminal/config/secure_storage.dart';
 
 /// Resolves the backend API base URL for the Terminal application.
-///
-/// Priority:
-/// 1. Compile-time `--dart-define=API_BASE_URL=...` override.
-/// 2. If running on Web ([kIsWeb]), dynamically derives from browser [Uri.base.origin].
-/// 3. Native fallback defaults to `http://localhost:8080`.
-String resolveApiBaseUrl() {
-  const envUrl = String.fromEnvironment('API_BASE_URL');
-  if (envUrl.isNotEmpty) {
-    return envUrl.replaceAll(RegExp(r'/+$'), '');
-  }
-
-  if (kIsWeb) {
-    final host = Uri.base.host;
-    final isIp = RegExp(r'^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$').hasMatch(host);
-    if (host.isEmpty || host == 'localhost' || isIp) {
-      return 'http://${host.isEmpty ? 'localhost' : host}:8080';
-    }
-
-    if (host.contains('stage')) {
-      return 'https://api.finch-stage.sparrow-x.in';
-    }
-
-    return 'https://api.finch.sparrow-x.in';
-  }
-
-  return 'http://localhost:8080';
-}
+String resolveApiBaseUrl() => resolveBaseUrl(
+      defaultBaseUrl: 'http://localhost:8080',
+      host: kIsWeb ? Uri.base.host : null,
+      isWeb: kIsWeb,
+    );
 
 /// Initializes the global Dio HTTP client for the Terminal application.
 void initTerminalDio() {
   initDio(
-    Dio(
-        BaseOptions(
-          baseUrl: resolveApiBaseUrl(),
-          connectTimeout: const Duration(seconds: 10),
-          receiveTimeout: const Duration(seconds: 10),
-          extra: kIsWeb ? {'withCredentials': true} : {},
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-          },
-          validateStatus: (status) =>
-              status != null &&
-              ((status >= 200 && status < 300) || status == 401),
-        ),
-      )
-      ..interceptors.add(
+    createClientDio(
+      baseUrl: resolveApiBaseUrl(),
+      withCredentials: kIsWeb,
+      interceptors: [
         InterceptorsWrapper(
           onRequest: (options, handler) async {
             if (!kIsWeb) {
@@ -62,6 +28,7 @@ void initTerminalDio() {
             return handler.next(options);
           },
         ),
-      ),
+      ],
+    ),
   );
 }

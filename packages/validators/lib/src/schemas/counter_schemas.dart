@@ -1,5 +1,6 @@
 part of '../schemas.dart';
 
+/// Schema definition for counter creation request payload.
 @Schema()
 abstract class $CounterCreate {
   @StringField(minLength: 1, maxLength: 255, description: 'Counter name')
@@ -12,6 +13,7 @@ abstract class $CounterCreate {
   String? get imageUrl;
 }
 
+/// Schema definition for counter update request payload.
 @Schema()
 abstract class $CounterUpdate {
   @StringField(minLength: 1, maxLength: 255, description: 'Counter name')

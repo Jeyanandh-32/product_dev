@@ -7,8 +7,10 @@ import '../stock/stock.dart';
 part 'product.freezed.dart';
 part 'product.g.dart';
 
+/// Represents a catalog product offered by a merchant.
 @freezed
 abstract class Product with _$Product {
+  /// Creates a [Product] instance.
   const factory Product({
     required String id,
     required String merchantId,
@@ -28,6 +30,7 @@ abstract class Product with _$Product {
     Counter? counter,
   }) = _Product;
 
+  /// Creates a [Product] from a JSON map.
   factory Product.fromJson(Map<String, Object?> json) =>
       _$ProductFromJson(json);
 }

@@ -1,3 +1,4 @@
+/// Domain data models, Freezed entities, enums, and shared formatters.
 library;
 
 export 'src/bottle_return/bottle_coupon_status.dart';
@@ -27,6 +28,7 @@ export 'src/order_status.dart';
 export 'src/order_type.dart';
 export 'src/payment/payment.dart';
 export 'src/payment_gateway/payment_gateway_enums.dart';
+export 'src/payment_gateway/phonepe_gateway_state.dart';
 export 'src/payment_gateway/platform_phonepe_config.dart';
 export 'src/payment_gateway/store_phonepe_config.dart';
 export 'src/payment_method.dart';
@@ -48,5 +50,6 @@ export 'src/subscription/subscription_status.dart';
 export 'src/subscription/subscription_transaction.dart';
 export 'src/terminal/terminal.dart';
 export 'src/terminal/terminal_account.dart';
+export 'src/utils/app_currency_formatter.dart';
 export 'src/utils/app_date_formatter.dart';
 export 'src/utils/app_date_query_helper.dart';

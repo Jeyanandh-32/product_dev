@@ -65,12 +65,11 @@ Future<Response> _onPost(RequestContext context) async {
       return notFound(message: 'Transaction not found');
     }
 
-    final stateUpper = state.toUpperCase();
-    if (stateUpper == 'COMPLETED' || stateUpper == 'SUCCESS') {
+    final gatewayState = PhonePeGatewayState.fromJson(state);
+
+    if (gatewayState?.isSuccess ?? false) {
       final planCode =
-          SubscriptionPlanCode.values
-              .where((p) => p.name == tx.planCode)
-              .firstOrNull ??
+          SubscriptionPlanCode.tryParse(tx.planCode) ??
           SubscriptionPlanCode.monthly;
 
       await subRepo.renewSubscription(
@@ -79,10 +78,10 @@ Future<Response> _onPost(RequestContext context) async {
         paymentMethod: SubscriptionPaymentMethod.phonepe,
         reference: merchantOrderId,
       );
-    } else if (stateUpper == 'FAILED' || stateUpper == 'CANCELLED') {
+    } else if (gatewayState?.isFailed ?? false) {
       await db.subscriptionTransactions
           .byKey(tx.id)
-          .update((t, set) => set(status: toExpr('failed')))
+          .update((t, set) => set(status: toExpr(PaymentStatus.failed.name)))
           .execute();
     }
 

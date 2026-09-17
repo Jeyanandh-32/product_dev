@@ -5,8 +5,10 @@ import '../payment_gateway/payment_gateway_enums.dart';
 part 'store.freezed.dart';
 part 'store.g.dart';
 
+/// Represents a physical or online merchant storefront.
 @freezed
 abstract class Store with _$Store {
+  /// Creates a [Store] instance.
   const factory Store({
     required String id,
     required String merchantId,
@@ -22,5 +24,6 @@ abstract class Store with _$Store {
     String? slug,
   }) = _Store;
 
+  /// Creates a [Store] from a JSON map.
   factory Store.fromJson(Map<String, Object?> json) => _$StoreFromJson(json);
 }

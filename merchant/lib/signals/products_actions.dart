@@ -45,10 +45,11 @@ abstract final class ProductsActions {
       productsTotalSignal.value = productsTotalSignal.value + 1;
       productsSignal.value = AsyncData([...currentProducts, product]);
       showToast('Product created successfully.', type: ToastType.success);
-    } catch (e) {
-      final message = e is ApiException ? e.message : 'Something went wrong.';
-      showToast(message);
-
+    } on ApiException catch (e) {
+      showToast(e.message);
+      productsSignal.value = AsyncData(currentProducts);
+    } catch (_) {
+      showToast('Something went wrong.');
       productsSignal.value = AsyncData(currentProducts);
     }
   }
@@ -90,10 +91,11 @@ abstract final class ProductsActions {
         currentProducts.map((p) => p.id == id ? updatedProduct : p).toList(),
       );
       showToast('Product updated successfully.', type: ToastType.success);
-    } catch (e) {
-      final message = e is ApiException ? e.message : 'Something went wrong.';
-      showToast(message);
-
+    } on ApiException catch (e) {
+      showToast(e.message);
+      productsSignal.value = AsyncData(currentProducts);
+    } catch (_) {
+      showToast('Something went wrong.');
       productsSignal.value = AsyncData(currentProducts);
     }
   }
@@ -126,10 +128,11 @@ abstract final class ProductsActions {
 
       await refreshProductsSignal();
       refreshStockSummarySignal();
-    } catch (e) {
-      final message = e is ApiException ? e.message : 'Something went wrong.';
-      showToast(message);
-
+    } on ApiException catch (e) {
+      showToast(e.message);
+      productsSignal.value = AsyncData(currentProducts);
+    } catch (_) {
+      showToast('Something went wrong.');
       productsSignal.value = AsyncData(currentProducts);
     }
   }

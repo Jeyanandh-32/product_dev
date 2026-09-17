@@ -43,10 +43,10 @@ Future<Response> _onGet(RequestContext context) async {
           merchantOrderId: reference,
         );
 
-        final state = (statusResult['state'] as String?) ??
+        final stateStr = (statusResult['state'] as String?) ??
             (statusResult['data'] is Map ? (statusResult['data'] as Map)['state'] as String? : null);
 
-        final stateUpper = state?.toUpperCase();
+        final gatewayState = PhonePeGatewayState.fromJson(stateStr);
         final itemRows = await itemRepo.getAllForOrder(orderRow.id);
         final orderService = OrderService(
           orderRepo: orderRepo,
@@ -55,7 +55,7 @@ Future<Response> _onGet(RequestContext context) async {
           stockRepo: StockRepository(db: db),
         );
 
-        if (stateUpper == 'COMPLETED') {
+        if (gatewayState?.isSuccess ?? false) {
           await orderService.completeOrderPayment(orderRow: orderRow, orderItems: itemRows);
         } else {
           await orderService.cancelOrder(orderRow: orderRow);

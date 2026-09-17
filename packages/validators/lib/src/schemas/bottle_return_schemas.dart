@@ -1,5 +1,6 @@
 part of '../schemas.dart';
 
+/// Schema definition for updating store bottle return configuration.
 @Schema()
 abstract class $BottleReturnConfigUpdate {
   @StringField(minLength: 1, description: 'Store ID')
@@ -15,6 +16,7 @@ abstract class $BottleReturnConfigUpdate {
   String? get iotApiKey;
 }
 
+/// Schema definition for configuring product returnability status.
 @Schema()
 abstract class $BottleReturnProductUpdate {
   @StringField(minLength: 1, description: 'Store ID')
@@ -30,6 +32,7 @@ abstract class $BottleReturnProductUpdate {
   bool? get isReturnable;
 }
 
+/// Schema definition for applying bottle return credit against an order.
 @Schema()
 abstract class $BottleReturnCreditApply {
   @StringField(minLength: 1, description: 'Merchant ID')
@@ -48,6 +51,7 @@ abstract class $BottleReturnCreditApply {
   String? get orderId;
 }
 
+/// Schema definition for validating a physical bottle return coupon code.
 @Schema()
 abstract class $BottleReturnCouponValidate {
   @StringField(minLength: 1, description: 'Merchant ID')
@@ -60,6 +64,7 @@ abstract class $BottleReturnCouponValidate {
   String get storeId;
 }
 
+/// Schema definition for redeeming a bottle return coupon against an order.
 @Schema()
 abstract class $BottleReturnCouponRedeem {
   @StringField(minLength: 1, description: 'Merchant ID')
@@ -75,6 +80,7 @@ abstract class $BottleReturnCouponRedeem {
   String get orderId;
 }
 
+/// Schema definition for IoT reverse-vending scanner token ingestion.
 @Schema()
 abstract class $BottleReturnIotScan {
   @StringField(minLength: 1, description: 'Merchant ID')
@@ -87,12 +93,14 @@ abstract class $BottleReturnIotScan {
   List<String> get tokenStrings;
 }
 
+/// Schema definition for IoT sticker dispenser trigger payload.
 @Schema()
 abstract class $BottleReturnIotDispense {
   @StringField(minLength: 1, description: 'Order reference')
   String get orderReference;
 }
 
+/// Schema definition for a line item within a bottle token generation request.
 @Schema()
 abstract class $BottleReturnTokenItem {
   @StringField(minLength: 1, description: 'Product ID')
@@ -105,6 +113,7 @@ abstract class $BottleReturnTokenItem {
   bool? get isReturnableBottle;
 }
 
+/// Schema definition for generating bottle return tracking tokens.
 @Schema()
 abstract class $BottleReturnTokensGenerate {
   @StringField(minLength: 1, description: 'Merchant ID')

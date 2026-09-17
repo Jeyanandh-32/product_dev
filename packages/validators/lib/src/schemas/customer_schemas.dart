@@ -1,5 +1,6 @@
 part of '../schemas.dart';
 
+/// Schema definition for customer registration payload.
 @Schema()
 abstract class $CustomerRegister {
   @StringField(minLength: 1, maxLength: 255, description: 'Full Name')
@@ -20,6 +21,7 @@ abstract class $CustomerRegister {
   String get pin;
 }
 
+/// Schema definition for customer authentication login payload.
 @Schema()
 abstract class $CustomerLogin {
   @StringField(
@@ -37,12 +39,14 @@ abstract class $CustomerLogin {
   String get pin;
 }
 
+/// Schema definition for recording a customer store visit.
 @Schema()
 abstract class $CustomerRecentStoresUpdate {
   @StringField(minLength: 1, description: 'Store ID')
   String get storeId;
 }
 
+/// Schema definition for customer wallet balance top-up request.
 @Schema()
 abstract class $CustomerWalletTopUp {
   @DoubleField(minimum: 1, description: 'Top-up amount in rupees')
@@ -52,6 +56,7 @@ abstract class $CustomerWalletTopUp {
   String get storeId;
 }
 
+/// Schema definition for customer profile and security PIN updates.
 @Schema()
 abstract class $CustomerUpdate {
   @StringField(description: 'Full Name')

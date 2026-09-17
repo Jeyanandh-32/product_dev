@@ -1,19 +1,13 @@
 import 'package:client_repositories/client_repositories.dart';
-import 'package:date_format/date_format.dart' as df;
 import 'package:merchant/signals/stores_signal.dart';
+import 'package:models/models.dart';
 import 'package:signals/signals.dart';
 
 final stockSummaryPageSignal = signal<int>(1);
 final stockSummaryEntriesSignal = signal<int>(10);
 final stockSummarySearchSignal = signal<String>('');
 
-String getTodayDateString() => df.formatDate(DateTime.now().toLocal(), [
-  df.yyyy,
-  '-',
-  df.mm,
-  '-',
-  df.dd,
-]);
+String getTodayDateString() => AppDateFormatter.formatDateIso(DateTime.now());
 
 final stockSummaryDateSignal = signal<String>(getTodayDateString());
 

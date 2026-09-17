@@ -1,4 +1,3 @@
-import 'package:date_format/date_format.dart' as df;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:forui/forui.dart';
@@ -47,8 +46,7 @@ void main() {
       await tester.pumpAndSettle();
 
       final local = utcCreatedAt.toLocal();
-      final expectedDatePrefix =
-          df.formatDate(local, [df.dd, '/', df.mm, '/', df.yyyy]);
+      final expectedDatePrefix = AppDateFormatter.formatDate(local);
 
       expect(find.textContaining(expectedDatePrefix), findsOneWidget);
     });
@@ -62,8 +60,7 @@ void main() {
       await tester.pumpAndSettle();
 
       final local = utcCreatedAt.toLocal();
-      final expectedDatePrefix =
-          df.formatDate(local, [df.dd, '/', df.mm, '/', df.yyyy]);
+      final expectedDatePrefix = AppDateFormatter.formatDate(local);
 
       expect(find.textContaining(expectedDatePrefix), findsOneWidget);
     });

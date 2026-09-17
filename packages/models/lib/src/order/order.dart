@@ -4,8 +4,10 @@ import 'package:models/models.dart';
 part 'order.freezed.dart';
 part 'order.g.dart';
 
+/// Represents a complete customer order in the system.
 @Freezed(makeCollectionsUnmodifiable: false)
 abstract class Order with _$Order {
+  /// Creates an [Order] instance.
   const factory Order({
     required String id,
     required String merchantId,
@@ -32,5 +34,6 @@ abstract class Order with _$Order {
     required DateTime updatedAt,
   }) = _Order;
 
+  /// Creates an [Order] from a JSON map.
   factory Order.fromJson(Map<String, Object?> json) => _$OrderFromJson(json);
 }

@@ -1,2 +1,2 @@
-export 'phonepe_interop_stub.dart'
-    if (dart.library.js_interop) 'phonepe_interop_web.dart';
+export 'package:api_client/api_client.dart'
+    show openPhonePeCheckoutModal, renderQrCodeCanvas;

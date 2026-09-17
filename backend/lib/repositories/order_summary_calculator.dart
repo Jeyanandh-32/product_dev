@@ -48,8 +48,7 @@ class OrderSummaryCalculator {
       final method = row.paymentMethod.toLowerCase();
 
       final isPaidOrCompleted =
-          pStatus == PaymentStatus.completed.name ||
-          pStatus == 'paid' ||
+          pStatus.isPaidStatus ||
           method == PaymentMethod.complimentary.name;
 
       final isCancelled = status == OrderStatus.cancelled.name;

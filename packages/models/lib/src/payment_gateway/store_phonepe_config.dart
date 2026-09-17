@@ -4,8 +4,10 @@ import 'payment_gateway_enums.dart';
 part 'store_phonepe_config.freezed.dart';
 part 'store_phonepe_config.g.dart';
 
+/// Store-specific merchant credentials and configuration for PhonePe PG integration.
 @freezed
 abstract class StorePhonePeConfig with _$StorePhonePeConfig {
+  /// Creates a [StorePhonePeConfig] instance.
   const factory StorePhonePeConfig({
     required String id,
     required String storeId,
@@ -28,6 +30,7 @@ abstract class StorePhonePeConfig with _$StorePhonePeConfig {
     required DateTime updatedAt,
   }) = _StorePhonePeConfig;
 
+  /// Creates a [StorePhonePeConfig] from a JSON map.
   factory StorePhonePeConfig.fromJson(Map<String, Object?> json) =>
       _$StorePhonePeConfigFromJson(json);
 }

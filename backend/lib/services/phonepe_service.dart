@@ -11,20 +11,17 @@ class PhonePeService {
     Dio? dio,
     PhonePeAuthClient? authClient,
     PhonePeV1Client? v1Client,
-  }) : _dio =
-           dio ??
-           Dio(
-             BaseOptions(
-               connectTimeout: const Duration(seconds: 10),
-               receiveTimeout: const Duration(seconds: 10),
-               headers: {
-                 'Content-Type': 'application/json',
-                 'Accept': 'application/json',
-               },
-             ),
-           ),
+  }) : _dio = dio ?? _defaultDio(),
        _authClient = authClient ?? PhonePeAuthClient(dio: dio),
        _v1Client = v1Client ?? PhonePeV1Client(dio: dio);
+
+  static Dio _defaultDio() => Dio(
+    BaseOptions(
+      connectTimeout: const Duration(seconds: 10),
+      receiveTimeout: const Duration(seconds: 10),
+      headers: const {'Content-Type': 'application/json', 'Accept': 'application/json'},
+    ),
+  );
 
   final Dio _dio;
   final PhonePeAuthClient _authClient;
@@ -90,11 +87,9 @@ class PhonePeService {
       );
       final data = response.data;
       if (response.statusCode == 200 && data != null) {
-        final innerData = data['data'] as Map<String, dynamic>?;
-        final redirectUrlStr =
-            (data['redirectUrl'] ?? innerData?['redirectUrl']) as String?;
-        final orderIdStr =
-            ((data['orderId'] ?? innerData?['orderId']) as String?) ?? '';
+        final inner = data['data'] as Map<String, dynamic>?;
+        final redirectUrlStr = (data['redirectUrl'] ?? inner?['redirectUrl']) as String?;
+        final orderIdStr = ((data['orderId'] ?? inner?['orderId']) as String?) ?? '';
         if (redirectUrlStr != null && redirectUrlStr.isNotEmpty) {
           return (tokenUrl: redirectUrlStr, orderId: orderIdStr);
         }
@@ -104,9 +99,7 @@ class PhonePeService {
       final err = e.response?.data;
       final msg = err is Map
           ? (err['message'] ?? err['error'] ?? e.message)
-          : (err is String && err.trim().isNotEmpty
-                ? err.trim()
-                : (e.message ?? 'Unknown gateway error'));
+          : (err is String && err.trim().isNotEmpty ? err.trim() : (e.message ?? 'Unknown gateway error'));
       throw Exception('PhonePe gateway error: $msg');
     }
   }

@@ -66,7 +66,9 @@ abstract final class BottleReturnActions {
                     : 'Bottle return settings saved.'));
 
       showToast(message, type: ToastType.success);
-    } catch (e) {
+    } on ApiException catch (e) {
+      showToast(e.message);
+    } catch (_) {
       showToast('Failed to update bottle return settings.');
     }
   }

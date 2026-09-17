@@ -25,13 +25,10 @@ abstract final class PlatformFeeActions {
     try {
       final summary = await PlatformFeeClientRepository.getSummary();
       platformFeeSummarySignal.value = AsyncData(summary);
-    } catch (e) {
-      if (!silent) {
-        final message = e is ApiException
-            ? e.message
-            : 'Failed to load platform fee summary.';
-        showToast(message);
-      }
+    } on ApiException catch (e) {
+      if (!silent) showToast(e.message);
+    } catch (_) {
+      if (!silent) showToast('Failed to load platform fee summary.');
     }
   }
 
@@ -46,13 +43,10 @@ abstract final class PlatformFeeActions {
           type: ToastType.success,
         );
       }
-    } catch (e) {
-      if (!silent) {
-        final message = e is ApiException
-            ? e.message
-            : 'Payment verification still pending.';
-        showToast(message);
-      }
+    } on ApiException catch (e) {
+      if (!silent) showToast(e.message);
+    } catch (_) {
+      if (!silent) showToast('Payment verification still pending.');
     }
   }
 
@@ -67,7 +61,7 @@ abstract final class PlatformFeeActions {
         tokenUrl: tokenUrl,
         onComplete: (status) async {
           isPayingPlatformFeeSignal.value = false;
-          if (status == 'CONCLUDED') {
+          if (PhonePeGatewayState.fromJson(status)?.isConcluded ?? false) {
             await verifyPayment();
           } else {
             showToast(
@@ -77,12 +71,12 @@ abstract final class PlatformFeeActions {
           }
         },
       );
-    } catch (e) {
+    } on ApiException catch (e) {
       isPayingPlatformFeeSignal.value = false;
-      final message = e is ApiException
-          ? e.message
-          : 'Failed to initiate platform fee payment.';
-      showToast(message);
+      showToast(e.message);
+    } catch (_) {
+      isPayingPlatformFeeSignal.value = false;
+      showToast('Failed to initiate platform fee payment.');
     }
   }
 }

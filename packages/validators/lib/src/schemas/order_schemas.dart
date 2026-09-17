@@ -1,5 +1,6 @@
 part of '../schemas.dart';
 
+/// Schema definition for an individual product line in an order request.
 @Schema()
 abstract class $OrderProduct {
   @StringField(minLength: 1, description: 'Product ID')
@@ -12,6 +13,7 @@ abstract class $OrderProduct {
   double? get discount;
 }
 
+/// Schema definition for order creation payload.
 @Schema()
 abstract class $OrderCreate {
   @StringField(description: 'Order source')
@@ -36,6 +38,7 @@ abstract class $OrderCreate {
   List<$OrderProduct> get products;
 }
 
+/// Schema definition for order status/payment update payload.
 @Schema()
 abstract class $OrderUpdate {
   @StringField(description: 'Order status')

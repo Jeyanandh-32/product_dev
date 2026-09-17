@@ -1,5 +1,6 @@
 part of '../schemas.dart';
 
+/// Schema definition for merchant account registration.
 @Schema()
 abstract class $MerchantRegister {
   @StringField(minLength: 1, description: 'Merchant name')
@@ -24,6 +25,7 @@ abstract class $MerchantRegister {
   String get password;
 }
 
+/// Schema definition for merchant credentials authentication login.
 @Schema()
 abstract class $MerchantLogin {
   @StringField(
@@ -36,6 +38,7 @@ abstract class $MerchantLogin {
   String get password;
 }
 
+/// Schema definition for updating merchant notification preferences.
 @Schema()
 abstract class $MerchantSettingsUpdate {
   @Field(description: 'WhatsApp notifications enabled')
@@ -48,6 +51,7 @@ abstract class $MerchantSettingsUpdate {
   bool? get dailyReports;
 }
 
+/// Schema definition for updating merchant profile details.
 @Schema()
 abstract class $MerchantUpdate {
   @StringField(description: 'Merchant name')

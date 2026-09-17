@@ -24,4 +24,16 @@ enum SubscriptionStatus {
 
   /// Whether a warning banner should be displayed.
   bool get isWarning => this == gracePeriod || this == expired;
+
+  /// Safe parser from string or wire value.
+  static SubscriptionStatus? tryParse(String? value) {
+    if (value == null) return null;
+    final lower = value.toLowerCase().trim();
+    if (lower == 'grace_period') return SubscriptionStatus.gracePeriod;
+    return SubscriptionStatus.values.asNameMap()[lower];
+  }
+
+  /// Deserializes JSON string value.
+  static SubscriptionStatus? fromJson(dynamic json) =>
+      tryParse(json?.toString());
 }

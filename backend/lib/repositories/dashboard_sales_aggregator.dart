@@ -1,15 +1,18 @@
 import 'package:backend/database/schema.dart';
 import 'package:models/models.dart';
 
+/// Product and category sales metrics aggregated for the dashboard.
+typedef DashboardSalesMetrics = ({
+  Map<String, double> categorySales,
+  List<Map<String, dynamic>> topProducts,
+});
+
 /// Aggregates sales by product and by category for dashboard graphs and top-sellers lists.
 class DashboardSalesAggregator {
   const DashboardSalesAggregator._();
 
   /// Extracts top selling products and sales distribution per category.
-  static ({
-    Map<String, double> categorySales,
-    List<Map<String, dynamic>> topProducts,
-  }) aggregateItemSales(
+  static DashboardSalesMetrics aggregateItemSales(
     List<(OrderItemRow, OrderRow?, ProductRow?, CategoryRow?)> orderItemTuples, {
     DateTime? fromDate,
     DateTime? toDate,

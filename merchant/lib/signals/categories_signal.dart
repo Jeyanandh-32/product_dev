@@ -89,10 +89,11 @@ abstract final class CategoriesActions {
       categoriesTotalSignal.value = categoriesTotalSignal.value + 1;
       categoriesSignal.value = AsyncData([...currentCategories, category]);
       showToast('Category created successfully.', type: ToastType.success);
-    } catch (e) {
-      final message = e is ApiException ? e.message : 'Something went wrong.';
-      showToast(message);
-
+    } on ApiException catch (e) {
+      showToast(e.message);
+      categoriesSignal.value = AsyncData(currentCategories);
+    } catch (_) {
+      showToast('Something went wrong.');
       categoriesSignal.value = AsyncData(currentCategories);
     }
   }
@@ -122,10 +123,11 @@ abstract final class CategoriesActions {
         currentCategories.map((s) => s.id == id ? updatedCategory : s).toList(),
       );
       showToast('Category updated successfully.', type: ToastType.success);
-    } catch (e) {
-      final message = e is ApiException ? e.message : 'Something went wrong.';
-      showToast(message);
-
+    } on ApiException catch (e) {
+      showToast(e.message);
+      categoriesSignal.value = AsyncData(currentCategories);
+    } catch (_) {
+      showToast('Something went wrong.');
       categoriesSignal.value = AsyncData(currentCategories);
     }
   }

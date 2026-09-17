@@ -79,9 +79,11 @@ Future<void> loginMerchant({
     if (merchant != null) {
       refreshStoresSignal();
     }
-  } catch (e) {
-    final message = e is ApiException ? e.message : 'Something went wrong.';
-    showToast(message);
+  } on ApiException catch (e) {
+    showToast(e.message);
+    authSignal.value = const AsyncData(null);
+  } catch (_) {
+    showToast('Something went wrong.');
     authSignal.value = const AsyncData(null);
   } finally {
     authSubmittingSignal.value = false;
@@ -107,9 +109,11 @@ Future<void> registerMerchant({
     );
     authSignal.value = AsyncData(merchant);
     refreshStoresSignal();
-  } catch (e) {
-    final message = e is ApiException ? e.message : 'Something went wrong.';
-    showToast(message);
+  } on ApiException catch (e) {
+    showToast(e.message);
+    authSignal.value = const AsyncData(null);
+  } catch (_) {
+    showToast('Something went wrong.');
     authSignal.value = const AsyncData(null);
   } finally {
     authSubmittingSignal.value = false;
@@ -119,9 +123,10 @@ Future<void> registerMerchant({
 Future<void> logoutMerchant() async {
   try {
     await AuthRepository.logout();
-  } catch (e) {
-    final message = e is ApiException ? e.message : 'Something went wrong.';
-    showToast(message);
+  } on ApiException catch (e) {
+    showToast(e.message);
+  } catch (_) {
+    showToast('Something went wrong.');
   } finally {
     clearLastSelectedStoreId();
     authSignal.value = const AsyncData(null);

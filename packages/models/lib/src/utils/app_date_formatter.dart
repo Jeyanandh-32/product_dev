@@ -1,4 +1,4 @@
-import 'package:date_format/date_format.dart' as df;
+import 'package:intl/intl.dart';
 
 /// Standardized date and time formatting utilities across the application suite.
 ///
@@ -7,62 +7,37 @@ import 'package:date_format/date_format.dart' as df;
 class AppDateFormatter {
   const AppDateFormatter._();
 
-  /// Standard date format tokens: DD/MM/YYYY
-  static const List<String> dateTokens = [df.dd, '/', df.mm, '/', df.yyyy];
-
-  /// Standard date and time format tokens: DD/MM/YYYY hh:mm a
-  static const List<String> dateTimeTokens = [
-    df.dd,
-    '/',
-    df.mm,
-    '/',
-    df.yyyy,
-    ' ',
-    df.hh,
-    ':',
-    df.nn,
-    ' ',
-    df.am,
-  ];
-
-  /// Standard 12-hour time format tokens: hh:mm a
-  static const List<String> timeTokens = [df.hh, ':', df.nn, ' ', df.am];
-
-  /// Standard ISO date tokens: YYYY-MM-DD
-  static const List<String> isoDateTokens = [
-    df.yyyy,
-    '-',
-    df.mm,
-    '-',
-    df.dd,
-  ];
+  static final DateFormat _dateFormat = DateFormat('dd/MM/yyyy');
+  static final DateFormat _dateTimeFormat = DateFormat('dd/MM/yyyy hh:mm a');
+  static final DateFormat _timeFormat = DateFormat('hh:mm a');
+  static final DateFormat _isoDateFormat = DateFormat('yyyy-MM-dd');
 
   /// Formats a [DateTime] into a localized date string: `DD/MM/YYYY`.
   /// Returns an empty string if [dateTime] is null.
   static String formatDate(DateTime? dateTime) {
     if (dateTime == null) return '';
-    return df.formatDate(dateTime.toLocal(), dateTokens);
+    return _dateFormat.format(dateTime.toLocal());
   }
 
   /// Formats a [DateTime] into a localized date and time string: `DD/MM/YYYY hh:mm a`.
   /// Returns an empty string if [dateTime] is null.
   static String formatDateTime(DateTime? dateTime) {
     if (dateTime == null) return '';
-    return df.formatDate(dateTime.toLocal(), dateTimeTokens);
+    return _dateTimeFormat.format(dateTime.toLocal());
   }
 
   /// Formats a [DateTime] into a localized 12-hour time string: `hh:mm a`.
   /// Returns an empty string if [dateTime] is null.
   static String formatTime(DateTime? dateTime) {
     if (dateTime == null) return '';
-    return df.formatDate(dateTime.toLocal(), timeTokens);
+    return _timeFormat.format(dateTime.toLocal());
   }
 
   /// Formats a [DateTime] into a localized ISO date string: `YYYY-MM-DD`.
   /// Returns an empty string if [dateTime] is null.
   static String formatDateIso(DateTime? dateTime) {
     if (dateTime == null) return '';
-    return df.formatDate(dateTime.toLocal(), isoDateTokens);
+    return _isoDateFormat.format(dateTime.toLocal());
   }
 
   /// Formats start and end dates into a readable range string: `DD/MM/YYYY - DD/MM/YYYY`.

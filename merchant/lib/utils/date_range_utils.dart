@@ -1,4 +1,4 @@
-import 'package:date_format/date_format.dart' as df;
+import 'package:models/models.dart';
 
 /// Date formatting and preset range utilities for date pickers.
 class DateRangeUtils {
@@ -17,39 +17,31 @@ class DateRangeUtils {
     if (cleaned.isEmpty) return '';
     final dt = DateTime.tryParse(cleaned);
     if (dt == null) return cleaned;
-    return df.formatDate(dt.toLocal(), [df.dd, '/', df.mm, '/', df.yyyy]);
+    return AppDateFormatter.formatDate(dt);
   }
 
-  static String getTodayString() => df.formatDate(DateTime.now().toLocal(), [
-    df.yyyy,
-    '-',
-    df.mm,
-    '-',
-    df.dd,
-  ]);
+  static String getTodayString() =>
+      AppDateFormatter.formatDateIso(DateTime.now());
 
-  static String getYesterdayString() => df.formatDate(
-    DateTime.now().toLocal().subtract(const Duration(days: 1)),
-    [df.yyyy, '-', df.mm, '-', df.dd],
-  );
+  static String getYesterdayString() => AppDateFormatter.formatDateIso(
+        DateTime.now().subtract(const Duration(days: 1)),
+      );
 
-  static String getLast7DaysString() => df.formatDate(
-    DateTime.now().toLocal().subtract(const Duration(days: 6)),
-    [df.yyyy, '-', df.mm, '-', df.dd],
-  );
+  static String getLast7DaysString() => AppDateFormatter.formatDateIso(
+        DateTime.now().subtract(const Duration(days: 6)),
+      );
 
   static String getStartOfMonthString() {
     final now = DateTime.now().toLocal();
-    return df.formatDate(
+    return AppDateFormatter.formatDateIso(
       DateTime(now.year, now.month, 1),
-      [df.yyyy, '-', df.mm, '-', df.dd],
     );
   }
 
   static String getEndOfMonthString() {
     final now = DateTime.now().toLocal();
     final lastDay = DateTime(now.year, now.month + 1, 0);
-    return df.formatDate(lastDay, [df.yyyy, '-', df.mm, '-', df.dd]);
+    return AppDateFormatter.formatDateIso(lastDay);
   }
 
   static String computeButtonLabel({

@@ -37,12 +37,12 @@ class OrderTableRow extends StatelessComponent {
 
   @override
   Component build(BuildContext context) {
-    final isCash = paymentType == 'CASH';
+    final isCash = paymentType.toLowerCase() == PaymentMethod.cash.name;
 
     return tr(
       classes: 'hover:cursor-pointer',
       events: {
-        if (onClick != null) 'click': (e) => onClick!(),
+        if (onClick case final click?) 'click': (e) => click(),
       },
       [
         th([]),

@@ -3,6 +3,7 @@ import 'package:customer/signals/cart_signal.dart';
 import 'package:customer/signals/customer_auth_signal.dart';
 import 'package:customer/signals/toast_signal.dart';
 import 'package:customer/utils/phonepe_interop.dart';
+import 'package:models/models.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_router/jaspr_router.dart';
 
@@ -64,7 +65,7 @@ class CartCheckoutHandler {
         tokenUrl: tokenUrl,
         merchantOrderId: result.merchantOrderId,
         onComplete: (status) async {
-          if (status == 'CONCLUDED') {
+          if (PhonePeGatewayState.fromJson(status)?.isConcluded ?? false) {
             clearCart();
             Router.of(
               context,

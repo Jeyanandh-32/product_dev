@@ -2,7 +2,9 @@ import 'package:api_client/api_client.dart';
 import 'package:dio/dio.dart';
 import 'package:models/models.dart';
 
+/// Client repository for managing store categories.
 abstract final class CategoryRepository {
+  /// Creates a new product category under the specified store.
   static Future<Category> create({
     required String storeId,
     required String name,
@@ -28,6 +30,7 @@ abstract final class CategoryRepository {
     }
   }
 
+  /// Updates an existing category by its unique [id].
   static Future<Category> update({
     required String id,
     String? name,
@@ -55,6 +58,7 @@ abstract final class CategoryRepository {
     }
   }
 
+  /// Fetches a paginated list of categories for a store matching search and active filters.
   static Future<PaginatedResponse<Category>> getAll({
     required String storeId,
     int? page,

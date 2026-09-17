@@ -8,6 +8,7 @@ import 'package:terminal/components/account/subscription_info_card.dart';
 import 'package:terminal/components/account/terminal_info_card.dart';
 import 'package:terminal/signals/account_signal.dart';
 import 'package:terminal/signals/auth_signal.dart';
+import 'package:terminal/theme/terminal_colors.dart';
 import 'package:terminal/utils/responsive_extensions.dart';
 
 /// Terminal device and merchant account view with premium layout and cards.
@@ -31,7 +32,7 @@ class AccountPage extends StatelessWidget {
         final isMobile = context.isMobile;
 
         return Container(
-          color: const Color(0xFFF8FAFC),
+          color: TerminalColors.pageBackground,
           child: ListView(
             padding: EdgeInsets.all(isMobile ? 10 : 16),
             children: [

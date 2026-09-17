@@ -1,14 +1,18 @@
 import 'package:backend/database/schema.dart';
-import 'package:backend/repositories/customer_orders_query.dart';
 import 'package:backend/repositories/order_mutation_repository.dart';
 import 'package:backend/repositories/order_query_builder.dart';
+import 'package:backend/repositories/order_query_facade.dart';
+import 'package:backend/repositories/order_reports_facade.dart';
 import 'package:backend/repositories/order_reports_repository.dart';
-import 'package:backend/repositories/order_types.dart';
 import 'package:models/models.dart';
 import 'package:typed_sql/typed_sql.dart' as ts;
 
+export 'package:backend/repositories/order_query_facade.dart';
+export 'package:backend/repositories/order_reports_facade.dart';
+
 /// Repository facade for order mutations, queries, reports, and analytics.
-class OrderRepository {
+class OrderRepository with OrderQueryFacade, OrderReportsFacade {
+  /// Creates an order repository with underlying database and sub-repositories.
   OrderRepository({required ts.Database<DatabaseSchema> db})
     : _db = db,
       _mutations = OrderMutationRepository(db: db),
@@ -17,6 +21,15 @@ class OrderRepository {
   final ts.Database<DatabaseSchema> _db;
   final OrderMutationRepository _mutations;
   final OrderReportsRepository _reports;
+
+  @override
+  ts.Database<DatabaseSchema> get db => _db;
+
+  @override
+  OrderReportsRepository get reports => _reports;
+
+  /// Underlying order mutations repository.
+  OrderMutationRepository get mutations => _mutations;
 
   /// Inserts a new order row.
   Future<OrderRow> create({
@@ -78,58 +91,6 @@ class OrderRepository {
     terminalCode: terminalCode,
   );
 
-  /// Fetches orders filtered by criteria.
-  Future<List<OrderRow>> getAll({
-    required String merchantId,
-    String? storeId,
-    String? source,
-    String? terminalCode,
-    DateTime? fromDate,
-    DateTime? toDate,
-    String? paymentMethod,
-    String? status,
-    String? paymentStatus,
-    int? limit,
-    int? offset,
-  }) => OrderQueryBuilder.getAll(
-    db: _db,
-    merchantId: merchantId,
-    storeId: storeId,
-    source: source,
-    terminalCode: terminalCode,
-    fromDate: fromDate,
-    toDate: toDate,
-    paymentMethod: paymentMethod,
-    status: status,
-    paymentStatus: paymentStatus,
-    limit: limit,
-    offset: offset,
-  );
-
-  /// Counts total orders matching filter criteria.
-  Future<int> count({
-    required String merchantId,
-    String? storeId,
-    String? source,
-    String? terminalCode,
-    DateTime? fromDate,
-    DateTime? toDate,
-    String? paymentMethod,
-    String? status,
-    String? paymentStatus,
-  }) => OrderQueryBuilder.count(
-    db: _db,
-    merchantId: merchantId,
-    storeId: storeId,
-    source: source,
-    terminalCode: terminalCode,
-    fromDate: fromDate,
-    toDate: toDate,
-    paymentMethod: paymentMethod,
-    status: status,
-    paymentStatus: paymentStatus,
-  );
-
   /// Fetches order row by UUID.
   Future<OrderRow?> getById(String id) =>
       _db.orders.where((o) => o.id.equals(ts.toExpr(id))).first.fetch();
@@ -147,82 +108,4 @@ class OrderRepository {
       .where((o) => o.orderReference.equals(ts.toExpr(reference)))
       .first
       .fetch();
-
-  /// Computes order summary totals.
-  Future<OrderSummaryResult> getOrderSummary({
-    required String merchantId,
-    String? storeId,
-    DateTime? fromDate,
-    DateTime? toDate,
-  }) => _reports.getOrderSummary(
-    merchantId: merchantId,
-    storeId: storeId,
-    fromDate: fromDate,
-    toDate: toDate,
-  );
-
-  /// Computes payment breakdown summary.
-  Future<PaymentSummaryResult> getPaymentSummary({
-    required String merchantId,
-    String? storeId,
-    DateTime? fromDate,
-    DateTime? toDate,
-  }) => _reports.getPaymentSummary(
-    merchantId: merchantId,
-    storeId: storeId,
-    fromDate: fromDate,
-    toDate: toDate,
-  );
-
-  /// Computes Profit & Loss analytics report.
-  Future<ProfitLossReportResult> getProfitLossReport({
-    required String merchantId,
-    required String storeId,
-    DateTime? fromDate,
-    DateTime? toDate,
-    String? searchQuery,
-    int limit = 10,
-    int offset = 0,
-  }) => _reports.getProfitLossReport(
-    merchantId: merchantId,
-    storeId: storeId,
-    fromDate: fromDate,
-    toDate: toDate,
-    searchQuery: searchQuery,
-    limit: limit,
-    offset: offset,
-  );
-
-  /// Computes live dashboard metrics.
-  Future<Map<String, dynamic>> getDashboardAnalytics({
-    required String merchantId,
-    required String storeId,
-    DateTime? fromDate,
-    DateTime? toDate,
-  }) => _reports.getDashboardAnalytics(
-    merchantId: merchantId,
-    storeId: storeId,
-    fromDate: fromDate,
-    toDate: toDate,
-  );
-
-  /// Fetches customer order history.
-  Future<({List<Order> items, int total})> getCustomerOrders({
-    required String customerId,
-    String? storeId,
-    String? date,
-    String? fromDate,
-    String? toDate,
-    int limit = 10,
-    int offset = 0,
-  }) => CustomerOrdersQuery.fetchCustomerOrders(
-    db: _db,
-    customerId: customerId,
-    storeId: storeId,
-    date: date,
-    fromDate: fromDate,
-    toDate: toDate,
-    limit: limit,
-    offset: offset,
-  );
 }

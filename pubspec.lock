@@ -369,14 +369,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.1.8"
-  date_format:
-    dependency: transitive
-    description:
-      name: date_format
-      sha256: a48254e60bdb7f1d5a15cac7f86e37491808056c0a99dbdc850841def4754ddc
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.0.9"
   decimal:
     dependency: transitive
     description:
@@ -393,6 +385,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.11.0"
+  dio_smart_retry:
+    dependency: transitive
+    description:
+      name: dio_smart_retry
+      sha256: c8e20da5f49289fa7dce5c9c6b5b120928e3661aefa0fa2d206ea6d93f580928
+      url: "https://pub.dev"
+    source: hosted
+    version: "7.0.1"
   dio_web_adapter:
     dependency: transitive
     description:
@@ -409,14 +409,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.2.0"
-  dotted_decoration:
-    dependency: transitive
-    description:
-      name: dotted_decoration
-      sha256: a5c5771367690b4f64ebfa7911954ab472b9675f025c373f514e32ac4bb81d5e
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.0.0"
   dynamic_height_grid_view:
     dependency: transitive
     description:
@@ -1181,6 +1173,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "7.0.0"
+  pretty_dio_logger:
+    dependency: transitive
+    description:
+      name: pretty_dio_logger
+      sha256: "36f2101299786d567869493e2f5731de61ce130faa14679473b26905a92b6407"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.4.0"
   process:
     dependency: transitive
     description:
@@ -1538,14 +1538,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.0"
-  styled_divider:
-    dependency: transitive
-    description:
-      name: styled_divider
-      sha256: c360502fb8caf55c17467b0a59edfff68b465343ae040ce76cb08948992c2708
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.5"
   sugar:
     dependency: transitive
     description:

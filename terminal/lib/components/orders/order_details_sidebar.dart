@@ -2,58 +2,26 @@ import 'package:flutter/widgets.dart';
 import 'package:forui/forui.dart';
 import 'package:gap/gap.dart';
 import 'package:mix/mix.dart';
-import 'package:models/models.dart';
 import 'package:signals_flutter/signals_flutter.dart';
 import 'package:terminal/components/orders/order_details_empty_state.dart';
 import 'package:terminal/components/orders/order_details_header.dart';
-import 'package:terminal/components/orders/order_details_item_row.dart';
+import 'package:terminal/components/orders/order_details_items_list.dart';
 import 'package:terminal/components/orders/order_details_summary_card.dart';
-import 'package:terminal/components/product/scroll_down_indicator_pill.dart';
-import 'package:terminal/components/product/terminal_catalog_scrollbar.dart';
 import 'package:terminal/signals/orders_signal.dart';
 import 'package:terminal/theme/terminal_colors.dart';
 import 'package:terminal/utils/responsive_extensions.dart';
 
+export 'package:terminal/components/orders/order_details_items_list.dart';
+
 /// POS order details sidebar matching the exact layout, aesthetics, and summary card of [Cart].
-class OrderDetailsSidebar extends StatefulWidget {
+class OrderDetailsSidebar extends StatelessWidget {
   final bool isDrawerMode;
 
   const OrderDetailsSidebar({super.key, this.isDrawerMode = false});
 
   @override
-  State<OrderDetailsSidebar> createState() => _OrderDetailsSidebarState();
-}
-
-class _OrderDetailsSidebarState extends State<OrderDetailsSidebar> {
-  final ScrollController _itemsScrollController = ScrollController();
-  bool _canScrollDown = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _itemsScrollController.addListener(_updateScrollIndicator);
-    WidgetsBinding.instance.addPostFrameCallback(
-      (_) => _updateScrollIndicator(),
-    );
-  }
-
-  @override
-  void dispose() {
-    _itemsScrollController.removeListener(_updateScrollIndicator);
-    _itemsScrollController.dispose();
-    super.dispose();
-  }
-
-  void _updateScrollIndicator() {
-    if (!_itemsScrollController.hasClients) return;
-    final canScroll = _itemsScrollController.position.extentAfter > 12;
-    if (canScroll != _canScrollDown) setState(() => _canScrollDown = canScroll);
-  }
-
-  @override
   Widget build(BuildContext context) {
     final theme = context.theme;
-    final isDrawerMode = widget.isDrawerMode;
     final sidebarWidth = isDrawerMode
         ? double.infinity
         : context.screenWidth < context.breakpoints.xl
@@ -77,9 +45,6 @@ class _OrderDetailsSidebarState extends State<OrderDetailsSidebar> {
       child: SignalBuilder(
         builder: (context) {
           final order = selectedOrderSignal.value;
-          WidgetsBinding.instance.addPostFrameCallback(
-            (_) => _updateScrollIndicator(),
-          );
 
           return ColumnBox(
             style: sidebarStyle,
@@ -122,39 +87,13 @@ class _OrderDetailsSidebarState extends State<OrderDetailsSidebar> {
                   },
                 ),
                 const Gap(12),
-                Expanded(child: _buildItemsList(order)),
+                Expanded(child: OrderDetailsItemsList(order: order)),
                 OrderDetailsSummaryCard(order: order),
               ],
             ],
           );
         },
       ),
-    );
-  }
-
-  Widget _buildItemsList(Order order) {
-    return Stack(
-      children: [
-        TerminalCatalogScrollbar(
-          controller: _itemsScrollController,
-          child: MediaQuery.removePadding(
-            context: context,
-            removeTop: true,
-            child: ListView.separated(
-              controller: _itemsScrollController,
-              padding: const EdgeInsets.only(top: 6, right: 14, bottom: 20),
-              itemCount: order.items.length,
-              separatorBuilder: (context, index) => const Gap(10),
-              itemBuilder: (context, index) =>
-                  OrderDetailsItemRow(item: order.items[index], index: index),
-            ),
-          ),
-        ),
-        ScrollDownIndicatorPill(
-          visible: _canScrollDown,
-          controller: _itemsScrollController,
-        ),
-      ],
     );
   }
 }

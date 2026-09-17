@@ -2,7 +2,9 @@ import 'package:api_client/api_client.dart';
 import 'package:dio/dio.dart';
 import 'package:models/models.dart';
 
+/// Client repository for managing merchant alert and notification preferences.
 abstract final class MerchantSettingsRepository {
+  /// Fetches settings for the authenticated merchant, or null if unauthenticated.
   static Future<MerchantSettings?> getSettings() async {
     try {
       final result = await dio.get('/v1/merchants/settings');
@@ -21,6 +23,7 @@ abstract final class MerchantSettingsRepository {
     }
   }
 
+  /// Updates notification preferences for the authenticated merchant.
   static Future<MerchantSettings> updateSettings({
     bool? waNotifications,
     bool? lowStockAlerts,

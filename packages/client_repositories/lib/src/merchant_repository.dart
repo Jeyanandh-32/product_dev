@@ -2,7 +2,9 @@ import 'package:api_client/api_client.dart';
 import 'package:dio/dio.dart';
 import 'package:models/models.dart';
 
+/// Client repository for fetching and updating merchant profile details.
 abstract final class MerchantRepository {
+  /// Fetches profile details for the authenticated merchant, or null if unauthenticated.
   static Future<Merchant?> getMerchant() async {
     try {
       final result = await dio.get(ApiEndpoints.merchants);
@@ -21,6 +23,7 @@ abstract final class MerchantRepository {
     }
   }
 
+  /// Updates profile or password for the authenticated merchant.
   static Future<Merchant> updateMerchant({
     String? name,
     String? businessName,

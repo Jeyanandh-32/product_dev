@@ -89,10 +89,11 @@ abstract final class CountersActions {
       countersTotalSignal.value = countersTotalSignal.value + 1;
       countersSignal.value = AsyncData([...currentCounters, counter]);
       showToast('Counter created successfully.', type: ToastType.success);
-    } catch (e) {
-      final message = e is ApiException ? e.message : 'Something went wrong.';
-      showToast(message);
-
+    } on ApiException catch (e) {
+      showToast(e.message);
+      countersSignal.value = AsyncData(currentCounters);
+    } catch (_) {
+      showToast('Something went wrong.');
       countersSignal.value = AsyncData(currentCounters);
     }
   }
@@ -122,10 +123,11 @@ abstract final class CountersActions {
         currentCounters.map((s) => s.id == id ? updatedCounter : s).toList(),
       );
       showToast('Counter updated successfully.', type: ToastType.success);
-    } catch (e) {
-      final message = e is ApiException ? e.message : 'Something went wrong.';
-      showToast(message);
-
+    } on ApiException catch (e) {
+      showToast(e.message);
+      countersSignal.value = AsyncData(currentCounters);
+    } catch (_) {
+      showToast('Something went wrong.');
       countersSignal.value = AsyncData(currentCounters);
     }
   }

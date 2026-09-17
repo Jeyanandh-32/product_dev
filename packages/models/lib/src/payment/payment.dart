@@ -4,8 +4,10 @@ import 'package:models/models.dart';
 part 'payment.freezed.dart';
 part 'payment.g.dart';
 
+/// Represents a payment transaction record linked to an order.
 @freezed
 abstract class Payment with _$Payment {
+  /// Creates a [Payment] instance.
   const factory Payment({
     required String id,
     required String orderReference,
@@ -19,6 +21,7 @@ abstract class Payment with _$Payment {
     required DateTime date,
   }) = _Payment;
 
+  /// Creates a [Payment] from a JSON map.
   factory Payment.fromJson(Map<String, Object?> json) =>
       _$PaymentFromJson(json);
 }

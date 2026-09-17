@@ -43,9 +43,7 @@ class DashboardOrderAggregator {
       }
 
       final method = o.paymentMethod.toLowerCase();
-      final pStatus = o.paymentStatus.toLowerCase();
-      final isPaid =
-          pStatus == PaymentStatus.completed.name || pStatus == 'paid';
+      final isPaid = o.paymentStatus.isPaidStatus;
       final isComplimentary = method == PaymentMethod.complimentary.name;
 
       if (isComplimentary) {

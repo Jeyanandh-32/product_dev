@@ -2,35 +2,13 @@ import 'package:api_client/api_client.dart';
 import 'package:dio/dio.dart';
 import 'package:models/models.dart';
 
-typedef ProfitLossReportResponse = ({
-  List<ProfitLossItem> items,
-  int currentPage,
-  int pageSize,
-  int totalItems,
-  int totalPages,
-  double totalCostPrice,
-  double totalCollectedPrice,
-  double totalProfit,
-  double totalMarginPercentage,
-});
+import 'reports_response_types.dart';
 
-typedef StockSummaryReportResponse = ({
-  List<StockSummaryItem> items,
-  int currentPage,
-  int pageSize,
-  int totalItems,
-  int totalPages,
-  int totalOpeningStock,
-  int totalIn,
-  int totalOut,
-  int totalWastage,
-  int totalAdjustment,
-  int totalClosingStock,
-});
-
+/// Client repository for fetching analytics, profit-and-loss, and stock reports.
 class ReportsRepository {
   const ReportsRepository._();
 
+  /// Fetches a paginated profit-and-loss report for a store within an optional date range.
   static Future<ProfitLossReportResponse> getProfitLoss({
     required String storeId,
     int? page,
@@ -84,6 +62,7 @@ class ReportsRepository {
     }
   }
 
+  /// Fetches an aggregated stock movement summary report for a store within an optional date range.
   static Future<StockSummaryReportResponse> getStockSummary({
     required String storeId,
     int? page,

@@ -2,6 +2,7 @@ import 'package:api_client/api_client.dart';
 import 'package:dio/dio.dart';
 import 'package:models/models.dart';
 
+/// Aggregated collection totals for cash, UPI, and total revenue.
 typedef PaymentSummary = ({
   double cashCollected,
   double upiCollected,
@@ -9,6 +10,7 @@ typedef PaymentSummary = ({
   double totalCollected,
 });
 
+/// Paginated payment list response with aggregate collection summary.
 typedef PaymentPaginatedResponse = ({
   List<Payment> items,
   int currentPage,
@@ -18,7 +20,9 @@ typedef PaymentPaginatedResponse = ({
   PaymentSummary summary,
 });
 
+/// Client repository for querying payment transactions and summaries.
 abstract final class PaymentRepository {
+  /// Fetches a paginated list of payments for a store matching the given criteria.
   static Future<PaymentPaginatedResponse> getAll({
     required String storeId,
     int? page,

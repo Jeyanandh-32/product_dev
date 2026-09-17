@@ -2,9 +2,11 @@ import 'package:api_client/api_client.dart';
 import 'package:dio/dio.dart';
 import 'package:models/models.dart';
 
+/// Client repository for customer authentication, registration, profile, and recent stores.
 class CustomerAuthRepository {
   const CustomerAuthRepository._();
 
+  /// Logs in a customer with their mobile number and PIN.
   static Future<Customer> login({
     required String mobileNumber,
     required String pin,
@@ -22,6 +24,7 @@ class CustomerAuthRepository {
     }
   }
 
+  /// Registers a new customer account.
   static Future<Customer> register({
     required String name,
     required String mobileNumber,
@@ -40,6 +43,7 @@ class CustomerAuthRepository {
     }
   }
 
+  /// Fetches the currently authenticated customer profile, or null if unauthenticated.
   static Future<Customer?> getCustomer() async {
     try {
       final result = await dio.get(ApiEndpoints.customers);
@@ -57,6 +61,7 @@ class CustomerAuthRepository {
     }
   }
 
+  /// Updates profile details for the authenticated customer.
   static Future<Customer> updateProfile({
     String? name,
     String? mobileNumber,
@@ -81,6 +86,7 @@ class CustomerAuthRepository {
     }
   }
 
+  /// Fetches stores recently visited or ordered from by the customer.
   static Future<List<Store>> getRecentStores() async {
     try {
       final result = await dio.get(ApiEndpoints.customerRecentStores);
@@ -100,6 +106,7 @@ class CustomerAuthRepository {
     }
   }
 
+  /// Terminates the active customer session.
   static Future<void> logout() async {
     try {
       await dio.get(ApiEndpoints.logout);
@@ -108,6 +115,7 @@ class CustomerAuthRepository {
     }
   }
 
+  /// Records that the customer browsed or interacted with a store.
   static Future<void> recordStoreVisit(String storeId) async {
     try {
       await dio.post(
@@ -119,3 +127,4 @@ class CustomerAuthRepository {
     }
   }
 }
+

@@ -1,5 +1,6 @@
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
+import 'package:models/models.dart';
 
 class PaymentTableRow extends StatelessComponent {
   final String orderReference;
@@ -25,7 +26,7 @@ class PaymentTableRow extends StatelessComponent {
 
   @override
   Component build(BuildContext context) {
-    final isCash = paymentType == 'CASH';
+    final isCash = paymentType.toLowerCase() == PaymentMethod.cash.name;
 
     return tr([
       th([]),

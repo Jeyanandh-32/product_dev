@@ -3,6 +3,7 @@ import 'package:backend/database/schema.dart';
 import 'package:backend/extensions/store_phonepe_config_row_extension.dart';
 import 'package:backend/repositories/customer_repository.dart';
 import 'package:backend/services/phonepe_service.dart';
+import 'package:models/models.dart';
 import 'package:typed_sql/typed_sql.dart' hide Database;
 
 /// Helper service for verifying pending customer wallet top-ups with PhonePe status API.
@@ -24,7 +25,7 @@ class WalletVerificationService {
 
     for (final tx in txRows) {
       final reference = tx.reference;
-      if (tx.status == 'pending' &&
+      if (tx.status == PaymentStatus.pending.name &&
           reference != null &&
           reference.startsWith('TOPUP_')) {
         final activeConfigRow = await db.storePhonepeConfigs
@@ -48,20 +49,22 @@ class WalletVerificationService {
                     ? (statusResult['data'] as Map)['state'] as String?
                     : null);
 
-            if (state == 'COMPLETED') {
+            final gatewayState = PhonePeGatewayState.fromJson(state);
+
+            if (gatewayState?.isSuccess ?? false) {
               await repo.updateWalletTransactionStatus(
                 id: tx.id,
-                status: 'completed',
+                status: PaymentStatus.completed.name,
               );
               await repo.updateStoreWalletBalance(
                 customerId: customerId,
                 storeId: storeId,
                 amountDeltaPaise: tx.amount,
               );
-            } else if (state == 'FAILED') {
+            } else if (gatewayState?.isFailed ?? false) {
               await repo.updateWalletTransactionStatus(
                 id: tx.id,
-                status: 'failed',
+                status: PaymentStatus.failed.name,
               );
             }
           } catch (_) {}

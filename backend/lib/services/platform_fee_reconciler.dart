@@ -39,20 +39,20 @@ class PlatformFeeReconciler {
         merchantOrderId: 'PFS_${settlement.id}',
       );
 
-      final state =
+      final stateStr =
           (statusRes['state'] as String?) ??
           (statusRes['data'] is Map
               ? (statusRes['data'] as Map)['state'] as String?
               : null);
-      final stateUpper = state?.toUpperCase();
+      final gatewayState = PhonePeGatewayState.fromJson(stateStr);
 
-      if (stateUpper == 'COMPLETED' || stateUpper == 'SUCCESS') {
+      if (gatewayState?.isSuccess ?? false) {
         final txId = _extractTransactionId(statusRes, settlement.id);
         await platformFeeRepo.markSettlementCompleted(
           settlementId: settlement.id,
           paymentTransactionId: txId,
         );
-      } else if (stateUpper == 'FAILED' || stateUpper == 'CANCELLED') {
+      } else if (gatewayState?.isFailed ?? false) {
         await platformFeeRepo.markSettlementFailed(settlement.id);
       }
     } catch (_) {

@@ -2,9 +2,11 @@ import 'package:api_client/api_client.dart';
 import 'package:dio/dio.dart';
 import 'package:models/models.dart';
 
+/// Client repository for querying wallet balance, transactions, and initiating top-ups.
 class CustomerWalletRepository {
   const CustomerWalletRepository._();
 
+  /// Fetches the customer's current wallet balance and transaction history.
   static Future<({double balance, List<CustomerWalletTransaction> transactions})>
   getWalletInfo({String? storeId}) async {
     try {
@@ -30,6 +32,7 @@ class CustomerWalletRepository {
     }
   }
 
+  /// Initiates a wallet balance top-up payment session.
   static Future<({double? balance, CustomerWalletTransaction transaction, String? tokenUrl, String? merchantOrderId, bool isPendingPayment})> topUp(
     double amount, {
     String? storeId,

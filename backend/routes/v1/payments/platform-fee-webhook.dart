@@ -5,6 +5,7 @@ import 'package:backend/repositories/platform_phonepe_config_repository.dart';
 import 'package:backend/services/phonepe_service.dart';
 import 'package:backend/utils/responses.dart';
 import 'package:dart_frog/dart_frog.dart';
+import 'package:models/models.dart';
 
 /// Public webhook receiver for PhonePe platform fee settlement notifications.
 Future<Response> onRequest(RequestContext context) async {
@@ -54,9 +55,9 @@ Future<Response> _onPost(RequestContext context) async {
 
     if (merchantOrderId.startsWith('PFS_')) {
       final settlementId = merchantOrderId.substring(4);
-      final stateUpper = state.toUpperCase();
+      final gatewayState = PhonePeGatewayState.tryParse(state);
 
-      if (stateUpper == 'COMPLETED' || stateUpper == 'SUCCESS') {
+      if (gatewayState?.isSuccess ?? false) {
         const repo = PlatformFeeRepository();
         await repo.markSettlementCompleted(
           settlementId: settlementId,

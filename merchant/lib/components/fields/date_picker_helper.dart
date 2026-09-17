@@ -1,4 +1,4 @@
-import 'package:date_format/date_format.dart' as df;
+import 'package:models/models.dart';
 
 /// Date formatting and string cleaning helper utilities for date pickers.
 class DatePickerHelper {
@@ -16,19 +16,13 @@ class DatePickerHelper {
     final cleaned = cleanDate(dateStr);
     final dt = DateTime.tryParse(cleaned);
     if (dt == null) return cleaned;
-    return df.formatDate(dt.toLocal(), [df.dd, '/', df.mm, '/', df.yyyy]);
+    return AppDateFormatter.formatDate(dt);
   }
 
-  static String getTodayString() => df.formatDate(DateTime.now().toLocal(), [
-    df.yyyy,
-    '-',
-    df.mm,
-    '-',
-    df.dd,
-  ]);
+  static String getTodayString() =>
+      AppDateFormatter.formatDateIso(DateTime.now());
 
-  static String getYesterdayString() => df.formatDate(
-    DateTime.now().toLocal().subtract(const Duration(days: 1)),
-    [df.yyyy, '-', df.mm, '-', df.dd],
-  );
+  static String getYesterdayString() => AppDateFormatter.formatDateIso(
+        DateTime.now().subtract(const Duration(days: 1)),
+      );
 }

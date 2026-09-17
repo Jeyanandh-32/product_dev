@@ -1,3 +1,6 @@
+/// Aggregates all JSON Schemantic definitions across domain models.
+library;
+
 import 'package:schemantic/schemantic.dart';
 import 'package:validators/src/validation_patterns.dart';
 

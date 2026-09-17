@@ -72,7 +72,7 @@ class CustomerWalletHandler {
             setLoading(false);
             await onCompleted();
 
-            if (status == 'CONCLUDED') {
+            if (PhonePeGatewayState.fromJson(status)?.isConcluded ?? false) {
               showCustomerToast(
                 'Wallet topped up successfully!',
                 type: ToastType.success,

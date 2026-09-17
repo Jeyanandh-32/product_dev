@@ -32,10 +32,11 @@ abstract final class StoresActions {
         selectActiveStore(store);
       }
       showToast('Store created successfully.', type: ToastType.success);
-    } catch (e) {
-      final message = e is ApiException ? e.message : 'Something went wrong.';
-      showToast(message);
-
+    } on ApiException catch (e) {
+      showToast(e.message);
+      storesSignal.value = AsyncData(currentStores);
+    } catch (_) {
+      showToast('Something went wrong.');
       storesSignal.value = AsyncData(currentStores);
     }
   }
@@ -78,10 +79,11 @@ abstract final class StoresActions {
         storeSignal.value = updatedStore;
       }
       showToast('Store updated successfully.', type: ToastType.success);
-    } catch (e) {
-      final message = e is ApiException ? e.message : 'Something went wrong.';
-      showToast(message);
-
+    } on ApiException catch (e) {
+      showToast(e.message);
+      storesSignal.value = AsyncData(currentStores);
+    } catch (_) {
+      showToast('Something went wrong.');
       storesSignal.value = AsyncData(currentStores);
     }
   }

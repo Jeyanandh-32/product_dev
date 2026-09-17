@@ -1,5 +1,6 @@
 part of '../schemas.dart';
 
+/// Schema definition for registering a new POS terminal.
 @Schema()
 abstract class $TerminalCreate {
   @StringField(minLength: 1, description: 'Terminal name')
@@ -13,6 +14,7 @@ abstract class $TerminalCreate {
   String get password;
 }
 
+/// Schema definition for terminal authentication login.
 @Schema()
 abstract class $TerminalLogin {
   @StringField(minLength: 12, maxLength: 12, description: 'Terminal code')
@@ -26,6 +28,7 @@ abstract class $TerminalLogin {
   String get password;
 }
 
+/// Schema definition for updating terminal credentials or active status.
 @Schema()
 abstract class $TerminalUpdate {
   @StringField(minLength: 1, description: 'Terminal name')

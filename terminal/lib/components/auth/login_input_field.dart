@@ -55,9 +55,7 @@ class _LoginInputFieldState extends State<LoginInputField> {
   void didUpdateWidget(LoginInputField oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.focusNode != widget.focusNode) {
-      (oldWidget.focusNode ?? _internalFocusNode)?.removeListener(
-        _onFocusChange,
-      );
+      (oldWidget.focusNode ?? _internalFocusNode)?.removeListener(_onFocusChange);
       _effectiveFocusNode.addListener(_onFocusChange);
       _isFocused = _effectiveFocusNode.hasFocus;
     }
@@ -83,7 +81,7 @@ class _LoginInputFieldState extends State<LoginInputField> {
       builder: (state) {
         final hasError = state.hasError;
         final borderCol = hasError
-            ? const Color(0xFFDC2626)
+            ? TerminalColors.error
             : (_isFocused ? TerminalColors.primary : TerminalColors.border);
 
         return Column(
@@ -94,6 +92,7 @@ class _LoginInputFieldState extends State<LoginInputField> {
               duration: const Duration(milliseconds: 150),
               height: 42,
               alignment: Alignment.center,
+              padding: const EdgeInsets.symmetric(horizontal: 14),
               decoration: BoxDecoration(
                 color: const Color(0xFFFFFFFF),
                 borderRadius: BorderRadius.circular(10),
@@ -102,7 +101,6 @@ class _LoginInputFieldState extends State<LoginInputField> {
                   width: _isFocused || hasError ? 1.5 : 1.0,
                 ),
               ),
-              padding: const EdgeInsets.symmetric(horizontal: 14),
               child: Row(
                 children: [
                   Expanded(
@@ -128,12 +126,9 @@ class _LoginInputFieldState extends State<LoginInputField> {
                         isDense: true,
                         contentPadding: EdgeInsets.zero,
                         border: InputBorder.none,
-                        enabledBorder: InputBorder.none,
-                        focusedBorder: InputBorder.none,
                         hintText: widget.hint,
                         hintStyle: const TextStyle(
-                          fontSize: 13.5,
-                          color: Color(0xFF94A3B8),
+                          fontSize: 13.5, color: Color(0xFF94A3B8),
                         ),
                       ),
                     ),

@@ -10,6 +10,7 @@ import 'package:backend/services/order_service.dart';
 import 'package:backend/services/phonepe_service.dart';
 import 'package:backend/utils/responses.dart';
 import 'package:dart_frog/dart_frog.dart';
+import 'package:models/models.dart';
 import 'package:typed_sql/typed_sql.dart' hide Database;
 
 Future<Response> onRequest(RequestContext context) async {
@@ -64,6 +65,12 @@ Future<Response> _onPost(RequestContext context) async {
       }
     }
 
+    final gatewayState = PhonePeGatewayState.tryParse(state);
+    final isCompleted =
+        (gatewayState?.isSuccess ?? false) || event == 'checkout.order.completed';
+    final isFailed =
+        (gatewayState?.isFailed ?? false) || event == 'checkout.order.failed';
+
     // Process order or wallet top-up update based on event & state
     if (merchantOrderId.startsWith('TOPUP_')) {
       final customerRepo = CustomerRepository(db: Database.db);
@@ -73,7 +80,7 @@ Future<Response> _onPost(RequestContext context) async {
           .fetch();
 
       if (txRow != null && txRow.status == 'pending') {
-        if (state.toUpperCase() == 'COMPLETED' || event == 'checkout.order.completed') {
+        if (isCompleted) {
           await customerRepo.updateStoreWalletBalance(
             customerId: txRow.customerId,
             storeId: txRow.storeId,
@@ -83,7 +90,7 @@ Future<Response> _onPost(RequestContext context) async {
             id: txRow.id,
             status: 'completed',
           );
-        } else if (state.toUpperCase() == 'FAILED' || event == 'checkout.order.failed') {
+        } else if (isFailed) {
           await customerRepo.updateWalletTransactionStatus(
             id: txRow.id,
             status: 'failed',
@@ -107,12 +114,12 @@ Future<Response> _onPost(RequestContext context) async {
           stockRepo: StockRepository(db: db),
         );
 
-        if (state.toUpperCase() == 'COMPLETED' || event == 'checkout.order.completed') {
+        if (isCompleted) {
           await orderService.completeOrderPayment(
             orderRow: orderRow,
             orderItems: itemRows,
           );
-        } else if (state.toUpperCase() == 'FAILED' || event == 'checkout.order.failed') {
+        } else if (isFailed) {
           await orderService.cancelOrder(
             orderRow: orderRow,
           );

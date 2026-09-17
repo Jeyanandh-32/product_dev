@@ -2,7 +2,9 @@ import 'package:api_client/api_client.dart';
 import 'package:dio/dio.dart';
 import 'package:models/models.dart';
 
+/// Client repository for creating, updating, and querying products.
 abstract final class ProductRepository {
+  /// Creates a new product catalog entry under the given store.
   static Future<Product> create({
     required String storeId,
     required String name,
@@ -42,6 +44,7 @@ abstract final class ProductRepository {
     }
   }
 
+  /// Updates an existing product by its unique [id].
   static Future<Product> update({
     required String id,
     String? name,
@@ -83,6 +86,7 @@ abstract final class ProductRepository {
     }
   }
 
+  /// Fetches a paginated list of products for a store matching search and active filters.
   static Future<PaginatedResponse<Product>> getAll({
     required String storeId,
     int? page,

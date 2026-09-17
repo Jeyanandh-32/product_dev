@@ -1,5 +1,6 @@
 part of '../schemas.dart';
 
+/// Schema definition for product creation payload.
 @Schema()
 abstract class $ProductCreate {
   @StringField(minLength: 1, maxLength: 255, description: 'Product name')
@@ -33,6 +34,7 @@ abstract class $ProductCreate {
   double? get taxRate;
 }
 
+/// Schema definition for product update payload.
 @Schema()
 abstract class $ProductUpdate {
   @StringField(minLength: 1, maxLength: 255, description: 'Product name')

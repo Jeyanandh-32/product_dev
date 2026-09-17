@@ -6,6 +6,7 @@ import 'package:mix/mix.dart';
 import 'package:terminal/components/components.dart';
 import 'package:terminal/exceptions/api_exception.dart';
 import 'package:terminal/signals/auth_signal.dart';
+import 'package:terminal/theme/terminal_colors.dart';
 import 'package:terminal/utils/terminal_toast.dart';
 
 /// Terminal device authentication page with customer app brand styling using Forui.
@@ -82,10 +83,10 @@ class _LoginState extends State<Login> {
                   margin: const EdgeInsets.only(bottom: 12),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: const Color(0xFFE2E8F0)),
+                    border: Border.all(color: TerminalColors.border),
                     boxShadow: const [
                       BoxShadow(
-                        color: Color(0x0A000000),
+                        color: TerminalColors.shadow,
                         blurRadius: 4,
                         offset: Offset(0, 1),
                       ),
@@ -113,7 +114,7 @@ class _LoginState extends State<Login> {
                   style: TextStyler()
                       .fontSize(14)
                       .fontWeight(FontWeight.w600)
-                      .color(const Color(0xFF64748B)),
+                      .color(TerminalColors.textSecondary),
                 ),
                 const Gap(32),
                 TerminalLoginFormCard(

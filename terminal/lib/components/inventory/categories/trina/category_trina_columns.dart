@@ -1,10 +1,11 @@
 import 'package:flutter/widgets.dart';
-import 'package:forui/forui.dart';
-import 'package:mix/mix.dart';
 import 'package:models/models.dart';
+import 'package:terminal/components/inventory/categories/trina/category_trina_actions.dart';
 import 'package:terminal/components/inventory/inventory_table_cells.dart';
 import 'package:terminal/theme/terminal_colors.dart';
 import 'package:trina_grid/trina_grid.dart';
+
+export 'package:terminal/components/inventory/categories/trina/category_trina_actions.dart';
 
 /// Column definitions for the POS Inventory Categories TrinaGrid spreading columns equally like DaisyUI.
 class CategoryTrinaColumns {
@@ -34,7 +35,7 @@ class CategoryTrinaColumns {
         renderer: (ctx) {
           final category = ctx.row.cells['category_ref']?.value as Category?;
           if (category == null) return const SizedBox.shrink();
-          return _buildEditButton(() => onEdit(category));
+          return CategoryTrinaEditButton(onTap: () => onEdit(category));
         },
       ),
       TrinaColumn(
@@ -131,26 +132,5 @@ class CategoryTrinaColumns {
         ),
       ),
     ];
-  }
-
-  static Widget _buildEditButton(VoidCallback onTap) {
-    return MouseRegion(
-      cursor: SystemMouseCursors.click,
-      child: PressableBox(
-        onPress: onTap,
-        style: BoxStyler()
-            .width(30)
-            .height(30)
-            .borderRadiusAll(const Radius.circular(8))
-            .color(const Color(0xFFF1F5F9))
-            .alignment(Alignment.center)
-            .onHovered(BoxStyler().color(const Color(0xFFE2E8F0))),
-        child: const Icon(
-          FLucideIcons.squarePen,
-          size: 14.5,
-          color: Color(0xFF334155),
-        ),
-      ),
-    );
   }
 }

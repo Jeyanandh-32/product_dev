@@ -1,5 +1,6 @@
 part of '../schemas.dart';
 
+/// Schema definition for initial stock record creation payload.
 @Schema()
 abstract class $StockCreate {
   @StringField(minLength: 1, description: 'Product ID')
@@ -15,6 +16,7 @@ abstract class $StockCreate {
   int? get lowStockThreshold;
 }
 
+/// Schema definition for product stock adjustment and configuration payload.
 @Schema()
 abstract class $StockUpdate {
   @IntegerField(minimum: 0, description: 'Stock quantity')
