@@ -8,7 +8,9 @@ import 'package:terminal/components/cart/mobile_cart_floating_button.dart';
 import 'package:terminal/components/product/category_filter_list.dart';
 import 'package:terminal/components/product/product_search_bar.dart';
 import 'package:terminal/pages/loading.dart';
+import 'package:terminal/signals/cart_signal.dart';
 import 'package:terminal/signals/categories_signal.dart';
+import 'package:terminal/signals/navigation_signal.dart';
 import 'package:terminal/signals/products_signal.dart';
 import 'package:terminal/utils/responsive_extensions.dart';
 
@@ -22,15 +24,35 @@ class BillingCatalogView extends StatefulWidget {
 
 class _BillingCatalogViewState extends State<BillingCatalogView> {
   final ScrollController _scrollController = ScrollController();
+  late final void Function() _disposeNavEffect;
+  late final void Function() _disposeCartSanitizeEffect;
+  TerminalNavPage? _lastPage;
 
   @override
   void initState() {
     super.initState();
-    refreshProductsSignal();
+    _lastPage = activeTerminalPageSignal.value;
+    _disposeNavEffect = effect(() {
+      final current = activeTerminalPageSignal.value;
+      if (current == TerminalNavPage.billing && _lastPage != null && _lastPage != TerminalNavPage.billing) {
+        refreshProductsSignal();
+        refreshCategoriesSignal();
+      }
+      _lastPage = current;
+    });
+    _disposeCartSanitizeEffect = effect(() {
+      final prods = productsSignal.value.value;
+      final cats = categoriesSignal.value.value;
+      if (prods != null && cats != null) {
+        CartController.sanitizeCart(availableProducts: prods, availableCategories: cats);
+      }
+    });
   }
 
   @override
   void dispose() {
+    _disposeNavEffect();
+    _disposeCartSanitizeEffect();
     _scrollController.dispose();
     super.dispose();
   }
@@ -45,6 +67,11 @@ class _BillingCatalogViewState extends State<BillingCatalogView> {
           return const Center(child: Loading(message: 'Loading products...'));
         }
         final allProducts = products.value ?? [];
+        final allCategories = categories.value ?? [];
+        final activeCategoryIds = {for (final c in allCategories) if (c.isActive) c.id};
+        final hasActiveProducts = allProducts.any(
+          (p) => p.isActive && (p.category == null || activeCategoryIds.contains(p.category?.id)),
+        );
         final isMobile = context.isMobile;
         final crossAxisCount = context.productGridColumns;
 
@@ -55,7 +82,7 @@ class _BillingCatalogViewState extends State<BillingCatalogView> {
               children: [
                 Expanded(
                   flex: isMobile ? 1 : 6,
-                  child: allProducts.isEmpty
+                  child: !hasActiveProducts
                       ? const BillingEmptyCatalog()
                       : Padding(
                           padding: EdgeInsets.only(

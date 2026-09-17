@@ -97,10 +97,42 @@ abstract final class CategoryActions {
     return category;
   }
 
-  static Future<Category> update({required String id, String? name, bool? isActive, String? description, String? imageUrl}) async {
-    final updated = await CategoryRepository.update(id: id, name: name, isActive: isActive, description: description, imageUrl: imageUrl);
+  static Future<Category> update({
+    required String id,
+    String? name,
+    bool? isActive,
+    String? description,
+    String? imageUrl,
+  }) async {
+    final updated = await CategoryRepository.update(
+      id: id,
+      name: name,
+      isActive: isActive,
+      description: description,
+      imageUrl: imageUrl,
+    );
     final current = categoriesSignal.value.value ?? [];
-    categoriesSignal.value = AsyncData(current.map((c) => c.id == id ? updated : c).toList());
+    categoriesSignal.value =
+        AsyncData(current.map((c) => c.id == id ? updated : c).toList());
+
+    if (isActive != null) {
+      final currentProducts = productsSignal.value.value;
+      if (currentProducts != null) {
+        productsSignal.value = AsyncData(
+          currentProducts.map((p) {
+            if (p.category?.id == id) {
+              return p.copyWith(
+                category: p.category?.copyWith(isActive: isActive),
+              );
+            }
+            return p;
+          }).toList(),
+        );
+      }
+      if (!isActive && selectedCategorySignal.value?.id == id) {
+        selectedCategorySignal.value = null;
+      }
+    }
     return updated;
   }
 }

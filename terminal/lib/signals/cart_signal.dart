@@ -74,6 +74,25 @@ abstract final class CartController {
     BottleReturnActions.resetCartRewardState();
   }
 
+  /// Removes any items whose product or category has been deactivated.
+  static void sanitizeCart({
+    required Iterable<Product> availableProducts,
+    required Iterable<Category> availableCategories,
+  }) {
+    final activeCategoryIds = {
+      for (final c in availableCategories) if (c.isActive) c.id,
+    };
+    final activeProductIds = {
+      for (final p in availableProducts)
+        if (p.isActive && (p.category == null || activeCategoryIds.contains(p.category?.id))) p.id,
+    };
+    final current = cartSignal.value;
+    final validItems = current.items.where((i) => activeProductIds.contains(i.product.id)).toList();
+    if (validItems.length != current.items.length) {
+      _updateState(validItems);
+    }
+  }
+
   static void _updateState(List<CartItem> items) {
     var orderQuantity = 0;
     var subtotal = 0.0;

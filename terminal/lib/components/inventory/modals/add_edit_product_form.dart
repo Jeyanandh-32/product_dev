@@ -108,6 +108,7 @@ class AddEditProductForm extends StatelessWidget {
             ),
             const Gap(8),
             ModalSwitch(
+              key: const ValueKey('product-active-switch'),
               value: isActive,
               onChanged: onActiveChanged,
             ),

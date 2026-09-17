@@ -61,7 +61,6 @@ class DropdownFilterButton extends StatelessWidget {
             .paddingX(isPill ? 14 : 10)
             .borderRadiusAll(Radius.circular(isPill ? 999 : 8))
             .borderAll(color: borderColor)
-            .alignment(Alignment.center)
             .onHovered(
               isFiltered && isPill
                   ? BoxStyler()

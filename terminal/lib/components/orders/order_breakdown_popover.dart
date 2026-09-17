@@ -4,6 +4,7 @@ import 'package:gap/gap.dart';
 import 'package:mix/mix.dart';
 import 'package:models/models.dart';
 import 'package:terminal/components/cart/cart_summary_item_row.dart';
+import 'package:terminal/theme.dart';
 
 /// Overlay popover card displaying additional order metrics, item counts, and online fees.
 class OrderBreakdownPopover extends StatelessWidget {
@@ -30,11 +31,11 @@ class OrderBreakdownPopover extends StatelessWidget {
       style: BoxStyler()
           .width(290)
           .paddingAll(16)
-          .color(const Color(0xFFFFFFFF))
+          .color(TerminalColors.surface)
           .borderRadiusAll(const Radius.circular(16))
-          .borderAll(color: const Color(0xFFCBD5E1), width: 1.2)
+          .borderAll(color: TerminalColors.border, width: 1.0)
           .shadowOnly(
-            color: const Color(0x1A000000),
+            color: const Color(0x14000000),
             offset: const Offset(0, 4),
             blurRadius: 16,
           ),

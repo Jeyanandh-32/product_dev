@@ -57,6 +57,7 @@ class InventoryProductPinnedRow extends StatelessWidget {
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: InventoryTableCells.actionButtons(
+                  editKey: ValueKey('product-edit-${product.name.toLowerCase().replaceAll(' ', '-')}'),
                   onEdit: onEdit,
                   onUpdateStock: onUpdateStock,
                 ),

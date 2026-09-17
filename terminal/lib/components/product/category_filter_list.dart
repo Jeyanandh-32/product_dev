@@ -33,7 +33,17 @@ class CategoryFilterList extends SignalWidget {
           SizedBox(height: 38, child: Center(child: Text('Error: $err'))),
       data: (categories) {
         final activeCategories = categories.where((c) => c.isActive).toList();
-        final isAllSelected = selectedCategory == null;
+        final isCategoryActive = selectedCategory != null &&
+            activeCategories.any((c) => c.id == selectedCategory.id);
+        final isAllSelected = selectedCategory == null || !isCategoryActive;
+
+        if (selectedCategory != null && !isCategoryActive) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (selectedCategorySignal.value?.id == selectedCategory.id) {
+              selectedCategorySignal.value = null;
+            }
+          });
+        }
 
         return SingleChildScrollView(
           scrollDirection: Axis.horizontal,

@@ -123,7 +123,11 @@ class _AddEditCategoryDialogState extends State<AddEditCategoryDialog> {
                         ]),
                       ),
                       const Gap(8),
-                      ModalSwitch(value: _isActive, onChanged: (v) => setState(() => _isActive = v)),
+                      ModalSwitch(
+                        key: const ValueKey('category-active-switch'),
+                        value: _isActive,
+                        onChanged: (v) => setState(() => _isActive = v),
+                      ),
                     ]),
                   ]),
                 ),

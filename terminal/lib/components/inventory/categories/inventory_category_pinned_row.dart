@@ -56,6 +56,7 @@ class InventoryCategoryPinnedRow extends StatelessWidget {
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: IconButton(
+                  key: ValueKey('category-edit-${category.name.toLowerCase()}'),
                   onPressed: onEdit,
                   icon: const Icon(
                     FLucideIcons.squarePen,

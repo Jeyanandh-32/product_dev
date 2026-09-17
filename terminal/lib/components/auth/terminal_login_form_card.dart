@@ -76,6 +76,7 @@ class _TerminalLoginFormCardState extends State<TerminalLoginFormCard> {
             _fieldLabel(icon: FLucideIcons.monitor, label: 'Terminal Code'),
             const Gap(8),
             LoginInputField(
+              key: const ValueKey('terminal_code_field'),
               controller: widget.codeController,
               focusNode: _codeFocusNode,
               hint: 'HINXXXXXXOE5',
@@ -105,6 +106,7 @@ class _TerminalLoginFormCardState extends State<TerminalLoginFormCard> {
             _fieldLabel(icon: FLucideIcons.lock, label: 'Password'),
             const Gap(8),
             LoginInputField(
+              key: const ValueKey('terminal_password_field'),
               controller: widget.passwordController,
               focusNode: _passwordFocusNode,
               hint: '••••••••',

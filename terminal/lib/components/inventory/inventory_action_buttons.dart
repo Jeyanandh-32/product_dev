@@ -8,11 +8,13 @@ import 'package:terminal/theme/terminal_colors.dart';
 class InventoryActionButtons extends StatelessWidget {
   final VoidCallback onEdit;
   final VoidCallback onUpdateStock;
+  final Key? editKey;
 
   const InventoryActionButtons({
     super.key,
     required this.onEdit,
     required this.onUpdateStock,
+    this.editKey,
   });
 
   @override
@@ -20,16 +22,17 @@ class InventoryActionButtons extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        _buildActionBtn(FLucideIcons.squarePen, onEdit),
+        _buildActionBtn(FLucideIcons.squarePen, onEdit, key: editKey),
         const Gap(5),
         _buildActionBtn(FLucideIcons.boxes, onUpdateStock),
       ],
     );
   }
 
-  Widget _buildActionBtn(IconData icon, VoidCallback onTap) => MouseRegion(
+  Widget _buildActionBtn(IconData icon, VoidCallback onTap, {Key? key}) => MouseRegion(
         cursor: SystemMouseCursors.click,
         child: PressableBox(
+          key: key,
           onPress: onTap,
           style: BoxStyler()
               .width(30)

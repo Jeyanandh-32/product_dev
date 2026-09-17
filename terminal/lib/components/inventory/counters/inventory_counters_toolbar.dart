@@ -44,7 +44,12 @@ class _InventoryCountersToolbarState extends State<InventoryCountersToolbar> {
           children: [
             _buildSearchBox(),
             const Gap(10),
-            SingleChildScrollView(scrollDirection: Axis.horizontal, child: Row(children: [statusFilter])),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [statusFilter],
+            ),
           ],
         );
       }

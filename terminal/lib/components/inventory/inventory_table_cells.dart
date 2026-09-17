@@ -78,7 +78,12 @@ class InventoryTableCells {
   static Widget actionButtons({
     required VoidCallback onEdit,
     required VoidCallback onUpdateStock,
-  }) => InventoryActionButtons(onEdit: onEdit, onUpdateStock: onUpdateStock);
+    Key? editKey,
+  }) => InventoryActionButtons(
+        onEdit: onEdit,
+        onUpdateStock: onUpdateStock,
+        editKey: editKey,
+      );
 
   static Widget thumbnail(String? url, {double size = 38}) => SizedBox.square(
     dimension: size,

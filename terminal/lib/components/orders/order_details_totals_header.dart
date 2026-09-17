@@ -56,6 +56,7 @@ class _OrderDetailsTotalsHeaderState extends State<OrderDetailsTotalsHeader>
           data: TerminalTheme.light(false),
           child: FPopover(
             control: .managed(controller: _controller),
+            style: const FPopoverStyle(decoration: BoxDecoration()),
             popoverAnchor: Alignment.bottomRight,
             childAnchor: Alignment.topRight,
             popoverBuilder: (context, controller) => OrderBreakdownPopover(

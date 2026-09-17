@@ -82,7 +82,6 @@ class _OrdersDatePickerPopoverState extends State<OrdersDatePickerPopover>
                       offset: const Offset(0, 1),
                       blurRadius: 2,
                     )
-                    .alignment(Alignment.center)
                     .onHovered(
                       isCustomActive
                           ? BoxStyler()

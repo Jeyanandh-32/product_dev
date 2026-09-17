@@ -12,25 +12,31 @@ final productsSignal = asyncSignal<List<Product>>(const AsyncLoading());
 
 final filteredProductsSignal = computed(() {
   final products = productsSignal.value.value ?? [];
-  final searchQuery = searchQuerySignal.value;
+  final categories = categoriesSignal.value.value ?? [];
+  final searchQuery = searchQuerySignal.value.trim().toLowerCase();
   final selectedCategory = selectedCategorySignal.value;
 
-  final activeProducts = products.where(
-    (product) => product.isActive && (product.category?.isActive ?? true),
-  );
+  final categoryActiveMap = {
+    for (final c in categories) c.id: c.isActive,
+  };
 
-  if (searchQuery.isEmpty && selectedCategory == null) {
-    return activeProducts.toList();
-  }
+  final activeProducts = products.where((product) {
+    if (!product.isActive) return false;
+    final catId = product.category?.id;
+    if (catId != null) {
+      final isCatActive = categoryActiveMap[catId] ?? product.category?.isActive ?? true;
+      if (!isCatActive) return false;
+    }
+    return true;
+  });
 
   return activeProducts.where((product) {
-    if (searchQuery.isNotEmpty) {
-      return product.name.toLowerCase().contains(searchQuery) ||
-          (product.sku?.toLowerCase().contains(searchQuery) ?? false) ||
-          (product.barcode?.toLowerCase().contains(searchQuery) ?? false);
-    }
-    if (selectedCategory == null) return true;
-    return product.category?.id == selectedCategory.id;
+    final matchesCategory = selectedCategory == null || product.category?.id == selectedCategory.id;
+    final matchesQuery = searchQuery.isEmpty ||
+        product.name.toLowerCase().contains(searchQuery) ||
+        (product.sku?.toLowerCase().contains(searchQuery) ?? false) ||
+        (product.barcode?.toLowerCase().contains(searchQuery) ?? false);
+    return matchesCategory && matchesQuery;
   }).toList();
 });
 
