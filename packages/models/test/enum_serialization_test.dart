@@ -67,5 +67,16 @@ void main() {
       expect(StoreType.fromJson('retail'), equals(StoreType.retail));
       expect(StoreType.fromJson('restaurant'), equals(StoreType.restaurant));
     });
+
+    test('SettlementStatus parses correctly with convenience getters', () {
+      expect(SettlementStatus.fromJson('pending'), equals(SettlementStatus.pending));
+      expect(SettlementStatus.fromJson('completed'), equals(SettlementStatus.completed));
+      expect(SettlementStatus.fromJson('failed'), equals(SettlementStatus.failed));
+      expect(SettlementStatus.pending.isPending, isTrue);
+      expect(SettlementStatus.completed.isCompleted, isTrue);
+      expect(SettlementStatus.failed.isFailed, isTrue);
+      expect(SettlementStatus.fromJson('unknown'), isNull);
+      expect(SettlementStatus.fromJson(null), isNull);
+    });
   });
 }

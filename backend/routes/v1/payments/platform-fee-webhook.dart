@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:backend/repositories/platform_fee_repository.dart';
+import 'package:backend/extensions/request_context_extension.dart';
 import 'package:backend/repositories/platform_phonepe_config_repository.dart';
 import 'package:backend/services/phonepe_service.dart';
 import 'package:backend/utils/responses.dart';
@@ -58,8 +58,7 @@ Future<Response> _onPost(RequestContext context) async {
       final gatewayState = PhonePeGatewayState.tryParse(state);
 
       if (gatewayState?.isSuccess ?? false) {
-        const repo = PlatformFeeRepository();
-        await repo.markSettlementCompleted(
+        await context.platformFeeRepo.markSettlementCompleted(
           settlementId: settlementId,
           paymentTransactionId: transactionId,
         );

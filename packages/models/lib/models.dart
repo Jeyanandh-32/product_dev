@@ -21,6 +21,7 @@ export 'src/merchant/merchant.dart';
 export 'src/merchant/merchant_platform_fee_summary.dart';
 export 'src/merchant/merchant_settings.dart';
 export 'src/merchant/platform_fee_settlement.dart';
+export 'src/merchant/settlement_status.dart';
 export 'src/order/order.dart';
 export 'src/order_item/order_item.dart';
 export 'src/order_source.dart';

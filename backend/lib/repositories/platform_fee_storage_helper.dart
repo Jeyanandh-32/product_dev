@@ -1,59 +1,46 @@
+import 'package:backend/database/schema.dart';
 import 'package:models/models.dart';
-import 'package:postgres/postgres.dart';
+import 'package:typed_sql/typed_sql.dart' as ts;
 
-/// Low-level SQL mapping and mutation helper for platform fee settlements.
+/// Database mutation helper for finalizing platform fee settlements.
 abstract final class PlatformFeeStorageHelper {
-  /// Maps a PostgreSQL row into a [PlatformFeeSettlement] model.
-  static PlatformFeeSettlement mapRow(List<dynamic> r) => PlatformFeeSettlement(
-    id: '${r[0]}',
-    merchantId: '${r[1]}',
-    amountInPaise: (r[2] as num?)?.toInt() ?? 0,
-    ordersCount: (r[3] as num?)?.toInt() ?? 0,
-    paymentGateway: '${r[4]}',
-    paymentTransactionId: r[5]?.toString(),
-    status: '${r[6]}',
-    createdAt: r[7] as DateTime?,
-    settledAt: r[8] as DateTime?,
-  );
-
-  /// Completes a settlement and marks related orders as settled.
+  /// Completes a settlement and marks eligible completed orders as settled.
   static Future<void> completeSettlement({
-    required Pool<Object> pool,
+    required ts.Database<DatabaseSchema> db,
     required String settlementId,
     required String paymentTransactionId,
   }) async {
-    final res = await pool.execute(
-      Sql.named('''
-        UPDATE platform_fee_settlements
-        SET status = 'completed',
-            payment_transaction_id = @txId,
-            settled_at = NOW()
-        WHERE id = @settlementId
-        RETURNING merchant_id;
-      '''),
-      parameters: {
-        'settlementId': settlementId,
-        'txId': paymentTransactionId,
-      },
-    );
+    final updatedRow = await db.platformFeeSettlements
+        .byKey(settlementId)
+        .update(
+          (s, set) => set(
+            status: ts.toExpr(SettlementStatus.completed.name),
+            paymentTransactionId: ts.toExpr(paymentTransactionId),
+            settledAt: ts.toExpr(DateTime.now().toUtc()),
+          ),
+        )
+        .returnUpdated()
+        .executeAndFetch();
 
-    final merchantId = res.firstOrNull?[0] as String?;
+    final merchantId = updatedRow?.merchantId;
     if (merchantId == null) return;
 
-    await pool.execute(
-      Sql.named('''
-        UPDATE orders
-        SET platform_fee_settled = TRUE,
-            platform_fee_settlement_id = @settlementId
-        WHERE store_id IN (SELECT id FROM stores WHERE merchant_id = @merchantId)
-          AND platform_fee_settled = FALSE
-          AND status != 'cancelled'
-          AND platform_fee > 0;
-      '''),
-      parameters: {
-        'settlementId': settlementId,
-        'merchantId': merchantId,
-      },
-    );
+    await db.orders
+        .where((o) => o.merchantId.equals(ts.toExpr(merchantId)))
+        .where((o) => o.platformFeeSettled.equals(ts.toExpr(false)))
+        .where((o) => o.status.notEquals(ts.toExpr(OrderStatus.cancelled.name)))
+        .where(
+          (o) => o.paymentStatus.equals(
+            ts.toExpr(PaymentStatus.completed.name),
+          ),
+        )
+        .where((o) => o.platformFee > ts.toExpr(0))
+        .update(
+          (o, set) => set(
+            platformFeeSettled: ts.toExpr(true),
+            platformFeeSettlementId: ts.toExpr(settlementId),
+          ),
+        )
+        .execute();
   }
 }

@@ -1,56 +1,49 @@
 import 'package:backend/config/database.dart';
+import 'package:backend/database/schema.dart';
+import 'package:backend/extensions/platform_fee_settlement_row_extension.dart';
 import 'package:backend/repositories/platform_fee_storage_helper.dart';
 import 'package:models/models.dart';
-import 'package:postgres/postgres.dart';
+import 'package:typed_sql/typed_sql.dart' as ts;
 
 /// Repository for calculating and settling merchant platform fees.
 class PlatformFeeRepository {
-  const PlatformFeeRepository({Pool<Object>? pool}) : _customPool = pool;
+  const PlatformFeeRepository({ts.Database<DatabaseSchema>? db}) : _customDb = db;
 
-  final Pool<Object>? _customPool;
-  Pool<Object> get pool => _customPool ?? Database.pool;
+  final ts.Database<DatabaseSchema>? _customDb;
+  ts.Database<DatabaseSchema> get db => _customDb ?? Database.db;
 
   /// Fetches unsettled platform fees summary for all stores of a merchant.
   Future<MerchantPlatformFeeSummary> getPlatformFeeSummary(
     String merchantId,
   ) async {
-    final unsettledRes = await pool.execute(
-      Sql.named('''
-        SELECT 
-          COALESCE(SUM(o.platform_fee), 0) as unsettled_amount,
-          COUNT(o.id) as unsettled_orders
-        FROM orders o
-        JOIN stores s ON o.store_id = s.id
-        WHERE s.merchant_id = @merchantId
-          AND o.platform_fee_settled = FALSE
-          AND o.status != 'cancelled'
-          AND o.platform_fee > 0;
-      '''),
-      parameters: {'merchantId': merchantId},
-    );
+    final ordersQuery = db.orders
+        .where((o) => o.merchantId.equals(ts.toExpr(merchantId)))
+        .where((o) => o.platformFeeSettled.equals(ts.toExpr(false)))
+        .where((o) => o.status.notEquals(ts.toExpr(OrderStatus.cancelled.name)))
+        .where(
+          (o) => o.paymentStatus.equals(
+            ts.toExpr(PaymentStatus.completed.name),
+          ),
+        )
+        .where((o) => o.platformFee > ts.toExpr(0));
 
-    final row = unsettledRes.firstOrNull;
-    final unsettledAmount = (row?[0] as num?)?.toInt() ?? 0;
-    final unsettledOrders = (row?[1] as num?)?.toInt() ?? 0;
+    final (unsettledAmount, unsettledOrders) = await db.select(
+      (
+        ordersQuery.asSubQuery.select((o) => (o.platformFee,)).sum(),
+        ordersQuery.asSubQuery.count(),
+      ),
+    ).fetchOrNulls();
 
-    final settlementsRes = await pool.execute(
-      Sql.named('''
-        SELECT id, merchant_id, amount_in_paise, orders_count, 
-               payment_gateway, payment_transaction_id, status, created_at, settled_at
-        FROM platform_fee_settlements
-        WHERE merchant_id = @merchantId
-        ORDER BY created_at DESC
-        LIMIT 20;
-      '''),
-      parameters: {'merchantId': merchantId},
-    );
+    final settlements = await db.platformFeeSettlements
+        .where((s) => s.merchantId.equals(ts.toExpr(merchantId)))
+        .orderBy((s) => [(s.createdAt, ts.Order.descending)])
+        .limit(20)
+        .fetch();
 
     return MerchantPlatformFeeSummary(
-      unsettledAmountInPaise: unsettledAmount,
-      unsettledOrdersCount: unsettledOrders,
-      recentSettlements: settlementsRes
-          .map(PlatformFeeStorageHelper.mapRow)
-          .toList(),
+      unsettledAmountInPaise: unsettledAmount ?? 0,
+      unsettledOrdersCount: unsettledOrders ?? 0,
+      recentSettlements: settlements.map((s) => s.toModel()).toList(),
     );
   }
 
@@ -58,17 +51,17 @@ class PlatformFeeRepository {
   Future<List<PlatformFeeSettlement>> getPendingSettlements(
     String merchantId,
   ) async {
-    final res = await pool.execute(
-      Sql.named('''
-        SELECT id, merchant_id, amount_in_paise, orders_count, 
-               payment_gateway, payment_transaction_id, status, created_at, settled_at
-        FROM platform_fee_settlements
-        WHERE merchant_id = @merchantId AND status = 'pending'
-        ORDER BY created_at DESC;
-      '''),
-      parameters: {'merchantId': merchantId},
-    );
-    return res.map(PlatformFeeStorageHelper.mapRow).toList();
+    final settlements = await db.platformFeeSettlements
+        .where((s) => s.merchantId.equals(ts.toExpr(merchantId)))
+        .where(
+          (s) => s.status.equals(
+            ts.toExpr(SettlementStatus.pending.name),
+          ),
+        )
+        .orderBy((s) => [(s.createdAt, ts.Order.descending)])
+        .fetch();
+
+    return settlements.map((s) => s.toModel()).toList();
   }
 
   /// Creates a new pending settlement record.
@@ -78,45 +71,40 @@ class PlatformFeeRepository {
     required int ordersCount,
     required String paymentGateway,
   }) async {
-    final res = await pool.execute(
-      Sql.named('''
-        INSERT INTO platform_fee_settlements 
-          (merchant_id, amount_in_paise, orders_count, payment_gateway, status)
-        VALUES 
-          (@merchantId, @amountInPaise, @ordersCount, @paymentGateway, 'pending')
-        RETURNING id, merchant_id, amount_in_paise, orders_count, 
-                  payment_gateway, payment_transaction_id, status, created_at, settled_at;
-      '''),
-      parameters: {
-        'merchantId': merchantId,
-        'amountInPaise': amountInPaise,
-        'ordersCount': ordersCount,
-        'paymentGateway': paymentGateway,
-      },
-    );
+    final row = await db.platformFeeSettlements
+        .insertValue(
+          merchantId: merchantId,
+          amountInPaise: amountInPaise,
+          ordersCount: ordersCount,
+          paymentGateway: paymentGateway,
+          status: SettlementStatus.pending.name,
+        )
+        .returnInserted()
+        .executeAndFetch();
 
-    return PlatformFeeStorageHelper.mapRow(res.first);
+    return row.toModel();
   }
 
-  /// Marks a settlement completed and tags all pending orders as settled.
+  /// Marks a settlement completed and tags eligible orders as settled.
   Future<void> markSettlementCompleted({
     required String settlementId,
     required String paymentTransactionId,
-  }) => PlatformFeeStorageHelper.completeSettlement(
-    pool: pool,
-    settlementId: settlementId,
-    paymentTransactionId: paymentTransactionId,
-  );
+  }) =>
+      PlatformFeeStorageHelper.completeSettlement(
+        db: db,
+        settlementId: settlementId,
+        paymentTransactionId: paymentTransactionId,
+      );
 
   /// Marks a settlement as failed.
   Future<void> markSettlementFailed(String settlementId) async {
-    await pool.execute(
-      Sql.named('''
-        UPDATE platform_fee_settlements
-        SET status = 'failed'
-        WHERE id = @settlementId;
-      '''),
-      parameters: {'settlementId': settlementId},
-    );
+    await db.platformFeeSettlements
+        .byKey(settlementId)
+        .update(
+          (s, set) => set(
+            status: ts.toExpr(SettlementStatus.failed.name),
+          ),
+        )
+        .execute();
   }
 }

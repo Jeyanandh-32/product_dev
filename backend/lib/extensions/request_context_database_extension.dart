@@ -94,7 +94,7 @@ extension RequestContextDatabaseExtension on RequestContext {
 
   /// Repository for merchant platform fee calculations and settlements.
   PlatformFeeRepository get platformFeeRepo =>
-      _repo((_) => const PlatformFeeRepository());
+      _repo((db) => PlatformFeeRepository(db: db));
 
   /// Domain service coordinating product creation and stock initialization.
   ProductService get productService {
