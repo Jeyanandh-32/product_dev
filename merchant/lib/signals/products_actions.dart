@@ -44,6 +44,7 @@ abstract final class ProductsActions {
 
       productsTotalSignal.value = productsTotalSignal.value + 1;
       productsSignal.value = AsyncData([...currentProducts, product]);
+      fetchAllStoreProductsSignal();
       showToast('Product created successfully.', type: ToastType.success);
     } on ApiException catch (e) {
       showToast(e.message);
@@ -90,6 +91,7 @@ abstract final class ProductsActions {
       productsSignal.value = AsyncData(
         currentProducts.map((p) => p.id == id ? updatedProduct : p).toList(),
       );
+      fetchAllStoreProductsSignal();
       showToast('Product updated successfully.', type: ToastType.success);
     } on ApiException catch (e) {
       showToast(e.message);

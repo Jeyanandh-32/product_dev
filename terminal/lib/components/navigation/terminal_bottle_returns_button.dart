@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:forui/forui.dart';
 import 'package:gap/gap.dart';
 import 'package:mix/mix.dart';
@@ -8,8 +8,17 @@ import 'package:terminal/signals/bottle_return_signal.dart';
 import 'package:terminal/utils/responsive_extensions.dart';
 
 /// Top header quick action button for opening the manual bottle return acceptance modal.
-class TerminalBottleReturnsButton extends StatelessWidget {
+class TerminalBottleReturnsButton extends StatefulWidget {
   const TerminalBottleReturnsButton({super.key});
+
+  @override
+  State<TerminalBottleReturnsButton> createState() =>
+      _TerminalBottleReturnsButtonState();
+}
+
+class _TerminalBottleReturnsButtonState
+    extends State<TerminalBottleReturnsButton> {
+  bool _isHovered = false;
 
   @override
   Widget build(BuildContext context) {
@@ -18,41 +27,55 @@ class TerminalBottleReturnsButton extends StatelessWidget {
         final cfg = bottleReturnConfigSignal.value;
         if (cfg == null || !cfg.isEnabled) return const SizedBox.shrink();
 
-        final isCompact = context.screenWidth < 840;
+        final isCompact = context.screenWidth < 800;
+        final fgColor =
+            _isHovered ? const Color(0xFFFFFFFF) : const Color(0xFF16A34A);
+        final bgColor =
+            _isHovered ? const Color(0xFF16A34A) : const Color(0xFFF0FDF4);
+        final borderColor =
+            _isHovered ? const Color(0xFF16A34A) : const Color(0xFFBBF7D0);
 
-        final buttonStyle = BoxStyler()
-            .height(36)
-            .paddingX(isCompact ? 10 : 12)
-            .borderRadiusAll(const Radius.circular(10))
-            .color(const Color(0xFFF0FDF4))
-            .borderAll(color: const Color(0xFFBBF7D0), width: 1)
-            .alignment(Alignment.center)
-            .onHovered(
-              BoxStyler()
-                  .color(const Color(0xFFDCFCE7))
-                  .borderAll(color: const Color(0xFF86EFAC), width: 1),
-            );
+        final baseStyle = BoxStyler()
+            .height(38)
+            .paddingX(isCompact ? 0 : 12)
+            .borderRadiusAll(const Radius.circular(999))
+            .color(bgColor)
+            .borderAll(color: borderColor)
+            .shadowOnly(
+              color: const Color(0x06000000),
+              offset: const Offset(0, 1),
+              blurRadius: 2,
+            )
+            .alignment(Alignment.center);
+
+        final buttonStyle = isCompact ? baseStyle.width(38) : baseStyle;
 
         return Padding(
-          padding: const EdgeInsets.only(right: 10),
+          padding: const EdgeInsets.only(right: 8),
           child: MouseRegion(
             cursor: SystemMouseCursors.click,
+            onEnter: (_) => setState(() => _isHovered = true),
+            onExit: (_) => setState(() => _isHovered = false),
             child: PressableBox(
               onPress: () => AcceptBottleReturnsDialog.show(context),
               style: buttonStyle,
               child: Row(
                 mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const Icon(FLucideIcons.recycle, size: 14, color: Color(0xFF16A34A)),
-                  const Gap(6),
-                  Text(
-                    isCompact ? 'Returns' : 'Accept Returns',
-                    style: const TextStyle(
-                      fontSize: 12.5,
-                      fontWeight: FontWeight.w700,
-                      color: Color(0xFF15803D),
+                  Icon(FLucideIcons.recycle, size: 16, color: fgColor),
+                  if (!isCompact) ...[
+                    const Gap(6),
+                    Text(
+                      'Accept Returns',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                        color: fgColor,
+                      ),
                     ),
-                  ),
+                  ],
                 ],
               ),
             ),
@@ -62,3 +85,4 @@ class TerminalBottleReturnsButton extends StatelessWidget {
     );
   }
 }
+

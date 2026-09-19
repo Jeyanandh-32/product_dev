@@ -23,6 +23,11 @@ abstract final class TerminalColors {
   static const primaryHover = Color(0xFF1C2541);
   static const controlHover = Color(0xFFE2E8F0);
 
+  // Brand Blue Tokens (Info, QR Scanner, Logo Accent)
+  static const brandBlue = Color(0xFF2563EB);
+  static const brandBlueBg = Color(0xFFEFF6FF);
+  static const brandBlueBorder = Color(0xFFBFDBFE);
+
   // Semantic Status Badges & Chips
   static const activeBadgeBg = Color(0xFFDCFCE7);
   static const activeBadgeText = Color(0xFF166534);

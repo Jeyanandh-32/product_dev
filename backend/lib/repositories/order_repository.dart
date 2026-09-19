@@ -1,6 +1,5 @@
 import 'package:backend/database/schema.dart';
 import 'package:backend/repositories/order_mutation_repository.dart';
-import 'package:backend/repositories/order_query_builder.dart';
 import 'package:backend/repositories/order_query_facade.dart';
 import 'package:backend/repositories/order_reports_facade.dart';
 import 'package:backend/repositories/order_reports_repository.dart';
@@ -94,18 +93,4 @@ class OrderRepository with OrderQueryFacade, OrderReportsFacade {
   /// Fetches order row by UUID.
   Future<OrderRow?> getById(String id) =>
       _db.orders.where((o) => o.id.equals(ts.toExpr(id))).first.fetch();
-
-  /// Fetches order row by bill number or UUID.
-  Future<OrderRow?> getByIdOrBillNo(String idOrBillNo, String storeId) =>
-      OrderQueryBuilder.getByIdOrBillNo(
-        db: _db,
-        idOrBillNo: idOrBillNo,
-        storeId: storeId,
-      );
-
-  /// Fetches order row by reference code.
-  Future<OrderRow?> getByReference(String reference) => _db.orders
-      .where((o) => o.orderReference.equals(ts.toExpr(reference)))
-      .first
-      .fetch();
 }

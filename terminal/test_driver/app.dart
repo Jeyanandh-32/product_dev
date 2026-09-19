@@ -3,6 +3,6 @@ import 'package:terminal/main.dart' as app;
 
 /// Test driver entrypoint enabling Flutter Driver RPCs on Linux desktop.
 void main() {
-  enableFlutterDriverExtension();
+  enableFlutterDriverExtension(enableTextEntryEmulation: false);
   app.main();
 }

@@ -57,7 +57,7 @@ class _StockSummaryState extends SignalState<StockSummary> {
   }
 
   void _changeEntry(int entry) {
-    entriesSignal.value = entry;
+    stockSummaryEntriesSignal.value = entry;
     stockSummaryPageSignal.value = 1;
     refreshStockSummarySignal();
     _closeDropdowns();
@@ -72,7 +72,7 @@ class _StockSummaryState extends SignalState<StockSummary> {
         refreshStockSummarySignal();
       });
     }
-    final entries = entriesSignal.value;
+    final entries = stockSummaryEntriesSignal.value;
     final reportState = stockSummarySignal.value;
     final currentPage = stockSummaryPageSignal.value;
     final totalPages = reportState.value?.totalPages ?? 1;

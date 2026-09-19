@@ -89,13 +89,17 @@ class OrderQueryBuilder {
     return total ?? 0;
   }
 
+  static final _uuidRegex = RegExp(
+    r'^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$',
+  );
+
   /// Fetches single order row by either bill number, UUID, or reference code.
-  static Future<OrderRow?> getByIdOrBillNo({
+  static Future<OrderRow?> getByIdOrReference({
     required ts.Database<DatabaseSchema> db,
-    required String idOrBillNo,
+    required String identifier,
     required String storeId,
   }) async {
-    final billNo = int.tryParse(idOrBillNo);
+    final billNo = int.tryParse(identifier);
     if (billNo != null) {
       final row = await db.orders
           .where((o) => o.storeId.equals(ts.toExpr(storeId)))
@@ -105,9 +109,19 @@ class OrderQueryBuilder {
       if (row != null) return row;
     }
 
-    final byId = await db.orders.where((o) => o.id.equals(ts.toExpr(idOrBillNo))).first.fetch();
-    if (byId != null) return byId;
+    final byRef = await db.orders
+        .where((o) => o.orderReference.equals(ts.toExpr(identifier)))
+        .first
+        .fetch();
+    if (byRef != null) return byRef;
 
-    return db.orders.where((o) => o.orderReference.equals(ts.toExpr(idOrBillNo))).first.fetch();
+    if (_uuidRegex.hasMatch(identifier)) {
+      return db.orders
+          .where((o) => o.id.equals(ts.toExpr(identifier)))
+          .first
+          .fetch();
+    }
+
+    return null;
   }
 }

@@ -59,8 +59,8 @@ class _CategoriesState extends SignalState<Categories> {
     _closeDropdowns();
   }
 
-  int _getAssociatedCount(Category category) {
-    final prods = allStoreProductsSignal.value.value;
+  int _getAssociatedCount(Category category, [List<Product>? products]) {
+    final prods = products ?? allStoreProductsSignal.value.value;
     if (prods == null) return 0;
     return prods.where((prod) => prod.category?.id == category.id).length;
   }
@@ -81,6 +81,7 @@ class _CategoriesState extends SignalState<Categories> {
         activeModalSignal.value == ActiveModal.editCategory;
 
     final categoriesAsync = categoriesSignal.value;
+    final allProductsAsync = allStoreProductsSignal.value;
 
     return div(
       classes: 'flex flex-col flex-1 min-h-0 m-4 bg-white rounded-2xl border border-border-medium shadow-xs overflow-hidden',
@@ -120,7 +121,8 @@ class _CategoriesState extends SignalState<Categories> {
                       .toList(),
             sortState: _sortState,
             onSort: _onSort,
-            getAssociatedCount: _getAssociatedCount,
+            getAssociatedCount: (c) =>
+                _getAssociatedCount(c, allProductsAsync.value),
           ),
         TablePagination(
           currentPage: categoriesPageSignal.value,

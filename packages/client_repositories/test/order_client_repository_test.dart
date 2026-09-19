@@ -71,4 +71,61 @@ void main() {
       expect(capturedOptions!.queryParameters['storeId'], equals('store-1'));
     });
   });
+
+  group('OrderRepository.getByIdOrReference', () {
+    test('fetches order by id or reference with storeId param', () async {
+      final mockDio = Dio();
+      RequestOptions? capturedOptions;
+
+      mockDio.httpClientAdapter = _MockHttpClientAdapter((options) {
+        capturedOptions = options;
+        return ResponseBody.fromString(
+          jsonEncode({
+            'status': 'success',
+            'data': {
+              'order': {
+                'id': 'order-1',
+                'merchantId': 'm-1',
+                'storeId': 'store-1',
+                'orderReference': 'ORD-1234',
+                'billNo': 1,
+                'source': 'terminal',
+                'type': 'dineIn',
+                'status': 'completed',
+                'paymentStatus': 'paid',
+                'paymentMethod': 'cash',
+                'subtotal': 100.0,
+                'taxTotal': 5.0,
+                'grandTotal': 105.0,
+                'items': <Map<String, dynamic>>[],
+                'createdAt': '2026-09-19T10:00:00.000Z',
+                'updatedAt': '2026-09-19T10:00:00.000Z',
+              },
+            },
+          }),
+          200,
+          headers: {
+            Headers.contentTypeHeader: [Headers.jsonContentType],
+          },
+        );
+      });
+      initDio(mockDio);
+
+      final order = await OrderRepository.getByIdOrReference(
+        storeId: 'store-1',
+        id: 'ORD-1234',
+      );
+
+      expect(order.id, equals('order-1'));
+      expect(order.orderReference, equals('ORD-1234'));
+      expect(capturedOptions?.path, endsWith('/ORD-1234'));
+      expect(capturedOptions?.queryParameters['storeId'], equals('store-1'));
+
+      final aliasOrder = await OrderRepository.getById(
+        storeId: 'store-1',
+        id: 'ORD-1234',
+      );
+      expect(aliasOrder.id, equals('order-1'));
+    });
+  });
 }

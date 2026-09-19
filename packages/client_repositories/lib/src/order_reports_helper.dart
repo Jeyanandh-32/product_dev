@@ -105,8 +105,8 @@ class OrderReportsHelper {
     }
   }
 
-  /// Retrieves order details by primary UUID or bill number.
-  static Future<Order> getById({
+  /// Retrieves order details by primary UUID, order reference, or bill number.
+  static Future<Order> getByIdOrReference({
     required String storeId,
     required String id,
   }) async {

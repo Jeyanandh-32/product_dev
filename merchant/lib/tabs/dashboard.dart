@@ -25,7 +25,6 @@ class Dashboard extends SignalComponent {
 }
 
 class _DashboardState extends SignalState<Dashboard> {
-  DashboardRange _selectedRange = .days7;
   String? _loadedStoreId;
 
   @override
@@ -46,9 +45,6 @@ class _DashboardState extends SignalState<Dashboard> {
   }
 
   Future<void> _handleRangeChange(DashboardRange range) async {
-    setState(() {
-      _selectedRange = range;
-    });
     dashboardRangeSignal.value = range;
     await _handleRefresh();
   }
@@ -100,7 +96,7 @@ class _DashboardState extends SignalState<Dashboard> {
       classes: 'flex-1 overflow-y-auto bg-neutral/30 p-3 sm:p-4 space-y-4',
       [
         DashboardHeaderBar(
-          selectedRange: _selectedRange,
+          selectedRange: dashboardRangeSignal.value,
           onRangeChanged: _handleRangeChange,
           onRefresh: _handleRefresh,
         ),

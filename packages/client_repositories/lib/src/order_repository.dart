@@ -53,9 +53,15 @@ abstract final class OrderRepository {
         useWallet: useWallet,
       );
 
-  /// Retrieves order details by primary UUID or bill number.
+  /// Retrieves order details by primary UUID, order reference, or bill number.
+  static Future<Order> getByIdOrReference({
+    required String storeId,
+    required String id,
+  }) => OrderReportsHelper.getByIdOrReference(storeId: storeId, id: id);
+
+  /// Convenience alias for [getByIdOrReference].
   static Future<Order> getById({required String storeId, required String id}) =>
-      OrderReportsHelper.getById(storeId: storeId, id: id);
+      getByIdOrReference(storeId: storeId, id: id);
 
   /// Updates order state, payment status, or payment method via PATCH /v1/orders/[id].
   static Future<Order> updateStatus({
@@ -65,11 +71,8 @@ abstract final class OrderRepository {
     PaymentStatus? paymentStatus,
     PaymentMethod? paymentMethod,
   }) => OrderReportsHelper.updateStatus(
-    storeId: storeId,
-    id: id,
-    status: status,
-    paymentStatus: paymentStatus,
-    paymentMethod: paymentMethod,
+    storeId: storeId, id: id, status: status,
+    paymentStatus: paymentStatus, paymentMethod: paymentMethod,
   );
 
   /// Retrieves paginated orders report with summary totals for merchant management.
@@ -125,12 +128,8 @@ abstract final class OrderRepository {
       final result = await dio.get(
         ApiEndpoints.customerOrders,
         queryParameters: {
-          'storeId': ?storeId,
-          'date': ?date,
-          'fromDate': ?fromDate,
-          'toDate': ?toDate,
-          'page': ?page,
-          'size': ?size,
+          'storeId': ?storeId, 'date': ?date, 'fromDate': ?fromDate,
+          'toDate': ?toDate, 'page': ?page, 'size': ?size,
         },
       );
 

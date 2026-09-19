@@ -65,11 +65,13 @@ class _OrdersPageState extends State<OrdersPage> {
                     const Gap(10),
                     const OrdersDateFilterRow(),
                     const Gap(10),
-                    const Row(
+                    Row(
                       children: [
-                        Expanded(child: OrdersSearchBar()),
-                        Gap(8),
-                        OrdersRefreshButton(),
+                        const Expanded(child: OrdersSearchBar()),
+                        const Gap(8),
+                        const OrdersQrScanButton(),
+                        const Gap(8),
+                        const OrdersRefreshButton(),
                       ],
                     ),
                     Gap(isDesktop ? 12 : 10),

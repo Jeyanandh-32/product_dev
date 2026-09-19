@@ -80,4 +80,12 @@ mixin OrderQueryFacade {
     limit: limit,
     offset: offset,
   );
+
+  /// Fetches single order row by either bill number, UUID, or reference code.
+  Future<OrderRow?> getByIdOrReference(String identifier, String storeId) =>
+      OrderQueryBuilder.getByIdOrReference(
+        db: db,
+        identifier: identifier,
+        storeId: storeId,
+      );
 }

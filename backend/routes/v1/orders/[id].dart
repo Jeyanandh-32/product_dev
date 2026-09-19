@@ -22,7 +22,7 @@ Future<Response> _onGet(RequestContext context, String id) async {
   final productRepo = context.productRepo;
 
   try {
-    final orderRow = await orderRepo.getByIdOrBillNo(id, context.storeId);
+    final orderRow = await orderRepo.getByIdOrReference(id, context.storeId);
     if (orderRow == null) return notFound(message: 'Order not found.');
 
     final itemRows = await orderItemRepo.getAllForOrder(orderRow.id);
@@ -46,7 +46,7 @@ Future<Response> _onPatch(RequestContext context, String id) async {
   final productRepo = context.productRepo;
 
   try {
-    final orderRow = await orderRepo.getByIdOrBillNo(id, context.storeId);
+    final orderRow = await orderRepo.getByIdOrReference(id, context.storeId);
     if (orderRow == null) return notFound(message: 'Order not found.');
 
     final body = await context.validateBody(OrderValidator.update);

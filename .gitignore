@@ -16,3 +16,4 @@ build/
 DEPRECATION_PLAN_BOTTLE_RETURN.md
 .env
 *.env
+TODO.md

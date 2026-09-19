@@ -4661,12 +4661,6 @@
       border-color: color-mix(in oklab, var(--color-red-200) 80%, transparent);
     }
   }
-  .border-sky-200\/80 {
-    border-color: color-mix(in srgb, oklch(90.1% 0.058 230.902) 80%, transparent);
-    @supports (color: color-mix(in lab, red, red)) {
-      border-color: color-mix(in oklab, var(--color-sky-200) 80%, transparent);
-    }
-  }
   .border-slate-200 {
     border-color: var(--color-slate-200);
   }
@@ -4846,9 +4840,6 @@
   }
   .bg-rose-600 {
     background-color: var(--color-rose-600);
-  }
-  .bg-sky-50 {
-    background-color: var(--color-sky-50);
   }
   .bg-slate-50 {
     background-color: var(--color-slate-50);
@@ -5101,12 +5092,6 @@
   .text-\[28px\] {
     font-size: 28px;
   }
-  .text-\[30px\] {
-    font-size: 30px;
-  }
-  .text-\[42px\] {
-    font-size: 42px;
-  }
   .text-\[44px\] {
     font-size: 44px;
   }
@@ -5157,10 +5142,6 @@
   .tracking-wider {
     --tw-tracking: var(--tracking-wider);
     letter-spacing: var(--tracking-wider);
-  }
-  .tracking-widest {
-    --tw-tracking: var(--tracking-widest);
-    letter-spacing: var(--tracking-widest);
   }
   .whitespace-nowrap {
     white-space: nowrap;
@@ -5261,9 +5242,6 @@
   }
   .text-rose-600 {
     color: var(--color-rose-600);
-  }
-  .text-sky-600 {
-    color: var(--color-sky-600);
   }
   .text-slate-300 {
     color: var(--color-slate-300);

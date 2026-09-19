@@ -18,6 +18,7 @@ export 'orders_entries_dropdown.dart';
 export 'orders_entries_menu.dart';
 export 'orders_pagination.dart';
 export 'orders_pagination_nav_button.dart';
+export 'orders_qr_scan_button.dart';
 export 'orders_refresh_button.dart';
 export 'orders_search_bar.dart';
 export 'orders_source_tabs.dart';

@@ -46,12 +46,19 @@ class TerminalAppBar extends StatelessWidget {
                   ),
                 ),
                 const Gap(10),
-                Text(
-                  'Finch',
-                  style: GoogleFonts.dancingScript(
-                    fontSize: context.isMobile ? 26 : 30,
-                    fontWeight: FontWeight.w700,
-                    color: theme.colors.primary,
+                Flexible(
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'Finch',
+                      maxLines: 1,
+                      style: GoogleFonts.dancingScript(
+                        fontSize: context.isMobile ? 26 : 30,
+                        fontWeight: FontWeight.w700,
+                        color: theme.colors.primary,
+                      ),
+                    ),
                   ),
                 ),
               ],

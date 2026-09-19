@@ -59,8 +59,8 @@ class _CountersState extends SignalState<Counters> {
     _closeDropdowns();
   }
 
-  int _getAssociatedCount(Counter counter) {
-    final prods = allStoreProductsSignal.value.value;
+  int _getAssociatedCount(Counter counter, [List<Product>? products]) {
+    final prods = products ?? allStoreProductsSignal.value.value;
     if (prods == null) return 0;
     return prods.where((prod) => prod.counter?.id == counter.id).length;
   }
@@ -81,6 +81,7 @@ class _CountersState extends SignalState<Counters> {
         activeModalSignal.value == ActiveModal.editCounter;
 
     final countersAsync = countersSignal.value;
+    final allProductsAsync = allStoreProductsSignal.value;
 
     return div(
       classes: 'flex flex-col flex-1 min-h-0 m-4 bg-white rounded-2xl border border-border-medium shadow-xs overflow-hidden',
@@ -120,7 +121,8 @@ class _CountersState extends SignalState<Counters> {
                       .toList(),
             sortState: _sortState,
             onSort: _onSort,
-            getAssociatedCount: _getAssociatedCount,
+            getAssociatedCount: (c) =>
+                _getAssociatedCount(c, allProductsAsync.value),
           ),
         TablePagination(
           currentPage: countersPageSignal.value,
