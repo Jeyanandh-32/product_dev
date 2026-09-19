@@ -16,20 +16,15 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  changes:
-    name: Detect Changed Components
+  deploy:
+    name: Build & Deploy via Dart Orchestrator
     runs-on: ubuntu-latest
-    outputs:
-      backend: ${{ steps.detect.outputs.backend }}
-      merchant: ${{ steps.detect.outputs.merchant }}
-      customer: ${{ steps.detect.outputs.customer }}
-      terminal: ${{ steps.detect.outputs.terminal }}
-      landing: ${{ steps.detect.outputs.landing }}
-      migrations: ${{ steps.detect.outputs.migrations }}
-      deploy_tag: ${{ steps.detect.outputs.deploy_tag }}
+    permissions:
+      contents: write
+
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v7
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -38,180 +33,6 @@ jobs:
         with:
           channel: 'stable'
           cache: true
-
-      - name: Install Root Dependencies
-        run: dart pub get
-
-      - name: Detect Changes
-        id: detect
-        run: |
-          FLAGS="--detect-only --target=${{ github.ref_name }}"
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.deploy_all }}" = "true" ]; then
-            FLAGS="$FLAGS --all"
-          fi
-          dart run tool/deploy.dart $FLAGS
-
-  build-backend:
-    name: Build Backend Binary
-    needs: changes
-    runs-on: ubuntu-latest
-    if: needs.changes.outputs.backend == 'true' || github.event_name == 'workflow_dispatch'
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v7
-
-      - name: Setup Flutter & Dart SDK
-        uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
-          cache: true
-
-      - name: Install Root Dependencies
-        run: dart pub get
-
-      - name: Build Backend Binary
-        run: dart run tool/deploy.dart --build-only --only=backend
-
-      - name: Upload Backend Artifact
-        uses: actions/upload-artifact@v7
-        with:
-          name: release-backend
-          path: dist/server.exe
-
-  build-merchant:
-    name: Build Merchant Web App
-    needs: changes
-    runs-on: ubuntu-latest
-    if: needs.changes.outputs.merchant == 'true' || github.event_name == 'workflow_dispatch'
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v7
-
-      - name: Setup Flutter & Dart SDK
-        uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
-          cache: true
-
-      - name: Install Root Dependencies
-        run: dart pub get
-
-      - name: Build Merchant Web App (WASM)
-        run: dart run tool/deploy.dart --build-only --only=merchant
-
-      - name: Upload Merchant Artifact
-        uses: actions/upload-artifact@v7
-        with:
-          name: release-merchant
-          path: dist/merchant/
-
-  build-customer:
-    name: Build Customer Web App
-    needs: changes
-    runs-on: ubuntu-latest
-    if: needs.changes.outputs.customer == 'true' || github.event_name == 'workflow_dispatch'
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v7
-
-      - name: Setup Flutter & Dart SDK
-        uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
-          cache: true
-
-      - name: Install Root Dependencies
-        run: dart pub get
-
-      - name: Build Customer Web App (WASM)
-        run: dart run tool/deploy.dart --build-only --only=customer
-
-      - name: Upload Customer Artifact
-        uses: actions/upload-artifact@v7
-        with:
-          name: release-customer
-          path: dist/store/
-
-  build-terminal:
-    name: Build Terminal Web App
-    needs: changes
-    runs-on: ubuntu-latest
-    if: needs.changes.outputs.terminal == 'true' || github.event_name == 'workflow_dispatch'
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v7
-
-      - name: Setup Flutter & Dart SDK
-        uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
-          cache: true
-
-      - name: Install Root Dependencies
-        run: dart pub get
-
-      - name: Build Terminal Web App (WASM)
-        run: dart run tool/deploy.dart --build-only --only=terminal
-
-      - name: Upload Terminal Artifact
-        uses: actions/upload-artifact@v7
-        with:
-          name: release-terminal
-          path: dist/terminal/
-
-  deploy:
-    name: Deploy to EC2
-    needs: [changes, build-backend, build-merchant, build-customer, build-terminal]
-    runs-on: ubuntu-latest
-    if: |
-      !cancelled() &&
-      (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/stage') &&
-      (needs.changes.outputs.backend == 'true' || needs.changes.outputs.merchant == 'true' || needs.changes.outputs.customer == 'true' || needs.changes.outputs.terminal == 'true' || needs.changes.outputs.landing == 'true' || needs.changes.outputs.migrations == 'true' || github.event_name == 'workflow_dispatch') &&
-      (needs.build-backend.result == 'success' || needs.build-backend.result == 'skipped') &&
-      (needs.build-merchant.result == 'success' || needs.build-merchant.result == 'skipped') &&
-      (needs.build-customer.result == 'success' || needs.build-customer.result == 'skipped') &&
-      (needs.build-terminal.result == 'success' || needs.build-terminal.result == 'skipped')
-
-    steps:
-      - name: Checkout Code (Static Files & Migrations)
-        uses: actions/checkout@v7
-
-      - name: Setup Flutter & Dart SDK
-        uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
-          cache: true
-
-      - name: Install Root Dependencies
-        run: dart pub get
-
-      - name: Download Backend Artifact
-        if: needs.changes.outputs.backend == 'true' || github.event_name == 'workflow_dispatch'
-        uses: actions/download-artifact@v8
-        with:
-          name: release-backend
-          path: dist
-
-      - name: Download Merchant Artifact
-        if: needs.changes.outputs.merchant == 'true' || github.event_name == 'workflow_dispatch'
-        uses: actions/download-artifact@v8
-        with:
-          name: release-merchant
-          path: dist/merchant
-
-      - name: Download Customer Artifact
-        if: needs.changes.outputs.customer == 'true' || github.event_name == 'workflow_dispatch'
-        uses: actions/download-artifact@v8
-        with:
-          name: release-customer
-          path: dist/store
-
-      - name: Download Terminal Artifact
-        if: needs.changes.outputs.terminal == 'true' || github.event_name == 'workflow_dispatch'
-        uses: actions/download-artifact@v8
-        with:
-          name: release-terminal
-          path: dist/terminal
 
       - name: Setup SSH Key & Known Hosts
         run: |
@@ -220,6 +41,9 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts 2>/dev/null || true
 
+      - name: Install Root Dependencies
+        run: dart pub get
+
       - name: Run Dart Deploy Orchestrator
         env:
           EC2_HOST: ${{ secrets.EC2_HOST }}
@@ -227,35 +51,9 @@ jobs:
           EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
           EC2_SSH_KEY_PATH: /home/runner/.ssh/id_rsa
         run: |
-          FLAGS="--deploy-only --target=${{ github.ref_name }}"
+          FLAGS="--target=${{ github.ref_name }}"
           if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.deploy_all }}" = "true" ]; then
             FLAGS="$FLAGS --all"
           fi
           dart run tool/deploy.dart $FLAGS
 
-  mark-deployed:
-    name: Mark Commit as Deployed
-    needs: [changes, deploy]
-    if: |
-      !cancelled() &&
-      needs.deploy.result == 'success'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v7
-        with:
-          fetch-depth: 0
-
-      - name: Setup Flutter & Dart SDK
-        uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
-          cache: true
-
-      - name: Install Root Dependencies
-        run: dart pub get
-
-      - name: Move Deploy Tag
-        run: dart run tool/deploy.dart --tag-only --target=${{ github.ref_name }}
